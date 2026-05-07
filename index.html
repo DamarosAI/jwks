@@ -514,6 +514,9 @@ body.damaros-docs-active .damaros-site:before{background:repeating-linear-gradie
 html {
   scrollbar-gutter: stable;
 }
+body.damaros-ignition-home-active.damaros-home-lock {
+  scrollbar-gutter: stable;
+}
 #damaros-panel-home.active {
   padding: 0 !important;
   min-height: 100vh !important;
@@ -746,7 +749,7 @@ body.damaros-ignition-home-active.ig-workspace #damaros-panel-home.active .damar
 }
 body.damaros-ignition-home-active.ig-return #damaros-panel-home.active .damaros-ignition .workspace-logo {
   opacity: 0.64;
-  transform: translateY(-4px) scale(0.98);
+  transform: translateY(0) scale(0.98);
   transition: opacity 0.42s ease, transform 0.52s cubic-bezier(0.16, 1, 0.3, 1);
 }
 #damaros-panel-home.active .damaros-ignition .workspace-logo:hover,
@@ -928,10 +931,10 @@ body.damaros-ignition-home-active.ig-workspace #damaros-panel-home.active .damar
 }
 body.damaros-ignition-home-active.ig-return #damaros-panel-home.active .damaros-ignition .workspace {
   opacity: 0;
-  transform: translateY(18px) scale(0.985);
-  filter: blur(1.5px);
+  transform: translateY(0) scale(1);
+  filter: blur(2px);
   pointer-events: none;
-  transition: opacity 0.52s ease, transform 0.62s cubic-bezier(0.16, 1, 0.3, 1), filter 0.52s ease;
+  transition: opacity 0.52s ease, filter 0.52s ease;
 }
 #damaros-panel-home.active .damaros-ignition .workspace-head {
   text-align: left;
@@ -1662,7 +1665,7 @@ body.damaros-ignition-home-active.ig-init #damaros-panel-home.active .damaros-ig
 <section class="hero" id="ignitionHero" aria-label="Damaros hero">
 <div class="hero-inner">
 <div class="logo">Damaros<button type="button" class="ignition-dot" id="ignitionDot" aria-label="Initialize Damaros trial execution workspace"></button></div>
-<p class="command-line hero-action-cue" id="heroActionCue" aria-live="polite">click anywhere to initialize</p>
+<p class="command-line hero-action-cue" id="heroActionCue" aria-live="polite"></p>
 <div class="cta-row"><a class="cta" href="mailto:anirudh@damaros.ai">Request a Demo</a></div>
 </div>
 </section>
@@ -2148,15 +2151,56 @@ spec:
   let state = "idle";
   let parallaxX = 0;
   let parallaxY = 0;
+  let actionCueTypeTimer = null;
+  let actionCueCharIndex = 0;
+
+  function heroActionCueFullPhrase() {
+    return mqPointerCoarse.matches ? "tap anywhere to initialize" : "click anywhere to initialize";
+  }
+
+  function clearHeroActionCueTypewriter() {
+    if (actionCueTypeTimer !== null) {
+      clearTimeout(actionCueTypeTimer);
+      actionCueTypeTimer = null;
+    }
+    actionCueCharIndex = 0;
+  }
+
+  function tickHeroActionCueTypewriter() {
+    if (!heroActionCue || state !== "idle") {
+      clearHeroActionCueTypewriter();
+      return;
+    }
+    var full = heroActionCueFullPhrase();
+    actionCueCharIndex += 1;
+    heroActionCue.textContent = full.slice(0, actionCueCharIndex);
+    if (actionCueCharIndex >= full.length) {
+      clearHeroActionCueTypewriter();
+      return;
+    }
+    var delay = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 38;
+    actionCueTypeTimer = setTimeout(tickHeroActionCueTypewriter, delay);
+  }
+
+  function startHeroActionCueTypewriter() {
+    if (!heroActionCue) return;
+    clearHeroActionCueTypewriter();
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      heroActionCue.textContent = heroActionCueFullPhrase();
+      return;
+    }
+    heroActionCue.textContent = "";
+    actionCueCharIndex = 0;
+    actionCueTypeTimer = setTimeout(tickHeroActionCueTypewriter, 100);
+  }
 
   function updateHeroActionCue() {
-    if (!heroActionCue) return;
-    heroActionCue.textContent = mqPointerCoarse.matches ? "tap anywhere to initialize" : "click anywhere to initialize";
+    startHeroActionCueTypewriter();
   }
 
   function bindHeroActionCueMedia() {
     function onPointerTypeChange() {
-      updateHeroActionCue();
+      if (state === "idle") updateHeroActionCue();
       flushDotAnchors();
     }
     if (typeof mqPointerCoarse.addEventListener === "function") {
@@ -2277,6 +2321,7 @@ spec:
   async function initialize() {
     if (state !== "idle") return;
     state = "initializing";
+    clearHeroActionCueTypewriter();
     if (heroActionCue) heroActionCue.textContent = "";
     var phPre = homePanel();
     if (phPre) phPre.scrollTop = 0;
@@ -2304,7 +2349,13 @@ spec:
     var phR = homePanel();
     if (phR) phR.scrollTop = 0;
     window.scrollTo(0, 0);
+    await new Promise(function (resolve) {
+      requestAnimationFrame(function () {
+        requestAnimationFrame(resolve);
+      });
+    });
     updateWorkspaceDotAnchor();
+    flushDotAnchors();
     document.body.classList.add("ig-return");
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     await wait(reduceMotion ? 80 : 720);
@@ -2321,7 +2372,7 @@ spec:
     document.body.classList.remove("ig-init", "ig-workspace", "ig-return");
     const ph = homePanel();
     if (ph) ph.classList.remove("damaros-ig-scroll");
-    updateHeroActionCue();
+    startHeroActionCueTypewriter();
   };
 
   function setPanel(target, anchorId) {
@@ -2434,7 +2485,6 @@ spec:
   initMonogramGrid();
   initParallax();
   bindHeroActionCueMedia();
-  updateHeroActionCue();
   window.addEventListener("load", updateHeroDotAnchor);
   routeFromHash();
   setWorkflow("protocol");
