@@ -4,20 +4,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Damaros™</title>
-<meta name="description" content="Damaros™ runs deterministic, replayable eligibility on Epic-native cohorts. Built for hospital trial teams. Verifiable for sponsors, IRB, and FDA.">
+<meta name="description" content="Damaros™: Protocol, Population, Screening, Forms, and Replay — deterministic eligibility on Epic FHIR Populations (Group-backed cohorts). Built for hospital trial teams. Verifiable for sponsors, IRB, and FDA.">
 <link rel="canonical" href="https://www.damaros.ai/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Damaros™">
 <meta property="og:url" content="https://www.damaros.ai/">
-<meta property="og:title" content="Damaros™ — Deterministic, replayable clinical-trial eligibility">
-<meta property="og:description" content="Engineering Note 01: content-derived run IDs, idempotent replays, and criterion-level provenance. Why Damaros™ eligibility decisions are reproducible by construction.">
+<meta property="og:title" content="Damaros™ — Protocol, Population, Screening, Forms, Replay">
+<meta property="og:description" content="Engineering Note 01: content-derived run IDs, idempotent Replay, and criterion-level provenance. Why Damaros™ Screening decisions are reproducible by construction.">
 <meta property="og:image" content="https://www.damaros.ai/assets/damaros-white-on-black.png">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Damaros™ — Deterministic Replay">
-<meta name="twitter:description" content="Content-derived run IDs, idempotent replays, criterion-level provenance for clinical-trial eligibility evaluation.">
+<meta name="twitter:title" content="Damaros™ — Protocol, Population, Screening, Forms, Replay">
+<meta name="twitter:description" content="Content-derived run IDs, idempotent Replay, criterion-level provenance for clinical-trial Screening.">
 <meta name="twitter:image" content="https://www.damaros.ai/assets/damaros-white-on-black.png">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"TechArticle","headline":"Deterministic Replay","alternativeHeadline":"Damaros™ Engineering Note 01","author":{"@type":"Organization","name":"Damaros, LLC","url":"https://damaros.ai"},"publisher":{"@type":"Organization","name":"Damaros, LLC","url":"https://damaros.ai","logo":{"@type":"ImageObject","url":"https://www.damaros.ai/assets/damaros-white-on-black.png"}},"datePublished":"2026-05-06","dateModified":"2026-05-06","version":"1.0","url":"https://www.damaros.ai/#engineering","mainEntityOfPage":"https://www.damaros.ai/#engineering","description":"Engineering note on deterministic, replayable clinical-trial eligibility evaluation: content-derived run identifiers, idempotent replay semantics, and criterion-level provenance.","keywords":"clinical trials, eligibility, deterministic replay, FHIR, Epic, audit, AMC, IRB, FDA, provenance, content-derived run identifiers","isAccessibleForFree":true,"inLanguage":"en","about":["Clinical trial eligibility","Deterministic evaluation","Replay and audit","FHIR","SMART on FHIR Backend Services"]}
+{"@context":"https://schema.org","@type":"TechArticle","headline":"Deterministic Replay","alternativeHeadline":"Damaros™ Engineering Note 01","author":{"@type":"Organization","name":"Damaros, LLC","url":"https://damaros.ai"},"publisher":{"@type":"Organization","name":"Damaros, LLC","url":"https://damaros.ai","logo":{"@type":"ImageObject","url":"https://www.damaros.ai/assets/damaros-white-on-black.png"}},"datePublished":"2026-05-06","dateModified":"2026-05-06","version":"1.0","url":"https://www.damaros.ai/#engineering","mainEntityOfPage":"https://www.damaros.ai/#engineering","description":"Engineering note on deterministic, replayable clinical-trial Screening: content-derived run identifiers, idempotent Replay semantics, and criterion-level provenance.","keywords":"clinical trials, eligibility, deterministic Replay, FHIR, Epic, audit, AMC, IRB, FDA, provenance, content-derived run identifiers","isAccessibleForFree":true,"inLanguage":"en","about":["Protocol","Population","Screening","Forms","Replay","FHIR","SMART on FHIR Backend Services"]}
 </script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
@@ -1664,22 +1664,22 @@ body.damaros-ignition-home-active.ig-init #damaros-panel-home.active .damaros-ig
 <main class="home" id="ignitionHomeMain">
 <section class="hero" id="ignitionHero" aria-label="Damaros hero">
 <div class="hero-inner">
-<div class="logo">Damaros<button type="button" class="ignition-dot" id="ignitionDot" aria-label="Initialize Damaros trial execution workspace"></button></div>
+<div class="logo">Damaros<button type="button" class="ignition-dot" id="ignitionDot" aria-label="Initialize Damaros workspace: Protocol, Population, Screening, Forms, Replay"></button></div>
 <p class="command-line hero-action-cue" id="heroActionCue" aria-live="polite"></p>
 <div class="cta-row"><a class="cta" href="mailto:anirudh@damaros.ai">Request a Demo</a></div>
 </div>
 </section>
-<section class="workspace" id="workspace" aria-label="Damaros workflow workspace">
+<section class="workspace" id="workspace" aria-label="Damaros workspace: Protocol, Population, Screening, Forms, Replay">
 <header class="workspace-head">
 <button type="button" class="workspace-logo" id="workspaceLogo" aria-label="Return to Damaros homepage"><span class="workspace-logo-wordmark">Damaros</span><span class="workspace-logo-dot" id="workspaceLogoDot" aria-hidden="true"></span></button>
 </header>
 <div class="cockpit">
-<div class="workflow-map" aria-label="Workflow stages">
-<button type="button" class="step active stage-in" data-step="protocol" aria-label="Step 01 Protocol Ops"><span>01</span><b>Protocol Ops</b><small>lock the protocol as logic</small></button>
-<button type="button" class="step stage-in" data-step="population" aria-label="Step 02 Population"><span>02</span><b>Population</b><small>validate the cohort</small></button>
-<button type="button" class="step stage-in" data-step="screening" aria-label="Step 03 Screening"><span>03</span><b>Screening</b><small>decide and replay</small></button>
-<button type="button" class="step stage-in" data-step="forms" aria-label="Step 04 Forms"><span>04</span><b>Forms</b><small>fill site documents</small></button>
-<button type="button" class="step stage-in" data-step="audit" aria-label="Step 05 Evidence and Audit"><span>05</span><b>Evidence &amp; Audit</b><small>replay every decision</small></button>
+<div class="workflow-map" aria-label="Protocol, Population, Screening, Forms, Replay">
+<button type="button" class="step active stage-in" data-step="protocol" aria-label="Step 01 Protocol"><span>01</span><b>Protocol</b><small>versioned trial logic</small></button>
+<button type="button" class="step stage-in" data-step="population" aria-label="Step 02 Population"><span>02</span><b>Population</b><small>validated patient set</small></button>
+<button type="button" class="step stage-in" data-step="screening" aria-label="Step 03 Screening"><span>03</span><b>Screening</b><small>PASS / REVIEW / FAIL</small></button>
+<button type="button" class="step stage-in" data-step="forms" aria-label="Step 04 Forms"><span>04</span><b>Forms</b><small>site-ready outputs</small></button>
+<button type="button" class="step stage-in" data-step="replay" aria-label="Step 05 Replay"><span>05</span><b>Replay</b><small>reconstruct every decision</small></button>
 </div>
 <article class="detail-panel" aria-live="polite">
 <div class="detail-top">
@@ -1703,22 +1703,22 @@ body.damaros-ignition-home-active.ig-init #damaros-panel-home.active .damaros-ig
 
 <div id="damaros-panel-docs" class="damaros-panel"><div class="damaros-docs-wrap">
 <div class="damaros-docs-eyebrow">Epic FHIR Integration</div><h1 class="damaros-docs-title">Production Integration Documentation</h1>
-<p class="damaros-docs-subtitle">Submission-facing technical reference, grounded in the open-source Damaros product tree (<code>connectors/epic_fhir.py</code>, <code>connectors/fhir_bulk.py</code>, <code>ingest/fhir_normalize.py</code>, <code>ingest/cohort_sync.py</code>). SMART on FHIR <strong>Backend Services</strong> (server-to-server) for cohort ingest and deterministic screening; JWKS, scope parity, bulk posture, and audit hooks as implemented, not aspirational marketing copy.</p>
+<p class="damaros-docs-subtitle">Submission-facing technical reference, grounded in the open-source Damaros product tree (<code>connectors/epic_fhir.py</code>, <code>connectors/fhir_bulk.py</code>, <code>ingest/fhir_normalize.py</code>, <code>ingest/cohort_sync.py</code>). SMART on FHIR <strong>Backend Services</strong> (server-to-server) feeds <strong>Population</strong> ingest (FHIR Group cohorts) and deterministic <strong>Screening</strong>, with <strong>Forms</strong> and <strong>Replay</strong> on the same product path; JWKS, scope parity, bulk posture, and audit hooks as implemented, not aspirational marketing copy.</p>
 
 <section class="damaros-docs-section" id="docs-00"><div class="damaros-docs-section-label">00_SUBMISSION_NARRATIVE</div><h2 class="damaros-docs-section-heading">Epic classification: registry, cohort, and research execution. Not ad hoc analytics.</h2><div class="damaros-docs-body">
-<p>Damaros is a <strong>protocol-driven clinical trial screening system</strong> that evaluates eligibility across <strong>site-approved patient populations</strong> using <strong>site-approved FHIR access patterns</strong>. This is the same mental model Epic already uses for registry, population health, and research cohort tooling (scheduled, system-level, auditable access), not discretionary per-user chart mining or external SaaS analytics.</p>
+<p>Damaros is a <strong>clinical-trial execution system</strong> ordered as <strong>Protocol</strong> → <strong>Population</strong> → <strong>Screening</strong> → <strong>Forms</strong> → <strong>Replay</strong>: versioned trial logic, site-approved patient <strong>Population</strong> on FHIR, deterministic <strong>Screening</strong> verdicts, <strong>Forms</strong> outputs, and <strong>Replay</strong> for audit — using <strong>site-approved FHIR access patterns</strong>. This matches Epic’s mental model for registry, population health, and research cohort tooling (scheduled, system-level, auditable access), not discretionary per-user chart mining or external SaaS analytics.</p>
 <p><strong>Population-level evaluation is required</strong> because inclusion and exclusion logic must be applied <strong>consistently across every potentially eligible patient</strong> attached to an approved cohort, not triggered ad hoc one patient at a time. That is why <strong>Bulk FHIR <code>$export</code></strong> sits in the architecture as an <strong>optional, site-gated</strong> complement to iterative REST reads: it aligns with Epic's <strong>population-level access model</strong> (read-only, explicitly enabled, bounded jobs), not continuous streaming or open-ended replication.</p>
-<p><strong>System identity (deterministic core):</strong> a <strong>deterministic eligibility evaluation engine</strong> operating on FHIR-native inputs with <strong>full audit traceability</strong>. <strong>Protocol</strong> definitions supply versioned logic; <strong>REST and optional Bulk</strong> supply normalized facts; the <strong>engine</strong> executes the same rules on the same inputs for the same outcome class (PASS / REVIEW / FAIL); <strong>outputs</strong> are criterion-level decisions plus evidence and sync provenance, with no generative verdict on the screening path.</p>
-<p><strong>Reproducibility (non-stochastic on PHI):</strong> eligibility evaluation is <strong>deterministic and reproducible</strong>. Given the same protocol version and the same normalized inputs, the system produces <strong>identical criterion-level outcomes</strong>, and <strong>evaluations can be replayed for audit</strong> with full provenance. There is <strong>no</strong> stochastic "AI" behavior on patient-identifiable clinical data in the screening execution path.</p>
-<p><strong>Evaluation boundary:</strong> All eligibility evaluation occurs on normalized, protocol-scoped data within the execution environment.</p>
+<p><strong>System identity (deterministic core):</strong> a <strong>deterministic eligibility evaluation engine</strong> operating on FHIR-native inputs with <strong>full audit traceability</strong>. <strong>Protocol</strong> definitions supply versioned logic; <strong>REST and optional Bulk</strong> supply normalized facts; the <strong>engine</strong> executes the same rules on the same inputs for the same outcome class (PASS / REVIEW / FAIL); <strong>outputs</strong> are criterion-level decisions plus evidence and sync provenance, with no generative verdict on the <strong>Screening</strong> path.</p>
+<p><strong>Reproducibility (non-stochastic on PHI):</strong> eligibility evaluation is <strong>deterministic and reproducible</strong>. Given the same Protocol version and the same normalized inputs, the system produces <strong>identical criterion-level outcomes</strong>, and <strong>Replay</strong> can reproduce them for audit with full provenance. There is <strong>no</strong> stochastic "AI" behavior on patient-identifiable clinical data in the <strong>Screening</strong> execution path.</p>
+<p><strong>Evaluation boundary:</strong> All eligibility evaluation occurs on normalized, <strong>Protocol</strong>-scoped data within the execution environment.</p>
 </div>
-<div class="damaros-callout"><strong>Architectural constraint, no shadow EHR:</strong> The system is <strong>not architected</strong> to function as a secondary clinical data warehouse. Data ingestion pathways <strong>terminate</strong> in <code>fhir_bundle_to_normalized</code> (<code>ingest/fhir_normalize.py</code>) and <code>run_sync_into_db</code> (<code>ingest/cohort_sync.py</code>) as <strong>protocol-scoped normalization and eligibility artifacts</strong>. <strong>Persistent normalized data</strong> lives only in <strong>trial-scoped, minimal schemas</strong> required for eligibility evaluation and audit traceability. The product does <strong>not</strong> replicate or expose a general-purpose longitudinal patient record outside those execution structures. Epic remains the <strong>system of record</strong> for longitudinal care.</div>
-<div class="damaros-callout"><strong>Outbound posture (trust boundary):</strong> Artifacts intended to leave the hospital-approved execution environment are <strong>eligibility classifications</strong> (PASS / REVIEW / FAIL), <strong>criterion-level audit and evidence references</strong>, and operational telemetry. Not raw FHIR response bodies or opportunistic bulk clinical dumps for unrelated consumption.</div>
-<div class="damaros-callout"><strong>Submission-level positioning:</strong> Damaros is a population-scale clinical trial screening system that uses site-approved FHIR access patterns, including Bulk FHIR where enabled, to <strong>deterministically</strong> evaluate protocol eligibility across patient cohorts. Access is read-only, tenant-isolated per deployment, and explicitly enabled by the site. <strong>Bulk FHIR is used in alignment with Epic's intended model for population-level evaluation</strong> (<strong>scheduled, bounded cohort refresh</strong>) <strong>rather than</strong> continuous or per-request transactional scraping. NDJSON may carry additional resource types per site configuration; the normalization layer maps only contract-defined elements into structured ingest. <strong>Non-mapped resources are not persisted in normalized storage and are not included in downstream evaluation outputs.</strong></div></section>
+<div class="damaros-callout"><strong>Architectural constraint, no shadow EHR:</strong> The system is <strong>not architected</strong> to function as a secondary clinical data warehouse. Data ingestion pathways <strong>terminate</strong> in <code>fhir_bundle_to_normalized</code> (<code>ingest/fhir_normalize.py</code>) and <code>run_sync_into_db</code> (<code>ingest/cohort_sync.py</code>) as <strong>Protocol-scoped normalization and Screening artifacts</strong>. <strong>Persistent normalized data</strong> lives only in <strong>trial-scoped, minimal schemas</strong> required for Screening evaluation and audit traceability. The product does <strong>not</strong> replicate or expose a general-purpose longitudinal patient record outside those execution structures. Epic remains the <strong>system of record</strong> for longitudinal care.</div>
+<div class="damaros-callout"><strong>Outbound posture (trust boundary):</strong> Artifacts intended to leave the hospital-approved execution environment are <strong>Screening classifications</strong> (PASS / REVIEW / FAIL), <strong>criterion-level audit and evidence references</strong>, and operational telemetry. Not raw FHIR response bodies or opportunistic bulk clinical dumps for unrelated consumption.</div>
+<div class="damaros-callout"><strong>Submission-level positioning:</strong> Damaros runs <strong>Protocol</strong> → <strong>Population</strong> → <strong>Screening</strong> → <strong>Forms</strong> → <strong>Replay</strong> at population scale: site-approved FHIR access patterns, including Bulk FHIR where enabled, <strong>deterministically</strong> evaluate eligibility across patient <strong>Populations</strong> (Epic cohorts). Access is read-only, tenant-isolated per deployment, and explicitly enabled by the site. <strong>Bulk FHIR is used in alignment with Epic's intended model for population-level evaluation</strong> (<strong>scheduled, bounded cohort refresh</strong>) <strong>rather than</strong> continuous or per-request transactional scraping. NDJSON may carry additional resource types per site configuration; the normalization layer maps only contract-defined elements into structured ingest. <strong>Non-mapped resources are not persisted in normalized storage and are not included in downstream evaluation outputs.</strong></div></section>
 
 <section class="damaros-docs-section" id="docs-01"><div class="damaros-docs-section-label">01_PLATFORM_OVERVIEW</div><h2 class="damaros-docs-section-heading">Platform Overview</h2><div class="damaros-docs-body">
-<p>Operationally, the product converts versioned trial protocols into structured evaluation rules, applies them to cohorts synchronized from FHIR (REST bundle pulls and, when enabled, Bulk export), and records PASS, REVIEW, or FAIL at criterion granularity with evidence references for coordinators, QA, and audit.</p>
-<p>The <strong>production</strong> Epic connector is <strong>SMART on FHIR Backend Services</strong>: the API/worker exchanges a signed JWT for an access token (<code>client_credentials</code> + <code>private_key_jwt</code>, RFC 7523). Access is <strong>read-only</strong> for screening ingest. Epic tokens live server-side in process memory only, not in browsers or end-user SMART sessions for this path. End-user SMART on FHIR EHR launch is a separate integration pattern and is <strong>outside</strong> this Backend Services submission unless explicitly scoped elsewhere.</p>
+<p>Operationally, the product implements the <strong>Protocol</strong> → <strong>Population</strong> → <strong>Screening</strong> → <strong>Forms</strong> → <strong>Replay</strong> chain: versioned trial <strong>Protocol</strong> compiles to rules; FHIR sync (REST bundle pulls and, when enabled, Bulk export) materializes <strong>Population</strong>; <strong>Screening</strong> records PASS, REVIEW, or FAIL at criterion granularity; <strong>Forms</strong> assemble site outputs; <strong>Replay</strong> preserves evidence and lineage for coordinators, QA, and audit.</p>
+<p>The <strong>production</strong> Epic connector is <strong>SMART on FHIR Backend Services</strong>: the API/worker exchanges a signed JWT for an access token (<code>client_credentials</code> + <code>private_key_jwt</code>, RFC 7523). Access is <strong>read-only</strong> for <strong>Population</strong> and <strong>Screening</strong> ingest. Epic tokens live server-side in process memory only, not in browsers or end-user SMART sessions for this path. End-user SMART on FHIR EHR launch is a separate integration pattern and is <strong>outside</strong> this Backend Services submission unless explicitly scoped elsewhere.</p>
 </div></section>
 
 <div class="damaros-docs-divider"></div>
@@ -1726,9 +1726,9 @@ body.damaros-ignition-home-active.ig-init #damaros-panel-home.active .damaros-ig
 <section class="damaros-docs-section" id="docs-02"><div class="damaros-docs-section-label">02_INTEGRATION_ARCHITECTURE</div><h2 class="damaros-docs-section-heading">Integration Architecture</h2><table class="damaros-kv-table">
 <tr><td>APPLICATION_AUDIENCE</td><td>Backend Systems (Epic-registered Backend Services app)</td></tr>
 <tr><td>PRIMARY_OAUTH_MODEL</td><td><code>client_credentials</code> + JWT client assertion to Epic token URL; PKCE does not apply</td></tr>
-<tr><td>USER_SMART_LAUNCH</td><td>Not used for cohort sync or screening ingest; out of scope for the Backend Services submission described here (repository contains a non-production reference stub only)</td></tr>
+<tr><td>USER_SMART_LAUNCH</td><td>Not used for Population sync (FHIR cohort ingest) or Screening ingest; out of scope for the Backend Services submission described here (repository contains a non-production reference stub only)</td></tr>
 <tr><td>FHIR_VERSION</td><td>R4</td></tr>
-<tr><td>USE_CASE</td><td>Population-scale clinical trial screening: deterministic protocol eligibility on FHIR-native cohorts; evidence and audit replay; aligns with registry, cohort, and research execution patterns</td></tr>
+<tr><td>USE_CASE</td><td>Protocol → Population → Screening → Forms → Replay at population scale; deterministic eligibility on FHIR-native cohorts; Replay and audit lineage; aligns with registry, cohort, and research execution patterns</td></tr>
 <tr><td>AUTH_STANDARD</td><td>SMART on FHIR Backend Services (RFC 7523)</td></tr>
 <tr><td>AUTH_METHOD</td><td>JWT client assertion (<code>urn:ietf:params:oauth:client-assertion-type:jwt-bearer</code>)</td></tr>
 <tr><td>JWT_ALGORITHM</td><td>RS384 (override via <code>DAMAROS_EPIC_JWT_ALGORITHM</code> if Epic requires)</td></tr>
@@ -1768,13 +1768,13 @@ body.damaros-ignition-home-active.ig-init #damaros-panel-home.active .damaros-ig
 </table><div class="damaros-callout">FHIR requests use bounded retry and backoff on 429/5xx per connector configuration.</div></section>
 
 <section class="damaros-docs-section" id="docs-02c"><div class="damaros-docs-section-label">02C_OAUTH_SCOPE</div><h2 class="damaros-docs-section-heading">Initial requested scopes (App Orchard submission)</h2><div class="damaros-docs-body">
-<p><strong>OAuth <code>system/*.read</code> floor (per-patient hot path):</strong> when <code>DAMAROS_EPIC_FETCH_MEDICATION_STATEMENT</code> is <strong>not</strong> enabled (default), token scope must cover exactly what <code>EpicFhirClient.fetch_patient_bundle</code> (see <code>connectors/epic_fhir.py</code>, ~345 to 398) plus cohort <code>GET Group/{id}</code> via <code>search_patients_from_group</code> need: eight resource families below, with <strong>no</strong> write scopes. Epic's literal strings may use <code>.r</code> vs <code>.read</code>; <code>DAMAROS_EPIC_SCOPE</code> carries the agreed list at token time.</p>
+<p><strong>OAuth <code>system/*.read</code> floor (per-patient hot path):</strong> when <code>DAMAROS_EPIC_FETCH_MEDICATION_STATEMENT</code> is <strong>not</strong> enabled (default), token scope must cover exactly what <code>EpicFhirClient.fetch_patient_bundle</code> (see <code>connectors/epic_fhir.py</code>, ~345 to 398) plus <strong>Population</strong> <code>GET Group/{id}</code> via <code>search_patients_from_group</code> need: eight resource families below, with <strong>no</strong> write scopes. Epic's literal strings may use <code>.r</code> vs <code>.read</code>; <code>DAMAROS_EPIC_SCOPE</code> carries the agreed list at token time.</p>
 <p><strong>Never request FHIR Binary:</strong> product Python has <strong>zero</strong> HTTP calls to Binary (no <code>GET Binary/</code>, no Binary search). The only "binary" string hits in the repo are unrelated <code>psycopg[binary]</code> dependency markers in persistence modules. Do <strong>not</strong> register Binary.Read / Binary.Search (any Epic line-item variant): it is not derivable from code and would contradict DocumentReference handling in <code>ingest/fhir_normalize.py</code> (metadata only, see §02D).</p>
 <p><strong>Not on the per-patient OAuth floor (separate tracks):</strong> <code>system/MedicationStatement.read</code> only with §03 flag plus Epic amendment; Bulk Data <code>$export</code> scopes only when §03B gates and Epic line-items for kick-off, status, and file are approved (<strong>not</strong> "Bulk Data Delete Request": there is no delete implementation in <code>FhirBulkExporter</code>); all write scopes (§03C).</p>
 <p><strong>Scope and call parity:</strong> keep <code>DAMAROS_EPIC_SCOPE</code> aligned with traffic. With MedStatement flag off, <code>fetch_patient_bundle</code> does <code>GET Patient/{id}</code>; <code>search_observations_lab_capped_variants</code> for lab-tuned Observation searches; paginated <code>search_type_all_pages</code> for Condition, MedicationRequest, Procedure, AllergyIntolerance, DocumentReference; optional MedicationStatement when flag on. Cohort IDs use <code>GET Group/{id}</code> only, not Group search.</p>
 </div><table class="damaros-kv-table">
-<tr><td><code>system/Patient.read</code></td><td>Patient resource for cohort binding and demographics used in deterministic rules</td></tr>
-<tr><td><code>system/Group.read</code></td><td>Resolve cohort membership (patient ids) for approved trial lists</td></tr>
+<tr><td><code>system/Patient.read</code></td><td>Patient resource for <strong>Population</strong> binding (FHIR cohort) and demographics used in deterministic rules</td></tr>
+<tr><td><code>system/Group.read</code></td><td>Resolve Epic cohort membership (patient ids) for approved trial <strong>Population</strong> lists</td></tr>
 <tr><td><code>system/Observation.read</code></td><td>Laboratory observations per Epic-tuned searches (not full-chart extract)</td></tr>
 <tr><td><code>system/Condition.read</code></td><td>Active/problem list context for inclusion or exclusion criteria</td></tr>
 <tr><td><code>system/MedicationRequest.read</code></td><td>Outpatient medication orders for protocol-relevant criteria</td></tr>
@@ -1788,21 +1788,21 @@ body.damaros-ignition-home-active.ig-init #damaros-panel-home.active .damaros-ig
 <p><strong>Bulk FHIR is how Epic already frames population work:</strong> <strong>read-only</strong>, <strong>site-controlled</strong>, <strong>scheduled, bounded cohort refresh</strong>. Not defensive experimentation, but <strong>correct use of Epic's population-level access model</strong>. Architectural shape in code: <strong>tenant isolation</strong> per deployment and org-scoped sync (<code>run_sync_into_db(…, org_id=…)</code> in <code>ingest/cohort_sync.py</code>); <strong>no default activation</strong> (bulk is an explicit integration path, not the REST per-patient default); <strong>read-only FHIR</strong> with resource sets bounded by Epic grants plus normalizer contract.</p>
 <p><strong>Bounded job lifecycle (<code>FhirBulkExporter</code>, <code>connectors/fhir_bulk.py</code>):</strong> each export is a <strong>finite job</strong>: kick-off (<code>POST Group/{id}/$export</code>), async status polling with explicit <strong>polling limits</strong> (<code>max_poll_attempts</code> × <code>poll_interval_sec</code>), then file download and NDJSON parse. That design <strong>prevents unbounded or continuous extraction</strong>; it is not a streaming tap on the EHR.</p>
 <p><strong>Operational summary:</strong> Bulk export supports <strong>scheduled, bounded cohort refresh</strong> in a <strong>site-controlled, read-only</strong> manner. Export bytes are processed through <code>fhir_bundle_to_normalized</code> into protocol-scoped structured rows and auditable eligibility outputs inside the <strong>hospital-approved deployment boundary</strong>, not exfiltrated as an unmanaged secondary clinical record store.</p>
-<p><strong>Deterministic handling of extra NDJSON types:</strong> bulk exports may include <strong>additional resource types</strong> depending on site configuration and optional <code>_type</code> on <code>FhirBulkExporter.kick_off</code>. The normalization layer (<code>fhir_bundle_to_normalized</code> in <code>fhir_normalize.py</code>) <strong>deterministically maps</strong> only resources covered by explicit type branches into normalized cohort fields tied to the normalized contract. <strong>Non-mapped resources are not persisted in normalized storage and are not included in downstream evaluation outputs.</strong> Eligibility execution consumes the normalized facts under versioned protocol logic, not open-ended ML interpretation of raw PHI on the hot path.</p>
+<p><strong>Deterministic handling of extra NDJSON types:</strong> bulk exports may include <strong>additional resource types</strong> depending on site configuration and optional <code>_type</code> on <code>FhirBulkExporter.kick_off</code>. The normalization layer (<code>fhir_bundle_to_normalized</code> in <code>fhir_normalize.py</code>) <strong>deterministically maps</strong> only resources covered by explicit type branches into normalized cohort fields tied to the normalized contract. <strong>Non-mapped resources are not persisted in normalized storage and are not included in downstream evaluation outputs.</strong> <strong>Screening</strong> consumes the normalized facts under versioned <strong>Protocol</strong> logic, not open-ended ML interpretation of raw PHI on the hot path.</p>
 </div><ul class="damaros-bullet-list">
 <li><strong>Per-patient bundle (<code>fetch_patient_bundle</code>):</strong> Patient read; lab Observation search; Condition / MedicationRequest / Procedure / AllergyIntolerance / DocumentReference searches; optional MedicationStatement search when env flag on. <strong>No Binary anywhere.</strong></li>
 <li><strong>Cohort:</strong> <code>search_patients_from_group</code> resolves <code>GET Group/{id}</code> only. Do not select Group.Search in Epic if the connector never issues a Group-type search.</li>
 <li><strong>DocumentReference in <code>fhir_normalize.py</code>:</strong> for <code>resourceType == DocumentReference</code>, the normalizer records metadata only (explicit comment: no narrative <code>content</code> (PHI); no LLM path from that module). It does <strong>not</strong> resolve or fetch linked Binary payloads, another reason Binary scopes must stay off the registration.</li>
 <li><strong>Bulk FHIR (<code>connectors/fhir_bulk.py</code>):</strong> implements kick-off (<code>POST Group/{id}/$export</code>), status polling, and file download, not Bulk Data Delete. Kick-off accepts optional <code>_type</code>; when omitted, NDJSON may include many resource types; <code>fhir_normalize.py</code> includes explicit branches for Encounter, DiagnosticReport, FamilyMemberHistory, and Immunization when those resources appear. Register those Epic line-items <strong>only when</strong> bulk export is tenant-enabled and institutionally approved, not as part of the minimal per-patient OAuth eight in §02C.</li>
 <li><strong>Imaging stub:</strong> <code>extract_imaging_facts_from_radiology_report</code> in <code>imaging_extract.py</code> is a deterministic stub (plain <code>str</code> in, fixed null fields out); it performs no FHIR I/O and does not pull Binary or radiology attachments.</li>
-<li><strong>Patient.$match, default submission:</strong> <code>EpicFhirClient.patient_match</code> (<code>connectors/epic_fhir.py</code>) exists for <strong>optional</strong> site-driven <code>POST Patient/$match</code> (e.g. <code>scripts/fhir_live_readonly_validation.py</code>). It is <strong>not</strong> called from <code>fetch_patient_bundle</code> or cohort bulk hot paths. <strong>Omit the Epic Patient.$match line item from default App Orchard selection</strong> unless the hospital explicitly contracts for <strong>external patient list ingestion</strong> or <strong>cross-system identity reconciliation</strong> that invokes this client. Otherwise it only raises identity-resolution review friction without a hot-path justification.</li>
+<li><strong>Patient.$match, default submission:</strong> <code>EpicFhirClient.patient_match</code> (<code>connectors/epic_fhir.py</code>) exists for <strong>optional</strong> site-driven <code>POST Patient/$match</code> (e.g. <code>scripts/fhir_live_readonly_validation.py</code>). It is <strong>not</strong> called from <code>fetch_patient_bundle</code> or <strong>Population</strong> bulk hot paths. <strong>Omit the Epic Patient.$match line item from default App Orchard selection</strong> unless the hospital explicitly contracts for <strong>external patient list ingestion</strong> or <strong>cross-system identity reconciliation</strong> that invokes this client. Otherwise it only raises identity-resolution review friction without a hot-path justification.</li>
 </ul></section>
 
 <div class="damaros-docs-divider"></div>
 
 <section class="damaros-docs-section" id="docs-03"><div class="damaros-docs-section-label">03_DEFAULT_PATIENT_READ_BUNDLE</div><h2 class="damaros-docs-section-heading">Default Patient FHIR Reads (code-aligned)</h2><div class="damaros-docs-body"><p>The live <strong>patient bundle</strong> pull for eligibility ingest is built in <code>EpicFhirClient.fetch_patient_bundle</code> (<code>connectors/epic_fhir.py</code>, ~345 to 398): <code>GET Patient/{pid}</code>; <code>search_observations_lab_capped_variants</code> for capped lab Observation searches; then paginated type searches for Condition, MedicationRequest, Procedure, AllergyIntolerance, and DocumentReference (with MedicationStatement inserted in that loop when <code>DAMAROS_EPIC_FETCH_MEDICATION_STATEMENT</code> is on). There are <strong>no</strong> Binary calls. This list must stay in lockstep with §02C OAuth scopes and flags.</p></div><div class="damaros-api-groups">
 
-<div><div class="damaros-api-group-label">Patient &amp; cohort</div><ul class="damaros-api-list">
+<div><div class="damaros-api-group-label">Patient &amp; Population (Group cohort)</div><ul class="damaros-api-list">
 <li class="damaros-api-item"><span class="damaros-api-name">Patient.Read</span><span class="damaros-api-note"><code>GET Patient/{id}</code></span></li>
 <li class="damaros-api-item"><span class="damaros-api-name">Group.Read</span><span class="damaros-api-note"><code>search_patients_from_group</code> resolves <code>GET Group/{id}</code> for member patient IDs (cohort path; not a Group-type search)</span></li>
 </ul></div>
@@ -1822,18 +1822,18 @@ body.damaros-ignition-home-active.ig-init #damaros-panel-home.active .damaros-ig
 
 </div><div class="damaros-callout"><strong>No Binary:</strong> <code>fetch_patient_bundle</code> never follows DocumentReference <code>content</code> to Binary and never calls Binary. Epic registrations must omit Binary web services and any <code>system/Binary.read</code> scope.</div></section>
 
-<section class="damaros-docs-section" id="docs-03b"><div class="damaros-docs-section-label">03B_BULK_AND_ADVANCED_API</div><h2 class="damaros-docs-section-heading">Bulk FHIR &amp; advanced operations</h2><div class="damaros-docs-body"><p><strong>Bulk Data <code>$export</code> is disabled by default</strong> and runs only when a deployment explicitly executes <strong>scheduled, bounded cohort refresh</strong> (or operator-triggered bulk refresh) with Epic-granted bulk line-items and institutional approval (see §00 and §02D). This is <strong>how Bulk is intended to be used</strong> for population-level evaluation, not opportunistic per-request chart access.</p><p><code>FhirBulkExporter</code> (<code>connectors/fhir_bulk.py</code>) implements kick-off, async status polling with explicit <strong>job lifecycle bounds</strong> (<code>max_poll_attempts</code> × <code>poll_interval_sec</code>), and gzip-aware file download, not Bulk Data Delete. Optional <code>_type</code> narrows exported types when supplied; when omitted, NDJSON may include resource types beyond §03. Ingest passes through <code>fhir_bundle_to_normalized</code> per §02D. Non-mapped resources are not persisted in normalized storage and are not included in downstream evaluation outputs.</p><p><strong>Patient.$match</strong> (<code>EpicFhirClient.patient_match</code>): <strong>out of default submission scope.</strong> Omit from Epic line-item selection unless the site explicitly enables external-list or cross-system identity workflows that call this operation; it is not part of <code>fetch_patient_bundle</code> cohort screening.</p></div><div class="damaros-api-groups">
+<section class="damaros-docs-section" id="docs-03b"><div class="damaros-docs-section-label">03B_BULK_AND_ADVANCED_API</div><h2 class="damaros-docs-section-heading">Bulk FHIR &amp; advanced operations</h2><div class="damaros-docs-body"><p><strong>Bulk Data <code>$export</code> is disabled by default</strong> and runs only when a deployment explicitly executes <strong>scheduled, bounded cohort refresh</strong> (or operator-triggered bulk refresh) with Epic-granted bulk line-items and institutional approval (see §00 and §02D). This is <strong>how Bulk is intended to be used</strong> for population-level evaluation, not opportunistic per-request chart access.</p><p><code>FhirBulkExporter</code> (<code>connectors/fhir_bulk.py</code>) implements kick-off, async status polling with explicit <strong>job lifecycle bounds</strong> (<code>max_poll_attempts</code> × <code>poll_interval_sec</code>), and gzip-aware file download, not Bulk Data Delete. Optional <code>_type</code> narrows exported types when supplied; when omitted, NDJSON may include resource types beyond §03. Ingest passes through <code>fhir_bundle_to_normalized</code> per §02D. Non-mapped resources are not persisted in normalized storage and are not included in downstream evaluation outputs.</p><p><strong>Patient.$match</strong> (<code>EpicFhirClient.patient_match</code>): <strong>out of default submission scope.</strong> Omit from Epic line-item selection unless the site explicitly enables external-list or cross-system identity workflows that call this operation; it is not part of the <code>fetch_patient_bundle</code> <strong>Population</strong> / <strong>Screening</strong> hot path.</p></div><div class="damaros-api-groups">
 <div><div class="damaros-api-group-label">Bulk Data $export (off unless explicitly enabled)</div><ul class="damaros-api-list">
 <li class="damaros-api-item"><span class="damaros-api-name">Bulk kick-off / status / file download</span><span class="damaros-api-note"><code>FhirBulkExporter</code>: tenant-gated; read-only; bounded poll; no Delete API in codebase</span></li>
 </ul></div>
 </div></section>
 
-<section class="damaros-docs-section" id="docs-03c"><div class="damaros-docs-section-label">03C_WRITE_PATHS_NOT_IN_INITIAL_SUBMISSION</div><h2 class="damaros-docs-section-heading">Epic write scopes, not requested at initial deployment</h2><div class="damaros-docs-body"><p><strong>Initial Epic registration and production go-live do not request FHIR write scopes.</strong> Eligibility screening, evidence display, and audit replay operate entirely on reads plus application database state. The product codebase retains optional POST helpers (e.g. Observation create, Subscription create) for rare site-specific workflows; those paths are hard-disabled unless multiple environment attestations are set, and are <strong>out of scope</strong> for the first hospital deployment package.</p></div><ul class="damaros-api-list">
+<section class="damaros-docs-section" id="docs-03c"><div class="damaros-docs-section-label">03C_WRITE_PATHS_NOT_IN_INITIAL_SUBMISSION</div><h2 class="damaros-docs-section-heading">Epic write scopes, not requested at initial deployment</h2><div class="damaros-docs-body"><p><strong>Initial Epic registration and production go-live do not request FHIR write scopes.</strong> <strong>Screening</strong>, evidence display, and <strong>Replay</strong> operate entirely on reads plus application database state (audit trails remain for regulatory review). The product codebase retains optional POST helpers (e.g. Observation create, Subscription create) for rare site-specific workflows; those paths are hard-disabled unless multiple environment attestations are set, and are <strong>out of scope</strong> for the first hospital deployment package.</p></div><ul class="damaros-api-list">
 <li class="damaros-api-item"><span class="damaros-api-name">Observation.Create (code only)</span><span class="damaros-api-note">Would require write scopes plus <code>DAMAROS_FHIR_WRITE_ENABLED</code> plus production attestation; not activated in initial submission</span></li>
 <li class="damaros-api-item"><span class="damaros-api-name">Subscription.Create (code only)</span><span class="damaros-api-note">Same write gates; not part of initial connector</span></li>
 </ul><div class="damaros-callout">A write without gates fails fast with a configuration error, never a silent no-op, so misconfiguration cannot accidentally mutate the EHR during review or pilot.</div></section>
 
-<section class="damaros-docs-section" id="docs-03a"><div class="damaros-docs-section-label">03A_FUTURE_SCOPE_REQUESTS</div><h2 class="damaros-docs-section-heading">Future / site-specific scope requests (not default bundle)</h2><div class="damaros-docs-body"><p>The following may appear on an Epic scope worksheet for <strong>anticipated</strong> workflows. They are <strong>not</strong> part of the default patient bundle fetch today. Enable retrieval only when the protocol engine and site authorization require it.</p></div><div class="damaros-api-groups">
+<section class="damaros-docs-section" id="docs-03a"><div class="damaros-docs-section-label">03A_FUTURE_SCOPE_REQUESTS</div><h2 class="damaros-docs-section-heading">Future / site-specific scope requests (not default bundle)</h2><div class="damaros-docs-body"><p>The following may appear on an Epic scope worksheet for <strong>anticipated</strong> workflows. They are <strong>not</strong> part of the default patient bundle fetch today. Enable retrieval only when the <strong>Protocol</strong> engine and site authorization require it.</p></div><div class="damaros-api-groups">
 
 <div><div class="damaros-api-group-label">Extended clinical context (examples)</div><ul class="damaros-api-list">
 <li class="damaros-api-item"><span class="damaros-api-name">Encounter, Immunization, FamilyMemberHistory, DiagnosticReport</span><span class="damaros-api-note">Not called from <code>fetch_patient_bundle</code>; <code>fhir_normalize.py</code> handles them when they appear in bulk NDJSON (§02D / §03B)</span></li>
@@ -1849,31 +1849,31 @@ body.damaros-ignition-home-active.ig-init #damaros-panel-home.active .damaros-ig
 
 <div class="damaros-docs-divider"></div>
 
-<section class="damaros-docs-section" id="docs-04"><div class="damaros-docs-section-label">04_CLINICAL_DATA_BOUNDARY</div><h2 class="damaros-docs-section-heading">Clinical data boundary (enforcement, not policy-only)</h2><div class="damaros-docs-body"><p>Eligibility <strong>execution</strong> is the deterministic engine on <strong>normalized FHIR facts</strong> already ingested into the trial boundary, consistent with §00. External assistance and protocol text never sit on that hot path (see below).</p></div><ul class="damaros-bullet-list">
-<li>Cohorts are defined by approved protocol logic or institutional configuration.</li>
+<section class="damaros-docs-section" id="docs-04"><div class="damaros-docs-section-label">04_CLINICAL_DATA_BOUNDARY</div><h2 class="damaros-docs-section-heading">Clinical data boundary (enforcement, not policy-only)</h2><div class="damaros-docs-body"><p><strong>Screening</strong> execution is the deterministic engine on <strong>normalized FHIR facts</strong> already ingested into the trial boundary, consistent with §00. External assistance and <strong>Protocol</strong> text never sit on that hot path (see below).</p></div><ul class="damaros-bullet-list">
+<li><strong>Populations</strong> (Epic cohorts) are defined by approved <strong>Protocol</strong> logic or institutional configuration.</li>
 <li>Patient data is retrieved through FHIR read APIs or, only when explicitly enabled, Bulk FHIR export for <strong>scheduled, bounded cohort refresh</strong>, per site policy and §03B. Bulk is <strong>read-only</strong>, <strong>site-controlled</strong>, in line with Epic's population access model (§00 / §02D), not continuous extraction.</li>
 <li>PHI is processed inside the institution-approved deployment boundary (VPC / tenant isolation per deploy contract).</li>
-<li><strong>Protocol assistance (outside the screening execution path):</strong> Criterion PASS / REVIEW / FAIL comes only from the deterministic engine on ingested FHIR. Protocol assistance is <strong>not</strong> on that hot path. Where enabled at all, it is optional, uses <strong>non-patient</strong> protocol or synopsis text only, and sits behind deployment flags and pattern guards. Patient-facing narrative assistance stays off by default.</li>
-<li><strong>Technical controls (code-aligned):</strong> separation of protocol-facing modules from FHIR ingest paths; hard validation rejecting known PHI patterns in protocol-assistance payloads; structured audit signals on boundary violations.</li>
-<li><strong>Default egress posture for this Epic integration:</strong> <strong>no</strong> transmission of patient-identifiable data or cohort-row clinical payloads to third-party assistance endpoints for screening. The deterministic path never requires it. <strong>No patient identifiers and no cohort-linked fields</strong> are serialized into any optional external request path, even when protocol assistance is enabled. Only free-standing protocol or synopsis text passes those guards. Optional outbound use of that non-patient text exists only where deployment policy explicitly enables it and network paths allow it; default hospital deployments keep it off.</li>
+<li><strong>Protocol assistance (outside the Screening execution path):</strong> Criterion PASS / REVIEW / FAIL comes only from the deterministic engine on ingested FHIR. Protocol assistance is <strong>not</strong> on that hot path. Where enabled at all, it is optional, uses <strong>non-patient</strong> Protocol or synopsis text only, and sits behind deployment flags and pattern guards. Patient-facing narrative assistance stays off by default.</li>
+<li><strong>Technical controls (code-aligned):</strong> separation of <strong>Protocol</strong>-facing modules from FHIR ingest paths; hard validation rejecting known PHI patterns in Protocol-assistance payloads; structured audit signals on boundary violations.</li>
+<li><strong>Default egress posture for this Epic integration:</strong> <strong>no</strong> transmission of patient-identifiable data or cohort-row clinical payloads to third-party assistance endpoints for <strong>Screening</strong>. The deterministic path never requires it. <strong>No patient identifiers and no cohort-linked fields</strong> are serialized into any optional external request path, even when Protocol assistance is enabled. Only free-standing Protocol or synopsis text passes those guards. Optional outbound use of that non-patient text exists only where deployment policy explicitly enables it and network paths allow it; default hospital deployments keep it off.</li>
 <li><strong>Network enforcement (deploy-time):</strong> Helm ships <strong>deny-by-default</strong> API egress <code>NetworkPolicy</code> with explicit CIDR allowlists for Epic FHIR, OIDC, in-cluster Postgres/Redis, and DNS (see §08 sample). Customer CNI must enforce; IT validates with pod-level denial checks per deployment runbook.</li>
-<li>Eligibility outputs are criterion-level PASS, REVIEW, or FAIL with evidence references where populated, never an ungrounded generative verdict.</li>
+<li><strong>Screening</strong> outputs are criterion-level PASS, REVIEW, or FAIL with evidence references where populated, never an ungrounded generative verdict.</li>
 <li>Audit artifacts preserve source FHIR references where available for reconstruction.</li>
 </ul></section>
 
 <div class="damaros-docs-divider"></div>
 
 <section class="damaros-docs-section" id="docs-05"><div class="damaros-docs-section-label">05_AUDIT_AND_REPLAY</div><h2 class="damaros-docs-section-heading">Audit, Determinism, and Replay</h2><ul class="damaros-bullet-list">
-<li>Decisions are reproducible for fixed protocol version, cohort snapshot, evidence snapshot, and <code>evaluation_as_of</code>.</li>
+<li>Decisions are reproducible for fixed <strong>Protocol</strong> version, <strong>Population</strong> snapshot (cohort frame), evidence snapshot, and <code>evaluation_as_of</code>.</li>
 <li>Every patient outcome is recorded at criterion level with PASS, FAIL, or REVIEW and rationale.</li>
-<li>Protocol amendments link to versioned protocol IDs and engine versions.</li>
-<li>Replay classifies agreement or divergence; no opaque "model decided" eligibility.</li>
+<li><strong>Protocol</strong> amendments link to versioned protocol IDs and engine versions.</li>
+<li><strong>Replay</strong> classifies agreement or divergence; no opaque "model decided" eligibility.</li>
 </ul></section>
 
 <section class="damaros-docs-section" id="docs-05a"><div class="damaros-docs-section-label">05A_ACCESS_CONTROL</div><h2 class="damaros-docs-section-heading">Identity, attribution, and access control</h2><ul class="damaros-bullet-list">
-<li><strong>Epic layer:</strong> Backend Services uses a registered client credential (service identity). FHIR access is attributable to that Epic app registration and institutional consent, not to an individual end-user OAuth token on the screening hot path. There is <strong>no</strong> Epic "user impersonation" model on this connector: the app does not obtain on-behalf-of-clinician delegated scopes.</li>
-<li><strong>Application layer (who triggered the pull):</strong> interactive cohort / EHR sync is invoked via authenticated API routes (e.g. <code>POST /v1/integrations/ehr/sync</code>): the request is authorized with RBAC (<code>workflow_update</code> on the org) after <code>principal_from_request</code> resolves the caller's <code>subject</code> and org. Scheduled automation may instead use an org-scoped <code>DAMAROS_EHR_SYNC_TRIGGER_TOKEN</code> bearer (no human session). That path is explicitly service-to-service, not a hidden user identity. The token value lives only in a <strong>secret manager</strong> (or equivalent), is <strong>rotatable</strong> on demand, and each enqueue / trigger emits an auditable <code>log_event</code> line with org and job outcome. It grants <strong>no broader API privileges</strong>: it is accepted only as <code>Bearer</code> on <code>POST /v1/integrations/ehr/sync</code> and cannot enqueue unrelated jobs or call other routes.</li>
-<li><strong>Correlating Epic traffic to application audit:</strong> successful persisted ingests receive a durable <code>cohort_sync_run_id</code> carried into screening and review rows; connectivity or no-op checks are logged without creating downstream cohort mutation records.</li>
+<li><strong>Epic layer:</strong> Backend Services uses a registered client credential (service identity). FHIR access is attributable to that Epic app registration and institutional consent, not to an individual end-user OAuth token on the <strong>Screening</strong> hot path. There is <strong>no</strong> Epic "user impersonation" model on this connector: the app does not obtain on-behalf-of-clinician delegated scopes.</li>
+<li><strong>Application layer (who triggered the pull):</strong> interactive <strong>Population</strong> / EHR sync is invoked via authenticated API routes (e.g. <code>POST /v1/integrations/ehr/sync</code>): the request is authorized with RBAC (<code>workflow_update</code> on the org) after <code>principal_from_request</code> resolves the caller's <code>subject</code> and org. Scheduled automation may instead use an org-scoped <code>DAMAROS_EHR_SYNC_TRIGGER_TOKEN</code> bearer (no human session). That path is explicitly service-to-service, not a hidden user identity. The token value lives only in a <strong>secret manager</strong> (or equivalent), is <strong>rotatable</strong> on demand, and each enqueue / trigger emits an auditable <code>log_event</code> line with org and job outcome. It grants <strong>no broader API privileges</strong>: it is accepted only as <code>Bearer</code> on <code>POST /v1/integrations/ehr/sync</code> and cannot enqueue unrelated jobs or call other routes.</li>
+<li><strong>Correlating Epic traffic to application audit:</strong> successful persisted ingests receive a durable <code>cohort_sync_run_id</code> carried into <strong>Screening</strong> and review rows; connectivity or no-op checks are logged without creating downstream cohort mutation records.</li>
 <li>Coordinators and staff use identity-backed sessions (JWT / OIDC per deployment). Principals carry <code>subject</code>, role, organization scope, and trial scope; administrative and export actions remain RBAC-gated; web sessions are TTL-bound.</li>
 <li><strong>Summary for IT:</strong> Epic audit trails reflect the Backend Services app; Damaros audit trails reflect the signed-in principal (or declared automation token) plus <code>cohort_sync_run_id</code>. Together they answer "which institution, which ingest, which human action" without conflating the two layers.</li>
 </ul></section>
@@ -1969,37 +1969,37 @@ spec:
 
 <div id="damaros-panel-engineering" class="damaros-panel"><div class="damaros-docs-wrap">
 <div class="damaros-docs-eyebrow">Engineering Note 01 — Damaros™ Eligibility Engine</div><h1 class="damaros-docs-title">Deterministic Replay</h1>
-<p class="damaros-docs-subtitle">Why the Damaros eligibility engine produces the same answer to the same question, every time. A short technical note for hospital IT, AMC trial offices, sponsors, and reviewers. Pinned to engine semantics, not marketing copy; citable per §07.</p>
+<p class="damaros-docs-subtitle">Why the Damaros eligibility engine produces the same answer to the same question, every time — across <strong>Protocol</strong>, <strong>Population</strong>, <strong>Screening</strong>, <strong>Forms</strong>, and <strong>Replay</strong>. A short technical note for hospital IT, AMC trial offices, sponsors, and reviewers. Pinned to engine semantics, not marketing copy; citable per §07.</p>
 
-<section class="damaros-docs-section" id="engineering-00"><div class="damaros-docs-section-label">00_PROBLEM_STATEMENT</div><h2 class="damaros-docs-section-heading">The audit gap in generative-only screening</h2><div class="damaros-docs-body">
-<p>Two questions decide whether a clinical-trial eligibility decision survives audit. <strong>(1)</strong> Run the same screen again — do you get the same answer? <strong>(2)</strong> Show the specific evidence behind PASS / REVIEW / FAIL.</p>
-<p>Stacks that put a generative model on the patient-screening hot path do not answer either question by construction. Stochastic decoding produces output variance even with identical inputs; a free-text rationale is not the same as a pointer to a FHIR <code>Observation</code> with a normalized fact. Pinning a model to greedy decoding does not make the rationale traceable; it just makes the variance smaller.</p>
-<p>That gap is not cosmetic. It is the difference between a screening decision a coordinator can sign off on, and one a sponsor or IRB pulls at audit because it cannot be reconstructed.</p>
+<section class="damaros-docs-section" id="engineering-00"><div class="damaros-docs-section-label">00_PROBLEM_STATEMENT</div><h2 class="damaros-docs-section-heading">The audit gap in generative-only Screening</h2><div class="damaros-docs-body">
+<p>Two questions decide whether a clinical-trial eligibility decision survives audit. <strong>(1)</strong> Run the same <strong>Screening</strong> again — do you get the same answer? <strong>(2)</strong> Show the specific evidence behind PASS / REVIEW / FAIL.</p>
+<p>Stacks that put a generative model on the patient-<strong>Screening</strong> hot path do not answer either question by construction. Stochastic decoding produces output variance even with identical inputs; a free-text rationale is not the same as a pointer to a FHIR <code>Observation</code> with a normalized fact. Pinning a model to greedy decoding does not make the rationale traceable; it just makes the variance smaller.</p>
+<p>That gap is not cosmetic. It is the difference between a <strong>Screening</strong> decision a coordinator can sign off on, and one a sponsor or IRB pulls at audit because it cannot be reconstructed.</p>
 </div></section>
 
 <section class="damaros-docs-section" id="engineering-01"><div class="damaros-docs-section-label">01_DESIGN_PRINCIPLE</div><h2 class="damaros-docs-section-heading">Eligibility as a pure function of pinned inputs</h2><div class="damaros-docs-body">
-<p>The Damaros eligibility evaluation engine is <strong>non-stochastic on patient-identifiable data in the screening execution path</strong> (see <a class="damaros-kv-link" href="#docs-00">Documentation §00</a>). For any patient × criterion pair, the outcome class and its rationale are fully determined by four pinned inputs:</p>
+<p>The Damaros eligibility evaluation engine is <strong>non-stochastic on patient-identifiable data in the Screening execution path</strong> (see <a class="damaros-kv-link" href="#docs-00">Documentation §00</a>). For any patient × criterion pair, the outcome class and its rationale are fully determined by four pinned inputs:</p>
 </div><ul class="damaros-bullet-list">
 <li><strong>Protocol version.</strong> The compiled, version-pinned form of the trial logic, including the criterion under evaluation and any amendments in force at <code>evaluation_as_of</code>.</li>
-<li><strong>Cohort snapshot.</strong> The patient set bound to a durable <code>cohort_sync_run_id</code>, persisted on every successful FHIR ingest (see <a class="damaros-kv-link" href="#docs-05a">Documentation §05A</a>). One ingest, one run id, one cohort frame.</li>
-<li><strong>Evidence snapshot.</strong> The normalized FHIR facts available within that cohort sync after <code>fhir_bundle_to_normalized</code> (see <a class="damaros-kv-link" href="#docs-02d">Documentation §02D</a>). Raw FHIR response bodies are not part of the evaluation surface; only the normalized contract is.</li>
-<li><strong><code>evaluation_as_of</code>.</strong> The explicit logical timestamp at which protocol logic is evaluated against evidence. Not "now."</li>
+<li><strong>Population snapshot (cohort frame).</strong> The patient set bound to a durable <code>cohort_sync_run_id</code>, persisted on every successful FHIR ingest (see <a class="damaros-kv-link" href="#docs-05a">Documentation §05A</a>). One ingest, one run id, one Epic cohort frame for <strong>Population</strong>.</li>
+<li><strong>Evidence snapshot.</strong> The normalized FHIR facts available within that <strong>Population</strong> sync after <code>fhir_bundle_to_normalized</code> (see <a class="damaros-kv-link" href="#docs-02d">Documentation §02D</a>). Raw FHIR response bodies are not part of the evaluation surface; only the normalized contract is.</li>
+<li><strong><code>evaluation_as_of</code>.</strong> The explicit logical timestamp at which <strong>Protocol</strong> logic is evaluated against evidence. Not "now."</li>
 </ul><div class="damaros-docs-body">
 <p>Same four inputs ⇒ same criterion outcome class (PASS / REVIEW / FAIL) ⇒ same structured rationale ⇒ same evidence references. This is the invariant the engine is built to enforce, not a property of any particular run.</p>
 </div></section>
 
 <section class="damaros-docs-section" id="engineering-02"><div class="damaros-docs-section-label">02_RUN_IDS</div><h2 class="damaros-docs-section-heading">Content-derived run identifiers</h2><div class="damaros-docs-body">
-<p>A screening run identifier is not an opaque random UUID minted at execution start. It is a <strong>content-addressable identifier</strong> derived from the canonical fingerprint of the four pinned inputs above. Two evaluations with identical inputs collapse to the <strong>same</strong> run.</p>
-<p>The practical consequence: if nothing has moved, "screen this cohort again" is a record lookup, not a re-execution. The hospital does not pay an Epic API tax to reproduce a decision the coordinator already saw, and the audit trail does not accumulate spurious near-duplicate runs that have to be diffed later.</p>
-<p>If <em>any</em> pinned input moves — a protocol amendment lands, a cohort refresh promotes new patients, a lab result normalizes, the evaluation timestamp advances — the run identifier changes. Old runs remain immutable; the new run is a separately addressable record. There is no in-place mutation of a prior decision, even when the underlying facts have evolved.</p>
-</div><div class="damaros-callout"><strong>Why content-derivation, not a UUID:</strong> a UUID lets the system <em>name</em> a run; a content-derived id lets the system <em>recognize</em> a run. Recognition is what makes idempotent replay possible without a reconciliation layer that itself has to be audited.</div></section>
+<p>A <strong>Screening</strong> run identifier is not an opaque random UUID minted at execution start. It is a <strong>content-addressable identifier</strong> derived from the canonical fingerprint of the four pinned inputs above. Two evaluations with identical inputs collapse to the <strong>same</strong> run.</p>
+<p>The practical consequence: if nothing has moved, "run <strong>Screening</strong> on this <strong>Population</strong> again" is a record lookup, not a re-execution. The hospital does not pay an Epic API tax to reproduce a decision the coordinator already saw, and the audit trail does not accumulate spurious near-duplicate runs that have to be diffed later.</p>
+<p>If <em>any</em> pinned input moves — a <strong>Protocol</strong> amendment lands, a <strong>Population</strong> refresh promotes new patients, a lab result normalizes, the evaluation timestamp advances — the run identifier changes. Old runs remain immutable; the new run is a separately addressable record. There is no in-place mutation of a prior decision, even when the underlying facts have evolved.</p>
+</div><div class="damaros-callout"><strong>Why content-derivation, not a UUID:</strong> a UUID lets the system <em>name</em> a run; a content-derived id lets the system <em>recognize</em> a run. Recognition is what makes idempotent <strong>Replay</strong> possible without a reconciliation layer that itself has to be audited.</div></section>
 
-<section class="damaros-docs-section" id="engineering-03"><div class="damaros-docs-section-label">03_REPLAY_SEMANTICS</div><h2 class="damaros-docs-section-heading">Idempotent replay</h2><div class="damaros-docs-body">
-<p>Replay against an existing run is <strong>idempotent</strong>: it returns the same outputs as the original run, with the same criterion-level rationale and the same evidence references. Replay does not re-fetch FHIR; it re-executes the versioned protocol logic against the pinned, already-normalized evidence. Epic is not in the replay path.</p>
-<p>Replay against a <em>different</em> reference run is a structured comparison. The engine classifies agreement, divergence, or new criterion outcomes, and the run lineage shows which of the four pinned inputs moved (see <a class="damaros-kv-link" href="#docs-05">Documentation §05</a>: "Replay classifies agreement or divergence; no opaque 'model decided' eligibility."). Divergence is always attributable to a named delta on a named input.</p>
+<section class="damaros-docs-section" id="engineering-03"><div class="damaros-docs-section-label">03_REPLAY_SEMANTICS</div><h2 class="damaros-docs-section-heading">Idempotent Replay</h2><div class="damaros-docs-body">
+<p><strong>Replay</strong> against an existing run is <strong>idempotent</strong>: it returns the same outputs as the original run, with the same criterion-level rationale and the same evidence references. <strong>Replay</strong> does not re-fetch FHIR; it re-executes the versioned <strong>Protocol</strong> logic against the pinned, already-normalized evidence. Epic is not in the <strong>Replay</strong> path.</p>
+<p><strong>Replay</strong> against a <em>different</em> reference run is a structured comparison. The engine classifies agreement, divergence, or new criterion outcomes, and the run lineage shows which of the four pinned inputs moved (see <a class="damaros-kv-link" href="#docs-05">Documentation §05</a>: "<strong>Replay</strong> classifies agreement or divergence; no opaque 'model decided' eligibility."). Divergence is always attributable to a named delta on a named input.</p>
 </div><ul class="damaros-bullet-list">
-<li><strong>No silent re-execution.</strong> Replay is a typed operation, not a stale-cache miss; the run id math means the system can tell.</li>
-<li><strong>No hidden side effects.</strong> Replay does not write to the EHR; this connector does not request FHIR write scopes for initial deployment (see <a class="damaros-kv-link" href="#docs-03c">Documentation §03C</a> / <a class="damaros-kv-link" href="#docs-05b">§05B</a>).</li>
+<li><strong>No silent re-execution.</strong> <strong>Replay</strong> is a typed operation, not a stale-cache miss; the run id math means the system can tell.</li>
+<li><strong>No hidden side effects.</strong> <strong>Replay</strong> does not write to the EHR; this connector does not request FHIR write scopes for initial deployment (see <a class="damaros-kv-link" href="#docs-03c">Documentation §03C</a> / <a class="damaros-kv-link" href="#docs-05b">§05B</a>).</li>
 <li><strong>No re-billing of Epic.</strong> Reproducing a prior decision exercises stored facts, not the FHIR API.</li>
 </ul></section>
 
@@ -2007,23 +2007,23 @@ spec:
 <p>Each (patient × criterion) pair is recorded as its own audit unit (see <a class="damaros-kv-link" href="#docs-05">Documentation §05</a>). The engine never collapses to a single eligibility flag with a generative explanation appended.</p>
 </div><ul class="damaros-bullet-list">
 <li><strong>Outcome class:</strong> PASS / REVIEW / FAIL, drawn from a fixed enum, not a confidence score.</li>
-<li><strong>Structured rationale:</strong> the path through the protocol criterion's compiled form (the operands and operators that produced the outcome), not a free-text paragraph synthesized at decision time.</li>
+<li><strong>Structured rationale:</strong> the path through the <strong>Protocol</strong> criterion's compiled form (the operands and operators that produced the outcome), not a free-text paragraph synthesized at decision time.</li>
 <li><strong>Evidence references:</strong> pointers into normalized facts; where populated, source FHIR resource identifiers preserved per the integration boundary (see <a class="damaros-kv-link" href="#docs-04">Documentation §04</a>). Missing evidence surfaces as REVIEW, not silent PASS (<a class="damaros-kv-link" href="#docs-06a">§06A</a>).</li>
-<li><strong>Engine and protocol-criterion versions</strong> stamped on the record, so a future replay resolves "the engine that ran this," not "the current engine."</li>
+<li><strong>Engine and protocol-criterion versions</strong> stamped on the record, so future <strong>Replay</strong> resolves "the engine that ran this," not "the current engine."</li>
 </ul><div class="damaros-docs-body">
 <p>This is the unit a sponsor or IRB reviewer asks for: <em>"Show me criterion 4.2.1 for this patient on this run."</em> The answer is a deterministic record with sources, not a regenerated narrative.</p>
 </div></section>
 
 <section class="damaros-docs-section" id="engineering-05"><div class="damaros-docs-section-label">05_AMC_TRUST</div><h2 class="damaros-docs-section-heading">Why AMCs, IRBs, and FDA defensibility require this</h2><div class="damaros-docs-body">
-<p>"Replayability" is the operational form of the long-standing FDA expectation that decisions affecting clinical-trial conduct be reconstructable. Academic medical centers translate this to a concrete question at audit: <em>"With the protocol that was in force on the screen date, against the cohort and evidence as they stood, do we get the same set of eligible patients?"</em></p>
+<p>"Replayability" is the operational form of the long-standing FDA expectation that decisions affecting clinical-trial conduct be reconstructable. Academic medical centers translate this to a concrete question at audit: <em>"With the <strong>Protocol</strong> that was in force on the screen date, against the <strong>Population</strong> and evidence as they stood, do we get the same set of eligible patients?"</em></p>
 <p>A deterministic engine answers this in O(1) on stored runs. A generative engine cannot, because identical inputs are not guaranteed to map to identical outputs — that is a property of how generative decoding works, not a tunable.</p>
 <p>For hospital IT the question is narrower and harder: <em>"Can we produce, at audit, a bit-identical reconstruction of the decision the coordinator acted on?"</em> Damaros answers <strong>yes by construction</strong>. The engine semantics in §01–§04 are the property; the rest of the integration documentation is the implementation.</p>
-</div><div class="damaros-callout"><strong>What this is not:</strong> a marketing claim about "explainable AI." There is no AI verdict on the screening hot path to explain. Determinism here is a structural absence of stochastic decision-making on PHI, not a post-hoc gloss on a generative output.</div></section>
+</div><div class="damaros-callout"><strong>What this is not:</strong> a marketing claim about "explainable AI." There is no AI verdict on the <strong>Screening</strong> hot path to explain. Determinism here is a structural absence of stochastic decision-making on PHI, not a post-hoc gloss on a generative output.</div></section>
 
 <section class="damaros-docs-section" id="engineering-06"><div class="damaros-docs-section-label">06_DIFFERENTIATION</div><h2 class="damaros-docs-section-heading">Why a generative-only stack cannot retrofit determinism</h2><div class="damaros-docs-body">
-<p>Determinism is an architectural property. It has to be enforced from the protocol-compile step through normalization to evaluation, and it has to hold for <em>every</em> patient × criterion pair, not just the ones a reviewer happens to spot-check.</p>
-<p>A generative model on the screening hot path has two doors. <strong>(a)</strong> Tolerate output variance — replay is best-effort, the audit gap above stands, and the model is one upstream change away from re-deciding screens that have already been signed. <strong>(b)</strong> Pin the model to deterministic decoding plus a templated formatter — at which point the "rationale" is no longer the model's reasoning; it is a deterministic transform of structured inputs. Damaros built the deterministic transform natively, without the model on the hot path.</p>
-<p>Damaros uses generative assistance only <em>outside</em> the screening execution path, on non-PHI protocol or synopsis text, behind deployment flags and pattern guards (see <a class="damaros-kv-link" href="#docs-04">Documentation §04</a>). The screening verdict is deterministic; the optional protocol-comprehension layer is clearly separated and never carries patient identifiers.</p>
+<p>Determinism is an architectural property. It has to be enforced from the <strong>Protocol</strong>-compile step through normalization to evaluation, and it has to hold for <em>every</em> patient × criterion pair, not just the ones a reviewer happens to spot-check.</p>
+<p>A generative model on the <strong>Screening</strong> hot path has two doors. <strong>(a)</strong> Tolerate output variance — <strong>Replay</strong> is best-effort, the audit gap above stands, and the model is one upstream change away from re-deciding <strong>Screening</strong> runs that have already been signed. <strong>(b)</strong> Pin the model to deterministic decoding plus a templated formatter — at which point the "rationale" is no longer the model's reasoning; it is a deterministic transform of structured inputs. Damaros built the deterministic transform natively, without the model on the hot path.</p>
+<p>Damaros uses generative assistance only <em>outside</em> the <strong>Screening</strong> execution path, on non-PHI <strong>Protocol</strong> or synopsis text, behind deployment flags and pattern guards (see <a class="damaros-kv-link" href="#docs-04">Documentation §04</a>). The <strong>Screening</strong> verdict is deterministic; the optional <strong>Protocol</strong>-comprehension layer is clearly separated and never carries patient identifiers.</p>
 </div></section>
 
 <div class="damaros-docs-divider"></div>
@@ -2037,7 +2037,7 @@ spec:
 <tr><td>PERMALINK</td><td><a class="damaros-kv-link" href="https://www.damaros.ai/#engineering" target="_blank" rel="noopener">https://www.damaros.ai/#engineering</a></td></tr>
 <tr><td>SUGGESTED_CITATION</td><td>Damaros, LLC (2026). <em>Deterministic Replay.</em> Damaros™ Engineering Note 01, v1.0. Retrieved from <a class="damaros-kv-link" href="https://www.damaros.ai/#engineering">https://www.damaros.ai/#engineering</a></td></tr>
 <tr><td>RELATED</td><td><a class="damaros-kv-link" href="#docs">Production Integration Documentation</a> (Epic FHIR / SMART Backend Services, audit, write-back controls)</td></tr>
-</table><div class="damaros-callout"><strong>Versioning policy:</strong> this note describes pinned engine semantics. Substantive changes to the determinism guarantee, run-id construction, replay scope, or criterion-level provenance will be published as a new versioned note rather than overwritten in place. Older versions remain reachable for citation.</div></section>
+</table><div class="damaros-callout"><strong>Versioning policy:</strong> this note describes pinned engine semantics. Substantive changes to the determinism guarantee, run-id construction, <strong>Replay</strong> scope, or criterion-level provenance will be published as a new versioned note rather than overwritten in place. Older versions remain reachable for citation.</div></section>
 
 <section class="damaros-docs-section" id="engineering-08"><div class="damaros-docs-section-label">08_CONTACT</div><h2 class="damaros-docs-section-heading">Contact</h2><div class="damaros-contact-block"><div>Engineering &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="mailto:anirudh@damaros.ai">anirudh@damaros.ai</a></div><div>Integration docs &nbsp;<a href="#docs">damaros.ai/#docs</a></div><div>Website &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://damaros.ai">damaros.ai</a></div></div></section>
 
@@ -2045,14 +2045,14 @@ spec:
 
 <div id="damaros-panel-trust" class="damaros-panel"><div class="damaros-docs-wrap">
 <div class="damaros-docs-eyebrow">Trust &amp; Security</div><h1 class="damaros-docs-title">Trust Center</h1>
-<p class="damaros-docs-subtitle">Damaros runs deterministic, replayable clinical-trial eligibility on Epic-native cohorts. The substrate below — audit chain, tenant isolation, RBAC, encryption, backup, supply-chain integrity, and joint incident response — is <strong>implemented and tested today</strong>. Third-party attestations (SOC 2, HITRUST, App Orchard) layer on top of that substrate; the active programs below are tracked separately so prospective partners can see what's verifiable now versus what's in flight.</p>
+<p class="damaros-docs-subtitle">Damaros runs <strong>Protocol</strong> → <strong>Population</strong> → <strong>Screening</strong> → <strong>Forms</strong> → <strong>Replay</strong>: deterministic, replayable clinical-trial eligibility on Epic-native <strong>Populations</strong> (FHIR cohorts). The substrate below — audit chain, tenant isolation, RBAC, encryption, backup, supply-chain integrity, and joint incident response — is <strong>implemented and tested today</strong>. Third-party attestations (SOC 2, HITRUST, App Orchard) layer on top of that substrate; the active programs below are tracked separately so prospective partners can see what's verifiable now versus what's in flight.</p>
 
 <section class="damaros-docs-section" id="trust-00"><div class="damaros-docs-section-label">00_OPERATIONAL_POSTURE</div><h2 class="damaros-docs-section-heading">Operational posture</h2><table class="damaros-kv-table">
 <tr><td>READ_ACCESS</td><td>Read-only against institutional sources (Epic FHIR, SMART Backend Services). No EHR write scopes requested at initial deployment (see <a class="damaros-kv-link" href="#docs-03c">Documentation §03C</a>).</td></tr>
 <tr><td>WRITES</td><td>Confined to the Damaros application database inside the hospital-approved deployment boundary. No outbound mutation of source-of-truth systems.</td></tr>
 <tr><td>AUDIT_CHAIN</td><td>Hash-chained SHA-256 audit on every domain event. Chain heads signed by KMS, externally published to S3 object-lock + RFC 3161 timestamp authority.</td></tr>
 <tr><td>TENANCY</td><td>Tenant-isolated by <code>(org, study, trial)</code>. Postgres RLS enforced on 20+ tables; cross-tenant access denied at the database layer, not just the application layer.</td></tr>
-<tr><td>DETERMINISM</td><td>No stochastic AI on the screening hot path. Identical inputs → identical PASS/REVIEW/FAIL with criterion-level provenance (see <a class="damaros-kv-link" href="#engineering-01">Engineering Note 01 §01</a>).</td></tr>
+<tr><td>DETERMINISM</td><td>No stochastic AI on the <strong>Screening</strong> hot path. Identical inputs → identical PASS/REVIEW/FAIL with criterion-level provenance (see <a class="damaros-kv-link" href="#engineering-01">Engineering Note 01 §01</a>).</td></tr>
 <tr><td>EGRESS_DEFAULT</td><td>Deny-by-default API egress NetworkPolicy with explicit CIDR allowlists for Epic FHIR, OIDC, in-cluster Postgres/Redis, and DNS only.</td></tr>
 </table></section>
 
@@ -2064,19 +2064,19 @@ curl -s https://www.damaros.ai/.well-known/jwks-nonprod.json | jq .</pre>
 <p class="damaros-docs-pre-note">Production and non-production keypairs are independent. Rotation publishes the next public key in JWKS alongside the incumbent so Epic always has overlapping validity (see <a class="damaros-kv-link" href="#docs-02a">Documentation §02A</a>).</p>
 </section>
 
-<section class="damaros-docs-section" id="trust-02"><div class="damaros-docs-section-label">02_AUDIT_AND_REPLAY</div><h2 class="damaros-docs-section-heading">Audit &amp; replay</h2><ul class="damaros-bullet-list">
-<li><strong>Hash-chained audit log:</strong> every domain event (cohort sync, screening run, override, export) records a SHA-256 hash linked to the prior event's hash. Tamper detection is structural; a single missing or altered event breaks the chain.</li>
+<section class="damaros-docs-section" id="trust-02"><div class="damaros-docs-section-label">02_AUDIT_AND_REPLAY</div><h2 class="damaros-docs-section-heading">Audit and Replay</h2><ul class="damaros-bullet-list">
+<li><strong>Hash-chained audit log:</strong> every domain event (<strong>Population</strong> sync, <strong>Screening</strong> run, <strong>Forms</strong>, overrides, exports) records a SHA-256 hash linked to the prior event's hash. Tamper detection is structural; a single missing or altered event breaks the chain.</li>
 <li><strong>KMS-signed chain heads:</strong> chain heads are signed by a KMS key under deployment control, then externally published to S3 object-lock and RFC 3161 timestamp authority. Three independent witnesses to "this state existed at this time."</li>
 <li><strong>Operator-facing CLI:</strong> <code>damaros chain verify</code> produces a deterministic transcript that any auditor (internal or external) can reproduce against the same chain. Not "trust us"; "run it yourself."</li>
-<li><strong>Replayable screening:</strong> any criterion outcome can be re-executed against the original protocol version, cohort snapshot, evidence snapshot, and <code>evaluation_as_of</code>. Same inputs → bit-identical decision (see <a class="damaros-kv-link" href="#engineering-03">Engineering Note 01 §03</a>).</li>
+<li><strong>Replayable Screening:</strong> any criterion outcome can be re-executed against the original <strong>Protocol</strong> version, <strong>Population</strong> snapshot (cohort frame), evidence snapshot, and <code>evaluation_as_of</code>. Same inputs → bit-identical decision (see <a class="damaros-kv-link" href="#engineering-03">Engineering Note 01 §03</a>).</li>
 <li><strong>Sample transcript available on request</strong> for review packets.</li>
 </ul></section>
 
 <section class="damaros-docs-section" id="trust-03"><div class="damaros-docs-section-label">03_TENANT_ISOLATION</div><h2 class="damaros-docs-section-heading">Tenant isolation</h2><ul class="damaros-bullet-list">
-<li><strong>Postgres Row-Level Security</strong> applied on 20+ trial-scoped tables (cohorts, screening rows, audit events, exports, overrides, evidence references).</li>
+<li><strong>Postgres Row-Level Security</strong> applied on 20+ trial-scoped tables (<strong>Population</strong> / cohort tables, <strong>Screening</strong> rows, audit events, exports, overrides, evidence references).</li>
 <li><strong>Tenancy keyed on <code>(org, study, trial)</code>;</strong> every authenticated principal carries scoped claims, and queries filter at the database layer before returning rows to the application.</li>
 <li><strong>Property-based fuzz tests</strong> in CI assert that generated principals from one tenant cannot read or write rows belonging to another, across full table coverage.</li>
-<li><strong>No cross-tenant joins</strong> in application code; cohort and screening artifacts cannot be aggregated outside the deployment-approved tenancy boundary.</li>
+<li><strong>No cross-tenant joins</strong> in application code; <strong>Population</strong> and <strong>Screening</strong> artifacts cannot be aggregated outside the deployment-approved tenancy boundary.</li>
 </ul></section>
 
 <section class="damaros-docs-section" id="trust-04"><div class="damaros-docs-section-label">04_IDENTITY_AND_ACCESS</div><h2 class="damaros-docs-section-heading">Identity &amp; access control</h2><ul class="damaros-bullet-list">
@@ -2126,13 +2126,13 @@ curl -s https://www.damaros.ai/.well-known/jwks-nonprod.json | jq .</pre>
 
 <section class="damaros-docs-section" id="trust-10"><div class="damaros-docs-section-label">10_NIST_CSF_2_0</div><h2 class="damaros-docs-section-heading">NIST Cybersecurity Framework 2.0</h2><div class="damaros-docs-body"><p>Self-assessment complete against all 6 Functions (Govern, Identify, Protect, Detect, Respond, Recover) and 106 subcategories.</p></div><table class="damaros-kv-table">
 <tr><td>OVERALL_TIER</td><td>Tier 3 — Repeatable</td></tr>
-<tr><td>TIER_4_FUNCTIONS</td><td>Audit chain integrity, deterministic replay (Adaptive)</td></tr>
+<tr><td>TIER_4_FUNCTIONS</td><td>Audit chain integrity, deterministic <strong>Replay</strong> (Adaptive)</td></tr>
 <tr><td>HEADCOUNT_GAPS</td><td>GV.RM-01/02/06 (formal risk register), PR.AT-01/02 (security awareness training program). Both are headcount-dependent and disclosed.</td></tr>
 <tr><td>AVAILABLE_ON_REQUEST</td><td>NIST CSF 2.0 control mapping spreadsheet + tier rationale</td></tr>
 </table></section>
 
 <section class="damaros-docs-section" id="trust-11"><div class="damaros-docs-section-label">11_DATA_CLASSIFICATION</div><h2 class="damaros-docs-section-heading">Three-class data classification</h2><table class="damaros-kv-table">
-<tr><td>CLASS_A_PHI</td><td>Identifiable patient data from institutional sources. Stays inside the hospital-approved deployment boundary. Not transmitted to third-party assistance endpoints under any deployment configuration on the screening hot path.</td></tr>
+<tr><td>CLASS_A_PHI</td><td>Identifiable patient data from institutional sources. Stays inside the hospital-approved deployment boundary. Not transmitted to third-party assistance endpoints under any deployment configuration on the <strong>Screening</strong> hot path.</td></tr>
 <tr><td>CLASS_B_LIMITED_DATASET</td><td>De-identified or limited dataset per HIPAA §164.514(e). Permitted under Data Use Agreement; tagged at ingest and prevented from re-identification at export.</td></tr>
 <tr><td>CLASS_C_NON_PATIENT</td><td>Protocol text, synopsis, configuration, and operational telemetry. May pass deployment-flagged assistance paths where explicitly enabled by the site. No patient identifiers, no cohort-linked fields.</td></tr>
 </table></section>
@@ -2189,17 +2189,17 @@ curl -s https://www.damaros.ai/.well-known/jwks-nonprod.json | jq .</pre>
     "https://cdn.prod.website-files.com/68bf7963d15243aa9de0b68c/68bf7986af7ebf743a5ea4a9_Damaros%20v4%20Logo%20White.png";
     const workflow = {
     protocol: {
-      label: "01 / PROTOCOL OPS",
-      title: "The protocol, encoded as versioned execution logic",
-      text: "Protocol Ops compiles the study into a versioned, auditable execution substrate: criteria, amendments, and decision rules. Every downstream screen runs against one anchored protocol state, not a PDF or coordinator memory.",
+      label: "01 / PROTOCOL",
+      title: "Protocol, encoded as versioned execution logic",
+      text: "Protocol compiles the study into a versioned, auditable execution substrate: criteria, amendments, and decision rules. Every downstream Screening run uses one anchored Protocol state, not a PDF or coordinator memory.",
       does: [
         "Turns inclusion and exclusion criteria into structured, version-pinned rules.",
         "Tracks amendments back to the patients and decisions they change.",
-        "Eliminates protocol drift between the PDF, REDCap, and coordinator memory.",
+        "Eliminates Protocol drift between the PDF, REDCap, and coordinator memory.",
       ],
       why: [
-        "Amendments propagate as first-class artifacts, not as silent invalidation of prior screens.",
-        "One source of execution logic underpins replay, audit, and cross-site scale.",
+        "Amendments propagate as first-class artifacts, not as silent invalidation of prior Screening runs.",
+        "One source of execution logic underpins Replay, audit, and cross-site scale.",
       ],
       badges: [
         ["gold", "LOCKED LOGIC"],
@@ -2208,16 +2208,16 @@ curl -s https://www.damaros.ai/.well-known/jwks-nonprod.json | jq .</pre>
     },
     population: {
       label: "02 / POPULATION",
-      title: "A cohort substrate: validated, frozen, defensible",
-      text: "Population promotes a frozen, validated patient snapshot from labs, biomarkers, registries, and EHR ingest into a defensible cohort substrate. Data integrity issues quarantine upstream; every screening decision withstands IRB and sponsor scrutiny.",
+      title: "Population as substrate: validated, frozen, defensible",
+      text: "Population promotes a frozen, validated patient snapshot from labs, biomarkers, registries, and EHR ingest into a defensible Population substrate. Data integrity issues quarantine upstream; every Screening decision withstands IRB and sponsor scrutiny.",
       does: [
         "Locks a defensible snapshot of patients, labs, biomarkers, files, and registry data.",
-        "Flags broken imports, missing values, and conflicting records before a single screen runs.",
+        "Flags broken imports, missing values, and conflicting records before a single Screening run.",
         "Reproducibility from the same upstream evidence, every time.",
       ],
       why: [
-        "Most screen failures originate in the data, not in the protocol.",
-        "Defensible cohorts retain candidates routine extracts drop, each row backed by source-level evidence.",
+        "Most Screening failures originate in the data, not in the Protocol.",
+        "Defensible Populations retain candidates routine extracts drop, each row backed by source-level evidence.",
       ],
       badges: [
         ["blue", "VALIDATED"],
@@ -2227,9 +2227,9 @@ curl -s https://www.damaros.ai/.well-known/jwks-nonprod.json | jq .</pre>
     screening: {
       label: "03 / SCREENING",
       title: "Deterministic eligibility, decided at the criterion level",
-      text: "Screening runs the locked protocol against the validated cohort and returns PASS, REVIEW, or FAIL at the criterion level. Each verdict ships with exact evidence, source attribution, and a delta trace showing what changed since the last run.",
+      text: "Screening runs the locked Protocol against the validated Population and returns PASS, REVIEW, or FAIL at the criterion level. Each verdict ships with exact evidence, source attribution, and a delta trace showing what changed since the last run.",
       does: [
-        "Deterministic eligibility. Same protocol plus same data equals the same decision, every time.",
+        "Deterministic eligibility. Same Protocol plus same data equals the same decision, every time.",
         "Criterion-level PASS, REVIEW, or FAIL with full evidence. Never a black-box verdict.",
         "Delta Mode marks what flipped, and why, when labs refresh or amendments land.",
       ],
@@ -2246,15 +2246,15 @@ curl -s https://www.damaros.ai/.well-known/jwks-nonprod.json | jq .</pre>
     },
     forms: {
       label: "04 / FORMS",
-      title: "Forms as a protocol-grounded intelligence layer",
-      text: "Forms is a protocol-grounded intelligence layer that extracts, structures, and pre-populates the facts site documents need: registry rows, screening logs, IRB exhibits. Ambiguous fields surface for human review; nothing exports without explicit sign-off.",
+      title: "Forms as a Protocol-grounded intelligence layer",
+      text: "Forms is a Protocol-grounded intelligence layer that extracts, structures, and pre-populates the facts site documents need: registry rows, Screening logs, IRB exhibits. Ambiguous fields surface for human review; nothing exports without explicit sign-off.",
       does: [
-        "Ingests protocol and screening facts; pre-populates them directly into reviewable templates.",
+        "Ingests Protocol and Screening facts; pre-populates them directly into reviewable templates.",
         "Surfaces ambiguous or unresolved fields for human review before export. Never silent autocomplete.",
         "Compresses study startup overhead so the team reaches activation sooner.",
       ],
       why: [
-        "Reduces time from protocol approval to first screening verdict.",
+        "Reduces time from Protocol approval to first Screening verdict.",
         "Document assembly stops gating activation. Effort redirects into clinical judgment.",
       ],
       badges: [
@@ -2262,17 +2262,17 @@ curl -s https://www.damaros.ai/.well-known/jwks-nonprod.json | jq .</pre>
         ["blue", "STARTUP-READY"],
       ],
     },
-    audit: {
-      label: "05 / EVIDENCE & AUDIT",
-      title: "A replay engine for every screening decision",
-      text: "Evidence & Audit captures the protocol version, cohort snapshot, evidence, and reviewer trail behind every decision. Any screen, any patient, any amendment reconstructs cold for IRB, sponsor, or FDA review.",
+    replay: {
+      label: "05 / REPLAY",
+      title: "Replay for every Screening decision",
+      text: "Replay captures the Protocol version, Population snapshot, evidence, and reviewer trail behind every decision. Any Screening run, any patient, any amendment reconstructs cold for IRB, sponsor, or FDA review.",
       does: [
-        "Preserves lineage behind every screening decision and correction.",
-        "Replays decisions against historical protocol and cohort state.",
+        "Preserves lineage behind every Screening decision and correction.",
+        "Replays decisions against historical Protocol and Population state.",
         "Generates audit packets straight from production data. No parallel reporting layer.",
       ],
       why: [
-        "Trial defensibility today is replay, not just retention.",
+        "Trial defensibility today is Replay, not just retention.",
         "Audit-ready by construction. Inspection prep stops being a separate program of work.",
       ],
       badges: [
