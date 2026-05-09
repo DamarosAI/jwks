@@ -2190,16 +2190,16 @@ curl -s https://www.damaros.ai/.well-known/jwks-nonprod.json | jq .</pre>
     const workflow = {
     protocol: {
       label: "01 / PROTOCOL",
-      title: "Protocol, encoded as versioned execution logic",
-      text: "Protocol compiles the study into a versioned, auditable execution substrate: criteria, amendments, and decision rules. Every downstream Screening run uses one anchored Protocol state, not a PDF or coordinator memory.",
+      title: "Trial logic, versioned and encoded for execution",
+      text: "The protocol compiles the study into a versioned, auditable execution substrate: criteria, amendments, and decision rules. Every downstream screening run uses one anchored protocol state, not a PDF or coordinator memory.",
       does: [
         "Turns inclusion and exclusion criteria into structured, version-pinned rules.",
         "Tracks amendments back to the patients and decisions they change.",
-        "Eliminates Protocol drift between the PDF, REDCap, and coordinator memory.",
+        "Eliminates protocol drift between the PDF, REDCap, and coordinator memory.",
       ],
       why: [
-        "Amendments propagate as first-class artifacts, not as silent invalidation of prior Screening runs.",
-        "One source of execution logic underpins Replay, audit, and cross-site scale.",
+        "Amendments propagate as first-class artifacts, not as silent invalidation of prior screening runs.",
+        "One source of execution logic underpins replay, audit, and cross-site scale.",
       ],
       badges: [
         ["gold", "LOCKED LOGIC"],
@@ -2208,16 +2208,16 @@ curl -s https://www.damaros.ai/.well-known/jwks-nonprod.json | jq .</pre>
     },
     population: {
       label: "02 / POPULATION",
-      title: "Population as substrate: validated, frozen, defensible",
-      text: "Population promotes a frozen, validated patient snapshot from labs, biomarkers, registries, and EHR ingest into a defensible Population substrate. Data integrity issues quarantine upstream; every Screening decision withstands IRB and sponsor scrutiny.",
+      title: "A validated, frozen, defensible population substrate",
+      text: "The population layer promotes a frozen, validated patient snapshot from labs, biomarkers, registries, and EHR ingest into a defensible substrate. Data integrity issues quarantine upstream; every screening decision withstands IRB and sponsor scrutiny.",
       does: [
         "Locks a defensible snapshot of patients, labs, biomarkers, files, and registry data.",
-        "Flags broken imports, missing values, and conflicting records before a single Screening run.",
+        "Flags broken imports, missing values, and conflicting records before a single screening run.",
         "Reproducibility from the same upstream evidence, every time.",
       ],
       why: [
-        "Most Screening failures originate in the data, not in the Protocol.",
-        "Defensible Populations retain candidates routine extracts drop, each row backed by source-level evidence.",
+        "Most screening failures originate in the data, not in the protocol.",
+        "Defensible populations retain candidates routine extracts drop, each row backed by source-level evidence.",
       ],
       badges: [
         ["blue", "VALIDATED"],
@@ -2227,9 +2227,9 @@ curl -s https://www.damaros.ai/.well-known/jwks-nonprod.json | jq .</pre>
     screening: {
       label: "03 / SCREENING",
       title: "Deterministic eligibility, decided at the criterion level",
-      text: "Screening runs the locked Protocol against the validated Population and returns PASS, REVIEW, or FAIL at the criterion level. Each verdict ships with exact evidence, source attribution, and a delta trace showing what changed since the last run.",
+      text: "Runs the locked protocol against the validated population and returns PASS, REVIEW, or FAIL at the criterion level. Each verdict ships with exact evidence, source attribution, and a delta trace showing what changed since the last run.",
       does: [
-        "Deterministic eligibility. Same Protocol plus same data equals the same decision, every time.",
+        "Deterministic eligibility. Same protocol plus same data equals the same decision, every time.",
         "Criterion-level PASS, REVIEW, or FAIL with full evidence. Never a black-box verdict.",
         "Delta Mode marks what flipped, and why, when labs refresh or amendments land.",
       ],
@@ -2246,15 +2246,15 @@ curl -s https://www.damaros.ai/.well-known/jwks-nonprod.json | jq .</pre>
     },
     forms: {
       label: "04 / FORMS",
-      title: "Forms as a Protocol-grounded intelligence layer",
-      text: "Forms is a Protocol-grounded intelligence layer that extracts, structures, and pre-populates the facts site documents need: registry rows, Screening logs, IRB exhibits. Ambiguous fields surface for human review; nothing exports without explicit sign-off.",
+      title: "A protocol-grounded intelligence layer for site documents",
+      text: "The forms layer extracts, structures, and pre-populates the facts site documents need: registry rows, screening logs, IRB exhibits. Ambiguous fields surface for human review; nothing exports without explicit sign-off.",
       does: [
-        "Ingests Protocol and Screening facts; pre-populates them directly into reviewable templates.",
+        "Ingests protocol and screening facts; pre-populates them directly into reviewable templates.",
         "Surfaces ambiguous or unresolved fields for human review before export. Never silent autocomplete.",
         "Compresses study startup overhead so the team reaches activation sooner.",
       ],
       why: [
-        "Reduces time from Protocol approval to first Screening verdict.",
+        "Reduces time from protocol approval to first screening verdict.",
         "Document assembly stops gating activation. Effort redirects into clinical judgment.",
       ],
       badges: [
@@ -2264,15 +2264,15 @@ curl -s https://www.damaros.ai/.well-known/jwks-nonprod.json | jq .</pre>
     },
     replay: {
       label: "05 / REPLAY",
-      title: "Replay for every Screening decision",
-      text: "Replay captures the Protocol version, Population snapshot, evidence, and reviewer trail behind every decision. Any Screening run, any patient, any amendment reconstructs cold for IRB, sponsor, or FDA review.",
+      title: "Full lineage for every screening decision",
+      text: "Captures the protocol version, population snapshot, evidence, and reviewer trail behind every decision. Any screening run, any patient, any amendment reconstructs cold for IRB, sponsor, or FDA review.",
       does: [
-        "Preserves lineage behind every Screening decision and correction.",
-        "Replays decisions against historical Protocol and Population state.",
+        "Preserves lineage behind every screening decision and correction.",
+        "Replays decisions against historical protocol and population state.",
         "Generates audit packets straight from production data. No parallel reporting layer.",
       ],
       why: [
-        "Trial defensibility today is Replay, not just retention.",
+        "Trial defensibility today is replay, not just retention.",
         "Audit-ready by construction. Inspection prep stops being a separate program of work.",
       ],
       badges: [
