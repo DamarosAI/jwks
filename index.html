@@ -943,8 +943,27 @@ body.damaros-ignition-home-active.ig-return #damaros-panel-home.active .damaros-
   padding: 0.02rem 0 0.58rem;
   width: 100%;
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
+  gap: 0.75rem;
+}
+#damaros-panel-home.active .damaros-ignition .workspace-tagline {
+  margin: 0;
+  flex: 0 1 auto;
+  font-family: var(--fb);
+  font-weight: 500;
+  font-size: clamp(0.58rem, 0.92vw, 0.74rem);
+  letter-spacing: 0.055em;
+  line-height: 1.3;
+  color: var(--blue);
+  opacity: 0.9;
+  text-align: right;
+  text-transform: lowercase;
+  max-width: min(280px, 46vw);
+  text-wrap: balance;
+  text-shadow: 0 0 22px rgba(123, 150, 178, 0.22);
+  pointer-events: none;
+  user-select: none;
 }
 #damaros-panel-home.active .damaros-ignition .cockpit {
   display: grid;
@@ -1493,6 +1512,11 @@ body.damaros-ignition-home-active.ig-init #damaros-panel-home.active .damaros-ig
   #damaros-panel-home.active .damaros-ignition .workspace-head {
     padding: 0.18rem 0 0.5rem;
   }
+  #damaros-panel-home.active .damaros-ignition .workspace-tagline {
+    font-size: clamp(0.5rem, 2.4vw, 0.64rem);
+    max-width: min(200px, 50vw);
+    letter-spacing: 0.045em;
+  }
   #damaros-panel-home.active .damaros-ignition .cockpit {
     grid-template-columns: 1fr;
     gap: 0.65rem;
@@ -1674,6 +1698,7 @@ body.damaros-ignition-home-active.ig-init #damaros-panel-home.active .damaros-ig
 <section class="workspace" id="workspace" aria-label="Damaros workspace: Protocol, Population, Screening, Forms, Replay">
 <header class="workspace-head">
 <button type="button" class="workspace-logo" id="workspaceLogo" aria-label="Return to Damaros homepage"><span class="workspace-logo-wordmark">Damaros</span><span class="workspace-logo-dot" id="workspaceLogoDot" aria-hidden="true"></span></button>
+<p class="workspace-tagline">clinical trial execution, simplified</p>
 </header>
 <div class="cockpit">
 <div class="workflow-map" aria-label="Protocol, Population, Screening, Forms, Replay">
