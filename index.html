@@ -2242,9 +2242,9 @@ curl -s https://www.damaros.ai/.well-known/jwks-nonprod.json | jq .</pre>
       title: "Patient populations become defensible evidence state",
       text: "The population layer ingests approved FHIR cohorts and institutional datasets, normalizes fragmented evidence, reconciles conflicting facts, and materializes a protocol-scoped evidence state with preserved provenance. Every downstream screening decision inherits a reproducible population snapshot instead of transient extracts or analyst-defined cohorts.",
       highlights: [
-        "Canonical evidence normalization across labs, biomarkers, diagnoses, medications, therapies, and FHIR-native resources.",
-        "Explicit surfacing of missing evidence, conflicting facts, mapping overrides, and ingest degradation before execution.",
-        "Reproducible population snapshots anchored to upstream source lineage and sync state.",
+        "Normalized evidence across labs, biomarkers, diagnoses, medications, therapies, and FHIR resources.",
+        "Missing evidence, conflicting facts, mapping overrides, and ingest degradation surfaced before execution.",
+        "Reproducible population snapshots anchored to upstream source lineage.",
       ],
       outcomes: [
         "Most institutional screening failure originates in evidence inconsistency, not protocol logic.",
@@ -2258,11 +2258,11 @@ curl -s https://www.damaros.ai/.well-known/jwks-nonprod.json | jq .</pre>
     screening: {
       label: "03 / SCREENING",
       title: "Eligibility becomes deterministic execution",
-      text: "Damaros executes locked protocol logic against anchored population evidence and produces criterion-level PASS, REVIEW, or FAIL outcomes with reproducible provenance. Trident expands deterministic oncology coverage through source-cited operational semantics while uncertainty remains explicitly bounded in REVIEW. No stochastic LLM behavior exists on the patient-eligibility execution path.",
+      text: "Damaros executes locked protocol logic against anchored population evidence and returns criterion-level PASS, REVIEW, or FAIL outcomes with reproducible provenance. Trident expands deterministic oncology coverage through source-cited semantics; uncertainty stays bounded in REVIEW and no LLM runs on the patient-eligibility path.",
       highlights: [
-        "Deterministic execution where identical protocol state and evidence produce identical outcomes.",
-        "Criterion-level adjudication with evidence lineage, transition visibility, and source attribution.",
-        "Dynamic state transitions showing exactly what changed when evidence refreshes or amendments propagate.",
+        "Identical protocol state and evidence produce identical outcomes.",
+        "Criterion-level adjudication with evidence lineage and source attribution.",
+        "State transitions show exactly what changed when evidence refreshes or amendments propagate.",
       ],
       outcomes: [
         "Execution variability collapses across coordinators, sites, and repeated screening cycles.",
@@ -2280,9 +2280,9 @@ curl -s https://www.damaros.ai/.well-known/jwks-nonprod.json | jq .</pre>
       title: "Operational workflows materialize from execution state",
       text: "The forms layer transforms validated protocol, screening, and operational evidence into coordinator-ready execution workflows: startup packets, eligibility workflows, schedule-of-activities artifacts, source templates, consent operations, deviation tracking, and activation infrastructure. Human review boundaries remain explicit wherever operational ambiguity exists.",
       highlights: [
-        "Coordinator execution artifacts generated directly from validated operational state and source-linked evidence.",
-        "Review-required escalation for unresolved or ambiguous operational fields before downstream release.",
-        "Protocol operationalization compressed into reproducible site-ready execution workflows.",
+        "Coordinator artifacts generated from validated operational state and source-linked evidence.",
+        "Unresolved or ambiguous fields escalate for human review before release.",
+        "Protocol operationalization compressed into reproducible site-ready workflows.",
       ],
       outcomes: [
         "Coordinator effort shifts away from repetitive reconstruction and back toward clinical judgment and patient operations.",
