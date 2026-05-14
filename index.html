@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Damaros™ — Hospital-side execution infrastructure for oncology trials</title>
+<title>damaros™</title>
 <link rel="icon" href="/assets/damaros-favicon.png" type="image/png" sizes="32x32">
 <link rel="shortcut icon" href="/assets/damaros-favicon.png" type="image/png">
 <link rel="apple-touch-icon" href="/assets/damaros-favicon.png">
@@ -866,60 +866,31 @@ body.damaros-ignition-home-active.ig-workspace #damaros-panel-home.active .damar
 #damaros-panel-home.active .damaros-ignition .ignition-dot:focus-visible {
   box-shadow: 0 0 14px rgba(169, 192, 214, 0.72), 0 0 38px rgba(123, 150, 178, 0.32), 0 0 80px rgba(123, 150, 178, 0.13);
 }
-#damaros-panel-home.active .damaros-ignition .command-line.hero-tagline {
-  margin-top: 1.05rem;
+#damaros-panel-home.active .damaros-ignition .command-line.hero-action-cue {
+  margin-top: 1.15rem;
+  min-height: 2.2em;
   margin-bottom: 0;
-  min-height: 2.15em;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-wrap: wrap;
   text-align: center;
-  max-width: min(36rem, calc(100vw - 2.5rem));
+  max-width: 22rem;
   margin-left: auto;
   margin-right: auto;
-  padding: 0 0.75rem;
+  padding: 0 0.5rem;
   box-sizing: border-box;
-  font-family: var(--fb);
-  font-weight: 400;
-  font-size: clamp(0.78rem, 1.85vw, 1.02rem);
-  line-height: 1.5;
-  letter-spacing: 0.04em;
+  font-family: var(--fm);
+  font-weight: 500;
+  font-size: clamp(0.86rem, 1.35vw, 1.06rem);
+  line-height: 1.45;
+  letter-spacing: 0.055em;
   text-transform: none;
-  color: rgba(169, 192, 214, 0.9);
-  text-shadow: 0 0 28px rgba(123, 150, 178, 0.18);
+  color: rgba(169, 192, 214, 0.92);
+  text-shadow: 0 0 28px rgba(123, 150, 178, 0.22);
   transition: opacity 0.35s ease, transform 0.35s ease;
 }
-#damaros-panel-home.active .damaros-ignition .hero-tagline-terminal {
-  white-space: normal;
-}
-#damaros-panel-home.active .damaros-ignition .hero-tagline-prefix {
-  opacity: 0.82;
-}
-#damaros-panel-home.active .damaros-ignition .hero-tagline-rotator {
-  display: inline-block;
-  min-width: 12.5ch;
-  text-align: left;
-  color: rgba(186, 210, 232, 0.95);
-  font-weight: 500;
-}
-#damaros-panel-home.active .damaros-ignition .hero-tagline-rotator::after {
-  content: "▍";
-  display: inline-block;
-  margin-left: 0.06em;
-  font-weight: 300;
-  color: rgba(186, 210, 232, 0.55);
-  animation: workspace-tagline-cursor 1.06s steps(1, end) infinite;
-  transform: translateY(-0.04em);
-}
-@media (prefers-reduced-motion: reduce) {
-  #damaros-panel-home.active .damaros-ignition .hero-tagline-rotator::after {
-    animation: none;
-    opacity: 0.45;
-  }
-}
-body.damaros-ignition-home-active.ig-init #damaros-panel-home.active .damaros-ignition .command-line.hero-tagline,
-body.damaros-ignition-home-active.ig-workspace #damaros-panel-home.active .damaros-ignition .command-line.hero-tagline {
+body.damaros-ignition-home-active.ig-init #damaros-panel-home.active .damaros-ignition .command-line.hero-action-cue,
+body.damaros-ignition-home-active.ig-workspace #damaros-panel-home.active .damaros-ignition .command-line.hero-action-cue {
   opacity: 0;
   transform: translateY(-4px);
 }
@@ -960,14 +931,27 @@ body.damaros-ignition-home-active.ig-workspace #damaros-panel-home.active .damar
   color: var(--tp);
   background: rgba(123, 150, 178, 0.06);
 }
-#damaros-panel-home.active .damaros-ignition .damaros-thesis-card {
+#damaros-panel-home.active .damaros-ignition .thesis-stack-card {
   width: 100%;
-  padding: 0.35rem 0.12rem 0.75rem;
-  margin-bottom: 0.15rem;
-  border-bottom: 1px solid rgba(123, 150, 178, 0.12);
+  padding: 0.45rem 0.35rem 0.55rem;
+  margin: 0 0 0.1rem;
+  border-bottom: 1px solid rgba(123, 150, 178, 0.14);
   border-left: 1px solid rgba(123, 150, 178, 0.22);
-  padding-left: clamp(0.65rem, 1.8vw, 1rem);
-  background: linear-gradient(90deg, rgba(123, 150, 178, 0.045), transparent 55%);
+  padding-left: clamp(0.55rem, 1.5vw, 0.85rem);
+  background: linear-gradient(90deg, rgba(123, 150, 178, 0.05), transparent 62%);
+  flex: 0 0 auto;
+  max-height: min(46vh, 380px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+#damaros-panel-home.active .damaros-ignition .workflow-steps-strip {
+  flex: 1 1 0;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: repeat(5, minmax(0, 1fr));
+  gap: 0.48rem;
+  align-content: stretch;
 }
 #damaros-panel-home.active .damaros-ignition .damaros-thesis-register-label {
   font-family: var(--fm);
@@ -1022,9 +1006,10 @@ body.damaros-ignition-home-active.ig-workspace #damaros-panel-home.active .damar
   margin-bottom: 0;
 }
 @media (max-width: 620px) {
-  #damaros-panel-home.active .damaros-ignition .damaros-thesis-card {
-    padding-left: 0.55rem;
-    padding-right: 0.35rem;
+  #damaros-panel-home.active .damaros-ignition .thesis-stack-card {
+    padding-left: 0.5rem;
+    padding-right: 0.3rem;
+    max-height: none;
   }
   #damaros-panel-home.active .damaros-ignition .damaros-thesis-cta-row {
     flex-direction: column;
@@ -1044,7 +1029,7 @@ body.damaros-ignition-home-active.ig-workspace #damaros-panel-home.active .damar
   pointer-events: none;
   transition: opacity 0.78s ease, transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), filter 0.52s ease;
   display: grid;
-  grid-template-rows: auto auto minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
   gap: 0.65rem;
   position: relative;
   z-index: 4;
@@ -1066,7 +1051,7 @@ body.damaros-ignition-home-active.ig-return #damaros-panel-home.active .damaros-
   padding: 0.02rem 0 0.58rem;
   width: 100%;
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: flex-end;
   gap: 0.75rem;
 }
@@ -1133,8 +1118,8 @@ body.damaros-ignition-home-active.ig-return #damaros-panel-home.active .damaros-
   display: grid;
   grid-template-columns: minmax(270px, 0.5fr) minmax(0, 1fr);
   gap: 0.85rem;
-  height: min(520px, calc(100svh - var(--tab) - 9.2rem));
-  min-height: 480px;
+  height: auto;
+  min-height: min(520px, calc(100svh - var(--tab) - 9.2rem));
   align-items: start;
 }
 #damaros-panel-home.active .damaros-ignition .workflow-map {
@@ -1145,10 +1130,10 @@ body.damaros-ignition-home-active.ig-return #damaros-panel-home.active .damaros-
   height: calc(100% - 18px);
   align-self: start;
   padding: 0.62rem;
-  display: grid;
-  grid-template-rows: repeat(5, minmax(0, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 0.48rem;
-  align-content: stretch;
+  box-sizing: border-box;
 }
 #damaros-panel-home.active .damaros-ignition .step {
   width: 100%;
@@ -1681,9 +1666,15 @@ body.damaros-ignition-home-active.ig-init #damaros-panel-home.active .damaros-ig
   }
   #damaros-panel-home.active .damaros-ignition .workspace-head {
     padding: 0.18rem 0 0.5rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
   }
-  #damaros-panel-home.active .damaros-ignition .workspace-tagline {
-    display: none !important;
+  #damaros-panel-home.active .damaros-ignition .workspace-tagline.workspace-tagline-terminal {
+    white-space: normal;
+    text-align: left;
+    max-width: 100%;
+    align-self: stretch;
   }
   #damaros-panel-home.active .damaros-ignition .cockpit {
     grid-template-columns: 1fr;
@@ -1692,16 +1683,25 @@ body.damaros-ignition-home-active.ig-init #damaros-panel-home.active .damaros-ig
     min-height: 0;
   }
   #damaros-panel-home.active .damaros-ignition .workflow-map {
+    flex-direction: column;
+    overflow-x: visible;
+    overflow-y: visible;
+    gap: 0.42rem;
+    padding: 0.45rem 0.4rem;
+    height: auto;
+  }
+  #damaros-panel-home.active .damaros-ignition .workflow-steps-strip {
+    display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
     grid-template-rows: none;
     gap: 0.32rem;
-    padding: 0.45rem 0.4rem;
-    height: auto;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    flex: 0 0 auto;
+    min-height: 0;
   }
-  #damaros-panel-home.active .damaros-ignition .workflow-map::-webkit-scrollbar {
+  #damaros-panel-home.active .damaros-ignition .workflow-steps-strip::-webkit-scrollbar {
     display: none;
   }
   #damaros-panel-home.active .damaros-ignition .step {
@@ -1793,8 +1793,8 @@ body.damaros-ignition-home-active.ig-init #damaros-panel-home.active .damaros-ig
     font-size: clamp(1.65rem, 3vw, 2.45rem);
   }
   #damaros-panel-home.active .damaros-ignition .cockpit {
-    height: min(490px, calc(100svh - var(--tab) - 8.6rem));
-    min-height: 430px;
+    min-height: min(490px, calc(100svh - var(--tab) - 8.6rem));
+    height: auto;
   }
   #damaros-panel-home.active .damaros-ignition .workflow-map {
     gap: 0.42rem;
@@ -1873,14 +1873,17 @@ body.damaros-ignition-home-active.ig-init #damaros-panel-home.active .damaros-ig
 <section class="hero" id="ignitionHero" aria-label="Damaros hero">
 <div class="hero-inner">
 <div class="logo">Damaros<button type="button" class="ignition-dot" id="ignitionDot" aria-label="Initialize Damaros workspace: Protocol, Population, Screening, Forms, Replay"></button></div>
-<p class="command-line hero-tagline hero-tagline-terminal" id="heroTagline" aria-live="polite"><span class="hero-tagline-prefix">clinical trial execution, </span><span class="hero-tagline-rotator" id="heroTaglineRotator"></span></p>
+<p class="command-line hero-action-cue" id="heroActionCue" aria-live="polite">click anywhere to initialize</p>
 </div>
 </section>
 <section class="workspace" id="workspace" aria-label="Damaros workspace: Protocol, Population, Screening, Forms, Replay">
 <header class="workspace-head">
 <button type="button" class="workspace-logo" id="workspaceLogo" aria-label="Return to Damaros homepage"><span class="workspace-logo-wordmark">Damaros</span><span class="workspace-logo-dot" id="workspaceLogoDot" aria-hidden="true"></span></button>
+<p class="workspace-tagline workspace-tagline-terminal" id="workspaceTagline" aria-label="Clinical trial execution; descriptor cycles through governed execution terms."><span class="workspace-tagline-prefix">clinical trial execution, </span><span class="workspace-tagline-rotator" id="workspaceTaglineRotator"></span></p>
 </header>
-<section class="damaros-thesis-card" aria-labelledby="damaros-thesis-heading">
+<div class="cockpit">
+<div class="workflow-map" aria-label="Thesis, Protocol, Population, Screening, Forms, Replay">
+<div class="thesis-stack-card" aria-labelledby="damaros-thesis-heading">
 <div class="damaros-thesis-register-label">00 / THESIS</div>
 <h2 class="damaros-thesis-heading" id="damaros-thesis-heading">From NCT ID to criterion-level replay.</h2>
 <div class="damaros-cta-row damaros-thesis-cta-row">
@@ -1889,12 +1892,11 @@ body.damaros-ignition-home-active.ig-init #damaros-panel-home.active .damaros-ig
 </div>
 <div class="damaros-thesis-body">
 <p>Damaros is the hospital-side execution substrate for oncology trials: protocol logic compiled into criteria, site evidence normalized into a governed plane, coordinator work captured as operational lineage, and every output reconstructed through Replay.</p>
-<p>Five primitives define the chain. <strong>Protocol</strong> makes the trial executable. <strong>Population</strong> governs the evidence layer. <strong>Screening</strong> adjudicates eligibility with evidence. <strong>Forms</strong> builds governed operational packets. <strong>Replay</strong> preserves institutional memory.</p>
+<p>Five primitives define the chain. Protocol makes the trial executable. Population governs the evidence layer. Screening adjudicates eligibility with evidence. Forms builds governed operational packets. Replay preserves institutional memory.</p>
 <p>The first hospital question is not whether the interface is convincing. It is whether Damaros can be validated against the institution’s protocols, data, and adjudication standard.</p>
 </div>
-</section>
-<div class="cockpit">
-<div class="workflow-map" aria-label="Protocol, Population, Screening, Forms, Replay">
+</div>
+<div class="workflow-steps-strip">
 <button type="button" class="step active stage-in" data-step="protocol" aria-label="Step 01 Protocol">
   <span>01</span><b>Protocol</b><small>NCT to Criterion Tree</small>
 </button>
@@ -1914,6 +1916,7 @@ body.damaros-ignition-home-active.ig-init #damaros-panel-home.active .damaros-ig
 <button type="button" class="step stage-in" data-step="replay" aria-label="Step 05 Replay">
   <span>05</span><b>Replay</b><small>Audit Reconstruction</small>
 </button>
+</div>
 </div>
 <article class="detail-panel" aria-live="polite">
 <div class="detail-top">
@@ -2652,8 +2655,14 @@ spec:
   const dot = document.getElementById("ignitionDot");
   const workspaceLogo = document.getElementById("workspaceLogo");
   const workspaceLogoDot = document.getElementById("workspaceLogoDot");
-  const heroTaglineRotator = document.getElementById("heroTaglineRotator");
+  const workspaceTaglineRotator = document.getElementById("workspaceTaglineRotator");
+  const heroActionCue = document.getElementById("heroActionCue");
   const grid = document.getElementById("monogramGrid");
+  const mqPointerCoarse = window.matchMedia("(pointer: coarse)");
+
+  function heroActionCuePhrase() {
+    return mqPointerCoarse.matches ? "tap anywhere to initialize" : "click anywhere to initialize";
+  }
 
   const TAGLINE_WORDS = ["simplified", "operationalized", "governed", "source-linked", "replayable", "defensible"];
   let taglineRotatorTimer = null;
@@ -2674,9 +2683,9 @@ spec:
 
   function tickTaglineRotator() {
     taglineRotatorTimer = null;
-    if (!heroTaglineRotator || state !== "idle") return;
+    if (!workspaceTaglineRotator || state !== "workspace") return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      heroTaglineRotator.textContent = TAGLINE_WORDS[0];
+      workspaceTaglineRotator.textContent = TAGLINE_WORDS[0];
       return;
     }
     const word = TAGLINE_WORDS[taglineWordIndex];
@@ -2687,7 +2696,7 @@ spec:
 
     if (taglinePhase === "typing") {
       taglineDisplayLen += 1;
-      heroTaglineRotator.textContent = word.slice(0, taglineDisplayLen);
+      workspaceTaglineRotator.textContent = word.slice(0, taglineDisplayLen);
       if (taglineDisplayLen >= word.length) {
         taglinePhase = "pause";
         scheduleTaglineRotator(pauseTypedMs);
@@ -2705,7 +2714,7 @@ spec:
 
     if (taglinePhase === "deleting") {
       taglineDisplayLen -= 1;
-      heroTaglineRotator.textContent = word.slice(0, Math.max(0, taglineDisplayLen));
+      workspaceTaglineRotator.textContent = word.slice(0, Math.max(0, taglineDisplayLen));
       if (taglineDisplayLen <= 0) {
         taglineWordIndex = (taglineWordIndex + 1) % TAGLINE_WORDS.length;
         taglinePhase = "typing";
@@ -2719,26 +2728,43 @@ spec:
 
   function startTaglineRotator() {
     clearTaglineRotator();
-    if (!heroTaglineRotator) return;
+    if (!workspaceTaglineRotator) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      heroTaglineRotator.textContent = TAGLINE_WORDS[0];
+      workspaceTaglineRotator.textContent = TAGLINE_WORDS[0];
       return;
     }
     taglineWordIndex = 0;
     taglineDisplayLen = 0;
     taglinePhase = "typing";
-    heroTaglineRotator.textContent = "";
+    workspaceTaglineRotator.textContent = "";
     scheduleTaglineRotator(500);
   }
 
   function stopTaglineRotator() {
     clearTaglineRotator();
-    if (heroTaglineRotator) heroTaglineRotator.textContent = "";
+    if (workspaceTaglineRotator) workspaceTaglineRotator.textContent = "";
   }
 
   let state = "idle";
   let parallaxX = 0;
   let parallaxY = 0;
+
+  function updateHeroActionCue() {
+    if (!heroActionCue || state !== "idle") return;
+    heroActionCue.textContent = heroActionCuePhrase();
+  }
+
+  function bindHeroActionCueMedia() {
+    function onPointerTypeChange() {
+      if (state === "idle") updateHeroActionCue();
+      flushDotAnchors();
+    }
+    if (typeof mqPointerCoarse.addEventListener === "function") {
+      mqPointerCoarse.addEventListener("change", onPointerTypeChange);
+    } else if (typeof mqPointerCoarse.addListener === "function") {
+      mqPointerCoarse.addListener(onPointerTypeChange);
+    }
+  }
 
   function renderList(items) {
     return "<ul>" + items.map((item) => "<li>" + item + "</li>").join("") + "</ul>";
@@ -2870,6 +2896,7 @@ spec:
     state = "workspace";
     setWorkflow("protocol");
     flushDotAnchors();
+    startTaglineRotator();
   }
 
   async function returnHome() {
@@ -2893,7 +2920,7 @@ spec:
     const ph = homePanel();
     if (ph) ph.classList.remove("damaros-ig-scroll");
     state = "idle";
-    startTaglineRotator();
+    updateHeroActionCue();
     flushDotAnchors();
   }
 
@@ -2903,9 +2930,8 @@ spec:
     document.body.classList.remove("ig-init", "ig-workspace", "ig-return");
     const ph = homePanel();
     if (ph) ph.classList.remove("damaros-ig-scroll");
-    if (document.body.classList.contains("damaros-ignition-home-active")) {
-      startTaglineRotator();
-    }
+    if (workspaceTaglineRotator) workspaceTaglineRotator.textContent = "";
+    updateHeroActionCue();
   };
 
   function setPanel(target, anchorId) {
@@ -2995,6 +3021,7 @@ spec:
     btn.addEventListener("click", () => setWorkflow(btn.dataset.step));
   });
   window.addEventListener("resize", () => {
+    updateHeroActionCue();
     flushDotAnchors();
   });
 
@@ -3016,6 +3043,7 @@ spec:
 
   initMonogramGrid();
   initParallax();
+  bindHeroActionCueMedia();
   window.addEventListener("load", updateHeroDotAnchor);
   routeFromHash();
   setWorkflow("protocol");
