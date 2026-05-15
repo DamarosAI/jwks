@@ -7,20 +7,20 @@
 <link rel="icon" href="/assets/damaros-favicon.png" type="image/png" sizes="32x32">
 <link rel="shortcut icon" href="/assets/damaros-favicon.png" type="image/png">
 <link rel="apple-touch-icon" href="/assets/damaros-favicon.png">
-<meta name="description" content="Damaros™ is hospital-side infrastructure for clinical trial execution: Protocol Brain through Trident, deterministic screening, governed Forms, retrospective validation, and Replay.">
+<meta name="description" content="Damaros™ is hospital-side AI-native execution infrastructure for oncology trials: Protocol Brain through Trident, Population, Screening, governed Forms, correction memory, validation runs, and Replay. Deterministic screening, evidence lineage, operator workstate, and audit reconstruction.">
 <link rel="canonical" href="https://www.damaros.ai/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Damaros™">
 <meta property="og:url" content="https://www.damaros.ai/">
 <meta property="og:title" content="Damaros™ | Hospital-side execution infrastructure for oncology trials">
-<meta property="og:description" content="Damaros is hospital-side infrastructure for clinical trial execution: Protocol Brain through Trident, deterministic screening, governed Forms, retrospective validation, and Replay.">
+<meta property="og:description" content="Protocol to criterion tree. Site evidence to deterministic screening. PASS / REVIEW / FAIL with lineage, agreement analysis, and Replay. Retrospective validation before live EHR integration.">
 <meta property="og:image" content="https://www.damaros.ai/assets/damaros-white-on-black.png">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Damaros™ | Hospital-side execution infrastructure for oncology trials">
-<meta name="twitter:description" content="Damaros is hospital-side infrastructure for clinical trial execution: Protocol Brain through Trident, deterministic screening, governed Forms, retrospective validation, and Replay.">
+<meta name="twitter:description" content="Protocol to criterion tree. Site evidence to deterministic screening. PASS / REVIEW / FAIL with lineage, agreement analysis, and Replay. Retrospective validation before live EHR integration.">
 <meta name="twitter:image" content="https://www.damaros.ai/assets/damaros-white-on-black.png">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@graph":[{"@type":"SoftwareApplication","@id":"https://www.damaros.ai/#software","name":"Damaros™","applicationCategory":"HealthApplication","softwareApplicationCategory":"Clinical trial execution software","operatingSystem":"Web","url":"https://www.damaros.ai/","description":"Hospital-side infrastructure for clinical trial execution: Protocol Brain through Trident, deterministic screening, governed Forms, retrospective validation, and Replay.","provider":{"@type":"Organization","name":"Damaros, LLC","url":"https://damaros.ai","logo":{"@type":"ImageObject","url":"https://www.damaros.ai/assets/damaros-white-on-black.png"}},"isAccessibleForFree":true,"inLanguage":"en"},{"@type":"TechArticle","@id":"https://www.damaros.ai/#engineering-article","headline":"Deterministic replay","alternativeHeadline":"Damaros™ Engineering Note 01","author":{"@type":"Organization","name":"Damaros, LLC","url":"https://damaros.ai"},"publisher":{"@type":"Organization","name":"Damaros, LLC","url":"https://damaros.ai","logo":{"@type":"ImageObject","url":"https://www.damaros.ai/assets/damaros-white-on-black.png"}},"datePublished":"2026-05-06","dateModified":"2026-05-06","version":"1.0","url":"https://www.damaros.ai/#engineering","mainEntityOfPage":"https://www.damaros.ai/#engineering","description":"Engineering note on deterministic, replayable clinical-trial Screening: content-derived run identifiers, idempotent Replay semantics, and criterion-level provenance.","keywords":"clinical trials, eligibility, deterministic Replay, FHIR, Epic, audit, AMC, IRB, provenance, content-derived run identifiers","isAccessibleForFree":true,"inLanguage":"en","about":["Protocol","Population","Screening","Forms","Replay","FHIR","SMART on FHIR Backend Services"]}]}
+{"@context":"https://schema.org","@graph":[{"@type":"SoftwareApplication","@id":"https://www.damaros.ai/#software","name":"Damaros™","applicationCategory":"HealthApplication","softwareApplicationCategory":"Clinical trial execution software","operatingSystem":"Web","url":"https://www.damaros.ai/","description":"Hospital-side execution substrate for oncology trials: Protocol, Population, Screening, Forms, and Replay. Deterministic criterion-level screening, evidence lineage, and audit reconstruction.","provider":{"@type":"Organization","name":"Damaros, LLC","url":"https://damaros.ai","logo":{"@type":"ImageObject","url":"https://www.damaros.ai/assets/damaros-white-on-black.png"}},"isAccessibleForFree":true,"inLanguage":"en"},{"@type":"TechArticle","@id":"https://www.damaros.ai/#engineering-article","headline":"Deterministic replay","alternativeHeadline":"Damaros™ Engineering Note 01","author":{"@type":"Organization","name":"Damaros, LLC","url":"https://damaros.ai"},"publisher":{"@type":"Organization","name":"Damaros, LLC","url":"https://damaros.ai","logo":{"@type":"ImageObject","url":"https://www.damaros.ai/assets/damaros-white-on-black.png"}},"datePublished":"2026-05-06","dateModified":"2026-05-06","version":"1.0","url":"https://www.damaros.ai/#engineering","mainEntityOfPage":"https://www.damaros.ai/#engineering","description":"Engineering note on deterministic, replayable clinical-trial Screening: content-derived run identifiers, idempotent Replay semantics, and criterion-level provenance.","keywords":"clinical trials, eligibility, deterministic Replay, FHIR, Epic, audit, AMC, IRB, provenance, content-derived run identifiers","isAccessibleForFree":true,"inLanguage":"en","about":["Protocol","Population","Screening","Forms","Replay","FHIR","SMART on FHIR Backend Services"]}]}
 </script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
@@ -987,31 +987,14 @@ body.damaros-ignition-home-active.ig-return #damaros-panel-home.active .damaros-
   font-family: var(--fb);
   font-weight: 400;
   letter-spacing: 0.04em;
-  white-space: normal;
-  text-align: right;
-}
-#damaros-panel-home.active .damaros-ignition .workspace-tagline-terminal .workspace-tagline-line {
-  display: block;
   white-space: nowrap;
-}
-#damaros-panel-home.active .damaros-ignition .workspace-tagline-terminal .workspace-tagline-strap {
-  display: block;
-  margin-top: 0.32em;
-  font-size: clamp(0.58rem, 0.92vw, 0.74rem);
-  font-weight: 400;
-  letter-spacing: 0.035em;
-  line-height: 1.35;
-  color: rgba(186, 210, 232, 0.82);
-  max-width: min(520px, 72vw);
-  margin-left: auto;
-  text-wrap: balance;
 }
 #damaros-panel-home.active .damaros-ignition .workspace-tagline-terminal .workspace-tagline-prefix {
   opacity: 0.82;
 }
 #damaros-panel-home.active .damaros-ignition .workspace-tagline-terminal .workspace-tagline-rotator {
   display: inline-block;
-  min-width: 16ch;
+  min-width: 14.5ch;
   text-align: left;
   color: rgba(186, 210, 232, 0.95);
   font-weight: 500;
@@ -1804,7 +1787,7 @@ body.damaros-ignition-home-active.ig-init #damaros-panel-home.active .damaros-ig
     <div class="damaros-tab-links">
       <button class="damaros-tab-btn active" data-panel="home">HOME</button>
       <button class="damaros-tab-btn" data-panel="trust">TRUST</button>
-      <button class="damaros-tab-btn" data-panel="validation">VALIDATION</button>
+      <button class="damaros-tab-btn" data-panel="validation">PHASE 0</button>
       <button class="damaros-tab-btn" data-panel="docs">FHIR</button>
       <button class="damaros-tab-btn" data-panel="engineering">NOTES</button>
     </div>
@@ -1827,7 +1810,7 @@ body.damaros-ignition-home-active.ig-init #damaros-panel-home.active .damaros-ig
 <section class="workspace" id="workspace" aria-label="Damaros workspace: Thesis, Protocol, Population, Screening, Forms, Replay">
 <header class="workspace-head">
 <button type="button" class="workspace-logo" id="workspaceLogo" aria-label="Return to Damaros homepage"><span class="workspace-logo-wordmark">Damaros</span><span class="workspace-logo-dot" id="workspaceLogoDot" aria-hidden="true"></span></button>
-<p class="workspace-tagline workspace-tagline-terminal" id="workspaceTagline" aria-label="Clinical trial execution made replayable; descriptor cycles through governed execution terms."><span class="workspace-tagline-line"><span class="workspace-tagline-prefix">clinical trial execution—made replayable. </span><span class="workspace-tagline-rotator" id="workspaceTaglineRotator"></span></span></p>
+<p class="workspace-tagline workspace-tagline-terminal" id="workspaceTagline" aria-label="Clinical trial execution; descriptor cycles through governed execution terms."><span class="workspace-tagline-prefix">clinical trial execution, </span><span class="workspace-tagline-rotator" id="workspaceTaglineRotator"></span></p>
 </header>
 <div class="cockpit">
 <div class="workflow-map" aria-label="Thesis, Protocol, Population, Screening, Forms, Replay">
@@ -1873,25 +1856,25 @@ body.damaros-ignition-home-active.ig-init #damaros-panel-home.active .damaros-ig
 
 <div id="damaros-panel-docs" class="damaros-panel"><div class="damaros-docs-wrap">
 <div class="damaros-docs-eyebrow">Epic / FHIR</div><h1 class="damaros-docs-title">Production integration reference</h1>
-<p class="damaros-docs-subtitle">Damaros supports retrospective validation without Epic integration. When a site elects production integration, Damaros uses SMART on FHIR <strong>Backend Services</strong> (server-to-server), read-only scopes, bounded cohort sync, deterministic <strong>screening</strong>, and replayable audit lineage.</p>
+<p class="damaros-docs-subtitle">Submission-facing technical reference, grounded in the open-source Damaros product tree (<code>connectors/epic_fhir.py</code>, <code>connectors/fhir_bulk.py</code>, <code>ingest/fhir_normalize.py</code>, <code>ingest/cohort_sync.py</code>). SMART on FHIR <strong>Backend Services</strong> (server-to-server) feeds <strong>population</strong> ingest (FHIR Group cohorts) and deterministic <strong>screening</strong>, with <strong>forms</strong> and <strong>replay</strong> on the same product path; JWKS, scope parity, bulk posture, and audit hooks as implemented, not aspirational marketing copy.</p>
 <div class="damaros-docs-body damaros-docs-lead">
 <p><strong>Epic FHIR is a production integration track, not a prerequisite for retrospective validation.</strong></p>
 <p>Damaros supports file-based retrospective validation first. When a site elects production integration, the Epic/FHIR path uses SMART Backend Services, read-only access, bounded population sync, and protocol-scoped normalization.</p>
 </div>
 
 <section class="damaros-docs-section" id="docs-00"><div class="damaros-docs-section-label">00_SUBMISSION_NARRATIVE</div><h2 class="damaros-docs-section-heading">Epic classification: registry, cohort, and research execution. Not ad hoc analytics.</h2><div class="damaros-docs-body">
-<p>Damaros is a clinical-trial execution system for approved cohorts. It uses site-approved FHIR access to bind protocol logic to a defined patient population, evaluate eligibility deterministically, and preserve criterion-level evidence and Replay artifacts for audit. Correction history and validation packets remain on the same audit path.</p>
+<p>Damaros is a <strong>clinical-trial execution system</strong> ordered as <strong>protocol</strong> → <strong>population</strong> → <strong>screening</strong> → <strong>forms</strong> → <strong>replay</strong>: versioned trial logic, site-approved patient <strong>population</strong> on FHIR, deterministic <strong>screening</strong> verdicts, <strong>forms</strong> outputs, and <strong>replay</strong> for audit — using <strong>site-approved FHIR access patterns</strong>. This matches Epic’s mental model for registry, population health, and research cohort tooling (scheduled, system-level, auditable access), not discretionary per-user chart mining or external SaaS analytics.</p>
 <p><strong>population-level evaluation is required</strong> because inclusion and exclusion logic must be applied <strong>consistently across every potentially eligible patient</strong> attached to an approved cohort, not triggered ad hoc one patient at a time. That is why <strong>Bulk FHIR <code>$export</code></strong> sits in the architecture as an <strong>optional, site-gated</strong> complement to iterative REST reads: it aligns with Epic's <strong>population-level access model</strong> (read-only, explicitly enabled, bounded jobs), not continuous streaming or open-ended replication.</p>
 <p><strong>System identity (deterministic core):</strong> a <strong>deterministic eligibility evaluation engine</strong> operating on FHIR-native inputs with <strong>full audit traceability</strong>. <strong>protocol</strong> definitions supply versioned logic; <strong>REST and optional Bulk</strong> supply normalized facts; the <strong>engine</strong> executes the same rules on the same inputs for the same outcome class (PASS / REVIEW / FAIL); <strong>outputs</strong> are criterion-level decisions plus evidence and sync provenance, with no generative verdict on the <strong>screening</strong> path.</p>
-<p><strong>Reproducibility (non-stochastic on PHI):</strong> eligibility evaluation is <strong>deterministic and reproducible</strong>. Given the same protocol version and the same normalized inputs, the system produces <strong>identical criterion-level outcomes</strong>, and <strong>Replay</strong> can reproduce them for audit with full provenance. There is <strong>no</strong> stochastic "AI" behavior on patient-identifiable clinical data in the <strong>screening</strong> execution path.</p>
+<p><strong>Reproducibility (non-stochastic on PHI):</strong> eligibility evaluation is <strong>deterministic and reproducible</strong>. Given the same protocol version and the same normalized inputs, the system produces <strong>identical criterion-level outcomes</strong>, and <strong>replay</strong> can reproduce them for audit with full provenance. There is <strong>no</strong> stochastic "AI" behavior on patient-identifiable clinical data in the <strong>screening</strong> execution path.</p>
 <p><strong>Evaluation boundary:</strong> All eligibility evaluation occurs on normalized, <strong>protocol</strong>-scoped data within the execution environment.</p>
 </div>
 <div class="damaros-callout"><strong>Architectural constraint, no shadow EHR:</strong> The system is <strong>not architected</strong> to function as a secondary clinical data warehouse. Data ingestion pathways <strong>terminate</strong> in <code>fhir_bundle_to_normalized</code> (<code>ingest/fhir_normalize.py</code>) and <code>run_sync_into_db</code> (<code>ingest/cohort_sync.py</code>) as <strong>protocol-scoped normalization and screening artifacts</strong>. <strong>Persistent normalized data</strong> lives only in <strong>trial-scoped, minimal schemas</strong> required for screening evaluation and audit traceability. The product does <strong>not</strong> replicate or expose a general-purpose longitudinal patient record outside those execution structures. Epic remains the <strong>system of record</strong> for longitudinal care.</div>
 <div class="damaros-callout"><strong>Outbound posture (trust boundary):</strong> Artifacts intended to leave the hospital-approved execution environment are <strong>screening classifications</strong> (PASS / REVIEW / FAIL), <strong>criterion-level audit and evidence references</strong>, and operational telemetry. Not raw FHIR response bodies or opportunistic bulk clinical dumps for unrelated consumption.</div>
-<div class="damaros-callout"><strong>Submission-level positioning:</strong> Damaros runs <strong>protocol</strong> → <strong>population</strong> → <strong>screening</strong> → <strong>forms</strong> → <strong>Replay</strong> at population scale: site-approved FHIR access patterns, including Bulk FHIR where enabled, <strong>deterministically</strong> evaluate eligibility across patient <strong>populations</strong> (Epic cohorts). Access is read-only, tenant-isolated per deployment, and explicitly enabled by the site. <strong>Bulk FHIR is used in alignment with Epic's intended model for population-level evaluation</strong> (<strong>scheduled, bounded cohort refresh</strong>) <strong>rather than</strong> continuous or per-request transactional scraping. NDJSON may carry additional resource types per site configuration; the normalization layer maps only contract-defined elements into structured ingest. <strong>Non-mapped resources are not persisted in normalized storage and are not included in downstream evaluation outputs.</strong></div></section>
+<div class="damaros-callout"><strong>Submission-level positioning:</strong> Damaros runs <strong>protocol</strong> → <strong>population</strong> → <strong>screening</strong> → <strong>forms</strong> → <strong>replay</strong> at population scale: site-approved FHIR access patterns, including Bulk FHIR where enabled, <strong>deterministically</strong> evaluate eligibility across patient <strong>populations</strong> (Epic cohorts). Access is read-only, tenant-isolated per deployment, and explicitly enabled by the site. <strong>Bulk FHIR is used in alignment with Epic's intended model for population-level evaluation</strong> (<strong>scheduled, bounded cohort refresh</strong>) <strong>rather than</strong> continuous or per-request transactional scraping. NDJSON may carry additional resource types per site configuration; the normalization layer maps only contract-defined elements into structured ingest. <strong>Non-mapped resources are not persisted in normalized storage and are not included in downstream evaluation outputs.</strong></div></section>
 
 <section class="damaros-docs-section" id="docs-01"><div class="damaros-docs-section-label">01_PLATFORM_OVERVIEW</div><h2 class="damaros-docs-section-heading">Platform Overview</h2><div class="damaros-docs-body">
-<p>Operationally, the product implements the <strong>protocol</strong> → <strong>population</strong> → <strong>screening</strong> → <strong>forms</strong> → <strong>Replay</strong> chain: Protocol Brain through Trident compiles versioned trial logic; FHIR sync (REST bundle pulls and, when enabled, Bulk export) materializes <strong>population</strong>; <strong>screening</strong> records PASS, REVIEW, or FAIL at criterion granularity; <strong>forms</strong> produces governed coordinator artifacts; <strong>Replay</strong> preserves evidence and lineage for coordinators, QA, and audit.</p>
+<p>Operationally, the product implements the <strong>protocol</strong> → <strong>population</strong> → <strong>screening</strong> → <strong>forms</strong> → <strong>replay</strong> chain: versioned trial <strong>protocol</strong> compiles to rules; FHIR sync (REST bundle pulls and, when enabled, Bulk export) materializes <strong>population</strong>; <strong>screening</strong> records PASS, REVIEW, or FAIL at criterion granularity; <strong>forms</strong> assemble site outputs; <strong>replay</strong> preserves evidence and lineage for coordinators, QA, and audit.</p>
 <p>The <strong>production</strong> Epic connector is <strong>SMART on FHIR Backend Services</strong>: the API/worker exchanges a signed JWT for an access token (<code>client_credentials</code> + <code>private_key_jwt</code>, RFC 7523). Access is <strong>read-only</strong> for <strong>population</strong> and <strong>screening</strong> ingest. Epic tokens live server-side in process memory only, not in browsers or end-user SMART sessions for this path. End-user SMART on FHIR EHR launch is a separate integration pattern and is <strong>outside</strong> this Backend Services submission unless explicitly scoped elsewhere.</p>
 </div></section>
 
@@ -1902,7 +1885,7 @@ body.damaros-ignition-home-active.ig-init #damaros-panel-home.active .damaros-ig
 <tr><td>PRIMARY_OAUTH_MODEL</td><td><code>client_credentials</code> + JWT client assertion to Epic token URL; PKCE does not apply</td></tr>
 <tr><td>USER_SMART_LAUNCH</td><td>Not used for population sync (FHIR cohort ingest) or screening ingest; out of scope for the Backend Services submission described here (repository contains a non-production reference stub only)</td></tr>
 <tr><td>FHIR_VERSION</td><td>R4</td></tr>
-<tr><td>USE_CASE</td><td>protocol → population → screening → forms → Replay at population scale; deterministic eligibility on FHIR-native cohorts; Replay and audit lineage; aligns with registry, cohort, and research execution patterns</td></tr>
+<tr><td>USE_CASE</td><td>protocol → population → screening → forms → replay at population scale; deterministic eligibility on FHIR-native cohorts; replay and audit lineage; aligns with registry, cohort, and research execution patterns</td></tr>
 <tr><td>AUTH_STANDARD</td><td>SMART on FHIR Backend Services (RFC 7523)</td></tr>
 <tr><td>AUTH_METHOD</td><td>JWT client assertion (<code>urn:ietf:params:oauth:client-assertion-type:jwt-bearer</code>)</td></tr>
 <tr><td>JWT_ALGORITHM</td><td>RS384 (override via <code>DAMAROS_EPIC_JWT_ALGORITHM</code> if Epic requires)</td></tr>
@@ -2002,7 +1985,7 @@ body.damaros-ignition-home-active.ig-init #damaros-panel-home.active .damaros-ig
 </ul></div>
 </div></section>
 
-<section class="damaros-docs-section" id="docs-03c"><div class="damaros-docs-section-label">03C_WRITE_PATHS_NOT_IN_INITIAL_SUBMISSION</div><h2 class="damaros-docs-section-heading">Epic write scopes, not requested at initial deployment</h2><div class="damaros-docs-body"><p><strong>Initial Epic registration and production go-live do not request FHIR write scopes.</strong> <strong>screening</strong>, evidence display, and <strong>Replay</strong> operate entirely on reads plus application database state (audit trails remain for regulatory review). The product codebase retains optional POST helpers (e.g. Observation create, Subscription create) for rare site-specific workflows; those paths are hard-disabled unless multiple environment attestations are set, and are <strong>out of scope</strong> for the first hospital deployment package.</p></div><ul class="damaros-api-list">
+<section class="damaros-docs-section" id="docs-03c"><div class="damaros-docs-section-label">03C_WRITE_PATHS_NOT_IN_INITIAL_SUBMISSION</div><h2 class="damaros-docs-section-heading">Epic write scopes, not requested at initial deployment</h2><div class="damaros-docs-body"><p><strong>Initial Epic registration and production go-live do not request FHIR write scopes.</strong> <strong>screening</strong>, evidence display, and <strong>replay</strong> operate entirely on reads plus application database state (audit trails remain for regulatory review). The product codebase retains optional POST helpers (e.g. Observation create, Subscription create) for rare site-specific workflows; those paths are hard-disabled unless multiple environment attestations are set, and are <strong>out of scope</strong> for the first hospital deployment package.</p></div><ul class="damaros-api-list">
 <li class="damaros-api-item"><span class="damaros-api-name">Observation.Create (code only)</span><span class="damaros-api-note">Would require write scopes plus <code>DAMAROS_FHIR_WRITE_ENABLED</code> plus production attestation; not activated in initial submission</span></li>
 <li class="damaros-api-item"><span class="damaros-api-name">Subscription.Create (code only)</span><span class="damaros-api-note">Same write gates; not part of initial connector</span></li>
 </ul><div class="damaros-callout">A write without gates fails fast with a configuration error, never a silent no-op, so misconfiguration cannot accidentally mutate the EHR during review or pilot.</div></section>
@@ -2027,21 +2010,21 @@ body.damaros-ignition-home-active.ig-init #damaros-panel-home.active .damaros-ig
 <li><strong>populations</strong> (Epic cohorts) are defined by approved <strong>protocol</strong> logic or institutional configuration.</li>
 <li>Patient data is retrieved through FHIR read APIs or, only when explicitly enabled, Bulk FHIR export for <strong>scheduled, bounded cohort refresh</strong>, per site policy and §03B. Bulk is <strong>read-only</strong>, <strong>site-controlled</strong>, in line with Epic's population access model (§00 / §02D), not continuous extraction.</li>
 <li>PHI is processed inside the institution-approved deployment boundary (VPC / tenant isolation per deploy contract).</li>
-<li><strong>protocol assistance (outside the screening execution path):</strong> Criterion PASS / REVIEW / FAIL comes only from the deterministic engine on ingested FHIR. Optional AI assistance is limited to non-patient protocol and Forms source material and is kept outside patient-data screening execution.</li>
+<li><strong>protocol assistance (outside the screening execution path):</strong> Criterion PASS / REVIEW / FAIL comes only from the deterministic engine on ingested FHIR. protocol assistance is <strong>not</strong> on that hot path. Where enabled at all, it is optional, uses <strong>non-patient</strong> protocol or synopsis text only, and sits behind deployment flags and pattern guards. Patient-facing narrative assistance stays off by default.</li>
 <li><strong>Technical controls (code-aligned):</strong> separation of <strong>protocol</strong>-facing modules from FHIR ingest paths; hard validation rejecting known PHI patterns in protocol-assistance payloads; structured audit signals on boundary violations.</li>
 <li><strong>Default egress posture for this Epic integration:</strong> <strong>no</strong> transmission of patient-identifiable data or cohort-row clinical payloads to third-party assistance endpoints for <strong>screening</strong>. The deterministic path never requires it. <strong>No patient identifiers and no cohort-linked fields</strong> are serialized into any optional external request path, even when protocol assistance is enabled. Only free-standing protocol or synopsis text passes those guards. Optional outbound use of that non-patient text exists only where deployment policy explicitly enables it and network paths allow it; default hospital deployments keep it off.</li>
 <li><strong>Network enforcement (deploy-time):</strong> Helm ships <strong>deny-by-default</strong> API egress <code>NetworkPolicy</code> with explicit CIDR allowlists for Epic FHIR, OIDC, in-cluster Postgres/Redis, and DNS (see §08 sample). Customer CNI must enforce; IT validates with pod-level denial checks per deployment runbook.</li>
 <li><strong>screening</strong> outputs are criterion-level PASS, REVIEW, or FAIL with evidence references where populated, never an ungrounded generative verdict.</li>
 <li>Audit artifacts preserve source FHIR references where available for reconstruction.</li>
-</ul><div class="damaros-docs-body"><p><strong>Implemented trust boundary:</strong> AI assists with non-patient protocol and Forms artifacts. Trident governs what protocol logic can move into execution. Screening remains deterministic on site evidence. Replay reconstructs source material, logic, review, corrections, validation, and audit history.</p></div></section>
+</ul></section>
 
 <div class="damaros-docs-divider"></div>
 
-<section class="damaros-docs-section" id="docs-05"><div class="damaros-docs-section-label">05_AUDIT_AND_REPLAY</div><h2 class="damaros-docs-section-heading">Audit, Determinism, and Replay</h2><ul class="damaros-bullet-list">
+<section class="damaros-docs-section" id="docs-05"><div class="damaros-docs-section-label">05_AUDIT_AND_REPLAY</div><h2 class="damaros-docs-section-heading">Audit, Determinism, and replay</h2><ul class="damaros-bullet-list">
 <li>Decisions are reproducible for fixed <strong>protocol</strong> version, <strong>population</strong> snapshot (cohort frame), evidence snapshot, and <code>evaluation_as_of</code>.</li>
 <li>Every patient outcome is recorded at criterion level with PASS, FAIL, or REVIEW and rationale.</li>
 <li><strong>protocol</strong> amendments link to versioned protocol IDs and engine versions.</li>
-<li><strong>Replay</strong> classifies agreement or divergence; no opaque "model decided" eligibility.</li>
+<li><strong>replay</strong> classifies agreement or divergence; no opaque "model decided" eligibility.</li>
 </ul></section>
 
 <section class="damaros-docs-section" id="docs-05a"><div class="damaros-docs-section-label">05A_ACCESS_CONTROL</div><h2 class="damaros-docs-section-heading">Identity, attribution, and access control</h2><ul class="damaros-bullet-list">
@@ -2222,24 +2205,11 @@ spec:
   <div class="damaros-docs-wrap" id="trust" style="scroll-margin-top:calc(var(--tab) + 12px)">
 
     <div class="damaros-docs-eyebrow">Trust</div>
-    <h1 class="damaros-docs-title">Trust, validation, and non-claims.</h1>
+    <h1 class="damaros-docs-title">Diligence posture and explicit non-claims.</h1>
     <p class="damaros-docs-subtitle">
-      Trust is published as artifacts: retrospective validation packages, synthetic execution proofs, no-LLM patient-path checks,
-      NIST CSF 2.0 and HIPAA SRA self-assessments, and Epic/FHIR integration boundaries. The public surface states what is proven, what is not claimed, and what remains covered-entity responsibility.
+      Trust is published as artifacts: retrospective validation first, synthetic substrate proofs, NIST CSF 2.0 and HIPAA SRA self-assessments,
+      and Epic/FHIR integration boundaries. The public surface states what is proven, what is not claimed, and what remains covered-entity responsibility.
     </p>
-
-    <section class="damaros-docs-section" id="trust-substrate">
-      <div class="damaros-docs-section-label">EXECUTION_BOUNDARY</div>
-      <h2 class="damaros-docs-section-heading">Implemented execution boundary.</h2>
-      <div class="damaros-docs-body">
-        <p>
-          Damaros separates document intelligence from patient execution. Protocol and Forms assistance operate on declared non-patient source material. Trident governs whether protocol interpretations can become executable logic. Screening operates deterministically against site evidence. Replay reconstructs source material, logic, review, corrections, validation, and audit history.
-        </p>
-      </div>
-      <div class="damaros-callout">
-        Detailed engineering receipts are available in the Trust Packet.
-      </div>
-    </section>
 
     <section class="damaros-docs-section" id="trust-00">
       <div class="damaros-docs-section-label">00_RETROSPECTIVE_VALIDATION_PATHWAY</div>
@@ -2250,9 +2220,6 @@ spec:
           and supplies a governed extract through a de-identified, limited-dataset, site-hosted, or hybrid pathway. Damaros returns patient × criterion outputs,
           agreement analysis, REVIEW drivers, evidence lineage, and Replay artifacts. Damaros is ready for retrospective validation against closed oncology protocols
           and is not represented as clinically validated or production-deployed in those packets.
-        </p>
-        <p>
-          <strong>Protocol Brain through Trident:</strong> protocol requirements become reviewable criterion logic. Trident maps that logic to evidence requirements and determines what can be compiled, what needs review, and what cannot be used.
         </p>
       </div>
       <table class="damaros-kv-table">
@@ -2277,23 +2244,16 @@ spec:
       </div>
     </section>
 
-    <section class="damaros-docs-section" id="trust-corrections">
-      <div class="damaros-docs-section-label">CORRECTION_MEMORY</div>
-      <h2 class="damaros-docs-section-heading">Correction memory compounds execution.</h2>
-      <div class="damaros-docs-body">
-        <p>
-          Damaros captures coordinator review as structured correction history. Protocol and document corrections can improve future review workflows. Patient-linked corrections remain audit-only and are not used as model prompts or training signals.
-        </p>
-      </div>
-    </section>
-
     <section class="damaros-docs-section" id="trust-02">
       <div class="damaros-docs-section-label">02_CLAIM_BOUNDARY</div>
-      <h2 class="damaros-docs-section-heading">Synthetic validation proves execution-path behavior, not clinical agreement.</h2>
+      <h2 class="damaros-docs-section-heading">Synthetic validation proves substrate behavior, not clinical agreement.</h2>
       <div class="damaros-docs-body">
         <p>
-          The synthetic package tests deterministic execution, lineage, artifact completeness, Replay, and no-LLM patient-path controls before real patient data is used. It is engineering validation, not clinical validation. It does not claim clinical accuracy,
-          sponsor endorsement, FDA validation, or production EHR readiness. Full matrix details remain available in the Trust Packet.
+          The full-matrix package exercises Damaros before real patient data enters the system. It is designed to demonstrate deterministic execution, lineage,
+          artifact completeness, replay, and no-LLM patient-path controls. It exercises 100 synthetic patients, six NCT-anchored protocol locks, nine modalities,
+          54 Postgres screening runs, 5,400 deterministic evaluation slots, artifact hashes, equivalence proofs, replay artifacts, bundle signatures,
+          and no-LLM patient-data boundaries. It does not claim clinical accuracy or agreement with a coordinator gold standard. It does not prove clinical accuracy,
+          sponsor endorsement, FDA validation, or production EHR readiness. That boundary is enterprise seriousness; that is the purpose of the retrospective validation pathway.
         </p>
       </div>
     </section>
@@ -2302,8 +2262,7 @@ spec:
       <div class="damaros-docs-section-label">03_CURRENT_DILIGENCE_ARTIFACTS</div>
       <h2 class="damaros-docs-section-heading">Current diligence artifacts.</h2>
       <table class="damaros-kv-table">
-        <tr><td>SYNTHETIC_VALIDATION</td><td>Engineering validation of the protocol-to-decision path; not clinical validation.</td></tr>
-        <tr><td>ENGINEERING_RECEIPTS</td><td>Technical diligence receipts (test runs, migration state, trust-boundary checks, and deployment health) are available in the NDA Trust Packet.</td></tr>
+        <tr><td>SYNTHETIC_VALIDATION</td><td>Engineering validation of the protocol-to-decision substrate; not clinical validation.</td></tr>
         <tr><td>RETROSPECTIVE_VALIDATION</td><td>Site-facing package for closed oncology protocols, adjudication comparator, agreement metrics, evidence lineage, and Replay.</td></tr>
         <tr><td>NIST_CSF_2_0</td><td>Codebase-grounded self-assessment; framework, not certification.</td></tr>
         <tr><td>HIPAA_SRA</td><td>Business-associate-scope assessment with delegated covered-entity controls explicitly separated.</td></tr>
@@ -2361,7 +2320,7 @@ spec:
         </p>
       </div>
       <table class="damaros-kv-table">
-        <tr><td>VALIDATION</td><td>Full-matrix synthetic validation package; retrospective validation package; validation plan template; technical diligence receipt appendix; sample Replay packet when generated for a scoped run.</td></tr>
+        <tr><td>VALIDATION</td><td>Full-matrix synthetic validation package; retrospective validation package; validation plan template; sample replay packet when generated for a scoped run.</td></tr>
         <tr><td>SECURITY</td><td>NIST CSF 2.0 self-assessment; HIPAA Security Risk Assessment; security architecture brief; data flow diagram; network policy and egress allowlist template.</td></tr>
         <tr><td>EPIC_AND_DATA</td><td>Epic integration packet; FHIR scope worksheet; de-identified / limited-dataset extract spec; DUA / limited data set template.</td></tr>
         <tr><td>CONTRACTING</td><td>BAA template; pilot SOW template; subprocessor inventory with terms.</td></tr>
@@ -2404,23 +2363,19 @@ spec:
 
 <div id="damaros-panel-validation" class="damaros-panel">
   <div class="damaros-docs-wrap">
-    <div class="damaros-docs-eyebrow">Validation playbook</div>
+    <div class="damaros-docs-eyebrow">Phase 0 playbook</div>
     <h1 class="damaros-docs-title">Retrospective validation pathway.</h1>
     <p class="damaros-docs-subtitle">
       This page is the operational companion to the retrospective validation package: what the site supplies, what Damaros runs, what returns in the screening run and Replay packet,
-      and what remains explicitly out of scope until institutional agreements and production controls are in place. Epic/FHIR integration is documented under <a class="damaros-kv-link" href="#docs">Epic / FHIR</a>; it is not required for retrospective validation.
+      and what remains explicitly out of scope until institutional agreements and production controls are in place. Epic/FHIR integration is documented under <a class="damaros-kv-link" href="#docs">Epic / FHIR</a>; it is not required for Phase 0.
     </p>
 
     <section class="damaros-docs-section" id="val-00">
       <div class="damaros-docs-section-label">00_RETROSPECTIVE_VALIDATION_PATHWAY</div>
       <h2 class="damaros-docs-section-heading">End-to-end motion.</h2>
       <div class="damaros-docs-body">
-        <p>Protocol source → deterministic criterion tree → site extract → controlled ontology normalization → deterministic screening → PASS / REVIEW / FAIL outputs → agreement report → Replay packet.</p>
-        <p>
-          The validation packet includes protocol identity, cohort manifest, deterministic screening outputs, historical adjudication comparison, criterion-level agreement, false PASS / false FAIL analysis, REVIEW drivers, evidence completeness, unresolved ambiguity, limitations, and a Replay packet.
-        </p>
+        <p>Protocol source → deterministic criterion tree → site extract → controlled ontology normalization → deterministic screening → PASS / REVIEW / FAIL outputs → agreement report → replay packet.</p>
         <p>A cancer center can evaluate Damaros now, safely, against its own closed protocols and own adjudication records—without live Epic FHIR access, production EHR integration, real-time feeds, or identified data in most cases.</p>
-        <p><strong>Current limitation:</strong> retrospective validation is currently scoped to closed-protocol validation packets and does not represent production EHR deployment or live-trial operation.</p>
       </div>
     </section>
 
@@ -2475,7 +2430,7 @@ spec:
     <section class="damaros-docs-section" id="val-09">
       <div class="damaros-docs-section-label">09_WHAT_THIS_DOES_NOT_CLAIM</div>
       <h2 class="damaros-docs-section-heading">What this does not claim.</h2>
-      <div class="damaros-docs-body"><p>Not clinical validation as a regulated label; not FDA validation; not autonomous enrollment; not sponsor endorsement; not production EHR readiness from the retrospective package alone. Retrospective validation in this package remains scoped to closed-protocol validation packets and does not represent production EHR deployment or live-trial operation.</p></div>
+      <div class="damaros-docs-body"><p>Not clinical validation as a regulated label; not FDA validation; not autonomous enrollment; not sponsor endorsement; not production EHR readiness from the retrospective package alone.</p></div>
     </section>
 
     <section class="damaros-docs-section" id="val-10">
@@ -2504,9 +2459,9 @@ spec:
     const workflow = {
       thesis: {
         label: "00 / THESIS",
-        title: "From NCT ID to criterion-level Replay.",
+        title: "From NCT ID to criterion-level replay.",
         text:
-          "Damaros turns protocol requirements, site evidence, coordinator review, and audit reconstruction into one governed execution record. AI assists with non-patient documents. Trident governs protocol logic. Screening remains deterministic. Replay reconstructs the chain.",
+          "Damaros is the hospital-side execution substrate for oncology trials—Protocol, Population, Screening, Forms, and Replay compiled into criteria, a governed evidence plane, coordinator lineage, and audit-grade reconstruction, not a parallel analytics narrative. Critically, the first institutional question is not whether the interface persuades; it is whether Damaros validates against the institution's protocols, data, and adjudication standard.",
         badges: [],
         ctas: [
           { href: "mailto:anirudh@damaros.ai?subject=Damaros%20Validation%20Brief", label: "Request Validation Brief", secondary: false },
@@ -2516,16 +2471,16 @@ spec:
 
       protocol: {
         label: "01 / PROTOCOL",
-        title: "Protocol Brain through Trident.",
-        text: "Protocol requirements become reviewable criterion logic. Trident maps that logic to evidence requirements and determines what can be compiled, what needs review, and what cannot be used.",
+        title: "Protocol becomes executable.",
+        text: "Damaros fetches and locks NCT protocol records, structures inclusion and exclusion logic into a versioned Criterion Tree, and produces an Evidence Requirements Map before patient-level data is requested.",
         highlights: [
-          "Source-anchored protocol interpretation with explicit review checkpoints.",
-          "Evidence requirements map directly to executable criterion logic.",
-          "Only Trident-approved logic enters deterministic screening.",
+          "NCT ID ingestion; inclusion/exclusion structuring; amendment-aware versioning.",
+          "Protocol ingestion is fast; review concentrates where review belongs.",
+          "Criterion Tree and Evidence Map bound downstream Population, Screening, and Replay.",
         ],
         outcomes: [
-          "Executable screening logic is Trident-gated, not merely version-stamped prose.",
-          "Evidence Requirements Map still bounds Population, Screening, and Replay.",
+          "Reviewable protocol objects and a site extract field ask.",
+          "Locked protocol basis for Screening and Replay.",
           "Manual-mapping concern addressed without overclaiming zero human review.",
         ],
         badges: [
@@ -2563,7 +2518,7 @@ spec:
         title: "Screening remains deterministic.",
         text: "Each patient × criterion pair resolves to PASS, REVIEW, FAIL, or a structural auxiliary state. Missing, stale, conflicting, ambiguous, or investigator-dependent evidence routes to REVIEW rather than being coerced into a false answer.",
         highlights: [
-          "Deterministic rule execution; patient × criterion outputs; REVIEW driver taxonomy; Trident-approved compiled criteria path.",
+          "Deterministic rule execution; patient × criterion outputs; REVIEW driver taxonomy.",
           "No LLM on patient-data paths in the screening execution layer.",
           "Structural auxiliary states remain explicit instead of silent coercion.",
         ],
@@ -2582,17 +2537,17 @@ spec:
 
       forms: {
         label: "04 / FORMS",
-        title: "Governed Forms artifacts.",
-        text: "Forms turns sponsor documents into governed coordinator artifacts: schedule-of-activities extraction, source-document checklists, and eligibility worksheet drafts with source-linked review history.",
+        title: "Operational packets inherit the protocol substrate.",
+        text: "Forms assembles coordinator-facing artifacts from the same Protocol, Population, and Screening objects, preserving source links instead of creating a separate document-generation track.",
         highlights: [
-          "Coordinator-ready forms artifacts linked to protocol context.",
-          "Review states remain explicit and auditable.",
-          "Source-linked outputs feed validation and Replay.",
+          "Eligibility documentation; evidence requirements; operational packet assembly.",
+          "Coordinator-facing outputs trace to protocol state, not a detached template engine.",
+          "Optional protocol assistance stays outside the PHI screening execution path where enabled.",
         ],
         outcomes: [
-          "Coordinator summaries and checklists stay governed and traceable.",
-          "Artifacts support startup and screening operations without replacing clinical judgment.",
-          "Same trust posture as Screening: deterministic patient path remains unchanged.",
+          "Coordinator summaries; startup support; protocol-linked artifacts.",
+          "Traceability without claiming autonomous document completion.",
+          "Same substrate as Screening and Replay: no parallel ghost narrative layer.",
         ],
         badges: [
           ["SOURCE-LINKED", "blue"],
@@ -2614,7 +2569,7 @@ spec:
         outcomes: [
           "Audit-grade reconstruction; discrepancy review; institutional memory.",
           "Divergence attributable to named inputs, not regenerated prose.",
-          "Replay closes the loop on the execution-record narrative.",
+          "Replay closes the loop on the execution substrate narrative.",
         ],
         badges: [
           ["RUN MANIFEST", "blue"],
@@ -2637,7 +2592,7 @@ spec:
     return mqPointerCoarse.matches ? "tap anywhere to initialize" : "click anywhere to initialize";
   }
 
-  const TAGLINE_WORDS = ["trident-governed", "replayable", "governed", "source-linked", "deterministic", "defensible"];
+  const TAGLINE_WORDS = ["simplified", "operationalized", "governed", "source-linked", "replayable", "defensible"];
   let taglineRotatorTimer = null;
   let taglineWordIndex = 0;
   let taglineDisplayLen = 0;
