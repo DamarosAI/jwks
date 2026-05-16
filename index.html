@@ -932,7 +932,7 @@ body.damaros-ignition-home-active.ig-workspace #damaros-panel-home.active .damar
   background: rgba(123, 150, 178, 0.06);
 }
 #damaros-panel-home.active .damaros-ignition .workspace {
-  width: min(1180px, calc(100vw - 2rem));
+  width: min(1280px, calc(100vw - 2rem));
   min-height: min(560px, calc(100svh - var(--tab) - 4.2rem));
   opacity: 0;
   transform: translateY(28px) scale(0.985);
@@ -1026,10 +1026,10 @@ body.damaros-ignition-home-active.ig-return #damaros-panel-home.active .damaros-
 }
 #damaros-panel-home.active .damaros-ignition .cockpit {
   display: grid;
-  grid-template-columns: minmax(270px, 0.5fr) minmax(0, 1fr);
-  gap: 0.85rem;
+  grid-template-columns: minmax(300px, 0.55fr) minmax(0, 1fr);
+  gap: 1rem;
   height: auto;
-  min-height: min(460px, calc(100svh - var(--tab) - 9.2rem));
+  min-height: min(560px, calc(100svh - var(--tab) - 8.8rem));
   align-items: stretch;
 }
 #damaros-panel-home.active .damaros-ignition .workflow-map {
@@ -1042,7 +1042,7 @@ body.damaros-ignition-home-active.ig-return #damaros-panel-home.active .damaros-
   align-self: stretch;
   padding: 0.55rem;
   display: grid;
-  grid-template-rows: repeat(6, minmax(3.05rem, 1fr));
+  grid-template-rows: repeat(6, minmax(3.8rem, 1fr));
   gap: 0.42rem;
   align-content: stretch;
   box-sizing: border-box;
@@ -1055,7 +1055,7 @@ body.damaros-ignition-home-active.ig-return #damaros-panel-home.active .damaros-
   border: 1px solid rgba(123, 150, 178, 0.13);
   background: rgba(5, 8, 12, 0.72);
   color: var(--tp);
-  padding: 0.52rem 0.82rem;
+  padding: 0.64rem 0.86rem;
   cursor: pointer;
   position: relative;
   overflow: hidden;
@@ -1109,7 +1109,7 @@ body.damaros-ignition-home-active.ig-return #damaros-panel-home.active .damaros-
 }
 #damaros-panel-home.active .damaros-ignition .detail-top {
   padding: 1.05rem 1.1rem 1.15rem;
-  min-height: 248px;
+  min-height: 300px;
 }
 #damaros-panel-home.active .damaros-ignition .detail-top::after,
 #damaros-panel-home.active .damaros-ignition .step::after,
@@ -1248,24 +1248,24 @@ body.damaros-ignition-home-active.ig-return #damaros-panel-home.active .damaros-
 }
 @media (min-width: 921px) {
   #damaros-panel-home.active .damaros-ignition .cockpit {
-    min-height: 470px;
-    max-height: 470px;
+    min-height: 560px;
+    max-height: 560px;
   }
   #damaros-panel-home.active .damaros-ignition .workflow-map,
   #damaros-panel-home.active .damaros-ignition .detail-panel {
-    height: 470px;
-    min-height: 470px;
-    max-height: 470px;
+    height: 560px;
+    min-height: 560px;
+    max-height: 560px;
     align-self: stretch;
   }
   #damaros-panel-home.active .damaros-ignition .detail-panel {
-    grid-template-rows: 248px minmax(0, 1fr);
+    grid-template-rows: 300px minmax(0, 1fr);
     overflow: hidden;
   }
   #damaros-panel-home.active .damaros-ignition .detail-top {
-    height: 248px;
-    min-height: 248px;
-    max-height: 248px;
+    height: 300px;
+    min-height: 300px;
+    max-height: 300px;
   }
 }
 #damaros-panel-home.active .damaros-ignition .metric {
@@ -1742,13 +1742,13 @@ body.damaros-ignition-home-active.ig-init #damaros-panel-home.active .damaros-ig
     font-size: clamp(1.65rem, 3vw, 2.45rem);
   }
   #damaros-panel-home.active .damaros-ignition .cockpit {
-    min-height: min(430px, calc(100svh - var(--tab) - 8.6rem));
+    min-height: min(500px, calc(100svh - var(--tab) - 8rem));
     height: auto;
   }
   #damaros-panel-home.active .damaros-ignition .workflow-map {
     gap: 0.28rem;
     padding: 0.4rem;
-    grid-template-rows: repeat(6, minmax(2.65rem, 1fr));
+    grid-template-rows: repeat(6, minmax(3rem, 1fr));
   }
   #damaros-panel-home.active .damaros-ignition .step {
     padding: 0.34rem 0.5rem;
@@ -1758,7 +1758,7 @@ body.damaros-ignition-home-active.ig-init #damaros-panel-home.active .damaros-ig
   }
   #damaros-panel-home.active .damaros-ignition .detail-top {
     padding: 0.85rem 0.9rem;
-    min-height: 214px;
+    min-height: 268px;
   }
   #damaros-panel-home.active .damaros-ignition h1 {
     font-size: clamp(1.22rem, 2.2vw, 1.9rem);
