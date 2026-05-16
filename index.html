@@ -958,7 +958,7 @@ body.damaros-ignition-home-active.ig-return #damaros-panel-home.active .damaros-
 }
 #damaros-panel-home.active .damaros-ignition .workspace-head {
   text-align: left;
-  padding: 0.02rem 0 0.58rem;
+  padding: 0.02rem 0 0.5rem;
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -1026,10 +1026,10 @@ body.damaros-ignition-home-active.ig-return #damaros-panel-home.active .damaros-
 }
 #damaros-panel-home.active .damaros-ignition .cockpit {
   display: grid;
-  grid-template-columns: minmax(300px, 0.55fr) minmax(0, 1fr);
-  gap: 1rem;
+  grid-template-columns: minmax(276px, 0.48fr) minmax(0, 1fr);
+  gap: 0.9rem;
   height: auto;
-  min-height: min(620px, calc(100svh - var(--tab) - 8.2rem));
+  min-height: min(590px, calc(100svh - var(--tab) - 8.35rem));
   align-items: stretch;
 }
 #damaros-panel-home.active .damaros-ignition .workflow-map {
@@ -1108,8 +1108,8 @@ body.damaros-ignition-home-active.ig-return #damaros-panel-home.active .damaros-
   box-shadow: 0 0 40px rgba(123, 150, 178, 0.025), inset 0 0 0 1px rgba(255, 255, 255, 0.012);
 }
 #damaros-panel-home.active .damaros-ignition .detail-top {
-  padding: 1.05rem 1.1rem 1.15rem;
-  min-height: 350px;
+  padding: 0.92rem 1rem 0.98rem;
+  min-height: 300px;
 }
 #damaros-panel-home.active .damaros-ignition .detail-top::after,
 #damaros-panel-home.active .damaros-ignition .step::after,
@@ -1247,28 +1247,34 @@ body.damaros-ignition-home-active.ig-return #damaros-panel-home.active .damaros-
   gap: 0.92rem;
 }
 @media (min-width: 921px) {
+  #damaros-panel-home.active .damaros-ignition .workspace-head {
+    padding-left: clamp(0.34rem, 0.9vw, 0.72rem);
+  }
   #damaros-panel-home.active .damaros-ignition .workflow-map {
-    margin-left: clamp(0.3rem, 0.85vw, 0.7rem);
+    margin-left: clamp(0.34rem, 0.9vw, 0.72rem);
   }
   #damaros-panel-home.active .damaros-ignition .cockpit {
-    min-height: 620px;
-    max-height: 620px;
+    min-height: 590px;
+    max-height: 590px;
   }
-  #damaros-panel-home.active .damaros-ignition .workflow-map,
-  #damaros-panel-home.active .damaros-ignition .detail-panel {
-    height: 620px;
-    min-height: 620px;
-    max-height: 620px;
+  #damaros-panel-home.active .damaros-ignition .workflow-map {
+    height: 590px;
+    min-height: 590px;
+    max-height: 590px;
     align-self: stretch;
   }
   #damaros-panel-home.active .damaros-ignition .detail-panel {
-    grid-template-rows: 350px minmax(0, 1fr);
+    height: 560px;
+    min-height: 560px;
+    max-height: 560px;
+    align-self: start;
+    grid-template-rows: 300px minmax(0, 1fr);
     overflow: hidden;
   }
   #damaros-panel-home.active .damaros-ignition .detail-top {
-    height: 350px;
-    min-height: 350px;
-    max-height: 350px;
+    height: 300px;
+    min-height: 300px;
+    max-height: 300px;
   }
 }
 #damaros-panel-home.active .damaros-ignition .metric {
@@ -1745,7 +1751,7 @@ body.damaros-ignition-home-active.ig-init #damaros-panel-home.active .damaros-ig
     font-size: clamp(1.65rem, 3vw, 2.45rem);
   }
   #damaros-panel-home.active .damaros-ignition .cockpit {
-    min-height: min(560px, calc(100svh - var(--tab) - 7.5rem));
+    min-height: min(530px, calc(100svh - var(--tab) - 7.5rem));
     height: auto;
   }
   #damaros-panel-home.active .damaros-ignition .workflow-map {
@@ -1761,7 +1767,7 @@ body.damaros-ignition-home-active.ig-init #damaros-panel-home.active .damaros-ig
   }
   #damaros-panel-home.active .damaros-ignition .detail-top {
     padding: 0.85rem 0.9rem;
-    min-height: 310px;
+    min-height: 268px;
   }
   #damaros-panel-home.active .damaros-ignition h1 {
     font-size: clamp(1.22rem, 2.2vw, 1.9rem);
