@@ -663,15 +663,19 @@ body.is-cockpit .ig-cockpit{opacity:1;pointer-events:auto}
 .ig-info-card .ig-card-mech strong{color:var(--blue2);font-weight:600;font-family:var(--fm);letter-spacing:.12em;text-transform:uppercase;font-size:.56rem;display:block;margin-bottom:.18rem}
 
 /* Info card positions: fan out at edges of cockpit-inner (1480px max), canvas (1140px) centered. ~170px shoulders each side. */
-/* Cards 1,2 anchored to far-left edge of cockpit-inner; 4,5 to far-right; 3 (Screening) centered below. */
-.ig-info-card[data-stage="protocol"]   {top:0;       left:0;  --ig-card-origin:100% 100%}
-.ig-info-card[data-stage="population"] {top:40%;     left:0;  --ig-card-origin:100% 50%}
+/* Cards 1,2 anchored to far-left of cockpit-inner; 4,5 to far-right; 3 (Screening) centered below.
+   Protocol + Replay sit BELOW the header row so they never cover the wordmark or the tagline.
+   Population + Forms shift down to keep visual balance. */
+.ig-info-card[data-stage="protocol"]   {top:2.8rem;  left:0;  --ig-card-origin:100% 100%}
+.ig-info-card[data-stage="population"] {top:48%;     left:0;  --ig-card-origin:100% 50%}
 .ig-info-card[data-stage="screening"]  {bottom:-12px;left:50%;margin-left:clamp(-200px,-13vw,-180px);--ig-card-origin:50% 0%}
-.ig-info-card[data-stage="forms"]      {top:40%;     right:0; --ig-card-origin:0% 50%}
-.ig-info-card[data-stage="replay"]     {top:0;       right:0; --ig-card-origin:0% 100%}
+.ig-info-card[data-stage="forms"]      {top:48%;     right:0; --ig-card-origin:0% 50%}
+.ig-info-card[data-stage="replay"]     {top:2.8rem;  right:0; --ig-card-origin:0% 100%}
 
 /* Down arrow: pulsing chevron, click scrolls to stakeholders */
 .ig-cock-hint{text-align:center;margin:.85rem 0 0;font-family:var(--fm);font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:var(--td);opacity:.58;transition:opacity .3s ease}
+.ig-cock-hint::before{content:'Hover over any symbol to learn more'}
+@media(hover:none){.ig-cock-hint::before{content:'Tap any symbol to learn more'}}
 .ig-cockpit.ig-has-active .ig-cock-hint{opacity:0}
 .ig-down-arrow{display:block;margin:.6rem auto 0;background:transparent;border:none;color:var(--blue2);cursor:pointer;padding:.4rem .7rem;line-height:0;opacity:.7;transition:opacity .25s,color .25s}
 .ig-down-arrow:hover{opacity:1;color:#fff}
@@ -712,8 +716,8 @@ body.is-cockpit .ig-bottom-bar{opacity:1;pointer-events:auto}
 
 /* Responsive */
 @media(max-width:1480px){
-  .ig-info-card[data-stage="protocol"],.ig-info-card[data-stage="forms"]{top:0}
-  .ig-info-card[data-stage="population"],.ig-info-card[data-stage="replay"]{top:38%}
+  .ig-info-card[data-stage="protocol"],.ig-info-card[data-stage="replay"]{top:2.8rem}
+  .ig-info-card[data-stage="population"],.ig-info-card[data-stage="forms"]{top:46%}
 }
 @media(max-width:1080px){
   /* On smaller desktop / tablet, cards stack below the canvas (one visible at a time) */
@@ -743,7 +747,7 @@ body.is-cockpit .ig-bottom-bar{opacity:1;pointer-events:auto}
   .ig-info-card .ig-card-body{font-size:.85rem!important;line-height:1.55!important}
   .ig-info-card .ig-card-mech{font-size:.78rem!important;line-height:1.5!important}
   .ig-down-arrow svg{width:20px;height:20px}
-  .ig-cock-hint{font-size:.5rem!important;margin-top:.65rem!important}
+  .ig-cock-hint{font-size:.5rem!important;margin-top:.65rem!important;letter-spacing:.18em!important}
   .ig-manifesto{padding:clamp(2.2rem,6vh,3.4rem) 1rem!important}
   .ig-manifesto p{font-size:1.18rem!important;line-height:1.38!important}
   .ig-manifesto p+p{font-size:.96rem!important}
@@ -1088,7 +1092,7 @@ body.is-cockpit .ig-bottom-bar{opacity:1;pointer-events:auto}
       <div class="ig-card-mech"><strong>Mechanism</strong>Same engine across synthetic, retrospective, and production. Signed Replay Bundle ships as a KMS-signed cryptographic manifest.</div>
     </div>
 
-    <p class="ig-cock-hint" id="igCockHint" aria-hidden="false">Tap any symbol to learn more</p>
+    <p class="ig-cock-hint" id="igCockHint" aria-hidden="false"></p>
     <button type="button" class="ig-down-arrow" id="igDownArrow" aria-label="Scroll to overview">
       <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <path d="M4 7 L10 13 L16 7" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
