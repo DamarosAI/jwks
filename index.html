@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Damaros™</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap">
 <link rel="icon" href="/assets/damaros-favicon.png" type="image/png" sizes="32x32">
 <link rel="shortcut icon" href="/assets/damaros-favicon.png" type="image/png">
 <link rel="apple-touch-icon" href="/assets/damaros-favicon.png">
@@ -20,7 +23,6 @@
 <meta name="twitter:description" content="Damaros™">
 <meta name="twitter:image" content="https://www.damaros.ai/assets/damaros-white-on-black.png">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
   :root{--fh:'Chakra Petch',sans-serif;--fb:'Space Grotesk',sans-serif;--fm:'Space Grotesk',sans-serif;--blue:#7B96B2;--blue2:#A9C0D6;--bd:rgba(123,150,178,.25);--bg:#000;--panel:#07090b;--panel2:#0b1016;--tp:#E8E8E8;--ts:rgba(232,232,232,.72);--td:rgba(232,232,232,.38);--muted:rgba(232,232,232,.52);--tab:56px;--green:#4ADE80;--amber:#FACC15;--red:#FB7185}
   *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#000!important;color:var(--tp);font-family:var(--fb)}body.damaros-home-lock{overflow:hidden}body.damaros-docs-active{overflow-y:auto;overflow-x:hidden}.damaros-site{min-height:100vh;background:#000!important;color:var(--tp);position:relative;overflow:hidden}.damaros-site:before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(123,150,178,.007) 2px,rgba(123,150,178,.007) 4px),linear-gradient(90deg,rgba(123,150,178,.025),transparent 18%,transparent 82%,rgba(123,150,178,.025));pointer-events:none;z-index:100}.damaros-site:after{content:'';position:fixed;inset:-12%;background:radial-gradient(circle at 44% 36%,rgba(123,150,178,.13),transparent 25%),radial-gradient(circle at 85% 72%,rgba(123,150,178,.055),transparent 18%);pointer-events:none;z-index:0}
   .damaros-tab-bar{position:fixed;top:0;left:0;right:0;height:var(--tab);display:flex;align-items:center;justify-content:space-between!important;padding:0 1.15rem!important;z-index:200;background:rgba(0,0,0,.94)!important;border-bottom:1px solid rgba(123,150,178,.11);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}.damaros-tab-links{display:flex;align-items:center;margin:0!important;padding:0!important;gap:.05rem}.damaros-tab-btn{height:var(--tab);padding:0 1rem;border:0;background:transparent;color:rgba(232,232,232,.52);cursor:pointer;font-family:var(--fm);font-size:.68rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;position:relative}.damaros-tab-btn:after{content:'';position:absolute;left:1rem;right:1rem;bottom:0;height:1px;background:var(--blue);transform:scaleX(0);transform-origin:left;transition:transform .25s}.damaros-tab-btn.active,.damaros-tab-btn:hover{color:#f0f4f8}.damaros-tab-btn.active:after{transform:scaleX(1)}.damaros-top-status{display:flex;align-items:center;gap:.75rem;font-family:var(--fm);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--td)}.damaros-env{border:1px solid rgba(123,150,178,.28);border-radius:999px;padding:.32rem .65rem;color:var(--blue2);background:rgba(123,150,178,.08)}.damaros-health{display:inline-flex;align-items:center;gap:.35rem}.damaros-health:before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 12px rgba(74,222,128,.45)}
@@ -858,6 +860,83 @@ body.is-playing .ig-cockpit{transition:none!important;opacity:0!important;pointe
   .ig-outro .ig-stakeholders{flex:0 0 auto}
   .ig-outro .ig-stakeholders-cta{flex:0 0 auto}
   .ig-outro-up{flex:0 0 auto}
+}
+
+/* ================================================================
+   Global polish — smoothness, cohesion, GPU compositing
+   All rules here sit last in the cascade: same specificity wins.
+   ================================================================ */
+
+/* 1. Font rendering baseline — antialiased on all platforms */
+html{color-scheme:dark;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+
+/* 2. Section fade-ins: upgrade ease → expressive cubic-bezier + compositor hints.
+      cubic-bezier(.22,1,.36,1) = fast exit from zero, silky coast to 1. */
+.ig-stage           {transition:opacity .58s cubic-bezier(.22,1,.36,1);will-change:opacity}
+.ig-cockpit         {transition:opacity .58s cubic-bezier(.22,1,.36,1) .12s;will-change:opacity}
+.ig-manifesto       {transition:opacity .58s cubic-bezier(.22,1,.36,1) .32s;will-change:opacity}
+.ig-stakeholders    {transition:opacity .58s cubic-bezier(.22,1,.36,1) .42s;will-change:opacity}
+.ig-stakeholders-cta{transition:opacity .58s cubic-bezier(.22,1,.36,1) .52s;will-change:opacity}
+.ig-bottom-bar      {transition:opacity .52s cubic-bezier(.22,1,.36,1) .52s;will-change:opacity}
+
+/* 3. Info cards: anchor scale to the card's natural edge (each card sets --ig-card-origin)
+      so it pops in from the canvas side rather than from its own center. */
+.ig-info-card{
+  transform-origin:var(--ig-card-origin,50% 50%);
+  transform:scale(.88);
+  transition:opacity .28s cubic-bezier(.16,1,.3,1),transform .32s cubic-bezier(.16,1,.3,1);
+}
+.ig-info-card.visible{transform:scale(1)}
+
+/* 4. SVG layers: promote to compositor so opacity transitions don't re-paint */
+.viz-layer{will-change:opacity}
+
+/* 5. Interactive elements: unified cubic-bezier across every hover & focus */
+.ig-dot        {transition:transform .25s cubic-bezier(.16,1,.3,1),box-shadow .25s cubic-bezier(.16,1,.3,1)}
+.ig-skip       {transition:color .3s cubic-bezier(.16,1,.3,1),border-color .3s cubic-bezier(.16,1,.3,1),opacity .3s cubic-bezier(.16,1,.3,1)}
+.ig-cock-restart{transition:color .3s cubic-bezier(.16,1,.3,1),border-color .3s cubic-bezier(.16,1,.3,1),background .3s cubic-bezier(.16,1,.3,1)}
+.ig-cock-hint  {transition:opacity .35s cubic-bezier(.16,1,.3,1)}
+.ig-cock-wordmark{transition:color .3s cubic-bezier(.16,1,.3,1)}
+.ig-down-arrow,.ig-up-arrow{transition:opacity .3s cubic-bezier(.16,1,.3,1),color .3s cubic-bezier(.16,1,.3,1)}
+.ig-cta-btn    {transition:background .32s cubic-bezier(.16,1,.3,1),border-color .32s cubic-bezier(.16,1,.3,1),color .32s cubic-bezier(.16,1,.3,1)}
+.ig-cta-btn::after{transition:transform .28s cubic-bezier(.16,1,.3,1)}
+.ig-stake      {transition:border-color .42s cubic-bezier(.16,1,.3,1),box-shadow .42s cubic-bezier(.16,1,.3,1),transform .42s cubic-bezier(.16,1,.3,1)}
+.damaros-tab-btn{transition:color .3s cubic-bezier(.16,1,.3,1)}
+.damaros-tab-btn:after{transition:transform .28s cubic-bezier(.16,1,.3,1)}
+/* Timeline cursor: opacity easing upgraded to match */
+.tl-cursor       {transition:cx .75s cubic-bezier(.16,1,.3,1),opacity .32s cubic-bezier(.16,1,.3,1)}
+.viz-charged .tl-cursor{transition:cx 1.85s cubic-bezier(.65,0,.35,1),opacity .32s cubic-bezier(.16,1,.3,1)}
+
+/* 6. Cockpit canvas: subtle hover breathing so it feels alive */
+.ig-cock-canvas{transition:border-color .55s cubic-bezier(.16,1,.3,1),box-shadow .65s cubic-bezier(.16,1,.3,1)}
+.ig-cock-canvas:hover{border-color:rgba(123,150,178,.22);box-shadow:0 0 80px rgba(123,150,178,.07),inset 0 0 0 1px rgba(255,255,255,.018)}
+
+/* 7. Hero entrance: add a whisper of scale to the translateY for depth.
+      At 1% scale the change is sub-pixel at all text sizes — felt, not seen. */
+@keyframes igFadeUp{
+  from{opacity:0;transform:translateY(10px) scale(.99)}
+  to  {opacity:1;transform:translateY(0)    scale(1)}
+}
+
+/* 8. Arrow pulse: tighten travel distance, widen opacity range for crispness */
+@keyframes igArrowPulse  {0%,100%{transform:translateY(0);   opacity:.52}50%{transform:translateY(5px);  opacity:1}}
+@keyframes igArrowPulseUp{0%,100%{transform:translateY(0);   opacity:.52}50%{transform:translateY(-5px); opacity:1}}
+
+/* 9. Wordmark: geometric precision for clean strokes at display sizes */
+.ig-wordmark,.ig-cock-wordmark{text-rendering:geometricPrecision}
+
+/* 10. Caption: GPU-composited layer prevents subpixel jitter during opacity crossfade */
+.ig-caption{transform:translateZ(0)}
+
+/* 11. Manifesto & stake cards: micro-upgrade for reduced-motion fallback */
+@media(prefers-reduced-motion:reduce){
+  /* Entrance animations on hero text must also be disabled (they weren't listed before) */
+  .ig-wordmark,.ig-tagline,.ig-cue{animation:none!important;opacity:1!important;transform:none!important}
+  /* Upgraded transitions above must not fire */
+  .ig-stage,.ig-cockpit,.ig-manifesto,.ig-stakeholders,.ig-stakeholders-cta,.ig-bottom-bar{transition:none!important;will-change:auto}
+  .ig-info-card{transition:none!important}
+  .tl-cursor,.viz-charged .tl-cursor{transition:none!important}
 }
 
 </style>
@@ -1911,7 +1990,7 @@ spec:
     const t0 = performance.now();
     function tick(now) {
       const raw = Math.min(1, (now - t0) / duration);
-      const t = raw < .5 ? 2*raw*raw : -1+(4-2*raw)*raw; // easeInOut
+      const t = raw < .5 ? 4*raw*raw*raw : 1 - Math.pow(-2*raw + 2, 3) / 2; // cubic easeInOut — slower start/end, snappier peak
       const x = from.x + (to.x - from.x) * t;
       const y = from.y + (to.y - from.y) * t;
       const w = from.w + (to.w - from.w) * t;
