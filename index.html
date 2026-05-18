@@ -929,6 +929,30 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
 /* 10. Caption: GPU-composited layer prevents subpixel jitter during opacity crossfade */
 .ig-caption{transform:translateZ(0)}
 
+/* ── Screening symbol animations ── */
+/* Center root node: beacon pulse (scale + brightness) — more prominent than leaf nodes */
+.viz-screen-root{
+  animation:igScreenBeacon 3.8s ease-in-out infinite;
+  transform-box:fill-box;transform-origin:center;
+  will-change:opacity,transform;
+}
+@keyframes igScreenBeacon{
+  0%,100%{opacity:.72;transform:scale(1)}
+  50%    {opacity:1;  transform:scale(1.22)}
+}
+/* Leaf criterion dots: wider opacity swing so the pulsing reads clearly */
+@keyframes igCritPulse{0%,100%{opacity:.58}50%{opacity:1}}
+/* Connector lines: marching-ants flow from root outward */
+#vizScreening .viz-conn,#cvizScreening .viz-conn{
+  animation:igScreenConnFlow 2.4s linear infinite;
+}
+@keyframes igScreenConnFlow{from{stroke-dashoffset:7}to{stroke-dashoffset:0}}
+/* Suppress screening animations on reduced-motion */
+@media(prefers-reduced-motion:reduce){
+  .viz-screen-root{animation:none!important}
+  #vizScreening .viz-conn,#cvizScreening .viz-conn{animation:none!important}
+}
+
 /* 11. Manifesto & stake cards: micro-upgrade for reduced-motion fallback */
 @media(prefers-reduced-motion:reduce){
   /* Entrance animations on hero text must also be disabled (they weren't listed before) */
@@ -1033,7 +1057,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
         <line class="viz-conn" x1="395" y1="150" x2="395" y2="112"/>
         <line class="viz-conn" x1="420" y1="150" x2="410" y2="112"/>
         <line class="viz-conn" x1="420" y1="150" x2="435" y2="112"/>
-        <circle class="viz-criterion" cx="395" cy="200" r="10"/>
+        <circle class="viz-criterion viz-screen-root" cx="395" cy="200" r="10"/>
         <circle class="viz-criterion pass" cx="370" cy="150" r="8"/>
         <circle class="viz-criterion pass" cx="395" cy="150" r="8"/>
         <circle class="viz-criterion review" cx="420" cy="150" r="8"/>
@@ -1053,12 +1077,6 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
         <line class="viz-conn-solid" x1="447" y1="200" x2="478" y2="200"/>
       </g>
       <g class="viz-layer" id="vizForms" opacity="0">
-        <line class="viz-conn" x1="480" y1="190" x2="548" y2="158"/>
-        <line class="viz-conn" x1="480" y1="200" x2="548" y2="200"/>
-        <line class="viz-conn" x1="480" y1="210" x2="548" y2="242"/>
-        <line class="viz-conn" x1="568" y1="158" x2="620" y2="185"/>
-        <line class="viz-conn" x1="568" y1="200" x2="620" y2="200"/>
-        <line class="viz-conn" x1="568" y1="242" x2="620" y2="215"/>
         <g class="viz-form-doc" transform="translate(548 158) rotate(-7)">
           <rect x="-13" y="-14" width="26" height="32" rx="1.5" fill="rgba(123,150,178,.18)" stroke="rgba(169,192,214,.55)" stroke-width=".9"/>
           <line x1="-9" y1="-7" x2="9" y2="-7" stroke="rgba(169,192,214,.65)" stroke-width=".7"/>
@@ -1209,7 +1227,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
           <line class="viz-conn" x1="395" y1="150" x2="395" y2="112"/>
           <line class="viz-conn" x1="420" y1="150" x2="410" y2="112"/>
           <line class="viz-conn" x1="420" y1="150" x2="435" y2="112"/>
-          <circle class="viz-criterion" cx="395" cy="200" r="10"/>
+          <circle class="viz-criterion viz-screen-root" cx="395" cy="200" r="10"/>
           <circle class="viz-criterion pass" cx="370" cy="150" r="8"/>
           <circle class="viz-criterion pass" cx="395" cy="150" r="8"/>
           <circle class="viz-criterion review" cx="420" cy="150" r="8"/>
@@ -1229,12 +1247,6 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
           <line class="viz-conn-solid" x1="447" y1="200" x2="478" y2="200"/>
         </g>
         <g class="viz-layer" id="cvizForms" opacity="1">
-          <line class="viz-conn" x1="480" y1="190" x2="548" y2="158"/>
-          <line class="viz-conn" x1="480" y1="200" x2="548" y2="200"/>
-          <line class="viz-conn" x1="480" y1="210" x2="548" y2="242"/>
-          <line class="viz-conn" x1="568" y1="158" x2="620" y2="185"/>
-          <line class="viz-conn" x1="568" y1="200" x2="620" y2="200"/>
-          <line class="viz-conn" x1="568" y1="242" x2="620" y2="215"/>
           <g class="viz-form-doc" transform="translate(548 158) rotate(-7)">
             <rect x="-13" y="-14" width="26" height="32" rx="1.5" fill="rgba(123,150,178,.18)" stroke="rgba(169,192,214,.55)" stroke-width=".9"/>
             <line x1="-9" y1="-7" x2="9" y2="-7" stroke="rgba(169,192,214,.65)" stroke-width=".7"/>
