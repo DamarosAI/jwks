@@ -802,20 +802,20 @@ body.is-cockpit .ig-bottom-bar{opacity:1;pointer-events:auto}
 
 /* ── Desktop walkthrough: more horizontal space, caption pinned just above viz ── */
 @media(min-width:741px){
-  .ig-stage{justify-content:flex-start!important;padding:calc(var(--tab) + clamp(2rem,7svh,4.5rem)) clamp(.5rem,1.4vw,1.4rem) 1.4rem!important;gap:0!important}
-  .ig-viz-wrap{max-width:min(1340px,96vw)!important;flex:0 0 auto!important}
+  .ig-stage{justify-content:flex-start!important;padding:calc(var(--tab) + clamp(2rem,7svh,4.5rem)) clamp(.5rem,1.4vw,1.4rem) 1.4rem!important;gap:0!important;align-items:center!important}
+  .ig-viz-wrap{max-width:min(1340px,96vw)!important;flex:0 0 auto!important;margin:0 auto!important}
   .ig-viz{max-height:min(560px,64svh)!important;width:100%!important}
-  .ig-caption{font-size:clamp(.98rem,1.5vw,1.26rem)!important;margin:0 auto .6rem!important;max-width:760px!important}
+  .ig-caption{font-size:clamp(.98rem,1.5vw,1.26rem)!important;margin:0 auto .6rem!important;max-width:760px!important;min-height:1.6em!important}
   .ig-skip{margin-top:clamp(.8rem,2svh,1.4rem)!important}
 }
 
-/* ── Mobile walkthrough: caption right under viz, tight ── */
+/* ── Mobile walkthrough: viz on top, generous gaps to caption + skip below ── */
 @media(max-width:740px){
-  .ig-stage{justify-content:center!important;gap:0!important}
-  .ig-viz-wrap{order:-1;flex:0 0 auto!important}
-  .ig-caption{order:2;margin:.35rem auto 0!important;min-height:2em!important;font-size:.9rem!important;line-height:1.45!important;padding:0 .4rem!important}
-  .ig-skip{order:3;margin-top:.9rem!important}
-  .ig-viz{max-height:54svh!important}
+  .ig-stage{justify-content:center!important;gap:0!important;padding:calc(var(--tab) + 1rem) .8rem 1.5rem!important}
+  .ig-viz-wrap{order:-1;flex:0 0 auto!important;width:100%!important}
+  .ig-caption{order:2;margin:clamp(1.4rem,3.5svh,2.4rem) auto 0!important;min-height:3em!important;font-size:.94rem!important;line-height:1.5!important;padding:0 .6rem!important;max-width:90%!important}
+  .ig-skip{order:3;margin-top:clamp(1.2rem,2.8svh,1.8rem)!important}
+  .ig-viz{max-height:48svh!important}
 }
 
 /* ── Mobile cockpit dot: proportionally sized to wordmark ── */
@@ -875,7 +875,7 @@ body.is-cockpit .ig-bottom-bar{opacity:1;pointer-events:auto}
 <section class="ig-stage" id="igStage" aria-label="Damaros walkthrough" aria-hidden="true">
   <p class="ig-caption" id="igCaption" aria-live="polite" aria-atomic="true"></p>
   <div class="ig-viz-wrap">
-    <svg class="ig-viz" id="igViz" viewBox="0 0 768 450" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Provenance graph: Protocol, Population, Screening, Forms, Replay">
+    <svg class="ig-viz" id="igViz" viewBox="-11 0 768 450" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Provenance graph: Protocol, Population, Screening, Forms, Replay">
       <g class="viz-layer" id="vizProtocol" opacity="0">
         <!-- Top protocol (88, 132) -->
         <circle class="viz-origin-glow" cx="88" cy="132" r="30"/>
@@ -1047,7 +1047,7 @@ body.is-cockpit .ig-bottom-bar{opacity:1;pointer-events:auto}
           <path d="M5.5 4.6 L3 4.6 L3 7.1" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
         </svg>
       </button>
-      <svg class="ig-cockpit-viz" id="igCockpitViz" viewBox="0 0 768 450" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Provenance substrate">
+      <svg class="ig-cockpit-viz" id="igCockpitViz" viewBox="-11 0 768 450" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Provenance substrate">
         <g class="viz-layer" id="cvizProtocol" opacity="1">
           <!-- Top protocol (88, 132) -->
           <circle class="viz-origin-glow" cx="88" cy="132" r="30"/>
@@ -1857,17 +1857,18 @@ spec:
     { stageId: "_charge",    caption: "One system. Faster trials. Defensible answers.",               cursorX: 680, ms: 2540, charge: true }
   ];
 
-  // Mobile walkthrough: snap viewBox to a consistent 220x360 crop centered on each symbol.
-  // Crop includes the timeline label at y=416 so each stage's name is part of the
-  // visible animation area. No smooth tracking between beats — each symbol pops in.
-  // Charge beat smoothly zooms back to the full workflow before the load-up animation.
+  // Mobile walkthrough: snap viewBox to a consistent 220x360 crop CENTERED ON THE LABEL X
+  // for each stage. The timeline label at y=416 is included so each stage's name is part
+  // of the visible animation area. No smooth tracking between beats — each symbol pops in.
+  // Protocol's middle hex protrudes left of center (intentional offset, label stays centered).
+  // Charge beat smoothly zooms back to the centered full workflow before the load-up plays.
   const igMobileViewBoxes = {
-    protocol:   "-32 70 220 360",
+    protocol:   "-22 70 220 360",
     population: "135 70 220 360",
     screening:  "285 70 220 360",
     forms:      "438 70 220 360",
     replay:     "570 70 220 360",
-    full:       "0 0 768 450"
+    full:       "-11 0 768 450"
   };
 
   function _isMobileLayout() { return window.matchMedia("(max-width:740px)").matches; }
@@ -1897,7 +1898,7 @@ spec:
 
   function _resetVizViewBox() {
     if (_vbAnimId) { cancelAnimationFrame(_vbAnimId); _vbAnimId = null; }
-    if (igViz) igViz.setAttribute("viewBox", "0 0 768 450");
+    if (igViz) igViz.setAttribute("viewBox", "-11 0 768 450");
   }
 
   const igStageCursorX = { protocol: 88, population: 245, screening: 395, forms: 548, replay: 680 };
@@ -2119,8 +2120,8 @@ spec:
 
       if (igCaption && beat.caption !== undefined) {
         igCaption.classList.add("fading");
-        // Wait for full CSS fade-out (transition is 0.22s) before swapping text + viz
-        await wait(reduceMotion ? 0 : 240);
+        // Wait for full CSS fade-out (transition is 0.22s) + small buffer
+        await wait(reduceMotion ? 0 : 260);
         if (igAutoplayAbort) break;
         igCaption.textContent = beat.caption;
 
@@ -2135,7 +2136,10 @@ spec:
           }
         }
 
-        await new Promise(function(r){ requestAnimationFrame(r); });
+        // Force a reflow so the new text + faded state are committed before we restart
+        // the opacity transition. Without this the transition can mis-fire mid-cycle and
+        // produce a visible "phasing" glitch where caption flashes between texts.
+        void igCaption.offsetWidth;
         igCaption.classList.remove("fading");
       }
 
