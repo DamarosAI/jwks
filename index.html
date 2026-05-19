@@ -787,15 +787,55 @@ body.is-cockpit .ig-bottom-bar{opacity:1;pointer-events:auto}
 .viz-replay-rotor{transform-box:fill-box;transform-origin:center;animation:igReplayArrowSpin 11s linear infinite}
 @keyframes igReplayArrowSpin{from{transform:rotate(0deg)}to{transform:rotate(-360deg)}}
 
-/* ── Mobile FPS + isolation: hide non-active stages, timeline track/cursor during walkthrough ── */
+/* ── Mobile walkthrough: fluid pans + live symbol motion (no display:none pops) ── */
 @media(max-width:740px){
-  body.is-playing:not(.is-charging) .ig-viz .viz-layer:not(.viz-active){display:none!important}
-  body.is-playing:not(.is-charging) .ig-viz .tl-track,
-  body.is-playing:not(.is-charging) .ig-viz .tl-cursor{display:none!important}
-  /* Kill the 0.65s opacity transition on the active layer during walkthrough so the
-     symbol "pops in" instantly with each viewBox snap — no lingering fade overlapping
-     the caption's fade-in. */
-  body.is-playing:not(.is-charging) .ig-viz .viz-layer{transition:none!important}
+  body.is-mobile-play.is-playing .ig-viz{
+    transform:translateZ(0);
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+    contain:layout style;
+  }
+  body.is-mobile-play.is-playing:not(.is-charging) .ig-viz .viz-layer{
+    transition:opacity .52s cubic-bezier(.22,1,.36,1)!important;
+  }
+  body.is-mobile-play.is-playing:not(.is-charging) .ig-viz .viz-layer:not(.viz-active){
+    opacity:.1!important;
+    pointer-events:none;
+  }
+  body.is-mobile-play.is-playing:not(.is-charging) .ig-viz .viz-layer.viz-active{
+    opacity:1!important;
+  }
+  body.is-mobile-play.is-playing:not(.is-charging) .ig-viz .viz-layer:not(.viz-active) *{
+    animation-play-state:paused!important;
+  }
+  body.is-mobile-play.is-playing .ig-viz .viz-layer.viz-active .viz-proto-ring,
+  body.is-mobile-play.is-playing .ig-viz .viz-layer.viz-active .viz-proto-hex,
+  body.is-mobile-play.is-playing .ig-viz .viz-layer.viz-active .viz-origin-glow,
+  body.is-mobile-play.is-playing .ig-viz .viz-layer.viz-active .viz-particle.eligible,
+  body.is-mobile-play.is-playing .ig-viz .viz-layer.viz-active .viz-screen-root,
+  body.is-mobile-play.is-playing .ig-viz .viz-layer.viz-active .viz-criterion,
+  body.is-mobile-play.is-playing .ig-viz .viz-layer.viz-active .viz-evidence,
+  body.is-mobile-play.is-playing .ig-viz .viz-layer.viz-active .viz-form-doc,
+  body.is-mobile-play.is-playing .ig-viz .viz-layer.viz-active .viz-replay-rotor,
+  body.is-mobile-play.is-playing .ig-viz .viz-layer.viz-active .viz-decision-glow{
+    animation-play-state:running!important;
+  }
+  body.is-mobile-play.is-playing .ig-viz .tl-track,
+  body.is-mobile-play.is-playing .ig-viz .tl-cursor{
+    display:block!important;
+    opacity:1!important;
+  }
+  body.is-mobile-play.is-playing .ig-viz .tl-cursor{
+    transition:cx .62s cubic-bezier(.22,1,.36,1),opacity .28s ease!important;
+  }
+  body.is-mobile-play.is-playing .tl-stop{transition:fill .35s ease}
+  body.is-mobile-play.is-playing .tl-stop.is-active{fill:var(--blue2)}
+  body.is-mobile-play .ig-viz{max-height:var(--ig-mobile-viz-h,min(52svh,420px))!important}
+  body.is-mobile-play .ig-caption{margin-top:var(--ig-mobile-cap-gap,clamp(1.2rem,2.8svh,1.8rem))!important}
+  body.is-mobile-play .ig-skip{margin-top:var(--ig-mobile-skip-gap,clamp(1rem,2.4svh,1.6rem))!important;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  body.is-mobile-play .ig-monogram-grid{animation-duration:18s!important}
+  body.is-mobile-play .viz-hotzone{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  body.is-mobile-play .ig-cock-restart,.ig-down-arrow,.ig-up-arrow,.ig-cock-wordmark{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 }
 
 /* ── Replay scenario: cockpit instantly clears when the walkthrough starts. Without this,
@@ -830,7 +870,25 @@ body.is-playing .ig-cockpit{transition:none!important;opacity:0!important;pointe
   .ig-skip{margin-top:clamp(.8rem,2svh,1.4rem)!important}
 }
 
-/* ── Mobile walkthrough: viz on top, generous gaps to caption + skip below ── */
+/* ── Mobile walkthrough: viz on top, dynamic spacing via --ig-mobile-* vars ── */
+@media(max-width:740px){
+  body.is-mobile-play .ig-stage{
+    display:grid!important;
+    grid-template-rows:auto minmax(0,1fr) auto auto;
+    align-content:center;
+    justify-items:center;
+    row-gap:0;
+    padding:calc(var(--tab) + .85rem) .75rem 1.25rem!important;
+  }
+  body.is-mobile-play .ig-viz-wrap{order:unset;width:100%!important;max-width:100%!important}
+  body.is-mobile-play .ig-caption{order:unset;margin:var(--ig-mobile-cap-gap,clamp(1.2rem,2.8svh,1.8rem)) auto 0!important}
+  body.is-mobile-play .ig-skip{order:unset;margin-top:var(--ig-mobile-skip-gap,clamp(1rem,2.4svh,1.6rem))!important}
+  body.is-mobile-play .ig-info-card{
+    transform:translateY(10px) scale(.97);
+    transition:opacity .34s cubic-bezier(.22,1,.36,1),transform .4s cubic-bezier(.22,1,.36,1)!important;
+  }
+  body.is-mobile-play .ig-info-card.visible{transform:translateY(0) scale(1)}
+}
 @media(max-width:740px){
   .ig-stage{justify-content:center!important;gap:0!important;padding:calc(var(--tab) + 1rem) .8rem 1.5rem!important}
   .ig-viz-wrap{order:-1;flex:0 0 auto!important;width:100%!important}
@@ -1975,11 +2033,8 @@ spec:
     { stageId: "_charge",    caption: "One system. Faster trials. Defensible answers.",               cursorX: 680, ms: 2540, charge: true }
   ];
 
-  // Mobile walkthrough: snap viewBox to a consistent 220x360 crop CENTERED ON THE LABEL X
-  // for each stage. The timeline label at y=416 is included so each stage's name is part
-  // of the visible animation area. No smooth tracking between beats — each symbol pops in.
-  // Protocol's middle hex protrudes left of center (intentional offset, label stays centered).
-  // Charge beat smoothly zooms back to the centered full workflow before the load-up plays.
+  // Mobile walkthrough: smooth viewBox pans centered on each stage label.
+  // Charge beat zooms back to full workflow before load-up animation.
   const igMobileViewBoxes = {
     protocol:   "-22 70 220 360",
     population: "135 70 220 360",
@@ -1989,29 +2044,95 @@ spec:
     full:       "11 0 768 450"
   };
 
+  const igMobileHotzonePads = {
+    protocol:   { dx: -10, dy: -8, dw: 18, dh: 16 },
+    population: { dx: -8,  dy: -6, dw: 16, dh: 12 },
+    screening:  { dx: -8,  dy: -6, dw: 16, dh: 12 },
+    forms:      { dx: -8,  dy: -6, dw: 16, dh: 12 },
+    replay:     { dx: -8,  dy: -6, dw: 16, dh: 12 }
+  };
+  const igHotzoneBase = {};
+
   function _isMobileLayout() { return window.matchMedia("(max-width:740px)").matches; }
 
-  // Smooth viewBox animation
+  function _setMobilePlayMode(on) {
+    document.body.classList.toggle("is-mobile-play", !!on);
+    if (on) _syncMobileStageLayout();
+  }
+
+  function _syncMobileStageLayout() {
+    if (!_isMobileLayout() || !igStage) return;
+    const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    const tab = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--tab"), 10) || 56;
+    const avail = Math.max(480, vh - tab);
+    const vizH = Math.round(Math.min(avail * 0.54, 440));
+    const capGap = Math.round(Math.max(14, avail * 0.032));
+    const skipGap = Math.round(Math.max(12, avail * 0.026));
+    igStage.style.setProperty("--ig-mobile-viz-h", vizH + "px");
+    igStage.style.setProperty("--ig-mobile-cap-gap", capGap + "px");
+    igStage.style.setProperty("--ig-mobile-skip-gap", skipGap + "px");
+  }
+
+  function _applyMobileHotzones(on) {
+    document.querySelectorAll(".viz-hotzone").forEach(function (zone) {
+      const stage = zone.dataset.stage;
+      if (!stage) return;
+      if (!igHotzoneBase[stage]) {
+        igHotzoneBase[stage] = {
+          x: parseFloat(zone.getAttribute("x") || "0"),
+          y: parseFloat(zone.getAttribute("y") || "0"),
+          w: parseFloat(zone.getAttribute("width") || "0"),
+          h: parseFloat(zone.getAttribute("height") || "0")
+        };
+      }
+      const base = igHotzoneBase[stage];
+      const pad = igMobileHotzonePads[stage] || { dx: -8, dy: -6, dw: 16, dh: 12 };
+      if (on && _isMobileLayout()) {
+        zone.setAttribute("x", String(base.x + pad.dx));
+        zone.setAttribute("y", String(base.y + pad.dy));
+        zone.setAttribute("width", String(base.w + pad.dw));
+        zone.setAttribute("height", String(base.h + pad.dh));
+      } else {
+        zone.setAttribute("x", String(base.x));
+        zone.setAttribute("y", String(base.y));
+        zone.setAttribute("width", String(base.w));
+        zone.setAttribute("height", String(base.h));
+      }
+    });
+  }
+
+  function _mobilePanMs(beatMs) {
+    return Math.min(760, Math.max(540, Math.round(beatMs * 0.46)));
+  }
+
+  // Smooth viewBox animation (returns Promise)
   let _vbAnimId = null;
   function _animateViewBox(svgEl, targetStr, duration) {
-    if (_vbAnimId) { cancelAnimationFrame(_vbAnimId); _vbAnimId = null; }
-    if (!svgEl) return;
-    const cur = svgEl.getAttribute("viewBox") || "0 0 820 450";
-    const p = function(s){ const a = s.trim().split(/\s+/).map(Number); return {x:a[0],y:a[1],w:a[2],h:a[3]}; };
-    const from = p(cur), to = p(targetStr);
-    const t0 = performance.now();
-    function tick(now) {
-      const raw = Math.min(1, (now - t0) / duration);
-      const t = raw < .5 ? 4*raw*raw*raw : 1 - Math.pow(-2*raw + 2, 3) / 2; // cubic easeInOut — slower start/end, snappier peak
-      const x = from.x + (to.x - from.x) * t;
-      const y = from.y + (to.y - from.y) * t;
-      const w = from.w + (to.w - from.w) * t;
-      const h = from.h + (to.h - from.h) * t;
-      svgEl.setAttribute("viewBox", x+" "+y+" "+w+" "+h);
-      if (raw < 1) _vbAnimId = requestAnimationFrame(tick);
-      else _vbAnimId = null;
-    }
-    _vbAnimId = requestAnimationFrame(tick);
+    return new Promise(function (resolve) {
+      if (_vbAnimId) { cancelAnimationFrame(_vbAnimId); _vbAnimId = null; }
+      if (!svgEl) { resolve(); return; }
+      if (!duration || duration <= 0 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        svgEl.setAttribute("viewBox", targetStr);
+        resolve();
+        return;
+      }
+      const cur = svgEl.getAttribute("viewBox") || "0 0 820 450";
+      const p = function (s) { const a = s.trim().split(/\s+/).map(Number); return { x: a[0], y: a[1], w: a[2], h: a[3] }; };
+      const from = p(cur), to = p(targetStr);
+      const t0 = performance.now();
+      function tick(now) {
+        const raw = Math.min(1, (now - t0) / duration);
+        const t = raw < .5 ? 4 * raw * raw * raw : 1 - Math.pow(-2 * raw + 2, 3) / 2;
+        const x = from.x + (to.x - from.x) * t;
+        const y = from.y + (to.y - from.y) * t;
+        const w = from.w + (to.w - from.w) * t;
+        const h = from.h + (to.h - from.h) * t;
+        svgEl.setAttribute("viewBox", x + " " + y + " " + w + " " + h);
+        if (raw < 1) _vbAnimId = requestAnimationFrame(tick);
+        else { _vbAnimId = null; resolve(); }
+      }
+      _vbAnimId = requestAnimationFrame(tick);
+    });
   }
 
   // Stagger pulse animations with random per-element delays so the screening criterion
@@ -2211,6 +2332,22 @@ spec:
     if (igTlCursor) igTlCursor.setAttribute("cx", cursorX);
   }
 
+  function setTimelineStop(stageId) {
+    document.querySelectorAll("#igViz .tl-stop").forEach(function (stop) {
+      stop.classList.remove("is-active");
+      stop.setAttribute("r", "3");
+    });
+    const map = { protocol: 88, population: 245, screening: 395, forms: 548, replay: 680 };
+    const cx = map[stageId];
+    if (!cx) return;
+    document.querySelectorAll("#igViz .tl-stop").forEach(function (stop) {
+      if (parseFloat(stop.getAttribute("cx") || "0") === cx) {
+        stop.classList.add("is-active");
+        stop.setAttribute("r", "4.2");
+      }
+    });
+  }
+
   // ── Autoplay (left to right + ending charge-up) ──
   function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
 
@@ -2234,13 +2371,11 @@ spec:
     // Reset: cursor at start, all stages dim except first (protocol gets active immediately)
     setMainVizFocus("protocol");
     setTimelineCursor(88);
+    setTimelineStop("protocol");
 
-    // MOBILE: snap viewBox to the first beat's crop BEFORE we yield to the browser.
-    // Without this pre-snap, the first paint shows the full 768-wide viewBox — protocol
-    // stuck near the left edge with all five timeline labels visible across the bottom —
-    // and the first loop iteration only snaps to the protocol crop ~620ms later. That's
-    // the "all 5 then glitch to Protocol" jump.
     const onMobile = _isMobileLayout();
+    _setMobilePlayMode(onMobile);
+    _applyMobileHotzones(onMobile);
     if (onMobile) {
       const firstStage = igAutoplayBeats[0] && igAutoplayBeats[0].stageId;
       if (firstStage && igMobileViewBoxes[firstStage]) {
@@ -2260,51 +2395,43 @@ spec:
       if (beat.charge) {
         document.body.classList.add("is-charging");
         if (onMobile) {
-          _animateViewBox(igViz, igMobileViewBoxes.full, 700);
+          await _animateViewBox(igViz, igMobileViewBoxes.full, reduceMotion ? 0 : 820);
         }
       }
 
       if (igCaption && beat.caption !== undefined) {
         igCaption.classList.add("fading");
-        // Wait for full CSS fade-out (transition is now 0.32s) + comfortable buffer
-        await wait(reduceMotion ? 0 : 360);
+        await wait(reduceMotion ? 0 : 320);
         if (igAutoplayAbort) break;
         igCaption.textContent = beat.caption;
 
-        // Stage beats: swap viz focus + cursor + mobile viewBox during the caption blackout
-        // so the new symbol "pops" in with the caption (no smooth tracking between symbols).
         if (!beat.charge) {
           setMainVizFocus(beat.stageId);
           setTimelineCursor(beat.cursorX);
+          setTimelineStop(beat.stageId);
           if (onMobile) {
-            // Instant snap — no smooth animation. Each symbol is rendered at the same scale.
-            igViz.setAttribute("viewBox", igMobileViewBoxes[beat.stageId] || igMobileViewBoxes.full);
+            const panMs = reduceMotion ? 0 : _mobilePanMs(beat.ms);
+            _animateViewBox(
+              igViz,
+              igMobileViewBoxes[beat.stageId] || igMobileViewBoxes.full,
+              panMs
+            );
           }
         } else if (igTlCursor) {
-          // Charge beat: snap cursor 680→88 NOW, while the CSS rule above is fading it
-          // to opacity:0. The jump is invisible. Doing it here (during the caption blackout)
-          // eliminates the visible snap-then-dead-time stutter the user reported.
           igTlCursor.style.transition = "none";
           igTlCursor.setAttribute("cx", 88);
           void igTlCursor.getBoundingClientRect();
           igTlCursor.style.transition = "";
         }
 
-        // Force reflow + two rAFs so the DOM commit + style recalc both land before the
-        // opacity transition restarts. Without this the new text can briefly bleed into
-        // the tail end of the fade-out, producing the "flash/spazz" the user reported.
         void igCaption.offsetWidth;
-        await new Promise(function(r){ requestAnimationFrame(r); });
-        await new Promise(function(r){ requestAnimationFrame(r); });
+        await new Promise(function (r) { requestAnimationFrame(r); });
+        await new Promise(function (r) { requestAnimationFrame(r); });
         igCaption.classList.remove("fading");
       }
 
       if (beat.charge) {
-        // Mobile: brief wait so the viewBox zoom-out completes and the cursor's cx=88
-        // position is inside the visible viewBox before viz-charged fades it back in.
-        // Reduced from 480+140ms to a single 320ms — the cursor snap already happened
-        // invisibly during the caption blackout, so the old "snap + 140ms" dead time is gone.
-        if (onMobile) await wait(reduceMotion ? 0 : 320);
+        if (onMobile) await wait(reduceMotion ? 0 : 180);
         if (igAutoplayAbort) break;
         // Strip viz-active from all layers (replay was still lit from beat 5) so the
         // igChargeLight sweep starts from a clean .22 baseline on every symbol.
@@ -2324,6 +2451,7 @@ spec:
 
     igAutoplayRunning = false;
     if (igViz) igViz.classList.remove("viz-charged");
+    _setMobilePlayMode(false);
     if (!igAutoplayAbort) enterCockpit();
   }
 
@@ -2332,6 +2460,7 @@ spec:
     igAutoplayRunning = false;
     if (igViz) igViz.classList.remove("viz-charged");
     document.body.classList.remove("is-charging");
+    _setMobilePlayMode(false);
     _resetVizViewBox();
   }
 
@@ -2514,6 +2643,12 @@ spec:
       if (igState !== "cockpit") return;
       _maybeClearStage();
     });
+    zone.addEventListener("touchstart", function () {
+      _cancelClearStage();
+      if (igState !== "cockpit") return;
+      if (igLockedStage && igLockedStage !== stage) return;
+      showStage(stage, false);
+    }, { passive: true });
     zone.addEventListener("click", function (e) {
       if (igState !== "cockpit") return;
       e.stopPropagation();
@@ -2599,8 +2734,18 @@ spec:
   initMonogramGrid();
   initPopulationParticles();
   _randomizeVizPulses();
+  _applyMobileHotzones(_isMobileLayout());
   setMainVizFocus("protocol");
   if (igTlCursor) igTlCursor.setAttribute("cx", 88);
+  window.addEventListener("resize", function () {
+    _syncMobileStageLayout();
+    _applyMobileHotzones(_isMobileLayout());
+  });
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", function () {
+      _syncMobileStageLayout();
+    });
+  }
   routeFromHash();
 
   // ── Geo ──
