@@ -965,13 +965,12 @@ body.is-cockpit .ig-bottom-bar{opacity:1;pointer-events:auto}
 .viz-conn-solid{display:none!important}
 
 /* ── Replay: stop the bouncing radius pulse; rotate the arrow CCW instead ── */
-.viz-decision-glow{animation:none!important;stroke-opacity:.15!important}
+.viz-decision-glow{fill:none;stroke:rgba(123,150,178,.15)!important;stroke-width:1;animation:igOriginGlow 3s ease-in-out infinite}
 .viz-replay-rotor{transform-box:fill-box;transform-origin:center;animation:igReplayArrowSpin 24s linear infinite}
 @keyframes igReplayArrowSpin{from{transform:rotate(0deg)}to{transform:rotate(-360deg)}}
 #vizDecision .viz-decision,#cvizDecision .viz-decision{opacity:.5}
 #vizDecision .viz-replay-arrow,#cvizDecision .viz-replay-arrow{stroke-opacity:.44!important}
 #vizDecision .viz-replay-head,#cvizDecision .viz-replay-head{fill-opacity:.44!important}
-#vizDecision .viz-decision-glow,#cvizDecision .viz-decision-glow{stroke-opacity:.088!important}
 
 /* ── Walkthrough animation gating: animate only active stage until charge-up ── */
 body.is-playing:not(.is-charging) .ig-viz .viz-layer:not(.viz-active) *{
