@@ -1326,7 +1326,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
       <span>Damaros</span>
       <button type="button" class="ig-dot" id="igDot" aria-label="Initialize Damaros walkthrough"></button>
     </div>
-    <p class="ig-cue" id="igCue" aria-live="polite">initialize trial execution walkthrough</p>
+    <p class="ig-cue" id="igCue" aria-live="polite">Click to initialize walkthrough</p>
   </div>
 </section>
 
@@ -2313,12 +2313,12 @@ spec:
   // ================================================================
 
   const igAutoplayBeats = [
-    { stageId: "protocol",   caption: "Protocol requirements become executable logic.",                cursorX: 88,  ms: 2660 },
-    { stageId: "population", caption: "FHIR, exports, and site complexity become trial-ready evidence.", cursorX: 245, ms: 2700 },
-    { stageId: "screening",  caption: "Each patient resolves PASS, REVIEW, or FAIL at criterion level.", cursorX: 395, ms: 2720 },
-    { stageId: "forms",      caption: "Trial documents become governed operational artifacts.",        cursorX: 548, ms: 2640 },
-    { stageId: "replay",     caption: "Decisions become reconstructable institutional memory.",        cursorX: 680, ms: 2600 },
-    { stageId: "_charge",    caption: "Clinical trial execution infrastructure. Deterministic. Inspectable. Ready.", cursorX: 680, ms: 2580, charge: true }
+    { stageId: "protocol",   caption: "Protocol requirements compile into executable trial logic.",    cursorX: 88,  ms: 2660 },
+    { stageId: "population", caption: "FHIR, exports, and site variance resolve into trial-ready evidence.", cursorX: 245, ms: 2700 },
+    { stageId: "screening",  caption: "Patients resolve to criterion-level PASS, REVIEW, or FAIL.",    cursorX: 395, ms: 2720 },
+    { stageId: "forms",      caption: "Coordinator packets and sponsor artifacts assemble from governed evidence.", cursorX: 548, ms: 2720 },
+    { stageId: "replay",     caption: "Every outcome reconstructs into auditable institutional memory.", cursorX: 680, ms: 2600 },
+    { stageId: "_charge",    caption: "One execution graph. One audit truth. Institution ready.",      cursorX: 680, ms: 2580, charge: true }
   ];
 
   // Mobile walkthrough: smooth viewBox pans centered on each stage label.
@@ -2527,6 +2527,13 @@ spec:
   const igManifesto = document.getElementById("igManifesto");
   const igStakeholders = document.getElementById("igStakeholders");
   const igCaption = document.getElementById("igCaption");
+  const igCue = document.getElementById("igCue");
+  function updateHeroCue() {
+    if (!igCue) return;
+    const touchFirst = window.matchMedia("(hover: none)").matches;
+    igCue.textContent = (touchFirst ? "Tap" : "Click") + " to initialize walkthrough";
+  }
+
   const igTlCursor = document.getElementById("igTlCursor");
   const igMonogramGrid = document.getElementById("igMonogramGrid");
   const igSkip = document.getElementById("igSkip");
@@ -3082,10 +3089,12 @@ spec:
   })();
   initPopulationParticles();
   _randomizeVizPulses();
+  updateHeroCue();
   _applyMobileHotzones(_isMobileLayout());
   setMainVizFocus("protocol");
   if (igTlCursor) igTlCursor.setAttribute("cx", 88);
   window.addEventListener("resize", function () {
+    updateHeroCue();
     _syncMobileStageLayout();
     _applyMobileHotzones(_isMobileLayout());
   });
