@@ -1319,6 +1319,127 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
 
 .damaros-api-list,.damaros-api-item{background:var(--table-cell-bg)!important}
 
+/* ─────────────────────────────────────────────────────────────
+   Brand orbs — Trident (left) + Luna (right) inside cockpit canvas
+   Metallic dark orbs with Chakra Petch label; hover/tap reveal card
+   ───────────────────────────────────────────────────────────── */
+.ig-brand-orb{
+  position:absolute;
+  width:54px;height:54px;
+  border-radius:50%;
+  border:1px solid rgba(123,150,178,.28);
+  background:
+    radial-gradient(circle at 32% 28%,rgba(255,255,255,.14) 0%,rgba(143,165,189,.10) 22%,rgba(40,52,66,.85) 60%,#04060a 96%),
+    radial-gradient(circle at 70% 80%,rgba(123,150,178,.18),transparent 50%);
+  box-shadow:
+    inset 0 -10px 16px rgba(0,0,0,.66),
+    inset 0 4px 8px rgba(255,255,255,.05),
+    inset 0 0 0 1px rgba(255,255,255,.04),
+    0 6px 22px rgba(0,0,0,.55),
+    0 0 0 1px rgba(123,150,178,.08);
+  display:flex;align-items:center;justify-content:center;
+  padding:0;cursor:pointer;z-index:20;
+  -webkit-tap-highlight-color:transparent;
+  animation:igOrbFloat 5.8s ease-in-out infinite;
+  transition:border-color .35s ease,box-shadow .45s ease,transform .35s cubic-bezier(.16,1,.3,1);
+}
+.ig-brand-orb::before{
+  content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:radial-gradient(ellipse 60% 30% at 50% 18%,rgba(255,255,255,.18),transparent 70%);
+  mix-blend-mode:screen;opacity:.6;
+}
+.ig-brand-orb-label{
+  position:relative;z-index:1;
+  font-family:var(--fh);
+  font-size:.6rem;font-weight:500;letter-spacing:.06em;
+  color:var(--blue2);
+  text-shadow:0 0 8px rgba(123,150,178,.45),0 1px 2px rgba(0,0,0,.85);
+  pointer-events:none;user-select:none;line-height:1;
+}
+.ig-brand-orb-left {left:1.6rem; bottom:4.4rem}
+.ig-brand-orb-right{right:1.6rem;bottom:4.4rem; animation-delay:-2.9s}
+.ig-brand-orb:hover,.ig-brand-orb:focus-visible{
+  outline:none;
+  border-color:rgba(169,192,214,.55);
+  transform:translateY(-2px);
+  box-shadow:
+    inset 0 -10px 16px rgba(0,0,0,.6),
+    inset 0 4px 10px rgba(255,255,255,.09),
+    inset 0 0 0 1px rgba(255,255,255,.06),
+    0 10px 30px rgba(0,0,0,.6),
+    0 0 0 1px rgba(169,192,214,.22),
+    0 0 26px rgba(169,192,214,.18);
+}
+.ig-brand-orb:hover .ig-brand-orb-label,
+.ig-brand-orb:focus-visible .ig-brand-orb-label{color:var(--tp);text-shadow:0 0 10px rgba(169,192,214,.6),0 1px 2px rgba(0,0,0,.85)}
+@keyframes igOrbFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.ig-brand-orb:hover{animation-play-state:paused}
+
+/* Brand info cards: positioned above the orbs */
+.ig-info-card[data-stage="trident"]{left:1.6rem;bottom:7.5rem;--ig-card-origin:0% 100%;width:clamp(220px,18vw,272px)}
+.ig-info-card[data-stage="luna"]   {right:1.6rem;bottom:7.5rem;--ig-card-origin:100% 100%;width:clamp(220px,18vw,272px)}
+
+/* Light mode: brushed-aluminum metallic orbs */
+[data-theme="light"] .ig-brand-orb,
+:root:not([data-theme="dark"]) .ig-brand-orb{
+  border-color:rgba(91,118,148,.42);
+  background:
+    radial-gradient(circle at 32% 28%,rgba(255,255,255,.95) 0%,rgba(218,226,234,.85) 28%,rgba(132,150,170,.78) 62%,#566678 96%),
+    radial-gradient(circle at 70% 80%,rgba(91,118,148,.5),transparent 55%);
+  box-shadow:
+    inset 0 -10px 16px rgba(40,55,72,.4),
+    inset 0 4px 10px rgba(255,255,255,.75),
+    inset 0 0 0 1px rgba(255,255,255,.55),
+    0 8px 22px rgba(91,118,148,.28),
+    0 0 0 1px rgba(91,118,148,.22);
+}
+[data-theme="light"] .ig-brand-orb::before,
+:root:not([data-theme="dark"]) .ig-brand-orb::before{
+  background:radial-gradient(ellipse 60% 30% at 50% 16%,rgba(255,255,255,.7),transparent 70%);
+  mix-blend-mode:normal;opacity:.85;
+}
+[data-theme="light"] .ig-brand-orb-label,
+:root:not([data-theme="dark"]) .ig-brand-orb-label{
+  color:#1a2229;
+  text-shadow:0 1px 1px rgba(255,255,255,.85),0 0 6px rgba(255,255,255,.65);
+}
+[data-theme="light"] .ig-brand-orb:hover,
+[data-theme="light"] .ig-brand-orb:focus-visible,
+:root:not([data-theme="dark"]) .ig-brand-orb:hover,
+:root:not([data-theme="dark"]) .ig-brand-orb:focus-visible{
+  border-color:rgba(45,62,80,.55);
+  box-shadow:
+    inset 0 -10px 16px rgba(40,55,72,.38),
+    inset 0 4px 12px rgba(255,255,255,.85),
+    inset 0 0 0 1px rgba(255,255,255,.7),
+    0 12px 32px rgba(91,118,148,.32),
+    0 0 0 1px rgba(45,62,80,.36),
+    0 0 26px rgba(91,118,148,.32);
+}
+[data-theme="light"] .ig-brand-orb:hover .ig-brand-orb-label,
+:root:not([data-theme="dark"]) .ig-brand-orb:hover .ig-brand-orb-label{color:#0a131c}
+
+/* Tablet/medium: when cards stack below canvas, orbs still anchor in canvas */
+@media(max-width:1080px){
+  .ig-info-card[data-stage="trident"],
+  .ig-info-card[data-stage="luna"]{width:100%!important;max-width:640px}
+  .ig-brand-orb-left {left:1rem;bottom:3.4rem}
+  .ig-brand-orb-right{right:1rem;bottom:3.4rem}
+}
+
+/* Mobile: shrink orbs proportionally so they don't crowd the timeline */
+@media(max-width:740px){
+  .ig-brand-orb{width:42px;height:42px}
+  .ig-brand-orb-label{font-size:.48rem;letter-spacing:.05em}
+  .ig-brand-orb-left {left:.6rem;bottom:2.6rem}
+  .ig-brand-orb-right{right:.6rem;bottom:2.6rem}
+}
+
+/* Reduced motion: stop float */
+@media(prefers-reduced-motion:reduce){
+  .ig-brand-orb{animation:none}
+}
+
 </style>
 </head>
 <body>
@@ -1528,7 +1649,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
           <path d="M5.5 4.6 L3 4.6 L3 7.1" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
         </svg>
       </button>
-      <svg class="ig-cockpit-viz" id="igCockpitViz" viewBox="11 0 768 450" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Trial execution workflow">
+      <svg class="ig-cockpit-viz" id="igCockpitViz" viewBox="-9 0 768 450" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Trial execution workflow">
         <g class="viz-layer" id="cvizProtocol" opacity="1">
           <!-- Top protocol (88, 132) -->
           <circle class="viz-origin-glow" cx="88" cy="132" r="30"/>
@@ -1579,7 +1700,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
         <g class="viz-layer" id="cvizPopulation" opacity="1">
           <line class="viz-conn-solid" x1="306" y1="200" x2="350" y2="200"/>
         </g>
-        <g class="viz-layer" id="cvizScreening" opacity="1">
+        <g class="viz-layer" id="cvizScreening" opacity="1" transform="translate(-20 0)">
           <line class="viz-conn" x1="389" y1="188" x2="375" y2="157"/>
           <line class="viz-conn" x1="395" y1="190" x2="395" y2="158"/>
           <line class="viz-conn" x1="401" y1="188" x2="415" y2="157"/>
@@ -1668,8 +1789,8 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
           <text class="tl-stop-lbl" x="88" y="416">Protocol</text>
           <circle class="tl-stop" cx="245" cy="400" r="3"/>
           <text class="tl-stop-lbl" x="245" y="416">Population</text>
-          <circle class="tl-stop" cx="395" cy="400" r="3"/>
-          <text class="tl-stop-lbl" x="395" y="416">Screening</text>
+          <circle class="tl-stop" cx="375" cy="400" r="3"/>
+          <text class="tl-stop-lbl" x="375" y="416">Screening</text>
           <circle class="tl-stop" cx="548" cy="400" r="3"/>
           <text class="tl-stop-lbl" x="548" y="416">Forms</text>
           <circle class="tl-stop" cx="680" cy="400" r="3"/>
@@ -1678,10 +1799,18 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
         <!-- Hot zones (transparent, focus outline disabled) -->
         <rect class="viz-hotzone" data-stage="protocol"   x="14"  y="95"  width="160" height="220"/>
         <rect class="viz-hotzone" data-stage="population" x="175" y="85"  width="155" height="240"/>
-        <rect class="viz-hotzone" data-stage="screening"  x="335" y="80"  width="140" height="270"/>
+        <rect class="viz-hotzone" data-stage="screening"  x="315" y="80"  width="140" height="270"/>
         <rect class="viz-hotzone" data-stage="forms"      x="478" y="120" width="135" height="190"/>
         <rect class="viz-hotzone" data-stage="replay"     x="615" y="145" width="135" height="140"/>
       </svg>
+
+      <!-- Brand orbs: governance + learning layer entry points -->
+      <button type="button" class="ig-brand-orb ig-brand-orb-left" data-stage="trident" aria-label="Trident overview" aria-haspopup="dialog">
+        <span class="ig-brand-orb-label">Trident</span>
+      </button>
+      <button type="button" class="ig-brand-orb ig-brand-orb-right" data-stage="luna" aria-label="Luna overview" aria-haspopup="dialog">
+        <span class="ig-brand-orb-label">Luna</span>
+      </button>
     </div>
 
     <!-- Hint: above info cards so it sits above cards on mobile -->
@@ -1717,6 +1846,17 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
       <h3 class="ig-card-title">Decisions become reconstructable institutional memory.</h3>
       <p class="ig-card-body">Replay reconstructs outcomes from protocol version, evidence inputs, and governed execution context across validation and production.</p>
       <div class="ig-card-mech"><strong>Mechanism</strong>Signed replay bundle. One engine from first site test through cutover.</div>
+    </div>
+
+    <div class="ig-info-card ig-info-card-brand" data-stage="trident" id="cardTrident" role="region" aria-label="Trident overview">
+      <div class="ig-card-label">Trident</div>
+      <h3 class="ig-card-title">Learning ontology</h3>
+      <p class="ig-card-body">The learning ontology where trial knowledge compounds into executable logic.</p>
+    </div>
+    <div class="ig-info-card ig-info-card-brand" data-stage="luna" id="cardLuna" role="region" aria-label="Luna overview">
+      <div class="ig-card-label">Luna</div>
+      <h3 class="ig-card-title">Governance harness</h3>
+      <p class="ig-card-body">The governance harness where AI-assisted work becomes traceable, reviewable, and safe.</p>
     </div>
 
     <button type="button" class="ig-down-arrow" id="igDownArrow" aria-label="Scroll to overview">
@@ -3007,8 +3147,8 @@ spec:
     }, 120);
   }
 
-  // Hot zones in cockpit SVG → info cards
-  document.querySelectorAll(".viz-hotzone").forEach(function (zone) {
+  // Hot zones in cockpit SVG → info cards (plus brand orbs at canvas corners)
+  document.querySelectorAll(".viz-hotzone, .ig-brand-orb").forEach(function (zone) {
     const stage = zone.dataset.stage;
     zone.addEventListener("mouseenter", function () {
       _cancelClearStage();
@@ -3053,7 +3193,7 @@ spec:
   if (igCockCanvas) {
     igCockCanvas.addEventListener("click", function (e) {
       if (igState !== "cockpit") return;
-      if (e.target.closest(".viz-hotzone") || e.target.closest(".ig-info-card")) return;
+      if (e.target.closest(".viz-hotzone") || e.target.closest(".ig-brand-orb") || e.target.closest(".ig-info-card")) return;
       unlockStage();
     });
   }
