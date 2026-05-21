@@ -37,7 +37,7 @@ Adapted from Palantir's briefing register for Damaros product, docs, and cockpit
 
 > Trident is the trial knowledge core.
 
-> Knowledge sharpens with every protocol release and site run, compounds into executable logic, and ships as content-hashed, amendment-aware releases with one execution basis per site run.
+> Sharpens with each protocol release and site run, compounds into versioned execution logic, one content-hashed basis per site.
 
 **Example (Screening):**
 
