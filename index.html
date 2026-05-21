@@ -1710,7 +1710,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
       <div class="ig-card-label">04 · Forms</div>
       <h3 class="ig-card-title">Forms become operational artifacts, not re-keyed documents.</h3>
       <p class="ig-card-body">Coordinator and sponsor artifacts assemble from governed evidence lineage with field-level traceability and reviewability.</p>
-      <div class="ig-card-mech"><strong>Mechanism</strong>Luna governs document AI. Human review before use.</div>
+      <div class="ig-card-mech"><strong>Mechanism</strong>Luna governs document provenance and review boundaries. Human review before use.</div>
     </div>
     <div class="ig-info-card" data-stage="replay" id="cardReplay" role="region" aria-label="Replay detail">
       <div class="ig-card-label">05 · Replay</div>
@@ -1754,7 +1754,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
   </div>
   <div class="ig-stake">
     <div class="ig-stake-aud">Research &amp; teaming partners</div>
-    <p class="ig-stake-body">FHIR-ready infrastructure with deterministic patient execution, governed AI-assisted document work, and inspectable replay lineage.</p>
+    <p class="ig-stake-body">FHIR-ready infrastructure with deterministic patient execution, governed document provenance, and inspectable replay lineage.</p>
   </div>
 </section>
 
@@ -1787,7 +1787,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
 <p><strong>Deterministic core.</strong> Versioned protocol logic plus normalized clinical facts from REST and optional bulk export feed a single eligibility engine. Outputs are PASS, REVIEW, or FAIL at criterion granularity with evidence and sync provenance. No generative verdict on the screening path.</p>
 <p><strong>Reproducibility on PHI.</strong> Same protocol version plus same normalized inputs yields identical criterion outcomes. Replay reproduces outcomes with full provenance. Models can assist language-heavy work; they do not become the system of record.</p>
 <p><strong>Trident</strong> is the learning ontology where trial knowledge compounds into executable logic. Trident helps Damaros structure trial knowledge into reusable execution concepts.</p>
-<p><strong>Luna</strong> is the provenance layer where AI-assisted work becomes governed, traceable, and safe. Luna gives AI-assisted work provenance, reviewability, and institutional boundaries.</p>
+<p><strong>Luna</strong> is the provenance layer where language-assisted workflows become governed, traceable, and safe. Luna provides provenance, reviewability, and institutional boundaries.</p>
 <p><strong>Readiness exercised before cutover:</strong> Site Readiness Report, FHIR R4 and US Core conformance testing, dual-key JWKS rotation drill, bounded bulk export jobs, and deterministic normalization with stable content hashing.</p>
 </div>
 <div class="damaros-callout"><strong>No shadow EHR.</strong> Damaros is not a secondary warehouse. Ingest ends in protocol-scoped screening artifacts. Epic remains system of record for longitudinal care.</div>
@@ -2050,7 +2050,7 @@ spec:
     <div class="damaros-docs-eyebrow">Trust</div>
     <h1 class="damaros-docs-title">Trust, proof, and execution boundaries.</h1>
     <p class="damaros-docs-subtitle">
-      Trust ships as inspectable artifacts: deterministic execution proofs, governed AI provenance controls, replay evidence lineage, and Epic/FHIR readiness checks. This page shows what is proven, what is not claimed, and what remains with the covered entity. Site validation detail lives on the <a class="damaros-kv-link" href="#validation">Validation</a> page.
+      Trust ships as inspectable artifacts: deterministic execution proofs, governed provenance controls, replay evidence lineage, and Epic/FHIR readiness checks. This page shows what is proven, what is not claimed, and what remains with the covered entity. Site validation detail lives on the <a class="damaros-kv-link" href="#validation">Validation</a> page.
     </p>
 
     <section class="damaros-docs-section" id="trust-00">
@@ -2098,7 +2098,7 @@ spec:
       <table class="damaros-kv-table">
         <tr><td>SYNTHETIC_VALIDATION</td><td>Engineering proof of the protocol-to-decision platform before site data.</td></tr>
         <tr><td>SITE_VALIDATION</td><td>Site-facing package; see <a class="damaros-kv-link" href="#validation">Validation</a> for pathway.</td></tr>
-        <tr><td>LUNA_GOVERNANCE</td><td>The provenance layer where AI-assisted work becomes governed, traceable, and safe. Patient evidence, eligibility execution, adjudication, and replay remain deterministic.</td></tr>
+        <tr><td>LUNA_GOVERNANCE</td><td>The provenance layer where language-assisted workflows become governed, traceable, and safe. Patient evidence, eligibility execution, adjudication, and replay remain deterministic.</td></tr>
         <tr><td>TRIDENT_RELEASE</td><td>The learning ontology where trial knowledge compounds into executable logic.</td></tr>
         <tr><td>FHIR_CONFORMANCE_SUITE</td><td>Automated FHIR R4 and US Core conformance testing in CI.</td></tr>
         <tr><td>EPIC_SITE_READINESS_REPORT</td><td>Pre-cutover checklist for Epic Backend Services.</td></tr>
@@ -2345,7 +2345,7 @@ spec:
     { stageId: "protocol",   caption: "Encode protocol requirements into executable logic.",            cursorX: 88,  ms: 2660 },
     { stageId: "population", caption: "Unify fragmented site data into clear evidence.",               cursorX: 245, ms: 2700 },
     { stageId: "screening",  caption: "Run criterion-level review across every patient.",              cursorX: 395, ms: 2720 },
-    { stageId: "forms",      caption: "Supercharge trial documentation with governed AI.",             cursorX: 548, ms: 2640 },
+    { stageId: "forms",      caption: "Supercharge trial documentation with governed provenance.",     cursorX: 548, ms: 2640 },
     { stageId: "replay",     caption: "Reconstruct decisions through traceable provenance.",           cursorX: 680, ms: 2600 },
     { stageId: "_charge",    caption: "One execution engine. PASS / REVIEW / FAIL at institutional scale.", cursorX: 680, ms: 2580, charge: true }
   ];
