@@ -83,4 +83,4 @@ Same unit as Palantir technical prose, without em dashes:
 
 - Search repo for U+2014 em dash and en-dash sentence breaks in HTML text nodes and strings.
 - Read each hover card aloud: one breath for title, two for body.
-- Confirm Trident / Luna cards sit bottom-left / bottom-right on desktop without covering orbs.
+- Trident / Luna use brand-bar chips on all viewports; cards stack under the bar (not inside the canvas).
