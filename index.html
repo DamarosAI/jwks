@@ -1874,17 +1874,17 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
     <div class="ig-info-card" data-stage="screening" id="cardScreening" role="region" aria-label="Screening detail">
       <div class="ig-card-label">03 · Screening</div>
       <h3 class="ig-card-title">Eligibility resolves at criterion level.</h3>
-      <p class="ig-card-body">Each patient × criterion yields PASS, REVIEW, or FAIL with attached evidence, via a deterministic engine with human review preserved.</p>
+      <p class="ig-card-body">The engine evaluates each patient on normalized facts, attaches evidence per criterion, and routes edge cases to coordinators. Deterministic, not generative.</p>
     </div>
     <div class="ig-info-card" data-stage="forms" id="cardForms" role="region" aria-label="Forms detail">
       <div class="ig-card-label">04 · Forms</div>
-      <h3 class="ig-card-title">Forms carry governed provenance.</h3>
-      <p class="ig-card-body">Coordinator and sponsor artifacts assemble from evidence lineage, with field-level traceability under Luna governance.</p>
+      <h3 class="ig-card-title">Documentation accelerates with assisted drafting.</h3>
+      <p class="ig-card-body">Models draft coordinator and sponsor forms from screening evidence, with human review before outputs ship. Luna enforces traceability, not the creative bottleneck.</p>
     </div>
     <div class="ig-info-card" data-stage="replay" id="cardReplay" role="region" aria-label="Replay detail">
       <div class="ig-card-label">05 · Replay</div>
-      <h3 class="ig-card-title">Decisions become institutional memory.</h3>
-      <p class="ig-card-body">Replay reconstructs protocol version, evidence inputs, and execution context as a signed bundle, through one engine to cutover.</p>
+      <h3 class="ig-card-title">Every decision is auditable end to end.</h3>
+      <p class="ig-card-body">Replay rebuilds protocol version, evidence, and execution context so QA and audit can reproduce what the site decided and why, without manual chart reconstruction.</p>
     </div>
 
     <button type="button" class="ig-down-arrow" id="igDownArrow" aria-label="Scroll to overview">
@@ -2515,9 +2515,9 @@ spec:
     { stageId: "protocol",   caption: "Encode protocol requirements into executable logic.",            cursorX: igTimelineX.protocol,   ms: 2660 },
     { stageId: "population", caption: "Unify fragmented site data into clear evidence.",               cursorX: igTimelineX.population, ms: 2700 },
     { stageId: "screening",  caption: "Run criterion-level review across every patient.",              cursorX: igTimelineX.screening,  ms: 2720 },
-    { stageId: "forms",      caption: "Supercharge trial documentation with governed provenance.",     cursorX: igTimelineX.forms,      ms: 2640 },
-    { stageId: "replay",     caption: "Reconstruct decisions through traceable provenance.",           cursorX: igTimelineX.replay, ms: 2600 },
-    { stageId: "_charge",    caption: "One execution engine. PASS / REVIEW / FAIL at institutional scale.", cursorX: igTimelineX.replay, ms: 2580, charge: true }
+    { stageId: "forms",      caption: "Draft trial documentation faster with AI-assisted assembly.", cursorX: igTimelineX.forms,      ms: 2640 },
+    { stageId: "replay",     caption: "Rebuild any decision record for audit and QA.",                 cursorX: igTimelineX.replay, ms: 2600 },
+    { stageId: "_charge",    caption: "One execution engine. Criterion-level eligibility at institutional scale.", cursorX: igTimelineX.replay, ms: 2580, charge: true }
   ];
 
   // Mobile walkthrough: smooth viewBox pans centered on each stage label.
