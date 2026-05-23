@@ -1099,11 +1099,10 @@ body.is-cockpit .ig-cockpit-viz .viz-layer *{
   body.is-mobile-play.is-outro-zoom .ig-viz .viz-layer.viz-active{
     opacity:.1!important;
   }
-  body.is-mobile-play .ig-viz .tl-cursor.tl-cursor-reveal{
+  body.is-mobile-play.is-charging .ig-viz:not(.viz-charged) .tl-cursor{
     opacity:0!important;
-    animation:igTlCursorReveal .36s cubic-bezier(.22,1,.36,1) forwards;
+    visibility:hidden!important;
   }
-  @keyframes igTlCursorReveal{to{opacity:1}}
   body.is-mobile-play.is-playing .tl-stop{transition:fill .35s ease}
   body.is-mobile-play.is-playing .tl-stop.is-active{fill:var(--blue2)}
   body.is-mobile-play .ig-viz{max-height:var(--ig-mobile-viz-h,min(52svh,420px))!important}
@@ -1114,9 +1113,6 @@ body.is-cockpit .ig-cockpit-viz .viz-layer *{
   body.is-mobile-play.is-charging .ig-viz:not(.viz-charged) .viz-layer.viz-active{
     opacity:.22!important;
     transition:none!important;
-  }
-  body.is-mobile-play.is-charging .ig-viz .tl-cursor{
-    opacity:1!important;
   }
   body.is-mobile-play.is-charging .ig-viz.viz-charged .viz-layer{
     transition:none!important;
@@ -2599,24 +2595,10 @@ spec:
     });
 
     await _animateViewBox(igViz, igMobileViewBoxes.full, prePanMs);
-    if (igAutoplayAbort) return;
-
-    document.body.classList.remove("is-outro-zoom");
-    if (igTlCursor) {
-      igTlCursor.style.transition = "none";
-      igTlCursor.classList.remove("tl-cursor-reveal");
-      igTlCursor.setAttribute("cx", String(igTimelineX.protocol));
-      void igTlCursor.getBoundingClientRect();
-    }
-    setTimelineStop("protocol");
-    if (igTlCursor && !reduceMotion) {
-      igTlCursor.classList.add("tl-cursor-reveal");
-      await wait(360);
-      igTlCursor.classList.remove("tl-cursor-reveal");
-    }
   }
 
   async function _beginMobileChargeSweep(reduceMotion) {
+    document.body.classList.remove("is-outro-zoom");
     document.body.classList.add("is-charging");
     const mainLayers = _mainVizLayers();
     mainLayers.forEach(function (el) {
@@ -2624,16 +2606,15 @@ spec:
       el.classList.remove("viz-active", "viz-dim", "viz-mid");
     });
     if (igTlCursor) {
-      igTlCursor.classList.remove("tl-cursor-reveal");
-      igTlCursor.style.opacity = "";
+      igTlCursor.style.transition = "none";
       igTlCursor.setAttribute("cx", String(igTimelineX.protocol));
     }
-    await flushFrames(1);
-    mainLayers.forEach(function (el) { el.style.transition = ""; });
+    setTimelineStop("protocol");
+    if (igViz) void igViz.getBoundingClientRect();
     if (igViz) igViz.classList.add("viz-charged");
+    mainLayers.forEach(function (el) { el.style.transition = ""; });
     if (igTlCursor) {
       igTlCursor.style.transition = reduceMotion ? "none" : "cx 1.85s cubic-bezier(.65,0,.35,1)";
-      void igTlCursor.getBoundingClientRect();
       igTlCursor.setAttribute("cx", String(igTimelineX.replay));
     }
     await wait(reduceMotion ? 200 : 2500);
@@ -2995,8 +2976,6 @@ spec:
 
       if (beat.charge) {
         if (onMobile) {
-          await wait(reduceMotion ? 0 : 180);
-          if (igAutoplayAbort) break;
           await _beginMobileChargeSweep(reduceMotion);
         } else {
           document.body.classList.add("is-charging");
@@ -3009,6 +2988,11 @@ spec:
         }
       } else if (beat.stageId === "replay" && onMobile && igAutoplayBeats[i + 1] && igAutoplayBeats[i + 1].charge) {
         await _runMobileReplayOutro(beat.ms, reduceMotion);
+        if (igAutoplayAbort) break;
+        const chargeBeat = igAutoplayBeats[i + 1];
+        if (igCaption) igCaption.textContent = chargeBeat.caption;
+        await _beginMobileChargeSweep(reduceMotion);
+        i++;
       } else {
         await wait(reduceMotion ? 160 : beat.ms);
       }
