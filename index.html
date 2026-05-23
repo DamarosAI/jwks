@@ -2551,12 +2551,46 @@ spec:
     return allStages.map(function (s) { return document.getElementById(vizLayerIds.main[s]); }).filter(Boolean);
   }
 
+  async function _animateTimelineCursor(targetX, duration, reduceMotion) {
+    return new Promise(function (resolve) {
+      if (!igTlCursor) { resolve(); return; }
+      if (!duration || reduceMotion || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        igTlCursor.setAttribute("cx", String(targetX));
+        resolve();
+        return;
+      }
+      const ease = "cubic-bezier(.65,0,.35,1)";
+      igTlCursor.style.transition = "cx " + duration + "ms " + ease;
+      void igTlCursor.getBoundingClientRect();
+      igTlCursor.setAttribute("cx", String(targetX));
+      let done = false;
+      function finish() {
+        if (done) return;
+        done = true;
+        igTlCursor.removeEventListener("transitionend", onEnd);
+        igTlCursor.style.transition = "";
+        resolve();
+      }
+      function onEnd(e) {
+        if (e && e.propertyName && e.propertyName !== "cx") return;
+        finish();
+      }
+      igTlCursor.addEventListener("transitionend", onEnd);
+      setTimeout(finish, duration + 80);
+    });
+  }
+
   async function _runMobileReplayOutro(beatMs, reduceMotion) {
     const prePanMs = reduceMotion ? 0 : 860;
     const holdMs = reduceMotion ? 0 : Math.max(760, beatMs - prePanMs);
     await wait(holdMs);
     if (igAutoplayAbort) return;
-    await _animateViewBox(igViz, igMobileViewBoxes.full, prePanMs);
+    setMainVizFocus("protocol");
+    setTimelineStop("protocol");
+    await Promise.all([
+      _animateViewBox(igViz, igMobileViewBoxes.full, prePanMs),
+      _animateTimelineCursor(igTimelineX.protocol, prePanMs, reduceMotion)
+    ]);
   }
 
   async function _beginMobileChargeSweep(reduceMotion) {
@@ -2567,18 +2601,16 @@ spec:
       el.classList.remove("viz-active", "viz-dim", "viz-mid");
     });
     if (igTlCursor) {
-      igTlCursor.style.transition = "none";
-      igTlCursor.style.opacity = "0";
-      igTlCursor.setAttribute("cx", igTimelineX.protocol);
+      igTlCursor.style.opacity = "1";
+      igTlCursor.setAttribute("cx", String(igTimelineX.protocol));
     }
-    if (igViz) void igViz.getBoundingClientRect();
+    await flushFrames(1);
     mainLayers.forEach(function (el) { el.style.transition = ""; });
-    await flushFrames(2);
     if (igViz) igViz.classList.add("viz-charged");
     if (igTlCursor) {
-      igTlCursor.style.transition = reduceMotion ? "none" : "cx 1.85s cubic-bezier(.65,0,.35,1),opacity .28s ease";
-      igTlCursor.style.opacity = "1";
-      igTlCursor.setAttribute("cx", igTimelineX.replay);
+      igTlCursor.style.transition = reduceMotion ? "none" : "cx 1.85s cubic-bezier(.65,0,.35,1)";
+      void igTlCursor.getBoundingClientRect();
+      igTlCursor.setAttribute("cx", String(igTimelineX.replay));
     }
     await wait(reduceMotion ? 200 : 2500);
   }
@@ -2929,11 +2961,6 @@ spec:
               panMs
             );
           }
-        } else if (igTlCursor) {
-          igTlCursor.style.transition = "none";
-          igTlCursor.setAttribute("cx", 88);
-          void igTlCursor.getBoundingClientRect();
-          igTlCursor.style.transition = "";
         }
 
         void igCaption.offsetWidth;
