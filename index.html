@@ -2863,9 +2863,7 @@ spec:
     setTimelineCursor(88);
     setTimelineStop("protocol");
 
-    // Walkthrough parity request: force desktop autoplay behavior on mobile.
-    // Cockpit behavior remains unchanged.
-    const onMobile = false;
+    const onMobile = _isMobileLayout();
     _syncMobileStageLayout();
     _setMobilePlayMode(onMobile);
     _applyMobileHotzones(onMobile);
