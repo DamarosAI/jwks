@@ -2562,52 +2562,6 @@ spec:
     await _animateViewBox(igViz, igMobileViewBoxes.full, prePanMs);
   }
 
-  async function _runMobileChargeSweep(reduceMotion) {
-    const stageOrder = ["protocol", "population", "screening", "forms", "replay"];
-    const stepMs = reduceMotion ? 0 : 420;
-    const layers = _mainVizLayers();
-
-    layers.forEach(function (el) {
-      el.style.transition = "none";
-      el.style.opacity = "0.22";
-    });
-    if (igTlCursor) {
-      igTlCursor.style.transition = "none";
-      igTlCursor.style.opacity = "1";
-      igTlCursor.setAttribute("cx", igTimelineX.protocol);
-    }
-    await flushFrames(2);
-
-    for (let i = 0; i < stageOrder.length; i++) {
-      if (igAutoplayAbort) break;
-      const stageId = stageOrder[i];
-      const el = document.getElementById(vizLayerIds.main[stageId]);
-      if (el) {
-        el.style.transition = reduceMotion ? "none" : "opacity " + stepMs + "ms cubic-bezier(.22,1,.36,1)";
-        el.style.opacity = "1";
-      }
-      if (igTlCursor) {
-        igTlCursor.style.transition = reduceMotion ? "none" : "cx " + stepMs + "ms cubic-bezier(.22,1,.36,1),opacity .28s ease";
-        igTlCursor.setAttribute("cx", igTimelineX[stageId]);
-      }
-      document.querySelectorAll("#igViz .tl-stop").forEach(function (stop) {
-        stop.classList.remove("is-active");
-        stop.setAttribute("r", "3");
-      });
-      setTimelineStop(stageId);
-      await wait(reduceMotion ? 48 : stepMs);
-    }
-
-    layers.forEach(function (el) {
-      el.style.transition = "";
-      el.style.opacity = "";
-    });
-    if (igTlCursor) {
-      igTlCursor.style.transition = "";
-      igTlCursor.style.opacity = "";
-    }
-  }
-
   // Smooth viewBox animation (returns Promise)
   let _vbAnimId = null;
   function _animateViewBox(svgEl, targetStr, duration) {
@@ -2958,7 +2912,7 @@ spec:
               panMs
             );
           }
-        } else if (igTlCursor && !onMobile) {
+        } else if (igTlCursor) {
           igTlCursor.style.transition = "none";
           igTlCursor.setAttribute("cx", 88);
           void igTlCursor.getBoundingClientRect();
@@ -2972,19 +2926,14 @@ spec:
       }
 
       if (beat.charge) {
-        if (onMobile) {
-          await wait(reduceMotion ? 0 : 140);
-          if (igAutoplayAbort) break;
-          await _runMobileChargeSweep(reduceMotion);
-          await wait(reduceMotion ? 200 : 720);
-        } else {
-          const mainLayers = _mainVizLayers();
-          mainLayers.forEach(function (el) { el.style.transition = "none"; el.classList.remove("viz-active", "viz-dim", "viz-mid"); });
-          if (igViz) igViz.classList.add("viz-charged");
-          if (igTlCursor) igTlCursor.setAttribute("cx", 680);
-          mainLayers.forEach(function (el) { el.style.transition = ""; });
-          await wait(reduceMotion ? 160 : beat.ms);
-        }
+        if (onMobile) await wait(reduceMotion ? 0 : 120);
+        if (igAutoplayAbort) break;
+        const mainLayers = _mainVizLayers();
+        mainLayers.forEach(function (el) { el.style.transition = "none"; el.classList.remove("viz-active", "viz-dim", "viz-mid"); });
+        if (igViz) igViz.classList.add("viz-charged");
+        if (igTlCursor) igTlCursor.setAttribute("cx", 680);
+        mainLayers.forEach(function (el) { el.style.transition = ""; });
+        await wait(reduceMotion ? 160 : beat.ms);
       } else if (beat.stageId === "replay" && onMobile && igAutoplayBeats[i + 1] && igAutoplayBeats[i + 1].charge) {
         await _runMobileReplayOutro(beat.ms, reduceMotion);
       } else {
