@@ -985,16 +985,28 @@ body.is-cockpit .ig-bottom-bar{opacity:1;pointer-events:auto}
   .ig-manifesto{padding:1.1rem 1rem .85rem!important}
   .ig-manifesto h1,.ig-manifesto p{font-size:.98rem!important;line-height:1.36!important;padding:.85rem 1rem!important}
   .ig-manifesto p+p{font-size:.86rem!important}
-  .ig-stakeholders{grid-template-columns:1fr!important;padding:.75rem 1rem 1rem!important;gap:.85rem!important}
-  .ig-stake{padding:.72rem .85rem!important;gap:.38rem!important}
+  .ig-stakeholders{grid-template-columns:1fr!important;padding:clamp(.85rem,2.5svh,1.25rem) 1rem clamp(1rem,3svh,1.75rem)!important;gap:clamp(1.1rem,4.2svh,2.35rem)!important}
+  .ig-stake{padding:clamp(.85rem,2.8svh,1.35rem) clamp(.9rem,3vw,1.1rem)!important;gap:clamp(.35rem,1.2svh,.55rem)!important}
   .ig-stake-aud{font-size:.54rem!important;margin-bottom:.1rem!important}
   .ig-stake-body{font-size:.8rem!important;line-height:1.5!important}
-  .ig-stakeholders-cta{padding:0 1rem .85rem!important}
+  .ig-stakeholders-cta{padding:clamp(1rem,3.5svh,2rem) 1rem clamp(1.2rem,4svh,2.5rem)!important}
   .ig-cta-btn{font-size:.58rem!important;padding:.58rem 1rem!important}
   .ig-outro{min-height:100svh;display:flex;flex-direction:column;justify-content:center}
   .ig-outro .ig-manifesto{padding-top:clamp(1rem,3vh,1.6rem)!important;padding-bottom:.65rem!important;flex:0 0 auto}
-  .ig-outro .ig-stakeholders{padding-top:.5rem!important;padding-bottom:.65rem!important;flex:0 0 auto}
-  .ig-outro .ig-stakeholders-cta{padding-bottom:.75rem!important;flex:0 0 auto}
+  .ig-outro .ig-stakeholders{
+    flex:1 1 auto;
+    display:flex!important;
+    flex-direction:column;
+    justify-content:space-evenly;
+    min-height:clamp(220px,38svh,420px);
+    padding-top:clamp(.85rem,3svh,1.5rem)!important;
+    padding-bottom:clamp(1.1rem,3.5svh,2rem)!important;
+    gap:clamp(1.2rem,5svh,2.75rem)!important;
+  }
+  .ig-outro .ig-stakeholders-cta{
+    padding-top:clamp(.75rem,2.5svh,1.25rem)!important;
+    padding-bottom:clamp(1.5rem,5svh,3rem)!important;
+  }
   .ig-bottom-bar{flex:0 0 auto}
   .ig-bottom-bar{padding:1rem 1rem!important;font-size:.52rem!important;flex-wrap:wrap;gap:.6rem}
 }
@@ -1076,9 +1088,22 @@ body.is-cockpit .ig-cockpit-viz .viz-layer *{
     opacity:1!important;
     visibility:visible!important;
   }
-  body.is-mobile-play.is-playing .ig-viz .tl-cursor{
+  body.is-mobile-play.is-playing:not(.is-outro-zoom) .ig-viz .tl-cursor{
     transition:cx .62s cubic-bezier(.22,1,.36,1),opacity .28s ease!important;
   }
+  body.is-mobile-play.is-outro-zoom .ig-viz .tl-cursor{
+    opacity:0!important;
+    visibility:hidden!important;
+  }
+  body.is-mobile-play.is-outro-zoom .ig-viz .viz-layer,
+  body.is-mobile-play.is-outro-zoom .ig-viz .viz-layer.viz-active{
+    opacity:.1!important;
+  }
+  body.is-mobile-play .ig-viz .tl-cursor.tl-cursor-reveal{
+    opacity:0!important;
+    animation:igTlCursorReveal .36s cubic-bezier(.22,1,.36,1) forwards;
+  }
+  @keyframes igTlCursorReveal{to{opacity:1}}
   body.is-mobile-play.is-playing .tl-stop{transition:fill .35s ease}
   body.is-mobile-play.is-playing .tl-stop.is-active{fill:var(--blue2)}
   body.is-mobile-play .ig-viz{max-height:var(--ig-mobile-viz-h,min(52svh,420px))!important}
@@ -1190,7 +1215,14 @@ body.is-playing .ig-cockpit{transition:none!important;opacity:0!important;pointe
 @media(max-width:740px){
   .ig-outro{min-height:100svh;display:flex;flex-direction:column;justify-content:center;align-items:stretch;padding:clamp(1.2rem,3svh,2.5rem) 0 clamp(.5rem,1.5svh,1rem)}
   .ig-outro .ig-manifesto{flex:0 0 auto}
-  .ig-outro .ig-stakeholders{flex:0 0 auto}
+  .ig-outro .ig-stakeholders{
+    flex:1 1 auto;
+    display:flex!important;
+    flex-direction:column;
+    justify-content:space-evenly;
+    min-height:clamp(220px,38svh,420px);
+    gap:clamp(1.2rem,5svh,2.75rem)!important;
+  }
   .ig-outro .ig-stakeholders-cta{flex:0 0 auto}
   .ig-outro-up{flex:0 0 auto}
 }
@@ -2551,46 +2583,37 @@ spec:
     return allStages.map(function (s) { return document.getElementById(vizLayerIds.main[s]); }).filter(Boolean);
   }
 
-  async function _animateTimelineCursor(targetX, duration, reduceMotion) {
-    return new Promise(function (resolve) {
-      if (!igTlCursor) { resolve(); return; }
-      if (!duration || reduceMotion || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        igTlCursor.setAttribute("cx", String(targetX));
-        resolve();
-        return;
-      }
-      const ease = "cubic-bezier(.65,0,.35,1)";
-      igTlCursor.style.transition = "cx " + duration + "ms " + ease;
-      void igTlCursor.getBoundingClientRect();
-      igTlCursor.setAttribute("cx", String(targetX));
-      let done = false;
-      function finish() {
-        if (done) return;
-        done = true;
-        igTlCursor.removeEventListener("transitionend", onEnd);
-        igTlCursor.style.transition = "";
-        resolve();
-      }
-      function onEnd(e) {
-        if (e && e.propertyName && e.propertyName !== "cx") return;
-        finish();
-      }
-      igTlCursor.addEventListener("transitionend", onEnd);
-      setTimeout(finish, duration + 80);
-    });
-  }
-
   async function _runMobileReplayOutro(beatMs, reduceMotion) {
     const prePanMs = reduceMotion ? 0 : 860;
     const holdMs = reduceMotion ? 0 : Math.max(760, beatMs - prePanMs);
     await wait(holdMs);
     if (igAutoplayAbort) return;
-    setMainVizFocus("protocol");
+
+    document.body.classList.add("is-outro-zoom");
+    _mainVizLayers().forEach(function (el) {
+      el.classList.remove("viz-active", "viz-dim", "viz-mid");
+    });
+    document.querySelectorAll("#igViz .tl-stop").forEach(function (stop) {
+      stop.classList.remove("is-active");
+      stop.setAttribute("r", "3");
+    });
+
+    await _animateViewBox(igViz, igMobileViewBoxes.full, prePanMs);
+    if (igAutoplayAbort) return;
+
+    document.body.classList.remove("is-outro-zoom");
+    if (igTlCursor) {
+      igTlCursor.style.transition = "none";
+      igTlCursor.classList.remove("tl-cursor-reveal");
+      igTlCursor.setAttribute("cx", String(igTimelineX.protocol));
+      void igTlCursor.getBoundingClientRect();
+    }
     setTimelineStop("protocol");
-    await Promise.all([
-      _animateViewBox(igViz, igMobileViewBoxes.full, prePanMs),
-      _animateTimelineCursor(igTimelineX.protocol, prePanMs, reduceMotion)
-    ]);
+    if (igTlCursor && !reduceMotion) {
+      igTlCursor.classList.add("tl-cursor-reveal");
+      await wait(360);
+      igTlCursor.classList.remove("tl-cursor-reveal");
+    }
   }
 
   async function _beginMobileChargeSweep(reduceMotion) {
@@ -2601,7 +2624,8 @@ spec:
       el.classList.remove("viz-active", "viz-dim", "viz-mid");
     });
     if (igTlCursor) {
-      igTlCursor.style.opacity = "1";
+      igTlCursor.classList.remove("tl-cursor-reveal");
+      igTlCursor.style.opacity = "";
       igTlCursor.setAttribute("cx", String(igTimelineX.protocol));
     }
     await flushFrames(1);
