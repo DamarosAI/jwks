@@ -1091,13 +1091,9 @@ body.is-cockpit .ig-cockpit-viz .viz-layer *{
   body.is-mobile-play.is-playing:not(.is-outro-zoom) .ig-viz .tl-cursor{
     transition:cx .62s cubic-bezier(.22,1,.36,1),opacity .28s ease!important;
   }
-  body.is-mobile-play.is-outro-zoom .ig-viz .tl-cursor{
-    opacity:0!important;
-    visibility:hidden!important;
-  }
   body.is-mobile-play.is-outro-zoom .ig-viz .viz-layer,
   body.is-mobile-play.is-outro-zoom .ig-viz .viz-layer.viz-active{
-    opacity:.1!important;
+    opacity:.22!important;
   }
   body.is-mobile-play.is-charging .ig-viz:not(.viz-charged) .tl-cursor{
     opacity:0!important;
@@ -1115,7 +1111,6 @@ body.is-cockpit .ig-cockpit-viz .viz-layer *{
     transition:none!important;
   }
   body.is-mobile-play.is-charging .ig-viz.viz-charged .viz-layer{
-    transition:none!important;
     animation-fill-mode:forwards;
   }
   body.is-mobile-play.is-charging .ig-viz.viz-charged #vizProtocol  {animation:igChargeLight 1s ease 0s    forwards}
@@ -1123,9 +1118,6 @@ body.is-cockpit .ig-cockpit-viz .viz-layer *{
   body.is-mobile-play.is-charging .ig-viz.viz-charged #vizScreening {animation:igChargeLight 1s ease .7s   forwards}
   body.is-mobile-play.is-charging .ig-viz.viz-charged #vizForms     {animation:igChargeLight 1s ease 1.05s forwards}
   body.is-mobile-play.is-charging .ig-viz.viz-charged #vizDecision  {animation:igChargeLight 1s ease 1.4s  forwards}
-  body.is-mobile-play.is-charging .ig-viz.viz-charged .tl-cursor{
-    transition:none!important;
-  }
   body.is-mobile-play .viz-hotzone{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   body.is-mobile-play .ig-cock-restart,.ig-down-arrow,.ig-up-arrow,.ig-cock-wordmark{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   /* Cockpit is the top of the page - no scroll-up affordance; use wordmark or HOME tab */
@@ -2487,14 +2479,20 @@ spec:
     { stageId: "_charge",    caption: "One execution engine. Criterion-level eligibility at institutional scale.", cursorX: igTimelineX.replay, ms: 2580, charge: true }
   ];
 
-  // Mobile walkthrough: full-width crop keeps timeline labels in frame; symbol focus via viz-active.
-  const igMobileCropW = 768;
-  const igMobileCropX = 11;
-  const igMobileCropTop = 52;
-  const igMobileCropH = 398;
+  // Mobile walkthrough: crop around each symbol and its timeline type label,
+  // then sweep the SVG viewBox left-to-right before zooming back to the full chain.
+  const igMobileStageCrops = {
+    protocol:   { x: -34, y: 68, w: 244, h: 366 },
+    population: { x: 112, y: 68, w: 248, h: 366 },
+    screening:  { x: 258, y: 68, w: 256, h: 366 },
+    forms:      { x: 414, y: 68, w: 246, h: 366 },
+    replay:     { x: 560, y: 68, w: 242, h: 366 }
+  };
 
   function _mobileStageViewBox(stageId) {
-    return igMobileCropX + " " + igMobileCropTop + " " + igMobileCropW + " " + igMobileCropH;
+    const crop = igMobileStageCrops[stageId];
+    if (!crop) return "11 0 768 450";
+    return crop.x + " " + crop.y + " " + crop.w + " " + crop.h;
   }
 
   const igMobileViewBoxes = {
@@ -2564,7 +2562,7 @@ spec:
   }
 
   function _mobilePanMs(beatMs) {
-    return Math.min(760, Math.max(540, Math.round(beatMs * 0.46)));
+    return Math.min(980, Math.max(700, Math.round(beatMs * 0.36)));
   }
 
   function _mainVizLayers() {
