@@ -1081,20 +1081,17 @@ body.is-cockpit .ig-cockpit-viz .viz-layer *{
   body.is-mobile-play .ig-caption{margin-top:var(--ig-mobile-cap-gap,clamp(1.2rem,2.8svh,1.8rem))!important}
   body.is-mobile-play .ig-skip{margin-top:var(--ig-mobile-skip-gap,clamp(1rem,2.4svh,1.6rem))!important;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   body.is-mobile-play .ig-monogram-grid{animation-duration:18s!important}
-  body.is-mobile-play.is-charging .ig-viz .viz-layer,
-  body.is-mobile-play.is-charging .ig-viz .viz-layer.viz-active{
+  body.is-mobile-play.is-charging .ig-viz:not(.viz-charged) .viz-layer,
+  body.is-mobile-play.is-charging .ig-viz:not(.viz-charged) .viz-layer.viz-active{
     opacity:.22!important;
     transition:none!important;
   }
+  body.is-mobile-play.is-charging .ig-viz .tl-cursor{
+    opacity:1!important;
+  }
   body.is-mobile-play.is-charging .ig-viz.viz-charged .viz-layer{
     transition:none!important;
-    animation-fill-mode:forwards;
   }
-  body.is-mobile-play.is-charging .ig-viz.viz-charged #vizProtocol  {animation:igChargeLight .68s ease 0s    forwards}
-  body.is-mobile-play.is-charging .ig-viz.viz-charged #vizPopulation{animation:igChargeLight .68s ease .2s   forwards}
-  body.is-mobile-play.is-charging .ig-viz.viz-charged #vizScreening {animation:igChargeLight .68s ease .4s   forwards}
-  body.is-mobile-play.is-charging .ig-viz.viz-charged #vizForms     {animation:igChargeLight .68s ease .6s   forwards}
-  body.is-mobile-play.is-charging .ig-viz.viz-charged #vizDecision  {animation:igChargeLight .68s ease .8s   forwards}
   body.is-mobile-play .viz-hotzone{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   body.is-mobile-play .ig-cock-restart,.ig-down-arrow,.ig-up-arrow,.ig-cock-wordmark{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   /* Cockpit is the top of the page - no scroll-up affordance; use wordmark or HOME tab */
@@ -1807,8 +1804,8 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
     </div>
     <div class="ig-info-card" data-stage="forms" id="cardForms" role="region" aria-label="Forms detail">
       <div class="ig-card-label">04 · Forms</div>
-      <h3 class="ig-card-title">Site forms draft from sponsor packets.</h3>
-      <p class="ig-card-body">Luna maps sponsor CRFs, visit schedules, and source templates to screening evidence, then assembles coordinator-ready drafts for human review. Every field traces to packet version, protocol release, and criterion facts.</p>
+      <h3 class="ig-card-title">Forms intelligence from sponsor packets.</h3>
+      <p class="ig-card-body">AI-assisted assembly maps sponsor CRFs, visit schedules, and source templates to screening evidence, under Luna governance for traceability, PHI gating, and coordinator review before site outputs ship.</p>
     </div>
     <div class="ig-info-card" data-stage="replay" id="cardReplay" role="region" aria-label="Replay detail">
       <div class="ig-card-label">05 · Replay</div>
@@ -2449,14 +2446,30 @@ spec:
     { stageId: "_charge",    caption: "One execution engine. Criterion-level eligibility at institutional scale.", cursorX: igTimelineX.replay, ms: 2580, charge: true }
   ];
 
-  // Mobile walkthrough: smooth viewBox pans centered on each stage label.
-  // Charge beat zooms back to full workflow before load-up animation.
+  // Mobile walkthrough: viewBox crops centered on each stage focal point.
+  const igMobileStageFocals = {
+    protocol:   { x: 88,  y: 200 },
+    population: { x: 236, y: 200 },
+    screening:  { x: 384, y: 200 },
+    forms:      { x: 532, y: 200 },
+    replay:     { x: 680, y: 200 }
+  };
+  const igMobileCropW = 220;
+  const igMobileCropH = 340;
+
+  function _mobileStageViewBox(stageId) {
+    const focal = igMobileStageFocals[stageId] || igMobileStageFocals.screening;
+    const x = focal.x - igMobileCropW / 2;
+    const y = focal.y - igMobileCropH / 2;
+    return x + " " + y + " " + igMobileCropW + " " + igMobileCropH;
+  }
+
   const igMobileViewBoxes = {
-    protocol:   "-22 70 220 360",
-    population: "135 70 220 360",
-    screening:  "285 70 220 360",
-    forms:      "438 70 220 360",
-    replay:     "570 70 220 360",
+    protocol:   _mobileStageViewBox("protocol"),
+    population: _mobileStageViewBox("population"),
+    screening:  _mobileStageViewBox("screening"),
+    forms:      _mobileStageViewBox("forms"),
+    replay:     _mobileStageViewBox("replay"),
     full:       "11 0 768 450"
   };
 
@@ -2541,12 +2554,58 @@ spec:
   }
 
   async function _runMobileReplayOutro(beatMs, reduceMotion) {
-    const prePanMs = reduceMotion ? 0 : 840;
-    const holdMs = reduceMotion ? 0 : Math.max(760, beatMs - prePanMs);
+    const prePanMs = reduceMotion ? 0 : 780;
+    const holdMs = reduceMotion ? 0 : Math.max(820, beatMs - prePanMs);
     await wait(holdMs);
     if (igAutoplayAbort) return;
     _enterMobileChargePrep();
     await _animateViewBox(igViz, igMobileViewBoxes.full, prePanMs);
+  }
+
+  async function _runMobileChargeSweep(reduceMotion) {
+    const stageOrder = ["protocol", "population", "screening", "forms", "replay"];
+    const stepMs = reduceMotion ? 0 : 420;
+    const layers = _mainVizLayers();
+
+    layers.forEach(function (el) {
+      el.style.transition = "none";
+      el.style.opacity = "0.22";
+    });
+    if (igTlCursor) {
+      igTlCursor.style.transition = "none";
+      igTlCursor.style.opacity = "1";
+      igTlCursor.setAttribute("cx", igTimelineX.protocol);
+    }
+    await flushFrames(2);
+
+    for (let i = 0; i < stageOrder.length; i++) {
+      if (igAutoplayAbort) break;
+      const stageId = stageOrder[i];
+      const el = document.getElementById(vizLayerIds.main[stageId]);
+      if (el) {
+        el.style.transition = reduceMotion ? "none" : "opacity " + stepMs + "ms cubic-bezier(.22,1,.36,1)";
+        el.style.opacity = "1";
+      }
+      if (igTlCursor) {
+        igTlCursor.style.transition = reduceMotion ? "none" : "cx " + stepMs + "ms cubic-bezier(.22,1,.36,1),opacity .28s ease";
+        igTlCursor.setAttribute("cx", igTimelineX[stageId]);
+      }
+      document.querySelectorAll("#igViz .tl-stop").forEach(function (stop) {
+        stop.classList.remove("is-active");
+        stop.setAttribute("r", "3");
+      });
+      setTimelineStop(stageId);
+      await wait(reduceMotion ? 48 : stepMs);
+    }
+
+    layers.forEach(function (el) {
+      el.style.transition = "";
+      el.style.opacity = "";
+    });
+    if (igTlCursor) {
+      igTlCursor.style.transition = "";
+      igTlCursor.style.opacity = "";
+    }
   }
 
   // Smooth viewBox animation (returns Promise)
@@ -2899,7 +2958,7 @@ spec:
               panMs
             );
           }
-        } else if (igTlCursor) {
+        } else if (igTlCursor && !onMobile) {
           igTlCursor.style.transition = "none";
           igTlCursor.setAttribute("cx", 88);
           void igTlCursor.getBoundingClientRect();
@@ -2913,20 +2972,22 @@ spec:
       }
 
       if (beat.charge) {
-        if (onMobile) await wait(reduceMotion ? 0 : 120);
-        if (igAutoplayAbort) break;
-        const mainLayers = _mainVizLayers();
-        mainLayers.forEach(function (el) { el.style.transition = "none"; el.classList.remove("viz-active", "viz-dim", "viz-mid"); });
-        if (igViz) igViz.classList.add("viz-charged");
-        if (igTlCursor) igTlCursor.setAttribute("cx", 680);
-        mainLayers.forEach(function (el) { el.style.transition = ""; });
+        if (onMobile) {
+          await wait(reduceMotion ? 0 : 140);
+          if (igAutoplayAbort) break;
+          await _runMobileChargeSweep(reduceMotion);
+          await wait(reduceMotion ? 200 : 720);
+        } else {
+          const mainLayers = _mainVizLayers();
+          mainLayers.forEach(function (el) { el.style.transition = "none"; el.classList.remove("viz-active", "viz-dim", "viz-mid"); });
+          if (igViz) igViz.classList.add("viz-charged");
+          if (igTlCursor) igTlCursor.setAttribute("cx", 680);
+          mainLayers.forEach(function (el) { el.style.transition = ""; });
+          await wait(reduceMotion ? 160 : beat.ms);
+        }
       } else if (beat.stageId === "replay" && onMobile && igAutoplayBeats[i + 1] && igAutoplayBeats[i + 1].charge) {
         await _runMobileReplayOutro(beat.ms, reduceMotion);
       } else {
-        await wait(reduceMotion ? 160 : beat.ms);
-      }
-
-      if (beat.charge) {
         await wait(reduceMotion ? 160 : beat.ms);
       }
     }
