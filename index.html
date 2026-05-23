@@ -1081,19 +1081,20 @@ body.is-cockpit .ig-cockpit-viz .viz-layer *{
   body.is-mobile-play .ig-caption{margin-top:var(--ig-mobile-cap-gap,clamp(1.2rem,2.8svh,1.8rem))!important}
   body.is-mobile-play .ig-skip{margin-top:var(--ig-mobile-skip-gap,clamp(1rem,2.4svh,1.6rem))!important;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   body.is-mobile-play .ig-monogram-grid{animation-duration:18s!important}
-  /* Charge-up: hold equal dim baseline before sweep (avoids replay-at-1 → .22 snap) */
-  body.is-mobile-play.is-charging .ig-viz .viz-layer{
+  body.is-mobile-play.is-charging .ig-viz .viz-layer,
+  body.is-mobile-play.is-charging .ig-viz .viz-layer.viz-active{
     opacity:.22!important;
     transition:none!important;
   }
   body.is-mobile-play.is-charging .ig-viz.viz-charged .viz-layer{
     transition:none!important;
+    animation-fill-mode:forwards;
   }
-  body.is-mobile-play.is-charging .ig-viz.viz-charged #vizProtocol  {animation:igChargeLight .72s ease 0s    forwards}
-  body.is-mobile-play.is-charging .ig-viz.viz-charged #vizPopulation{animation:igChargeLight .72s ease .22s  forwards}
-  body.is-mobile-play.is-charging .ig-viz.viz-charged #vizScreening {animation:igChargeLight .72s ease .44s  forwards}
-  body.is-mobile-play.is-charging .ig-viz.viz-charged #vizForms     {animation:igChargeLight .72s ease .66s  forwards}
-  body.is-mobile-play.is-charging .ig-viz.viz-charged #vizDecision  {animation:igChargeLight .72s ease .88s  forwards}
+  body.is-mobile-play.is-charging .ig-viz.viz-charged #vizProtocol  {animation:igChargeLight .68s ease 0s    forwards}
+  body.is-mobile-play.is-charging .ig-viz.viz-charged #vizPopulation{animation:igChargeLight .68s ease .2s   forwards}
+  body.is-mobile-play.is-charging .ig-viz.viz-charged #vizScreening {animation:igChargeLight .68s ease .4s   forwards}
+  body.is-mobile-play.is-charging .ig-viz.viz-charged #vizForms     {animation:igChargeLight .68s ease .6s   forwards}
+  body.is-mobile-play.is-charging .ig-viz.viz-charged #vizDecision  {animation:igChargeLight .68s ease .8s   forwards}
   body.is-mobile-play .viz-hotzone{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   body.is-mobile-play .ig-cock-restart,.ig-down-arrow,.ig-up-arrow,.ig-cock-wordmark{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   /* Cockpit is the top of the page - no scroll-up affordance; use wordmark or HOME tab */
@@ -1385,15 +1386,20 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
   .ig-cock-brand-bar{gap:.45rem .55rem;margin-top:.65rem}
   .ig-cock-hint{flex:1 1 9rem;font-size:.575rem;letter-spacing:.18em;color:var(--ts)}
 }
-/* Mobile dark hero: monogram ~18% brighter than desktop dark baseline */
+/* Mobile dark hero: light-mode vignette shape, ~10% brighter than prior mobile pass */
 @media(max-width:740px){
+  [data-theme="dark"] body:not(.is-playing):not(.is-cockpit) .ig-monogram-bg,
+  :root:not([data-theme="light"]) body:not(.is-playing):not(.is-cockpit) .ig-monogram-bg{
+    -webkit-mask-image:radial-gradient(ellipse 60% 48% at 50% 46%,transparent 0%,transparent 29%,var(--mask-fade) 48%,var(--mask-solid) 71%);
+    mask-image:radial-gradient(ellipse 60% 48% at 50% 46%,transparent 0%,transparent 29%,var(--mask-fade) 48%,var(--mask-solid) 71%);
+  }
   [data-theme="dark"] body:not(.is-playing):not(.is-cockpit) .ig-monogram-grid,
   :root:not([data-theme="light"]) body:not(.is-playing):not(.is-cockpit) .ig-monogram-grid{
-    opacity:.106;
+    opacity:.117;
   }
   [data-theme="dark"] body:not(.is-playing):not(.is-cockpit) .ig-monogram-grid img,
   :root:not([data-theme="light"]) body:not(.is-playing):not(.is-cockpit) .ig-monogram-grid img{
-    filter:grayscale(1) brightness(.71) contrast(1.3);
+    filter:grayscale(1) brightness(.78) contrast(1.3);
     mix-blend-mode:screen;
   }
 }
@@ -1801,8 +1807,8 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
     </div>
     <div class="ig-info-card" data-stage="forms" id="cardForms" role="region" aria-label="Forms detail">
       <div class="ig-card-label">04 · Forms</div>
-      <h3 class="ig-card-title">Trial documentation assembles from screening lineage.</h3>
-      <p class="ig-card-body">Coordinator and sponsor forms draft from criterion-level evidence under Luna governance, with human review before outputs ship. Every field traces to protocol version and source facts.</p>
+      <h3 class="ig-card-title">Site forms draft from sponsor packets.</h3>
+      <p class="ig-card-body">Luna maps sponsor CRFs, visit schedules, and source templates to screening evidence, then assembles coordinator-ready drafts for human review. Every field traces to packet version, protocol release, and criterion facts.</p>
     </div>
     <div class="ig-info-card" data-stage="replay" id="cardReplay" role="region" aria-label="Replay detail">
       <div class="ig-card-label">05 · Replay</div>
@@ -2515,6 +2521,34 @@ spec:
     return Math.min(760, Math.max(540, Math.round(beatMs * 0.46)));
   }
 
+  function _mainVizLayers() {
+    return allStages.map(function (s) { return document.getElementById(vizLayerIds.main[s]); }).filter(Boolean);
+  }
+
+  function _enterMobileChargePrep() {
+    document.body.classList.add("is-charging");
+    const mainLayers = _mainVizLayers();
+    mainLayers.forEach(function (el) {
+      el.style.transition = "none";
+      el.classList.remove("viz-active", "viz-dim", "viz-mid");
+    });
+    if (igViz) void igViz.getBoundingClientRect();
+    mainLayers.forEach(function (el) { el.style.transition = ""; });
+    document.querySelectorAll("#igViz .tl-stop").forEach(function (stop) {
+      stop.classList.remove("is-active");
+      stop.setAttribute("r", "3");
+    });
+  }
+
+  async function _runMobileReplayOutro(beatMs, reduceMotion) {
+    const prePanMs = reduceMotion ? 0 : 840;
+    const holdMs = reduceMotion ? 0 : Math.max(760, beatMs - prePanMs);
+    await wait(holdMs);
+    if (igAutoplayAbort) return;
+    _enterMobileChargePrep();
+    await _animateViewBox(igViz, igMobileViewBoxes.full, prePanMs);
+  }
+
   // Smooth viewBox animation (returns Promise)
   let _vbAnimId = null;
   function _animateViewBox(svgEl, targetStr, duration) {
@@ -2843,20 +2877,8 @@ spec:
       if (igAutoplayAbort) break;
       const beat = igAutoplayBeats[i];
 
-      // Charge beat: on mobile, flatten layer opacity and zoom out before is-charging
-      // so replay does not snap from viz-active (1) to dim (.22) when charge rules apply.
       if (beat.charge) {
-        if (onMobile) {
-          const mainLayers = allStages.map(function (s) { return document.getElementById(vizLayerIds.main[s]); }).filter(Boolean);
-          mainLayers.forEach(function (el) {
-            el.style.transition = "none";
-            el.classList.remove("viz-active", "viz-dim", "viz-mid");
-          });
-          void igViz && igViz.getBoundingClientRect();
-          mainLayers.forEach(function (el) { el.style.transition = ""; });
-          await _animateViewBox(igViz, igMobileViewBoxes.full, reduceMotion ? 0 : 720);
-        }
-        document.body.classList.add("is-charging");
+        if (!onMobile) document.body.classList.add("is-charging");
       }
 
       if (igCaption && beat.caption !== undefined) {
@@ -2891,22 +2913,22 @@ spec:
       }
 
       if (beat.charge) {
-        if (onMobile) await wait(reduceMotion ? 0 : 180);
+        if (onMobile) await wait(reduceMotion ? 0 : 120);
         if (igAutoplayAbort) break;
-        // Strip viz-active from all layers (replay was still lit from beat 5) so the
-        // igChargeLight sweep starts from a clean .22 baseline on every symbol.
-        // transition:none prevents a visible .65s dim-flash when viz-active is removed.
-        const mainLayers = allStages.map(function(s){ return document.getElementById(vizLayerIds.main[s]); }).filter(Boolean);
-        mainLayers.forEach(function(el){ el.style.transition = "none"; el.classList.remove("viz-active","viz-dim","viz-mid"); });
+        const mainLayers = _mainVizLayers();
+        mainLayers.forEach(function (el) { el.style.transition = "none"; el.classList.remove("viz-active", "viz-dim", "viz-mid"); });
         if (igViz) igViz.classList.add("viz-charged");
-        // viz-charged removes the opacity:0 rule → cursor fades back in at cx=88 (.28s)
-        // and simultaneously begins the 1.85s cx transition to 680.
-        igTlCursor.setAttribute("cx", 680);
-        // Restore transitions - animations are in control now
-        mainLayers.forEach(function(el){ el.style.transition = ""; });
+        if (igTlCursor) igTlCursor.setAttribute("cx", 680);
+        mainLayers.forEach(function (el) { el.style.transition = ""; });
+      } else if (beat.stageId === "replay" && onMobile && igAutoplayBeats[i + 1] && igAutoplayBeats[i + 1].charge) {
+        await _runMobileReplayOutro(beat.ms, reduceMotion);
+      } else {
+        await wait(reduceMotion ? 160 : beat.ms);
       }
 
-      await wait(reduceMotion ? 160 : beat.ms);
+      if (beat.charge) {
+        await wait(reduceMotion ? 160 : beat.ms);
+      }
     }
 
     igAutoplayRunning = false;
