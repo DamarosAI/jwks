@@ -1124,7 +1124,7 @@ body.is-cockpit .ig-cockpit-viz .viz-layer *{
   body.is-mobile-play.is-charging .ig-viz.viz-charged #vizForms     {animation:igChargeLight 1s ease 1.05s forwards}
   body.is-mobile-play.is-charging .ig-viz.viz-charged #vizDecision  {animation:igChargeLight 1s ease 1.4s  forwards}
   body.is-mobile-play.is-charging .ig-viz.viz-charged .tl-cursor{
-    transition:cx 1.85s cubic-bezier(.65,0,.35,1),opacity .28s ease!important;
+    transition:none!important;
   }
   body.is-mobile-play .viz-hotzone{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   body.is-mobile-play .ig-cock-restart,.ig-down-arrow,.ig-up-arrow,.ig-cock-wordmark{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
@@ -2487,22 +2487,14 @@ spec:
     { stageId: "_charge",    caption: "One execution engine. Criterion-level eligibility at institutional scale.", cursorX: igTimelineX.replay, ms: 2580, charge: true }
   ];
 
-  // Mobile walkthrough: viewBox crops centered on each stage focal point.
-  const igMobileStageFocals = {
-    protocol:   { x: 88,  y: 200 },
-    population: { x: 236, y: 200 },
-    screening:  { x: 384, y: 200 },
-    forms:      { x: 532, y: 200 },
-    replay:     { x: 680, y: 200 }
-  };
-  const igMobileCropW = 220;
+  // Mobile walkthrough: full-width crop keeps timeline labels in frame; symbol focus via viz-active.
+  const igMobileCropW = 768;
+  const igMobileCropX = 11;
   const igMobileCropTop = 52;
   const igMobileCropH = 398;
 
   function _mobileStageViewBox(stageId) {
-    const focal = igMobileStageFocals[stageId] || igMobileStageFocals.screening;
-    const x = focal.x - igMobileCropW / 2;
-    return x + " " + igMobileCropTop + " " + igMobileCropW + " " + igMobileCropH;
+    return igMobileCropX + " " + igMobileCropTop + " " + igMobileCropW + " " + igMobileCropH;
   }
 
   const igMobileViewBoxes = {
@@ -2579,6 +2571,69 @@ spec:
     return allStages.map(function (s) { return document.getElementById(vizLayerIds.main[s]); }).filter(Boolean);
   }
 
+  const igChargeTimelineStops = [
+    { stageId: "protocol",   x: igTimelineX.protocol,   ms: 0 },
+    { stageId: "population", x: igTimelineX.population, ms: 350 },
+    { stageId: "screening",  x: igTimelineX.screening,  ms: 700 },
+    { stageId: "forms",      x: igTimelineX.forms,      ms: 1050 },
+    { stageId: "replay",     x: igTimelineX.replay,     ms: 1400 }
+  ];
+  const igChargeTimelineMs = 2400;
+
+  async function _runChargeTimelineSweep(reduceMotion) {
+    document.body.classList.add("is-charging");
+    const mainLayers = _mainVizLayers();
+    mainLayers.forEach(function (el) {
+      el.style.transition = "none";
+      el.classList.remove("viz-active", "viz-dim", "viz-mid");
+    });
+    if (igTlCursor) {
+      igTlCursor.style.transition = "none";
+      igTlCursor.style.opacity = "1";
+      igTlCursor.style.visibility = "visible";
+      igTlCursor.setAttribute("cx", String(igTimelineX.protocol));
+    }
+    setTimelineStop("protocol");
+    await flushFrames(1);
+    if (igViz) igViz.classList.add("viz-charged");
+    mainLayers.forEach(function (el) { el.style.transition = ""; });
+
+    if (reduceMotion) {
+      if (igTlCursor) igTlCursor.setAttribute("cx", String(igTimelineX.replay));
+      setTimelineStop("replay");
+      await wait(200);
+      return;
+    }
+
+    await new Promise(function (resolve) {
+      const t0 = performance.now();
+      function tick(now) {
+        const elapsed = now - t0;
+        let idx = 0;
+        for (let i = igChargeTimelineStops.length - 1; i >= 0; i--) {
+          if (elapsed >= igChargeTimelineStops[i].ms) { idx = i; break; }
+        }
+        const a = igChargeTimelineStops[idx];
+        const b = igChargeTimelineStops[Math.min(idx + 1, igChargeTimelineStops.length - 1)];
+        const segStart = a.ms;
+        const segEnd = b.ms === a.ms ? igChargeTimelineMs : b.ms;
+        const raw = segEnd > segStart ? Math.min(1, (elapsed - segStart) / (segEnd - segStart)) : 1;
+        const t = raw < 0.5 ? 2 * raw * raw : 1 - Math.pow(-2 * raw + 2, 2) / 2;
+        const cx = a.x + (b.x - a.x) * t;
+        if (igTlCursor) igTlCursor.setAttribute("cx", String(cx));
+        setTimelineStop(a.stageId);
+        if (elapsed >= igChargeTimelineMs) {
+          if (igTlCursor) igTlCursor.setAttribute("cx", String(igTimelineX.replay));
+          setTimelineStop("replay");
+          resolve();
+          return;
+        }
+        requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    });
+  }
+
   async function _runMobileReplayOutro(beatMs, reduceMotion) {
     const prePanMs = reduceMotion ? 0 : 860;
     const holdMs = reduceMotion ? 0 : Math.max(760, beatMs - prePanMs);
@@ -2599,25 +2654,7 @@ spec:
 
   async function _beginMobileChargeSweep(reduceMotion) {
     document.body.classList.remove("is-outro-zoom");
-    document.body.classList.add("is-charging");
-    const mainLayers = _mainVizLayers();
-    mainLayers.forEach(function (el) {
-      el.style.transition = "none";
-      el.classList.remove("viz-active", "viz-dim", "viz-mid");
-    });
-    if (igTlCursor) {
-      igTlCursor.style.transition = "none";
-      igTlCursor.setAttribute("cx", String(igTimelineX.protocol));
-    }
-    setTimelineStop("protocol");
-    if (igViz) void igViz.getBoundingClientRect();
-    if (igViz) igViz.classList.add("viz-charged");
-    mainLayers.forEach(function (el) { el.style.transition = ""; });
-    if (igTlCursor) {
-      igTlCursor.style.transition = reduceMotion ? "none" : "cx 1.85s cubic-bezier(.65,0,.35,1)";
-      igTlCursor.setAttribute("cx", String(igTimelineX.replay));
-    }
-    await wait(reduceMotion ? 200 : 2500);
+    await _runChargeTimelineSweep(reduceMotion);
   }
 
   // Smooth viewBox animation (returns Promise)
@@ -2632,6 +2669,10 @@ spec:
         return;
       }
       const cur = svgEl.getAttribute("viewBox") || "0 0 820 450";
+      if (cur.trim() === targetStr.trim()) {
+        resolve();
+        return;
+      }
       const p = function (s) { const a = s.trim().split(/\s+/).map(Number); return { x: a[0], y: a[1], w: a[2], h: a[3] }; };
       const from = p(cur), to = p(targetStr);
       const t0 = performance.now();
@@ -2914,6 +2955,10 @@ spec:
     window.scrollTo(0, 0);
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const onMobile = _isMobileLayout();
+    if (onMobile && igViz && igMobileViewBoxes.protocol) {
+      igViz.setAttribute("viewBox", igMobileViewBoxes.protocol);
+    }
 
     await (monogramReadyPromise || Promise.resolve());
 
@@ -2921,17 +2966,9 @@ spec:
     setTimelineCursor(88);
     setTimelineStop("protocol");
 
-    const onMobile = _isMobileLayout();
     _syncMobileStageLayout();
     _setMobilePlayMode(onMobile);
     _applyMobileHotzones(onMobile);
-    if (onMobile && igViz) {
-      const firstStage = igAutoplayBeats[0] && igAutoplayBeats[0].stageId;
-      if (firstStage && igMobileViewBoxes[firstStage]) {
-        igViz.setAttribute("viewBox", igMobileViewBoxes[firstStage]);
-        void igViz.getBoundingClientRect();
-      }
-    }
 
     document.body.classList.add("is-playing");
     if (reduceMotion) {
@@ -2978,13 +3015,8 @@ spec:
         if (onMobile) {
           await _beginMobileChargeSweep(reduceMotion);
         } else {
-          document.body.classList.add("is-charging");
-          const mainLayers = _mainVizLayers();
-          mainLayers.forEach(function (el) { el.style.transition = "none"; el.classList.remove("viz-active", "viz-dim", "viz-mid"); });
-          if (igViz) igViz.classList.add("viz-charged");
-          if (igTlCursor) igTlCursor.setAttribute("cx", 680);
-          mainLayers.forEach(function (el) { el.style.transition = ""; });
-          await wait(reduceMotion ? 160 : beat.ms);
+          await _runChargeTimelineSweep(reduceMotion);
+          await wait(reduceMotion ? 160 : Math.max(0, beat.ms - igChargeTimelineMs));
         }
       } else if (beat.stageId === "replay" && onMobile && igAutoplayBeats[i + 1] && igAutoplayBeats[i + 1].charge) {
         await _runMobileReplayOutro(beat.ms, reduceMotion);
