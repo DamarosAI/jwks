@@ -2580,7 +2580,8 @@ spec:
     { stageId: "replay",     x: igTimelineX.replay,     ms: 1400 }
   ];
   const igChargeTimelineMs = 2400;
-  const igChargeProtocolHoldMs = 520;
+  const igChargeSweepMs = igChargeTimelineStops[igChargeTimelineStops.length - 1].ms;
+  const igChargeProtocolHoldMs = 320;
 
   async function _runChargeTimelineSweep(reduceMotion) {
     document.body.classList.add("is-charging");
@@ -2619,20 +2620,20 @@ spec:
           return;
         }
         const sweepElapsed = elapsed - igChargeProtocolHoldMs;
-        let idx = 0;
-        for (let i = igChargeTimelineStops.length - 1; i >= 0; i--) {
-          if (sweepElapsed >= igChargeTimelineStops[i].ms) { idx = i; break; }
-        }
-        const a = igChargeTimelineStops[idx];
-        const b = igChargeTimelineStops[Math.min(idx + 1, igChargeTimelineStops.length - 1)];
-        const segStart = a.ms;
-        const segEnd = b.ms === a.ms ? igChargeTimelineMs : b.ms;
-        const raw = segEnd > segStart ? Math.min(1, (sweepElapsed - segStart) / (segEnd - segStart)) : 1;
-        const t = raw < 0.5 ? 2 * raw * raw : 1 - Math.pow(-2 * raw + 2, 2) / 2;
-        const cx = a.x + (b.x - a.x) * t;
+        const clampedSweep = Math.min(igChargeSweepMs, Math.max(0, sweepElapsed));
+        const raw = igChargeSweepMs > 0 ? clampedSweep / igChargeSweepMs : 1;
+        // Single curve across full sweep prevents segment-by-segment bounce.
+        const t = raw * raw * (3 - 2 * raw);
+        const startX = igChargeTimelineStops[0].x;
+        const endX = igChargeTimelineStops[igChargeTimelineStops.length - 1].x;
+        const cx = startX + (endX - startX) * t;
         if (igTlCursor) igTlCursor.setAttribute("cx", String(cx));
-        setTimelineStop(a.stageId);
-        if (sweepElapsed >= igChargeTimelineMs) {
+        let activeStage = igChargeTimelineStops[0].stageId;
+        for (let i = 1; i < igChargeTimelineStops.length; i++) {
+          if (clampedSweep >= igChargeTimelineStops[i].ms) activeStage = igChargeTimelineStops[i].stageId;
+        }
+        setTimelineStop(activeStage);
+        if (clampedSweep >= igChargeSweepMs) {
           if (igTlCursor) igTlCursor.setAttribute("cx", String(igTimelineX.replay));
           setTimelineStop("replay");
           resolve();
