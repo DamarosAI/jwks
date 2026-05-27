@@ -837,35 +837,37 @@ body.is-cockpit .ig-cockpit{opacity:1;pointer-events:auto}
 .ig-info-card.visible{opacity:1;pointer-events:auto;transform:scale(1)}
 .ig-info-card .ig-card-label{font-family:var(--fm);font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:var(--blue2);font-weight:700;margin-bottom:.42rem;display:flex;align-items:center;gap:.38rem}
 .ig-info-card .ig-card-label::before,.damaros-docs-section-label::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--blue2);box-shadow:0 0 12px rgba(123,150,178,.55)}
+/* Evidence label flair: tri-color dot echoing the eligible / near-eligible / REVIEW
+   particle palette used in the Evidence symbol cluster. Title accent uses the same
+   gradient as a subtle reading cue. */
+.ig-info-card[data-stage="evidence"] .ig-card-label{
+  color:transparent;
+  background-image:linear-gradient(90deg,rgba(74,222,128,.95) 0%,var(--blue2) 50%,rgba(250,204,21,.95) 100%);
+  -webkit-background-clip:text;background-clip:text;
+}
+.ig-info-card[data-stage="evidence"] .ig-card-label::before{
+  background:conic-gradient(from 220deg,rgba(74,222,128,.95) 0%,rgba(123,150,178,.95) 40%,rgba(169,192,214,.95) 60%,rgba(250,204,21,.95) 100%);
+  box-shadow:0 0 12px rgba(74,222,128,.4),0 0 10px rgba(250,204,21,.32),0 0 14px rgba(123,150,178,.5);
+  animation:igEvidenceLabelDot 5.6s linear infinite;
+}
+@keyframes igEvidenceLabelDot{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 .ig-info-card .ig-card-title{font-family:var(--fh);font-size:clamp(.92rem,1.1vw,1.05rem);font-weight:600;line-height:1.28;margin:0 0 .5rem;color:var(--tp)}
 .ig-info-card .ig-card-body{font-family:var(--fb);font-size:clamp(.74rem,.88vw,.82rem);line-height:1.55;color:var(--ts);margin:0}
 .ig-info-card .ig-card-mech{margin-top:.58rem;font-family:var(--fb);font-size:clamp(.68rem,.82vw,.76rem);line-height:1.5;color:var(--blue2);letter-spacing:.01em}
 .ig-info-card .ig-card-mech strong{color:var(--blue2);font-weight:600;font-family:var(--fm);letter-spacing:.12em;text-transform:uppercase;font-size:.56rem;display:block;margin-bottom:.18rem}
 
-/* Info card positions: 2 on each side of the canvas, never obscuring the wordmark,
+/* Info card positions: 3 on each side of the canvas, never obscuring the wordmark,
    the typewriter tagline, the SVG symbols, or the Trident/Luna chips below.
-   Left column: Protocol (top), Evidence (bottom).
-   Right column: Screening (top), Replay (bottom).
-   Top row sits BELOW the header to clear the wordmark + tagline.
-   Bottom row sits ABOVE the brand bar to clear the Trident/Luna chips. */
+   LEFT column (top → bottom): Protocol, Evidence, Trident.
+   RIGHT column (top → bottom): Screening, Replay, Luna.
+   Trident/Luna cards are absolute-positioned like the workflow cards so showing
+   them does NOT push surrounding sections around. */
 .ig-info-card[data-stage="protocol"]  {top:3.2rem;    left:0;  --ig-card-origin:100% 100%}
-.ig-info-card[data-stage="evidence"]  {bottom:4.6rem; left:0;  --ig-card-origin:100% 0%}
-.ig-info-card[data-stage="screening"] {bottom:4.6rem; right:0; --ig-card-origin:0% 0%}
-.ig-info-card[data-stage="replay"]    {top:3.2rem;    right:0; --ig-card-origin:0% 100%}
-
-/* Trident/Luna cards: stack under brand bar; hidden cards take no layout space */
-.ig-info-card[data-stage="trident"],
-.ig-info-card[data-stage="luna"]{
-  position:relative!important;
-  left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;
-  width:100%;max-width:640px;margin:.65rem auto 0!important;
-  transform:none!important;--ig-card-origin:50% 0;z-index:27;
-  display:none;opacity:0;pointer-events:none;
-}
-.ig-info-card[data-stage="trident"].visible,
-.ig-info-card[data-stage="luna"].visible{
-  display:block;opacity:1;pointer-events:auto;
-}
+.ig-info-card[data-stage="evidence"]  {top:38%;       left:0;  --ig-card-origin:100% 50%}
+.ig-info-card[data-stage="trident"]   {bottom:4.6rem; left:0;  --ig-card-origin:100% 0%}
+.ig-info-card[data-stage="screening"] {top:3.2rem;    right:0; --ig-card-origin:0% 100%}
+.ig-info-card[data-stage="replay"]    {top:38%;       right:0; --ig-card-origin:0% 50%}
+.ig-info-card[data-stage="luna"]      {bottom:4.6rem; right:0; --ig-card-origin:0% 0%}
 
 /* Brand bar: Trident/Luna chips + inspect hint (all viewports; no canvas orbs) */
 .ig-cock-brand-bar{
@@ -948,8 +950,9 @@ body.is-cockpit .ig-bottom-bar{opacity:1;pointer-events:auto}
 
 /* Responsive */
 @media(max-width:1480px){
-  .ig-info-card[data-stage="protocol"],.ig-info-card[data-stage="replay"]{top:3.2rem}
-  .ig-info-card[data-stage="evidence"],.ig-info-card[data-stage="screening"]{bottom:4.6rem}
+  .ig-info-card[data-stage="protocol"],.ig-info-card[data-stage="screening"]{top:3.2rem}
+  .ig-info-card[data-stage="evidence"],.ig-info-card[data-stage="replay"]{top:38%}
+  .ig-info-card[data-stage="trident"],.ig-info-card[data-stage="luna"]{bottom:4.6rem}
 }
 @media(max-width:1080px){
   /* On smaller desktop / tablet, cards stack below the canvas (one visible at a time) */
@@ -1011,7 +1014,7 @@ body.is-cockpit .ig-bottom-bar{opacity:1;pointer-events:auto}
   .ig-bottom-bar{padding:1rem 1rem!important;font-size:.52rem!important;flex-wrap:wrap;gap:.6rem}
 }
 @media(prefers-reduced-motion:reduce){
-  .ig-monogram-grid,.ig-dot,.viz-origin-glow,.viz-origin-pulse,.viz-decision-glow,.viz-particle.eligible,.ig-tagline-rotator::after,.ig-cock-dot,.viz-replay-rotor,.viz-criterion,.viz-evidence{animation:none}
+  .ig-monogram-grid,.ig-dot,.viz-origin-glow,.viz-origin-pulse,.viz-decision-glow,.viz-particle.eligible,.ig-tagline-rotator::after,.ig-cock-dot,.viz-replay-rotor,.viz-criterion,.viz-evidence,.ig-info-card[data-stage="evidence"] .ig-card-label::before{animation:none}
   .ig-dot{opacity:.85}
   .tl-cursor{transition:none}
   .viz-layer,.ig-hero,.ig-stage,.ig-cockpit,.ig-manifesto,.ig-stakeholders,.ig-bottom-bar,.ig-info-card{transition:none}
@@ -1408,9 +1411,6 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
 
 .damaros-api-list,.damaros-api-item{background:var(--table-cell-bg)!important}
 
-.ig-info-card-brand .ig-card-title{margin-bottom:.38rem}
-.ig-info-card-brand .ig-card-body{line-height:1.45}
-
 @media(max-width:740px){
   .ig-cock-brand-bar{gap:.45rem .55rem;margin-top:.65rem}
   .ig-cock-hint{flex:1 1 9rem;font-size:.575rem;letter-spacing:.18em;color:var(--ts)}
@@ -1727,12 +1727,12 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
       <button type="button" class="ig-brand-chip" data-stage="luna" aria-label="Luna overview" aria-haspopup="dialog">Luna</button>
     </div>
 
-    <div class="ig-info-card ig-info-card-brand" data-stage="trident" id="cardTrident" role="region" aria-label="Trident overview">
+    <div class="ig-info-card" data-stage="trident" id="cardTrident" role="region" aria-label="Trident overview">
       <div class="ig-card-label">Trident</div>
       <h3 class="ig-card-title">Trident is the trial knowledge core.</h3>
       <p class="ig-card-body">Sharpens with each protocol release and site run, compounds into versioned execution logic, one content-hashed basis per site.</p>
     </div>
-    <div class="ig-info-card ig-info-card-brand" data-stage="luna" id="cardLuna" role="region" aria-label="Luna overview">
+    <div class="ig-info-card" data-stage="luna" id="cardLuna" role="region" aria-label="Luna overview">
       <div class="ig-card-label">Luna</div>
       <h3 class="ig-card-title">Luna is the governance harness.</h3>
       <p class="ig-card-body">AI-assisted work stays traceable and reviewable, with provenance, PHI gating, and scoped tasks enforced.</p>
