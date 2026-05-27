@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script>
+(function () {
+  var mq = window.matchMedia("(prefers-color-scheme: light)");
+  function applyTheme() {
+    document.documentElement.setAttribute("data-theme", mq.matches ? "light" : "dark");
+  }
+  applyTheme();
+  if (typeof mq.addEventListener === "function") mq.addEventListener("change", applyTheme);
+  else if (typeof mq.addListener === "function") mq.addListener(applyTheme);
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Privacy · Damaros™</title>
+<meta name="description" content="Privacy notice for the Damaros public website.">
+<link rel="canonical" href="https://www.damaros.ai/privacy">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600&family=Space+Grotesk:wght@400;500&display=swap">
+<link rel="icon" href="/assets/damaros-favicon.png" type="image/png" sizes="32x32">
+<style>
+  :root,[data-theme="dark"]{
+    --fh:'Chakra Petch',sans-serif;--fb:'Space Grotesk',sans-serif;
+    --blue:#7B96B2;--bg:#000;--heading:#fff;--ts:rgba(232,232,232,.72);--td:rgba(232,232,232,.38);
+  }
+  [data-theme="light"]{
+    --bg:#E4E8EC;--heading:#0a0c0e;--ts:rgba(10,12,14,.78);--td:rgba(10,12,14,.45);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--fb);background:var(--bg);color:var(--ts);line-height:1.75;font-size:.88rem;min-height:100vh}
+  .wrap{max-width:720px;margin:0 auto;padding:3.5rem 1.6rem 5rem}
+  .eyebrow{font-family:var(--fh);font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--blue);margin-bottom:.5rem}
+  h1{font-family:var(--fh);font-size:clamp(1.35rem,3vw,1.75rem);font-weight:500;color:var(--heading);letter-spacing:.02em;margin-bottom:.35rem}
+  .meta{font-size:.72rem;color:var(--td);letter-spacing:.06em;margin-bottom:2.5rem}
+  h2{font-family:var(--fh);font-size:.92rem;font-weight:500;color:var(--heading);letter-spacing:.04em;margin:2rem 0 .65rem}
+  p+p{margin-top:.75rem}
+  ul{list-style:none;margin:.5rem 0 0;padding:0}
+  ul li{margin-top:.45rem;padding-left:1rem;position:relative}
+  ul li::before{content:'•';position:absolute;left:0;color:var(--blue);opacity:.7}
+  a{color:var(--blue);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .back{display:inline-block;margin-top:2.5rem;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--td)}
+  .back:hover{color:var(--blue)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Legal</div>
+  <h1>Website privacy notice</h1>
+  <p class="meta">Effective May 27, 2026 · Damaros, LLC</p>
+
+  <p>This notice describes how <strong>Damaros, LLC</strong> (“Damaros,” “we”) handles information when you visit the public marketing site at <a href="https://www.damaros.ai/">www.damaros.ai</a> and related static pages (including JWKS documents under <code>/.well-known/</code>). It does <strong>not</strong> govern customer deployments of the Damaros platform, clinical data processing under a business associate agreement, or hospital-hosted integrations. Those environments are covered by separate contracts and security documentation.</p>
+
+  <h2>What we collect</h2>
+  <p>We do not operate user accounts, lead forms, newsletters, or advertising analytics on this website. We still receive limited technical data needed to deliver pages:</p>
+  <ul>
+    <li><strong>Hosting logs.</strong> Our host (Vercel) records standard request metadata such as IP address, browser type, requested URL, referrer, and timestamps for security and operations.</li>
+    <li><strong>Approximate location display.</strong> The home page may call <a href="https://www.geojs.io/" rel="noopener noreferrer" target="_blank">geojs.io</a> to show a city/region label from your IP address. We do not store that label in a database; it appears only in your browser session.</li>
+    <li><strong>Fonts and assets.</strong> Pages load typography from Google Fonts and images from our CDN. Those providers may receive your IP address and technical identifiers as part of normal delivery.</li>
+    <li><strong>Email.</strong> “Get in touch” links open your mail client (<a href="mailto:anirudh@damaros.ai">anirudh@damaros.ai</a>). We do not collect message content through the website itself.</li>
+  </ul>
+  <p>We do not use cookies for cross-site tracking or personalized advertising on this site. Your browser may store local preferences (for example theme) without our server reading them.</p>
+
+  <h2>Why we use it</h2>
+  <ul>
+    <li>Deliver and secure the public site</li>
+    <li>Diagnose abuse or outages</li>
+    <li>Respond when you contact us</li>
+  </ul>
+
+  <h2>Sharing</h2>
+  <p>We use infrastructure and service providers that process data on our behalf (hosting, DNS/TLS, font delivery, optional geo lookup). We do not sell personal information. We may disclose information if required by law or to protect rights, safety, and integrity of our services.</p>
+
+  <h2>Retention</h2>
+  <p>Server logs are retained for a limited period consistent with our hosting provider’s defaults and operational needs, then rotated or deleted. Email you send us is kept as long as needed to correspond and meet legal obligations.</p>
+
+  <h2>Your choices and rights</h2>
+  <p>You may disable non-essential scripts in your browser, use a VPN, or block third-party requests. Depending on where you live, you may have rights to access, correct, delete, or restrict certain processing. To exercise rights or ask questions, email <a href="mailto:anirudh@damaros.ai?subject=Privacy%20request">anirudh@damaros.ai</a> with “Privacy request” in the subject line.</p>
+
+  <h2>International visitors</h2>
+  <p>We are based in the United States. If you access the site from other regions, your information may be processed in the U.S. where laws may differ from your home jurisdiction.</p>
+
+  <h2>Children</h2>
+  <p>This site is not directed to children under 16, and we do not knowingly collect their personal information through the website.</p>
+
+  <h2>Changes</h2>
+  <p>We may update this notice. The effective date above will change when we do. Continued use of the site after an update means you accept the revised notice.</p>
+
+  <a class="back" href="/">← Back to Damaros</a>
+</div>
+</body>
+</html>
