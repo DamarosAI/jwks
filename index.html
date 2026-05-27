@@ -763,7 +763,6 @@ body.is-playing #vizProtocol,body.is-playing #vizEvidence,body.is-playing #vizSc
 .viz-criterion.pass{fill:rgba(74,222,128,.22);stroke:rgba(74,222,128,.75)}
 .viz-criterion.review{fill:rgba(250,204,21,.22);stroke:rgba(250,204,21,.75)}
 .viz-criterion.fail{fill:rgba(251,113,133,.22);stroke:rgba(251,113,133,.75)}
-.viz-evidence{fill:var(--viz-evidence)}
 .viz-decision-glow{fill:none;stroke:var(--viz-decision-glow);stroke-width:1;animation:igDecisionGlow 2.2s ease-in-out infinite}
 @keyframes igDecisionGlow{0%,100%{r:42px;stroke-opacity:.12}50%{r:55px;stroke-opacity:.28}}
 .viz-proto-ring{stroke:var(--viz-proto-ring);transform-box:fill-box;transform-origin:center;animation:igProtoRingSpin 28s linear infinite}
@@ -837,20 +836,6 @@ body.is-cockpit .ig-cockpit{opacity:1;pointer-events:auto}
 .ig-info-card.visible{opacity:1;pointer-events:auto;transform:scale(1)}
 .ig-info-card .ig-card-label{font-family:var(--fm);font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:var(--blue2);font-weight:700;margin-bottom:.42rem;display:flex;align-items:center;gap:.38rem}
 .ig-info-card .ig-card-label::before,.damaros-docs-section-label::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--blue2);box-shadow:0 0 12px rgba(123,150,178,.55)}
-/* Evidence label flair: tri-color dot echoing the eligible / near-eligible / REVIEW
-   particle palette used in the Evidence symbol cluster. Title accent uses the same
-   gradient as a subtle reading cue. */
-.ig-info-card[data-stage="evidence"] .ig-card-label{
-  color:transparent;
-  background-image:linear-gradient(90deg,rgba(74,222,128,.95) 0%,var(--blue2) 50%,rgba(250,204,21,.95) 100%);
-  -webkit-background-clip:text;background-clip:text;
-}
-.ig-info-card[data-stage="evidence"] .ig-card-label::before{
-  background:conic-gradient(from 220deg,rgba(74,222,128,.95) 0%,rgba(123,150,178,.95) 40%,rgba(169,192,214,.95) 60%,rgba(250,204,21,.95) 100%);
-  box-shadow:0 0 12px rgba(74,222,128,.4),0 0 10px rgba(250,204,21,.32),0 0 14px rgba(123,150,178,.5);
-  animation:igEvidenceLabelDot 5.6s linear infinite;
-}
-@keyframes igEvidenceLabelDot{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 .ig-info-card .ig-card-title{font-family:var(--fh);font-size:clamp(.92rem,1.1vw,1.05rem);font-weight:600;line-height:1.28;margin:0 0 .5rem;color:var(--tp)}
 .ig-info-card .ig-card-body{font-family:var(--fb);font-size:clamp(.74rem,.88vw,.82rem);line-height:1.55;color:var(--ts);margin:0}
 .ig-info-card .ig-card-mech{margin-top:.58rem;font-family:var(--fb);font-size:clamp(.68rem,.82vw,.76rem);line-height:1.5;color:var(--blue2);letter-spacing:.01em}
@@ -864,10 +849,10 @@ body.is-cockpit .ig-cockpit{opacity:1;pointer-events:auto}
    them does NOT push surrounding sections around. */
 .ig-info-card[data-stage="protocol"]  {top:3.2rem;    left:0;  --ig-card-origin:100% 100%}
 .ig-info-card[data-stage="evidence"]  {top:38%;       left:0;  --ig-card-origin:100% 50%}
-.ig-info-card[data-stage="trident"]   {bottom:4.6rem; left:0;  --ig-card-origin:100% 0%}
+.ig-info-card[data-stage="trident"]   {bottom:9rem;   left:0;  --ig-card-origin:100% 0%}
 .ig-info-card[data-stage="screening"] {top:3.2rem;    right:0; --ig-card-origin:0% 100%}
 .ig-info-card[data-stage="replay"]    {top:38%;       right:0; --ig-card-origin:0% 50%}
-.ig-info-card[data-stage="luna"]      {bottom:4.6rem; right:0; --ig-card-origin:0% 0%}
+.ig-info-card[data-stage="luna"]      {bottom:9rem;   right:0; --ig-card-origin:0% 0%}
 
 /* Brand bar: Trident/Luna chips + inspect hint (all viewports; no canvas orbs) */
 .ig-cock-brand-bar{
@@ -952,7 +937,7 @@ body.is-cockpit .ig-bottom-bar{opacity:1;pointer-events:auto}
 @media(max-width:1480px){
   .ig-info-card[data-stage="protocol"],.ig-info-card[data-stage="screening"]{top:3.2rem}
   .ig-info-card[data-stage="evidence"],.ig-info-card[data-stage="replay"]{top:38%}
-  .ig-info-card[data-stage="trident"],.ig-info-card[data-stage="luna"]{bottom:4.6rem}
+  .ig-info-card[data-stage="trident"],.ig-info-card[data-stage="luna"]{bottom:9rem}
 }
 @media(max-width:1080px){
   /* On smaller desktop / tablet, cards stack below the canvas (one visible at a time) */
@@ -1014,7 +999,7 @@ body.is-cockpit .ig-bottom-bar{opacity:1;pointer-events:auto}
   .ig-bottom-bar{padding:1rem 1rem!important;font-size:.52rem!important;flex-wrap:wrap;gap:.6rem}
 }
 @media(prefers-reduced-motion:reduce){
-  .ig-monogram-grid,.ig-dot,.viz-origin-glow,.viz-origin-pulse,.viz-decision-glow,.viz-particle.eligible,.ig-tagline-rotator::after,.ig-cock-dot,.viz-replay-rotor,.viz-criterion,.viz-evidence,.ig-info-card[data-stage="evidence"] .ig-card-label::before{animation:none}
+  .ig-monogram-grid,.ig-dot,.viz-origin-glow,.viz-origin-pulse,.viz-decision-glow,.viz-particle,.viz-particle.eligible,.ig-tagline-rotator::after,.ig-cock-dot,.viz-replay-rotor,.viz-criterion{animation:none}
   .ig-dot{opacity:.85}
   .tl-cursor{transition:none}
   .viz-layer,.ig-hero,.ig-stage,.ig-cockpit,.ig-manifesto,.ig-stakeholders,.ig-bottom-bar,.ig-info-card{transition:none}
@@ -1076,7 +1061,7 @@ body.is-cockpit .ig-cockpit-viz .viz-layer *{
   body.is-mobile-play.is-playing .ig-viz .viz-layer.viz-active .viz-particle.eligible,
   body.is-mobile-play.is-playing .ig-viz .viz-layer.viz-active .viz-screen-root,
   body.is-mobile-play.is-playing .ig-viz .viz-layer.viz-active .viz-criterion,
-  body.is-mobile-play.is-playing .ig-viz .viz-layer.viz-active .viz-evidence,
+  body.is-mobile-play.is-playing .ig-viz .viz-layer.viz-active .viz-particle,
   body.is-mobile-play.is-playing .ig-viz .viz-layer.viz-active .viz-replay-rotor,
   body.is-mobile-play.is-playing .ig-viz .viz-layer.viz-active .viz-decision-glow{
     animation-play-state:running!important;
@@ -1148,8 +1133,23 @@ body.is-playing .ig-cockpit{transition:none!important;opacity:0!important;pointe
 /* ── Subtle pulse animations on screening criterion circles ── */
 .viz-criterion{animation:igCritPulse 5.2s ease-in-out infinite;will-change:opacity}
 @keyframes igCritPulse{0%,100%{opacity:.88}50%{opacity:1}}
-.viz-evidence{animation:igEvidencePulse 4.4s ease-in-out infinite;transform-box:fill-box;transform-origin:center;will-change:opacity,transform}
-@keyframes igEvidencePulse{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.18)}}
+
+/* ── Evidence symbol dynamism: each particle drifts a few SVG units in a slow
+   orbit so the cluster reads like a loose electron cloud rather than a static
+   point field. Per-particle delay + duration variance (set in JS) keeps the
+   motion organic and asynchronous. ── */
+.viz-particle{
+  transform-box:fill-box;transform-origin:center;
+  animation:igParticleDrift 9s ease-in-out infinite;
+  will-change:transform;
+}
+@keyframes igParticleDrift{
+  0%   {transform:translate(0,0)}
+  25%  {transform:translate(2.4px,-1.8px)}
+  50%  {transform:translate(-1.6px,2.6px)}
+  75%  {transform:translate(-2.2px,-1.4px)}
+  100% {transform:translate(0,0)}
+}
 
 /* ── Desktop walkthrough: more horizontal space, caption pinned just above viz ── */
 @media(min-width:741px){
@@ -2608,16 +2608,19 @@ spec:
     });
   }
 
-  // Stagger pulse animations with random per-element delays so the screening criterion
-  // circles and evidence dots feel organic instead of uniformly pulsing in lockstep.
-  // Negative delays start each animation already in-progress, so there's no synchronized
-  // "everything starts now" moment on load.
+  // Stagger animations with random per-element delays so the screening criterion
+  // circles, evidence dots, and Evidence-cluster particle drift feel organic
+  // instead of uniformly pulsing in lockstep. Negative delays start each animation
+  // already in-progress, so there's no synchronized "everything starts now" moment.
+  // Particle drift also gets a per-element duration jitter so each "electron"
+  // settles into its own slow orbit.
   function _randomizeVizPulses() {
     document.querySelectorAll(".viz-criterion").forEach(function (el) {
       el.style.animationDelay = (-Math.random() * 5.2).toFixed(2) + "s";
     });
-    document.querySelectorAll(".viz-evidence").forEach(function (el) {
-      el.style.animationDelay = (-Math.random() * 4.4).toFixed(2) + "s";
+    document.querySelectorAll(".viz-particle").forEach(function (el) {
+      el.style.animationDelay = (-Math.random() * 9).toFixed(2) + "s";
+      el.style.animationDuration = (7 + Math.random() * 6).toFixed(2) + "s";
     });
   }
 
