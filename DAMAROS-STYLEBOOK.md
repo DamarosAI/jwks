@@ -2,7 +2,7 @@
 
 Adapted from Palantir's briefing register for Damaros product, docs, and cockpit UI. Use this for hover cards, autoplay captions, docs sections, and any user-facing string.
 
-## Non-negotiable typography
+## Non-negotiable typography and style
 
 - **No em dashes (U+2014) and no en dashes used as sentence breaks** in user-facing copy.
 - Split claim and mechanism with a **comma**, **period**, or **with / via / under** instead.
