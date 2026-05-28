@@ -956,7 +956,8 @@ body.is-cockpit .ig-bottom-bar{opacity:1;pointer-events:auto}
   .ig-stage{padding:calc(var(--tab-total) + 1rem) .7rem 1.4rem}
   .ig-caption{font-size:.92rem!important;line-height:1.45!important;margin-bottom:1rem!important}
   .ig-viz{max-height:50svh!important}
-  .ig-cockpit{padding:calc(var(--tab-total) + 1.4rem) .6rem 1.4rem}
+  .ig-cockpit{padding:calc(var(--tab-total) + 1.4rem) .6rem clamp(1.75rem,4.5svh,2.75rem)}
+  .ig-down-arrow{margin-top:clamp(1rem,3.2svh,1.65rem)!important}
   .ig-cock-wordmark{font-size:1rem!important;padding-bottom:.4rem!important;gap:.32rem!important}
   .ig-cock-dot{width:clamp(7px,2.2vw,10px)!important;height:clamp(7px,2.2vw,10px)!important;min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;transform:translateY(.06em)!important;box-shadow:0 0 18px rgba(123,150,178,.58)!important}
   .ig-cock-header{flex-direction:column;align-items:flex-start;gap:.2rem;padding:0 .2rem}
@@ -979,17 +980,18 @@ body.is-cockpit .ig-bottom-bar{opacity:1;pointer-events:auto}
   .ig-stake-body{font-size:.8rem!important;line-height:1.5!important}
   .ig-stakeholders-cta{padding:clamp(1rem,3.5svh,2rem) 1rem clamp(1.2rem,4svh,2.5rem)!important}
   .ig-cta-btn{font-size:.58rem!important;padding:.58rem 1rem!important}
-  .ig-outro{min-height:100svh;display:flex;flex-direction:column;justify-content:center}
-  .ig-outro .ig-manifesto{padding-top:clamp(1rem,3vh,1.6rem)!important;padding-bottom:.65rem!important;flex:0 0 auto}
+  .ig-outro{min-height:auto;display:flex;flex-direction:column;justify-content:flex-start;padding-top:clamp(1.5rem,4svh,2.25rem)!important}
+  body.is-cockpit .ig-outro{padding-top:clamp(2rem,5svh,3rem)!important}
+  .ig-outro .ig-manifesto{padding-top:clamp(1.25rem,3.5svh,2rem)!important;padding-bottom:clamp(.85rem,2.5svh,1.25rem)!important;flex:0 0 auto;scroll-margin-top:calc(var(--tab-total) + 14px)}
   .ig-outro .ig-stakeholders{
-    flex:1 1 auto;
+    flex:0 0 auto;
     display:flex!important;
     flex-direction:column;
-    justify-content:space-evenly;
-    min-height:clamp(220px,38svh,420px);
-    padding-top:clamp(.85rem,3svh,1.5rem)!important;
-    padding-bottom:clamp(1.1rem,3.5svh,2rem)!important;
-    gap:clamp(1.2rem,5svh,2.75rem)!important;
+    justify-content:flex-start;
+    min-height:0;
+    padding-top:clamp(1rem,3.5svh,1.75rem)!important;
+    padding-bottom:clamp(1.25rem,4svh,2.25rem)!important;
+    gap:clamp(1.35rem,5.5svh,2.5rem)!important;
   }
   .ig-outro .ig-stakeholders-cta{
     padding-top:clamp(.75rem,2.5svh,1.25rem)!important;
@@ -1201,19 +1203,20 @@ body.is-playing .ig-cockpit{transition:none!important;opacity:0!important;pointe
 .ig-outro-up{display:flex;justify-content:center;padding-top:clamp(.8rem,2svh,1.4rem)}
 @media(max-width:740px){.ig-outro-up{padding-top:clamp(.5rem,1.5svh,1rem)}}
 
-/* ── Mobile outro: vertically centered, dynamic for screen size ── */
+/* ── Mobile outro: top-aligned so down-arrow scroll shows manifesto first ── */
 @media(max-width:740px){
-  .ig-outro{min-height:100svh;display:flex;flex-direction:column;justify-content:center;align-items:stretch;padding:clamp(1.2rem,3svh,2.5rem) 0 clamp(.5rem,1.5svh,1rem)}
-  .ig-outro .ig-manifesto{flex:0 0 auto}
+  .ig-outro{min-height:auto;display:flex;flex-direction:column;justify-content:flex-start;align-items:stretch;padding:clamp(1.5rem,4svh,2.5rem) 0 clamp(.75rem,2svh,1.25rem)}
+  body.is-cockpit .ig-outro{padding-top:clamp(2rem,5.5svh,3.25rem)!important}
+  .ig-outro .ig-manifesto{flex:0 0 auto;scroll-margin-top:calc(var(--tab-total) + 14px)}
   .ig-outro .ig-stakeholders{
-    flex:1 1 auto;
+    flex:0 0 auto;
     display:flex!important;
     flex-direction:column;
-    justify-content:space-evenly;
-    min-height:clamp(220px,38svh,420px);
-    gap:clamp(1.2rem,5svh,2.75rem)!important;
+    justify-content:flex-start;
+    min-height:0;
+    gap:clamp(1.35rem,5.5svh,2.5rem)!important;
   }
-  .ig-outro .ig-stakeholders-cta{flex:0 0 auto}
+  .ig-outro .ig-stakeholders-cta{flex:0 0 auto;padding-top:clamp(.85rem,3svh,1.5rem)!important}
   .ig-outro-up{flex:0 0 auto}
 }
 
@@ -1794,8 +1797,8 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
     <p class="ig-stake-body">Protocol, evidence, screening, and replay on one governed flow. Less operational drag. Defensible decisions.</p>
   </div>
   <div class="ig-stake">
-    <div class="ig-stake-aud">Research &amp; teaming partners</div>
-    <p class="ig-stake-body">FHIR-ready infrastructure with deterministic patient execution, governed document provenance, and inspectable replay lineage.</p>
+    <div class="ig-stake-aud">Hospital systems</div>
+    <p class="ig-stake-body">Governed trial access across campuses, research institutes, and specialty partners. Protocol logic, patient evidence, screening, routing, and replay in one measurable workflow.</p>
   </div>
 </section>
 
@@ -3246,19 +3249,30 @@ spec:
   if (igDownArrow) {
     igDownArrow.addEventListener("click", function () {
       const outro = igOutroEl || document.getElementById("igOutro");
-      const bottomBar = document.querySelector(".ig-bottom-bar");
+      const manifesto = document.getElementById("igManifesto");
       if (!outro) return;
-      const tabH = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--tab"), 10) || 56;
+      const tabH = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--tab-total"), 10) || 56;
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const scrollBehavior = reduceMotion ? "auto" : "smooth";
+      const anchor = manifesto || outro;
+      const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+
+      if (_isMobileLayout()) {
+        const target = Math.max(0, Math.min(anchor.offsetTop - tabH - 16, maxScroll));
+        window.scrollTo({ top: target, behavior: scrollBehavior });
+        return;
+      }
+
+      const bottomBar = document.querySelector(".ig-bottom-bar");
       const outroTop = outro.offsetTop;
       const blockHeight = outro.offsetHeight + (bottomBar ? bottomBar.offsetHeight : 0);
       const blockBottom = outroTop + blockHeight;
-      const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
       const available = window.innerHeight - tabH - 10;
       let target = blockHeight <= available
         ? outroTop - tabH - 8
-        : blockBottom - window.innerHeight;
+        : Math.max(outroTop - tabH - 8, anchor.offsetTop - tabH - 16);
       target = Math.max(0, Math.min(target, maxScroll));
-      window.scrollTo({ top: target, behavior: "smooth" });
+      window.scrollTo({ top: target, behavior: scrollBehavior });
     });
   }
 
