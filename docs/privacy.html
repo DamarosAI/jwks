@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Damaros — Privacy</title>
+<link rel="icon" href="../assets/damaros-favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap">
+<script src="../shared/theme.js"></script>
+<link rel="stylesheet" href="../shared/damaros.css">
+<style>
+  .docs { max-width: 820px; margin: 0 auto; padding: calc(60px + 3.4rem) clamp(1.1rem, 4vw, 2.4rem) 6rem; position: relative; z-index: 1; }
+  .d-eyebrow { font-family: var(--fm); font-size: .6rem; letter-spacing: .18em; text-transform: uppercase; color: var(--accent-2); margin-bottom: .7rem; }
+  .d-title { font-family: var(--fh); font-weight: 600; font-size: clamp(1.9rem, 4.4vw, 3rem); letter-spacing: -.01em; line-height: 1.02; }
+  .d-lead { color: var(--fg-2); font-size: 1rem; line-height: 1.7; margin: 1.2rem 0 0; max-width: 62ch; }
+  .updated { font-family: var(--fm); font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; color: var(--fg-3); margin-top: 1rem; }
+  .divider { height: 1px; background: var(--bd-soft); margin: 2.8rem 0; }
+  section.doc { margin-bottom: 2.4rem; }
+  .sec-label { font-family: var(--fm); font-size: .58rem; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); opacity: .7; margin-bottom: .5rem; }
+  .sec-label::before { content: '// '; }
+  .sec-head { font-family: var(--fh); font-weight: 600; font-size: 1.2rem; letter-spacing: .01em; padding-bottom: .55rem; border-bottom: 1px solid var(--bd-soft); margin: 0 0 1rem; }
+  .body { color: var(--fg-2); font-size: .92rem; line-height: 1.75; }
+  .body p { margin: 0 0 .8rem; } .body p:last-child { margin-bottom: 0; }
+  .body strong { color: var(--fg); font-weight: 600; }
+  .body code { font-family: var(--fm); color: var(--accent-2); font-size: .85em; }
+  .bullets { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .55rem; color: var(--fg-2); font-size: .9rem; line-height: 1.6; }
+  .bullets li { padding-left: 1rem; position: relative; }
+  .bullets li::before { content: '>'; position: absolute; left: 0; color: var(--accent); font-family: var(--fm); }
+  .bullets strong { color: var(--fg); }
+  .callout { margin: 1.1rem 0 0; padding: .85rem 1.15rem; border-left: 2px solid var(--bd-strong); background: var(--chip-bg); color: var(--fg-2); font-family: var(--fm); font-size: .76rem; line-height: 1.65; border-radius: 0 6px 6px 0; }
+  .callout strong { color: var(--fg); }
+  .contact { font-family: var(--fm); font-size: .85rem; line-height: 2; color: var(--fg-2); }
+  .contact a { color: var(--accent-2); } .contact a:hover { text-decoration: underline; }
+  footer { border-top: 1px solid var(--bd-soft); padding: 2.2rem clamp(1.1rem,4vw,2.4rem); display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; align-items: center; font-family: var(--fm); font-size: .6rem; letter-spacing: .1em; color: var(--fg-3); max-width: 820px; margin: 0 auto; }
+  footer a:hover { color: var(--fg); } footer .fl { display: flex; gap: 1.3rem; }
+</style>
+</head>
+<body>
+<nav class="dmx-nav">
+  <a class="dmx-brand" href="../index.html"><img class="mark" src="../assets/damaros-monogram-white.png" alt="" style="width:22px;height:22px;object-fit:contain"> Damaros<span class="dmx-dot"></span></a>
+  <div class="dmx-nav-links">
+    <a class="dmx-nav-link" href="../index.html">Home</a>
+    <a class="dmx-nav-link" href="fhir.html">FHIR</a>
+    <a class="dmx-nav-link" href="privacy.html" aria-current="true">Privacy</a>
+    <button class="dmx-theme" aria-label="Toggle theme">
+      <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
+    </button>
+  </div>
+</nav>
+
+<main class="docs">
+  <div class="d-eyebrow">Privacy</div>
+  <h1 class="d-title">Privacy &amp; data handling</h1>
+  <p class="d-lead">Damaros processes clinical data inside an institution-approved boundary under deterministic, auditable execution. This policy describes what data is handled, where it lives, and the controls that keep it governed.</p>
+  <div class="updated">Last updated · May 2026</div>
+
+  <div class="divider"></div>
+
+  <section class="doc">
+    <div class="sec-label">01_SCOPE</div>
+    <h2 class="sec-head">What this covers</h2>
+    <div class="body">
+      <p>This policy applies to the Damaros platform and its FHIR integration when deployed for a site, sponsor, or hospital system. Protected health information (PHI) handling is governed by the executed Business Associate Agreement (BAA) or Data Processing Agreement (DPA) for each deployment, which prevails where terms differ.</p>
+    </div>
+  </section>
+
+  <section class="doc">
+    <div class="sec-label">02_DATA_WE_PROCESS</div>
+    <h2 class="sec-head">Data we process</h2>
+    <ul class="bullets">
+      <li><strong>Clinical evidence.</strong> Read-only FHIR resources for site-approved cohorts, normalized to protocol-scoped facts. Only contract-mapped fields persist; everything else is discarded before evaluation.</li>
+      <li><strong>Execution records.</strong> Criterion-level PASS / REVIEW / FAIL outcomes, evidence references, and replay lineage.</li>
+      <li><strong>Operational identity.</strong> Coordinator and staff sessions carry a subject, role, organization scope, and trial scope for attribution and access control.</li>
+      <li><strong>Telemetry.</strong> Structured logs favoring stable identifiers (request id, org id, trial id, non-PHI codes). Free-text clinical narrative is excluded from default log templates.</li>
+    </ul>
+  </section>
+
+  <section class="doc">
+    <div class="sec-label">03_PHI_AND_AI_BOUNDARY</div>
+    <h2 class="sec-head">PHI and AI boundary</h2>
+    <div class="body">
+      <p>Screening outcomes are <strong>deterministic</strong>. Eligibility verdicts come only from the engine evaluating normalized FHIR facts, never from a generative model. Luna governs AI-assisted work that sits outside the screening path, with provenance, reviewability, PHI gating, and scoped tasks enforced.</p>
+      <p><strong>PHI never touches an LLM.</strong> No patient identifiers and no cohort-linked clinical fields are serialized into any AI-assisted path. Eligibility remains traceable to the protocol version and the evidence inputs that produced it.</p>
+      <div class="callout"><strong>Default egress posture.</strong> No transmission of patient-identifiable data to third-party assistance endpoints for screening. The deterministic path never requires it.</div>
+    </div>
+  </section>
+
+  <section class="doc">
+    <div class="sec-label">04_WHERE_DATA_LIVES</div>
+    <h2 class="sec-head">Where data lives</h2>
+    <ul class="bullets">
+      <li>PHI is processed inside the institution-approved deployment boundary (VPC or tenant isolation per the deploy contract).</li>
+      <li>Deny-by-default network egress with explicit allowlists for Epic FHIR, OIDC, and in-cluster data stores.</li>
+      <li>Damaros is <strong>not</strong> a secondary clinical record store. Ingest ends in protocol-scoped screening artifacts; the EHR remains system of record.</li>
+      <li>Encryption at rest and retention follow the deployment architecture and the customer BAA or DPA.</li>
+    </ul>
+  </section>
+
+  <section class="doc">
+    <div class="sec-label">05_YOUR_CONTROLS</div>
+    <h2 class="sec-head">Access, retention, and your rights</h2>
+    <div class="body">
+      <p>Access is role-based and attributable. Administrative and export actions are RBAC-gated, and web sessions are time-bound. Data subject requests, retention schedules, and deletion are handled through the contracting institution under the applicable BAA or DPA. The geographic readout shown on this site is derived from a coarse IP lookup for display only and is not stored.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section class="doc contact">
+    <div class="sec-label">06_CONTACT</div>
+    <h2 class="sec-head">Contact</h2>
+    <div>Privacy &nbsp;&nbsp; <a href="mailto:anirudh@damaros.ai">anirudh@damaros.ai</a></div>
+    <div>Website &nbsp;&nbsp; <a href="https://damaros.ai">damaros.ai</a></div>
+  </section>
+</main>
+
+<footer>
+  <span>© 2026 Damaros™</span>
+  <div class="fl"><a href="../index.html">Home</a><a href="fhir.html">FHIR</a></div>
+</footer>
+</body>
+</html>
