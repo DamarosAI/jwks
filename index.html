@@ -97,19 +97,21 @@
   .c-title { font-family: var(--fh); font-weight: 600; font-size: clamp(1.25rem, 1.7vw, 1.65rem); letter-spacing: -.01em; line-height: 1.05; margin: .35rem 0 .4rem; height: 2.1em; }
   .c-desc { font-size: clamp(.86rem, 1.05vw, .98rem); line-height: 1.52; color: var(--fg-2); margin: 0; height: 4.3em; }
 
-  /* scroll-reveal - clean steel-blue glow-in (no blur), same family as the caption ignite */
-  .reveal { opacity: 0; }
-  .reveal.in { animation: glowIn .6s var(--ease) both; }
-  .reveal.s1.in { animation-delay: .12s; } .reveal.s2.in { animation-delay: .24s; } .reveal.s3.in { animation-delay: .36s; }
+  /* scroll-reveal - cleaner lift + stagger for smoother scroll-through pacing */
+  .reveal { opacity: 0; transform: translate3d(0, 16px, 0) scale(.988); }
+  .reveal.in { animation: glowIn .72s var(--ease) both; animation-delay: var(--rv-delay, 0s); }
+  .reveal.s1.in { --rv-delay: .12s; } .reveal.s2.in { --rv-delay: .24s; } .reveal.s3.in { --rv-delay: .36s; }
   @keyframes glowIn {
-    0%   { opacity: 0; filter: drop-shadow(0 0 9px rgba(169,192,214,.55)); }
-    55%  { opacity: 1; filter: drop-shadow(0 0 6px rgba(169,192,214,.4)); }
-    100% { opacity: 1; filter: none; }
+    0%   { opacity: 0; transform: translate3d(0, 16px, 0) scale(.988); filter: drop-shadow(0 0 11px rgba(169,192,214,.55)); }
+    52%  { opacity: 1; transform: translate3d(0, 0, 0) scale(1); filter: drop-shadow(0 0 7px rgba(169,192,214,.4)); }
+    100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); filter: none; }
   }
   .draw { width: 110px; height: 1px; background: var(--accent-2); opacity: .55; transform: scaleX(0); transform-origin: left;
     transition: transform .8s var(--ease) .1s; }
   .draw.in { transform: scaleX(1); }
-  @media (prefers-reduced-motion: reduce) { .reveal, .draw { transition: none; opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal, .draw { transition: none; animation: none !important; opacity: 1; transform: none; filter: none; }
+  }
 
   /* ===== SECTIONS ===== */
   .band { position: relative; z-index: 1; padding: clamp(3.6rem, 11vh, 8.5rem) 0; border-top: 1px solid var(--bd-soft); }
@@ -597,12 +599,38 @@
   window.addEventListener("resize", function () { layout.done = false; layout(); });
   new ResizeObserver(function () { layout(); }).observe(canvas);
 
-  /* scroll reveals - robust scroll check */
+  /* scroll reveals - staggered, observer-driven reveal for smoother narrative flow */
   var revs = [].slice.call(document.querySelectorAll(".reveal, .draw"));
-  function checkReveal() { var vh = window.innerHeight || 800; revs.forEach(function (el) { if (el.classList.contains("in")) return; if (el.getBoundingClientRect().top < vh * 0.86) el.classList.add("in"); }); }
-  window.addEventListener("scroll", checkReveal, { passive: true });
-  window.addEventListener("resize", checkReveal);
-  checkReveal();
+  revs.forEach(function (el, idx) {
+    if (el.classList.contains("draw")) return;
+    if (el.classList.contains("s1") || el.classList.contains("s2") || el.classList.contains("s3")) return;
+    var parent = el.closest(".story, .finale, .band, .cta-band") || document.body;
+    var siblings = [].slice.call(parent.querySelectorAll(".reveal:not(.s1):not(.s2):not(.s3)"));
+    var slot = Math.max(0, siblings.indexOf(el));
+    var d = Math.min(0.32, slot * 0.075 + (idx % 2 ? 0.02 : 0));
+    el.style.setProperty("--rv-delay", d.toFixed(3) + "s");
+  });
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("in");
+        io.unobserve(entry.target);
+      });
+    }, { root: null, rootMargin: "0px 0px -10% 0px", threshold: 0.12 });
+    revs.forEach(function (el) { io.observe(el); });
+  } else {
+    function checkReveal() {
+      var vh = window.innerHeight || 800;
+      revs.forEach(function (el) {
+        if (el.classList.contains("in")) return;
+        if (el.getBoundingClientRect().top < vh * 0.86) el.classList.add("in");
+      });
+    }
+    window.addEventListener("scroll", checkReveal, { passive: true });
+    window.addEventListener("resize", checkReveal);
+    checkReveal();
+  }
 
   readColors(); layout(); setPillar("trident", false);
   requestAnimationFrame(frame);
