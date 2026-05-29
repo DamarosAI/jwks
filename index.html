@@ -311,7 +311,7 @@
     <img class="finale-mono" src="assets/damaros-white-transparent.png" alt="" aria-hidden="true">
     <div class="finale-rule reveal"></div>
     <h2 class="reveal">Clinical trials, <em>rewired<span class="dmx-dot"></span></em></h2>
-    <a class="btn-primary reveal s2" href="/cdn-cgi/l/email-protection#2647484f5453424e6642474b4754495508474f195553444c4345521b62474b47544955">Get in touch</a>
+    <a class="btn-primary reveal s2" href="mailto:anirudh@damaros.ai" data-ignite="Get in touch">Get in touch</a>
   </section>
 </main>
 
@@ -454,6 +454,17 @@
       if (i < words.length - 1) el.appendChild(document.createTextNode(" "));
     }
     return start + words.length;
+  }
+  function igniteRevealText(root) {
+    var targets = [];
+    if (root && root.matches && root.matches("[data-ignite]")) targets.push(root);
+    if (root && root.querySelectorAll) targets = targets.concat([].slice.call(root.querySelectorAll("[data-ignite]")));
+    targets.forEach(function (el) {
+      if (el.dataset.ignited === "1") return;
+      var txt = el.getAttribute("data-ignite") || el.textContent.trim();
+      fillWave(el, txt, 0, 0.04);
+      el.dataset.ignited = "1";
+    });
   }
 
   function setPillar(id, byUser) {
@@ -615,6 +626,7 @@
       entries.forEach(function (entry) {
         if (!entry.isIntersecting) return;
         entry.target.classList.add("in");
+        igniteRevealText(entry.target);
         io.unobserve(entry.target);
       });
     }, { root: null, rootMargin: "0px 0px -10% 0px", threshold: 0.12 });
@@ -624,7 +636,10 @@
       var vh = window.innerHeight || 800;
       revs.forEach(function (el) {
         if (el.classList.contains("in")) return;
-        if (el.getBoundingClientRect().top < vh * 0.86) el.classList.add("in");
+        if (el.getBoundingClientRect().top < vh * 0.86) {
+          el.classList.add("in");
+          igniteRevealText(el);
+        }
       });
     }
     window.addEventListener("scroll", checkReveal, { passive: true });
