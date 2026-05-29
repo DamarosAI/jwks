@@ -194,8 +194,6 @@
     .hero-inner { position: relative; left: auto; top: auto; transform: none; width: auto; order: 1; }
     #field { position: relative; inset: auto; left: auto; order: 2; width: 100%; height: 44svh; min-height: 320px; margin: 1.4rem 0 0; border: 1px solid var(--bd); border-radius: 12px; background: var(--panel); }
     .caption { position: relative; left: auto; bottom: auto; width: auto; order: 3; margin-top: 1.2rem; }
-    .topnav { position: relative; left: auto; right: auto; bottom: auto; order: 4; justify-content: flex-start; margin-top: 1.4rem; }
-    .topnav::before { display: none; }
     .spine { position: relative; left: auto; right: auto; bottom: auto; order: 4; flex-direction: column; gap: .9rem; padding: 0; margin-top: 1.6rem; }
     .spine-exec::before { display: none; }
     .stake { grid-template-columns: 1fr; }
@@ -275,7 +273,7 @@
     <div class="finale-rule reveal"></div>
     <h2 class="reveal">Clinical trials, <em>rewired<span class="dmx-dot"></span></em></h2>
     <p class="reveal s1">Damaros binds complex protocol logic to governed evidence and deterministic screening, end to end, on one substrate.</p>
-    <a class="btn-primary reveal s2" href="mailto:anirudh@damaros.ai?subject=Damaros">Get in touch</a>
+    <a class="btn-primary reveal s2" href="/cdn-cgi/l/email-protection#6b0a0502191e0f032b0f0a060a190418450a0254181e09010e081f562f0a060a190418">Get in touch</a>
   </section>
 </main>
 
@@ -285,7 +283,7 @@
   <span class="cp">© 2026 Damaros™</span>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 (function () {
   /* monogram tiles */
   var grid = document.getElementById("monoGrid");
@@ -382,11 +380,11 @@
         }
       });
     } else if (id === "screening") {
-      var tcy = cy - R * 0.12;
+      var tcy = cy - R * 0.02;
       var centers = [ { x: cx - R * 0.46, y: tcy + R * 0.3 }, { x: cx, y: tcy - R * 0.4 }, { x: cx + R * 0.46, y: tcy + R * 0.3 } ];
       decor.centers = centers;
       parts.forEach(function (q) {
-        var c = centers[q.grp], a = Math.random() * 6.28, rr = (0.25 + Math.sqrt(Math.random()) * 0.75) * R * 0.34;
+        var c = centers[q.grp], a = Math.random() * 6.28, rr = (0.25 + Math.sqrt(Math.random()) * 0.75) * R * 0.39;
         q.sa = a; q.sr = rr; q.scx = c.x; q.scy = c.y;
         q.tx = c.x + Math.cos(a) * rr; q.ty = c.y + Math.sin(a) * rr * 0.9;
       });
@@ -419,10 +417,15 @@
   function easeInOut(x){ return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2; }
   var t0 = performance.now(), autoNext = t0 + 4200, autoPause = 0, sweep = 0;
 
-  function pointerWithinInteractiveShape(mx, my, cx, cy, R, mode) {
-    if (mode !== "trident" && mode !== "luna") return true;
-    var rx = mode === "trident" ? R * 1.02 : R * 1.08;
-    var ry = mode === "trident" ? R * 0.86 : R * 0.9;
+  /* Hover is only "live" when the cursor is over the actual symbol, not the
+     whole canvas (which reaches down to the nav). Tight ellipse around the
+     formation centre keeps it off the spine selector below. */
+  function pointerOverSymbol(mx, my, cx, cy, R, mode) {
+    var rx, ry;
+    if (mode === "evidence") { rx = R * 1.12; ry = R * 0.78; }
+    else if (mode === "replay") { rx = R * 1.15; ry = R * 0.5; }
+    else if (mode === "screening") { rx = R * 1.05; ry = R * 0.95; }
+    else { rx = R * 0.98; ry = R * 0.72; }   /* trident + luna: tight */
     var nx = (mx - cx) / rx, ny = (my - cy) / ry;
     return nx * nx + ny * ny <= 1;
   }
@@ -434,7 +437,7 @@
     if (now > autoPause && now > autoNext) { setPillar(ORDER[(ORDER.indexOf(current) + 1) % ORDER.length], false); autoNext = now + 4800; }
 
     var R = decor.R || 1, pad = decor.pad || 0, cx = decor.cx || W / 2, cy = decor.cy || H / 2;
-    var mx = mouse.x, my = mouse.y, hov = mouse.inside && pointerWithinInteractiveShape(mx, my, cx, cy, R, current);
+    var mx = mouse.x, my = mouse.y, hov = mouse.inside && pointerOverSymbol(mx, my, cx, cy, R, current);
     ctx.clearRect(0, 0, W, H);
     var pcol = colorFor(PILLARS[current].color);
 
@@ -496,11 +499,11 @@
         bx = q.tx + Math.cos(time * 0.5 + q.jx) * 2.4 * (1 - e * 0.7);
         by = q.ty + Math.sin(time * 0.6 + q.jy) * 2.4 * (1 - e * 0.7);
       }
-      // evidence interactivity lives in the styling + decor (survey line)
+      // evidence interactivity lives in the styling + decor (ridge displacement on hover)
       if (hov) {
         var dx = bx - mx, dy = by - my, d = Math.sqrt(dx * dx + dy * dy) || 1;
         if (current === "screening") { var rs = R * 0.55; if (d < rs) { var f2 = (1 - d / rs) * 0.26; bx -= dx * f2; by -= dy * f2; } }
-        else if (current === "luna") { var rl = Math.max(24, Math.min(52, R * 0.2)); if (d < rl) { var f3 = (1 - d / rl); f3 = f3 * f3 * 0.6; bx -= dx * f3; by -= dy * f3; } }
+        else if (current === "luna") { var rl = R * 0.55; if (d < rl) { var f3 = (1 - d / rl); f3 = f3 * f3 * 0.6; bx -= dx * f3; by -= dy * f3; } }
         else if (current === "evidence") { var re = R * 0.42; if (d < re) { var fe = (1 - d / re); fe = fe * fe; bx -= dx * fe * 0.5; by -= dy * fe * 0.5; } }
       }
       q.x += (bx - q.x) * (0.08 + 0.12 * morph); q.y += (by - q.y) * (0.08 + 0.12 * morph);
@@ -511,7 +514,7 @@
       if (current === "evidence" && !q.ridge) { alpha *= 0.5; rad *= 0.82; }
       if (current === "evidence" && hov) { var dXe = Math.abs(q.x - mx); if (dXe < R * 0.1) { var be = 1 - dXe / (R * 0.1); alpha = Math.min(1, alpha + be * 0.55); rad += be * 1.8; col = COL.accent2; } }
       if (current === "protocol" && hov) { var dl = Math.sqrt((q.x - mx) * (q.x - mx) + (q.y - my) * (q.y - my)); var lit = Math.max(0, 1 - dl / (R * 0.42)); if (lit > 0.4) { sq = true; bright = 1 + lit; rad = q.r + 0.8 + lit * 1.6; col = COL.accent2; } }
-      if (current === "luna" && hov) { var dlu = Math.sqrt((q.x - mx) * (q.x - mx) + (q.y - my) * (q.y - my)); var lrad = Math.max(26, Math.min(56, R * 0.22)); var b2 = Math.max(0, 1 - dlu / lrad); alpha = Math.min(1, alpha + b2 * 0.5); rad += b2 * 1.6; }
+      if (current === "luna" && hov) { var dlu = Math.sqrt((q.x - mx) * (q.x - mx) + (q.y - my) * (q.y - my)); var b2 = Math.max(0, 1 - dlu / (R * 0.5)); alpha = Math.min(1, alpha + b2 * 0.5); rad += b2 * 1.6; }
       if (current === "replay") { var done = q.tx <= px; alpha = done ? (0.5 + 0.5 * e) : 0.16; rad = q.r + (Math.abs(q.tx - px) < 16 ? 2.6 : 0.4); col = done ? COL.accent2 : COL.line; }
 
       var pulse = 0.55 + 0.45 * Math.sin(time * 2 + q.ph);
