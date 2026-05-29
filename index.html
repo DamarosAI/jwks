@@ -46,7 +46,7 @@
   .spine-sub { display: flex; justify-content: center; gap: 2rem; }
   .srail { appearance: none; background: none; border: 0; cursor: pointer; display: inline-flex; align-items: center; gap: .5rem;
     font-family: var(--fm); font-size: .62rem; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: var(--fg-3);
-    line-height: 1; padding: .14rem .08rem; transition: color var(--t) var(--ease); }
+    padding: .3rem .1rem; transition: color var(--t) var(--ease); }
   .srail .smark { width: 7px; height: 7px; border: 1px solid var(--bd-strong); transform: rotate(45deg); transition: background var(--t) var(--ease), border-color var(--t) var(--ease), box-shadow var(--t) var(--ease); }
   .srail:hover { color: var(--fg-2); } .srail:hover .smark { border-color: var(--accent-2); }
   .srail.active { color: var(--fg); }
@@ -410,16 +410,7 @@
 
   /* mouse (canvas coords) */
   var mouse = { x: -9999, y: -9999, inside: false };
-  var hoverShield = document.querySelector(".spine");
-  function inHoverShield(clientX, clientY) {
-    if (!hoverShield) return false;
-    var r = hoverShield.getBoundingClientRect();
-    var padX = 20, padTop = 10, padBottom = 22;
-    return clientX >= (r.left - padX) && clientX <= (r.right + padX) &&
-           clientY >= (r.top - padTop) && clientY <= (r.bottom + padBottom);
-  }
   canvas.addEventListener("pointermove", function (ev) {
-    if (inHoverShield(ev.clientX, ev.clientY)) { mouse.inside = false; mouse.x = -9999; mouse.y = -9999; return; }
     var r = canvas.getBoundingClientRect(); mouse.x = ev.clientX - r.left; mouse.y = ev.clientY - r.top; mouse.inside = true;
     autoPause = performance.now() + 6500;
   });
@@ -428,6 +419,14 @@
   function easeInOut(x){ return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2; }
   var t0 = performance.now(), autoNext = t0 + 4200, autoPause = 0, sweep = 0;
 
+  function pointerWithinInteractiveShape(mx, my, cx, cy, R, mode) {
+    if (mode !== "trident" && mode !== "luna") return true;
+    var rx = mode === "trident" ? R * 1.02 : R * 1.08;
+    var ry = mode === "trident" ? R * 0.86 : R * 0.9;
+    var nx = (mx - cx) / rx, ny = (my - cy) / ry;
+    return nx * nx + ny * ny <= 1;
+  }
+
   function frame(now) {
     var dt = Math.min(0.05, (now - t0) / 1000); t0 = now;
     morph = Math.min(1, morph + dt * 1.6);
@@ -435,7 +434,7 @@
     if (now > autoPause && now > autoNext) { setPillar(ORDER[(ORDER.indexOf(current) + 1) % ORDER.length], false); autoNext = now + 4800; }
 
     var R = decor.R || 1, pad = decor.pad || 0, cx = decor.cx || W / 2, cy = decor.cy || H / 2;
-    var mx = mouse.x, my = mouse.y, hov = mouse.inside;
+    var mx = mouse.x, my = mouse.y, hov = mouse.inside && pointerWithinInteractiveShape(mx, my, cx, cy, R, current);
     ctx.clearRect(0, 0, W, H);
     var pcol = colorFor(PILLARS[current].color);
 
@@ -451,7 +450,7 @@
     /* ---- decor ---- */
     ctx.save(); ctx.lineWidth = 1;
     if (decor.type === "trident") {
-      if (hov) { var bi = -1, bd = 1e9; for (var ai = 0; ai < N; ai++) { var ddx = parts[ai].x - mx, ddy = parts[ai].y - my, dd = ddx * ddx + ddy * ddy; if (dd < bd) { bd = dd; bi = ai; } } if (bi >= 0 && bd < R * R * 0.36) tact[bi] = 1; }
+      if (hov) { var bi = -1, bd = 1e9; var tr = Math.max(18, Math.min(42, R * 0.17)); for (var ai = 0; ai < N; ai++) { var ddx = parts[ai].x - mx, ddy = parts[ai].y - my, dd = ddx * ddx + ddy * ddy; if (dd < bd) { bd = dd; bi = ai; } } if (bi >= 0 && bd < tr * tr) tact[bi] = 1; }
       if (decor.tneighbors) {
         var nxt = []; for (var ui = 0; ui < N; ui++) { var bv = (tact[ui] || 0) * 0.9; var nbs = decor.tneighbors[ui]; for (var ni = 0; ni < nbs.length; ni++) { var nv = (tact[nbs[ni]] || 0) * 0.8; if (nv > bv) bv = nv; } nxt[ui] = bv; } tact = nxt;
         for (var ei = 0; ei < N; ei++) { var nb2 = decor.tneighbors[ei]; for (var ej = 0; ej < nb2.length; ej++) { var k2 = nb2[ej]; if (k2 < ei) continue; var act = Math.max(tact[ei] || 0, tact[k2] || 0); ctx.strokeStyle = act > 0.06 ? COL.accent2 : COL.line; ctx.globalAlpha = e * (0.05 + act * 0.6); ctx.beginPath(); ctx.moveTo(parts[ei].x, parts[ei].y); ctx.lineTo(parts[k2].x, parts[k2].y); ctx.stroke(); } }
@@ -501,7 +500,7 @@
       if (hov) {
         var dx = bx - mx, dy = by - my, d = Math.sqrt(dx * dx + dy * dy) || 1;
         if (current === "screening") { var rs = R * 0.55; if (d < rs) { var f2 = (1 - d / rs) * 0.26; bx -= dx * f2; by -= dy * f2; } }
-        else if (current === "luna") { var rl = R * 0.55; if (d < rl) { var f3 = (1 - d / rl); f3 = f3 * f3 * 0.6; bx -= dx * f3; by -= dy * f3; } }
+        else if (current === "luna") { var rl = Math.max(24, Math.min(52, R * 0.2)); if (d < rl) { var f3 = (1 - d / rl); f3 = f3 * f3 * 0.6; bx -= dx * f3; by -= dy * f3; } }
         else if (current === "evidence") { var re = R * 0.42; if (d < re) { var fe = (1 - d / re); fe = fe * fe; bx -= dx * fe * 0.5; by -= dy * fe * 0.5; } }
       }
       q.x += (bx - q.x) * (0.08 + 0.12 * morph); q.y += (by - q.y) * (0.08 + 0.12 * morph);
@@ -512,7 +511,7 @@
       if (current === "evidence" && !q.ridge) { alpha *= 0.5; rad *= 0.82; }
       if (current === "evidence" && hov) { var dXe = Math.abs(q.x - mx); if (dXe < R * 0.1) { var be = 1 - dXe / (R * 0.1); alpha = Math.min(1, alpha + be * 0.55); rad += be * 1.8; col = COL.accent2; } }
       if (current === "protocol" && hov) { var dl = Math.sqrt((q.x - mx) * (q.x - mx) + (q.y - my) * (q.y - my)); var lit = Math.max(0, 1 - dl / (R * 0.42)); if (lit > 0.4) { sq = true; bright = 1 + lit; rad = q.r + 0.8 + lit * 1.6; col = COL.accent2; } }
-      if (current === "luna" && hov) { var dlu = Math.sqrt((q.x - mx) * (q.x - mx) + (q.y - my) * (q.y - my)); var b2 = Math.max(0, 1 - dlu / (R * 0.42)); alpha = Math.min(1, alpha + b2 * 0.5); rad += b2 * 1.6; }
+      if (current === "luna" && hov) { var dlu = Math.sqrt((q.x - mx) * (q.x - mx) + (q.y - my) * (q.y - my)); var lrad = Math.max(26, Math.min(56, R * 0.22)); var b2 = Math.max(0, 1 - dlu / lrad); alpha = Math.min(1, alpha + b2 * 0.5); rad += b2 * 1.6; }
       if (current === "replay") { var done = q.tx <= px; alpha = done ? (0.5 + 0.5 * e) : 0.16; rad = q.r + (Math.abs(q.tx - px) < 16 ? 2.6 : 0.4); col = done ? COL.accent2 : COL.line; }
 
       var pulse = 0.55 + 0.45 * Math.sin(time * 2 + q.ph);
