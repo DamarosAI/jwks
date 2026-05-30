@@ -1,17 +1,6 @@
-/* Damaros — system color-scheme only. No manual override or persistence. */
+/* Damaros — clear legacy theme pins; OS scheme is handled in CSS. */
 (function () {
   var root = document.documentElement;
-  var mq = window.matchMedia("(prefers-color-scheme: light)");
-
-  function apply() {
-    root.setAttribute("data-theme", mq.matches ? "light" : "dark");
-  }
-
-  apply();
-
-  if (typeof mq.addEventListener === "function") {
-    mq.addEventListener("change", apply);
-  } else if (typeof mq.addListener === "function") {
-    mq.addListener(apply);
-  }
+  try { localStorage.removeItem("damaros-theme"); } catch (e) {}
+  root.removeAttribute("data-theme");
 })();

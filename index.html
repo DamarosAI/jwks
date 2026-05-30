@@ -148,6 +148,9 @@
   .finale p { color: var(--fg-2); margin: 1.4rem auto 0; max-width: 44ch; line-height: 1.6; }
   .finale .dmx-cta--md { margin-top: 2.2rem; }
   .finale-mono { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-58%); width: clamp(220px, 34vw, 460px); opacity: .05; pointer-events: none; animation: finaleFloat 9s ease-in-out infinite; }
+  @media (prefers-color-scheme: light) {
+    .finale-mono { filter: invert(1) brightness(.4); opacity: .07; }
+  }
   [data-theme="light"] .finale-mono { filter: invert(1) brightness(.4); opacity: .07; }
   @keyframes finaleFloat { 0%,100% { transform: translate(-50%,-58%) rotate(-3deg); } 50% { transform: translate(-50%,-62%) rotate(3deg); } }
   .finale-rule { width: 40px; height: 2px; background: var(--accent-2); margin: 0 auto 1.6rem; }
@@ -702,6 +705,10 @@
     b.addEventListener("click", function () { setPillar(b.dataset.id, true); });
   });
   new MutationObserver(readColors).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  var schemeMq = window.matchMedia("(prefers-color-scheme: light)");
+  function onSchemeChange() { readColors(); }
+  if (typeof schemeMq.addEventListener === "function") schemeMq.addEventListener("change", onSchemeChange);
+  else if (typeof schemeMq.addListener === "function") schemeMq.addListener(onSchemeChange);
   window.addEventListener("resize", function () { layout.done = false; layout(); });
   new ResizeObserver(function () { layout(); }).observe(canvas);
 

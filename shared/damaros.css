@@ -6,10 +6,9 @@
  * THEME MODEL (robust, JS-optional):
  *   1. :root carries the DARK tokens as the default.
  *   2. @media (prefers-color-scheme: light) re-points :root to LIGHT
- *      tokens — so the site follows the OS with NO JavaScript at all.
- *      Guarded with :not([data-theme]) so an explicit choice always wins.
- *   3. [data-theme="dark"|"light"] are explicit overrides (set by
- *      shared/theme-system.js, or any future manual toggle).
+ *      tokens — follows the OS/browser with NO JavaScript.
+ *   3. [data-theme="dark"|"light"] are explicit manual overrides only.
+ *      theme-system.js never sets data-theme; it only clears stale pins.
  * ============================================================ */
 
 :root {
@@ -63,11 +62,9 @@
   color-scheme: dark;
 }
 
-/* ---- LIGHT tokens, driven purely by the OS preference ----
-   No JavaScript required. Applies only when the page has NOT
-   been given an explicit data-theme, so a manual override wins. */
+/* ---- LIGHT tokens, driven by OS / browser prefers-color-scheme ---- */
 @media (prefers-color-scheme: light) {
-  :root:not([data-theme]) {
+  :root {
     --bg:        #E4E8EC;
     --bg-1:      #EBEEF2;
     --bg-2:      #DDE3EA;
@@ -109,9 +106,8 @@
   }
 }
 
-/* ---- Explicit overrides (set by shared/theme-system.js or a manual
-   toggle). These come last so an explicit choice always beats the
-   OS-preference media query above. ---- */
+/* ---- Explicit manual overrides (future toggle). Listed after the
+   prefers-color-scheme block so an explicit choice always wins. ---- */
 [data-theme="dark"] {
   --bg:        #000;
   --bg-1:      #07090b;
@@ -251,10 +247,10 @@ h1,h2,h3 { font-family: var(--fh); font-weight: 600; letter-spacing: -.01em; lin
 .dmx-theme .moon { display: none; }
 [data-theme="light"] .dmx-theme .sun { display: none; }
 [data-theme="light"] .dmx-theme .moon { display: block; }
-/* OS-driven (no explicit data-theme) icon swap */
+/* OS-driven icon swap */
 @media (prefers-color-scheme: light) {
-  :root:not([data-theme]) .dmx-theme .sun { display: none; }
-  :root:not([data-theme]) .dmx-theme .moon { display: block; }
+  .dmx-theme .sun { display: none; }
+  .dmx-theme .moon { display: block; }
 }
 
 /* status chip primitive */
@@ -347,10 +343,10 @@ h1,h2,h3 { font-family: var(--fh); font-weight: 600; letter-spacing: -.01em; lin
       color-mix(in srgb, var(--glass) 88%, transparent) 45%,
       color-mix(in srgb, var(--accent-2) 14%, transparent) 100%);
 }
-/* OS-driven (no explicit data-theme) CTA tuning */
+/* OS-driven CTA tuning in light scheme */
 @media (prefers-color-scheme: light) {
-  :root:not([data-theme]) .dmx-cta:hover { color: #fff; }
-  :root:not([data-theme]) .dmx-cta {
+  .dmx-cta:hover { color: #fff; }
+  .dmx-cta {
     border-color: color-mix(in srgb, var(--accent) 42%, transparent);
     background:
       linear-gradient(145deg,

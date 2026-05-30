@@ -2,17 +2,6 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<script>
-(function () {
-  var mq = window.matchMedia("(prefers-color-scheme: light)");
-  function applyTheme() {
-    document.documentElement.setAttribute("data-theme", mq.matches ? "light" : "dark");
-  }
-  applyTheme();
-  if (typeof mq.addEventListener === "function") mq.addEventListener("change", applyTheme);
-  else if (typeof mq.addListener === "function") mq.addListener(applyTheme);
-})();
-</script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="dark light">
 <title>Privacy · Damaros™</title>
@@ -22,10 +11,16 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600&family=Space+Grotesk:wght@400;500&display=swap">
 <link rel="icon" href="/assets/damaros-favicon.png" type="image/png" sizes="32x32">
+<script src="/shared/theme-system.js"></script>
 <style>
   :root,[data-theme="dark"]{
     --fh:'Chakra Petch',sans-serif;--fb:'Space Grotesk',sans-serif;
     --blue:#7B96B2;--bg:#000;--heading:#fff;--ts:rgba(232,232,232,.72);--td:rgba(232,232,232,.38);
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg:#E4E8EC;--heading:#0a0c0e;--ts:rgba(10,12,14,.78);--td:rgba(10,12,14,.45);
+    }
   }
   [data-theme="light"]{
     --bg:#E4E8EC;--heading:#0a0c0e;--ts:rgba(10,12,14,.78);--td:rgba(10,12,14,.45);
