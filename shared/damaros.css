@@ -2,6 +2,14 @@
  * Damaros — shared design tokens + base.
  * Steel-on-black operator console DNA. Dark + light parity.
  * Type: Chakra Petch (display) · Space Grotesk (UI + mono register).
+ *
+ * THEME MODEL (robust, JS-optional):
+ *   1. :root carries the DARK tokens as the default.
+ *   2. @media (prefers-color-scheme: light) re-points :root to LIGHT
+ *      tokens — so the site follows the OS with NO JavaScript at all.
+ *      Guarded with :not([data-theme]) so an explicit choice always wins.
+ *   3. [data-theme="dark"|"light"] are explicit overrides (set by
+ *      shared/theme-system.js, or any future manual toggle).
  * ============================================================ */
 
 :root {
@@ -13,10 +21,8 @@
   --t-fast: 140ms;
   --t: 220ms;
   --t-slow: 300ms;
-  color-scheme: dark light;
-}
 
-[data-theme="dark"] {
+  /* ---- DARK tokens are the default ---- */
   --bg:        #000;
   --bg-1:      #07090b;
   --bg-2:      #0b1016;
@@ -36,6 +42,96 @@
   --fail:   #FB7185;
   --locked: #60A5FA;
   --luna:   #C084FC;   /* provenance / AI origin */
+
+  --bd:      rgba(123,150,178,.22);
+  --bd-soft: rgba(123,150,178,.12);
+  --bd-strong:rgba(123,150,178,.4);
+  --chip-bg: rgba(123,150,178,.06);
+  --glass:   rgba(0,0,0,.36);
+
+  --grid-line: rgba(123,150,178,.05);
+  --scan: rgba(123,150,178,.018);
+  --shadow-panel: 0 0 0 1px rgba(4,8,14,.5), 0 18px 48px rgba(0,0,0,.34);
+  --glow: 0 0 42px rgba(123,150,178,.14);
+
+  --mono-op: .07;
+  --mono-filter: none;
+  --cta-shine: rgba(255,255,255,.16);
+  --cta-shine-strong: rgba(255,255,255,.35);
+  --cta-inset-dark: rgba(0,0,0,.14);
+
+  color-scheme: dark;
+}
+
+/* ---- LIGHT tokens, driven purely by the OS preference ----
+   No JavaScript required. Applies only when the page has NOT
+   been given an explicit data-theme, so a manual override wins. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    --bg:        #E4E8EC;
+    --bg-1:      #EBEEF2;
+    --bg-2:      #DDE3EA;
+    --panel:     linear-gradient(180deg, rgba(255,255,255,.84), rgba(214,222,232,.66));
+    --panel-solid:#EEF1F5;
+
+    --fg:        #161D24;
+    --fg-2:      rgba(22,29,36,.74);
+    --fg-3:      rgba(22,29,36,.5);
+
+    --accent:    #4F6B8A;
+    --accent-2:  #38536F;
+    --accent-bright:#2C6FB0;
+
+    --pass:   #1F9D57;
+    --review: #B7860B;
+    --fail:   #D6455E;
+    --locked: #2C6FB0;
+    --luna:   #8B4FC9;
+
+    --bd:      rgba(79,107,138,.34);
+    --bd-soft: rgba(79,107,138,.18);
+    --bd-strong:rgba(79,107,138,.52);
+    --chip-bg: rgba(255,255,255,.5);
+    --glass:   rgba(255,255,255,.5);
+
+    --grid-line: rgba(79,107,138,.09);
+    --scan: transparent;
+    --shadow-panel: 0 2px 10px rgba(40,60,84,.08), 0 18px 48px rgba(40,60,84,.12);
+    --glow: 0 0 42px rgba(79,107,138,.12);
+
+    --mono-op: .038;
+    --mono-filter: invert(1) brightness(.82);
+    --cta-shine: rgba(255,255,255,.72);
+    --cta-shine-strong: rgba(255,255,255,.92);
+    --cta-inset-dark: rgba(79,107,138,.12);
+
+    color-scheme: light;
+  }
+}
+
+/* ---- Explicit overrides (set by shared/theme-system.js or a manual
+   toggle). These come last so an explicit choice always beats the
+   OS-preference media query above. ---- */
+[data-theme="dark"] {
+  --bg:        #000;
+  --bg-1:      #07090b;
+  --bg-2:      #0b1016;
+  --panel:     linear-gradient(180deg, rgba(11,14,20,.82), rgba(7,10,15,.62));
+  --panel-solid:#0a0e14;
+
+  --fg:        #E8E8E8;
+  --fg-2:      rgba(232,232,232,.72);
+  --fg-3:      rgba(232,232,232,.46);
+
+  --accent:    #7B96B2;
+  --accent-2:  #A9C0D6;
+  --accent-bright:#8fbfff;
+
+  --pass:   #4ADE80;
+  --review: #FACC15;
+  --fail:   #FB7185;
+  --locked: #60A5FA;
+  --luna:   #C084FC;
 
   --bd:      rgba(123,150,178,.22);
   --bd-soft: rgba(123,150,178,.12);
@@ -155,6 +251,11 @@ h1,h2,h3 { font-family: var(--fh); font-weight: 600; letter-spacing: -.01em; lin
 .dmx-theme .moon { display: none; }
 [data-theme="light"] .dmx-theme .sun { display: none; }
 [data-theme="light"] .dmx-theme .moon { display: block; }
+/* OS-driven (no explicit data-theme) icon swap */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) .dmx-theme .sun { display: none; }
+  :root:not([data-theme]) .dmx-theme .moon { display: block; }
+}
 
 /* status chip primitive */
 .chip {
@@ -245,6 +346,18 @@ h1,h2,h3 { font-family: var(--fh); font-weight: 600; letter-spacing: -.01em; lin
       color-mix(in srgb, #fff 72%, transparent) 0%,
       color-mix(in srgb, var(--glass) 88%, transparent) 45%,
       color-mix(in srgb, var(--accent-2) 14%, transparent) 100%);
+}
+/* OS-driven (no explicit data-theme) CTA tuning */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) .dmx-cta:hover { color: #fff; }
+  :root:not([data-theme]) .dmx-cta {
+    border-color: color-mix(in srgb, var(--accent) 42%, transparent);
+    background:
+      linear-gradient(145deg,
+        color-mix(in srgb, #fff 72%, transparent) 0%,
+        color-mix(in srgb, var(--glass) 88%, transparent) 45%,
+        color-mix(in srgb, var(--accent-2) 14%, transparent) 100%);
+  }
 }
 .dmx-cta:hover::before { opacity: .65; }
 
