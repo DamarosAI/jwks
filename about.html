@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Damaros · About</title>
+<link rel="icon" href="assets/damaros-favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap">
+<script>
+(function(){var mq=matchMedia('(prefers-color-scheme: light)');function set(){document.documentElement.setAttribute('data-theme', mq.matches?'light':'dark');}set();if(mq.addEventListener)mq.addEventListener('change',set);else if(mq.addListener)mq.addListener(set);})();
+</script>
+<link rel="stylesheet" href="shared/damaros.css">
+<style>
+  body { overflow-x: hidden; }
+
+  .about { max-width: 760px; margin: 0 auto; padding: calc(60px + clamp(3rem, 9vh, 6rem)) clamp(1.1rem, 4vw, 2.4rem) 4rem; position: relative; z-index: 1; }
+  .a-eyebrow { font-family: var(--fm); font-size: .6rem; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); opacity: .75; margin-bottom: .8rem; }
+  .a-eyebrow::before { content: '// '; }
+  .a-title { font-family: var(--fh); font-weight: 600; font-size: clamp(2.4rem, 6vw, 3.8rem); letter-spacing: -.015em; line-height: 1; }
+  .a-sub { color: var(--fg-2); font-size: clamp(1rem, 1.4vw, 1.14rem); line-height: 1.6; margin: 1.1rem 0 0; max-width: 56ch; }
+
+  /* the rectangle: founder identity header + the about prose, in one bordered block */
+  .a-block {
+    margin-top: clamp(2rem, 5vh, 3.2rem);
+    border: 1px solid var(--bd); border-radius: 14px;
+    background: var(--panel); box-shadow: var(--shadow-panel);
+    overflow: hidden;
+  }
+  .a-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 1.4rem; flex-wrap: wrap;
+    padding: clamp(1.3rem, 3vw, 1.9rem) clamp(1.4rem, 3.6vw, 2.4rem);
+    border-bottom: 1px solid var(--bd-soft);
+    background: color-mix(in srgb, var(--accent) 4%, transparent);
+  }
+  .a-id { display: flex; flex-direction: column; gap: .28rem; }
+  .a-name { font-family: var(--fh); font-weight: 700; font-size: 1.3rem; letter-spacing: -.01em; }
+  .a-role { font-family: var(--fm); font-size: .62rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--accent-2); }
+
+  .a-linkedin {
+    display: inline-flex; align-items: center; gap: .6rem; flex: 0 0 auto;
+    font-family: var(--fh); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; font-size: .72rem;
+    padding: .82rem 1.3rem; border: 1px solid var(--bd-strong); border-radius: 8px;
+    color: var(--fg); background: var(--glass); transition: all var(--t) var(--ease);
+  }
+  .a-linkedin svg { width: 16px; height: 16px; display: block; }
+  .a-linkedin:hover { border-color: var(--accent); background: var(--accent); color: #000; box-shadow: var(--glow); }
+  [data-theme="light"] .a-linkedin:hover { color: #fff; }
+
+  .a-body { padding: clamp(1.6rem, 4vw, 2.6rem) clamp(1.4rem, 3.6vw, 2.4rem) clamp(1.8rem, 4vw, 2.6rem); }
+  .a-body p { margin: 0 0 1.15rem; color: var(--fg-2); font-size: 1rem; line-height: 1.78; }
+  .a-body p:first-child { color: var(--fg); font-size: clamp(1.08rem, 1.5vw, 1.22rem); line-height: 1.6; }
+  .a-body strong { color: var(--fg); font-weight: 600; }
+  .a-close {
+    margin: clamp(1.6rem, 4vh, 2.4rem) 0 0 !important; padding-top: clamp(1.4rem, 3.5vh, 2rem);
+    border-top: 1px solid var(--bd-soft);
+    font-family: var(--fh); font-weight: 600; font-size: clamp(1.15rem, 2vw, 1.5rem) !important;
+    line-height: 1.2 !important; color: var(--fg) !important; letter-spacing: -.01em;
+  }
+  .a-close b { color: var(--accent-2); font-weight: 600; }
+
+  footer { border-top: 1px solid var(--bd-soft); padding: 2.2rem clamp(1.1rem,4vw,2.4rem); display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; align-items: center; font-family: var(--fm); font-size: .6rem; letter-spacing: .1em; text-transform: uppercase; color: var(--fg-3); max-width: 760px; margin: 0 auto; }
+  footer a:hover { color: var(--fg); } footer .fl { display: flex; gap: 1.3rem; }
+
+  /* nav: no wordmark, no theme toggle. tabs top-left, theme follows system */
+  .dmx-nav { justify-content: flex-start; }
+
+  @media (max-width: 560px) {
+    .a-head { flex-direction: column; align-items: flex-start; }
+    .a-linkedin { width: 100%; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="dmx-nav">
+  <div class="dmx-nav-links">
+    <a class="dmx-nav-link" href="/">Home</a>
+    <a class="dmx-nav-link" href="/about" aria-current="true">About</a>
+  </div>
+</nav>
+
+<div class="dmx-texture" aria-hidden="true"></div>
+
+<main class="about">
+  <div class="a-eyebrow">Founder</div>
+  <h1 class="a-title">About</h1>
+  <p class="a-sub">Why Damaros exists, from the person building it. Written from inside the system it is built to serve.</p>
+
+  <div class="a-block">
+    <div class="a-head">
+      <div class="a-id">
+        <span class="a-name">Anirudh C. Nimmagadda</span>
+        <span class="a-role">Founder &amp; CEO · MD/MSAI Candidate</span>
+      </div>
+      <a class="a-linkedin" href="https://www.linkedin.com/in/acnimma/" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+        Connect on LinkedIn
+      </a>
+    </div>
+
+    <div class="a-body">
+      <p>I founded Damaros from inside the clinical training environment.</p>
+      <p>Clinical research is not short on software. It is short on execution infrastructure. The next era of medicine will be constrained less by discovery than by execution: whether institutions can turn therapeutic intent into governed action fast enough for patients to benefit.</p>
+      <p>I am an MD/MSAI candidate because this is the intersection I intend to build inside: medicine, AI systems, and institutional trust. From inside the system, the missing layer is visible before it becomes obvious.</p>
+      <p>The next clinical AI companies will not wrap models around workflows. They will encode the work itself: <strong>judgment, boundaries, provenance, and replay</strong>.</p>
+      <p>Clinical trials expose the failure first. They are where the hospital's execution problem becomes impossible to ignore: protocols define intent, patient evidence is fragmented, humans carry judgment, and institutions carry risk.</p>
+      <p>That pattern is larger than trials. Regulated clinical work is becoming too complex and too data-rich to run on disconnected systems, manual translation, and retrospective audit.</p>
+      <p>Damaros starts with trials because the failure is concentrated there. The rail system is larger: AI-native infrastructure for how hospitals operationalize complex clinical work.</p>
+      <p class="a-close">The first domain is trials. <b>The system is medicine.</b></p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <span>© 2026 Damaros™</span>
+  <div class="fl"><a href="/">Home</a><a href="/docs/fhir">FHIR</a><a href="/privacy">Privacy</a></div>
+</footer>
+
+</body>
+</html>

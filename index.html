@@ -165,8 +165,7 @@
   [data-theme="light"] .finale-mono { filter: invert(1) brightness(.4); opacity: .07; }
   @keyframes finaleFloat { 0%,100% { transform: translate(-50%,-58%) rotate(-3deg); } 50% { transform: translate(-50%,-62%) rotate(3deg); } }
   .finale-rule { width: 40px; height: 2px; background: var(--accent-2); margin: 0 auto 1.6rem; }
-  .finale h2 em { font-style: normal; color: var(--accent-2); display: inline-flex; align-items: baseline; gap: .14em; }
-  .finale h2 em .dmx-dot { width: 12px; height: 12px; }
+  .finale h2 em { font-style: normal; color: var(--accent-2); }
   @media (prefers-reduced-motion: reduce) { .finale-mono { animation: none; } }
   @media (max-width: 640px) { .who-row { grid-template-columns: 1fr; gap: .3rem; } }
   @media (max-width: 600px) {
@@ -223,9 +222,24 @@
     .botbar { grid-template-columns: 1fr auto; }
     .botbar .cp { display: none; }
   }
+
+  /* nav: no wordmark in the corner — tabs only, top-left */
+  .dmx-nav { justify-content: flex-start; }
+
+  /* terminal type-in reveal — inlined so index.html is fully self-contained
+     (works even if shared/scramble.js or an older shared/damaros.css is deployed) */
+  .dmx-w { display: inline-block; }          /* keeps a phrase a single item inside inline-flex contexts */
+  .dmx-c.pre { visibility: hidden; }         /* not yet typed — space reserved, nothing shifts */
 </style>
 </head>
 <body style="font-size: 26px">
+
+<nav class="dmx-nav">
+  <div class="dmx-nav-links">
+    <a class="dmx-nav-link" href="/" aria-current="true">Home</a>
+    <a class="dmx-nav-link" href="/about">About</a>
+  </div>
+</nav>
 
 <template id="__bundler_thumbnail">
   <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -277,7 +291,6 @@
       <header class="story-lede reveal">
         <span class="eyebrow">The mission</span>
         <h2>Run trials at the <em>pace of technology.</em></h2>
-        <p>Trial execution is still largely manual. Eligibility lives in dense protocols, evidence is spread across separate systems, and review happens chart by chart, criterion by criterion.</p>
       </header>
 
       <div class="stats reveal">
@@ -302,18 +315,127 @@
   <section class="finale">
     <img class="finale-mono" src="assets/damaros-white-transparent.png" alt="" aria-hidden="true">
     <div class="finale-rule reveal"></div>
-    <h2 class="reveal">Clinical trials, <em>rewired<span class="dmx-dot"></span></em></h2>
-    <a class="btn-primary reveal s2" href="/cdn-cgi/l/email-protection#3f5e51564d4a5b577f5b5e525e4d504c115e56004c4a5d555a5c4b027b5e525e4d504c">Get in touch</a>
+    <h2 class="reveal">Clinical trials, <em>rewired</em></h2>
+    <a class="btn-primary reveal s2" href="mailto:anirudh@damaros.ai?subject=Damaros">Get in touch</a>
   </section>
 </main>
 
 <div class="botbar">
   <span class="geo pending" id="geo">Locating</span>
-  <span class="bc"><a href="docs/fhir.html">FHIR</a><a href="docs/privacy.html">Privacy</a></span>
+  <span class="bc"><a href="/docs/fhir">FHIR</a><a href="/privacy">Privacy</a></span>
   <span class="cp">© 2026 Damaros™</span>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="shared/scramble.js?v=3"></script>
+<script>
+/* ============================================================
+ * Damaros — terminal type-in reveal (inlined; self-contained).
+ *   Emphasis phrases + stat numbers reveal one character at a time,
+ *   left → right. Real letters stay in the DOM (hidden via visibility),
+ *   so spacing is reserved and nothing shifts. Respects reduced-motion.
+ * ============================================================ */
+(function () {
+  var REDUCED = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function split(el) {
+    if (el.__chars) return el.__chars;
+    var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
+      acceptNode: function (n) {
+        return n.nodeValue && n.nodeValue.replace(/\s+/g, "")
+          ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      }
+    });
+    var texts = [], n;
+    while ((n = walker.nextNode())) texts.push(n);
+    var chars = [], words = [];
+    texts.forEach(function (tn) {
+      var frag = document.createDocumentFragment();
+      tn.nodeValue.split(/(\s+)/).forEach(function (part) {
+        if (part === "") return;
+        if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+        var w = document.createElement("span"); w.className = "dmx-w";
+        for (var i = 0; i < part.length; i++) {
+          var c = document.createElement("span"); c.className = "dmx-c"; c.textContent = part[i];
+          chars.push(c); w.appendChild(c);
+        }
+        words.push(w); frag.appendChild(w);
+      });
+      tn.parentNode.replaceChild(frag, tn);
+    });
+    el.__chars = chars; el.__words = words;
+    return chars;
+  }
+
+  function arm(el) {
+    if (REDUCED) return;
+    if (!el.getAttribute("aria-label")) el.setAttribute("aria-label", el.textContent.trim());
+    split(el);
+    el.__words.forEach(function (w) { w.setAttribute("aria-hidden", "true"); });
+    el.__chars.forEach(function (c) { c.classList.add("pre"); });
+  }
+
+  function reveal(el, opts) {
+    opts = opts || {};
+    if (typeof opts.text === "string") { el.textContent = opts.text; el.__chars = null; el.__words = null; }
+    if (REDUCED) return;
+    var chars = split(el);
+    if (!chars.length) return;
+    el.__words.forEach(function (w) { w.setAttribute("aria-hidden", "true"); });
+    chars.forEach(function (c) { c.classList.add("pre"); });
+    var n = chars.length, BASE = 20, STEP = 28, maxEnd = 0;
+    chars.forEach(function (c, i) { c.__at = BASE + i * STEP; c.__fin = false; if (c.__at > maxEnd) maxEnd = c.__at; });
+    function finish() { for (var i = 0; i < n; i++) { chars[i].classList.remove("pre"); chars[i].__fin = true; } }
+    var t0 = performance.now();
+    (function tick(t) {
+      var e = t - t0, all = true;
+      for (var i = 0; i < n; i++) {
+        var c = chars[i]; if (c.__fin) continue;
+        if (e >= c.__at) { c.classList.remove("pre"); c.__fin = true; } else all = false;
+      }
+      if (!all) requestAnimationFrame(tick);
+    })(performance.now());
+    setTimeout(finish, maxEnd + 200);
+  }
+
+  window.DMX_SC = { decode: reveal };
+
+  function init() {
+    if (REDUCED) return;
+    var map = [];
+    [].slice.call(document.querySelectorAll(".story-lede h2, .finale h2")).forEach(function (h) {
+      if (h.closest(".caption")) return;
+      var em = h.querySelector("em");
+      if (em) { arm(em); map.push({ host: h, targets: [em], done: false }); }
+    });
+    var stats = document.querySelector(".stats");
+    if (stats) {
+      var snums = [].slice.call(stats.querySelectorAll(".snum"));
+      if (snums.length) { snums.forEach(arm); map.push({ host: stats, targets: snums, done: false }); }
+    }
+    function inView(el) { var r = el.getBoundingClientRect(), vh = window.innerHeight || 800; return r.top < vh * 0.9 && r.bottom > 0; }
+    function check() {
+      var pending = false;
+      for (var i = 0; i < map.length; i++) {
+        var m = map[i]; if (m.done) continue;
+        if (inView(m.host)) { m.done = true; m.targets.forEach(function (t) { reveal(t); }); } else pending = true;
+      }
+      if (!pending) { clearInterval(timer); window.removeEventListener("scroll", check); window.removeEventListener("resize", check); }
+    }
+    var timer = setInterval(check, 120);
+    window.addEventListener("scroll", check, { passive: true });
+    window.addEventListener("resize", check);
+    check();
+  }
+
+  var _init = init;
+  init = function () { if (window.__dmxScInit) return; window.__dmxScInit = 1; _init(); };
+  function ready(fn) { document.readyState !== "loading" ? fn() : document.addEventListener("DOMContentLoaded", fn); }
+  ready(function () {
+    var fr = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+    fr.then(init);
+    setTimeout(init, 1200);
+  });
+})();
+</script>
 <script>
 (function () {
   /* monogram tiles */
