@@ -58,6 +58,16 @@
   --cta-shine: rgba(255,255,255,.16);
   --cta-shine-strong: rgba(255,255,255,.35);
   --cta-inset-dark: rgba(0,0,0,.14);
+  --cta-shine-opacity: .45;
+  --cta-grain-opacity: .25;
+  --cta-color: var(--fg);
+  --cta-color-hover: #0a0e14;
+  --cta-border: color-mix(in srgb, var(--accent-2) 38%, transparent);
+  --cta-border-hover: var(--accent);
+  --cta-bg: linear-gradient(145deg, color-mix(in srgb, var(--accent-2) 16%, transparent) 0%, color-mix(in srgb, var(--glass) 92%, transparent) 42%, color-mix(in srgb, var(--accent) 10%, transparent) 100%);
+  --cta-bg-hover: linear-gradient(145deg, color-mix(in srgb, var(--accent-2) 88%, #fff) 0%, var(--accent) 52%, color-mix(in srgb, var(--accent) 92%, #000) 100%);
+  --cta-shadow: inset 0 1px 0 var(--cta-shine), inset 0 -1px 0 var(--cta-inset-dark), 0 8px 28px color-mix(in srgb, var(--accent) 10%, transparent);
+  --cta-shadow-hover: inset 0 1px 0 var(--cta-shine-strong), var(--glow), 0 10px 32px color-mix(in srgb, var(--accent) 28%, transparent);
 
   color-scheme: dark;
 }
@@ -98,9 +108,27 @@
 
     --mono-op: .038;
     --mono-filter: invert(1) brightness(.82);
-    --cta-shine: rgba(255,255,255,.72);
-    --cta-shine-strong: rgba(255,255,255,.92);
-    --cta-inset-dark: rgba(79,107,138,.12);
+    --cta-shine: rgba(255,255,255,.98);
+    --cta-shine-strong: rgba(255,255,255,.55);
+    --cta-inset-dark: rgba(56,83,111,.18);
+    --cta-shine-opacity: .38;
+    --cta-grain-opacity: .14;
+    --cta-color: #1a2430;
+    --cta-color-hover: #fff;
+    --cta-border: rgba(79,107,138,.52);
+    --cta-border-hover: var(--accent);
+    --cta-bg: linear-gradient(158deg, rgba(255,255,255,.94) 0%, rgba(236,242,248,.90) 42%, rgba(210,222,234,.84) 100%);
+    --cta-bg-hover: linear-gradient(145deg, color-mix(in srgb, var(--accent-2) 72%, #fff) 0%, var(--accent) 54%, color-mix(in srgb, var(--accent) 86%, #14202c) 100%);
+    --cta-shadow:
+      inset 0 1px 0 rgba(255,255,255,.98),
+      inset 0 -1px 0 rgba(79,107,138,.16),
+      0 1px 2px rgba(40,60,84,.07),
+      0 8px 22px rgba(40,60,84,.11),
+      0 0 0 1px rgba(79,107,138,.10);
+    --cta-shadow-hover:
+      inset 0 1px 0 rgba(255,255,255,.42),
+      var(--glow),
+      0 10px 28px color-mix(in srgb, var(--accent) 34%, transparent);
 
     color-scheme: light;
   }
@@ -145,6 +173,16 @@
   --cta-shine: rgba(255,255,255,.16);
   --cta-shine-strong: rgba(255,255,255,.35);
   --cta-inset-dark: rgba(0,0,0,.14);
+  --cta-shine-opacity: .45;
+  --cta-grain-opacity: .25;
+  --cta-color: var(--fg);
+  --cta-color-hover: #0a0e14;
+  --cta-border: color-mix(in srgb, var(--accent-2) 38%, transparent);
+  --cta-border-hover: var(--accent);
+  --cta-bg: linear-gradient(145deg, color-mix(in srgb, var(--accent-2) 16%, transparent) 0%, color-mix(in srgb, var(--glass) 92%, transparent) 42%, color-mix(in srgb, var(--accent) 10%, transparent) 100%);
+  --cta-bg-hover: linear-gradient(145deg, color-mix(in srgb, var(--accent-2) 88%, #fff) 0%, var(--accent) 52%, color-mix(in srgb, var(--accent) 92%, #000) 100%);
+  --cta-shadow: inset 0 1px 0 var(--cta-shine), inset 0 -1px 0 var(--cta-inset-dark), 0 8px 28px color-mix(in srgb, var(--accent) 10%, transparent);
+  --cta-shadow-hover: inset 0 1px 0 var(--cta-shine-strong), var(--glow), 0 10px 32px color-mix(in srgb, var(--accent) 28%, transparent);
 
   color-scheme: dark;
 }
@@ -183,9 +221,27 @@
 
   --mono-op: .038;
   --mono-filter: invert(1) brightness(.82);
-  --cta-shine: rgba(255,255,255,.72);
-  --cta-shine-strong: rgba(255,255,255,.92);
-  --cta-inset-dark: rgba(79,107,138,.12);
+  --cta-shine: rgba(255,255,255,.98);
+  --cta-shine-strong: rgba(255,255,255,.55);
+  --cta-inset-dark: rgba(56,83,111,.18);
+  --cta-shine-opacity: .38;
+  --cta-grain-opacity: .14;
+  --cta-color: #1a2430;
+  --cta-color-hover: #fff;
+  --cta-border: rgba(79,107,138,.52);
+  --cta-border-hover: var(--accent);
+  --cta-bg: linear-gradient(158deg, rgba(255,255,255,.94) 0%, rgba(236,242,248,.90) 42%, rgba(210,222,234,.84) 100%);
+  --cta-bg-hover: linear-gradient(145deg, color-mix(in srgb, var(--accent-2) 72%, #fff) 0%, var(--accent) 54%, color-mix(in srgb, var(--accent) 86%, #14202c) 100%);
+  --cta-shadow:
+    inset 0 1px 0 rgba(255,255,255,.98),
+    inset 0 -1px 0 rgba(79,107,138,.16),
+    0 1px 2px rgba(40,60,84,.07),
+    0 8px 22px rgba(40,60,84,.11),
+    0 0 0 1px rgba(79,107,138,.10);
+  --cta-shadow-hover:
+    inset 0 1px 0 rgba(255,255,255,.42),
+    var(--glow),
+    0 10px 28px color-mix(in srgb, var(--accent) 34%, transparent);
 
   color-scheme: light;
 }
@@ -291,71 +347,43 @@ h1,h2,h3 { font-family: var(--fh); font-weight: 600; letter-spacing: -.01em; lin
 /* ---- metallic glass CTA ---- */
 .dmx-cta {
   position: relative; isolation: isolate;
-  display: inline-flex; align-items: center; gap: .6rem;
+  display: inline-flex; align-items: center; justify-content: center; gap: .6rem;
   font-family: var(--fh); font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
-  border-radius: 8px; color: var(--fg); text-decoration: none;
-  border: 1px solid color-mix(in srgb, var(--accent-2) 38%, transparent);
-  background:
-    linear-gradient(145deg,
-      color-mix(in srgb, var(--accent-2) 16%, transparent) 0%,
-      color-mix(in srgb, var(--glass) 92%, transparent) 42%,
-      color-mix(in srgb, var(--accent) 10%, transparent) 100%);
+  border-radius: 8px; color: var(--cta-color); text-decoration: none;
+  border: 1px solid var(--cta-border);
+  background: var(--cta-bg);
   backdrop-filter: blur(14px) saturate(1.35);
   -webkit-backdrop-filter: blur(14px) saturate(1.35);
-  box-shadow:
-    inset 0 1px 0 var(--cta-shine),
-    inset 0 -1px 0 var(--cta-inset-dark),
-    0 8px 28px color-mix(in srgb, var(--accent) 10%, transparent);
+  box-shadow: var(--cta-shadow);
   transition: border-color var(--t) var(--ease), color var(--t) var(--ease), box-shadow var(--t) var(--ease), transform var(--t) var(--ease), background var(--t) var(--ease);
   overflow: hidden;
 }
 .dmx-cta::before {
   content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 0;
-  background: linear-gradient(112deg, transparent 30%, var(--cta-shine) 48%, transparent 62%);
-  opacity: .45;
+  background: linear-gradient(112deg, transparent 28%, var(--cta-shine) 50%, transparent 66%);
+  opacity: var(--cta-shine-opacity);
 }
 .dmx-cta::after {
   content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 0;
-  background: repeating-linear-gradient(-18deg, transparent, transparent 3px, color-mix(in srgb, var(--accent-2) 4%, transparent) 3px, color-mix(in srgb, var(--accent-2) 4%, transparent) 4px);
-  opacity: .25;
+  background: repeating-linear-gradient(-18deg, transparent, transparent 3px, color-mix(in srgb, var(--accent-2) 5%, transparent) 3px, color-mix(in srgb, var(--accent-2) 5%, transparent) 4px);
+  opacity: var(--cta-grain-opacity);
 }
 .dmx-cta > * { position: relative; z-index: 1; }
 .dmx-cta--sm { font-size: .72rem; padding: .82rem 1.3rem; }
 .dmx-cta--md { font-size: .76rem; padding: 1rem 1.7rem; margin-top: 2rem; }
 .dmx-cta:hover {
-  border-color: var(--accent); color: #0a0e14; transform: translateY(-1px);
-  background:
-    linear-gradient(145deg,
-      color-mix(in srgb, var(--accent-2) 88%, #fff) 0%,
-      var(--accent) 52%,
-      color-mix(in srgb, var(--accent) 92%, #000) 100%);
-  box-shadow:
-    inset 0 1px 0 var(--cta-shine-strong),
-    var(--glow),
-    0 10px 32px color-mix(in srgb, var(--accent) 28%, transparent);
+  border-color: var(--cta-border-hover);
+  color: var(--cta-color-hover);
+  transform: translateY(-1px);
+  background: var(--cta-bg-hover);
+  box-shadow: var(--cta-shadow-hover);
 }
-[data-theme="light"] .dmx-cta:hover { color: #fff; }
-[data-theme="light"] .dmx-cta {
-  border-color: color-mix(in srgb, var(--accent) 42%, transparent);
-  background:
-    linear-gradient(145deg,
-      color-mix(in srgb, #fff 72%, transparent) 0%,
-      color-mix(in srgb, var(--glass) 88%, transparent) 45%,
-      color-mix(in srgb, var(--accent-2) 14%, transparent) 100%);
+.dmx-cta:hover::before { opacity: calc(var(--cta-shine-opacity) + .18); }
+.dmx-cta:active { transform: translateY(0); }
+.dmx-cta:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 72%, transparent);
+  outline-offset: 3px;
 }
-/* OS-driven CTA tuning in light scheme */
-@media (prefers-color-scheme: light) {
-  .dmx-cta:hover { color: #fff; }
-  .dmx-cta {
-    border-color: color-mix(in srgb, var(--accent) 42%, transparent);
-    background:
-      linear-gradient(145deg,
-        color-mix(in srgb, #fff 72%, transparent) 0%,
-        color-mix(in srgb, var(--glass) 88%, transparent) 45%,
-        color-mix(in srgb, var(--accent-2) 14%, transparent) 100%);
-  }
-}
-.dmx-cta:hover::before { opacity: .65; }
 
 /* surface texture overlay — scanlines + vignette, fixed */
 .dmx-texture { position: fixed; inset: 0; pointer-events: none; z-index: 90;
