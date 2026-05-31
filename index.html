@@ -15,7 +15,7 @@
   body { overflow-x: hidden; }
   .wrap { max-width: 1480px; margin: 0 auto; padding: 0 clamp(1.1rem, 3.4vw, 2.6rem); }
 
-  /* ===== section selector — primary platform nav, anchored UNDER the animation =====
+  /* ===== section selector - primary platform nav, anchored UNDER the animation =====
      Large hit areas, generous type, with a clear divider + padding between the
      execution row (Protocol/Evidence/Screening/Replay) and the Trident/Luna buttons. */
   .spine { position: absolute; left: 40%; right: clamp(1rem, 3vw, 2.4rem); bottom: clamp(5rem, 9vh, 6rem);
@@ -81,13 +81,10 @@
 
   /* caption - active pillar detail. Re-plays a digital phase-in on each pillar switch. */
   .caption { margin-top: clamp(1.6rem, 3vh, 2.2rem); }
-  /* caption - words ignite in a steel-blue wave (spreading activation, mirrors the network) then settle */
-  .ig { animation: ignite .5s var(--ease) both; animation-delay: var(--d, 0s); }
-  @keyframes ignite {
-    0%   { opacity: 0; color: var(--accent-2); text-shadow: 0 0 12px var(--accent-2), 0 0 7px var(--accent-2); }
-    45%  { opacity: 1; color: var(--accent-2); text-shadow: 0 0 9px var(--accent-2); }
-    100% { opacity: 1; color: inherit; text-shadow: none; }
-  }
+  /* caption - clean fade on each pillar change (no typewriter) */
+  .c-label, .c-body { animation: capFade .42s var(--ease) both; }
+  @keyframes capFade { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .c-label, .c-body { animation: none; } }
   .caption .crule { width: 30px; height: 2px; background: var(--accent-2); margin-bottom: .9rem; }
   .c-label { font-family: var(--fm); font-size: .58rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--accent-2); margin-bottom: .6rem; }
   .c-body { display: block; }
@@ -97,10 +94,15 @@
   /* sections are static; the header decode-scramble carries the entrance interest */
   .reveal { opacity: 1; }
   .reveal.in { animation: none; }
+  .flow-in { opacity: 0; transform: translateY(22px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
+  .flow-in.in { opacity: 1; transform: none; }
+  .spine-cards .flow-in:nth-child(2), .who-cards .flow-in:nth-child(2) { transition-delay: .09s; }
+  .spine-cards .flow-in:nth-child(3), .who-cards .flow-in:nth-child(3) { transition-delay: .18s; }
+  .spine-cards .flow-in:nth-child(4) { transition-delay: .27s; }
   .draw { width: 110px; height: 1px; background: var(--accent-2); opacity: .55; transform: scaleX(0); transform-origin: left;
     transition: transform .8s var(--ease) .1s; }
   .draw.in { transform: scaleX(1); }
-  @media (prefers-reduced-motion: reduce) { .reveal, .draw { transition: none; opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .reveal, .draw, .flow-in { transition: none; opacity: 1; transform: none; } }
 
   /* ===== SECTIONS ===== */
   .band { position: relative; z-index: 1; padding: clamp(3.6rem, 11vh, 8.5rem) 0; border-top: 1px solid var(--bd-soft); }
@@ -140,18 +142,82 @@
   .chain-row .cn { font-family: var(--fm); font-size: .58rem; letter-spacing: .16em; text-transform: uppercase; color: var(--accent-2); }
   .chain-row h3 { font-family: var(--fh); font-size: clamp(1.3rem,2.5vw,1.95rem); font-weight: 600; letter-spacing: -.01em; margin: .25rem 0 .45rem; }
   .chain-row p { margin: 0; color: var(--fg-2); font-size: .95rem; line-height: 1.6; max-width: 56ch; }
-  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1.2rem,3vw,2.4rem); margin-bottom: clamp(2.4rem,6vh,4rem); }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(1.1rem,2.4vw,2rem); margin-bottom: clamp(2.4rem,6vh,4rem); }
   .stat { display: flex; flex-direction: column; gap: .5rem; padding-top: 1rem; border-top: 1px solid var(--bd); }
-  .stat .snum { font-family: var(--fh); font-weight: 700; font-size: clamp(2rem,4.5vw,3.2rem); line-height: 1; color: var(--accent-2); letter-spacing: -.02em; }
+  .stat .snum { font-family: var(--fh); font-weight: 700; font-size: clamp(1.85rem,3.6vw,2.9rem); line-height: 1; color: var(--accent-2); letter-spacing: -.02em; }
   .stat .slbl { font-size: .82rem; line-height: 1.45; color: var(--fg-2); }
   .story-turn { color: var(--fg); font-size: clamp(1.05rem,1.6vw,1.34rem); line-height: 1.55; max-width: 56ch; margin: 0 0 clamp(2.8rem,7vh,5rem); }
   .story-turn em { font-style: normal; color: var(--accent-2); }
+
+  /* ===== convergence: "the gap" broken-signal animation ===== */
+  .gap-scene { position: relative; margin: 0; height: clamp(250px, 35vh, 350px); }
+  #gapField { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .gap-steps { position: absolute; left: 0; right: 0; bottom: clamp(1rem, 2.8vw, 1.5rem); z-index: 2; pointer-events: none; height: 1em; }
+  .gap-steps span { position: absolute; transform: translateX(-50%); white-space: nowrap; font-family: var(--fm);
+    font-size: clamp(.5rem, 1.1vw, .6rem); font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--fg-2); }
+  .gap-steps b { color: var(--accent-2); font-weight: 600; margin-right: .32rem; }
+  .gap-breaks { position: absolute; left: 0; right: 0; top: 24%; z-index: 2; pointer-events: none; height: 1em; }
+  .gap-breaks span { position: absolute; transform: translateX(-50%); white-space: nowrap; font-family: var(--fm);
+    font-size: clamp(.46rem, 1vw, .56rem); font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+    color: color-mix(in srgb, var(--fail) 80%, var(--fg-3)); }
+  .gap-note { margin: clamp(1.5rem, 4vh, 2.3rem) 0 0; color: var(--fg);
+    font-size: clamp(1.05rem, 1.45vw, 1.25rem); font-weight: 500; line-height: 1.5; max-width: 60ch; text-wrap: pretty; }
   .who .eyebrow { display: block; margin-bottom: 1.2rem; }
-  .who-rows { display: flex; flex-direction: column; }
-  .who-row { display: grid; grid-template-columns: 210px 1fr; gap: 1.4rem; padding: 1.1rem 0; border-top: 1px solid var(--bd-soft); }
-  .who-row:last-child { border-bottom: 1px solid var(--bd-soft); }
-  .who-row .wa { font-family: var(--fm); font-size: .62rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
-  .who-row p { margin: 0; color: var(--fg-2); font-size: .92rem; line-height: 1.6; }
+  .who-cards { margin: 1.8rem 0 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--bd-soft); border: 1px solid var(--bd-soft); border-radius: 12px; overflow: hidden; }
+  .wcard { background: var(--bg); padding: 1.6rem 1.4rem 1.5rem; display: flex; flex-direction: column; transition: background var(--t) var(--ease); }
+  .wcard:hover { background: var(--bg-1); }
+  .wcard h3 { font-size: 1.12rem; margin: 0 0 .6rem; }
+  .wcard p { margin: 0; color: var(--fg-2); font-size: .9rem; line-height: 1.6; }
+  @media (max-width: 760px) { .who-cards { grid-template-columns: 1fr; } }
+
+  /* ===== convergence: hero category lock ===== */
+  .hero-cat { display: block; font-family: var(--fh); font-weight: 600; font-size: clamp(1.18rem, 1.55vw, 1.5rem);
+    line-height: 1.14; letter-spacing: -.01em; color: var(--fg); margin: 0; }
+
+  /* ===== convergence: static execution-spine cards ===== */
+  .spine-cards { margin: 2.4rem 0 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+    background: var(--bd-soft); border: 1px solid var(--bd-soft); border-radius: 12px; overflow: hidden; }
+  .scard { background: var(--bg); padding: 1.7rem 1.4rem 1.5rem; display: flex; flex-direction: column;
+    transition: background var(--t) var(--ease); }
+  .scard:hover { background: var(--bg-1); }
+  .scard .sc-n { font-family: var(--fm); font-size: .58rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--accent-2); }
+  .scard h3 { font-size: 1.18rem; margin: .55rem 0 .55rem; }
+  .scard .sc-op { color: var(--fg-2); font-size: .9rem; line-height: 1.55; margin: 0 0 1.1rem; }
+  .scard .sc-trust { margin-top: auto; padding-top: .8rem; border-top: 1px solid var(--bd-soft);
+    font-family: var(--fm); font-size: .72rem; line-height: 1.5; color: var(--fg-3); }
+
+  /* ===== convergence: category disambiguation strip ===== */
+  .disambig { margin: clamp(2.4rem, 6vh, 3.6rem) 0 0; padding: clamp(1.5rem, 4vw, 2.1rem) clamp(1.5rem, 4vw, 2.4rem);
+    border: 1px solid var(--bd-soft); border-radius: 12px; background: var(--chip-bg); }
+  .disambig h3 { font-size: clamp(1.3rem, 2.5vw, 1.85rem); line-height: 1.08; margin: 0 0 .85rem; }
+  .disambig h3 em { font-style: normal; color: var(--accent-2); }
+  .disambig p { margin: 0; color: var(--fg-2); font-size: clamp(.92rem, 1.1vw, 1rem); line-height: 1.62; max-width: 72ch; }
+
+  /* ===== convergence: integration-reference link ===== */
+  .h-ref { display: inline-flex; align-items: center; gap: .5rem; margin-top: 1.4rem; white-space: nowrap; font-family: var(--fm);
+    font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; color: var(--accent-2);
+    border-bottom: 1px solid transparent; padding-bottom: 2px; transition: color var(--t) var(--ease), border-color var(--t) var(--ease); }
+  .h-ref:hover { color: var(--fg); border-color: var(--accent); }
+
+  /* ===== convergence: who-it-serves declarative header ===== */
+  .who-head { margin-bottom: clamp(1.7rem, 4vh, 2.5rem); }
+  .who-head .eyebrow { display: block; margin-bottom: .95rem; }
+  .who-head h2 { font-family: var(--fh); font-weight: 600; font-size: clamp(1.7rem, 3.4vw, 2.7rem);
+    line-height: 1.03; letter-spacing: -.015em; max-width: 17ch; }
+  .who-head h2 em { font-style: normal; color: var(--accent-2); }
+
+  /* ===== convergence: stat source footnotes ===== */
+  .stat .ssrc { font-family: var(--fm); font-size: .54rem; font-weight: 600; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--fg-3); margin-top: .35rem; }
+  .stats-lede { display: block; margin-bottom: 1.5rem; }
+
+  @media (max-width: 900px) {
+    .spine-cards { grid-template-columns: repeat(2, 1fr); }
+    .stats { grid-template-columns: repeat(2, 1fr); gap: 1.6rem 1.4rem; }
+  }
+  @media (max-width: 560px) {
+    .spine-cards { grid-template-columns: 1fr; }
+  }
   /* ===== finale ===== */
   .finale { position: relative; z-index: 1; min-height: 78vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: clamp(4rem,12vh,8rem) clamp(1.1rem,4vw,2rem) clamp(5rem,12vh,8rem); overflow: hidden; }
   .finale::before { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 62% 52% at 50% 46%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 70%); }
@@ -214,6 +280,7 @@
     @keyframes monoDrift { 0%{transform:rotate(-6deg) translate3d(0,0,0)} 50%{transform:rotate(-6deg) translate3d(0,-22px,0)} 100%{transform:rotate(-6deg) translate3d(0,0,0)} }
     .hero-inner { display: contents; }
     .wordmark { order: 1; }
+    .hero-cat { order: 1; max-width: none; }
     .hero-tag { order: 2; max-width: none; }
     #field { position: relative; inset: auto; left: auto; order: 3; width: 100%; height: 44svh; min-height: 320px; margin: 1.5rem 0 0; border: 1px solid var(--bd); border-radius: 12px; background: var(--panel); }
     .caption { position: relative; left: auto; bottom: auto; width: auto; order: 4; margin-top: 1.5rem; }
@@ -228,13 +295,13 @@
     .botbar .cp { display: none; }
   }
 
-  /* nav: no wordmark in the corner — tabs only, top-left */
+  /* nav: no wordmark in the corner - tabs only, top-left */
   .dmx-nav { justify-content: flex-start; }
 
-  /* terminal type-in reveal — inlined so index.html is fully self-contained
+  /* terminal type-in reveal - inlined so index.html is fully self-contained
      (works even if shared/scramble.js or an older shared/damaros.css is deployed) */
   .dmx-w { display: inline-block; }          /* keeps a phrase a single item inside inline-flex contexts */
-  .dmx-c.pre { visibility: hidden; }         /* not yet typed — space reserved, nothing shifts */
+  .dmx-c.pre { visibility: hidden; }         /* not yet typed - space reserved, nothing shifts */
 </style>
 </head>
 <body style="font-size: 26px">
@@ -266,8 +333,8 @@
 
     <div class="hero-inner">
       <span class="wordmark">Damaros<span class="dmx-dot" style="margin: 36px 1px 0px -7px"></span></span>
-      <p class="hero-tag" style="margin: 18px 0px 15px 2px">The first domain is trials. The platform is AI-native clinical research infrastructure.
-      </p>
+      <p class="hero-cat" style="margin: 16px 0 0 2px">The governed execution layer for clinical trials.</p>
+      <p class="hero-tag" style="margin: 12px 0px 15px 2px">Transform locked protocols and site-approved evidence into deterministic screening, human review, and replayable audit.</p>
 
       <div class="caption" style="margin: 26px 0px 0px 2px">
         <div class="crule"></div>
@@ -276,7 +343,7 @@
           <h2 class="c-title" id="cTitle"></h2>
           <p class="c-desc" id="cDesc"></p>
         </div>
-        <a class="dmx-cta dmx-cta--sm caption-cta" href="/cdn-cgi/l/email-protection#6a0b0403181f0e022a0e0b070b180519440b0355191f08000f091e572e0b070b1805194f585a0e0f07054f585a180f1b1f0f191e">Request a demo</a>
+        <a class="dmx-cta dmx-cta--sm caption-cta" href="/cdn-cgi/l/email-protection#25444b4c5750414d6541444844574a560b444c1a5650474f4046511861444844574a560017155344494c4144514c4a4b0017155244494e514d574a50424d">Request a walkthrough</a>
       </div>
     </div>
 
@@ -298,25 +365,83 @@
 
   <section class="story">
     <div class="story-inner">
-      <header class="story-lede reveal">
-        <span class="eyebrow">The mission</span>
-        <h2>Run trials at the <em>pace of technology.</em></h2>
+      <header class="story-lede reveal flow-in" style="margin-bottom: clamp(1.7rem, 4vh, 2.5rem)">
+        <span class="eyebrow">The gap</span>
+        <h2>Trials fragment at <em>the site.</em></h2>
       </header>
 
-      <div class="stats reveal">
-        <div class="stat"><span class="snum">~80%</span><span class="slbl">of trials miss their enrollment timelines</span></div>
-        <div class="stat"><span class="snum">1 in 5</span><span class="slbl">activated sites enroll zero patients</span></div>
-        <div class="stat"><span class="snum">&lt;5%</span><span class="slbl">of eligible patients are ever approached</span></div>
+      <div class="gap-scene reveal">
+        <canvas id="gapField"></canvas>
+        <div class="gap-steps" aria-hidden="true">
+          <span style="left: 14%"><b>01</b>Protocol</span>
+          <span style="left: 38%"><b>02</b>Evidence</span>
+          <span style="left: 62%"><b>03</b>Screening</span>
+          <span style="left: 86%"><b>04</b>Replay</span>
+        </div>
       </div>
 
-      <p class="story-turn reveal">As trial complexity, coordinator burden, and the pace of drug discovery accelerate, these gaps compound. Damaros is the <em>AI-native execution infrastructure</em> for clinical trials, built to run inside the hospital, so a site can keep pace with the technology driving discovery.</p>
+      <p class="gap-note reveal">The legacy stack is chaotic. Four steps stranded across systems. Damaros™ creates that governed execution spine to connect them.</p>
 
-      <div class="who reveal">
-        <span class="eyebrow" style="font-family: &quot;Chakra Petch&quot;">THE MODERN CLINICAL TRIAL SPINE</span>
-        <div class="who-rows">
-          <div class="who-row"><span class="wa" style="font-size: 16px; text-align: left">Sponsors &amp; CROs</span><p>Criterion-level execution and replay-ready evidence across every site and protocol, on one basis. Oversight becomes a query, not a fire drill.</p></div>
-          <div class="who-row"><span class="wa" style="font-size: 16px">Sites &amp; networks</span><p>Protocol, evidence, screening, and replay on a single substrate. Faster cycles, consistent decisions, records that reconstruct on demand.</p></div>
-          <div class="who-row"><span class="wa" style="font-size: 16px">Coordinators</span><p>Damaros normalizes dense eligibility and fragmented evidence, screens every patient deterministically, and surfaces the highest-leverage next action.</p></div>
+      <p class="story-turn reveal" style="margin-top: clamp(2.2rem, 5.5vh, 3.4rem)">
+</p>
+
+      <div class="spine-cards reveal">
+        <div class="scard flow-in">
+          <span class="sc-n">01 · Protocol</span>
+          <h3>Execution basis</h3>
+          <p class="sc-op">Dense, ambiguous inclusion and exclusion is compiled into one precise basis the whole trial executes against.</p>
+          <p class="sc-trust">Versioned protocol logic. Trident turns criteria into reviewable, executable rules.</p>
+        </div>
+        <div class="scard flow-in">
+          <span class="sc-n">02 · Evidence</span>
+          <h3>Sourced clarity</h3>
+          <p class="sc-op">FHIR, labs, notes, and exports collapse into one evidence plane before any patient is screened. Actionable insights not mess. </p>
+          <p class="sc-trust">Source, timestamp, and criterion-level lineage preserved.</p>
+        </div>
+        <div class="scard flow-in">
+          <span class="sc-n">03 · Screening</span>
+          <h3>Governed verdicts</h3>
+          <p class="sc-op">Every patient is evaluated PASS, REVIEW, or FAIL at criterion level, with evidence attached.</p>
+          <p class="sc-trust">No generative verdicts. Human review stays explicit. Same inputs, same answer.</p>
+        </div>
+        <div class="scard flow-in">
+          <span class="sc-n">04 · Replay</span>
+          <h3>Site memory</h3>
+          <p class="sc-op">Any decision reconstructs from protocol version, evidence snapshot, and engine run.</p>
+          <p class="sc-trust">QA, sponsor oversight, and audit become queryable, not forensic.</p>
+        </div>
+      </div>
+
+      <div class="disambig reveal flow-in">
+        <h3 style="font-size: 24px"><em>Not</em> CTMS. <em>Not</em> a shadow EHR. <em>Not</em> chatbots. <em>Not</em> trial matching.</h3>
+        <p>Damaros™ sits between approved protocols and approved site evidence, producing deterministic screening records, human review states, and replayable execution lineage. Epic stays the system of record.</p>
+      </div>
+
+      <div class="disambig reveal flow-in">
+        <h3 style="font-size: 24px">Built for <em>hospital deployment.</em></h3>
+        <p>FHIR-first and read-only by default, on site-approved cohorts. No PHI ever reaches an LLM, and every screening decision keeps a replayable, criterion-level audit trail. The same execution chain runs validation and production.</p>
+        <a class="h-ref" href="docs/fhir.html">Full integration reference →</a>
+      </div>
+
+      <div class="who reveal" style="margin-top: clamp(2.8rem, 7vh, 4.4rem)">
+        <header class="who-head">
+          <span class="eyebrow">Who it serves</span>
+          <h2 style="width: 750px">The spine for <em>modern clinical trials.</em></h2>
+        </header>
+        <div class="who-cards">
+          <div class="wcard flow-in"><h3>Sites &amp; networks</h3><p>Protocol, evidence, screening, and replay on a single substrate. Faster cycles, consistent decisions, records that reconstruct on demand.</p></div>
+          <div class="wcard flow-in"><h3>Coordinators &amp; study teams</h3><p>Damaros normalizes dense eligibility and fragmented evidence, screens every patient deterministically, and surfaces the highest-leverage next action.</p></div>
+          <div class="wcard flow-in"><h3>Sponsors &amp; CROs</h3><p>Criterion-level execution and replay-ready evidence across every site and protocol, on one basis. Oversight becomes a query, not a fire drill.</p></div>
+        </div>
+      </div>
+
+      <div class="reveal flow-in" style="margin-top: clamp(2.8rem, 7vh, 4.4rem)">
+        <span class="eyebrow stats-lede">The cost of the gap</span>
+        <div class="stats">
+          <div class="stat"><span class="snum">$30B+</span><span class="slbl">spent directly at U.S. clinical trial sites in 2023</span><span class="ssrc">PhRMA</span></div>
+          <div class="stat"><span class="snum">~80%</span><span class="slbl">of trials miss their enrollment timelines</span><span class="ssrc">Tufts CSDD · industry analyses</span></div>
+          <div class="stat"><span class="snum">1 in 5</span><span class="slbl">activated sites enroll zero patients</span><span class="ssrc">CenterWatch / Tufts CSDD</span></div>
+          <div class="stat"><span class="snum">&lt;5%</span><span class="slbl">of eligible patients are ever approached</span><span class="ssrc">NCI · J Clin Oncol</span></div>
         </div>
       </div>
     </div>
@@ -325,8 +450,8 @@
   <section class="finale">
     <img class="finale-mono" src="assets/damaros-white-transparent.png" alt="" aria-hidden="true">
     <div class="finale-rule reveal"></div>
-    <h2 class="reveal">Clinical trials, <em>rewired</em></h2>
-    <a class="dmx-cta dmx-cta--md reveal s2" href="/cdn-cgi/l/email-protection#b1d0dfd8c3c4d5d9f1d5d0dcd0c3dec29fd0d88ec2c4d3dbd4d2c58cf5d0dcd0c3dec2">Get in touch</a>
+    <h2 class="reveal flow-in">Clinical trials, <em>rewired</em></h2>
+    <a class="dmx-cta dmx-cta--md reveal s2" href="/cdn-cgi/l/email-protection#7d1c13140f0819153d191c101c0f120e531c14420e081f17181e0940391c101c0f120e584f4d0b1c1114191c09141213584f4d0a1c111609150f12081a15">GET IN TOUCH</a>
   </section>
 </main>
 
@@ -338,7 +463,7 @@
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 /* ============================================================
- * Damaros — terminal type-in reveal (inlined; self-contained).
+ * Damaros - terminal type-in reveal (inlined; self-contained).
  *   Emphasis phrases + stat numbers reveal one character at a time,
  *   left → right. Real letters stay in the DOM (hidden via visibility),
  *   so spacing is reserved and nothing shifts. Respects reduced-motion.
@@ -411,16 +536,7 @@
   function init() {
     if (REDUCED) return;
     var map = [];
-    [].slice.call(document.querySelectorAll(".story-lede h2, .finale h2")).forEach(function (h) {
-      if (h.closest(".caption")) return;
-      var em = h.querySelector("em");
-      if (em) { arm(em); map.push({ host: h, targets: [em], done: false }); }
-    });
-    var stats = document.querySelector(".stats");
-    if (stats) {
-      var snums = [].slice.call(stats.querySelectorAll(".snum"));
-      if (snums.length) { snums.forEach(arm); map.push({ host: stats, targets: snums, done: false }); }
-    }
+    /* typewriter/scramble removed - entrances are clean fades via .flow-in on scroll */
     function inView(el) { var r = el.getBoundingClientRect(), vh = window.innerHeight || 800; return r.top < vh * 0.9 && r.bottom > 0; }
     function check() {
       var pending = false;
@@ -470,7 +586,7 @@
 
   /* pillars */
   var PILLARS = {
-    trident:   { color: "accent2", label: "Substrate / Trident",  title: "Compounding protocol intelligence", emph: "intelligence", desc: "Trident turns inclusion and exclusion criteria into reusable protocol ontology: versioned logic, evidence expectations, and trial-ready mappings that sharpen with every release and hold across every site." },
+    trident:   { color: "accent2", label: "Substrate / Trident",  title: "Protocol intelligence that compounds.", emph: "compounds.", desc: "Trident turns inclusion and exclusion criteria into reusable protocol ontology: versioned logic, evidence expectations, and trial-ready mappings that sharpen with every release and hold across every site." },
     luna:      { color: "luna",    label: "Substrate / Luna",     title: "Every model, governed.",        emph: "governed.", desc: "Luna clamps the harness around every model. AI drafts the language-heavy work and never the verdict, and PHI never reaches a model." },
     protocol:  { color: "locked",  label: "01 / Protocol",        title: "Complex eligibility, normalized.", emph: "normalized.", desc: "Dense, ambiguous protocol inclusion and exclusion is compiled into one precise basis the entire trial executes against." },
     evidence:  { color: "accent",  label: "02 / Evidence",        title: "Fragmented data, resolved.",     emph: "resolved.", desc: "FHIR, exports, spreadsheets, labs, notes, and registry fragments collapse into one governed evidence plane before Damaros screens a single patient." },
@@ -591,7 +707,7 @@
         q.tx = c.x + Math.cos(a) * rr; q.ty = c.y + Math.sin(a) * rr * 0.9;
       });
     } else if (id === "replay") {
-      parts.forEach(function (q, i) { var fx = i / (N - 1); q.tx = leftBound + pad + fx * (availW - 2 * pad); q.ty = cy + (i % 2 === 0 ? -1 : 1) * R * 0.06; });
+      parts.forEach(function (q, i) { var fx = i / (N - 1); q.tx = leftBound + pad + fx * (availW - 2 * pad); q.ty = cy + Math.sin(fx * Math.PI * 4) * R * 0.16; });
     }
   }
 
@@ -615,7 +731,7 @@
     [].slice.call(document.querySelectorAll(".enode, .srail")).forEach(function (b) { b.classList.toggle("active", b.dataset.id === id); });
     var P = PILLARS[id];
     var lbl = document.getElementById("cLabel"), ttl = document.getElementById("cTitle");
-    lbl.textContent = P.label;                          /* label is static — never scrambles */
+    lbl.textContent = P.label;                          /* label is static - never scrambles */
     /* title: static prefix + scramble only the emphasis phrase */
     ttl.textContent = "";
     var emph = P.emph || "";
@@ -625,9 +741,10 @@
       var es = document.createElement("span");
       es.textContent = emph;
       ttl.appendChild(es);
-      if (window.DMX_SC) DMX_SC.decode(es);
     }
-    document.getElementById("cDesc").textContent = P.desc;   /* body is static — plain swap, no animation */
+    document.getElementById("cDesc").textContent = P.desc;
+    var capB = document.getElementById("cBody");
+    [lbl, capB].forEach(function (el) { if (!el) return; el.style.animation = "none"; void el.offsetWidth; el.style.animation = ""; });
     if (byUser) autoPause = performance.now() + 11000;
   }
 
@@ -648,12 +765,18 @@
      whole canvas (which reaches down to the nav). Tight ellipse around the
      formation centre keeps it off the spine selector below. */
   function pointerOverSymbol(mx, my, cx, cy, R, mode) {
-    var rx, ry;
-    if (mode === "evidence") { rx = R * 1.12; ry = R * 0.78; }
-    else if (mode === "replay") { rx = R * 1.15; ry = R * 0.5; }
-    else if (mode === "screening") { rx = R * 1.05; ry = R * 0.95; }
-    else { rx = R * 0.98; ry = R * 0.72; }   /* trident + luna: tight */
-    var nx = (mx - cx) / rx, ny = (my - cy) / ry;
+    /* Each window is sized to the formation's REAL extent (formations are
+       y-squashed ~0.84 and several sit off-centre) so there is no dead band
+       above or below the visible dots. cy already carries each mode's offset. */
+    var rx, ry, oy = 0;
+    if (mode === "trident")        { rx = R * 1.08; ry = R * 0.94; }       /* phyllotaxis disk: rr→1.02R, vert ~0.86R */
+    else if (mode === "luna")      { rx = R * 1.04; ry = R * 0.9; }        /* outer ring 0.98R, vert ~0.82R */
+    else if (mode === "protocol")  { rx = R * 1.12; ry = R * 0.62; oy = -R * 0.08; } /* lattice gw=2.1R, gh=0.95R */
+    else if (mode === "evidence")  { rx = R * 1.14; ry = R * 0.84; oy = -R * 0.05; } /* apex→base spans ~1.14R */
+    else if (mode === "screening") { rx = R * 1.1;  ry = R * 1.0;  oy = -R * 0.02; } /* 3 clusters spread wide + tall */
+    else if (mode === "replay")    { rx = R * 1.18; ry = R * 0.46; }       /* thin horizontal trace */
+    else                           { rx = R * 1.0;  ry = R * 0.85; }
+    var nx = (mx - cx) / rx, ny = (my - (cy + oy)) / ry;
     return nx * nx + ny * ny <= 1;
   }
 
@@ -668,26 +791,40 @@
     ctx.clearRect(0, 0, W, H);
     var pcol = colorFor(PILLARS[current].color);
 
-    /* replay playhead position */
-    var px = 0;
+    /* replay scan position (hover rewinds the scan) */
+    var px = 0, rvX0 = 0, rvAW = 1, rvAmp = 0, rvEnv = 0;
     if (current === "replay") {
       var dir = hov ? -1 : 1;
       sweep += dir * dt * 0.16;
       if (sweep > 1) sweep -= 1; if (sweep < 0) sweep += 1;
-      px = (decor.leftBound || 0) + pad + sweep * ((decor.availW || W) - 2 * pad);
+      rvX0 = (decor.leftBound || 0) + pad; rvAW = (decor.availW || W) - 2 * pad; rvAmp = R * 0.16;
+      px = rvX0 + sweep * rvAW; rvEnv = Math.sin(sweep * Math.PI);
     }
+    function rvWaveY(x) { return cy + Math.sin((x - rvX0) / rvAW * Math.PI * 4) * rvAmp; }
 
     /* ---- decor ---- */
     ctx.save(); ctx.lineWidth = 1;
     if (decor.type === "trident") {
-      if (hov) { var tr = Math.max(24, Math.min(58, R * 0.24)); for (var ai = 0; ai < N; ai++) { var ddx = parts[ai].x - mx, ddy = parts[ai].y - my, dd = ddx * ddx + ddy * ddy; if (dd < tr * tr) { var sd = 1 - Math.sqrt(dd) / tr; var seed = 0.55 + 0.45 * sd; if (seed > (tact[ai] || 0)) tact[ai] = seed; } } }
+      if (hov) { var tr = Math.max(20, Math.min(44, R * 0.19)); for (var ai = 0; ai < N; ai++) { var ddx = parts[ai].x - mx, ddy = parts[ai].y - my, dd = ddx * ddx + ddy * ddy; if (dd < tr * tr) { var sd = 1 - Math.sqrt(dd) / tr; var seed = 0.42 + 0.34 * sd; if (seed > (tact[ai] || 0)) tact[ai] = seed; } } }
       if (decor.tneighbors) {
         /* spreading activation: each node keeps a little of its own charge and
            catches most of its strongest neighbour's, so the pulse fans outward
            across the nearest-neighbour graph, firing node after node. */
-        var nxt = []; for (var ui = 0; ui < N; ui++) { var bv = (tact[ui] || 0) * 0.9; var nbs = decor.tneighbors[ui]; for (var ni = 0; ni < nbs.length; ni++) { var nv = (tact[nbs[ni]] || 0) * 0.85; if (nv > bv) bv = nv; } nxt[ui] = bv < 0.012 ? 0 : bv; } tact = nxt;
-        for (var ei = 0; ei < N; ei++) { var nb2 = decor.tneighbors[ei]; for (var ej = 0; ej < nb2.length; ej++) { var k2 = nb2[ej]; if (k2 < ei) continue; var act = Math.max(tact[ei] || 0, tact[k2] || 0); var fired = act > 0.06; ctx.strokeStyle = fired ? COL.accent2 : COL.line; ctx.lineWidth = fired ? 1 + act * 1.1 : 1; ctx.globalAlpha = e * (0.05 + act * 0.72); ctx.beginPath(); ctx.moveTo(parts[ei].x, parts[ei].y); ctx.lineTo(parts[k2].x, parts[k2].y); ctx.stroke(); } }
-        ctx.lineWidth = 1;
+        var nxt = []; for (var ui = 0; ui < N; ui++) { var bv = (tact[ui] || 0) * 0.88; var nbs = decor.tneighbors[ui]; for (var ni = 0; ni < nbs.length; ni++) { var nv = (tact[nbs[ni]] || 0) * 0.82; if (nv > bv) bv = nv; } nxt[ui] = bv < 0.02 ? 0 : bv; } tact = nxt;
+        for (var ei = 0; ei < N; ei++) { var nb2 = decor.tneighbors[ei]; for (var ej = 0; ej < nb2.length; ej++) { var k2 = nb2[ej]; if (k2 < ei) continue;
+          var ae = tact[ei] || 0, ak = tact[k2] || 0, act = Math.max(ae, ak), fired = act > 0.06;
+          ctx.strokeStyle = fired ? COL.accent2 : COL.line; ctx.lineWidth = fired ? 1 + act * 0.55 : 1; ctx.globalAlpha = e * (0.05 + act * 0.4);
+          ctx.beginPath(); ctx.moveTo(parts[ei].x, parts[ei].y); ctx.lineTo(parts[k2].x, parts[k2].y); ctx.stroke();
+          /* signature: a glowing spike travels the synapse from the more-charged node toward its neighbour */
+          if (act > 0.16) {
+            var hi = ae >= ak, sx = hi ? parts[ei].x : parts[k2].x, sy = hi ? parts[ei].y : parts[k2].y;
+            var dxp = (hi ? parts[k2].x : parts[ei].x) - sx, dyp = (hi ? parts[k2].y : parts[ei].y) - sy;
+            var eseed = ((ei * 73 + k2 * 131) % 97) / 97, fr = (time * 1.35 + eseed) % 1, env = Math.sin(fr * Math.PI);
+            ctx.globalAlpha = e * act * env * 0.9; ctx.fillStyle = COL.accent2;
+            ctx.beginPath(); ctx.arc(sx + dxp * fr, sy + dyp * fr, 1.3 + act * 1.5, 0, 6.2832); ctx.fill();
+          }
+        } }
+        ctx.lineWidth = 1; ctx.globalAlpha = 1;
       }
     } else if (decor.type === "luna" && decor.rings) {
       ctx.strokeStyle = COL.line; ctx.globalAlpha = e * 0.5; decor.rings.forEach(function (rr) { ctx.beginPath(); ctx.ellipse(cx, cy, rr, rr * 0.84, 0, 0, 6.2832); ctx.stroke(); });
@@ -706,10 +843,21 @@
       });
       ctx.strokeStyle = COL.line; ctx.globalAlpha = e * 0.22; parts.forEach(function (q) { var c = decor.centers[q.grp]; ctx.beginPath(); ctx.moveTo(c.x, c.y); ctx.lineTo(q.x, q.y); ctx.stroke(); });
     } else if (decor.type === "replay") {
-      ctx.strokeStyle = COL.line; ctx.globalAlpha = e * 0.22; ctx.beginPath(); parts.forEach(function (q, i) { i ? ctx.lineTo(q.x, q.y) : ctx.moveTo(q.x, q.y); }); ctx.stroke();
-      ctx.strokeStyle = COL.accent2; ctx.globalAlpha = e * 0.62; ctx.lineWidth = 1.6; ctx.beginPath(); var started = false;
-      parts.forEach(function (q) { if (q.tx <= px) { started ? ctx.lineTo(q.x, q.y) : ctx.moveTo(q.x, q.y); started = true; } }); ctx.stroke(); ctx.lineWidth = 1;
-      ctx.globalAlpha = e * 0.7; ctx.beginPath(); ctx.moveTo(px, cy - R * 0.55); ctx.lineTo(px, cy + R * 0.55); ctx.stroke();
+      /* faint wave ahead of the cursor (not yet connected) */
+      ctx.strokeStyle = pcol; ctx.globalAlpha = e * 0.14; ctx.lineWidth = 1.2; ctx.lineJoin = "round"; ctx.beginPath();
+      var rfirst = true;
+      for (var rwx = px; rwx <= rvX0 + rvAW + 0.1; rwx += 4) { var rwy = rvWaveY(rwx); rfirst ? ctx.moveTo(rwx, rwy) : ctx.lineTo(rwx, rwy); rfirst = false; }
+      ctx.stroke();
+      /* bright connection drawn from the left up to the cursor */
+      ctx.strokeStyle = pcol; ctx.globalAlpha = e * 0.72; ctx.lineWidth = 2; ctx.beginPath();
+      var rcfirst = true;
+      for (var rcx = rvX0; rcx <= px + 0.1; rcx += 4) { var rcy = rvWaveY(rcx); rcfirst ? ctx.moveTo(rcx, rcy) : ctx.lineTo(rcx, rcy); rcfirst = false; }
+      ctx.stroke(); ctx.lineWidth = 1;
+      /* large cursor */
+      var rsy = rvWaveY(px); ctx.fillStyle = pcol; ctx.strokeStyle = pcol; ctx.shadowColor = pcol;
+      ctx.globalAlpha = e * 0.4; ctx.shadowBlur = 24; ctx.beginPath(); ctx.arc(px, rsy, 6, 0, 6.2832); ctx.fill();
+      ctx.globalAlpha = e; ctx.shadowBlur = 12; ctx.beginPath(); ctx.arc(px, rsy, 3.4, 0, 6.2832); ctx.fill(); ctx.shadowBlur = 0;
+      ctx.globalAlpha = e * 0.55; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.arc(px, rsy, 9.5, 0, 6.2832); ctx.stroke(); ctx.lineWidth = 1;
     }
     ctx.restore();
 
@@ -726,6 +874,8 @@
         var spin = time * 0.12 * (q.grp === 2 ? 1.5 : 1);
         var rEff = q.grp === 2 ? q.sr * (0.6 + 0.4 * (0.5 + 0.5 * Math.sin(time * 0.9 + q.ph))) : q.sr;
         bx = q.scx + Math.cos(q.sa + spin) * rEff; by = q.scy + Math.sin(q.sa + spin) * rEff * 0.9;
+      } else if (current === "replay") {
+        bx = q.tx; by = rvWaveY(q.tx);
       } else {
         bx = q.tx + Math.cos(time * 0.5 + q.jx) * 2.4 * (1 - e * 0.7);
         by = q.ty + Math.sin(time * 0.6 + q.jy) * 2.4 * (1 - e * 0.7);
@@ -741,12 +891,12 @@
 
       var col = pcol, rad = q.r + e * 0.7, alpha = 0.45 + 0.5 * e, sq = false, bright = 1;
       if (current === "screening") col = [COL.pass, COL.review, COL.fail][q.grp];
-      if (current === "trident" && (tact[qi] || 0) > 0.05) { var ta = tact[qi]; alpha = Math.min(1, alpha + ta * 0.7); rad += ta * 3.0; col = COL.accent2; bright = 1 + ta * 1.4; }
+      if (current === "trident" && (tact[qi] || 0) > 0.05) { var ta = tact[qi]; alpha = Math.min(1, alpha + ta * 0.42); rad += ta * 1.6; col = COL.accent2; bright = 1 + ta * 0.7; }
       if (current === "evidence" && !q.ridge) { alpha *= 0.5; rad *= 0.82; }
       if (current === "evidence" && hov) { var dXe = Math.abs(q.x - mx); if (dXe < R * 0.1) { var be = 1 - dXe / (R * 0.1); alpha = Math.min(1, alpha + be * 0.55); rad += be * 1.8; col = COL.accent2; } }
       if (current === "protocol" && hov) { var dl = Math.sqrt((q.x - mx) * (q.x - mx) + (q.y - my) * (q.y - my)); var lit = Math.max(0, 1 - dl / (R * 0.42)); if (lit > 0.4) { sq = true; bright = 1 + lit; rad = q.r + 0.8 + lit * 1.6; col = COL.accent2; } }
       if (current === "luna" && hov) { var dlu = Math.sqrt((q.x - mx) * (q.x - mx) + (q.y - my) * (q.y - my)); var b2 = Math.max(0, 1 - dlu / (R * 0.5)); alpha = Math.min(1, alpha + b2 * 0.5); rad += b2 * 1.6; }
-      if (current === "replay") { var done = q.tx <= px; alpha = done ? (0.5 + 0.5 * e) : 0.16; rad = q.r + (Math.abs(q.tx - px) < 16 ? 2.6 : 0.4); col = done ? COL.accent2 : COL.line; }
+      if (current === "replay") { if (qi % Math.max(1, Math.round(N / 11)) !== 0) { alpha = 0; rad = 0; } else { var done = q.x <= px, near = Math.abs(q.x - px) < 16; alpha = done ? (0.6 + 0.4 * e) : 0.22; rad = q.r + (done ? 1.3 : 0.4) + (near ? 2.6 : 0); col = pcol; bright = 1 + (near ? 1.6 : (done ? 0.4 : 0)); } }
 
       var pulse = 0.55 + 0.45 * Math.sin(time * 2 + q.ph);
       rad *= RSCALE;
@@ -771,7 +921,7 @@
   new ResizeObserver(function () { layout(); }).observe(canvas);
 
   /* scroll reveals - robust scroll check */
-  var revs = [].slice.call(document.querySelectorAll(".reveal, .draw"));
+  var revs = [].slice.call(document.querySelectorAll(".reveal, .draw, .flow-in"));
   function checkReveal() { var vh = window.innerHeight || 800; revs.forEach(function (el) { if (el.classList.contains("in")) return; if (el.getBoundingClientRect().top < vh * 0.86) el.classList.add("in"); }); }
   window.addEventListener("scroll", checkReveal, { passive: true });
   window.addEventListener("resize", checkReveal);
@@ -781,6 +931,198 @@
   (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(sizeCaption);
   setTimeout(sizeCaption, 400);
   requestAnimationFrame(frame);
+})();
+</script>
+<script>
+(function () {
+  var cv = document.getElementById("gapField");
+  if (!cv) return;
+  var ctx = cv.getContext("2d");
+  var REDUCED = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var TOUCH = window.matchMedia && matchMedia("(hover: none), (pointer: coarse)").matches;
+  var DPR = Math.min(2, window.devicePixelRatio || 1), W = 0, H = 0, LIGHT = false;
+  var COL = {}, RGB = {};
+  var stepsEl = document.querySelector(".gap-steps");
+
+  function hexToRgb(h) { if (!h || h.charAt(0) !== "#") return null; h = h.slice(1); if (h.length === 3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2]; var n = parseInt(h, 16); return [(n>>16)&255,(n>>8)&255,n&255]; }
+  function readColors() {
+    var cs = getComputedStyle(document.documentElement), g = function (n) { return cs.getPropertyValue(n).trim(); };
+    RGB.blue   = hexToRgb(g("--accent-2")) || [169,192,214];
+    RGB.red    = hexToRgb(g("--fail"))     || [251,113,133];
+    RGB.amber  = hexToRgb(g("--review"))   || [250,204,21];
+    RGB.green  = hexToRgb(g("--pass"))     || [74,222,128];
+    RGB.purple = hexToRgb(g("--luna"))     || [192,132,252];
+    var bg = hexToRgb(g("--bg")); LIGHT = bg ? (0.2126*bg[0]+0.7152*bg[1]+0.0722*bg[2]) > 140 : false;
+  }
+  function rgb(c, a) { return "rgba(" + c[0] + "," + c[1] + "," + c[2] + "," + (a<0?0:a>1?1:a) + ")"; }
+  function lerpC(a, b, t) { t = t<0?0:t>1?1:t; return [a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t, a[2]+(b[2]-a[2])*t]; }
+  function smooth(t) { t = t<0?0:t>1?1:t; return t*t*(3-2*t); }
+  function cl01(t) { return t<0?0:t>1?1:t; }
+  function rnd(a, b) { return a + Math.random()*(b-a); }
+
+  var FR = [0.115, 0.372, 0.628, 0.885];
+  var nodes = [], NY = 0, R = 0, F = [];
+
+  function buildProtocol(cx) {
+    var cols = 4, rows = 4, gw = R*1.4, gh = R*1.2, x0 = cx-gw/2, y0 = NY-gh/2, dots = [];
+    for (var r = 0; r < rows; r++) for (var c = 0; c < cols; c++) {
+      var hx = x0 + c*gw/(cols-1), hy = y0 + r*gh/(rows-1);
+      dots.push({ hx:hx, hy:hy, bx: cx + (hx-cx)*1.32 + rnd(-1,1)*R*0.2, by: NY + (hy-NY)*1.28 + rnd(-1,1)*R*0.24, seq: c/(cols-1), ph: Math.random()*6.28 });
+    }
+    return { type:"protocol", cx:cx, dots:dots, box:{x0:x0,y0:y0,gw:gw,gh:gh,cols:cols,rows:rows} };
+  }
+  function buildEvidence(cx) {
+    var baseY = NY + R*0.55, apexY = NY - R*0.66, prof = [[-1,0],[-0.58,0.5],[-0.2,0.84],[0.04,1],[0.42,0.62],[0.74,0.34],[1,0.05]];
+    var ridge = [], fill = [];
+    for (var p = 0; p < prof.length; p++) ridge.push({ hx: cx + prof[p][0]*R, hy: baseY - prof[p][1]*(baseY-apexY), t: p/(prof.length-1), ph: Math.random()*6.28 });
+    for (var k = 0; k < 5; k++) { var rx = rnd(-0.82,0.82); fill.push({ hx: cx + rx*R, hy: baseY - Math.random()*0.5*(baseY-apexY)*Math.max(0,1-Math.abs(rx)), ph: Math.random()*6.28 }); }
+    return { type:"evidence", cx:cx, ridge:ridge, fill:fill };
+  }
+  function buildScreening(cx) {
+    var cen = [ {x:cx-R*0.5, y:NY+R*0.4}, {x:cx, y:NY-R*0.5}, {x:cx+R*0.5, y:NY+R*0.4} ], dots = [];
+    for (var c = 0; c < 3; c++) for (var k = 0; k < 5; k++) dots.push({ ci:c, a0: Math.random()*6.28, rr: rnd(0.4,1), ph: Math.random()*6.28 });
+    return { type:"screening", cx:cx, cen:cen, dots:dots };
+  }
+  function buildReplay(cx) {
+    var n = 9, dots = [];
+    for (var i = 0; i < n; i++) dots.push({ hx: cx - R + (i/(n-1))*2*R, hy: NY + (i%2?-1:1)*R*0.12, miss: Math.random()<0.42, ph: Math.random()*6.28 });
+    return { type:"replay", cx:cx, dots:dots };
+  }
+
+  function layout() {
+    var r = cv.getBoundingClientRect(); W = r.width; H = r.height;
+    cv.width = Math.max(1, W*DPR); cv.height = Math.max(1, H*DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0); readColors();
+    NY = H*0.46;
+    nodes = FR.map(function (f) { return { x: W*f, y: NY }; });
+    R = Math.min((nodes[1].x - nodes[0].x)*0.30, H*0.26);
+    F = [ buildProtocol(nodes[0].x), buildEvidence(nodes[1].x), buildScreening(nodes[2].x), buildReplay(nodes[3].x) ];
+  }
+
+  function dotAt(x, y, sz, c, a, glow) {
+    if (a <= 0) return;
+    ctx.globalAlpha = a*0.13; ctx.fillStyle = rgb(c,1); ctx.beginPath(); ctx.arc(x, y, sz*3.0, 0, 6.2832); ctx.fill();
+    if (glow) { ctx.shadowBlur = glow; ctx.shadowColor = rgb(c,1); }
+    ctx.globalAlpha = Math.min(1, a*0.95); ctx.beginPath(); ctx.arc(x, y, sz*1.25, 0, 6.2832); ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+
+  /* ---- 01 PROTOCOL: fragmented grid (red, scattered) -> ordered lattice (blue) ---- */
+  function drawProtocol(f, g, hi, time) {
+    var sm = smooth(g), pc = lerpC(RGB.red, RGB.blue, g), b = f.box;
+    if (g > 0.03) {
+      ctx.strokeStyle = rgb(RGB.blue,1); ctx.lineWidth = 1; ctx.globalAlpha = 0.16*sm;
+      for (var c = 0; c < b.cols; c++) { var x = b.x0 + c*b.gw/(b.cols-1); ctx.beginPath(); ctx.moveTo(x, b.y0); ctx.lineTo(x, b.y0+b.gh); ctx.stroke(); }
+      for (var r = 0; r < b.rows; r++) { var y = b.y0 + r*b.gh/(b.rows-1); ctx.beginPath(); ctx.moveTo(b.x0, y); ctx.lineTo(b.x0+b.gw, y); ctx.stroke(); }
+    }
+    f.dots.forEach(function (d) {
+      var jx = (1-g)*Math.cos(time*1.3+d.ph)*R*0.05, jy = (1-g)*Math.sin(time*1.6+d.ph)*R*0.05;
+      var x = d.bx + (d.hx-d.bx)*sm + jx, y = d.by + (d.hy-d.by)*sm + jy;
+      var on = hi*cl01((sm - d.seq)*3);
+      dotAt(x, y, 1.05+on*0.5, lerpC(pc, RGB.blue, hi), 0.7+0.26*g+on*0.4, on>0.2?8:0);
+    });
+  }
+
+  /* ---- 02 EVIDENCE: inconsistent ridges (amber, conflicting) -> one stable ridge (blue) ---- */
+  function drawEvidence(f, g, hi, time) {
+    var ec = lerpC(RGB.amber, RGB.blue, g);
+    function ridgePath(off, jit) { ctx.beginPath(); f.ridge.forEach(function (d, i) { var x = d.hx, y = d.hy + off + (jit?Math.sin(time*3+d.ph)*jit:0); i?ctx.lineTo(x,y):ctx.moveTo(x,y); }); ctx.stroke(); }
+    for (var k = -1; k <= 1; k += 2) {                 /* ghost ridges = the inconsistency, fade out as it governs */
+      var aa = (1-g)*0.42; if (aa > 0.01) { ctx.strokeStyle = rgb(ec,1); ctx.lineWidth = 1.1; ctx.globalAlpha = aa; ridgePath(k*R*0.16*(1-g) + Math.sin(time*2.2+k)*R*0.05*(1-g), R*0.04*(1-g)); }
+    }
+    ctx.strokeStyle = rgb(ec,1); ctx.lineWidth = 1.3; ctx.globalAlpha = 0.28 + 0.5*g + hi*0.2; ctx.lineJoin = "round"; ridgePath(0, R*0.05*(1-g)); ctx.lineWidth = 1;
+    f.ridge.forEach(function (d) { var jy = Math.sin(time*3+d.ph)*R*0.05*(1-g); dotAt(d.hx, d.hy+jy, 1.0+hi*0.4, lerpC(ec, RGB.blue, hi), 0.62+0.3*g+hi*0.3, hi>0.3?8:0); });
+    f.fill.forEach(function (d) { var jx = (1-g)*Math.cos(time*1.4+d.ph)*R*0.06, jy = (1-g)*Math.sin(time*1.7+d.ph)*R*0.06; dotAt(d.hx+jx, d.hy+jy, 0.8, ec, 0.4+0.2*g, 0); });
+  }
+
+  /* ---- 03 SCREENING: discordant verdicts (green/amber/red, spinning) -> one governed verdict (blue, aligned) ---- */
+  function drawScreening(f, g, hi, time) {
+    var verd = [RGB.green, RGB.amber, RGB.red];
+    f.cen.forEach(function (c, ci) {
+      var sm = smooth(g);
+      var cc = lerpC(verd[ci], RGB.blue, sm);
+      var cy = c.y + (NY - c.y)*0.42*sm;
+      var rad = R*0.3*(1.26 - 0.48*sm), spin = time*(0.5 - 0.38*sm)*(ci===1?1:-1)*(ci===2?1.12:1);
+      for (var kk = 0; kk < 2; kk++) { var fr = ((time*0.3 + kk/2) % 1); ctx.strokeStyle = rgb(cc,1); ctx.globalAlpha = (1-fr)*(0.1+0.2*g+0.2*hi); ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(c.x, cy, fr*rad*1.25, fr*rad*1.1, 0, 0, 6.2832); ctx.stroke(); }
+      f.dots.forEach(function (d) { if (d.ci !== ci) return;
+        var ang = d.a0 + spin, x = c.x + Math.cos(ang)*rad*d.rr, y = cy + Math.sin(ang)*rad*0.9*d.rr;
+        dotAt(x, y, 0.95+hi*0.4, cc, 0.6+0.3*g+hi*0.3, (g>0.55||hi>0.3)?7:0);
+      });
+    });
+  }
+
+  /* ---- 04 REPLAY: unrecorded trace (purple, gaps/flicker) -> full recorded trace (blue) ---- */
+  function drawReplay(f, g, hi, time) {
+    var rc = lerpC(RGB.purple, RGB.blue, g), sm = smooth(g);
+    var amp = R*0.15, k = Math.PI*2.2/R, phase = time*1.0;
+    function waveY(x) { return NY + Math.sin((x-(f.cx-R))*k - phase)*amp; }
+    var hf = (time*0.32)%1, headX = f.cx - R + hf*2*R, env = Math.sin(hf*Math.PI);
+
+    if (g < 0.9) {                                     /* broken: a gappy timeline that skips the unrecorded points */
+      ctx.strokeStyle = rgb(RGB.purple,1); ctx.lineWidth = 1; ctx.globalAlpha = (1-g)*0.32;
+      for (var s2 = 0; s2 < f.dots.length-1; s2++) { var d0 = f.dots[s2], d1 = f.dots[s2+1]; if (d0.miss || d1.miss) continue; ctx.beginPath(); ctx.moveTo(d0.hx, d0.hy); ctx.lineTo(d1.hx, d1.hy); ctx.stroke(); }
+    }
+    if (g > 0.05) {                                    /* governed: faint wave + a cursor that connects the dots L->R */
+      ctx.strokeStyle = rgb(RGB.blue,1); ctx.globalAlpha = 0.16*g; ctx.lineWidth = 1.2; ctx.lineJoin = "round"; ctx.beginPath();
+      for (var x = f.cx-R; x <= f.cx+R+0.1; x += 4) { var y = waveY(x); (x <= f.cx-R) ? ctx.moveTo(x, y) : ctx.lineTo(x, y); }
+      ctx.stroke();
+      ctx.strokeStyle = rgb(RGB.blue,1); ctx.lineWidth = 1.8; ctx.lineJoin = "round"; var trail = R;
+      for (var s3 = 0; s3 < trail; s3 += 4) { var xa = headX - s3, xb = headX - (s3+4), ca = (1 - s3/trail)*g*env*0.85; if (ca <= 0.01 || xa < f.cx-R-2) continue; ctx.globalAlpha = ca; ctx.beginPath(); ctx.moveTo(xa, waveY(xa)); ctx.lineTo(xb, waveY(xb)); ctx.stroke(); }
+      ctx.lineWidth = 1;
+    }
+    f.dots.forEach(function (d) {                       /* interspersed dots ride the wave; the cursor lights them as it passes */
+      var jx = (1-g)*Math.cos(time*1.5+d.ph)*R*0.04, jy = (1-g)*Math.sin(time*1.8+d.ph)*R*0.04;
+      var y = d.hy + (waveY(d.hx) - d.hy)*sm;
+      var a = d.miss ? (g*0.78 + (1-g)*((Math.sin(time*6+d.ph)>0.62)?0.32:0.03)) : (0.55+0.25*g);
+      var prox = g * env * Math.exp(-Math.pow((d.hx-headX)/(R*0.4), 2));
+      dotAt(d.hx+jx, y+jy, 0.95+prox*0.8, rc, a + prox*0.6, prox>0.15?9:0);
+    });
+    if (g > 0.2) {                                     /* the cursor */
+      var hy = waveY(headX); ctx.fillStyle = rgb(RGB.blue,1); ctx.shadowColor = rgb(RGB.blue,1);
+      ctx.globalAlpha = g*env*0.5; ctx.shadowBlur = 20; ctx.beginPath(); ctx.arc(headX, hy, 3.0, 0, 6.2832); ctx.fill();
+      ctx.globalAlpha = g*env; ctx.shadowBlur = 10; ctx.beginPath(); ctx.arc(headX, hy, 1.9, 0, 6.2832); ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+  }
+
+  function drawF(f, g, hi, time) {
+    if (f.type === "protocol") drawProtocol(f, g, hi, time);
+    else if (f.type === "evidence") drawEvidence(f, g, hi, time);
+    else if (f.type === "screening") drawScreening(f, g, hi, time);
+    else drawReplay(f, g, hi, time);
+  }
+
+  /* ---- cycle: discordant -> governance rolls left->right -> unified stone blue ---- */
+  var CYCLE = 13, T0 = performance.now(), last = T0, STAG = 0.16;
+  function Gat(c) { if (c < 4) return 0; if (c < 7.5) return smooth((c-4)/3.5); if (c < 10.5) return 1; return 1 - smooth((c-10.5)/2.5); }
+  var mouse = { x:-9999, y:-9999, in:false };
+  if (!TOUCH) {
+    cv.addEventListener("pointermove", function (e) { var r = cv.getBoundingClientRect(); mouse.x = e.clientX-r.left; mouse.y = e.clientY-r.top; mouse.in = true; });
+    cv.addEventListener("pointerleave", function () { mouse.in = false; mouse.x = -9999; mouse.y = -9999; });
+  }
+
+  function frame(now) {
+    var dt = Math.min(0.05, (now-last)/1000); last = now; var time = now/1000;
+    var cyc = ((now - T0)/1000) % CYCLE, G = Gat(cyc);
+    var sweep = (time*0.26)%1, center = sweep*3.4 - 0.2, hiScale = cl01((G-0.5)/0.35);
+    ctx.clearRect(0, 0, W, H);
+    for (var i = 0; i < 4; i++) {
+      var g = G;
+      var hi = Math.max(0, 1 - Math.abs(center - i)*1.3) * hiScale;
+      if (mouse.in) { var hv = Math.max(0, 1 - Math.hypot(mouse.x-F[i].cx, mouse.y-NY)/(R*1.5)); g = cl01(g + hv*0.0); hi = Math.max(hi, hv*0.8*Math.max(g,0.0)); }
+      drawF(F[i], g, hi, time);
+    }
+    if (stepsEl) stepsEl.style.opacity = (0.58 + 0.42*G).toFixed(3);
+    ctx.globalAlpha = 1; requestAnimationFrame(frame);
+  }
+  function staticFrame() { ctx.clearRect(0, 0, W, H); for (var i = 0; i < 4; i++) drawF(F[i], 1, 0.3, 0); if (stepsEl) stepsEl.style.opacity = "1"; ctx.globalAlpha = 1; }
+
+  function start() { layout(); if (REDUCED) { staticFrame(); return; } T0 = performance.now(); last = T0; window.__gapStep = function (ms) { frame(T0 + ms); }; requestAnimationFrame(frame); }
+  var rt; window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { layout(); if (REDUCED) staticFrame(); }, 150); });
+  new MutationObserver(function () { readColors(); if (REDUCED) staticFrame(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  var mq = window.matchMedia && matchMedia("(prefers-color-scheme: light)");
+  if (mq && mq.addEventListener) mq.addEventListener("change", function () { readColors(); if (REDUCED) staticFrame(); });
+  if (document.readyState !== "loading") start(); else document.addEventListener("DOMContentLoaded", start);
 })();
 </script>
 </body>
