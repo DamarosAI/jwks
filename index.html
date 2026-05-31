@@ -47,33 +47,22 @@
   .srail[data-id="luna"].active .smark { background: var(--luna); border-color: var(--luna); box-shadow: 0 0 8px color-mix(in srgb, var(--luna) 70%, transparent); }
   .sub-tag { display: block; text-align: center; font-family: var(--fm); font-size: .5rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: var(--fg-3); margin-bottom: .55rem; }
 
-  /* ===== HERO — left column rhythm (8px scale, shared left edge) ===== */
-  .hero-copy { --hc-gap: clamp(.5rem, 1.1vw, .75rem);
-    --hc-stack: clamp(1.35rem, 2.8vh, 2rem);
-    --hc-cta: clamp(1.35rem, 2.6vh, 1.85rem);
-    --hero-block-h: clamp(22rem, 58vh, 33rem);
-    --hero-mark-h: clamp(3rem, 7.2vh, 5.1rem);
-    --hero-desc-h: clamp(7.4em, 18vh, 9em); }
+  /* request-a-demo CTA under the live caption */
+  .caption-cta { margin-top: 1.3rem; }
 
   /* ===== HERO ===== */
   .hero { position: relative; z-index: 1; height: 100svh; min-height: 560px; box-sizing: border-box; overflow: hidden; }
   #field { position: absolute; top: 0; bottom: 0; left: 40%; width: 60%; height: 100%; display: block; z-index: 1; }
 
-  .hero-inner { position: absolute; left: 0; top: 50%; z-index: 5;
-    width: clamp(18rem, 38vw, 30rem); max-width: calc(42% - 0.75rem);
-    height: var(--hero-block-h); max-height: calc(100svh - 9.5rem);
-    transform: translateY(calc(-50% - 1.25vh));
-    container-type: inline-size; container-name: hero-copy;
-    display: flex; flex-direction: column; align-items: flex-start; gap: var(--hc-stack);
-    padding: 0; margin: 0; box-sizing: border-box; }
-  .wordmark { display: inline-flex; align-items: flex-end; gap: .5rem; margin: 0; padding: 0;
-    flex: 0 0 var(--hero-mark-h); height: var(--hero-mark-h); overflow: hidden;
-    font-family: var(--fh); font-weight: 700; font-size: clamp(2.85rem, 6vw, 5.25rem);
-    line-height: .9; letter-spacing: -.015em; text-shadow: var(--glow); }
-  .wordmark .dmx-dot { width: 11px; height: 11px; }
-  .hero-eyebrow { margin: 0; font-family: var(--fm); font-size: .64rem; font-weight: 600; letter-spacing: .2em;
+  /* left column */
+  .hero-inner { position: absolute; left: clamp(1.2rem, 4vw, 3.4rem); top: clamp(108px, 20vh, 215px); z-index: 5;
+    width: clamp(300px, 33vw, 440px); display: flex; flex-direction: column; }
+  .wordmark { display: inline-flex; align-items: flex-start; gap: .14em; font-family: var(--fh); font-weight: 700;
+    font-size: clamp(3rem, 6.4vw, 5.4rem); line-height: 1; letter-spacing: -.015em; text-shadow: var(--glow); }
+  .wordmark .dmx-dot { width: .13em; height: .13em; flex: none; align-self: flex-start; margin-top: .2em; }
+  .hero-eyebrow { margin-top: 1rem; font-family: var(--fm); font-size: .64rem; font-weight: 600; letter-spacing: .2em;
     text-transform: uppercase; color: var(--accent-2); }
-  .hero-tag { margin: 0; font-size: clamp(.96rem, 1.25vw, 1.1rem); line-height: 1.54; color: var(--fg-2); }
+  .hero-tag { margin-top: .78rem; font-size: clamp(.96rem, 1.25vw, 1.1rem); line-height: 1.54; color: var(--fg-2); }
   .hero-tag b { color: var(--fg); font-weight: 500; }
 
   /* pillar menu - drives the field */
@@ -91,8 +80,7 @@
   .prow.active .pn { color: var(--accent-2); }
 
   /* caption - active pillar detail. Re-plays a digital phase-in on each pillar switch. */
-  .caption { margin: 0; width: 100%; min-width: 0; flex: 1 1 auto; min-height: 0;
-    display: flex; flex-direction: column; align-items: flex-start; gap: var(--hc-gap); }
+  .caption { margin-top: 1.7rem; }
   /* caption - words ignite in a steel-blue wave (spreading activation, mirrors the network) then settle */
   .ig { animation: ignite .5s var(--ease) both; animation-delay: var(--d, 0s); }
   @keyframes ignite {
@@ -100,22 +88,10 @@
     45%  { opacity: 1; color: var(--accent-2); text-shadow: 0 0 9px var(--accent-2); }
     100% { opacity: 1; color: inherit; text-shadow: none; }
   }
-  .caption .crule { width: 24px; height: 2px; background: var(--accent-2); margin: 0; flex-shrink: 0; }
-  .c-label { margin: 0; flex: 0 0 auto; min-height: 1.35em; line-height: 1.35;
-    font-family: var(--fm); font-size: clamp(.52rem, .7vw, .58rem); font-weight: 600;
-    letter-spacing: .18em; text-transform: uppercase; color: var(--accent-2); }
-  .c-title { margin: 0; flex: 0 0 1.15em; width: 100%; max-width: 100%; height: 1.15em;
-    font-family: var(--fh); font-weight: 600; font-size: clamp(0.92rem, 1.1vw + 0.62rem, 1.5rem);
-    letter-spacing: -.012em; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: clip; }
-  @container hero-copy (max-width: 22rem) {
-    .c-title { font-size: clamp(0.82rem, 4.6cqi, 1.12rem); letter-spacing: -.014em; }
-  }
-  @container hero-copy (max-width: 17.5rem) {
-    .c-title { font-size: clamp(0.76rem, 4.2cqi, 0.98rem); }
-  }
-  .c-desc { margin: 0; flex: 0 0 var(--hero-desc-h); min-height: var(--hero-desc-h); max-height: var(--hero-desc-h);
-    overflow: hidden; font-size: clamp(.84rem, 1.05vw, .97rem); line-height: 1.58; color: var(--fg-2); max-width: 38ch; }
-  .caption-cta { margin: var(--hc-cta) 0 0; flex: 0 0 auto; align-self: flex-start; }
+  .caption .crule { width: 24px; height: 2px; background: var(--accent-2); margin-bottom: .7rem; }
+  .c-label { font-family: var(--fm); font-size: .56rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--accent-2); }
+  .c-title { font-family: var(--fh); font-weight: 600; font-size: clamp(1.25rem, 1.7vw, 1.65rem); letter-spacing: -.01em; line-height: 1.05; margin: .35rem 0 .4rem; height: 2.1em; }
+  .c-desc { font-size: clamp(.86rem, 1.05vw, .98rem); line-height: 1.52; color: var(--fg-2); margin: 0; }
 
   /* sections are static; the header decode-scramble carries the entrance interest */
   .reveal { opacity: 1; }
@@ -194,6 +170,7 @@
   @media (max-width: 600px) {
     .stats { grid-template-columns: 1fr; gap: 1.1rem; }
     .caption { min-height: 0; }
+    .c-title { min-height: 0; } .c-desc { min-height: 0; }
     .enode .elbl { font-size: .64rem; } .enode { gap: .45rem; width: 4.4rem; }
     .spine { padding: 0; }
     .chain { padding-left: 1.8rem; }
@@ -211,42 +188,30 @@
   .botbar .cp { justify-self: end; }
 
   @media (min-width: 901px) and (max-height: 660px) {
-    .hero-copy { --hc-gap: .45rem; --hc-stack: 1.1rem; --hc-cta: 1.1rem;
-      --hero-block-h: clamp(18rem, 66vh, 23.5rem); --hero-mark-h: clamp(2.45rem, 5.5vh, 3.5rem); --hero-desc-h: 5.9em; }
-    .hero-inner { transform: translateY(calc(-50% - 0.75vh)); gap: clamp(1rem, 2vh, 1.35rem); }
-    .wordmark { font-size: clamp(2.5rem, 5vw, 3.6rem); }
+    .wordmark { font-size: clamp(2.6rem, 5.2vw, 3.8rem); }
+    .hero-tag { margin-top: .6rem; line-height: 1.46; }
+    .caption { margin-top: 1.1rem; }
+    .caption-cta { margin-top: .9rem; }
     .spine { bottom: clamp(4.5rem, 8vh, 5.5rem); gap: 1rem; }
     .spine-sub-wrap { padding-top: 1rem; }
   }
 
   @media (max-width: 900px) {
-    .hero { height: auto; min-height: 100svh; overflow: visible; display: flex; flex-direction: column; padding: clamp(4.5rem, 12vw, 5.5rem) 0 clamp(5.5rem, 14vw, 6.5rem); }
-    .hero-copy { --hc-gap: clamp(.45rem, 2vw, .65rem); --hc-stack: clamp(1.1rem, 4vw, 1.5rem); --hc-cta: clamp(1.1rem, 3.5vw, 1.5rem);
-      --hero-mark-h: clamp(2.6rem, 10vw, 3.6rem); --hero-desc-h: clamp(5.8em, 22vw, 7.2em); }
+    .hero { height: auto; min-height: 100svh; overflow: visible; display: flex; flex-direction: column; padding: 78px 0 92px; }
     .mono-bg { -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 24%, transparent 62%); mask-image: linear-gradient(180deg, #000 0%, #000 24%, transparent 62%); }
     .mono-grid { left: -8%; top: -8%; width: 116%; height: 128%; transform: rotate(-6deg);
       grid-template-columns: repeat(auto-fill, 92px); grid-auto-rows: 92px; gap: 34px; opacity: calc(var(--mono-op) * 1.35); }
     .mono-grid img { width: 92px; height: 92px; }
     @keyframes monoDrift { 0%{transform:rotate(-6deg) translate3d(0,0,0)} 50%{transform:rotate(-6deg) translate3d(0,-22px,0)} 100%{transform:rotate(-6deg) translate3d(0,0,0)} }
-    .hero-inner { display: contents; height: auto; max-height: none; transform: none; top: auto; }
-    .wordmark { order: 1; width: 100%; max-width: none; font-size: clamp(2.5rem, 11vw, 3.6rem); margin: 0;
-      flex: none; height: var(--hero-mark-h); align-items: flex-end; }
+    .hero-inner { display: contents; }
+    .wordmark { order: 1; }
     .hero-tag { order: 2; max-width: none; }
-    #field { position: relative; inset: auto; left: auto; order: 3; width: 100%; height: 44svh; min-height: 320px; margin: clamp(1.25rem, 4vw, 1.75rem) 0 0; border: 1px solid var(--bd); border-radius: 12px; background: var(--panel); }
-    .caption { position: relative; left: auto; bottom: auto; width: 100%; max-width: none; order: 4; margin: 0; flex: none;
-      container-type: inline-size; container-name: hero-copy; }
-    .c-title { flex: 0 0 1.15em; height: 1.15em; }
-    .c-desc { flex: 0 0 var(--hero-desc-h); min-height: var(--hero-desc-h); max-height: var(--hero-desc-h); max-width: none; }
-    .spine { position: static; left: auto; right: auto; bottom: auto; order: 5; margin-top: clamp(1.5rem, 5vw, 2rem); align-items: stretch; }
+    #field { position: relative; inset: auto; left: auto; order: 3; width: 100%; height: 44svh; min-height: 320px; margin: 1.5rem 0 0; border: 1px solid var(--bd); border-radius: 12px; background: var(--panel); }
+    .caption { position: relative; left: auto; bottom: auto; width: auto; order: 4; margin-top: 1.5rem; }
+    .c-title, .c-desc { height: auto; }
+    .spine { position: static; left: auto; right: auto; bottom: auto; order: 5; margin-top: 1.9rem; align-items: stretch; }
     .spine-exec, .spine-sub-wrap { max-width: none; }
     .stake { grid-template-columns: 1fr; }
-  }
-
-  @media (max-width: 480px) {
-    .hero-copy { --hc-gap: .5rem; --hc-stack: 1rem; --hc-cta: 1.15rem; }
-    .wordmark { font-size: clamp(2.15rem, 12vw, 2.85rem); }
-    .c-title { font-size: clamp(0.78rem, 3.6vw, 1.02rem); flex: 0 0 1.15em; height: 1.15em; letter-spacing: -.016em; }
-    .c-desc { font-size: .86rem; line-height: 1.55; }
   }
 
   @media (max-width: 560px) {
@@ -263,7 +228,7 @@
   .dmx-c.pre { visibility: hidden; }         /* not yet typed — space reserved, nothing shifts */
 </style>
 </head>
-<body>
+<body style="font-size: 26px">
 
 <nav class="dmx-nav">
   <div class="dmx-nav-links">
@@ -287,18 +252,18 @@
 <div class="dmx-texture"></div>
 
 <main class="wrap">
-  <section class="hero hero-copy">
+  <section class="hero">
     <canvas id="field"></canvas>
 
-    <div class="hero-inner hero-copy">
+    <div class="hero-inner">
       <span class="wordmark">Damaros<span class="dmx-dot"></span></span>
 
-      <div class="caption">
+      <div class="caption" style="margin: 40px 0px 0px 4px">
         <div class="crule"></div>
         <div class="c-label" id="cLabel"></div>
-        <h2 class="c-title" id="cTitle"></h2>
-        <p class="c-desc" id="cDesc">Any decision reconstructs from version, evidence, and context into a signed bundle. No manual reconstruction, ever.</p>
-        <a class="dmx-cta dmx-cta--sm caption-cta" href="/cdn-cgi/l/email-protection#84e5eaedf6f1e0ecc4e0e5e9e5f6ebf7aae5edbbf7f1e6eee1e7f0b9c0e5e9e5f6ebf7a1b6b4e0e1e9eba1b6b4f6e1f5f1e1f7f0">Request a demo</a>
+        <h2 class="c-title" id="cTitle" style="margin: 6px 0px 0px; height: 40px"></h2>
+        <p class="c-desc" id="cDesc" style="padding: 0px 0px 1px; height: 80px; font-size: 16px">Any decision reconstructs from version, evidence, and context into a signed bundle. No manual reconstruction, ever.</p>
+        <a class="dmx-cta dmx-cta--sm caption-cta" href="/cdn-cgi/l/email-protection#21404f48535445496145404c40534e520f40481e5254434b4442551c65404c40534e5204131145444c4e04131153445054445255" style="padding: 13px 21px; margin: 30px 0px 0px; gap: 25px">Request a demo</a>
       </div>
     </div>
 
@@ -348,7 +313,7 @@
     <img class="finale-mono" src="assets/damaros-white-transparent.png" alt="" aria-hidden="true">
     <div class="finale-rule reveal"></div>
     <h2 class="reveal">Clinical trials, <em>rewired</em></h2>
-    <a class="dmx-cta dmx-cta--md reveal s2" href="/cdn-cgi/l/email-protection#32535c5b4047565a7256535f53405d411c535b0d414750585751460f76535f53405d41">Get in touch</a>
+    <a class="dmx-cta dmx-cta--md reveal s2" href="/cdn-cgi/l/email-protection#bedfd0d7cccbdad6fedadfd3dfccd1cd90dfd781cdcbdcd4dbddca83fadfd3dfccd1cd">Get in touch</a>
   </section>
 </main>
 
@@ -496,10 +461,39 @@
     luna:      { color: "luna",    label: "Substrate / Luna",     title: "Every model, governed.",        emph: "governed.", desc: "Luna clamps the harness around every model. AI drafts the language-heavy work and never the verdict, and PHI never reaches a model." },
     protocol:  { color: "locked",  label: "01 / Protocol",        title: "Complex eligibility, normalized.", emph: "normalized.", desc: "Dense, ambiguous protocol inclusion and exclusion is compiled into one precise basis the entire trial executes against." },
     evidence:  { color: "accent",  label: "02 / Evidence",        title: "Fragmented data, resolved.",     emph: "resolved.", desc: "Messy multi-format site data is normalized onto a single trial-ready plane before a single patient is screened." },
-    screening: { color: "screening", label: "03 / Screening",     title: "Patients screened deterministically.", emph: "Deterministically.", desc: "Deterministic PASS, REVIEW, or FAIL at criterion level with evidence attached. The same inputs always give the same answer." },
+    screening: { color: "screening", label: "03 / Screening",     title: "Patients screened Deterministically.", emph: "Deterministically.", desc: "Deterministic PASS, REVIEW, or FAIL at criterion level with evidence attached. The same inputs always give the same answer." },
     replay:    { color: "accent2", label: "04 / Replay",          title: "Reproducible by default.",       emph: "by default.", desc: "Any decision reconstructs from version, evidence, and context into a signed bundle. No manual reconstruction, ever." }
   };
   var ORDER = ["trident", "luna", "protocol", "evidence", "screening", "replay"];
+
+  /* Reserve the caption's title + description box to the TALLEST pillar at the
+     current width, measured off-screen. Keeps the Request-a-demo CTA pinned in
+     place as pillars rotate, while still adapting to every screen size. Disabled
+     on the stacked mobile layout (<=900px), where content flows freely. */
+  var capProbe = null;
+  function sizeCaption() {
+    var ttl = document.getElementById("cTitle"), dsc = document.getElementById("cDesc");
+    if (!ttl || !dsc) return;
+    if (window.innerWidth <= 900) { ttl.style.height = ""; dsc.style.minHeight = ""; return; }
+    if (!capProbe) { capProbe = document.createElement("div"); capProbe.setAttribute("aria-hidden", "true");
+      capProbe.style.cssText = "position:absolute;left:-9999px;top:0;visibility:hidden;white-space:normal;"; document.body.appendChild(capProbe); }
+    var w = Math.round(dsc.getBoundingClientRect().width); if (!w) return;
+    function measure(el, txt) {
+      var cs = getComputedStyle(el);
+      capProbe.style.width = w + "px";
+      capProbe.style.fontFamily = cs.fontFamily; capProbe.style.fontWeight = cs.fontWeight;
+      capProbe.style.fontSize = cs.fontSize; capProbe.style.lineHeight = cs.lineHeight;
+      capProbe.style.letterSpacing = cs.letterSpacing; capProbe.style.fontStyle = cs.fontStyle;
+      capProbe.textContent = txt; return capProbe.offsetHeight;
+    }
+    var maxT = 0, maxD = 0;
+    for (var k in PILLARS) {
+      var t = measure(ttl, PILLARS[k].title); if (t > maxT) maxT = t;
+      var d = measure(dsc, PILLARS[k].desc); if (d > maxD) maxD = d;
+    }
+    ttl.style.height = maxT + "px";
+    dsc.style.minHeight = maxD + "px";
+  }
 
   /* colors */
   var COL = {};
@@ -762,7 +756,7 @@
   function onSchemeChange() { readColors(); }
   if (typeof schemeMq.addEventListener === "function") schemeMq.addEventListener("change", onSchemeChange);
   else if (typeof schemeMq.addListener === "function") schemeMq.addListener(onSchemeChange);
-  window.addEventListener("resize", function () { layout.done = false; layout(); });
+  window.addEventListener("resize", function () { layout.done = false; layout(); sizeCaption(); });
   new ResizeObserver(function () { layout(); }).observe(canvas);
 
   /* scroll reveals - robust scroll check */
@@ -772,7 +766,9 @@
   window.addEventListener("resize", checkReveal);
   checkReveal();
 
-  readColors(); layout(); setPillar("trident", false);
+  readColors(); layout(); sizeCaption(); setPillar("trident", false);
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(sizeCaption);
+  setTimeout(sizeCaption, 400);
   requestAnimationFrame(frame);
 })();
 </script>
