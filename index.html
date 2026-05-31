@@ -57,7 +57,8 @@
   #field { position: absolute; top: 0; bottom: 0; left: 40%; width: 60%; height: 100%; display: block; z-index: 1; }
 
   .hero-inner { position: absolute; left: 0; top: clamp(6.5rem, 17vh, 12.75rem); z-index: 5;
-    width: clamp(17.5rem, 36vw, 27.5rem); max-width: calc(40% - 1.5rem);
+    width: clamp(18rem, 38vw, 30rem); max-width: calc(42% - 0.75rem);
+    container-type: inline-size; container-name: hero-copy;
     display: flex; flex-direction: column; align-items: flex-start; gap: var(--hc-stack); padding: 0; margin: 0; }
   .wordmark { display: inline-flex; align-items: center; gap: .5rem; margin: 0; padding: 0;
     font-family: var(--fh); font-weight: 700; font-size: clamp(2.85rem, 6vw, 5.25rem);
@@ -83,7 +84,7 @@
   .prow.active .pn { color: var(--accent-2); }
 
   /* caption - active pillar detail. Re-plays a digital phase-in on each pillar switch. */
-  .caption { margin: 0; width: 100%; max-width: 42ch;
+  .caption { margin: 0; width: 100%; min-width: 0;
     display: flex; flex-direction: column; align-items: flex-start; gap: var(--hc-gap); }
   /* caption - words ignite in a steel-blue wave (spreading activation, mirrors the network) then settle */
   .ig { animation: ignite .5s var(--ease) both; animation-delay: var(--d, 0s); }
@@ -95,8 +96,15 @@
   .caption .crule { width: 24px; height: 2px; background: var(--accent-2); margin: 0; flex-shrink: 0; }
   .c-label { margin: 0; font-family: var(--fm); font-size: clamp(.52rem, .7vw, .58rem); font-weight: 600;
     letter-spacing: .18em; text-transform: uppercase; color: var(--accent-2); }
-  .c-title { margin: 0; font-family: var(--fh); font-weight: 600; font-size: clamp(1.2rem, 1.65vw, 1.62rem);
-    letter-spacing: -.01em; line-height: 1.12; min-height: 2.2em; }
+  .c-title { margin: 0; width: 100%; max-width: 100%; font-family: var(--fh); font-weight: 600;
+    font-size: clamp(0.92rem, 1.1vw + 0.62rem, 1.5rem); letter-spacing: -.012em;
+    line-height: 1.15; min-height: 1.15em; white-space: nowrap; overflow: hidden; text-overflow: clip; }
+  @container hero-copy (max-width: 22rem) {
+    .c-title { font-size: clamp(0.82rem, 4.6cqi, 1.12rem); letter-spacing: -.014em; }
+  }
+  @container hero-copy (max-width: 17.5rem) {
+    .c-title { font-size: clamp(0.76rem, 4.2cqi, 0.98rem); }
+  }
   .c-desc { margin: 0; font-size: clamp(.84rem, 1.05vw, .97rem); line-height: 1.58; color: var(--fg-2); max-width: 38ch; }
   .caption-cta { margin: var(--hc-cta) 0 0; align-self: flex-start; }
 
@@ -198,7 +206,7 @@
     .hero-inner { top: clamp(5.5rem, 14vh, 9rem); gap: clamp(1rem, 2vh, 1.35rem); }
     .hero-copy { --hc-gap: .45rem; --hc-stack: 1.1rem; --hc-cta: 1.1rem; }
     .wordmark { font-size: clamp(2.5rem, 5vw, 3.6rem); }
-    .c-title { min-height: 2em; }
+    .c-title { min-height: 1.15em; }
     .spine { bottom: clamp(4.5rem, 8vh, 5.5rem); gap: 1rem; }
     .spine-sub-wrap { padding-top: 1rem; }
   }
@@ -215,7 +223,8 @@
     .wordmark { order: 1; width: 100%; max-width: none; font-size: clamp(2.5rem, 11vw, 3.6rem); margin: 0; }
     .hero-tag { order: 2; max-width: none; }
     #field { position: relative; inset: auto; left: auto; order: 3; width: 100%; height: 44svh; min-height: 320px; margin: clamp(1.25rem, 4vw, 1.75rem) 0 0; border: 1px solid var(--bd); border-radius: 12px; background: var(--panel); }
-    .caption { position: relative; left: auto; bottom: auto; width: 100%; max-width: none; order: 4; margin: 0; }
+    .caption { position: relative; left: auto; bottom: auto; width: 100%; max-width: none; order: 4; margin: 0;
+      container-type: inline-size; container-name: hero-copy; }
     .c-title { min-height: 0; }
     .c-desc { max-width: none; }
     .spine { position: static; left: auto; right: auto; bottom: auto; order: 5; margin-top: clamp(1.5rem, 5vw, 2rem); align-items: stretch; }
@@ -226,7 +235,7 @@
   @media (max-width: 480px) {
     .hero-copy { --hc-gap: .5rem; --hc-stack: 1rem; --hc-cta: 1.15rem; }
     .wordmark { font-size: clamp(2.15rem, 12vw, 2.85rem); }
-    .c-title { font-size: 1.15rem; min-height: 0; }
+    .c-title { font-size: clamp(0.78rem, 3.6vw, 1.02rem); min-height: 1.15em; letter-spacing: -.016em; }
     .c-desc { font-size: .86rem; line-height: 1.55; }
   }
 
