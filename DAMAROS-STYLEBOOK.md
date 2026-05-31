@@ -1,85 +1,144 @@
-# Damaros voice and copy stylebook
+# Damaros Public Stylebook
 
-Adapted from Palantir's briefing register for Damaros product, docs, and cockpit UI. Use this for hover cards, autoplay captions, docs sections, and any user-facing string.
+Use this file for all public website copy, docs pages, and external messaging.
 
-## Non-negotiable typography and style
+## Non-negotiable writing constraints
 
-- **No em dashes (U+2014) and no en dashes used as sentence breaks** in user-facing copy.
-- Split claim and mechanism with a **comma**, **period**, or **with / via / under** instead.
-- Hyphens only for compound modifiers (e.g. `content-hashed`, `amendment-aware`).
+- No em dash characters in public copy.
+- Briefing register only: claim, mechanism, consequence.
+- Present tense only for shipped behavior.
+- No startup hype language and no speculative claims.
 
-## Register
+## External website master direction
 
-- **Briefing register**, not marketing: definitional title, one declarative claim, one mechanism sentence, optional consequence.
-- **Present tense** for what the system does today.
-- **Inheritance over aspiration**: cite versioned logic, deterministic engine, signed replay, not future promises.
+- Category lock: `governed decentralized trial-access infrastructure`.
+- Category line: `The governed access layer for decentralized clinical trials.`
+- Core line: `Damaros turns community clinics into governed trial-access nodes.`
+- Hierarchy lock: access layer is category; execution spine is mechanism.
+- Foil without naming competitors: discovery vs governed access.
 
-## Proper nouns (capitalize as products)
+## Category architecture
 
-| Name | Role |
-|------|------|
-| **Damaros** | Provenance substrate for trial operations |
-| **Trident** | Trial knowledge that sharpens with releases and site runs; compounds into executable logic |
-| **Luna** | Governance harness for AI-assisted, traceable work |
-| **Protocol** | Eligibility language locked to Trident releases |
-| **Evidence** | Site data resolved into one trial-ready evidence plane before screening |
-| **Screening** | Deterministic PASS / REVIEW / FAIL per criterion |
-| **Replay** | Signed reconstruction of version, evidence, context |
+- Category: decentralized trial-access infrastructure.
+- Mechanism: `Protocol -> Evidence -> Screening -> Replay`.
+- Differentiator: replayable, deterministic, institution-defensible decisions.
+- Boundary doctrine: `PHI never touches an LLM.` and `The model is not the system of record.`
 
-## Hover card template (cockpit)
+## Buyer and user architecture
 
-1. **Label**: stage or brand name (uppercase micro-label).
-2. **Title**: definitional noun phrase (what this stage *is*).
-3. **Body**: Claim, then mechanism in one or two sentences. No scroll on desktop; prune until it fits.
+- Economic buyers: sponsors, CROs, federal research networks, coordinating centers.
+- Operational users: site coordinators, investigators, QA, compliance.
+- Messaging split: buyers get permissioned network visibility, sites get REVIEW worklists and referral readiness.
 
-**Example (Trident):**
+## Two-sided product architecture
 
-> Trident is the trial knowledge core.
+- `Clinic Node`: deterministic screening against sponsor-deployed protocols, REVIEW routing, replayable referral packets.
+- `Sponsor Access Console`: permissioned, de-identified execution visibility, readiness signals, bottleneck visibility.
+- Canonical lines:
+  - `Clinics get trial-access infrastructure. Sponsors get permissioned, evidence-ready reach.`
+  - `Sites get worklists. Networks get truth.`
 
-> Sharpens with each protocol release and site run, compounds into versioned execution logic, one content-hashed basis per site.
+## Product vocabulary and reframes
 
-**Example (Screening):**
+- Preferred nouns: protocol lock, evidence admission, deterministic screening, REVIEW worklist, replay bundle, referral packet.
+- Reframe away from matching language:
+  - Not `match more patients`
+  - Use `screen against sponsor-deployed protocols`
+  - Use `surface review-ready patients for clinic-confirmed referral`
+- `Evidence` replaces `population` in public workflow framing.
+- Keep Trident compiler language and Luna governance-harness language.
 
-> Each patient × criterion yields PASS, REVIEW, or FAIL with attached evidence, via a deterministic engine with human review preserved.
+## Trident and Luna boundaries
 
-Not: claim and mechanism joined by an em dash (forbidden).
+- Trident line: `Trident compiles protocol language into executable eligibility structure.`
+- Luna line: `Luna records AI origin, policy boundaries, provenance, and execution constraints.`
+- Do not call Trident an ontology in public copy.
+- Do not call Luna an assistant in public copy.
 
-## Trident vs Luna (word boundaries)
+## Preferred public lines
 
-**Trident:** sharpens, compounds, release, site run, compiles, versioned, content-hashed, amendment-aware, execution basis.
+- `The governed access layer for decentralized clinical trials.`
+- `Clinical trial execution without black-box patient AI.`
+- `Damaros turns community clinics into governed trial-access nodes.`
+- `PHI never touches an LLM.`
+- `The model is not the system of record.`
+- `AI upstream. Determinism downstream. Human review before referral. Replay always.`
+- `Matching is discovery. Damaros is governed access.`
+- `A citation shows what a model read. Replay reconstructs the decision an institution made.`
+- `Community trial access, governed from protocol to referral.`
 
-**Luna:** governance, harness, traceable, reviewable, PHI gating, scoped tasks, provenance (for assisted work).
+## Banned public language
 
-Do not use **ontology** or **governed** on Trident (Palantir overlap and Luna blur). Trident improves via **new releases**, not runtime eligibility changes.
+Never use:
 
-## Claim → mechanism → consequence
+- AI-powered trial matching
+- patient-to-trial matching
+- trial-to-patient matching
+- recruitment automation
+- patient lead generation
+- monetize clinic patients
+- sell access to patients
+- sponsor marketplace
+- patient funnel
+- referral marketplace
+- AI lead scoring
+- clinic recruitment network
+- accelerate enrollment by X%
+- autonomous eligibility decisions
+- LLM verdicts on PHI
 
-Same unit as Palantir technical prose, without em dashes:
+## Audience-specific messaging matrix
 
-1. **Claim**: what is true in the enterprise.
-2. **Mechanism**: how Trident, Luna, or the engine makes it true (`via`, `under`, `with`, named components).
-3. **Consequence** (optional): what the coordinator or sponsor can rely on.
+- Sponsors: permissioned execution truth across decentralized nodes, protocol friction visibility, replay credibility.
+- CROs: cross-site operational control, REVIEW burden visibility, referral packet consistency.
+- Federal networks: governed expansion beyond elite centers with traceable oversight.
+- Sites: deterministic screening, evidence readiness queues, human-adjudication capture.
+- Investors: category is decentralized access infrastructure, mechanism is governed execution spine.
 
-## Vocabulary
+## Public claim boundary
 
-**Use:** provenance, versioned, sharpens, compounds, deterministic, evidence plane, lineage, content-hashed, amendment-aware, tenant-isolated, PHI gating, traceable, reviewable, signed bundle, cutover.
+- Allowed:
+  - governed execution infrastructure
+  - deterministic PASS/REVIEW/FAIL
+  - replayable audit and referral packets
+  - validation readiness and retrospective validation posture
+  - FHIR-ready and export-first integration posture
+- Disallowed:
+  - clinical efficacy claims
+  - FDA clearance claims unless formally granted
+  - sponsor endorsement claims unless explicit
+  - production Epic implications unless live and contracted
 
-**Avoid:** revolutionary, game-changing, seamless, cutting-edge, synergy, bare superlatives without an architectural anchor.
+## Homepage sequence guardrail
 
-## PHI and AI boundaries (always explicit in copy)
+Public homepage sequence must follow:
 
-- Screening outcomes are **deterministic**; Luna governs AI-assisted work, not eligibility decisions.
-- **PHI never touches an LLM** in product copy and implementation claims.
-- Eligibility is **traceable** to protocol version and evidence inputs.
+1. Hero with category lock and trust boundary lines.
+2. Market truth: academic-center infrastructure vs community-clinic patient concentration.
+3. Category contrast: discovery vs governed access.
+4. Two-sided product: Clinic Node + Sponsor Access Console.
+5. Execution spine: Protocol -> Evidence -> Screening -> Replay.
+6. REVIEW worklist and evidence readiness queue.
+7. Replayable referral packet and citation-vs-replay contrast.
+8. Trust boundary section.
+9. Buyer section.
+10. Validation-before-deployment.
+11. Closing line: `Community trial access, governed from protocol to referral.`
 
-## Docs sections
+## Stats and sourcing rules
 
-- Open with a definitional sentence or section label (`04_CLINICAL_DATA_BOUNDARY`).
-- Use § cross-refs where helpful; keep paragraphs short.
-- Lists are evidentiary, not sales bullets.
-
-## QA before ship
-
-- Search repo for U+2014 em dash and en-dash sentence breaks in HTML text nodes and strings.
-- Read each hover card aloud: one breath for title, two for body.
-- Trident / Luna use brand-bar chips on all viewports; cards stack under the bar (not inside the canvas).
+- Homepage stat block stays in same location and layout.
+- Sources allowed: FDA, NCI, NIH, peer-reviewed journals, major public industry reports.
+- Every stat must have:
+  - displayed number
+  - one-line claim
+  - source label
+  - provenance URL in internal notes
+  - exact quote excerpt in internal notes
+  - retrieval date in internal notes
+- Do not publish ambiguous figures or unattributed metrics.
+- Prioritize stat themes:
+  - decentralized trial legitimacy (FDA guidance)
+  - community trial infrastructure scale (NCORP)
+  - where care happens (community concentration)
+  - protocol and execution burden metrics

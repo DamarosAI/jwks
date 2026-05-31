@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<title>Damaros - Trust Boundary</title>
+<link rel="icon" href="assets/damaros-favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap">
+<script src="shared/theme-system.js"></script>
+<link rel="stylesheet" href="shared/damaros.css">
+<style>
+  .docs { max-width: 920px; margin: 0 auto; padding: calc(60px + 3.4rem) clamp(1.1rem, 4vw, 2.4rem) 6rem; position: relative; z-index: 1; }
+  .d-eyebrow { font-family: var(--fm); font-size: .6rem; letter-spacing: .18em; text-transform: uppercase; color: var(--accent-2); margin-bottom: .7rem; }
+  .d-title { font-family: var(--fh); font-weight: 600; font-size: clamp(1.9rem, 4.4vw, 3rem); letter-spacing: -.01em; line-height: 1.03; }
+  .d-lead { color: var(--fg-2); font-size: 1rem; line-height: 1.7; margin: 1.2rem 0 0; max-width: 64ch; }
+  .divider { height: 1px; background: var(--bd-soft); margin: 2.8rem 0; }
+  section.doc { margin-bottom: 2.4rem; }
+  .sec-label { font-family: var(--fm); font-size: .58rem; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); opacity: .7; margin-bottom: .5rem; }
+  .sec-label::before { content: '// '; }
+  .sec-head { font-family: var(--fh); font-weight: 600; font-size: 1.2rem; letter-spacing: .01em; padding-bottom: .55rem; border-bottom: 1px solid var(--bd-soft); margin: 0 0 1rem; }
+  .body { color: var(--fg-2); font-size: .92rem; line-height: 1.75; }
+  .body p { margin: 0 0 .8rem; }
+  .bullets { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .55rem; color: var(--fg-2); font-size: .9rem; line-height: 1.6; }
+  .bullets li { padding-left: 1rem; position: relative; }
+  .bullets li::before { content: '>'; position: absolute; left: 0; color: var(--accent); font-family: var(--fm); }
+  .callout { margin: 1.1rem 0 0; padding: .85rem 1.15rem; border-left: 2px solid var(--bd-strong); background: var(--chip-bg); color: var(--fg-2); font-family: var(--fm); font-size: .76rem; line-height: 1.65; border-radius: 0 6px 6px 0; }
+  .foil { border: 1px solid var(--bd-soft); border-radius: 10px; padding: 1rem 1.1rem; background: var(--chip-bg); margin-top: 1rem; }
+  footer { border-top: 1px solid var(--bd-soft); padding: 2.2rem clamp(1.1rem,4vw,2.4rem); display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; align-items: center; font-family: var(--fm); font-size: .6rem; letter-spacing: .1em; color: var(--fg-3); max-width: 920px; margin: 0 auto; text-transform: uppercase; }
+  footer .fl { display: flex; gap: 1.2rem; }
+  footer .tag { font-size: .54rem; letter-spacing: .12em; }
+</style>
+</head>
+<body>
+<nav class="dmx-nav">
+  <div class="dmx-nav-links">
+    <a class="dmx-nav-link" href="/">Home</a>
+    <a class="dmx-nav-link" href="/trust-boundary" aria-current="true">Trust Boundary</a>
+    <a class="dmx-nav-link" href="/replay">Replay</a>
+    <a class="dmx-nav-link" href="/validation">Validation</a>
+    <a class="dmx-nav-link" href="/about">About</a>
+  </div>
+</nav>
+
+<main class="docs">
+  <div class="d-eyebrow">Doctrine</div>
+  <h1 class="d-title">The model is not the system of record.</h1>
+  <p class="d-lead">Damaros is governed decentralized trial-access infrastructure. AI works upstream on non-PHI protocol intelligence. Patient-path eligibility stays deterministic, evidence-bound, human-reviewed, and replayable across community clinics and network operations. AI upstream. Determinism downstream. Replay always.</p>
+
+  <div class="divider"></div>
+
+  <section class="doc">
+    <div class="sec-label">01_WHAT_AI_CAN_TOUCH</div>
+    <h2 class="sec-head">Permitted AI surface</h2>
+    <ul class="bullets">
+      <li>Non-PHI protocol text and sponsor documents.</li>
+      <li>Criterion structuring, ambiguity detection, and mapping suggestions.</li>
+      <li>Governance narration and operator support outside verdict issuance.</li>
+      <li>Policy-bound tasks with provenance and review hooks captured by Luna.</li>
+    </ul>
+  </section>
+
+  <section class="doc">
+    <div class="sec-label">02_WHAT_AI_CANNOT_TOUCH</div>
+    <h2 class="sec-head">Prohibited AI surface</h2>
+    <ul class="bullets">
+      <li>PHI-bearing patient evidence parsing on the screening path.</li>
+      <li>Eligibility verdict issuance, adjudication, and replay reconstruction.</li>
+      <li>Audit source of truth generation by model output.</li>
+      <li>Any model as system of record for patient-path decisions.</li>
+    </ul>
+    <div class="callout"><strong>Hard boundary.</strong> PHI never touches an LLM on the eligibility path.</div>
+  </section>
+
+  <section class="doc">
+    <div class="sec-label">03_WHY_THIS_MATTERS</div>
+    <h2 class="sec-head">Governance scales clinical AI</h2>
+    <div class="body">
+      <p>Sponsors, CROs, and federal research networks need decisions that reconstruct under scrutiny across sites. A model answer with citations can help discovery. It does not replace a governed execution record.</p>
+      <p>Regulated AI does not scale through opacity. It scales through replay.</p>
+    </div>
+  </section>
+
+  <section class="doc">
+    <div class="sec-label">04_HOW_DAMAROS_EXECUTES</div>
+    <h2 class="sec-head">Protocol to replay chain</h2>
+    <ul class="bullets">
+      <li><strong>Protocol lock:</strong> Trident compiles protocol language into executable eligibility structure.</li>
+      <li><strong>Evidence admission:</strong> site-approved evidence enters with lineage and timestamps.</li>
+      <li><strong>Deterministic screening:</strong> criterion-level PASS, REVIEW, FAIL on the same inputs, same output rule.</li>
+      <li><strong>Human review:</strong> REVIEW worklists route blockers and capture adjudication state.</li>
+      <li><strong>Replay:</strong> reconstruct version, evidence, criterion outcomes, reviewers, and change history.</li>
+    </ul>
+    <div class="callout"><strong>Sponsor visibility boundary.</strong> Sponsor, CRO, and federal-network views are permissioned and de-identified by default. Site-approved outputs are exposed as execution signals and replay artifacts, not raw PHI payloads.</div>
+  </section>
+
+  <section class="doc">
+    <div class="sec-label">05_TRIDENT_AND_LUNA</div>
+    <h2 class="sec-head">Trident and Luna</h2>
+    <ul class="bullets">
+      <li><strong>Trident:</strong> compiles protocol language into executable eligibility structure.</li>
+      <li><strong>Luna:</strong> records AI origin, policy boundaries, provenance, and execution constraints.</li>
+    </ul>
+  </section>
+
+  <section class="doc">
+    <div class="sec-label">06_THE_FOIL</div>
+    <h2 class="sec-head">Respectful category split</h2>
+    <div class="body foil">
+      Others are validating AI-assisted trial discovery. Damaros focuses on the governed execution layer sponsors, CROs, and research networks need to operationalize and defend those decisions across sites.
+    </div>
+  </section>
+
+  <section class="doc">
+    <div class="sec-label">07_VALIDATION</div>
+    <h2 class="sec-head">Validation dimensions</h2>
+    <ul class="bullets">
+      <li>Criterion-level agreement, false PASS, false FAIL.</li>
+      <li>REVIEW burden and missing-evidence drivers.</li>
+      <li>Evidence-lineage completeness and replay completeness.</li>
+      <li>Adjudication deltas and run reproducibility.</li>
+    </ul>
+    <div class="callout">Validation covers execution integrity, not clinical efficacy claims. Full method on <a href="/validation">/validation</a>.</div>
+  </section>
+</main>
+
+<footer>
+  <span>© 2026 Damaros™</span>
+  <div class="fl"><a href="/">Home</a><a href="/trust-boundary">Trust Boundary</a><a href="/replay">Replay</a><a href="/validation">Validation</a><a href="/docs/fhir">FHIR</a><a href="/privacy">Privacy</a><a href="/about">About</a></div>
+  <span class="tag">Damaros governs trial execution from protocol to replay.</span>
+</footer>
+</body>
+</html>

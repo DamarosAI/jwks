@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<title>Damaros - Replay</title>
+<link rel="icon" href="assets/damaros-favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap">
+<script src="shared/theme-system.js"></script>
+<link rel="stylesheet" href="shared/damaros.css">
+<style>
+  .docs { max-width: 920px; margin: 0 auto; padding: calc(60px + 3.4rem) clamp(1.1rem, 4vw, 2.4rem) 6rem; position: relative; z-index: 1; }
+  .d-eyebrow { font-family: var(--fm); font-size: .6rem; letter-spacing: .18em; text-transform: uppercase; color: var(--accent-2); margin-bottom: .7rem; }
+  .d-title { font-family: var(--fh); font-weight: 600; font-size: clamp(1.9rem, 4.4vw, 3rem); letter-spacing: -.01em; line-height: 1.03; }
+  .d-lead { color: var(--fg-2); font-size: 1rem; line-height: 1.7; margin: 1.2rem 0 0; max-width: 64ch; }
+  .divider { height: 1px; background: var(--bd-soft); margin: 2.8rem 0; }
+  .card { border: 1px solid var(--bd-soft); border-radius: 12px; padding: 1.2rem; background: var(--chip-bg); margin-bottom: 1.1rem; }
+  .card h3 { font-family: var(--fh); font-size: 1.18rem; margin: 0 0 .55rem; }
+  .card p { margin: 0; color: var(--fg-2); line-height: 1.62; font-size: .92rem; }
+  .bundle { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .9rem; margin-top: .95rem; }
+  .node { border-top: 1px solid var(--bd-soft); padding-top: .65rem; font-size: .86rem; color: var(--fg-2); }
+  .node b { color: var(--accent-2); font-family: var(--fm); font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; display: block; margin-bottom: .35rem; }
+  .qs { margin: 0; padding-left: 1.25rem; display: grid; gap: .4rem; color: var(--fg-2); }
+  .qs li::marker { color: var(--accent-2); font-family: var(--fm); }
+  footer { border-top: 1px solid var(--bd-soft); padding: 2.2rem clamp(1.1rem,4vw,2.4rem); display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; align-items: center; font-family: var(--fm); font-size: .6rem; letter-spacing: .1em; color: var(--fg-3); max-width: 920px; margin: 0 auto; text-transform: uppercase; }
+  footer .fl { display: flex; gap: 1.2rem; }
+  footer .tag { font-size: .54rem; letter-spacing: .12em; }
+  @media (max-width: 760px) { .bundle { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<nav class="dmx-nav">
+  <div class="dmx-nav-links">
+    <a class="dmx-nav-link" href="/">Home</a>
+    <a class="dmx-nav-link" href="/trust-boundary">Trust Boundary</a>
+    <a class="dmx-nav-link" href="/replay" aria-current="true">Replay</a>
+    <a class="dmx-nav-link" href="/validation">Validation</a>
+    <a class="dmx-nav-link" href="/about">About</a>
+  </div>
+</nav>
+
+<main class="docs">
+  <div class="d-eyebrow">Flagship</div>
+  <h1 class="d-title">Every trial decision should reconstruct.</h1>
+  <p class="d-lead">Replay preserves protocol version, admitted evidence, criterion outcomes, review state, and adjudication history for every PASS, REVIEW, and FAIL across sites. This is not just citation. This is network execution memory.</p>
+
+  <div class="divider"></div>
+
+  <div class="card">
+    <div class="d-eyebrow">01_REPLAY_BUNDLE_ANATOMY</div>
+    <h3>Replay bundle anatomy</h3>
+    <p>Each replay packet is traceable and queryable from protocol lock through adjudication.</p>
+    <div class="bundle">
+      <div class="node"><b>Protocol</b>Protocol version, criterion graph, and lock timestamp.</div>
+      <div class="node"><b>Evidence</b>Admitted evidence set, source lineage, and missingness markers.</div>
+      <div class="node"><b>Engine run</b>Deterministic run context, evaluation timestamp, and rule versions.</div>
+      <div class="node"><b>Criterion outcomes</b>PASS, REVIEW, FAIL for every criterion with rationale references.</div>
+      <div class="node"><b>Review path</b>Coordinator actions, escalation steps, and PI adjudication decisions.</div>
+      <div class="node"><b>Integrity chain</b>Content hash, signed lineage, and replay completeness status.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="d-eyebrow">02_SIX_QUESTIONS</div>
+    <h3>Six questions replay answers</h3>
+    <ol class="qs">
+      <li>What protocol version was locked?</li>
+      <li>What evidence was admitted?</li>
+      <li>Which criterion passed, failed, or required review?</li>
+      <li>Who adjudicated uncertainty?</li>
+      <li>What changed?</li>
+      <li>Can the decision be replayed?</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="d-eyebrow">03_CITATION_VERSUS_REPLAY</div>
+    <h3>Centerpiece contrast</h3>
+    <p>A citation shows what a model read. Replay reconstructs the decision an institution made.</p>
+  </div>
+
+  <div class="card">
+    <div class="d-eyebrow">04_REVIEW_WORKLIST</div>
+    <h3>REVIEW is work</h3>
+    <p>Replay captures REVIEW as structured operational work, not noise. Evidence blockers, human decisions, and final outcomes stay connected. Sponsors and CROs see where execution stalls before timelines collapse.</p>
+  </div>
+
+  <div class="card">
+    <div class="d-eyebrow">05_WHO_RELIES_ON_REPLAY</div>
+    <h3>Who relies on replay</h3>
+    <p>Site teams and coordinators run worklists. Sponsors, CROs, federal networks, coordinating centers, QA, IRB, and compliance teams inspect and defend decentralized trial-access execution without black-box eligibility.</p>
+  </div>
+  <p class="d-lead" style="margin-top:1rem">Oversight becomes a query, not a fire drill.</p>
+</main>
+
+<footer>
+  <span>© 2026 Damaros™</span>
+  <div class="fl"><a href="/">Home</a><a href="/trust-boundary">Trust Boundary</a><a href="/replay">Replay</a><a href="/validation">Validation</a><a href="/docs/fhir">FHIR</a><a href="/privacy">Privacy</a><a href="/about">About</a></div>
+  <span class="tag">Damaros governs trial execution from protocol to replay.</span>
+</footer>
+</body>
+</html>

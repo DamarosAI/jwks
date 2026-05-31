@@ -62,8 +62,14 @@
   .wordmark .dmx-dot { width: .13em; height: .13em; flex: none; align-self: flex-start; margin-top: .2em; }
   .hero-eyebrow { margin-top: 1rem; font-family: var(--fm); font-size: .64rem; font-weight: 600; letter-spacing: .2em;
     text-transform: uppercase; color: var(--accent-2); }
+  .hero-subline { margin-top: .75rem; font-family: var(--fh); font-size: clamp(1rem, 1.12vw, 1.16rem); font-weight: 600; line-height: 1.4; color: var(--fg); max-width: 42ch; }
   .hero-tag { margin-top: 1.15rem; font-size: clamp(.95rem, 1.04vw, 1.1rem); line-height: 1.6; color: var(--fg-2); max-width: 44ch; }
   .hero-tag b { color: var(--fg); font-weight: 600; }
+  .hero-doctrine { margin-top: .95rem; max-width: 44ch; color: var(--accent-2); }
+  .hero-anchor { margin-top: .85rem; font-family: var(--fm); font-size: .64rem; letter-spacing: .14em; text-transform: uppercase; color: var(--fg-3); }
+  .hero-chip { margin-top: .8rem; }
+  .hero-actions { margin-top: 1rem; display: inline-flex; gap: .85rem; flex-wrap: wrap; align-items: center; }
+  .hero-actions .h-ref { margin-top: 0; }
 
   /* pillar menu - drives the field */
   .pillars { margin-top: 2.1rem; display: flex; flex-direction: column; gap: 1.25rem; }
@@ -163,7 +169,7 @@
   .gap-note { margin: clamp(1.5rem, 4vh, 2.3rem) 0 0; color: var(--fg);
     font-size: clamp(1.05rem, 1.45vw, 1.25rem); font-weight: 500; line-height: 1.5; max-width: 60ch; text-wrap: pretty; }
   .who .eyebrow { display: block; margin-bottom: 1.2rem; }
-  .who-cards { margin: 1.8rem 0 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--bd-soft); border: 1px solid var(--bd-soft); border-radius: 12px; overflow: hidden; }
+  .who-cards { margin: 1.8rem 0 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--bd-soft); border: 1px solid var(--bd-soft); border-radius: 12px; overflow: hidden; }
   .wcard { background: var(--bg); padding: 1.6rem 1.4rem 1.5rem; display: flex; flex-direction: column; transition: background var(--t) var(--ease); }
   .wcard:hover { background: var(--bg-1); }
   .wcard h3 { font-size: 1.12rem; margin: 0 0 .6rem; }
@@ -210,13 +216,29 @@
   .stat .ssrc { font-family: var(--fm); font-size: .54rem; font-weight: 600; letter-spacing: .1em;
     text-transform: uppercase; color: var(--fg-3); margin-top: .35rem; }
   .stats-lede { display: block; margin-bottom: 1.5rem; }
+  .six-qs { margin: clamp(2.4rem, 6vh, 3.6rem) 0 0; padding: clamp(1.5rem, 4vw, 2.1rem) clamp(1.5rem, 4vw, 2.4rem); border: 1px solid var(--bd-soft); border-radius: 12px; background: var(--chip-bg); }
+  .six-qs h3 { font-size: clamp(1.2rem, 2.4vw, 1.8rem); margin: 0 0 1rem; line-height: 1.1; }
+  .six-qs ol { margin: 0; padding-left: 1.3rem; display: grid; gap: .52rem; color: var(--fg-2); font-size: .92rem; line-height: 1.58; }
+  .six-qs li::marker { color: var(--accent-2); font-family: var(--fm); }
+  .six-qs p { margin: 1rem 0 0; color: var(--fg-2); font-size: .94rem; line-height: 1.62; }
+  .review-queue { margin: clamp(2.4rem, 6vh, 3.6rem) 0 0; padding: clamp(1.5rem, 4vw, 2.1rem) clamp(1.5rem, 4vw, 2.4rem); border: 1px solid var(--bd-soft); border-radius: 12px; }
+  .review-queue h3 { margin: 0 0 .72rem; font-size: clamp(1.22rem, 2.4vw, 1.82rem); line-height: 1.08; }
+  .review-queue p { margin: 0; color: var(--fg-2); font-size: .92rem; line-height: 1.62; }
+  .review-queue .queue-grid { margin-top: 1rem; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem .95rem; }
+  .queue-item { font-family: var(--fm); font-size: .76rem; letter-spacing: .06em; text-transform: uppercase; color: var(--fg-2); border-top: 1px solid var(--bd-soft); padding-top: .65rem; }
+  .queue-item b { color: var(--accent-2); font-weight: 600; margin-right: .35rem; }
+  .validation-teaser { margin-top: 1.1rem; font-size: .88rem; color: var(--fg-2); }
+  .validation-teaser a { color: var(--accent-2); }
+  .botbar .tagline { justify-self: center; font-size: .54rem; color: var(--fg-3); letter-spacing: .12em; text-transform: uppercase; text-align: center; }
 
   @media (max-width: 900px) {
     .spine-cards { grid-template-columns: repeat(2, 1fr); }
     .stats { grid-template-columns: repeat(2, 1fr); gap: 1.6rem 1.4rem; }
+    .review-queue .queue-grid { grid-template-columns: 1fr; }
   }
   @media (max-width: 560px) {
     .spine-cards { grid-template-columns: 1fr; }
+    .botbar .tagline { display: none; }
   }
   /* ===== finale ===== */
   .finale { position: relative; z-index: 1; min-height: 78vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: clamp(4rem,12vh,8rem) clamp(1.1rem,4vw,2rem) clamp(5rem,12vh,8rem); overflow: hidden; }
@@ -244,7 +266,7 @@
   }
 
   /* ===== bottom bar ===== */
-  .botbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 95; display: grid; grid-template-columns: 1fr auto 1fr;
+  .botbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 95; display: grid; grid-template-columns: 1fr auto auto 1fr;
     align-items: center; gap: 1rem; padding: .75rem clamp(1.1rem, 3.4vw, 2.6rem); font-family: var(--fm); font-size: .58rem;
     letter-spacing: .12em; text-transform: uppercase; color: var(--fg-3);
     background: linear-gradient(transparent, var(--bg) 46%); }
@@ -309,6 +331,9 @@
 <nav class="dmx-nav">
   <div class="dmx-nav-links">
     <a class="dmx-nav-link" href="/" aria-current="true">Home</a>
+    <a class="dmx-nav-link" href="/trust-boundary">Trust Boundary</a>
+    <a class="dmx-nav-link" href="/replay">Replay</a>
+    <a class="dmx-nav-link" href="/validation">Validation</a>
     <a class="dmx-nav-link" href="/about">About</a>
   </div>
 </nav>
@@ -333,8 +358,18 @@
 
     <div class="hero-inner">
       <span class="wordmark">Damaros<span class="dmx-dot" style="margin: 36px 1px 0px -7px"></span></span>
-      <p class="hero-cat" style="margin: 16px 0 0 2px">The governed execution layer for clinical trials.</p>
-      <p class="hero-tag" style="margin: 12px 0px 15px 2px">Transform locked protocols and site-approved evidence into deterministic screening, human review, and replayable audit.</p>
+      <p class="eyebrow" style="margin: 1rem 0 0 2px;">Governed clinical trial execution</p>
+      <p class="hero-cat" style="margin: 16px 0 0 2px">The governed access layer for decentralized clinical trials.</p>
+      <p class="hero-subline" style="margin-left: 2px">Clinical trial execution without black-box patient AI.</p>
+      <p class="hero-tag" style="margin: 12px 0px 15px 2px">Damaros turns community clinics into governed trial-access nodes, using locked protocols, site-approved evidence, deterministic screening, REVIEW worklists, and replayable referral packets. PHI never touches an LLM.</p>
+      <p class="hero-anchor" style="margin-left: 2px">PHI never touches an LLM.</p>
+      <p class="eyebrow hero-doctrine" style="margin-left: 2px">AI upstream. Determinism downstream. Human review before referral. Replay always.</p>
+      <p class="hero-anchor" style="margin-left: 2px">The model is not the system of record.</p>
+      <span class="chip locked hero-chip" style="margin-left: 2px">NO LLM ON THE PHI PATH</span>
+      <div class="hero-actions" style="margin-left:2px">
+        <a class="dmx-cta dmx-cta--sm" href="#execution-chain">View the execution chain</a>
+        <a class="h-ref" href="/trust-boundary">Read the trust boundary →</a>
+      </div>
 
       <div class="caption" style="margin: 26px 0px 0px 2px">
         <div class="crule"></div>
@@ -366,8 +401,8 @@
   <section class="story">
     <div class="story-inner">
       <header class="story-lede reveal flow-in" style="margin-bottom: clamp(1.7rem, 4vh, 2.5rem)">
-        <span class="eyebrow">The gap</span>
-        <h2>Trials fragment at <em>the site.</em></h2>
+        <span class="eyebrow">Market truth</span>
+        <h2>Academic centers have trial infrastructure. <em>Community clinics have patients.</em></h2>
       </header>
 
       <div class="gap-scene reveal">
@@ -380,12 +415,16 @@
         </div>
       </div>
 
-      <p class="gap-note reveal">The legacy stack is chaotic. Four steps stranded across systems. Damaros™ creates that governed execution spine to connect them.</p>
+      <p class="gap-note reveal">Damaros turns community clinics into governed trial-access nodes, so decentralized trial access can run on one governed execution spine.</p>
 
-      <p class="story-turn reveal" style="margin-top: clamp(2.2rem, 5.5vh, 3.4rem)">
-</p>
+      <p class="story-turn reveal" style="margin-top: clamp(2.2rem, 5.5vh, 3.4rem)">Hospitals and community clinics are execution environments. Sponsors, CROs, and federal networks are economic buyers.</p>
 
-      <div class="spine-cards reveal">
+      <div class="disambig reveal flow-in">
+        <h3 style="font-size: 24px">Matching is discovery. <em>Damaros is governed access.</em></h3>
+        <p>Discovery can identify candidates. Governed access operationalizes sponsor-deployed protocol decisions with deterministic screening, human review, and replayable referral packets.</p>
+      </div>
+
+      <div class="spine-cards reveal" id="execution-chain">
         <div class="scard flow-in">
           <span class="sc-n">01 · Protocol</span>
           <h3>Execution basis</h3>
@@ -402,47 +441,119 @@
           <span class="sc-n">03 · Screening</span>
           <h3>Governed verdicts</h3>
           <p class="sc-op">Every patient is evaluated PASS, REVIEW, or FAIL at criterion level, with evidence attached.</p>
-          <p class="sc-trust">No generative verdicts. Human review stays explicit. Same inputs, same answer.</p>
+          <p class="sc-trust">No LLM eligibility verdicts over PHI. Human review stays explicit. Same inputs, same answer.</p>
         </div>
         <div class="scard flow-in">
           <span class="sc-n">04 · Replay</span>
-          <h3>Site memory</h3>
-          <p class="sc-op">Any decision reconstructs from protocol version, evidence snapshot, and engine run.</p>
+          <h3><a href="/replay">Site memory</a></h3>
+          <p class="sc-op">Any decision reconstructs from protocol version, evidence snapshot, engine run, and adjudication history.</p>
           <p class="sc-trust">QA, sponsor oversight, and audit become queryable, not forensic.</p>
         </div>
       </div>
 
       <div class="disambig reveal flow-in">
-        <h3 style="font-size: 24px"><em>Not</em> CTMS. <em>Not</em> a shadow EHR. <em>Not</em> chatbots. <em>Not</em> trial matching.</h3>
-        <p>Damaros™ sits between approved protocols and approved site evidence, producing deterministic screening records, human review states, and replayable execution lineage. Epic stays the system of record.</p>
+        <h3 style="font-size: 24px">Clinic Node + <em>Sponsor Access Console.</em></h3>
+        <p><strong>Clinic Node</strong> screens against sponsor-deployed protocols and surfaces review-ready patients for clinic-confirmed referral. <strong>Sponsor Access Console</strong> provides permissioned, de-identified execution visibility across governed trial-access nodes.</p>
+        <p style="margin-top:.7rem">Clinics get trial-access infrastructure. Sponsors get permissioned, evidence-ready reach.</p>
+        <p style="margin-top:.4rem">Sites get worklists. Networks get truth.</p>
+      </div>
+
+      <div class="stake reveal flow-in">
+        <div class="stake-col">
+          <span class="sa">Layer 1</span>
+          <h3>Discovery</h3>
+          <p>Which patient might match which trial. Valuable and crowded, not where Damaros competes.</p>
+        </div>
+        <div class="stake-col">
+          <span class="sa">Layer 2</span>
+          <h3>Execution</h3>
+          <p>Locked protocol plus site-approved evidence becomes deterministic PASS, REVIEW, and FAIL at criterion level.</p>
+        </div>
+        <div class="stake-col">
+          <span class="sa">Layer 3</span>
+          <h3>Institutional memory</h3>
+          <p>Every protocol run, review action, and adjudication compounds into replayable network execution memory.</p>
+        </div>
+      </div>
+
+      <div class="six-qs reveal flow-in">
+        <span class="eyebrow">The execution ledger</span>
+        <h3>Six questions every institution must answer.</h3>
+        <ol>
+          <li>What protocol version was locked?</li>
+          <li>What evidence was admitted?</li>
+          <li>Which criterion passed, failed, or required review?</li>
+          <li>Who adjudicated uncertainty?</li>
+          <li>What changed?</li>
+          <li>Can the decision be replayed?</li>
+        </ol>
+        <p>Damaros answers all six by construction. That is the difference between a model output and an execution record.</p>
       </div>
 
       <div class="disambig reveal flow-in">
-        <h3 style="font-size: 24px">Built for <em>hospital deployment.</em></h3>
-        <p>FHIR-first and read-only by default, on site-approved cohorts. No PHI ever reaches an LLM, and every screening decision keeps a replayable, criterion-level audit trail. The same execution chain runs validation and production.</p>
-        <a class="h-ref" href="docs/fhir.html">Full integration reference →</a>
+        <h3 style="font-size: 24px">Replayable referral packet, <em>not citation theater.</em></h3>
+        <p>A citation shows what a model read. Replay reconstructs the decision an institution made. Every packet includes locked protocol version, admitted evidence, criterion outcomes, REVIEW actions, and referral confirmation history.</p>
+      </div>
+
+      <div class="review-queue reveal flow-in">
+        <h3>REVIEW is not failure. REVIEW is the worklist.</h3>
+        <p>Evidence Readiness Queue, coordinator-ready at shift start.</p>
+        <div class="queue-grid">
+          <div class="queue-item"><b>17</b>blocked by missing ECOG</div>
+          <div class="queue-item"><b>9</b>blocked by stale creatinine</div>
+          <div class="queue-item"><b>6</b>blocked by unresolved EGFR status</div>
+          <div class="queue-item"><b>4</b>blocked by prior-therapy ambiguity</div>
+        </div>
+        <p style="margin-top:1rem;font-family:var(--fh);font-weight:600;color:var(--fg)">Sites get worklists. Networks get truth.</p>
+      </div>
+
+      <div class="disambig reveal flow-in">
+        <span class="eyebrow">Trust boundary</span>
+        <h3 style="font-size: 24px">The model is <em>not</em> the system of record.</h3>
+        <p>Damaros uses AI upstream, on non-PHI protocol and document logic. It never issues eligibility verdicts over PHI. The patient-path chain stays deterministic, evidence-bound, human-reviewed, and replayable. Governance is what lets clinical AI scale. Regulated AI does not scale through opacity, it scales through replay.</p>
+      </div>
+
+      <div class="stake reveal flow-in">
+        <span class="eyebrow" style="grid-column: 1 / -1; margin: 1.2rem 1.4rem 0;">The model is not the system of record</span>
+        <div class="stake-col">
+          <span class="sa">AI is permitted</span>
+          <h3>Upstream intelligence</h3>
+          <p>Criterion structuring, ambiguity detection, mapping suggestions, protocol intelligence, and governed narration on non-PHI inputs.</p>
+        </div>
+        <div class="stake-col">
+          <span class="sa">AI is not permitted</span>
+          <h3>Patient-path verdicts</h3>
+          <p>No PHI parsing, no eligibility verdicts, no adjudication, no replay reconstruction, and no model as audit source of truth.</p>
+        </div>
+        <div class="stake-col">
+          <span class="sa">Doctrine</span>
+          <h3>Trust by construction</h3>
+          <p>AI upstream. Determinism downstream. Replay across the network. <a href="/trust-boundary">Read the trust boundary</a>.</p>
+        </div>
       </div>
 
       <div class="who reveal" style="margin-top: clamp(2.8rem, 7vh, 4.4rem)">
         <header class="who-head">
           <span class="eyebrow">Who it serves</span>
-          <h2 style="width: 750px">The spine for <em>modern clinical trials.</em></h2>
+          <h2 style="width: 750px">Built for <em>buyers and operators of decentralized trial access.</em></h2>
         </header>
         <div class="who-cards">
-          <div class="wcard flow-in"><h3>Sites &amp; networks</h3><p>Protocol, evidence, screening, and replay on a single substrate. Faster cycles, consistent decisions, records that reconstruct on demand.</p></div>
-          <div class="wcard flow-in"><h3>Coordinators &amp; study teams</h3><p>Damaros normalizes dense eligibility and fragmented evidence, screens every patient deterministically, and surfaces the highest-leverage next action.</p></div>
-          <div class="wcard flow-in"><h3>Sponsors &amp; CROs</h3><p>Criterion-level execution and replay-ready evidence across every site and protocol, on one basis. Oversight becomes a query, not a fire drill.</p></div>
+          <div class="wcard flow-in"><h3>Sponsors</h3><p>Inspect permissioned, de-identified execution truth: protocol friction points, evidence blockers, and clinic readiness across decentralized nodes.</p></div>
+          <div class="wcard flow-in"><h3>CROs</h3><p>Operate review queues across community clinics with deterministic outputs and replayable referral packets.</p></div>
+          <div class="wcard flow-in"><h3>Federal networks</h3><p>Expand trial reach outside elite research centers while preserving institutional oversight and auditability.</p></div>
+          <div class="wcard flow-in"><h3>Sites and coordinators</h3><p>Screen against sponsor-deployed protocols, surface review-ready patients, and confirm referral with evidence lineage intact.</p></div>
         </div>
       </div>
 
       <div class="reveal flow-in" style="margin-top: clamp(2.8rem, 7vh, 4.4rem)">
-        <span class="eyebrow stats-lede">The cost of the gap</span>
+        <span class="eyebrow stats-lede">Category-creation metrics</span>
         <div class="stats">
-          <div class="stat"><span class="snum">$30B+</span><span class="slbl">spent directly at U.S. clinical trial sites in 2023</span><span class="ssrc">PhRMA</span></div>
-          <div class="stat"><span class="snum">~80%</span><span class="slbl">of trials miss their enrollment timelines</span><span class="ssrc">Tufts CSDD · industry analyses</span></div>
-          <div class="stat"><span class="snum">1 in 5</span><span class="slbl">activated sites enroll zero patients</span><span class="ssrc">CenterWatch / Tufts CSDD</span></div>
-          <div class="stat"><span class="snum">&lt;5%</span><span class="slbl">of eligible patients are ever approached</span><span class="ssrc">NCI · J Clin Oncol</span></div>
+          <div class="stat"><span class="snum">2024</span><span class="slbl">FDA finalized guidance for trials with decentralized elements</span><span class="ssrc">FDA Federal Register</span></div>
+          <div class="stat"><span class="snum">1,000+</span><span class="slbl">NCORP community affiliates supporting U.S. oncology research access</span><span class="ssrc">NCI NCORP</span></div>
+          <div class="stat"><span class="snum">Up to 80%</span><span class="slbl">of U.S. cancer care occurs in non-academic community settings</span><span class="ssrc">JCO Oncol Pract / JCO Glob Oncol</span></div>
+          <div class="stat"><span class="snum">16,000+</span><span class="slbl">trials analyzed show a decade-long rise in protocol complexity</span><span class="ssrc">NPJ Digit Med</span></div>
         </div>
+        <p class="validation-teaser">Built for validation before deployment. <a href="/validation">See the network validation dossier approach →</a></p>
       </div>
     </div>
   </section>
@@ -450,14 +561,16 @@
   <section class="finale">
     <img class="finale-mono" src="assets/damaros-white-transparent.png" alt="" aria-hidden="true">
     <div class="finale-rule reveal"></div>
-    <h2 class="reveal flow-in">Clinical trials, <em>rewired</em></h2>
+    <h2 class="reveal flow-in">Community trial access, <em>governed.</em></h2>
+    <p class="reveal flow-in">Community trial access, governed from protocol to referral.</p>
     <a class="dmx-cta dmx-cta--md reveal s2" href="/cdn-cgi/l/email-protection#7d1c13140f0819153d191c101c0f120e531c14420e081f17181e0940391c101c0f120e584f4d0b1c1114191c09141213584f4d0a1c111609150f12081a15">GET IN TOUCH</a>
   </section>
 </main>
 
 <div class="botbar">
   <span class="geo pending" id="geo">Locating</span>
-  <span class="bc"><a href="/docs/fhir">FHIR</a><a href="/privacy">Privacy</a></span>
+  <span class="bc"><a href="/">Home</a><a href="/trust-boundary">Trust Boundary</a><a href="/replay">Replay</a><a href="/validation">Validation</a><a href="/docs/fhir">FHIR</a><a href="/privacy">Privacy</a><a href="/about">About</a></span>
+  <span class="tagline">Damaros governs trial execution from protocol to replay.</span>
   <span class="cp">© 2026 Damaros™</span>
 </div>
 
@@ -586,11 +699,11 @@
 
   /* pillars */
   var PILLARS = {
-    trident:   { color: "accent2", label: "Substrate / Trident",  title: "Compounding protocol intelligence.", emph: "", desc: "Trident turns inclusion and exclusion criteria into reusable protocol ontology: versioned logic, evidence expectations, and trial-ready mappings that sharpen with every release and hold across every site." },
-    luna:      { color: "luna",    label: "Substrate / Luna",     title: "Every model, governed.",        emph: "governed.", desc: "Luna clamps the harness around every model. AI drafts the language-heavy work and never the verdict, and PHI never reaches a model." },
+    trident:   { color: "accent2", label: "Substrate / Trident",  title: "Compounding protocol intelligence.", emph: "", desc: "Trident compiles protocol language into executable eligibility structure: versioned logic, evidence expectations, and trial-ready mappings that sharpen with every release and hold across every site." },
+    luna:      { color: "luna",    label: "Substrate / Luna",     title: "Governance harness at runtime.",        emph: "", desc: "Luna records AI origin, policy boundaries, provenance, and execution constraints. AI drafts the language-heavy work and never the verdict, and PHI never reaches a model." },
     protocol:  { color: "locked",  label: "01 / Protocol",        title: "Complex eligibility, normalized.", emph: "normalized.", desc: "Dense, ambiguous protocol inclusion and exclusion is compiled into one precise basis the entire trial executes against." },
     evidence:  { color: "accent",  label: "02 / Evidence",        title: "Fragmented data, resolved.",     emph: "resolved.", desc: "FHIR, exports, spreadsheets, labs, notes, and registry fragments collapse into one governed evidence plane before Damaros screens a single patient." },
-    screening: { color: "screening", label: "03 / Screening",     title: "Patients screened deterministically.", emph: "deterministically.", desc: "Deterministic PASS, REVIEW, or FAIL at criterion level with evidence attached. The same inputs always give the same answer." },
+    screening: { color: "screening", label: "03 / Screening",     title: "Patients screened deterministically.", emph: "deterministically.", desc: "Deterministic PASS, REVIEW, or FAIL at criterion level with evidence attached. No LLM eligibility verdicts over PHI. The same inputs always give the same answer." },
     replay:    { color: "accent2", label: "04 / Replay",          title: "Reproducible by default.",       emph: "by default.", desc: "Any decision reconstructs from version, evidence, and context into a signed bundle. No manual reconstruction, ever." }
   };
   var ORDER = ["trident", "luna", "protocol", "evidence", "screening", "replay"];

@@ -61,11 +61,12 @@
 </head>
 <body>
 <nav class="dmx-nav">
-  <a class="dmx-brand" href="../index.html"><img class="mark" src="../assets/damaros-monogram-white.png" alt="" style="width:22px;height:22px;object-fit:contain"> Damaros<span class="dmx-dot"></span></a>
   <div class="dmx-nav-links">
-    <a class="dmx-nav-link" href="../index.html">Home</a>
-    <a class="dmx-nav-link" href="fhir.html" aria-current="true">FHIR</a>
-    <a class="dmx-nav-link" href="privacy.html">Privacy</a>
+    <a class="dmx-nav-link" href="/">Home</a>
+    <a class="dmx-nav-link" href="/trust-boundary">Trust Boundary</a>
+    <a class="dmx-nav-link" href="/replay">Replay</a>
+    <a class="dmx-nav-link" href="/validation">Validation</a>
+    <a class="dmx-nav-link" href="/about">About</a>
   </div>
 </nav>
 
@@ -80,7 +81,7 @@
     <div class="sec-label">00_SUBMISSION_NARRATIVE</div>
     <h2 class="sec-head">Research execution on approved cohorts, not ad hoc analytics.</h2>
     <div class="body">
-      <p>Damaros is clinical-trial execution infrastructure for site-approved cohorts. Site-approved FHIR access binds locked protocol logic to a defined population, evaluates eligibility deterministically, and preserves criterion-level evidence with replay lineage on one audit path.</p>
+      <p>Damaros is clinical-trial execution infrastructure for site-approved cohorts. Site-approved FHIR access binds locked protocol logic to a defined evidence cohort, evaluates eligibility deterministically, and preserves criterion-level evidence with replay lineage on one audit path.</p>
       <p><strong>Deterministic core.</strong> Versioned protocol logic plus normalized clinical facts from REST and optional bulk export feed a single eligibility engine. Outputs are PASS, REVIEW, or FAIL at criterion granularity with evidence and sync provenance. No generative verdict on the screening path.</p>
       <p><strong>Trident</strong> is trial knowledge that sharpens with every protocol release and site run, compounding into executable logic. <strong>Luna</strong> is the governance harness where AI-assisted work becomes traceable, reviewable, and safe.</p>
       <div class="callout"><strong>No shadow EHR.</strong> Damaros is not a secondary warehouse. Ingest ends in protocol-scoped screening artifacts. Epic remains system of record for longitudinal care.</div>
@@ -92,7 +93,7 @@
     <h2 class="sec-head">Platform overview</h2>
     <div class="body">
       <p>The operating chain is Protocol → Evidence → Screening → Replay. Versioned protocol compiles to rules; FHIR sync materializes the cohort as governed evidence; screening records PASS, REVIEW, or FAIL per criterion; replay preserves the protocol version, evidence, and execution context for coordinators, QA, and audit.</p>
-      <p>Production uses SMART on FHIR Backend Services: a signed JWT exchanged for an access token (<code>client_credentials</code> + <code>private_key_jwt</code>, RFC 7523). Read-only for population and screening ingest. Tokens stay server-side in process memory, never in browsers.</p>
+      <p>Production uses SMART on FHIR Backend Services: a signed JWT exchanged for an access token (<code>client_credentials</code> + <code>private_key_jwt</code>, RFC 7523). Read-only for evidence cohort and screening ingest. Tokens stay server-side in process memory, never in browsers.</p>
     </div>
   </section>
 
@@ -130,8 +131,8 @@
     <h2 class="sec-head">Initial requested scopes</h2>
     <div class="body"><p>An OAuth floor of eight <code>system/*.read</code> scopes covers the per-patient eligibility bundle plus cohort membership via <code>GET Group/{id}</code>. No write scopes on first deployment. The connector never calls FHIR Binary; DocumentReference ingest keeps metadata only.</p></div>
     <ul class="scopes">
-      <li><span class="sn">system/Patient.read</span><span class="sd">Patient resource for population binding and demographics used in deterministic rules</span></li>
-      <li><span class="sn">system/Group.read</span><span class="sd">Resolve Epic cohort membership for approved trial population lists</span></li>
+      <li><span class="sn">system/Patient.read</span><span class="sd">Patient resource for cohort binding and demographics used in deterministic rules</span></li>
+      <li><span class="sn">system/Group.read</span><span class="sd">Resolve Epic cohort membership for approved trial evidence lists</span></li>
       <li><span class="sn">system/Observation.read</span><span class="sd">Laboratory observations per Epic-tuned searches, not a full-chart extract</span></li>
       <li><span class="sn">system/Condition.read</span><span class="sd">Active and problem-list context for inclusion or exclusion criteria</span></li>
       <li><span class="sn">system/MedicationRequest.read</span><span class="sd">Outpatient medication orders for protocol-relevant criteria</span></li>
@@ -148,7 +149,7 @@
     <div class="sec-label">04_CLINICAL_DATA_BOUNDARY</div>
     <h2 class="sec-head">Clinical data boundary</h2>
     <ul class="bullets">
-      <li><strong>Populations</strong> (Epic cohorts) are defined by approved protocol logic or institutional configuration.</li>
+      <li><strong>Evidence cohorts</strong> (Epic cohorts) are defined by approved protocol logic or institutional configuration.</li>
       <li>PHI is processed inside the institution-approved deployment boundary, with tenant isolation per the deploy contract.</li>
       <li><strong>PHI never reaches an LLM.</strong> Criterion PASS / REVIEW / FAIL comes only from the deterministic engine on ingested FHIR. No patient identifiers or cohort-linked fields are serialized into any optional external request path.</li>
       <li>Helm ships deny-by-default API egress <code>NetworkPolicy</code> with explicit CIDR allowlists for Epic FHIR, OIDC, in-cluster Postgres/Redis, and DNS.</li>
@@ -160,7 +161,7 @@
     <div class="sec-label">05_AUDIT_AND_REPLAY</div>
     <h2 class="sec-head">Audit, determinism, and replay</h2>
     <ul class="bullets">
-      <li>Decisions are reproducible for a fixed protocol version, population snapshot, evidence snapshot, and <code>evaluation_as_of</code>.</li>
+      <li>Decisions are reproducible for a fixed protocol version, cohort snapshot, evidence snapshot, and <code>evaluation_as_of</code>.</li>
       <li>Every patient outcome is recorded at criterion level with PASS, FAIL, or REVIEW and a rationale.</li>
       <li>Protocol amendments link to versioned protocol IDs and engine versions.</li>
       <li>Replay classifies agreement or divergence. No opaque "model decided" eligibility.</li>
@@ -198,7 +199,8 @@
 
 <footer>
   <span>© 2026 Damaros™</span>
-  <div class="fl"><a href="../index.html">Home</a><a href="privacy.html">Privacy</a></div>
+  <div class="fl"><a href="/">Home</a><a href="/trust-boundary">Trust Boundary</a><a href="/replay">Replay</a><a href="/validation">Validation</a><a href="/docs/fhir">FHIR</a><a href="/privacy">Privacy</a><a href="/about">About</a></div>
+  <span style="font-size:.54rem;letter-spacing:.12em;color:var(--fg-3);text-transform:uppercase">Damaros governs trial execution from protocol to replay.</span>
 </footer>
 </body>
 </html>

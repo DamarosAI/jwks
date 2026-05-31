@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<title>Damaros - Validation</title>
+<link rel="icon" href="assets/damaros-favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap">
+<script src="shared/theme-system.js"></script>
+<link rel="stylesheet" href="shared/damaros.css">
+<style>
+  .docs { max-width: 920px; margin: 0 auto; padding: calc(60px + 3.4rem) clamp(1.1rem, 4vw, 2.4rem) 6rem; position: relative; z-index: 1; }
+  .d-eyebrow { font-family: var(--fm); font-size: .6rem; letter-spacing: .18em; text-transform: uppercase; color: var(--accent-2); margin-bottom: .7rem; }
+  .d-title { font-family: var(--fh); font-weight: 600; font-size: clamp(1.9rem, 4.4vw, 3rem); letter-spacing: -.01em; line-height: 1.03; }
+  .d-lead { color: var(--fg-2); font-size: 1rem; line-height: 1.7; margin: 1.2rem 0 0; max-width: 64ch; }
+  .divider { height: 1px; background: var(--bd-soft); margin: 2.8rem 0; }
+  .tier { border: 1px solid var(--bd-soft); border-radius: 12px; padding: 1.2rem; margin-bottom: 1rem; background: var(--chip-bg); }
+  .tier h3 { font-family: var(--fh); margin: 0 0 .5rem; font-size: 1.16rem; }
+  .tier p { margin: 0; color: var(--fg-2); font-size: .92rem; line-height: 1.62; }
+  .tier.subordinate { opacity: .88; }
+  .callout { margin: 1rem 0 0; padding: .85rem 1.15rem; border-left: 2px solid var(--bd-strong); background: var(--chip-bg); color: var(--fg-2); font-family: var(--fm); font-size: .76rem; line-height: 1.65; border-radius: 0 6px 6px 0; }
+  .metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem 1rem; margin-top: 1rem; }
+  .metric { border-top: 1px solid var(--bd-soft); padding-top: .6rem; color: var(--fg-2); font-size: .9rem; }
+  .metric b { color: var(--accent-2); font-family: var(--fm); font-size: .68rem; letter-spacing: .11em; text-transform: uppercase; display: block; margin-bottom: .3rem; }
+  footer { border-top: 1px solid var(--bd-soft); padding: 2.2rem clamp(1.1rem,4vw,2.4rem); display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; align-items: center; font-family: var(--fm); font-size: .6rem; letter-spacing: .1em; color: var(--fg-3); max-width: 920px; margin: 0 auto; text-transform: uppercase; }
+  footer .fl { display: flex; gap: 1.2rem; }
+  footer .tag { font-size: .54rem; letter-spacing: .12em; }
+  @media (max-width: 760px) { .metrics { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<nav class="dmx-nav">
+  <div class="dmx-nav-links">
+    <a class="dmx-nav-link" href="/">Home</a>
+    <a class="dmx-nav-link" href="/trust-boundary">Trust Boundary</a>
+    <a class="dmx-nav-link" href="/replay">Replay</a>
+    <a class="dmx-nav-link" href="/validation" aria-current="true">Validation</a>
+    <a class="dmx-nav-link" href="/about">About</a>
+  </div>
+</nav>
+
+<main class="docs">
+  <div class="d-eyebrow">Validation</div>
+  <h1 class="d-title">Built for validation before deployment.</h1>
+  <p class="d-lead">Validation in Damaros is staged, inspectable, and tied to the same execution chain used in production across sites. This is how sponsors, CROs, and federal networks trust deterministic screening and replay at scale.</p>
+  <div class="callout"><strong>Honesty callout.</strong> This page describes engineering and execution validation only. It does not claim clinical efficacy, FDA clearance, or sponsor endorsement.</div>
+
+  <div class="divider"></div>
+
+  <section class="tier subordinate">
+    <div class="d-eyebrow">01_ENGINEERING_VALIDATION</div>
+    <h3>Engineering validation</h3>
+    <p>Current matrix: 100 synthetic patients across 6 NCT-anchored protocol locks and 9 ingestion modalities, totaling 5,400 deterministic evaluation slots.</p>
+  </section>
+
+  <section class="tier">
+    <div class="d-eyebrow">02_RETROSPECTIVE_VALIDATION</div>
+    <h3>Retrospective validation</h3>
+    <p>Closed cohorts with adjudicated outcomes are replayed to measure agreement, review burden, site bottlenecks, and evidence quality before any prospective network rollout.</p>
+  </section>
+
+  <section class="tier">
+    <div class="d-eyebrow">03_METRICS_DOSSIER</div>
+    <h3>Validation dossier dimensions</h3>
+    <div class="metrics">
+      <div class="metric"><b>Agreement</b>Criterion-level agreement vs adjudicated outcomes.</div>
+      <div class="metric"><b>False PASS</b>Ineligible patients labeled PASS.</div>
+      <div class="metric"><b>False FAIL</b>Eligible patients labeled FAIL.</div>
+      <div class="metric"><b>Review burden</b>REVIEW taxonomy and queue volume by site.</div>
+      <div class="metric"><b>Missing evidence</b>Top blocker categories per criterion and per site.</div>
+      <div class="metric"><b>Lineage completeness</b>Evidence source and timestamp coverage.</div>
+      <div class="metric"><b>Replay completeness</b>Reconstruction success across packets.</div>
+      <div class="metric"><b>Adjudication deltas</b>Human override patterns by criterion.</div>
+      <div class="metric"><b>Run reproducibility</b>Same inputs, same outputs verification.</div>
+      <div class="metric"><b>Time to adjudication</b>Cycle time from REVIEW creation to referral-ready closure.</div>
+    </div>
+  </section>
+
+  <section class="tier">
+    <div class="d-eyebrow">04_DOSSIER_AUDIENCE</div>
+    <h3>Dossier audience</h3>
+    <p>Output format is a dossier a sponsor operations lead, CRO delivery lead, CISO, PI, CTO, and QA lead can inspect. Not a demo screenshot.</p>
+  </section>
+
+  <section class="tier">
+    <div class="d-eyebrow">05_INTEGRATION_POSTURE</div>
+    <h3>Integration posture</h3>
+    <p>FHIR-ready by default, with export-first deployment paths when validation must start before integration. No implied Epic production cutover until institution readiness gates are met.</p>
+    <p style="margin-top:.6rem;color:var(--fg-2);">See integration details on <a href="/docs/fhir">/docs/fhir</a>.</p>
+  </section>
+  <section class="tier">
+    <div class="d-eyebrow">06_TRUST_BOUNDARY</div>
+    <h3>Trust boundary linkage</h3>
+    <p>Validation posture is inseparable from execution boundaries. Review AI-permitted and AI-prohibited surfaces on <a href="/trust-boundary">/trust-boundary</a>.</p>
+  </section>
+</main>
+
+<footer>
+  <span>© 2026 Damaros™</span>
+  <div class="fl"><a href="/">Home</a><a href="/trust-boundary">Trust Boundary</a><a href="/replay">Replay</a><a href="/validation">Validation</a><a href="/docs/fhir">FHIR</a><a href="/privacy">Privacy</a><a href="/about">About</a></div>
+  <span class="tag">Damaros governs trial execution from protocol to replay.</span>
+</footer>
+</body>
+</html>
