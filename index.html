@@ -76,7 +76,6 @@
     z-index: 7; display: flex; flex-direction: column; align-items: center; gap: .35rem; padding: .4rem 1rem;
     color: var(--fg-3); text-decoration: none; transition: opacity .35s var(--ease); }
   .hero-scroll.is-hidden { opacity: 0; pointer-events: none; }
-  .hero-scroll-label { font-family: var(--fm); font-size: .52rem; letter-spacing: .16em; text-transform: uppercase; color: var(--fg-3); }
   .hero-scroll-arrow { width: 12px; height: 12px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor;
     transform: rotate(45deg); animation: heroScrollCue 1.85s ease-in-out infinite; }
   @keyframes heroScrollCue {
@@ -605,7 +604,6 @@
       </div>
     </nav>
     <a class="hero-scroll" href="#story" aria-label="Scroll to learn more">
-      <span class="hero-scroll-label">Scroll</span>
       <span class="hero-scroll-arrow" aria-hidden="true"></span>
     </a>
   </section>
