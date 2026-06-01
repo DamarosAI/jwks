@@ -7,7 +7,9 @@
   var REDUCED = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   var canvases = [].slice.call(document.querySelectorAll("canvas.mini[data-mode]"));
   if (!canvases.length) return;
-  var DPR = Math.min(2, window.devicePixelRatio || 1);
+  var MOBILE = matchMedia("(hover: none), (pointer: coarse)").matches || window.innerWidth <= 700;
+  var SFX = MOBILE ? 0.42 : 1;
+  var DPR = Math.min(MOBILE ? 1.25 : 2, window.devicePixelRatio || 1);
   var COL = readCol();
 
   function readCol() {
@@ -181,28 +183,33 @@
         ctx.beginPath(); ctx.arc(q.x, q.y, rad, 0, 6.2832);
         ctx.fillStyle = col;
         ctx.globalAlpha = Math.min(1, alpha * (0.85 + 0.15 * pulse));
-        ctx.shadowBlur = 6 * pulse * e * bright; ctx.shadowColor = col; ctx.fill();
+        ctx.shadowBlur = 6 * pulse * e * bright * SFX; ctx.shadowColor = col; ctx.fill();
         ctx.shadowBlur = 0; ctx.globalAlpha = 1;
       });
     }
 
     var t0 = performance.now();
-    function frame(now) {
+    function onFrame(now) {
       morph = Math.min(1, morph + Math.min(0.05, (now - t0) / 1000) * 1.6);
       t0 = now;
       render(now);
-      requestAnimationFrame(frame);
     }
 
     layout();
-    var rt;
+    var rt, roT;
     window.addEventListener("resize", function () {
       clearTimeout(rt);
       rt = setTimeout(function () { layout.done = false; layout(); }, 150);
     });
-    if (window.ResizeObserver) new ResizeObserver(function () { layout(); }).observe(canvas);
+    if (window.ResizeObserver) {
+      new ResizeObserver(function () {
+        clearTimeout(roT);
+        roT = setTimeout(layout, 80);
+      }).observe(canvas);
+    }
     if (REDUCED) { morph = 1; render(performance.now()); }
-    else requestAnimationFrame(frame);
+    else if (window.DamarosAnim) DamarosAnim.loop({ root: canvas, onFrame: onFrame }).start();
+    else (function spin(now) { onFrame(now); requestAnimationFrame(spin); })(performance.now());
   }
 
   canvases.forEach(make);

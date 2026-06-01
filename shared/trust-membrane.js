@@ -14,7 +14,9 @@
   var cv = document.getElementById("tbField"); if (!cv) return;
   var ctx = cv.getContext("2d");
   var REDUCED = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var DPR = Math.min(2, window.devicePixelRatio || 1), W = 0, H = 0, last = 0;
+  var MOBILE = matchMedia("(hover: none), (pointer: coarse)").matches || window.innerWidth < 560;
+  var SFX = MOBILE ? 0.45 : 1;
+  var DPR = Math.min(MOBILE ? 1.25 : 2, window.devicePixelRatio || 1), W = 0, H = 0, last = 0;
   var C = {};
   var sponsors = [], core, coreW, coreH, sites = [], tokens = [], probes = [], beamL = null, beamR = null, lastBeam = 0;
 
@@ -75,7 +77,7 @@
   function newProbe(wait) { var st = siteOf(), ang = Math.atan2(core.y - st.y, core.x - st.x); return { site: st, ang: ang, d: 0, v: rnd(16, 28), wait: wait, fade: 0 }; }
 
   function dot(x, y, r, col, a, glow) {
-    if (glow) { ctx.shadowColor = rgb(col, 0.9); ctx.shadowBlur = glow; }
+    if (glow) { ctx.shadowColor = rgb(col, 0.9); ctx.shadowBlur = glow * SFX; }
     ctx.fillStyle = rgb(col, a); ctx.beginPath(); ctx.arc(x, y, r, 0, 6.2832); ctx.fill();
     if (glow) ctx.shadowBlur = 0;
   }
@@ -102,7 +104,6 @@
     drawTokens(t, dt);
     drawBeams(now, dt);
     drawProbes(t, dt);
-    requestAnimationFrame(frame);
   }
 
   function drawLinks() {
@@ -201,7 +202,13 @@
     label("Sponsors \u00b7 CROs \u00b7 Networks", sponsors[sponsors.length - 1].x, sponsors[sponsors.length - 1].y + sponsors[0].r + 30, C.fg, 8.5);
     label("Sites", W * 0.86, H * 0.94, C.fg);
   }
-  function start() { readColors(); layout(); if (REDUCED) { staticFrame(); return; } last = performance.now(); requestAnimationFrame(frame); }
+  function start() {
+    readColors(); layout();
+    if (REDUCED) { staticFrame(); return; }
+    last = performance.now();
+    if (window.DamarosAnim) DamarosAnim.loop({ root: stage, onFrame: frame }).start();
+    else (function spin(now) { frame(now); requestAnimationFrame(spin); })(last);
+  }
   var rt; window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { layout(); if (REDUCED) staticFrame(); }, 150); });
   new MutationObserver(function () { readColors(); if (REDUCED) staticFrame(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
   if (document.readyState !== "loading") start(); else document.addEventListener("DOMContentLoaded", start);
