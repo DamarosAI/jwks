@@ -33,3 +33,11 @@ Retrieval date: 2026-05-31
 - Source label: `NPJ Digit Med`
 - URL: https://pmc.ncbi.nlm.nih.gov/articles/PMC10861486/
 - Exact quote excerpt: `Here we present a large-scale analysis of protocols and other data from over 16,000 trials.`
+
+## 5) Amendment cascade latency
+
+- Displayed number: `61 days`
+- Claim text: `average added when an amendment cascades to participating sites`
+- Source label: `Tufts CSDD`
+- URL: https://pmc.ncbi.nlm.nih.gov/articles/PMC4053871/
+- Exact quote excerpt: `On average the direct cost to implement a single protocol amendment is approximately $500,000 (USD) in unplanned expense and adds 61 days to the project timeline.`
