@@ -321,6 +321,7 @@
     .caption { position: relative; left: auto; bottom: auto; width: auto; order: 5; margin-top: 1.25rem; }
     .c-title, .c-desc { height: auto; }
     .stake { grid-template-columns: 1fr; }
+    .flow-in, .draw { opacity: 1; transform: none; transition: none; }
   }
   /* nav: no wordmark in the corner - tabs only, top-left */
   .dmx-nav { justify-content: flex-start; }
@@ -745,7 +746,7 @@
 </div>
 
 <script src="shared/geo-footer.js"></script>
-<script src="shared/anim-governor.js"></script>
+<script src="shared/anim-governor.js?v=2"></script>
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 /* ============================================================
  * Damaros - terminal type-in reveal (inlined; self-contained).
@@ -755,6 +756,7 @@
  * ============================================================ */
 (function () {
   var REDUCED = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var MOBILE = window.DamarosAnim ? DamarosAnim.isMobile() : matchMedia("(hover: none), (pointer: coarse)").matches || window.innerWidth <= 900;
 
   function split(el) {
     if (el.__chars) return el.__chars;
@@ -819,7 +821,7 @@
   window.DMX_SC = { decode: reveal };
 
   function init() {
-    if (REDUCED) return;
+    if (REDUCED || MOBILE) return;
     var map = [];
     /* typewriter/scramble removed - entrances are clean fades via .flow-in on scroll */
     function inView(el) { var r = el.getBoundingClientRect(), vh = window.innerHeight || 800; return r.top < vh * 0.9 && r.bottom > 0; }
@@ -918,12 +920,12 @@
   var canvas = document.getElementById("field"), ctx = canvas.getContext("2d");
   var REDUCED = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   var TOUCH = matchMedia("(hover: none), (pointer: coarse)").matches;
+  var PF = window.DamarosAnim ? DamarosAnim.perf() : { mobile: TOUCH || window.innerWidth <= 900, dpr: Math.min(2, window.devicePixelRatio || 1), glow: 1 };
+  var MOBILE = PF.mobile;
+  var SFX = PF.glow;
   var SMALL = window.innerWidth <= 700;
-  var MOBILE = TOUCH || window.innerWidth <= 900;
-  var STATIC = REDUCED || MOBILE;
-  var SFX = MOBILE ? 0.42 : 1;
   var RSCALE = SMALL ? 0.66 : 1;
-  var DPR = Math.min(MOBILE ? 1.25 : 2, window.devicePixelRatio || 1), W = 0, H = 0, N = SMALL ? 84 : 120;
+  var DPR = PF.dpr, W = 0, H = 0, N = MOBILE ? 100 : (SMALL ? 84 : 120);
   var parts = [];
   for (var p = 0; p < N; p++) {
     var grp = p < N * 0.45 ? 0 : (p < N * 0.78 ? 1 : 2);
@@ -1168,8 +1170,8 @@
       ctx.stroke(); ctx.lineWidth = 1;
       /* large cursor */
       var rsy = rvWaveY(px); ctx.fillStyle = pcol; ctx.strokeStyle = pcol; ctx.shadowColor = pcol;
-      ctx.globalAlpha = e * 0.4; ctx.shadowBlur = 24 * SFX; ctx.beginPath(); ctx.arc(px, rsy, 6, 0, 6.2832); ctx.fill();
-      ctx.globalAlpha = e; ctx.shadowBlur = 12 * SFX; ctx.beginPath(); ctx.arc(px, rsy, 3.4, 0, 6.2832); ctx.fill(); ctx.shadowBlur = 0;
+      ctx.globalAlpha = e * 0.4; if (SFX) ctx.shadowBlur = 24; ctx.beginPath(); ctx.arc(px, rsy, 6, 0, 6.2832); ctx.fill();
+      ctx.globalAlpha = e; if (SFX) ctx.shadowBlur = 12; ctx.beginPath(); ctx.arc(px, rsy, 3.4, 0, 6.2832); ctx.fill(); ctx.shadowBlur = 0;
       ctx.globalAlpha = e * 0.55; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.arc(px, rsy, 9.5, 0, 6.2832); ctx.stroke(); ctx.lineWidth = 1;
     }
     ctx.restore();
@@ -1218,7 +1220,7 @@
       ctx.beginPath();
       if (sq) ctx.rect(q.x - rad, q.y - rad, rad * 2, rad * 2); else ctx.arc(q.x, q.y, rad, 0, 6.2832);
       ctx.fillStyle = col; ctx.globalAlpha = Math.min(1, alpha * (0.85 + 0.15 * pulse));
-      ctx.shadowBlur = 7 * pulse * e * bright * SFX; ctx.shadowColor = col; ctx.fill();
+      ctx.shadowBlur = SFX ? 7 * pulse * e * bright : 0; ctx.shadowColor = col; ctx.fill();
       ctx.shadowBlur = 0; ctx.globalAlpha = 1;
     });
   }
@@ -1238,19 +1240,28 @@
   var heroWrap = document.querySelector(".wrap");
   if (heroWrap) new ResizeObserver(sizeHeroCat).observe(heroWrap);
 
-  /* scroll reveals - robust scroll check */
+  /* scroll reveals - skip on mobile for smoother scrolling */
   var revs = [].slice.call(document.querySelectorAll(".reveal, .draw, .flow-in"));
-  function checkReveal() { var vh = window.innerHeight || 800; revs.forEach(function (el) { if (el.classList.contains("in")) return; if (el.getBoundingClientRect().top < vh * 0.86) el.classList.add("in"); }); }
-  window.addEventListener("scroll", checkReveal, { passive: true });
-  window.addEventListener("resize", checkReveal);
-  checkReveal();
+  if (MOBILE) revs.forEach(function (el) { el.classList.add("in"); });
+  else {
+    function checkReveal() { var vh = window.innerHeight || 800; revs.forEach(function (el) { if (el.classList.contains("in")) return; if (el.getBoundingClientRect().top < vh * 0.86) el.classList.add("in"); }); }
+    window.addEventListener("scroll", checkReveal, { passive: true });
+    window.addEventListener("resize", checkReveal);
+    checkReveal();
+  }
 
-  readColors(); layout(); sizeCaption(); sizeHeroCat(); setPillar("protocol", false);
-  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(function () { sizeCaption(); sizeHeroCat(); });
-  setTimeout(function () { sizeCaption(); sizeHeroCat(); }, 400);
-  if (STATIC) { morph = 1; runHeroFrame(performance.now()); }
-  else if (window.DamarosAnim) DamarosAnim.loop({ root: canvas, onFrame: runHeroFrame }).start();
-  else (function spin(now) { runHeroFrame(now); requestAnimationFrame(spin); })(performance.now());
+  function bootHero() {
+    layout();
+    if (!W || !H) { requestAnimationFrame(bootHero); return; }
+    if (REDUCED) { morph = 1; runHeroFrame(performance.now()); }
+    else if (window.DamarosAnim) DamarosAnim.loop({ root: canvas, onFrame: runHeroFrame }).start();
+    else (function spin(now) { runHeroFrame(now); requestAnimationFrame(spin); })(performance.now());
+  }
+
+  readColors(); sizeCaption(); sizeHeroCat(); setPillar("protocol", false);
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(function () { sizeCaption(); sizeHeroCat(); bootHero(); });
+  setTimeout(function () { sizeCaption(); sizeHeroCat(); bootHero(); }, 400);
+  bootHero();
 })();
 </script>
 <script>
@@ -1260,10 +1271,10 @@
   var ctx = cv.getContext("2d");
   var REDUCED = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   var TOUCH = window.matchMedia && matchMedia("(hover: none), (pointer: coarse)").matches;
-  var MOBILE = TOUCH || window.innerWidth <= 900;
-  var STATIC = REDUCED || MOBILE;
-  var SFX = MOBILE ? 0.42 : 1;
-  var DPR = Math.min(MOBILE ? 1.25 : 2, window.devicePixelRatio || 1), W = 0, H = 0, LIGHT = false;
+  var PF = window.DamarosAnim ? DamarosAnim.perf() : { mobile: TOUCH || window.innerWidth <= 900, dpr: Math.min(2, window.devicePixelRatio || 1), glow: 1 };
+  var MOBILE = PF.mobile;
+  var SFX = PF.glow;
+  var DPR = PF.dpr, W = 0, H = 0, LIGHT = false;
   var COL = {}, RGB = {};
   var stepsEl = document.querySelector(".gap-steps");
 
@@ -1334,7 +1345,7 @@
     if (a <= 0) return;
     a = vis(a);
     ctx.globalAlpha = a * 0.16; ctx.fillStyle = rgb(c,1); ctx.beginPath(); ctx.arc(x, y, sz*3.0, 0, 6.2832); ctx.fill();
-    if (glow) { ctx.shadowBlur = glow * (LIGHT ? 1.15 : 1) * SFX; ctx.shadowColor = rgb(c,1); }
+    if (glow && SFX) { ctx.shadowBlur = glow * (LIGHT ? 1.15 : 1); ctx.shadowColor = rgb(c,1); }
     ctx.globalAlpha = Math.min(1, a * 0.98); ctx.beginPath(); ctx.arc(x, y, sz*1.25, 0, 6.2832); ctx.fill();
     ctx.shadowBlur = 0;
   }
@@ -1411,8 +1422,8 @@
     });
     if (g > 0.2) {                                     /* the cursor */
       var hy = waveY(headX); ctx.fillStyle = rgb(RGB.blue,1); ctx.shadowColor = rgb(RGB.blue,1);
-      ctx.globalAlpha = g*env*0.5; ctx.shadowBlur = 20 * SFX; ctx.beginPath(); ctx.arc(headX, hy, 3.0, 0, 6.2832); ctx.fill();
-      ctx.globalAlpha = g*env; ctx.shadowBlur = 10 * SFX; ctx.beginPath(); ctx.arc(headX, hy, 1.9, 0, 6.2832); ctx.fill();
+      ctx.globalAlpha = g*env*0.5; if (SFX) ctx.shadowBlur = 20; ctx.beginPath(); ctx.arc(headX, hy, 3.0, 0, 6.2832); ctx.fill();
+      ctx.globalAlpha = g*env; if (SFX) ctx.shadowBlur = 10; ctx.beginPath(); ctx.arc(headX, hy, 1.9, 0, 6.2832); ctx.fill();
       ctx.shadowBlur = 0;
     }
   }
@@ -1451,22 +1462,22 @@
 
   function start() {
     layout();
-    if (STATIC) { staticFrame(); return; }
+    if (REDUCED) { staticFrame(); return; }
     T0 = performance.now(); last = T0;
     window.__gapStep = function (ms) { runGapFrame(T0 + ms); };
     var scene = cv.closest(".gap-scene") || cv;
     if (window.DamarosAnim) DamarosAnim.loop({ root: scene, onFrame: runGapFrame }).start();
     else (function spin(now) { runGapFrame(now); requestAnimationFrame(spin); })(T0);
   }
-  var rt; window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { layout(); if (STATIC) staticFrame(); }, 150); });
-  new MutationObserver(function () { readColors(); if (STATIC) staticFrame(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  var rt; window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { layout(); if (REDUCED) staticFrame(); }, 150); });
+  new MutationObserver(function () { readColors(); if (REDUCED) staticFrame(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
   var mq = window.matchMedia && matchMedia("(prefers-color-scheme: light)");
-  if (mq && mq.addEventListener) mq.addEventListener("change", function () { readColors(); if (STATIC) staticFrame(); });
+  if (mq && mq.addEventListener) mq.addEventListener("change", function () { readColors(); if (REDUCED) staticFrame(); });
   if (document.readyState !== "loading") start(); else document.addEventListener("DOMContentLoaded", start);
 })();
 </script>
-<script src="shared/trust-membrane.js?v=11"></script>
-<script src="shared/trident-luna.js?v=4"></script>
+<script src="shared/trust-membrane.js?v=12"></script>
+<script src="shared/trident-luna.js?v=5"></script>
 <script>
 /* keep the category-contrast line on a single row at any width */
 (function () {

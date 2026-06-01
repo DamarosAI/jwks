@@ -1,15 +1,16 @@
 /* ============================================================
  * Trident & Luna - substrate mini-animations (hero #field port).
- *   trident: phyllotaxis + spreading-activation synapses on hover
+ *   trident: phyllotaxis + counter-rotating synapses on hover
  *   luna:    dense counter-rotating elliptical rings on hover
  * ============================================================ */
 (function () {
   var REDUCED = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   var canvases = [].slice.call(document.querySelectorAll("canvas.mini[data-mode]"));
   if (!canvases.length) return;
-  var MOBILE = matchMedia("(hover: none), (pointer: coarse)").matches || window.innerWidth <= 900;
-  var SFX = MOBILE ? 0.42 : 1;
-  var DPR = Math.min(MOBILE ? 1.25 : 2, window.devicePixelRatio || 1);
+  var PF = window.DamarosAnim ? DamarosAnim.perf() : { mobile: matchMedia("(hover: none), (pointer: coarse)").matches || window.innerWidth <= 900, dpr: Math.min(2, window.devicePixelRatio || 1), glow: 1 };
+  var MOBILE = PF.mobile;
+  var SFX = PF.glow;
+  var DPR = PF.dpr;
   var COL = readCol();
 
   function readCol() {
@@ -30,7 +31,7 @@
     var mode = canvas.dataset.mode;
     var ctx = canvas.getContext("2d");
     var TOUCH = matchMedia("(hover: none), (pointer: coarse)").matches;
-    var W = 0, H = 0, N = mode === "luna" ? 90 : 46, parts = [], tact = [], decor = {}, morph = 0;
+    var W = 0, H = 0, N = mode === "luna" ? (MOBILE ? 72 : 90) : 46, parts = [], tact = [], decor = {}, morph = 0;
     var mouse = { x: -9999, y: -9999, inside: false };
     for (var i = 0; i < N; i++) parts.push({ x: 0, y: 0, tx: 0, ty: 0, r: 1.0 + Math.random() * 1.05, ph: Math.random() * 6.28, ring: 0 });
 
@@ -183,7 +184,8 @@
         ctx.beginPath(); ctx.arc(q.x, q.y, rad, 0, 6.2832);
         ctx.fillStyle = col;
         ctx.globalAlpha = Math.min(1, alpha * (0.85 + 0.15 * pulse));
-        ctx.shadowBlur = 6 * pulse * e * bright * SFX; ctx.shadowColor = col; ctx.fill();
+        if (SFX) { ctx.shadowBlur = 6 * pulse * e * bright; ctx.shadowColor = col; }
+        ctx.fill();
         ctx.shadowBlur = 0; ctx.globalAlpha = 1;
       });
     }
@@ -195,7 +197,14 @@
       render(now);
     }
 
-    layout();
+    function boot() {
+      layout();
+      if (!W || !H) { requestAnimationFrame(boot); return; }
+      if (REDUCED) { morph = 1; render(performance.now()); return; }
+      if (window.DamarosAnim) DamarosAnim.loop({ root: canvas, onFrame: onFrame }).start();
+      else (function spin(now) { onFrame(now); requestAnimationFrame(spin); })(performance.now());
+    }
+
     var rt, roT;
     window.addEventListener("resize", function () {
       clearTimeout(rt);
@@ -204,12 +213,10 @@
     if (window.ResizeObserver) {
       new ResizeObserver(function () {
         clearTimeout(roT);
-        roT = setTimeout(layout, 80);
+        roT = setTimeout(function () { layout.done = false; layout(); }, 80);
       }).observe(canvas);
     }
-    if (REDUCED || MOBILE) { morph = 1; render(performance.now()); }
-    else if (window.DamarosAnim) DamarosAnim.loop({ root: canvas, onFrame: onFrame }).start();
-    else (function spin(now) { onFrame(now); requestAnimationFrame(spin); })(performance.now());
+    boot();
   }
 
   canvases.forEach(make);

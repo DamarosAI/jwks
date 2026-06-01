@@ -14,9 +14,10 @@
   var cv = document.getElementById("tbField"); if (!cv) return;
   var ctx = cv.getContext("2d");
   var REDUCED = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var MOBILE = matchMedia("(hover: none), (pointer: coarse)").matches || window.innerWidth <= 900;
-  var SFX = MOBILE ? 0.45 : 1;
-  var DPR = Math.min(MOBILE ? 1.25 : 2, window.devicePixelRatio || 1), W = 0, H = 0, last = 0;
+  var PF = window.DamarosAnim ? DamarosAnim.perf() : { mobile: matchMedia("(hover: none), (pointer: coarse)").matches || window.innerWidth <= 900, dpr: Math.min(2, window.devicePixelRatio || 1), glow: 1 };
+  var MOBILE = PF.mobile;
+  var SFX = PF.glow;
+  var DPR = PF.dpr, W = 0, H = 0, last = 0;
   var C = {};
   var sponsors = [], core, coreW, coreH, sites = [], tokens = [], probes = [], beamL = null, beamR = null, lastBeam = 0;
 
@@ -60,7 +61,7 @@
 
   function build() {
     for (var s = 0; s < sites.length; s++) { sites[s].phi = []; for (var p = 0; p < 2; p++) sites[s].phi.push({ a: rnd(0, 6.28), rr: rnd(0.25, 0.6) * sites[s].r, sp: rnd(0.4, 0.9) * (Math.random() < 0.5 ? 1 : -1), ph: rnd(0, 6.28) }); }
-    tokens = []; var kinds = ["spec", "packet", "amendment", "spec", "packet", "amendment"]; var KN = (W < 560) ? 6 : 10;
+    tokens = []; var kinds = ["spec", "packet", "amendment", "spec", "packet", "amendment"]; var KN = MOBILE ? 5 : 10;
     for (var k = 0; k < KN; k++) tokens.push(newToken(kinds[k % kinds.length], rnd(0, 4)));
     probes = []; for (var q = 0; q < 3; q++) probes.push(newProbe(rnd(0, 3.4)));
   }
@@ -77,7 +78,7 @@
   function newProbe(wait) { var st = siteOf(), ang = Math.atan2(core.y - st.y, core.x - st.x); return { site: st, ang: ang, d: 0, v: rnd(16, 28), wait: wait, fade: 0 }; }
 
   function dot(x, y, r, col, a, glow) {
-    if (glow) { ctx.shadowColor = rgb(col, 0.9); ctx.shadowBlur = glow * SFX; }
+    if (glow && SFX) { ctx.shadowColor = rgb(col, 0.9); ctx.shadowBlur = glow * SFX; }
     ctx.fillStyle = rgb(col, a); ctx.beginPath(); ctx.arc(x, y, r, 0, 6.2832); ctx.fill();
     if (glow) ctx.shadowBlur = 0;
   }
@@ -204,12 +205,12 @@
   }
   function start() {
     readColors(); layout();
-    if (REDUCED || MOBILE) { staticFrame(); return; }
+    if (REDUCED) { staticFrame(); return; }
     last = performance.now();
     if (window.DamarosAnim) DamarosAnim.loop({ root: stage, onFrame: frame }).start();
     else (function spin(now) { frame(now); requestAnimationFrame(spin); })(last);
   }
-  var rt; window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { layout(); if (REDUCED || MOBILE) staticFrame(); }, 150); });
-  new MutationObserver(function () { readColors(); if (REDUCED || MOBILE) staticFrame(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  var rt; window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { layout(); if (REDUCED) staticFrame(); }, 150); });
+  new MutationObserver(function () { readColors(); if (REDUCED) staticFrame(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
   if (document.readyState !== "loading") start(); else document.addEventListener("DOMContentLoaded", start);
 })();
