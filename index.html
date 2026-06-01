@@ -115,7 +115,7 @@
   .reveal.in { animation: none; }
   .flow-in { opacity: 0; transform: translateY(22px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
   .flow-in.in { opacity: 1; transform: none; }
-  .spine-cards .flow-in:nth-child(2), .who-cards .flow-in:nth-child(2), .product-grid .flow-in:nth-child(2) { transition-delay: .09s; }
+  .spine-cards .flow-in:nth-child(2), .who-cards .flow-in:nth-child(2), .platform-cards .flow-in:nth-child(2) { transition-delay: .09s; }
   .spine-cards .flow-in:nth-child(3), .who-cards .flow-in:nth-child(3) { transition-delay: .18s; }
   .spine-cards .flow-in:nth-child(4), .who-cards .flow-in:nth-child(4) { transition-delay: .27s; }
   .draw { width: 110px; height: 1px; background: var(--accent-2); opacity: .55; transform: scaleX(0); transform-origin: left;
@@ -379,6 +379,9 @@
   /* ---- category-contrast statement band ---- */
   .contrast-band { margin: clamp(2.4rem,6vh,3.6rem) 0 0; padding: clamp(1.8rem,4.5vw,2.6rem) clamp(1.8rem,4.5vw,2.8rem);
     border: 1px solid var(--bd); border-radius: 14px; background: var(--panel); box-shadow: var(--shadow-panel); }
+  .product .platform-bridge { margin: 0 0 clamp(2.4rem,5vh,3.6rem); padding: 1.6rem 1.4rem 1.5rem;
+    background: var(--bg); border: 1px solid var(--bd-soft); border-radius: 12px; box-shadow: none; }
+  .product .platform-bridge .cb-line { white-space: normal; line-height: 1.12; }
   .contrast-band .cb-line { font-family: var(--fh); font-weight: 600; font-size: clamp(1.45rem,2.7vw,2.05rem);
     line-height: 1.12; letter-spacing: -.015em; margin: 0; white-space: nowrap; }
   .contrast-band .cb-line em { font-style: normal; color: var(--accent-2); }
@@ -386,6 +389,13 @@
 
   /* ---- two-sided product architecture ---- */
   .product { margin: clamp(3rem,8vh,5rem) 0 0; width: 100%; }
+  .platform-cards { margin: 0; }
+  .platform-card { position: relative; }
+  .platform-card .platform-accent { height: clamp(72px, 10vw, 96px); border-bottom: 1px solid var(--bd-soft);
+    background: radial-gradient(ellipse 85% 120% at 50% 115%, color-mix(in srgb, var(--accent-2) 14%, transparent), transparent 72%); }
+  .platform-card .sub-body { padding: clamp(1.2rem,2.4vw,1.6rem); }
+  .platform-card .ps-tag { display: block; margin-bottom: .55rem; font-family: var(--fm); font-size: .56rem; font-weight: 600;
+    letter-spacing: .18em; text-transform: uppercase; color: var(--accent); }
   .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; position: relative; width: 100%;
     background: var(--bd-soft); border: 1px solid var(--bd-soft); border-radius: 12px; overflow: hidden; align-items: stretch; }
   .product-grid::before { content: ''; position: absolute; top: 8%; bottom: 8%; left: 50%; width: 1px;
@@ -702,20 +712,28 @@
           <span class="eyebrow">Platform</span>
         </header>
         <!-- CATEGORY CONTRAST -->
-        <div class="contrast-band reveal flow-in">
+        <div class="contrast-band platform-bridge reveal flow-in">
           <p class="cb-line" style="font-size: 26px">Turn trial execution into <em>command intelligence.</em></p>
-          <p>Every clinic run sends signal from the field. Sponsors see where the protocol holds, where the terrain resists, and where execution fractures. Decentralized trials become an operational picture: faster deployment, sharper sites, and amendments backed by ground truth.</p>
+          <p>Clinic Node runs the trial where patients already receive care. Sponsor Console turns that execution into live operational intelligence. Together they give clinics and sponsors the same governed picture of what the protocol is doing in the field. Regulators are moving toward live oversight and faster learning. Damaros connects both sides before the enrollment report tells you what already broke.</p>
         </div>
-        <div class="product-grid">
-          <article class="psurface flow-in">
-            <div class="ps-top"><span class="ps-tag">For sites and coordinators</span><h3>Clinic Node</h3></div>
-            <p class="ps-headline">Local execution. Network trust.</p>
-            <p class="ps-lede">Clinics run governed trial access under their own control. Every evidence admission, REVIEW resolution, and clinician confirmation produces a replayable record the network can trust.</p>
+        <div class="platform-cards sub-grid">
+          <article class="sub-card platform-card flow-in">
+            <div class="platform-accent" aria-hidden="true"></div>
+            <div class="sub-body">
+              <span class="ps-tag">For sites and coordinators</span>
+              <span class="sub-name">Clinic Node</span>
+              <span class="sub-tagline">Every clinic becomes a node in the trial network.</span>
+              <p>Community clinics run protocol work where care already happens. Every run sends governed signal upstream without surrendering the patient relationship or clinic control.</p>
+            </div>
           </article>
-          <article class="psurface flow-in">
-            <div class="ps-top"><span class="ps-tag">For sponsors and CROs</span><h3>Sponsor Console</h3></div>
-            <p class="ps-headline">Command the field.</p>
-            <p class="ps-lede">Clinic Node activity becomes a live operational picture. See where terrain resists, evidence gaps form, and referral momentum is building. Instrumented, governed, and replayable.</p>
+          <article class="sub-card platform-card flow-in">
+            <div class="platform-accent" aria-hidden="true"></div>
+            <div class="sub-body">
+              <span class="ps-tag">For sponsors and CROs</span>
+              <span class="sub-name">Sponsor Console</span>
+              <span class="sub-tagline">Command intelligence from the field.</span>
+              <p>See protocol terrain as clinics execute: readiness, friction, momentum. The trial becomes an operational picture while it still runs, not a lagging report after enrollment stalls.</p>
+            </div>
           </article>
         </div>
       </div>
