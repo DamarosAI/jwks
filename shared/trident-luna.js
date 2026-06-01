@@ -207,8 +207,10 @@
     function boot() {
       layout();
       if (!W || !H) { requestAnimationFrame(boot); return; }
-      // Mobile + reduced-motion: render one static frame, no loop, no interaction.
-      if (REDUCED || MOBILE) { staticRender(); return; }
+      // Reduced-motion: one static frame, no loop. Mobile: clean continuous
+      // loop (governor pauses it off-screen, so scroll never makes it choppy);
+      // hover/touch interaction stays disabled on mobile.
+      if (REDUCED) { staticRender(); return; }
       if (window.DamarosAnim) DamarosAnim.loop({ root: canvas, onFrame: onFrame }).start();
       else (function spin(now) { onFrame(now); requestAnimationFrame(spin); })(performance.now());
     }
@@ -216,12 +218,12 @@
     var rt, roT;
     window.addEventListener("resize", function () {
       clearTimeout(rt);
-      rt = setTimeout(function () { layout.done = false; if (REDUCED || MOBILE) staticRender(); else layout(); }, 150);
+      rt = setTimeout(function () { layout.done = false; if (REDUCED) staticRender(); else layout(); }, 150);
     });
     if (window.ResizeObserver) {
       new ResizeObserver(function () {
         clearTimeout(roT);
-        roT = setTimeout(function () { layout.done = false; if (REDUCED || MOBILE) staticRender(); else layout(); }, 80);
+        roT = setTimeout(function () { layout.done = false; if (REDUCED) staticRender(); else layout(); }, 80);
       }).observe(canvas);
     }
     boot();

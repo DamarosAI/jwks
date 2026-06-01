@@ -32,8 +32,8 @@ Use this file for all public website copy, docs pages, and external messaging.
 
 ## Two-sided product architecture
 
-- `Clinic Node`: deterministic screening against sponsor-deployed protocols, REVIEW routing, replayable referral packets.
-- `Sponsor Access Console`: permissioned, de-identified execution visibility, readiness signals, bottleneck visibility.
+- `Node`: deterministic screening against sponsor-deployed protocols, REVIEW routing, replayable referral packets.
+- `Console`: permissioned, de-identified execution visibility, readiness signals, bottleneck visibility.
 - Canonical lines:
   - `Clinics get trial-access infrastructure. Sponsors get permissioned, evidence-ready reach.`
   - `Sites get worklists. Networks get truth.`
@@ -116,7 +116,7 @@ Public homepage sequence must follow:
 1. Hero with category lock and trust boundary lines.
 2. Market truth: academic-center infrastructure vs community-clinic patient concentration.
 3. Category contrast: discovery vs governed access.
-4. Two-sided product: Clinic Node + Sponsor Access Console.
+4. Two-sided product: Node + Console.
 5. Execution spine: Protocol -> Evidence -> Screening -> Replay.
 6. REVIEW worklist and evidence readiness queue.
 7. Replayable referral packet and citation-vs-replay contrast.
