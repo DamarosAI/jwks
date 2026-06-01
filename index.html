@@ -18,9 +18,9 @@
   /* ===== section selector - primary platform nav, anchored UNDER the animation =====
      Large hit areas, generous type, with a clear divider + padding between the
      execution row (Protocol/Evidence/Screening/Replay) and the Trident/Luna buttons. */
-  .spine { position: absolute; left: 40%; right: clamp(1rem, 3vw, 2.4rem); bottom: clamp(5rem, 9vh, 6rem);
+  .spine { position: absolute; left: clamp(1rem, 3vw, 2.4rem); right: clamp(1rem, 3vw, 2.4rem); bottom: clamp(5rem, 9vh, 6rem);
     z-index: 6; display: flex; flex-direction: column; align-items: center; gap: .95rem; }
-  .spine-exec { position: relative; display: flex; justify-content: space-between; width: 100%; max-width: 660px; }
+  .spine-exec { position: relative; display: flex; justify-content: space-between; width: 100%; max-width: 660px; will-change: transform; }
   .spine-exec::before { content: ''; position: absolute; left: 2.7rem; right: 2.7rem; top: calc(.5rem + 7px); height: 1px;
     background: linear-gradient(90deg, transparent, var(--bd) 16%, var(--bd) 84%, transparent); z-index: 0; }
   .enode { appearance: none; background: none; border: 0; cursor: pointer; position: relative; z-index: 1;
@@ -188,7 +188,7 @@
   .scard:hover { background: var(--bg-1); }
   .scard .sc-n { font-family: var(--fm); font-size: .58rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--accent-2); }
   .scard h3 { font-size: 1.18rem; margin: .55rem 0 .55rem; }
-  .scard .sc-op { color: var(--fg-2); font-size: .9rem; line-height: 1.55; margin: 0 0 1.1rem; }
+  .scard .sc-op { color: var(--fg-2); font-size: .9rem; line-height: 1.55; margin: 0; }
   .scard .sc-trust { margin-top: auto; padding-top: .8rem; border-top: 1px solid var(--bd-soft);
     font-family: var(--fm); font-size: .72rem; line-height: 1.5; color: var(--fg-3); }
 
@@ -276,7 +276,6 @@
   .botbar .pv:hover { color: var(--fg); }
 
   @media (min-width: 901px) and (max-height: 760px) {
-    .hero-inner { top: clamp(74px, 11vh, 104px); transform: none; }
     .wordmark { font-size: clamp(2.6rem, 5.2vw, 4rem); }
     .hero-tag { margin-top: .75rem; line-height: 1.5; font-size: clamp(.9rem, 1vw, 1rem); }
     .caption { margin-top: 1.2rem; }
@@ -367,7 +366,7 @@
   .ps-tag { font-family: var(--fm); font-size: .56rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); }
   .ps-top h3 { font-size: clamp(1.4rem,2.6vw,1.9rem); letter-spacing: -.01em; }
   .ps-headline { margin: .85rem 0 0; font-family: var(--fh); font-weight: 600; font-size: clamp(1.02rem,1.5vw,1.28rem);
-    letter-spacing: -.01em; line-height: 1.2; color: var(--accent-2); text-wrap: pretty; }
+    letter-spacing: -.01em; line-height: 1.2; color: var(--accent-2); text-wrap: pretty; white-space: nowrap; }
   .ps-lede { margin: .7rem 0 0; color: var(--fg-2); font-size: clamp(.92rem,1.15vw,1rem); line-height: 1.6; }
   .ps-flow { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin-top: 1.2rem; }
   .ps-flow .ps-step { font-family: var(--fm); font-size: .72rem; letter-spacing: .02em; color: var(--fg); white-space: nowrap;
@@ -518,12 +517,10 @@
 
 <nav class="dmx-nav">
   <div class="dmx-nav-links">
-    <a class="dmx-nav-link" href="/" aria-current="true">Home</a>
-    <a class="dmx-nav-link" href="/trust-boundary">Trust Boundary</a>
-    <a class="dmx-nav-link" href="/replay">Replay</a>
-    <a class="dmx-nav-link" href="/validation">Validation</a>
+    <a class="dmx-nav-link" href="/" aria-current="true">HOME</a>
+    <a class="dmx-nav-link" href="/trust-boundary">TRUST</a>
     <a class="dmx-nav-link" href="/docs/fhir">FHIR</a>
-    <a class="dmx-nav-link" href="/about">About</a>
+    <a class="dmx-nav-link" href="/about">ABOUT</a>
   </div>
 </nav>
 
@@ -559,12 +556,6 @@
         <button class="enode" data-id="evidence"><span class="edot"></span><span class="enum">02</span><span class="elbl">Evidence</span></button>
         <button class="enode" data-id="screening"><span class="edot"></span><span class="enum">03</span><span class="elbl">Screening</span></button>
         <button class="enode" data-id="replay"><span class="edot"></span><span class="enum">04</span><span class="elbl">Replay</span></button>
-      </div>
-      <div class="spine-sub-wrap">
-        <div class="spine-sub">
-          <button class="srail" data-id="trident"><span class="smark"></span>Trident</button>
-          <button class="srail" data-id="luna"><span class="smark"></span>Luna</button>
-        </div>
       </div>
     </nav>
   </section>
@@ -613,14 +604,12 @@
           <article class="psurface flow-in">
             <div class="ps-top"><span class="ps-tag">For sites and coordinators</span><h3>Clinic Node</h3></div>
             <p class="ps-headline">Community trial access starts here.</p>
-            <p class="ps-lede">Execution infrastructure that turns trusted local clinics into governed trial-access nodes: site-approved evidence in, deterministic screening, REVIEW resolution, clinician confirmation, replayable referral packet out.</p>
-            <div class="ps-foot">Clinics expand operations. Patients find therapeutic options faster.</div>
+            <p class="ps-lede">Execution infrastructure that turns trusted local clinics into governed trial-access nodes: site-approved evidence in, deterministic screening, REVIEW resolution, clinician confirmation, replayable referral packet out. Clinics expand operations and patients reach therapeutic options faster.</p>
           </article>
           <article class="psurface flow-in">
             <div class="ps-top"><span class="ps-tag">For sponsors and CROs</span><h3>Sponsor Console</h3></div>
-            <p class="ps-headline">Streamlined decentralized access.</p>
-            <p class="ps-lede">A permissioned network view across governed clinic nodes: protocol deployment, clinic readiness, evidence-ready signals, REVIEW load, referral packet status, and replay completeness.</p>
-            <div class="ps-foot">Sponsors get permissioned, evidence-ready reach.</div>
+            <p class="ps-headline">Streamline decentralized operations.</p>
+            <p class="ps-lede">A permissioned network view across governed clinic nodes: protocol deployment, clinic readiness, evidence-ready signals, REVIEW load, referral packet status, and replay completeness. Sponsors get permissioned, evidence-ready reach.</p>
           </article>
         </div>
       </div>
@@ -635,29 +624,25 @@
             <span class="sc-step">01</span>
             <span class="sc-n">Protocol</span>
             <h3>Lock the criterion</h3>
-            <p class="sc-op">Dense, ambiguous inclusion and exclusion is compiled into one precise basis the whole trial executes against.</p>
-            <p class="sc-trust">Versioned protocol logic. Trident turns criteria into reviewable, executable rules.</p>
+            <p class="sc-op">Dense, ambiguous inclusion and exclusion is compiled into one precise basis the trial executes against.</p>
           </div>
           <div class="scard flow-in">
             <span class="sc-step">02</span>
             <span class="sc-n">Evidence</span>
             <h3>Source clarity</h3>
             <p class="sc-op">FHIR, labs, notes, and exports collapse into one evidence plane before any patient is screened.</p>
-            <p class="sc-trust">Source, timestamp, and criterion-level lineage preserved.</p>
           </div>
           <div class="scard flow-in">
             <span class="sc-step">03</span>
             <span class="sc-n">Screening</span>
             <h3>Engine verdicts</h3>
             <p class="sc-op">Every patient is evaluated PASS, REVIEW, or FAIL at criterion level, with evidence attached.</p>
-            <p class="sc-trust">No LLM eligibility verdicts over PHI. Same inputs, same answer.</p>
           </div>
           <div class="scard flow-in">
             <span class="sc-step">04</span>
             <span class="sc-n">Replay</span>
             <h3>Always auditable</h3>
-            <p class="sc-op">Any decision reconstructs from protocol version, evidence snapshot, engine run, and adjudication history.</p>
-            <p class="sc-trust">QA, sponsor oversight, and audit become queryable, not forensic.</p>
+            <p class="sc-op">Decisions reconstruct from protocol version, evidence snapshot, engine run, and adjudication history.</p>
           </div>
         </div>
       </div>
@@ -667,14 +652,14 @@
       <div class="substrate reveal flow-in" style="margin-top: clamp(2.8rem,7vh,4.2rem)">
         <header class="sec-head-block">
           <span class="eyebrow">THE SUBSTRATE</span>
-          <h2>AI is harnessed, <em>never trusted blindly.</em></h2>
+          <h2>AI is leveraged, never trusted blindly.</h2>
         </header>
         <div class="sub-grid">
           <article class="sub-card flow-in">
             <canvas class="mini" data-mode="trident" aria-hidden="true"></canvas>
             <div class="sub-body">
               <span class="sub-name">Trident</span>
-              <span class="sub-tagline">Protocol intelligence that compounds.</span>
+              <span class="sub-tagline">Compounding protocol intelligence.</span>
               <p>Compiles dense protocol language into versioned, executable eligibility logic: evidence expectations and trial-ready mappings that sharpen every release and hold across every site.</p>
             </div>
           </article>
@@ -861,14 +846,12 @@
 
   /* pillars */
   var PILLARS = {
-    trident:   { color: "accent2", label: "Substrate / Trident",  title: "Protocol intelligence that compounds.", emph: "", desc: "Trident compiles protocol language into executable eligibility structure: versioned logic, evidence expectations, and trial-ready mappings that sharpen with every release and hold across every site." },
-    luna:      { color: "luna",    label: "Substrate / Luna",     title: "Governance harness at runtime.",        emph: "", desc: "Luna records AI origin, policy boundaries, provenance, and execution constraints. AI drafts the language-heavy work and never the verdict, and PHI never reaches a model." },
     protocol:  { color: "locked",  label: "01 / Protocol",        title: "Complex eligibility, normalized.", emph: "normalized.", desc: "Dense, ambiguous protocol inclusion and exclusion is compiled into one precise basis the entire trial executes against." },
     evidence:  { color: "accent",  label: "02 / Evidence",        title: "Fragmented data, resolved.",     emph: "resolved.", desc: "FHIR, exports, spreadsheets, labs, notes, and registry fragments collapse into one governed evidence plane before Damaros screens a single patient." },
     screening: { color: "screening", label: "03 / Screening",     title: "Patients screened deterministically.", emph: "deterministically.", desc: "Deterministic PASS, REVIEW, or FAIL at criterion level with evidence attached. No LLM eligibility verdicts over PHI. The same inputs always give the same answer." },
     replay:    { color: "accent2", label: "04 / Replay",          title: "Reproducible by default.",       emph: "by default.", desc: "Any decision reconstructs from version, evidence, and context into a signed bundle. No manual reconstruction, ever." }
   };
-  var ORDER = ["trident", "luna", "protocol", "evidence", "screening", "replay"];
+  var ORDER = ["protocol", "evidence", "screening", "replay"];
 
   /* Reserve the caption's title + description box to the TALLEST pillar at the
      current width, measured off-screen. Keeps the Request-a-demo CTA pinned in
@@ -933,7 +916,7 @@
     var grp = p < N * 0.45 ? 0 : (p < N * 0.78 ? 1 : 2);
     parts.push({ x: Math.random(), y: Math.random(), tx: 0.5, ty: 0.5, r: 1.5 + Math.random() * 1.9, ph: Math.random() * 6.28, grp: grp, jx: Math.random() * 6.28, jy: Math.random() * 6.28, lit: Math.random() < 0.4 });
   }
-  var current = "trident", morph = 0, decor = { type: "trident" }, tact = [];
+  var current = "protocol", morph = 0, decor = { type: "protocol" }, tact = [];
 
   function layout() {
     var rect = canvas.getBoundingClientRect();
@@ -1007,6 +990,21 @@
       });
     } else if (id === "replay") {
       parts.forEach(function (q, i) { var fx = i / (N - 1); q.tx = leftBound + pad + fx * (availW - 2 * pad); q.ty = cy + Math.sin(fx * Math.PI * 4) * R * 0.16; });
+    }
+    /* keep the Protocol/Evidence/Screening/Replay row centered under the live formation.
+       The canvas occupies only the right part of the hero, so align in shared coords:
+       formation center (canvas.left + decor.cx) vs the spine row's natural center (hero center).
+       Clamp so the row never pushes off either viewport edge at narrow desktop widths. */
+    var sx = document.querySelector(".spine-exec");
+    if (sx) {
+      var cr = canvas.getBoundingClientRect(), hr = canvas.parentNode.getBoundingClientRect();
+      var sxW = sx.offsetWidth, natCenter = hr.left + hr.width / 2, vw = window.innerWidth, margin = 14;
+      var natLeft = natCenter - sxW / 2, natRight = natCenter + sxW / 2;
+      var delta = (cr.left + decor.cx) - natCenter;
+      var minDelta = margin - natLeft, maxDelta = vw - margin - natRight;
+      if (minDelta > maxDelta) delta = vw / 2 - natCenter;       /* row wider than space: center in viewport */
+      else delta = Math.max(minDelta, Math.min(maxDelta, delta));
+      sx.style.transform = "translateX(" + delta + "px)";
     }
   }
 
@@ -1234,7 +1232,7 @@
   window.addEventListener("resize", checkReveal);
   checkReveal();
 
-  readColors(); layout(); sizeCaption(); sizeHeroCat(); setPillar("trident", false);
+  readColors(); layout(); sizeCaption(); sizeHeroCat(); setPillar("protocol", false);
   (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(function () { sizeCaption(); sizeHeroCat(); });
   setTimeout(function () { sizeCaption(); sizeHeroCat(); }, 400);
   requestAnimationFrame(frame);
@@ -1432,8 +1430,143 @@
   if (document.readyState !== "loading") start(); else document.addEventListener("DOMContentLoaded", start);
 })();
 </script>
-<script src="shared/trust-membrane.js?v=6"></script>
-<script src="shared/trident-luna.js?v=6"></script>
+<script src="shared/trust-membrane.js?v=7"></script>
+<script>
+/* ============================================================
+ * Substrate minis - Trident & Luna, ported faithfully from the
+ * hero #field engine. Each mini is locked to one mode, runs the
+ * exact phyllotaxis/ring formations, spreading-activation synapses
+ * (Trident) and counter-rotating rings (Luna). Pointer hover keeps
+ * the hero interactions; a gentle auto-seed keeps the interaction
+ * playing inside the loop even with no cursor.
+ * ============================================================ */
+(function () {
+  var REDUCED = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var canvases = [].slice.call(document.querySelectorAll("canvas.mini[data-mode]"));
+  if (!canvases.length) return;
+  var DPR = Math.min(2, window.devicePixelRatio || 1);
+  var COL = readCol();
+  function readCol() {
+    var cs = getComputedStyle(document.documentElement); function g(n){ return cs.getPropertyValue(n).trim(); }
+    return { accent2: g("--accent-2") || "#A9C0D6", luna: g("--luna") || "#C084FC", line: g("--bd") || "#2a3340" };
+  }
+  new MutationObserver(function(){ COL = readCol(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  var schemeMq = window.matchMedia("(prefers-color-scheme: light)");
+  var onScheme = function(){ COL = readCol(); };
+  if (schemeMq.addEventListener) schemeMq.addEventListener("change", onScheme); else if (schemeMq.addListener) schemeMq.addListener(onScheme);
+
+  function easeInOut(x){ return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2; }
+
+  function make(canvas) {
+    var mode = canvas.dataset.mode; // "trident" | "luna"
+    var ctx = canvas.getContext("2d");
+    var TOUCH = matchMedia("(hover: none), (pointer: coarse)").matches;
+    var W = 0, H = 0, N = 46, parts = [], tact = [], decor = {}, morph = 0, lastSeed = 0;
+    var mouse = { x: -9999, y: -9999, inside: false };
+    for (var i = 0; i < N; i++) parts.push({ x: 0, y: 0, tx: 0, ty: 0, r: 1.0 + Math.random() * 1.05, ph: Math.random() * 6.28, ring: 0 });
+
+    function compute() {
+      var cx = W * 0.5, cy = H * 0.5, R = Math.min(W, H) * 0.4;
+      decor = { cx: cx, cy: cy, R: R };
+      if (mode === "trident") {
+        parts.forEach(function (q, i) { var a = i * 2.39996, rr = Math.sqrt(i / N) * R * 1.02; q.tx = cx + Math.cos(a) * rr; q.ty = cy + Math.sin(a) * rr * 0.84; });
+        decor.tneighbors = [];
+        for (var ti = 0; ti < N; ti++) {
+          var ds = [];
+          for (var tj = 0; tj < N; tj++) { if (ti === tj) continue; var ax = parts[ti].tx - parts[tj].tx, ay = parts[ti].ty - parts[tj].ty; ds.push([ax * ax + ay * ay, tj]); }
+          ds.sort(function (a, b) { return a[0] - b[0]; });
+          decor.tneighbors[ti] = [ds[0][1], ds[1][1], ds[2][1], ds[3][1]];
+        }
+        for (var tz = 0; tz < N; tz++) tact[tz] = 0;
+      } else {
+        decor.rings = [R * 0.5, R * 0.74, R * 0.98];
+        parts.forEach(function (q, i) { var ring = i % 3, a = i * 2.39996, rr = decor.rings[ring]; q.ring = ring; q.tx = cx + Math.cos(a) * rr; q.ty = cy + Math.sin(a) * rr * 0.84; });
+      }
+    }
+    function layout() {
+      var r = canvas.getBoundingClientRect(); W = r.width; H = r.height; if (!W || !H) return;
+      canvas.width = Math.round(W * DPR); canvas.height = Math.round(H * DPR); ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      compute();
+      if (!layout.done) { parts.forEach(function (q) { q.x = q.tx; q.y = q.ty; }); layout.done = true; }
+    }
+    if (!TOUCH) {
+      canvas.addEventListener("pointermove", function (ev) { var r = canvas.getBoundingClientRect(); mouse.x = ev.clientX - r.left; mouse.y = ev.clientY - r.top; mouse.inside = true; });
+      canvas.addEventListener("pointerleave", function () { mouse.inside = false; mouse.x = -9999; mouse.y = -9999; });
+    }
+
+    function render(now) {
+      var time = now / 1000, e = easeInOut(morph);
+      var cx = decor.cx, cy = decor.cy, R = decor.R;
+      var mx = mouse.x, my = mouse.y, hov = !TOUCH && mouse.inside;
+      ctx.clearRect(0, 0, W, H);
+      ctx.save(); ctx.lineWidth = 1;
+      if (mode === "trident") {
+        /* hover seeds activation near the cursor */
+        if (hov) { var tr = Math.max(14, R * 0.3); for (var ai = 0; ai < N; ai++) { var ddx = parts[ai].x - mx, ddy = parts[ai].y - my, dd = ddx * ddx + ddy * ddy; if (dd < tr * tr) { var sd = 1 - Math.sqrt(dd) / tr; var seed = 0.42 + 0.34 * sd; if (seed > (tact[ai] || 0)) tact[ai] = seed; } } }
+        /* hover seeds activation near the cursor (no idle auto-pulse - keeps it calm) */
+        var nxt = []; for (var ui = 0; ui < N; ui++) { var bv = (tact[ui] || 0) * 0.9; var nbs = decor.tneighbors[ui]; for (var ni = 0; ni < nbs.length; ni++) { var nv = (tact[nbs[ni]] || 0) * 0.8; if (nv > bv) bv = nv; } nxt[ui] = bv < 0.02 ? 0 : bv; } tact = nxt;
+        for (var ei = 0; ei < N; ei++) { var nb2 = decor.tneighbors[ei]; for (var ej = 0; ej < nb2.length; ej++) { var k2 = nb2[ej]; if (k2 < ei) continue;
+          var ae = tact[ei] || 0, ak = tact[k2] || 0, act = Math.max(ae, ak), fired = act > 0.06;
+          ctx.strokeStyle = fired ? COL.accent2 : COL.line; ctx.lineWidth = fired ? 1 + act * 0.55 : 1; ctx.globalAlpha = e * (0.05 + act * 0.4);
+          ctx.beginPath(); ctx.moveTo(parts[ei].x, parts[ei].y); ctx.lineTo(parts[k2].x, parts[k2].y); ctx.stroke();
+          if (act > 0.16) {
+            var hi = ae >= ak, sx = hi ? parts[ei].x : parts[k2].x, sy = hi ? parts[ei].y : parts[k2].y;
+            var dxp = (hi ? parts[k2].x : parts[ei].x) - sx, dyp = (hi ? parts[k2].y : parts[ei].y) - sy;
+            var eseed = ((ei * 73 + k2 * 131) % 97) / 97, fr = (time * 1.0 + eseed) % 1, env = Math.sin(fr * Math.PI);
+            ctx.globalAlpha = e * act * env * 0.9; ctx.fillStyle = COL.accent2;
+            ctx.beginPath(); ctx.arc(sx + dxp * fr, sy + dyp * fr, 1.3 + act * 1.4, 0, 6.2832); ctx.fill();
+          }
+        } }
+        ctx.lineWidth = 1; ctx.globalAlpha = 1;
+      } else if (decor.rings) {
+        ctx.strokeStyle = COL.line; ctx.globalAlpha = e * 0.5; decor.rings.forEach(function (rr) { ctx.beginPath(); ctx.ellipse(cx, cy, rr, rr * 0.84, 0, 0, 6.2832); ctx.stroke(); });
+      }
+      ctx.restore();
+
+      var pcol = mode === "luna" ? COL.luna : COL.accent2;
+      parts.forEach(function (q, qi) {
+        var bx, by;
+        if (mode === "trident") {
+          var angT = time * 0.05, oxT = q.tx - cx, oyT = q.ty - cy, caT = Math.cos(angT), saT = Math.sin(angT);
+          bx = cx + oxT * caT - oyT * saT; by = cy + oxT * saT + oyT * caT;
+        } else {
+          var rd = (q.ring % 2 === 0) ? 1 : -1, angL = time * (0.03 + (q.ring || 0) * 0.018) * rd, oxL = q.tx - cx, oyL = q.ty - cy, caL = Math.cos(angL), saL = Math.sin(angL);
+          bx = cx + oxL * caL - oyL * saL; by = cy + oxL * saL + oyL * caL;
+        }
+        if (hov) {
+          var dx = bx - mx, dy = by - my, d = Math.sqrt(dx * dx + dy * dy) || 1;
+          if (mode === "luna") { var rl = R * 0.55; if (d < rl) { var f3 = (1 - d / rl); f3 = f3 * f3 * 0.6; bx -= dx * f3; by -= dy * f3; } }
+        }
+        q.x += (bx - q.x) * (0.08 + 0.12 * morph); q.y += (by - q.y) * (0.08 + 0.12 * morph);
+
+        var col = pcol, rad = q.r + e * 0.7, alpha = 0.45 + 0.5 * e, bright = 1;
+        if (mode === "trident" && (tact[qi] || 0) > 0.05) { var ta = tact[qi]; alpha = Math.min(1, alpha + ta * 0.42); rad += ta * 1.6; col = COL.accent2; bright = 1 + ta * 0.7; }
+        if (mode === "luna" && hov) { var dlu = Math.sqrt((q.x - mx) * (q.x - mx) + (q.y - my) * (q.y - my)); var b2 = Math.max(0, 1 - dlu / (R * 0.5)); alpha = Math.min(1, alpha + b2 * 0.5); rad += b2 * 1.6; }
+
+        var pulse = 0.55 + 0.45 * Math.sin(time * 2 + q.ph);
+        ctx.beginPath(); ctx.arc(q.x, q.y, rad, 0, 6.2832);
+        ctx.fillStyle = col; ctx.globalAlpha = Math.min(1, alpha * (0.85 + 0.15 * pulse));
+        ctx.shadowBlur = 6 * pulse * e * bright; ctx.shadowColor = col; ctx.fill();
+        ctx.shadowBlur = 0; ctx.globalAlpha = 1;
+      });
+    }
+
+    var t0 = performance.now();
+    function frame(now) {
+      morph = Math.min(1, morph + Math.min(0.05, (now - t0) / 1000) * 1.6); t0 = now;
+      render(now);
+      requestAnimationFrame(frame);
+    }
+    layout();
+    var rt; window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { layout.done = false; layout(); }, 150); });
+    if (window.ResizeObserver) new ResizeObserver(function () { layout(); }).observe(canvas);
+    if (REDUCED) { morph = 1; render(performance.now()); }
+    else requestAnimationFrame(frame);
+  }
+
+  canvases.forEach(make);
+})();
+</script>
 <script>
 /* keep the category-contrast line on a single row at any width */
 (function () {
@@ -1448,6 +1581,21 @@
   (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(fit);
   if (document.readyState !== "loading") fit(); else document.addEventListener("DOMContentLoaded", fit);
   setTimeout(fit, 300);
+})();
+
+/* keep each product-card headline on a single row, shrinking to fit its card */
+(function () {
+  var els = [].slice.call(document.querySelectorAll(".ps-headline")); if (!els.length) return;
+  function fitOne(el) {
+    el.style.fontSize = "";
+    var size = parseFloat(getComputedStyle(el).fontSize), guard = 0;
+    while (el.scrollWidth > el.clientWidth + 0.5 && size > 9 && guard < 240) { size -= 0.5; el.style.fontSize = size + "px"; guard++; }
+  }
+  function fitAll() { els.forEach(fitOne); }
+  window.addEventListener("resize", fitAll);
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(fitAll);
+  if (document.readyState !== "loading") fitAll(); else document.addEventListener("DOMContentLoaded", fitAll);
+  setTimeout(fitAll, 300);
 })();
 </script>
 </body>
