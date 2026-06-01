@@ -96,7 +96,7 @@
     for (var s = 0; s < sites.length; s++) drawSite(sites[s], t);
     for (var p = 0; p < sponsors.length; p++) drawSponsor(sponsors[p]);
     drawCore(t);
-    label("Sponsors · CROs · Networks", sponsors[sponsors.length - 1].x, sponsors[sponsors.length - 1].y + sponsors[0].r + 15, C.fg, 8.5);
+    label("Sponsors \u00b7 CROs \u00b7 Networks", sponsors[sponsors.length - 1].x, sponsors[sponsors.length - 1].y + sponsors[0].r + 15, C.fg, 8.5);
     label("Sites", core.x + (W * 0.86 - core.x), H * 0.94, C.fg);
     drawTokens(t, dt);
     drawBeams(now, dt);
@@ -192,7 +192,7 @@
     ctx.clearRect(0, 0, W, H); drawLinks();
     for (var s = 0; s < sites.length; s++) drawSite(sites[s], 0);
     for (var p = 0; p < sponsors.length; p++) drawSponsor(sponsors[p]); drawCore(0);
-    label("Sponsors · CROs · Networks", sponsors[sponsors.length - 1].x, sponsors[sponsors.length - 1].y + sponsors[0].r + 15, C.fg, 8.5);
+    label("Sponsors \u00b7 CROs \u00b7 Networks", sponsors[sponsors.length - 1].x, sponsors[sponsors.length - 1].y + sponsors[0].r + 15, C.fg, 8.5);
     label("Sites", W * 0.86, H * 0.94, C.fg);
   }
   function start() { readColors(); layout(); if (REDUCED) { staticFrame(); return; } last = performance.now(); requestAnimationFrame(frame); }
