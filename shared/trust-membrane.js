@@ -32,6 +32,7 @@
     C.dim   = hexToRgb(g("--fg-3"))     || [120,134,150];
     C.fg    = hexToRgb(g("--fg-2"))     || [190,200,210];
     C.purple= hexToRgb(g("--luna"))     || [192,132,252];
+    C.white = [255,255,255];
   }
   function rgb(c, a) { return "rgba(" + c[0] + "," + c[1] + "," + c[2] + "," + (a<0?0:a>1?1:a) + ")"; }
   function rnd(a, b) { return a + Math.random() * (b - a); }
@@ -49,7 +50,7 @@
     // a bunch of sites
     var N = (W < 560) ? 4 : 9;
     sites = [];
-    var top = H * (W < 560 ? 0.22 : 0.12), bot = H * (W < 560 ? 0.78 : 0.88);
+    var top = H * (W < 560 ? 0.30 : 0.12), bot = H * (W < 560 ? 0.70 : 0.88);
     for (var s = 0; s < N; s++) {
       var fy2 = (N === 1) ? 0.5 : s / (N - 1);
       var col = (s % 2 === 0) ? 0.82 : 0.9;
@@ -68,6 +69,7 @@
   }
   function siteOf() { return sites[Math.floor(Math.random() * sites.length)]; }
   function sponsorOf() { return sponsors[Math.floor(Math.random() * sponsors.length)]; }
+  function labelYFor(nodes) { var n = nodes[nodes.length - 1]; return n.y + n.r + 30; }
   function newToken(kind, wait) {
     var st = siteOf(), sp = sponsorOf(), path;
     if (kind === "spec")          path = [ { x: sp.x, y: sp.y }, { x: core.x, y: core.y, dwell: 0.3 }, { x: st.x, y: st.y } ];  // sponsor deploys protocols & amendments (specs) to a site
@@ -101,8 +103,8 @@
     for (var s = 0; s < sites.length; s++) drawSite(sites[s], t);
     for (var p = 0; p < sponsors.length; p++) drawSponsor(sponsors[p]);
     drawCore(t);
-    label(MOBILE ? "Sources" : "Sponsors \u00b7 CROs \u00b7 Networks", sponsors[sponsors.length - 1].x, sponsors[sponsors.length - 1].y + sponsors[0].r + 30, MOBILE ? C.blue : C.fg, MOBILE ? 9.5 : 8.5);
-    label("Sites", core.x + (W * 0.86 - core.x), H * 0.94, MOBILE ? C.green : C.fg);
+    label(MOBILE ? "Sources" : "Sponsors \u00b7 CROs \u00b7 Networks", sponsors[sponsors.length - 1].x, labelYFor(sponsors), MOBILE ? C.white : C.fg, MOBILE ? 9.5 : 8.5);
+    label("Sites", core.x + (W * 0.86 - core.x), MOBILE ? labelYFor(sites) : H * 0.94, MOBILE ? C.white : C.fg);
     drawTokens(t, dt);
     drawBeams(now, dt);
     drawProbes(t, dt);
@@ -205,8 +207,8 @@
     ctx.clearRect(0, 0, W, H); drawLinks();
     for (var s = 0; s < sites.length; s++) drawSite(sites[s], 0);
     for (var p = 0; p < sponsors.length; p++) drawSponsor(sponsors[p]); drawCore(0);
-    label(MOBILE ? "Sources" : "Sponsors \u00b7 CROs \u00b7 Networks", sponsors[sponsors.length - 1].x, sponsors[sponsors.length - 1].y + sponsors[0].r + 30, MOBILE ? C.blue : C.fg, MOBILE ? 9.5 : 8.5);
-    label("Sites", W * 0.86, H * 0.94, MOBILE ? C.green : C.fg);
+    label(MOBILE ? "Sources" : "Sponsors \u00b7 CROs \u00b7 Networks", sponsors[sponsors.length - 1].x, labelYFor(sponsors), MOBILE ? C.white : C.fg, MOBILE ? 9.5 : 8.5);
+    label("Sites", W * 0.86, MOBILE ? labelYFor(sites) : H * 0.94, MOBILE ? C.white : C.fg);
   }
   function start() {
     readColors(); layout();
