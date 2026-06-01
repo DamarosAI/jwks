@@ -1132,7 +1132,7 @@
   }
 
   function easeInOut(x){ return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2; }
-  var t0 = performance.now(), autoNext = t0 + 4200, autoPause = 0, sweep = 0;
+  var t0 = performance.now(), autoNext = t0 + 4200, autoPause = 0, sweep = 0, heroScreenAngle = 0;
 
   /* Hover is only "live" when the cursor is over the actual symbol, not the
      whole canvas (which reaches down to the nav). Tight ellipse around the
@@ -1156,6 +1156,7 @@
   function runHeroFrame(now) {
     var dt = Math.min(0.05, (now - t0) / 1000); t0 = now;
     morph = Math.min(1, morph + dt * 1.6);
+    heroScreenAngle += Math.min(0.032, 0.016 + morph * 0.016) * dt;
     var e = easeInOut(morph), time = now / 1000;
     if (!REDUCED && now > autoPause && now > autoNext) { setPillar(ORDER[(ORDER.indexOf(current) + 1) % ORDER.length], false); autoNext = now + 4800; }
 
@@ -1244,8 +1245,7 @@
         var rd = (q.ring % 2 === 0) ? 1 : -1, angL = time * (0.03 + (q.ring || 0) * 0.018) * rd, oxL = q.tx - cx, oyL = q.ty - cy, caL = Math.cos(angL), saL = Math.sin(angL);
         bx = cx + oxL * caL - oyL * saL; by = cy + oxL * saL + oyL * caL;
       } else if (current === "screening") {
-        var spin = time * Math.min(0.032, 0.016 + morph * 0.016);
-        bx = q.scx + Math.cos(q.sa + spin) * q.sr; by = q.scy + Math.sin(q.sa + spin) * q.sr * 0.9;
+        bx = q.scx + Math.cos(q.sa + heroScreenAngle) * q.sr; by = q.scy + Math.sin(q.sa + heroScreenAngle) * q.sr * 0.9;
       } else if (current === "replay") {
         bx = q.tx; by = rvWaveY(q.tx);
       } else if (current === "protocol") {
@@ -1447,10 +1447,7 @@
       var cc = lerpC(verd[ci], RGB.blue, sm);
       var cy = c.y + (NY - c.y)*0.42*sm;
       var rad = R*0.3*(1.26 - 0.48*sm);
-      var spinRate = Math.min(0.10, 0.03 + (1 - sm) * 0.07);
-      var dir = ci === 1 ? 1 : -1;
-      if (ci === 2 && sm < 0.5) dir *= 1.05;
-      var spin = time * spinRate * dir;
+      var spin = screenAngles[ci];
       for (var kk = 0; kk < 2; kk++) { var fr = ((time*0.18 + kk/2) % 1); ctx.strokeStyle = rgb(cc,1); ctx.globalAlpha = vis((1-fr)*(0.1+0.2*g+0.2*hi)); ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(c.x, cy, fr*rad*1.25, fr*rad*1.1, 0, 0, 6.2832); ctx.stroke(); }
       f.dots.forEach(function (d) { if (d.ci !== ci) return;
         var ang = d.a0 + spin, x = c.x + Math.cos(ang)*rad*d.rr, y = cy + Math.sin(ang)*rad*0.9*d.rr;
@@ -1502,6 +1499,7 @@
 
   /* ---- cycle: discordant -> governance rolls left->right -> unified stone blue ---- */
   var CYCLE = 13, T0 = performance.now(), last = T0, STAG = 0.16;
+  var screenAngles = [0, 0, 0];
   function Gat(c) { if (c < 4) return 0; if (c < 7.5) return smooth((c-4)/3.5); if (c < 10.5) return 1; return 1 - smooth((c-10.5)/2.5); }
   var mouse = { x:-9999, y:-9999, in:false };
   if (!TOUCH) {
@@ -1511,6 +1509,11 @@
 
   function runGapFrame(now) {
     var dt = Math.min(0.05, (now-last)/1000); last = now; var time = now/1000;
+    var _cyc0 = ((now - T0)/1000) % CYCLE, _G0 = Gat(_cyc0), _sm0 = smooth(_G0);
+    var _baseRate = Math.min(0.10, 0.03 + (1 - _sm0) * 0.07);
+    screenAngles[0] += _baseRate * -1 * dt;
+    screenAngles[1] += _baseRate *  1 * dt;
+    screenAngles[2] += _baseRate * -1.05 * ((_cyc0 < (CYCLE * 10.5/13)) && _sm0 < 0.5 ? 1 : 1) * dt;
     var cyc = ((now - T0)/1000) % CYCLE, G = Gat(cyc);
     var sweep = (time*0.26)%1, center = sweep*3.4 - 0.2, hiScale = cl01((G-0.5)/0.35);
     ctx.clearRect(0, 0, W, H);
