@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark light">
-<title>Damaros — Enterprise integration reference</title>
+<title>Damaros · Enterprise FHIR integration</title>
 <link rel="icon" href="../assets/damaros-favicon.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,21 +13,33 @@
 <link rel="stylesheet" href="../shared/damaros.css">
 <style>
   body { scrollbar-gutter: stable; }
-  .docs { max-width: 920px; margin: 0 auto; padding: calc(60px + 3.4rem) clamp(1.1rem, 4vw, 2.4rem) 6rem; position: relative; z-index: 1; }
+  .docs { max-width: 1040px; margin: 0 auto; padding: calc(60px + clamp(2.8rem, 7vh, 4rem)) clamp(1.1rem, 4vw, 2.4rem) 6rem; position: relative; z-index: 1; }
   .d-eyebrow { font-family: var(--fm); font-size: .6rem; letter-spacing: .18em; text-transform: uppercase; color: var(--accent-2); margin-bottom: .7rem; }
-  .d-title { font-family: var(--fh); font-weight: 600; font-size: clamp(1.8rem, 4vw, 2.7rem); letter-spacing: -.01em; line-height: 1.02; }
-  .d-lead { color: var(--fg-2); font-size: 1rem; line-height: 1.7; margin: 1.2rem 0 0; max-width: 64ch; }
-  .d-lead b { color: var(--fg); font-weight: 500; }
-  .divider { height: 1px; background: var(--bd-soft); margin: 3rem 0; }
+  .d-title { font-family: var(--fh); font-weight: 600; font-size: clamp(1.9rem, 4.2vw, 2.85rem); letter-spacing: -.015em; line-height: 1.02; max-width: 20ch; }
+  .d-lead { color: var(--fg-2); font-size: clamp(1rem, 1.2vw, 1.06rem); line-height: 1.68; margin: 1.15rem 0 0; max-width: 64ch; }
+  .d-lead b { color: var(--fg); font-weight: 600; }
 
-  section.doc { margin-bottom: 2.8rem; scroll-margin-top: 80px; }
+  .pill-row { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: 1.25rem; }
+  .pill { font-family: var(--fm); font-size: .68rem; letter-spacing: .06em; color: var(--fg-2); padding: .4rem .65rem; border: 1px solid var(--bd-soft); border-radius: 7px; background: color-mix(in srgb, var(--accent-2) 5%, transparent); white-space: nowrap; }
+  .pill strong { color: var(--accent-2); font-weight: 600; }
+
+  .cross-link { display: inline-flex; align-items: center; gap: .45rem; margin-top: 1.1rem; font-family: var(--fm); font-size: .66rem; letter-spacing: .14em; text-transform: uppercase; color: var(--accent-2); text-decoration: none; border-bottom: 1px solid transparent; padding-bottom: 2px; transition: color var(--t) var(--ease), border-color var(--t) var(--ease); }
+  .cross-link:hover { color: var(--fg); border-color: var(--accent); }
+
+  .divider { height: 1px; background: var(--bd-soft); margin: clamp(2.4rem, 5vh, 3.2rem) 0; }
+
+  section.doc { margin-bottom: clamp(2rem, 4vh, 2.8rem); scroll-margin-top: 80px; }
   .sec-label { font-family: var(--fm); font-size: .58rem; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); opacity: .7; margin-bottom: .5rem; }
   .sec-label::before { content: '// '; }
-  .sec-head { font-family: var(--fh); font-weight: 600; font-size: 1.25rem; letter-spacing: .01em; padding-bottom: .6rem; border-bottom: 1px solid var(--bd-soft); margin: 0 0 1.1rem; }
+  .sec-head { font-family: var(--fh); font-weight: 600; font-size: clamp(1.15rem, 2vw, 1.35rem); letter-spacing: -.005em; padding-bottom: .55rem; border-bottom: 1px solid var(--bd-soft); margin: 0 0 1rem; }
   .body { color: var(--fg-2); font-size: .92rem; line-height: 1.75; }
   .body p { margin: 0 0 .8rem; } .body p:last-child { margin-bottom: 0; }
   .body strong { color: var(--fg); font-weight: 600; }
-  .body code, .kv code, .scopes code { font-family: var(--fm); color: var(--accent-2); font-size: .85em; }
+  .body code, .kv code, .scopes code, .flow code { font-family: var(--fm); color: var(--accent-2); font-size: .85em; }
+
+  .flow { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem; margin: 1rem 0 0; }
+  .flow .f-step { font-family: var(--fm); font-size: .72rem; letter-spacing: .02em; color: var(--fg); padding: .42rem .65rem; border: 1px solid var(--bd-soft); border-radius: 7px; background: var(--chip-bg); white-space: nowrap; }
+  .flow .f-arrow { color: var(--accent-2); font-size: .72rem; opacity: .65; }
 
   .kv { width: 100%; border-collapse: collapse; font-family: var(--fm); font-size: .8rem; }
   .kv tr { border-bottom: 1px solid var(--bd-soft); }
@@ -45,21 +57,26 @@
 
   .callout { margin: 1.1rem 0 0; padding: .85rem 1.15rem; border-left: 2px solid var(--bd-strong); background: var(--chip-bg); color: var(--fg-2); font-family: var(--fm); font-size: .76rem; line-height: 1.65; border-radius: 0 6px 6px 0; }
   .callout strong { color: var(--fg); }
-  .bullets { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .55rem; color: var(--fg-2); font-size: .9rem; line-height: 1.6; }
+  .callout.em { border-left-color: var(--accent-2); }
+  .bullets { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .55rem; color: var(--fg-2); font-size: .88rem; line-height: 1.58; }
   .bullets li { padding-left: 1rem; position: relative; }
   .bullets li::before { content: '>'; position: absolute; left: 0; color: var(--accent); font-family: var(--fm); }
   .bullets strong { color: var(--fg); }
+
   pre.code { margin: 1rem 0 0; padding: 1rem 1.15rem; border: 1px solid var(--bd-soft); border-radius: 8px; background: var(--bg-1); font-family: var(--fm); font-size: .72rem; line-height: 1.55; color: var(--fg-2); overflow-x: auto; }
   .pre-cap { font-family: var(--fm); font-size: .58rem; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); opacity: .85; margin: 1.3rem 0 .3rem; }
+  .pre-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
   .contact a { color: var(--accent-2); } .contact a:hover { text-decoration: underline; }
   .contact { font-family: var(--fm); font-size: .85rem; line-height: 2; color: var(--fg-2); }
 
-  footer { border-top: 1px solid var(--bd-soft); padding: 2.2rem clamp(1.1rem,4vw,2.4rem); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; font-family: var(--fm); font-size: .6rem; letter-spacing: .1em; color: var(--fg-3); max-width: 920px; margin: 0 auto; text-transform: uppercase; }
+  footer { border-top: 1px solid var(--bd-soft); padding: 2.2rem clamp(1.1rem,4vw,2.4rem); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; font-family: var(--fm); font-size: .6rem; letter-spacing: .1em; color: var(--fg-3); max-width: 1040px; margin: 0 auto; text-transform: uppercase; }
   footer .geo { justify-self: start; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   footer .geo.pending { opacity: .45; }
   footer .cp { justify-self: center; }
   footer a { justify-self: end; color: var(--fg-3); text-decoration: none; }
   footer a:hover { color: var(--fg); }
+
+  @media (max-width: 820px) { .pre-grid { grid-template-columns: 1fr; } }
   @media (max-width: 620px) { .kv td:first-child { width: 140px; font-size: .72rem; } .scopes li { grid-template-columns: 1fr; gap: .1rem; } }
 </style>
 </head>
@@ -74,63 +91,130 @@
 </nav>
 
 <main class="docs">
-  <div class="d-eyebrow">Epic / FHIR</div>
+  <div class="d-eyebrow">Epic / FHIR / JWKS</div>
   <h1 class="d-title">Enterprise integration reference</h1>
-  <p class="d-lead">FHIR is the enterprise integration spine for Damaros: read-only Backend Services access, site-approved cohort sync, a secure JWT and JWKS posture, and deterministic execution on governed evidence. <b>The same execution chain runs validation and production</b>, so validation evidence carries forward to cutover without rebuilding workflow logic.</p>
+  <p class="d-lead">FHIR is the enterprise spine for Damaros clinic nodes: read-only Backend Services access, site-approved cohort sync, a production-grade <b>JWT and JWKS posture</b>, and deterministic execution on governed evidence. <b>The same Protocol → Evidence → Screening → Replay chain runs validation and production</b>, so validation evidence carries forward to cutover without rebuilding workflow logic.</p>
+
+  <div class="pill-row" aria-label="Integration highlights">
+    <span class="pill"><strong>SMART</strong> Backend Services</span>
+    <span class="pill"><strong>RFC 7523</strong> private_key_jwt</span>
+    <span class="pill"><strong>RS384</strong> signing</span>
+    <span class="pill"><strong>JWKS</strong> public discovery</span>
+    <span class="pill"><strong>Read-only</strong> FHIR</span>
+    <span class="pill"><strong>PHI</strong> never in LLM path</span>
+  </div>
+
+  <a class="cross-link" href="/trust-boundary">Trust boundary doctrine <span aria-hidden="true">&rarr;</span></a>
 
   <div class="divider"></div>
 
   <section class="doc">
-    <div class="sec-label">00_SUBMISSION_NARRATIVE</div>
-    <h2 class="sec-head">Research execution on approved cohorts, not ad hoc analytics.</h2>
+    <div class="sec-label">00_OPERATING_MODEL</div>
+    <h2 class="sec-head">Research execution on approved cohorts</h2>
     <div class="body">
-      <p>Damaros is clinical-trial execution infrastructure for site-approved cohorts. Site-approved FHIR access binds locked protocol logic to a defined evidence cohort, evaluates eligibility deterministically, and preserves criterion-level evidence with replay lineage on one audit path.</p>
+      <p>Damaros is decentralized trial-access infrastructure. Site-approved FHIR access binds locked protocol logic to a defined evidence cohort, evaluates eligibility deterministically, and preserves criterion-level evidence with replay lineage on one audit path.</p>
       <p><strong>Deterministic core.</strong> Versioned protocol logic plus normalized clinical facts from REST and optional bulk export feed a single eligibility engine. Outputs are PASS, REVIEW, or FAIL at criterion granularity with evidence and sync provenance. No generative verdict on the screening path.</p>
-      <p><strong>Trident</strong> is trial knowledge that sharpens with every protocol release and site run, compounding into executable logic. <strong>Luna</strong> is the governance harness where AI-assisted work becomes traceable, reviewable, and safe.</p>
+      <p><strong>Trident</strong> compiles protocol language into executable eligibility structure. <strong>Luna</strong> records AI origin, policy boundaries, provenance, and execution constraints.</p>
       <div class="callout"><strong>No shadow EHR.</strong> Damaros is not a secondary warehouse. Ingest ends in protocol-scoped screening artifacts. Epic remains system of record for longitudinal care.</div>
     </div>
   </section>
 
   <section class="doc">
-    <div class="sec-label">01_PLATFORM_OVERVIEW</div>
-    <h2 class="sec-head">Platform overview</h2>
+    <div class="sec-label">01_OAUTH_FLOW</div>
+    <h2 class="sec-head">Backend Services token exchange</h2>
     <div class="body">
-      <p>The operating chain is Protocol → Evidence → Screening → Replay. Versioned protocol compiles to rules; FHIR sync materializes the cohort as governed evidence; screening records PASS, REVIEW, or FAIL per criterion; replay preserves the protocol version, evidence, and execution context for coordinators, QA, and audit.</p>
-      <p>Production uses SMART on FHIR Backend Services: a signed JWT exchanged for an access token (<code>client_credentials</code> + <code>private_key_jwt</code>, RFC 7523). Read-only for evidence cohort and screening ingest. Tokens stay server-side in process memory, never in browsers.</p>
+      <p>Production uses SMART on FHIR Backend Services. Damaros signs a short-lived JWT client assertion, posts it to Epic's token URL, and receives an access token. PKCE does not apply to Backend Systems.</p>
     </div>
+    <div class="flow" aria-label="OAuth flow">
+      <span class="f-step">Load signing key</span><span class="f-arrow">&rarr;</span>
+      <span class="f-step">Build JWT assertion</span><span class="f-arrow">&rarr;</span>
+      <span class="f-step">POST token URL</span><span class="f-arrow">&rarr;</span>
+      <span class="f-step">Cache access token</span><span class="f-arrow">&rarr;</span>
+      <span class="f-step">Read-only FHIR calls</span>
+    </div>
+    <table class="kv" style="margin-top:1.1rem">
+      <tr><td>GRANT_TYPE</td><td><code>client_credentials</code></td></tr>
+      <tr><td>CLIENT_ASSERTION_TYPE</td><td><code>urn:ietf:params:oauth:client-assertion-type:jwt-bearer</code></td></tr>
+      <tr><td>ASSERTION_TTL</td><td><code>exp</code> within 300 seconds of <code>iat</code>; access token TTL from Epic; in-memory cache only</td></tr>
+      <tr><td>TOKEN_STORAGE</td><td>Server-side process memory only. Never in browsers, localStorage, or client bundles.</td></tr>
+      <tr><td>REQUIRED_CLAIMS</td><td><code>iss</code>, <code>sub</code> (Epic client ID), <code>aud</code> (token URL), <code>jti</code>, <code>iat</code>, <code>exp</code></td></tr>
+    </table>
+    <div class="pre-cap">Illustrative client assertion header and payload. Not for auth.</div>
+    <pre class="code">// Header
+{ "alg": "RS384", "kid": "epic-prod-2026-04", "typ": "JWT" }
+
+// Payload (claims abbreviated)
+{
+  "iss": "&lt;Epic Backend Services client ID&gt;",
+  "sub": "&lt;Epic Backend Services client ID&gt;",
+  "aud": "https://fhir.epic.com/interconnect-fhir-oauth/oauth2/token",
+  "jti": "d7f3a1b2-4c8e-4f91-9a2d-1e6b0c8d4f2a",
+  "iat": 1748736000,
+  "exp": 1748736300
+}</pre>
   </section>
 
-  <div class="divider"></div>
-
   <section class="doc">
-    <div class="sec-label">02_INTEGRATION_ARCHITECTURE</div>
+    <div class="sec-label">02_PLATFORM_OVERVIEW</div>
     <h2 class="sec-head">Integration architecture</h2>
     <table class="kv">
       <tr><td>APPLICATION_AUDIENCE</td><td>Backend Systems (Epic-registered Backend Services app)</td></tr>
-      <tr><td>PRIMARY_OAUTH_MODEL</td><td><code>client_credentials</code> + JWT client assertion to Epic token URL; PKCE does not apply</td></tr>
+      <tr><td>PRIMARY_OAUTH_MODEL</td><td><code>client_credentials</code> + JWT client assertion to Epic token URL</td></tr>
       <tr><td>FHIR_VERSION</td><td>R4</td></tr>
       <tr><td>AUTH_STANDARD</td><td>SMART on FHIR Backend Services (RFC 7523)</td></tr>
       <tr><td>JWT_ALGORITHM</td><td>RS384 (override via <code>DAMAROS_EPIC_JWT_ALGORITHM</code> if Epic requires)</td></tr>
-      <tr><td>TOKEN_TTL</td><td>Assertion <code>exp</code> within 300 seconds of <code>iat</code>; access token TTL from Epic; in-memory cache only</td></tr>
+      <tr><td>COHORT_RESOLUTION</td><td><code>GET Group/{id}</code> for Epic-approved trial evidence lists</td></tr>
       <tr><td>DEFAULT_ACCESS</td><td>Read-only FHIR; no EHR write-back unless explicit env gates are set</td></tr>
+      <tr><td>EXECUTION_CHAIN</td><td>Protocol → Evidence → Screening → Replay on governed cohort snapshots</td></tr>
     </table>
   </section>
 
   <section class="doc">
-    <div class="sec-label">02A_ENVIRONMENT_SEPARATION</div>
-    <h2 class="sec-head">Environment separation &amp; JWKS</h2>
+    <div class="sec-label">03_JWKS_AND_KEYS</div>
+    <h2 class="sec-head">Environment separation, JWKS hosting, and rotation</h2>
+    <div class="body">
+      <p>Epic validates Damaros client assertions against public keys published in JWKS documents. Private signing material never leaves secret stores. Public keys are the only material exposed on the wire.</p>
+    </div>
     <table class="kv">
       <tr><td>NON_PRODUCTION</td><td>Separate Epic sandbox client ID, signing keypair, and JWKS URL</td></tr>
       <tr><td>PRODUCTION</td><td>Independent Epic production client ID, signing keypair, and JWKS URL</td></tr>
-      <tr><td>JWKS_HOSTING</td><td>Public JWKS documents served over HTTPS from Damaros-controlled DNS and TLS. Private signing material never appears in JWKS JSON.</td></tr>
+      <tr><td>JWKS_NONPROD_URL</td><td><a href="https://www.damaros.ai/.well-known/jwks-nonprod.json">https://www.damaros.ai/.well-known/jwks-nonprod.json</a></td></tr>
+      <tr><td>JWKS_PROD_URL</td><td><a href="https://www.damaros.ai/.well-known/jwks-prod.json">https://www.damaros.ai/.well-known/jwks-prod.json</a></td></tr>
+      <tr><td>JWKS_HOSTING</td><td>Public JWKS documents served over HTTPS from Damaros-controlled DNS and TLS</td></tr>
+      <tr><td>JWKS_CONTENT</td><td>Public RSA keys only: <code>kty</code>, <code>use</code>, <code>alg</code>, <code>kid</code>, <code>n</code>, <code>e</code>. No private material.</td></tr>
       <tr><td>JWKS_KEY_ROTATION</td><td>Publish the next public key alongside the incumbent so Epic always has overlapping validity. Signing switches only after Epic confirms the new <code>kid</code>.</td></tr>
       <tr><td>SECRET_STORAGE</td><td>Private signing PEM from secret manager or secure mount; never in git or client bundles</td></tr>
+      <tr><td>ASSERTION_KID</td><td>JWT header <code>kid</code> must match a published JWKS entry for the active environment</td></tr>
     </table>
-    <div class="callout">Private keys exist only in the customer deployment or a Damaros-operated secret store, never in git or browser bundles.</div>
+    <div class="callout em"><strong>Rotation protocol.</strong> (1) Generate new keypair. (2) Append public key to JWKS with new <code>kid</code>. (3) Confirm Epic resolves the new key. (4) Switch signing to new <code>kid</code>. (5) Retire prior key after overlap window.</div>
+    <div class="pre-grid">
+      <div>
+        <div class="pre-cap">Illustrative JWKS document. Fictitious modulus, not for auth.</div>
+        <pre class="code">{
+  "keys": [{
+    "kty": "RSA",
+    "use": "sig",
+    "alg": "RS384",
+    "kid": "epic-prod-2026-04",
+    "n": "1tCLz4Y...TRUNCATED...lpUmU3w",
+    "e": "AQAB"
+  }]
+}</pre>
+      </div>
+      <div>
+        <div class="pre-cap">Rotation-ready JWKS. Two overlapping keys.</div>
+        <pre class="code">{
+  "keys": [
+    { "kid": "epic-prod-2026-04", "alg": "RS384", "..." },
+    { "kid": "epic-prod-2026-10", "alg": "RS384", "..." }
+  ]
+}</pre>
+      </div>
+    </div>
   </section>
 
   <section class="doc">
-    <div class="sec-label">02C_OAUTH_SCOPE</div>
+    <div class="sec-label">04_OAUTH_SCOPES</div>
     <h2 class="sec-head">Initial requested scopes</h2>
     <div class="body"><p>An OAuth floor of eight <code>system/*.read</code> scopes covers the per-patient eligibility bundle plus cohort membership via <code>GET Group/{id}</code>. No write scopes on first deployment. The connector never calls FHIR Binary; DocumentReference ingest keeps metadata only.</p></div>
     <ul class="scopes">
@@ -143,13 +227,13 @@
       <li><span class="sn">system/AllergyIntolerance.read</span><span class="sd">Allergies via patient-scoped search only</span></li>
       <li><span class="sn">system/DocumentReference.read</span><span class="sd">Search, normalized to metadata only. No narrative content, no Binary follow-up.</span></li>
     </ul>
-    <div class="callout"><strong>No Binary.</strong> Eligibility remains deterministic on structured fields; Epic registration omits Binary web services and any Binary read scope.</div>
+    <div class="callout"><strong>No Binary.</strong> Eligibility remains deterministic on structured fields. Epic registration omits Binary web services and any Binary read scope.</div>
   </section>
 
   <div class="divider"></div>
 
   <section class="doc">
-    <div class="sec-label">04_CLINICAL_DATA_BOUNDARY</div>
+    <div class="sec-label">05_CLINICAL_DATA_BOUNDARY</div>
     <h2 class="sec-head">Clinical data boundary</h2>
     <ul class="bullets">
       <li><strong>Evidence cohorts</strong> (Epic cohorts) are defined by approved protocol logic or institutional configuration.</li>
@@ -157,37 +241,40 @@
       <li><strong>PHI never reaches an LLM.</strong> Criterion PASS / REVIEW / FAIL comes only from the deterministic engine on ingested FHIR. No patient identifiers or cohort-linked fields are serialized into any optional external request path.</li>
       <li>Helm ships deny-by-default API egress <code>NetworkPolicy</code> with explicit CIDR allowlists for Epic FHIR, OIDC, in-cluster Postgres/Redis, and DNS.</li>
       <li>Screening outputs are criterion-level PASS, REVIEW, or FAIL with evidence references, never an ungrounded generative verdict.</li>
+      <li>Sponsor and CRO visibility stays permissioned and de-identified by default. See the <a href="/trust-boundary">trust boundary</a> for the full visibility model.</li>
     </ul>
   </section>
 
   <section class="doc">
-    <div class="sec-label">05_AUDIT_AND_REPLAY</div>
+    <div class="sec-label">06_AUDIT_AND_REPLAY</div>
     <h2 class="sec-head">Audit, determinism, and replay</h2>
     <ul class="bullets">
       <li>Decisions are reproducible for a fixed protocol version, cohort snapshot, evidence snapshot, and <code>evaluation_as_of</code>.</li>
       <li>Every patient outcome is recorded at criterion level with PASS, FAIL, or REVIEW and a rationale.</li>
       <li>Protocol amendments link to versioned protocol IDs and engine versions.</li>
+      <li>FHIR sync provenance (resource IDs, retrieval timestamps, cohort membership) attaches to the replay bundle.</li>
       <li>Replay classifies agreement or divergence. No opaque "model decided" eligibility.</li>
     </ul>
   </section>
 
   <section class="doc">
-    <div class="sec-label">07_SECURITY_AND_PRIVACY</div>
+    <div class="sec-label">07_SECURITY_AND_LOGGING</div>
     <h2 class="sec-head">Security, privacy, and logging</h2>
     <ul class="bullets">
       <li>Signing keys and Epic access tokens are server-side secrets; FHIR and browser traffic use TLS.</li>
+      <li>JWKS endpoints serve public key material only. Private PEM never appears in logs, JWKS JSON, or marketing bundles.</li>
       <li>Structured logs favor stable identifiers. Field-level exclusion lists omit free-text clinical narrative from default log templates.</li>
       <li>Data at rest encryption and retention follow the deployment architecture and the customer BAA / DPA.</li>
     </ul>
-    <div class="pre-cap">Illustrative JWKS shape — fictitious, modulus truncated, not for auth</div>
-    <pre class="code">{
-  "keys": [{
-    "kty": "RSA", "use": "sig", "alg": "RS384",
-    "kid": "example-hospital-prod-2026",
-    "n": "w9zY...BASE64URL_TRUNCATED...q8Q",
-    "e": "AQAB"
-  }]
-}</pre>
+  </section>
+
+  <section class="doc">
+    <div class="sec-label">08_VALIDATION_CUTOVER</div>
+    <h2 class="sec-head">Validation to production cutover</h2>
+    <div class="body">
+      <p>Validation and production share the same eligibility engine, protocol compiler, and replay model. Sandbox FHIR credentials, JWKS URLs, and signing keys stay isolated from production. Retrospective validation runs produce replay artifacts that carry the same structure sponsors expect in live operations.</p>
+      <p>Cutover is a credential and environment swap, not a workflow rebuild.</p>
+    </div>
   </section>
 
   <div class="divider"></div>
@@ -196,6 +283,8 @@
     <div class="sec-label">09_CONTACT</div>
     <h2 class="sec-head">Contact</h2>
     <div>Website &nbsp;&nbsp; <a href="https://damaros.ai">damaros.ai</a></div>
+    <div>JWKS (prod) &nbsp;&nbsp; <a href="https://www.damaros.ai/.well-known/jwks-prod.json">/.well-known/jwks-prod.json</a></div>
+    <div>JWKS (sandbox) &nbsp;&nbsp; <a href="https://www.damaros.ai/.well-known/jwks-nonprod.json">/.well-known/jwks-nonprod.json</a></div>
     <div>Contact &nbsp;&nbsp; <a href="mailto:anirudh@damaros.ai">anirudh@damaros.ai</a></div>
   </section>
 </main>

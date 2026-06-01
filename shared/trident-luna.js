@@ -7,7 +7,7 @@
   var REDUCED = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   var canvases = [].slice.call(document.querySelectorAll("canvas.mini[data-mode]"));
   if (!canvases.length) return;
-  var MOBILE = matchMedia("(hover: none), (pointer: coarse)").matches || window.innerWidth <= 700;
+  var MOBILE = matchMedia("(hover: none), (pointer: coarse)").matches || window.innerWidth <= 900;
   var SFX = MOBILE ? 0.42 : 1;
   var DPR = Math.min(MOBILE ? 1.25 : 2, window.devicePixelRatio || 1);
   var COL = readCol();
@@ -207,7 +207,7 @@
         roT = setTimeout(layout, 80);
       }).observe(canvas);
     }
-    if (REDUCED) { morph = 1; render(performance.now()); }
+    if (REDUCED || MOBILE) { morph = 1; render(performance.now()); }
     else if (window.DamarosAnim) DamarosAnim.loop({ root: canvas, onFrame: onFrame }).start();
     else (function spin(now) { onFrame(now); requestAnimationFrame(spin); })(performance.now());
   }

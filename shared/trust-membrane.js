@@ -14,7 +14,7 @@
   var cv = document.getElementById("tbField"); if (!cv) return;
   var ctx = cv.getContext("2d");
   var REDUCED = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var MOBILE = matchMedia("(hover: none), (pointer: coarse)").matches || window.innerWidth < 560;
+  var MOBILE = matchMedia("(hover: none), (pointer: coarse)").matches || window.innerWidth <= 900;
   var SFX = MOBILE ? 0.45 : 1;
   var DPR = Math.min(MOBILE ? 1.25 : 2, window.devicePixelRatio || 1), W = 0, H = 0, last = 0;
   var C = {};
@@ -204,12 +204,12 @@
   }
   function start() {
     readColors(); layout();
-    if (REDUCED) { staticFrame(); return; }
+    if (REDUCED || MOBILE) { staticFrame(); return; }
     last = performance.now();
     if (window.DamarosAnim) DamarosAnim.loop({ root: stage, onFrame: frame }).start();
     else (function spin(now) { frame(now); requestAnimationFrame(spin); })(last);
   }
-  var rt; window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { layout(); if (REDUCED) staticFrame(); }, 150); });
-  new MutationObserver(function () { readColors(); if (REDUCED) staticFrame(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  var rt; window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { layout(); if (REDUCED || MOBILE) staticFrame(); }, 150); });
+  new MutationObserver(function () { readColors(); if (REDUCED || MOBILE) staticFrame(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
   if (document.readyState !== "loading") start(); else document.addEventListener("DOMContentLoaded", start);
 })();

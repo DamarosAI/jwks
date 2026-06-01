@@ -39,5 +39,9 @@
     return { start: kick, stop: stop, kick: kick };
   }
 
-  global.DamarosAnim = { loop: loop };
+  function mobileStatic() {
+    return matchMedia("(hover: none), (pointer: coarse)").matches || window.innerWidth <= 900;
+  }
+
+  global.DamarosAnim = { loop: loop, mobileStatic: mobileStatic };
 })(typeof window !== "undefined" ? window : this);

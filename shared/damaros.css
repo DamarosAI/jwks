@@ -393,6 +393,10 @@ h1,h2,h3 { font-family: var(--fh); font-weight: 600; letter-spacing: -.01em; lin
 }
 
 /* ---- light-mode surface + chrome polish ---- */
+@media (max-width: 900px) {
+  .mono-grid { animation: none; }
+}
+
 @media (prefers-color-scheme: light) {
   .stake-col, .wcard, .scard, .bcol { background: var(--panel-solid); }
   .stake-col:hover, .wcard:hover, .scard:hover { background: var(--bg-2); }
