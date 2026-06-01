@@ -53,8 +53,11 @@
   .a-close b { color: var(--accent-2); font-weight: 600; }
   .a-close .stone { color: var(--accent); }
 
-  footer { border-top: 1px solid var(--bd-soft); padding: 2.2rem clamp(1.1rem,4vw,2.4rem); display: flex; flex-direction: column; align-items: flex-start; gap: .35rem; font-family: var(--fm); font-size: .6rem; letter-spacing: .1em; text-transform: uppercase; color: var(--fg-3); max-width: 1140px; margin: 0 auto; }
-  footer a { color: var(--fg-3); text-decoration: none; }
+  footer { border-top: 1px solid var(--bd-soft); padding: 2.2rem clamp(1.1rem,4vw,2.4rem); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; font-family: var(--fm); font-size: .6rem; letter-spacing: .1em; text-transform: uppercase; color: var(--fg-3); max-width: 1140px; margin: 0 auto; }
+  footer .geo { justify-self: start; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  footer .geo.pending { opacity: .45; }
+  footer .cp { justify-self: center; }
+  footer a { justify-self: end; color: var(--fg-3); text-decoration: none; }
   footer a:hover { color: var(--fg); }
 
   /* nav: no wordmark, no theme toggle. tabs top-left, theme follows system */
@@ -117,11 +120,12 @@
 </main>
 
 <footer>
-  <span>United States</span>
-  <span>© 2026 Damaros™</span>
+  <span class="geo pending" id="geo">Locating</span>
+  <span class="cp">© 2026 Damaros™</span>
   <a href="/privacy">Privacy</a>
 </footer>
 
+<script src="/shared/geo-footer.js"></script>
 <script>
 (function () {
   var grid = document.getElementById("monoGrid");

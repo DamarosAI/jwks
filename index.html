@@ -263,11 +263,14 @@
   }
 
   /* ===== bottom bar ===== */
-  .botbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 95; display: flex; flex-direction: column; align-items: flex-start; gap: .35rem;
+  .botbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 95; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
     padding: .75rem clamp(1.1rem, 3.4vw, 2.6rem); font-family: var(--fm); font-size: .58rem;
     letter-spacing: .12em; text-transform: uppercase; color: var(--fg-3);
     background: linear-gradient(transparent, var(--bg) 46%); }
-  .botbar .pv { color: var(--fg-3); text-decoration: none; transition: color var(--t) var(--ease); }
+  .botbar .geo { justify-self: start; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .botbar .geo.pending { opacity: .45; }
+  .botbar .cp { justify-self: center; }
+  .botbar .pv { justify-self: end; color: var(--fg-3); text-decoration: none; transition: color var(--t) var(--ease); }
   .botbar .pv:hover { color: var(--fg); }
 
   @media (min-width: 901px) and (max-height: 760px) {
@@ -707,11 +710,12 @@
 </main>
 
 <div class="botbar">
-  <span>United States</span>
-  <span>© 2026 Damaros™</span>
+  <span class="geo pending" id="geo">Locating</span>
+  <span class="cp">© 2026 Damaros™</span>
   <a class="pv" href="/privacy">Privacy</a>
 </div>
 
+<script src="/shared/geo-footer.js"></script>
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 /* ============================================================
  * Damaros - terminal type-in reveal (inlined; self-contained).

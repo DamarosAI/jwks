@@ -28,8 +28,11 @@
   .bullets li::before { content: '>'; position: absolute; left: 0; color: var(--accent); font-family: var(--fm); }
   .callout { margin: 1.1rem 0 0; padding: .85rem 1.15rem; border-left: 2px solid var(--bd-strong); background: var(--chip-bg); color: var(--fg-2); font-family: var(--fm); font-size: .76rem; line-height: 1.65; border-radius: 0 6px 6px 0; }
   .foil { border: 1px solid var(--bd-soft); border-radius: 10px; padding: 1rem 1.1rem; background: var(--chip-bg); margin-top: 1rem; }
-  footer { border-top: 1px solid var(--bd-soft); padding: 2.2rem clamp(1.1rem,4vw,2.4rem); display: flex; flex-direction: column; align-items: flex-start; gap: .35rem; font-family: var(--fm); font-size: .6rem; letter-spacing: .1em; color: var(--fg-3); max-width: 920px; margin: 0 auto; text-transform: uppercase; }
-  footer a { color: var(--fg-3); text-decoration: none; }
+  footer { border-top: 1px solid var(--bd-soft); padding: 2.2rem clamp(1.1rem,4vw,2.4rem); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; font-family: var(--fm); font-size: .6rem; letter-spacing: .1em; color: var(--fg-3); max-width: 920px; margin: 0 auto; text-transform: uppercase; }
+  footer .geo { justify-self: start; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  footer .geo.pending { opacity: .45; }
+  footer .cp { justify-self: center; }
+  footer a { justify-self: end; color: var(--fg-3); text-decoration: none; }
   footer a:hover { color: var(--fg); }
 </style>
 </head>
@@ -126,9 +129,10 @@
 </main>
 
 <footer>
-  <span>United States</span>
-  <span>© 2026 Damaros™</span>
+  <span class="geo pending" id="geo">Locating</span>
+  <span class="cp">© 2026 Damaros™</span>
   <a href="/privacy">Privacy</a>
 </footer>
+<script src="/shared/geo-footer.js"></script>
 </body>
 </html>
