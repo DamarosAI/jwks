@@ -47,7 +47,7 @@
     core = { x: W * 0.5, y: cyc };
     coreW = Math.max(74, Math.min(168, W * 0.22)); coreH = Math.max(36, Math.min(58, H * 0.12));
     // a bunch of sites
-    var N = (W < 560) ? 5 : 9;
+    var N = (W < 560) ? 4 : 9;
     sites = [];
     var top = H * 0.12, bot = H * 0.88;
     for (var s = 0; s < N; s++) {
@@ -101,8 +101,8 @@
     for (var s = 0; s < sites.length; s++) drawSite(sites[s], t);
     for (var p = 0; p < sponsors.length; p++) drawSponsor(sponsors[p]);
     drawCore(t);
-    label("Sponsors \u00b7 CROs \u00b7 Networks", sponsors[sponsors.length - 1].x, sponsors[sponsors.length - 1].y + sponsors[0].r + 30, C.fg, 8.5);
-    label("Sites", core.x + (W * 0.86 - core.x), H * 0.94, C.fg);
+    label(MOBILE ? "Sources" : "Sponsors \u00b7 CROs \u00b7 Networks", sponsors[sponsors.length - 1].x, sponsors[sponsors.length - 1].y + sponsors[0].r + 30, MOBILE ? C.blue : C.fg, MOBILE ? 9.5 : 8.5);
+    label("Sites", core.x + (W * 0.86 - core.x), H * 0.94, MOBILE ? C.green : C.fg);
     drawTokens(t, dt);
     drawBeams(now, dt);
     drawProbes(t, dt);
@@ -194,19 +194,19 @@
   function label(txt, x, y, col, size) {
     ctx.font = "600 " + (size || 9.5) + 'px "Space Grotesk", ui-monospace, monospace';
     ctx.textAlign = "center"; ctx.textBaseline = "middle";
-    ctx.save(); ctx.letterSpacing = "1.2px";
+    ctx.save(); ctx.letterSpacing = MOBILE ? "0.4px" : "1.2px";
     // keep the centered caption fully inside the canvas so it never clips at an edge
     var halfW = ctx.measureText(txt).width / 2 + 8;
     if (x < halfW) x = halfW; else if (x > W - halfW) x = W - halfW;
-    ctx.fillStyle = rgb(col, 0.74); ctx.fillText(txt, x, y); ctx.restore();
+    ctx.fillStyle = rgb(col, MOBILE ? 0.92 : 0.74); ctx.fillText(txt, x, y); ctx.restore();
   }
 
   function staticFrame() {
     ctx.clearRect(0, 0, W, H); drawLinks();
     for (var s = 0; s < sites.length; s++) drawSite(sites[s], 0);
     for (var p = 0; p < sponsors.length; p++) drawSponsor(sponsors[p]); drawCore(0);
-    label("Sponsors \u00b7 CROs \u00b7 Networks", sponsors[sponsors.length - 1].x, sponsors[sponsors.length - 1].y + sponsors[0].r + 30, C.fg, 8.5);
-    label("Sites", W * 0.86, H * 0.94, C.fg);
+    label(MOBILE ? "Sources" : "Sponsors \u00b7 CROs \u00b7 Networks", sponsors[sponsors.length - 1].x, sponsors[sponsors.length - 1].y + sponsors[0].r + 30, MOBILE ? C.blue : C.fg, MOBILE ? 9.5 : 8.5);
+    label("Sites", W * 0.86, H * 0.94, MOBILE ? C.green : C.fg);
   }
   function start() {
     readColors(); layout();
