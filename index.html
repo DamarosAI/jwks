@@ -229,8 +229,6 @@
   .queue-item b { color: var(--accent-2); font-weight: 600; margin-right: .35rem; }
   .validation-teaser { margin-top: 1.1rem; font-size: .88rem; color: var(--fg-2); }
   .validation-teaser a { color: var(--accent-2); }
-  .botbar .tagline { justify-self: center; font-size: .54rem; color: var(--fg-3); letter-spacing: .12em; text-transform: uppercase; text-align: center; }
-
   @media (max-width: 900px) {
     .spine-cards { grid-template-columns: repeat(2, 1fr); }
     .stats { grid-template-columns: repeat(2, 1fr); gap: 1.6rem 1.4rem; }
@@ -238,7 +236,6 @@
   }
   @media (max-width: 560px) {
     .spine-cards { grid-template-columns: 1fr; }
-    .botbar .tagline { display: none; }
   }
   /* ===== finale ===== */
   .finale { position: relative; z-index: 1; min-height: 78vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: clamp(4rem,12vh,8rem) clamp(1.1rem,4vw,2rem) clamp(5rem,12vh,8rem); overflow: hidden; }
@@ -266,13 +263,11 @@
   }
 
   /* ===== bottom bar ===== */
-  .botbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 95; display: flex; align-items: center; gap: 1.2rem;
+  .botbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 95; display: flex; flex-direction: column; align-items: flex-start; gap: .35rem;
     padding: .75rem clamp(1.1rem, 3.4vw, 2.6rem); font-family: var(--fm); font-size: .58rem;
     letter-spacing: .12em; text-transform: uppercase; color: var(--fg-3);
     background: linear-gradient(transparent, var(--bg) 46%); }
-  .botbar .geo { margin-right: auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .botbar .geo.pending { opacity: .45; }
-  .botbar .pv { color: var(--fg-3); transition: color var(--t) var(--ease); }
+  .botbar .pv { color: var(--fg-3); text-decoration: none; transition: color var(--t) var(--ease); }
   .botbar .pv:hover { color: var(--fg); }
 
   @media (min-width: 901px) and (max-height: 760px) {
@@ -308,10 +303,6 @@
     .spine { position: static; left: auto; right: auto; bottom: auto; order: 5; margin-top: 1.9rem; align-items: stretch; }
     .spine-exec, .spine-sub-wrap { max-width: none; }
     .stake { grid-template-columns: 1fr; }
-  }
-
-  @media (max-width: 560px) {
-    .botbar .cp { display: none; }
   }
 
   /* nav: no wordmark in the corner - tabs only, top-left */
@@ -716,8 +707,8 @@
 </main>
 
 <div class="botbar">
-  <span class="geo pending" id="geo">Locating</span>
-  <span class="cp">© 2026 Damaros™</span>
+  <span>United States</span>
+  <span>© 2026 Damaros™</span>
   <a class="pv" href="/privacy">Privacy</a>
 </div>
 
@@ -827,22 +818,6 @@
   /* monogram tiles */
   var grid = document.getElementById("monoGrid");
   for (var i = 0; i < 90; i++) { var im = document.createElement("img"); im.src = "assets/damaros-white-transparent.png"; im.alt = ""; grid.appendChild(im); }
-
-  /* geocache - full country name */
-  (function () {
-    var el = document.getElementById("geo");
-    var ac = new AbortController();
-    var to = setTimeout(function () { try { ac.abort(); } catch (e) {} }, 5000);
-    fetch("https://get.geojs.io/v1/ip/geo.json", { credentials: "omit", signal: ac.signal })
-      .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
-      .then(function (d) {
-        clearTimeout(to);
-        var nat = (d.country || "").trim();
-        el.classList.remove("pending");
-        el.textContent = nat || "Session active";
-      })
-      .catch(function () { clearTimeout(to); el.classList.remove("pending"); el.textContent = "Tenant-isolated"; });
-  })();
 
   /* pillars */
   var PILLARS = {

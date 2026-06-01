@@ -54,8 +54,9 @@
   .contact a { color: var(--accent-2); } .contact a:hover { text-decoration: underline; }
   .contact { font-family: var(--fm); font-size: .85rem; line-height: 2; color: var(--fg-2); }
 
-  footer { border-top: 1px solid var(--bd-soft); padding: 2.2rem clamp(1.1rem,4vw,2.4rem); display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; align-items: center; font-family: var(--fm); font-size: .6rem; letter-spacing: .1em; color: var(--fg-3); max-width: 920px; margin: 0 auto; }
-  footer a:hover { color: var(--fg); } footer .fl { display: flex; gap: 1.3rem; }
+  footer { border-top: 1px solid var(--bd-soft); padding: 2.2rem clamp(1.1rem,4vw,2.4rem); display: flex; flex-direction: column; align-items: flex-start; gap: .35rem; font-family: var(--fm); font-size: .6rem; letter-spacing: .1em; color: var(--fg-3); max-width: 920px; margin: 0 auto; text-transform: uppercase; }
+  footer a { color: var(--fg-3); text-decoration: none; }
+  footer a:hover { color: var(--fg); }
   @media (max-width: 620px) { .kv td:first-child { width: 140px; font-size: .72rem; } .scopes li { grid-template-columns: 1fr; gap: .1rem; } }
 </style>
 </head>
@@ -197,9 +198,9 @@
 </main>
 
 <footer>
+  <span>United States</span>
   <span>© 2026 Damaros™</span>
-  <div class="fl"><a href="/">HOME</a><a href="/trust-boundary">TRUST</a><a href="/docs/fhir">FHIR</a><a href="/about">ABOUT</a><a href="/privacy">PRIVACY</a></div>
-  <span style="font-size:.54rem;letter-spacing:.12em;color:var(--fg-3);text-transform:uppercase">Damaros governs trial execution from protocol to replay.</span>
+  <a href="/privacy">Privacy</a>
 </footer>
 </body>
 </html>
