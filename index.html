@@ -59,7 +59,7 @@
     width: clamp(320px, 34vw, 480px); display: flex; flex-direction: column; }
   .wordmark { display: inline-flex; align-items: flex-start; gap: .14em; font-family: var(--fh); font-weight: 700;
     font-size: clamp(3rem, 6.4vw, 5.4rem); line-height: 1; letter-spacing: -.015em; text-shadow: var(--glow); }
-  .wordmark .dmx-dot { width: .13em; height: .13em; flex: none; align-self: flex-start; margin-top: .38em; }
+  .wordmark .dmx-dot { width: .13em; height: .13em; flex: none; align-self: flex-start; margin-top: .50em; }
   .hero-eyebrow { margin-top: 1rem; font-family: var(--fm); font-size: .64rem; font-weight: 600; letter-spacing: .2em;
     text-transform: uppercase; color: var(--accent-2); }
   .hero-subline { margin-top: .75rem; font-family: var(--fh); font-size: clamp(1rem, 1.12vw, 1.16rem); font-weight: 600; line-height: 1.4; color: var(--fg); max-width: 42ch; }
@@ -1244,7 +1244,7 @@
         var rd = (q.ring % 2 === 0) ? 1 : -1, angL = time * (0.03 + (q.ring || 0) * 0.018) * rd, oxL = q.tx - cx, oyL = q.ty - cy, caL = Math.cos(angL), saL = Math.sin(angL);
         bx = cx + oxL * caL - oyL * saL; by = cy + oxL * saL + oyL * caL;
       } else if (current === "screening") {
-        var spin = time * Math.min(0.05, 0.028 + morph * 0.022);
+        var spin = time * Math.min(0.032, 0.016 + morph * 0.016);
         bx = q.scx + Math.cos(q.sa + spin) * q.sr; by = q.scy + Math.sin(q.sa + spin) * q.sr * 0.9;
       } else if (current === "replay") {
         bx = q.tx; by = rvWaveY(q.tx);
@@ -1447,7 +1447,7 @@
       var cc = lerpC(verd[ci], RGB.blue, sm);
       var cy = c.y + (NY - c.y)*0.42*sm;
       var rad = R*0.3*(1.26 - 0.48*sm);
-      var spinRate = Math.min(0.22, 0.07 + (1 - sm) * 0.13);
+      var spinRate = Math.min(0.10, 0.03 + (1 - sm) * 0.07);
       var dir = ci === 1 ? 1 : -1;
       if (ci === 2 && sm < 0.5) dir *= 1.05;
       var spin = time * spinRate * dir;
