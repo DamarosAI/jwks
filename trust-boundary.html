@@ -17,13 +17,6 @@
   .d-title { font-family: var(--fh); font-weight: 600; font-size: clamp(2rem, 4.8vw, 3.2rem); letter-spacing: -.015em; line-height: 1.02; max-width: 18ch; }
   .d-lead { color: var(--fg-2); font-size: clamp(1rem, 1.2vw, 1.06rem); line-height: 1.68; margin: 1.15rem 0 0; max-width: 62ch; }
   .d-lead strong { color: var(--fg); font-weight: 600; }
-  .doc-meta { margin-top: 1rem; font-family: var(--fm); font-size: .62rem; letter-spacing: .1em; text-transform: uppercase; color: var(--fg-3); line-height: 1.8; }
-
-  .doctrine-strip { margin: clamp(1.8rem, 4vh, 2.6rem) 0 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--bd-soft); border: 1px solid var(--bd); border-radius: 12px; overflow: hidden; }
-  .doctrine-cell { background: var(--panel); padding: 1rem 1.05rem; }
-  .doctrine-cell .dc-k { display: block; font-family: var(--fm); font-size: .52rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin-bottom: .45rem; }
-  .doctrine-cell .dc-v { font-family: var(--fh); font-weight: 600; font-size: .92rem; line-height: 1.35; color: var(--fg); letter-spacing: -.01em; }
-
   .cross-link { display: inline-flex; align-items: center; gap: .45rem; margin-top: 1.4rem; font-family: var(--fm); font-size: .66rem; letter-spacing: .14em; text-transform: uppercase; color: var(--accent-2); text-decoration: none; border-bottom: 1px solid transparent; padding-bottom: 2px; transition: color var(--t) var(--ease), border-color var(--t) var(--ease); }
   .cross-link:hover { color: var(--fg); border-color: var(--accent); }
 
@@ -85,12 +78,11 @@
   footer a:hover { color: var(--fg); }
 
   @media (max-width: 820px) {
-    .doctrine-strip { grid-template-columns: repeat(2, 1fr); }
     .dual, .split-cards { grid-template-columns: 1fr; }
     .chain-mini { grid-template-columns: repeat(2, 1fr); }
     .kv td:first-child { width: 130px; font-size: .72rem; }
   }
-  @media (max-width: 480px) { .doctrine-strip, .chain-mini { grid-template-columns: 1fr; } }
+  @media (max-width: 480px) { .chain-mini { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -107,17 +99,6 @@
   <div class="d-eyebrow">Trust doctrine</div>
   <h1 class="d-title">The model is not the system of record.</h1>
   <p class="d-lead">This document describes how Damaros governs AI use, clinical data handling, eligibility execution, and audit reconstruction for decentralized trial-access deployments. It is written for security, compliance, clinical operations, and integration reviewers evaluating site, sponsor, or network diligence.</p>
-  <div class="doc-meta">
-    Audience: security · compliance · clinical ops · integration<br>
-    Last updated: May 2026 · Supplements customer BAA / DPA and deployment contracts
-  </div>
-
-  <div class="doctrine-strip" aria-label="Non-negotiable trust lines">
-    <div class="doctrine-cell"><span class="dc-k">Boundary</span><span class="dc-v">PHI never touches an LLM.</span></div>
-    <div class="doctrine-cell"><span class="dc-k">Verdict</span><span class="dc-v">PASS, REVIEW, FAIL only from the engine.</span></div>
-    <div class="doctrine-cell"><span class="dc-k">Audit</span><span class="dc-v">Replay reconstructs the institution's decision.</span></div>
-    <div class="doctrine-cell"><span class="dc-k">Category</span><span class="dc-v">Matching is discovery. Damaros is governed access.</span></div>
-  </div>
 
   <a class="cross-link" href="/docs/fhir">Enterprise FHIR, JWT, and JWKS reference <span aria-hidden="true">&rarr;</span></a>
 
