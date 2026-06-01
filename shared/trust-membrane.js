@@ -42,12 +42,12 @@
     var cyc = H * 0.44, sr = Math.max(8, Math.min(12, W * 0.016));
     // a few sponsors
     sponsors = [];
-    var SN = (W < 560) ? 4 : 5, ss = Math.min(H * 0.2, (H - coreHGuess()) * 0.46);
+    var SN = (W < 560) ? 3 : 5, ss = Math.min(H * 0.2, (H - coreHGuess()) * 0.46);
     for (var i = 0; i < SN; i++) { var fy = (SN === 1) ? 0 : (i / (SN - 1) * 2 - 1); sponsors.push({ x: W * 0.15, y: cyc + fy * ss, r: sr }); }
     core = { x: W * 0.5, y: cyc };
     coreW = Math.max(74, Math.min(168, W * 0.22)); coreH = Math.max(36, Math.min(58, H * 0.12));
     // a bunch of sites
-    var N = (W < 560) ? 6 : 9;
+    var N = (W < 560) ? 5 : 9;
     sites = [];
     var top = H * 0.12, bot = H * 0.88;
     for (var s = 0; s < N; s++) {
@@ -194,7 +194,11 @@
   function label(txt, x, y, col, size) {
     ctx.font = "600 " + (size || 9.5) + 'px "Space Grotesk", ui-monospace, monospace';
     ctx.textAlign = "center"; ctx.textBaseline = "middle";
-    ctx.save(); ctx.letterSpacing = "1.2px"; ctx.fillStyle = rgb(col, 0.74); ctx.fillText(txt, x, y); ctx.restore();
+    ctx.save(); ctx.letterSpacing = "1.2px";
+    // keep the centered caption fully inside the canvas so it never clips at an edge
+    var halfW = ctx.measureText(txt).width / 2 + 8;
+    if (x < halfW) x = halfW; else if (x > W - halfW) x = W - halfW;
+    ctx.fillStyle = rgb(col, 0.74); ctx.fillText(txt, x, y); ctx.restore();
   }
 
   function staticFrame() {

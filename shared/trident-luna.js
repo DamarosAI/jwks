@@ -82,7 +82,7 @@
       }
     }
 
-    if (!TOUCH) {
+    if (!TOUCH && !MOBILE) {
       canvas.style.touchAction = "none";
       canvas.addEventListener("pointermove", function (ev) {
         var r = canvas.getBoundingClientRect();

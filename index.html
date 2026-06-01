@@ -971,8 +971,6 @@
   window.addEventListener("resize", syncBotbarH);
 })();
 </script>
-})();
-</script>
 <script>
 (function () {
   var cv = document.getElementById("gapField");
@@ -1150,7 +1148,7 @@
   var screenAngles = [0, 0, 0];
   function Gat(c) { if (c < 4) return 0; if (c < 7.5) return smooth((c-4)/3.5); if (c < 10.5) return 1; return 1 - smooth((c-10.5)/2.5); }
   var mouse = { x:-9999, y:-9999, in:false };
-  if (!TOUCH) {
+  if (!TOUCH && !MOBILE) {
     cv.addEventListener("pointermove", function (e) { var r = cv.getBoundingClientRect(); mouse.x = e.clientX-r.left; mouse.y = e.clientY-r.top; mouse.in = true; });
     cv.addEventListener("pointerleave", function () { mouse.in = false; mouse.x = -9999; mouse.y = -9999; });
   }
@@ -1192,8 +1190,8 @@
   if (document.readyState !== "loading") start(); else document.addEventListener("DOMContentLoaded", start);
 })();
 </script>
-<script src="shared/trust-membrane.js?v=14"></script>
-<script src="shared/trident-luna.js?v=8"></script>
+<script src="shared/trust-membrane.js?v=15"></script>
+<script src="shared/trident-luna.js?v=9"></script>
 <script>
 /* keep the category-contrast line on a single row at any width */
 (function () {
