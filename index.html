@@ -15,9 +15,6 @@
   html { scroll-behavior: smooth; scroll-padding-top: 64px; -webkit-text-size-adjust: 100%; }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
   body { overflow-x: hidden; --botbar-h: 3.25rem; -webkit-font-smoothing: antialiased; }
-  @supports (content-visibility: auto) {
-    .story-inner > * { content-visibility: auto; contain-intrinsic-size: auto 480px; }
-  }
   .wrap { max-width: 1480px; margin: 0 auto; padding: 0 clamp(1.1rem, 3.4vw, 2.6rem); }
 
   /* ===== section selector - primary platform nav, anchored UNDER the animation =====
@@ -115,18 +112,36 @@
   .c-title { font-family: var(--fh); font-weight: 600; font-size: clamp(1.3rem, 1.78vw, 1.72rem); letter-spacing: -.01em; line-height: 1.08; margin: 0 0 1.05rem; }
   .c-desc { font-size: clamp(.9rem, 1.05vw, 1rem); line-height: 1.62; color: var(--fg-2); margin: 0; }
 
-  /* scroll reveals — compositor-friendly; IO-driven in anim-governor.js */
+  /* scroll reveals — container-level keyframes; IO in anim-governor.js */
+  @keyframes flowRise {
+    from { opacity: 0; transform: translate3d(0, 14px, 0); }
+    to { opacity: 1; transform: translate3d(0, 0, 0); }
+  }
+  @keyframes flowFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes drawIn {
+    from { transform: scale3d(0, 1, 1); }
+    to { transform: scale3d(1, 1, 1); }
+  }
   .reveal { opacity: 1; }
-  .reveal.in { animation: none; }
-  .flow-in { opacity: 0; transform: translate3d(0, 20px, 0); transition: opacity .62s var(--ease), transform .62s var(--ease); }
-  .flow-in.in { opacity: 1; transform: none; }
-  .spine-cards .flow-in:nth-child(2), .who-cards .flow-in:nth-child(2), .platform-cards .flow-in:nth-child(2) { transition-delay: .08s; }
-  .spine-cards .flow-in:nth-child(3), .who-cards .flow-in:nth-child(3) { transition-delay: .16s; }
-  .spine-cards .flow-in:nth-child(4), .who-cards .flow-in:nth-child(4) { transition-delay: .24s; }
-  .draw { width: 110px; height: 1px; background: var(--accent-2); opacity: .55; transform: scale3d(0, 1, 1); transform-origin: left;
-    transition: transform .72s var(--ease) .08s; }
-  .draw.in { transform: scale3d(1, 1, 1); }
-  @media (prefers-reduced-motion: reduce) { .reveal, .draw, .flow-in { transition: none; opacity: 1; transform: none; } }
+  .flow-in {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  .flow-in.in { animation: flowRise 520ms cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+  .spine-cards.flow-in,
+  .platform-cards.flow-in,
+  .sub-grid.flow-in,
+  .who-cards.flow-in { isolation: isolate; }
+  .draw { width: 110px; height: 1px; background: var(--accent-2); opacity: .55; transform: scale3d(0, 1, 1); transform-origin: left; }
+  .draw.in { animation: drawIn 480ms cubic-bezier(0.22, 1, 0.36, 1) 60ms forwards; }
+  @media (prefers-reduced-motion: reduce) {
+    .flow-in, .flow-in.in, .draw, .draw.in { animation: none; opacity: 1; transform: none; }
+  }
 
   /* ===== SECTIONS ===== */
   .band { position: relative; z-index: 1; padding: clamp(3.6rem, 11vh, 8.5rem) 0; border-top: 1px solid var(--bd-soft); }
@@ -355,11 +370,8 @@
     .caption { position: relative; left: auto; bottom: auto; width: auto; order: 5; margin-top: 1.25rem; }
     .c-title, .c-desc { height: auto; }
     .stake { grid-template-columns: 1fr; }
-    /* mobile: lighter fade-only entrances — no vertical shift during scroll */
-    .flow-in { opacity: 0; transform: none; transition: opacity .42s var(--ease); }
-    .flow-in.in { opacity: 1; }
-    .draw { opacity: 0; transform: none; transition: opacity .38s var(--ease); }
-    .draw.in { opacity: .55; }
+    .flow-in { transform: none; }
+    .flow-in.in { animation-name: flowFade; animation-duration: 380ms; }
     .sub-card .mini { pointer-events: none; touch-action: none; }
     .hero-scroll { position: relative; left: auto; bottom: auto; transform: none; order: 6; width: 100%; margin-top: 0; padding: .55rem 0 .1rem; flex-shrink: 0; }
   }
@@ -637,10 +649,6 @@
       background: var(--chip-bg);
     }
     .stat .slbl { font-size: .82rem; }
-
-    /* honor the entrance fade per-card without a left-shift that fights scroll */
-    .spine-cards .flow-in, .who-cards .flow-in, .stats > .stat { transform: none; opacity: 0; transition: opacity .38s var(--ease); }
-    .spine-cards .flow-in.in, .who-cards .flow-in.in, .stats > .stat.in { opacity: 1; }
   }
 </style>
 </head>
@@ -730,26 +738,26 @@
           </div>
         </div>
         </div>
-        <div class="spine-cards" style="margin-top: clamp(1.4rem, 3.5vh, 2.2rem)">
-          <div class="scard flow-in" data-spine="protocol">
+        <div class="spine-cards flow-in" style="margin-top: clamp(1.4rem, 3.5vh, 2.2rem)">
+          <div class="scard" data-spine="protocol">
             <span class="sc-step">01</span>
             <span class="sc-n">Protocol</span>
             <h3>Kill the PDF hunt</h3>
             <p class="sc-op">No more hunting through static eligibility text. Protocol exposes criteria, ambiguity, and evidence requirements as versioned logic the trial can run.</p>
           </div>
-          <div class="scard flow-in" data-spine="evidence">
+          <div class="scard" data-spine="evidence">
             <span class="sc-step">02</span>
             <span class="sc-n">Evidence</span>
             <h3>Filter clinical noise</h3>
             <p class="sc-op">No more screening against raw fragments. Evidence builds the plane where site data becomes source-traceable, protocol-usable, and ready to resolve.</p>
           </div>
-          <div class="scard flow-in" data-spine="screening">
+          <div class="scard" data-spine="screening">
             <span class="sc-step">03</span>
             <span class="sc-n">Screening</span>
             <h3>Kill black-box matching</h3>
             <p class="sc-op">No more match scores. Screening resolves each patient against executable protocol logic, criterion by criterion, with REVIEW isolated.</p>
           </div>
-          <div class="scard flow-in" data-spine="replay">
+          <div class="scard" data-spine="replay">
             <span class="sc-step">04</span>
             <span class="sc-n">Replay</span>
             <h3>Make truth reconstructable</h3>
@@ -760,13 +768,13 @@
 
       <!-- REPLAYABLE REFERRAL PACKET -->
       <!-- AI SUBSTRATE: TRIDENT & LUNA -->
-      <div class="substrate reveal flow-in" style="margin-top: clamp(2.8rem,7vh,4.2rem)">
+      <div class="substrate reveal" style="margin-top: clamp(2.8rem,7vh,4.2rem)">
         <header class="sec-head-block">
           <span class="eyebrow">THE SUBSTRATE</span>
           <h2>AI-native where operations scale. <em>Deterministic where trust requires.</em></h2>
         </header>
-        <div class="sub-grid">
-          <article class="sub-card flow-in">
+        <div class="sub-grid flow-in">
+          <article class="sub-card">
             <canvas class="mini" data-mode="trident" aria-hidden="true"></canvas>
             <div class="sub-body">
               <span class="sub-name">Trident</span>
@@ -774,7 +782,7 @@
               <p>Transforms the protocol from text into dynamic trial intelligence. Criterion resolve, evidence needs surface, and each run makes the system sharper.</p>
             </div>
           </article>
-          <article class="sub-card luna flow-in">
+          <article class="sub-card luna">
             <canvas class="mini" data-mode="luna" aria-hidden="true"></canvas>
             <div class="sub-body">
               <span class="sub-name">Luna</span>
@@ -795,8 +803,8 @@
           <p class="cb-line" style="font-size: 26px">Turn the protocol from a document into a <em>live execution system.</em></p>
           <p>CTMS watches the trial. Damaros™ makes the trial run. Node resolves evidence, criteria, REVIEW, and human judgment into verified signal. Console shows where the protocol holds, where it breaks, and the site terrain.</p>
         </div>
-        <div class="platform-cards sub-grid">
-          <article class="sub-card platform-card flow-in">
+        <div class="platform-cards sub-grid flow-in">
+          <article class="sub-card platform-card">
             <div class="sub-body">
               <span class="ps-tag">Sites / Coordinators</span>
               <span class="sub-name">Node</span>
@@ -804,7 +812,7 @@
               <p>Node turns a care site into trial-capable infrastructure: evidence in, criteria resolved, REVIEW bounded, clinician judgment captured, signal verified.</p>
             </div>
           </article>
-          <article class="sub-card platform-card flow-in">
+          <article class="sub-card platform-card">
             <div class="sub-body">
               <span class="ps-tag">Sponsors / CROs / Networks</span>
               <span class="sub-name">Console</span>
@@ -821,7 +829,7 @@
           <a class="eyebrow tb-eyebrow-cta" href="/trust-boundary">Trust boundary <span aria-hidden="true">&rarr;</span></a>
           <h2>Governance is not a report. <em>It is the runtime.</em></h2>
         </header>
-        <div class="tb-stage reveal flow-in" id="tbStage">
+        <div class="tb-stage reveal" id="tbStage">
           <canvas id="tbField" aria-hidden="true"></canvas>
           <span class="tb-core" aria-hidden="true">Damaros<span class="dmx-dot"></span></span>
           <div class="tb-legend">
@@ -838,23 +846,23 @@
         <header class="who-head">
           <span class="eyebrow">Who we serve</span>
         </header>
-        <div class="who-cards">
-          <div class="wcard flow-in">
+        <div class="who-cards flow-in">
+          <div class="wcard">
             <span class="w-n">Sponsors</span>
             <h3>Replace status with signal</h3>
             <p>Legacy systems show activity after the fact. Damaros shows where protocol logic is producing verified signal, where criteria are breaking, and where site terrain is changing the run.</p>
           </div>
-          <div class="wcard flow-in">
+          <div class="wcard">
             <span class="w-n">CROs</span>
             <h3>End the blind chase</h3>
             <p>No more chasing updates across sites. Damaros exposes deterministic REVIEW, evidence blockers, readiness state, and signal integrity before execution stalls.</p>
           </div>
-          <div class="wcard flow-in">
+          <div class="wcard">
             <span class="w-n">Federal Networks</span>
             <h3>Scale governed trial execution</h3>
             <p>Move beyond centralized research infrastructure with reproducible screening, governed evidence, replayable decisions, and oversight across distributed care settings.</p>
           </div>
-          <div class="wcard flow-in">
+          <div class="wcard">
             <span class="w-n">Sites &amp; Coordinators</span>
             <h3>Stop executing the trial by hand</h3>
             <p>Damaros™ pulls the protocol out of PDFs, filters evidence noise, isolates REVIEW, and captures clinician judgment inside one governed execution path.</p>
@@ -879,7 +887,7 @@
 </div>
 
 <script src="shared/geo-footer.js"></script>
-<script src="shared/anim-governor.js?v=3"></script>
+<script src="shared/anim-governor.js?v=4"></script>
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 /* ============================================================
  * Damaros - terminal type-in reveal (inlined; self-contained).

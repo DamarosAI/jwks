@@ -1,4 +1,4 @@
-/* Pause canvas RAF loops when tab hidden or element off-screen; scroll reveals via IO. */
+/* Pause canvas RAF loops when off-screen; one-shot scroll reveals via IO + rAF. */
 (function (global) {
   function isMobile() {
     return matchMedia("(hover: none), (pointer: coarse)").matches || window.innerWidth <= 900;
@@ -53,15 +53,16 @@
     return { start: kick, stop: stop, kick: kick };
   }
 
-  var CAROUSEL_SEL = ".stats, .spine-cards, .who-cards";
-
-  function inCarousel(el) {
-    return !!(el.closest && el.closest(CAROUSEL_SEL));
+  function inViewport(el, pad) {
+    pad = pad == null ? 0.04 : pad;
+    var r = el.getBoundingClientRect();
+    var vh = window.innerHeight || document.documentElement.clientHeight;
+    return r.top < vh * (1 - pad) && r.bottom > vh * pad;
   }
 
   function revealOnScroll(opts) {
     opts = opts || {};
-    var selector = opts.selector || ".reveal, .draw, .flow-in";
+    var selector = opts.selector || ".flow-in, .draw";
     var els = [].slice.call(document.querySelectorAll(selector));
     if (!els.length) return;
 
@@ -77,35 +78,31 @@
       return;
     }
 
-    var mobile = opts.mobile != null ? opts.mobile : isMobile();
+    var pending = new Set();
 
-    /* Vertical page scroll — one-shot reveal per element */
-    var vert = els.filter(function (el) { return !mobile || !inCarousel(el); });
-    if (vert.length) {
-      var vMargin = mobile ? "0px 0px -6% 0px" : "0px 0px -12% 0px";
-      var vIo = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (!entry.isIntersecting) return;
-          entry.target.classList.add("in");
-          vIo.unobserve(entry.target);
+    function activate(el) {
+      if (el.classList.contains("in") || pending.has(el)) return;
+      pending.add(el);
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          pending.delete(el);
+          el.classList.add("in");
         });
-      }, { root: null, rootMargin: vMargin, threshold: mobile ? 0.06 : 0.1 });
-      vert.forEach(function (el) { vIo.observe(el); });
-    }
-
-    /* Mobile horizontal carousels — fade cards as they snap into view */
-    if (mobile) {
-      [].slice.call(document.querySelectorAll(CAROUSEL_SEL)).forEach(function (track) {
-        var cards = track.querySelectorAll(".flow-in, .stat, .scard, .wcard");
-        if (!cards.length) return;
-        var cIo = new IntersectionObserver(function (entries) {
-          entries.forEach(function (entry) {
-            if (entry.isIntersecting) entry.target.classList.add("in");
-          });
-        }, { root: track, threshold: 0.52, rootMargin: "0px 8px" });
-        cards.forEach(function (c) { cIo.observe(c); });
       });
     }
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting || entry.intersectionRatio < 0.08) return;
+        activate(entry.target);
+        io.unobserve(entry.target);
+      });
+    }, { root: null, rootMargin: "0px 0px -5% 0px", threshold: [0, 0.08, 0.15] });
+
+    els.forEach(function (el) {
+      if (inViewport(el)) activate(el);
+      else io.observe(el);
+    });
   }
 
   global.DamarosAnim = { loop: loop, isMobile: isMobile, perf: perf, revealOnScroll: revealOnScroll };
