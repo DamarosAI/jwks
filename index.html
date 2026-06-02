@@ -59,9 +59,9 @@
   /* left column */
   .hero-inner { position: absolute; left: clamp(1.2rem, 4vw, 3.4rem); top: 50%; transform: translateY(-50%); z-index: 5;
     width: clamp(320px, 34vw, 480px); display: flex; flex-direction: column; }
-  .wordmark { display: inline-flex; align-items: flex-start; gap: .2em; font-family: var(--fh); font-weight: 700;
+  .wordmark { display: inline-flex; align-items: flex-start; gap: 0; font-family: var(--fh); font-weight: 700;
     font-size: clamp(3rem, 6.4vw, 5.4rem); line-height: 1; letter-spacing: -.015em; text-shadow: var(--glow); }
-  .wordmark .dmx-dot { width: .13em; height: .13em; flex: none; align-self: flex-start; margin-top: .50em; margin-left: .06em; }
+  .wordmark .dmx-dot { width: .13em; height: .13em; flex: none; align-self: flex-start; margin-top: .50em; margin-left: .0325em; }
   .hero-eyebrow { margin-top: 1rem; font-family: var(--fm); font-size: .64rem; font-weight: 600; letter-spacing: .2em;
     text-transform: uppercase; color: var(--accent-2); }
   .hero-subline { margin-top: .75rem; font-family: var(--fh); font-size: clamp(1rem, 1.12vw, 1.16rem); font-weight: 600; line-height: 1.4; color: var(--fg); max-width: 42ch; }
@@ -343,7 +343,7 @@
     .gap-scene { height: clamp(200px, 28vh, 260px); }
     .hero-inner { display: contents; }
     .wordmark { order: 1; font-size: clamp(2.35rem, 10.5vw, 3.35rem); }
-    .wordmark .dmx-dot { width: .17em; height: .17em; margin-left: .04em; }
+    .wordmark .dmx-dot { width: .17em; height: .17em; margin-left: .0425em; }
     .hero-cat { order: 1; max-width: none; width: 100%; }
     .hero-tag { order: 2; max-width: none; margin-top: .85rem; font-size: clamp(.88rem, 3.6vw, 1.02rem); line-height: 1.55; }
     .hero-actions { order: 3; width: 100%; margin: 1rem 0 0; display: flex; }
@@ -666,14 +666,6 @@
       <div class="hero-actions">
         <a class="dmx-cta dmx-cta--sm" href="mailto:anirudh@damaros.ai?subject=Damaros%20Inquiry">Request a walkthrough</a>
       </div>
-      <div class="caption">
-        <div class="crule" aria-hidden="true"></div>
-        <p class="c-label" id="cLabel">01 / Protocol</p>
-        <div class="c-body" id="cBody">
-          <h2 class="c-title" id="cTitle">Make criteria executable</h2>
-          <p class="c-desc" id="cDesc">Dense inclusion and exclusion language becomes versioned eligibility logic the trial can actually run.</p>
-        </div>
-      </div>
     </div>
 
     <div class="gap-scene-anchor hero-gap-anchor"></div>
@@ -726,25 +718,25 @@
         </div>
         </div>
         <div class="spine-cards" style="margin-top: clamp(1.4rem, 3.5vh, 2.2rem)">
-          <div class="scard flow-in">
+          <div class="scard flow-in" data-spine="protocol">
             <span class="sc-step">01</span>
             <span class="sc-n">Protocol</span>
             <h3>Make criteria executable</h3>
             <p class="sc-op">Dense inclusion and exclusion language becomes versioned eligibility logic the trial can actually run.</p>
           </div>
-          <div class="scard flow-in">
+          <div class="scard flow-in" data-spine="evidence">
             <span class="sc-step">02</span>
             <span class="sc-n">Evidence</span>
             <h3>Build the evidence plane</h3>
             <p class="sc-op">FHIR, labs, records, and site-approved exports become source-traceable evidence before screening begins.</p>
           </div>
-          <div class="scard flow-in">
+          <div class="scard flow-in" data-spine="screening">
             <span class="sc-step">03</span>
             <span class="sc-n">Screening</span>
             <h3>Resolve each criterion</h3>
             <p class="sc-op">Every patient resolves PASS, REVIEW, or FAIL at criterion level, with evidence attached.</p>
           </div>
-          <div class="scard flow-in">
+          <div class="scard flow-in" data-spine="replay">
             <span class="sc-step">04</span>
             <span class="sc-n">Replay</span>
             <h3>Replay every decision</h3>
@@ -967,14 +959,31 @@
   var grid = document.getElementById("monoGrid");
   for (var i = 0; i < 90; i++) { var im = document.createElement("img"); im.src = "assets/damaros-white-transparent.png"; im.alt = ""; grid.appendChild(im); }
 
-  /* pillars */
-  var PILLARS = {
-    protocol:  { color: "locked",  label: "01 / Protocol",        title: "Make criteria executable", emph: "executable", desc: "Dense inclusion and exclusion language becomes versioned eligibility logic the trial can actually run." },
-    evidence:  { color: "accent",  label: "02 / Evidence",        title: "Build the evidence plane", emph: "evidence plane", desc: "FHIR, labs, records, and site-approved exports become source-traceable evidence before screening begins." },
-    screening: { color: "screening", label: "03 / Screening",     title: "Resolve each criterion", emph: "each criterion", desc: "Every patient resolves PASS, REVIEW, or FAIL at criterion level, with evidence attached." },
-    replay:    { color: "accent2", label: "04 / Replay",          title: "Replay every decision", emph: "every decision", desc: "Each signal reconstructs from protocol version, evidence state, criterion result, review, and authorization context." }
-  };
-  var ORDER = ["protocol", "evidence", "screening", "replay"];
+  /* execution spine — single source for hero pillars + story cards */
+  var SPINE_STEPS = [
+    { id: "protocol",  step: "01", name: "Protocol",  color: "locked",    title: "Make criteria executable", emph: "executable",     body: "Dense inclusion and exclusion language becomes versioned eligibility logic the trial can actually run." },
+    { id: "evidence",  step: "02", name: "Evidence",  color: "accent",    title: "Build the evidence plane", emph: "evidence plane", body: "FHIR, labs, records, and site-approved exports become source-traceable evidence before screening begins." },
+    { id: "screening", step: "03", name: "Screening", color: "screening", title: "Resolve each criterion",   emph: "each criterion", body: "Every patient resolves PASS, REVIEW, or FAIL at criterion level, with evidence attached." },
+    { id: "replay",    step: "04", name: "Replay",    color: "accent2",   title: "Replay every decision",    emph: "every decision", body: "Each signal reconstructs from protocol version, evidence state, criterion result, review, and authorization context." }
+  ];
+  var PILLARS = {};
+  var ORDER = [];
+  SPINE_STEPS.forEach(function (s) {
+    ORDER.push(s.id);
+    PILLARS[s.id] = { color: s.color, label: s.step + " / " + s.name, title: s.title, emph: s.emph, desc: s.body };
+  });
+
+  function hydrateSpineCards() {
+    SPINE_STEPS.forEach(function (s) {
+      var card = document.querySelector('.spine-cards .scard[data-spine="' + s.id + '"]');
+      if (!card) return;
+      var h3 = card.querySelector("h3");
+      var body = card.querySelector(".sc-op");
+      if (h3) h3.textContent = s.title;
+      if (body) body.textContent = s.body;
+    });
+  }
+  hydrateSpineCards();
 
   /* Reserve the caption's title + description box to the TALLEST pillar at the
      current width, measured off-screen. Keeps the Request-a-demo CTA pinned in
