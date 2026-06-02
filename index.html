@@ -721,26 +721,26 @@
           <div class="scard flow-in" data-spine="protocol">
             <span class="sc-step">01</span>
             <span class="sc-n">Protocol</span>
-            <h3>Make criteria executable</h3>
-            <p class="sc-op">Dense inclusion and exclusion language becomes versioned eligibility logic the trial can actually run.</p>
+            <h3>Kill the PDF hunt</h3>
+            <p class="sc-op">No more hunting through static eligibility text. Protocol exposes criteria, ambiguity, and evidence requirements as versioned logic the trial can run.</p>
           </div>
           <div class="scard flow-in" data-spine="evidence">
             <span class="sc-step">02</span>
             <span class="sc-n">Evidence</span>
-            <h3>Build the evidence plane</h3>
-            <p class="sc-op">FHIR, labs, records, and site-approved exports become source-traceable evidence before screening begins.</p>
+            <h3>Filter clinical noise</h3>
+            <p class="sc-op">No more screening against raw fragments. Evidence builds the plane where site data becomes source-traceable, protocol-usable, and ready to resolve.</p>
           </div>
           <div class="scard flow-in" data-spine="screening">
             <span class="sc-step">03</span>
             <span class="sc-n">Screening</span>
-            <h3>Resolve each criterion</h3>
-            <p class="sc-op">Every patient resolves PASS, REVIEW, or FAIL at criterion level, with evidence attached.</p>
+            <h3>Kill black-box matching</h3>
+            <p class="sc-op">No more match scores. Screening resolves each patient against executable protocol logic, criterion by criterion, with REVIEW isolated.</p>
           </div>
           <div class="scard flow-in" data-spine="replay">
             <span class="sc-step">04</span>
             <span class="sc-n">Replay</span>
-            <h3>Replay every decision</h3>
-            <p class="sc-op">Each signal reconstructs from protocol version, evidence state, criterion result, review, and authorization context.</p>
+            <h3>Make truth reconstructable</h3>
+            <p class="sc-op">No more unverifiable trial claims. Replay reconstructs each signal from protocol, evidence, review, authorization, and the reason it moved or stopped.</p>
           </div>
         </div>
       </div>
@@ -961,10 +961,10 @@
 
   /* execution spine — single source for hero pillars + story cards */
   var SPINE_STEPS = [
-    { id: "protocol",  step: "01", name: "Protocol",  color: "locked",    title: "Make criteria executable", emph: "executable",     body: "Dense inclusion and exclusion language becomes versioned eligibility logic the trial can actually run." },
-    { id: "evidence",  step: "02", name: "Evidence",  color: "accent",    title: "Build the evidence plane", emph: "evidence plane", body: "FHIR, labs, records, and site-approved exports become source-traceable evidence before screening begins." },
-    { id: "screening", step: "03", name: "Screening", color: "screening", title: "Resolve each criterion",   emph: "each criterion", body: "Every patient resolves PASS, REVIEW, or FAIL at criterion level, with evidence attached." },
-    { id: "replay",    step: "04", name: "Replay",    color: "accent2",   title: "Replay every decision",    emph: "every decision", body: "Each signal reconstructs from protocol version, evidence state, criterion result, review, and authorization context." }
+    { id: "protocol",  step: "01", name: "Protocol",  color: "locked",    title: "Kill the PDF hunt",           emph: "PDF hunt",           body: "No more hunting through static eligibility text. Protocol exposes criteria, ambiguity, and evidence requirements as versioned logic the trial can run." },
+    { id: "evidence",  step: "02", name: "Evidence",  color: "accent",    title: "Filter clinical noise",       emph: "clinical noise",     body: "No more screening against raw fragments. Evidence builds the plane where site data becomes source-traceable, protocol-usable, and ready to resolve." },
+    { id: "screening", step: "03", name: "Screening", color: "screening", title: "Kill black-box matching",     emph: "black-box matching", body: "No more match scores. Screening resolves each patient against executable protocol logic, criterion by criterion, with REVIEW isolated." },
+    { id: "replay",    step: "04", name: "Replay",    color: "accent2",   title: "Make truth reconstructable",  emph: "reconstructable",    body: "No more unverifiable trial claims. Replay reconstructs each signal from protocol, evidence, review, authorization, and the reason it moved or stopped." }
   ];
   var PILLARS = {};
   var ORDER = [];
