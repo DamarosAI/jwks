@@ -1,7 +1,7 @@
 /* ============================================================
  * Damaros — shared design tokens + base.
  * Steel-on-black operator console DNA. Dark + light parity.
- * Type: Science Gothic (display) · Sohne (body + UI register).
+ * Type: Yantramanav (display) · Sohne (body + UI register).
  *
  * THEME MODEL (robust, JS-optional):
  *   1. :root carries the DARK tokens as the default.
@@ -11,18 +11,18 @@
  *      theme-system.js never sets data-theme; it only clears stale pins.
  * ============================================================ */
 
-@import url("science-gothic.css");
+@import url("yantramanav.css");
 @import url("sohne.css");
 
 :root {
-  --fh: 'Science Gothic', system-ui, sans-serif;   /* logo / headings */
+  --fh: 'Yantramanav', system-ui, sans-serif;   /* logo / headings */
   --fb: 'Sohne', system-ui, sans-serif;   /* body */
   --fm: 'Sohne', system-ui, sans-serif;   /* labels / UI register */
-  /* Science Gothic reads heavy at standard CSS semibold/bold — remap via wght axis */
-  --fh-w-display: 324;   /* wordmark only */
-  --fh-w-med: 330;
-  --fh-w: 340;
-  --fh-w-strong: 355;
+  /* Yantramanav — light display weights for readable headings */
+  --fh-w-display: 300;   /* wordmark only */
+  --fh-w-med: 400;
+  --fh-w: 500;
+  --fh-w-strong: 500;
   --fh-ls: -.006em;
   --fh-lh: 1.12;
 
