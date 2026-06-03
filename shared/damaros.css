@@ -1,7 +1,7 @@
 /* ============================================================
  * Damaros — shared design tokens + base.
  * Steel-on-black operator console DNA. Dark + light parity.
- * Type: Aeonik (display) · Sohne (body + UI register).
+ * Type: Science Gothic (display) · Sohne (body + UI register).
  *
  * THEME MODEL (robust, JS-optional):
  *   1. :root carries the DARK tokens as the default.
@@ -11,11 +11,11 @@
  *      theme-system.js never sets data-theme; it only clears stale pins.
  * ============================================================ */
 
-@import url("aeonik.css");
+@import url("science-gothic.css");
 @import url("sohne.css");
 
 :root {
-  --fh: 'Aeonik', system-ui, sans-serif;   /* logo / headings */
+  --fh: 'Science Gothic', system-ui, sans-serif;   /* logo / headings */
   --fb: 'Sohne', system-ui, sans-serif;   /* body */
   --fm: 'Sohne', system-ui, sans-serif;   /* labels / UI register */
 
