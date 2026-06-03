@@ -56,19 +56,10 @@
   /* left column */
   .hero-inner { position: absolute; left: clamp(1.2rem, 4vw, 3.4rem); top: 50%; transform: translateY(-50%); z-index: 5;
     width: clamp(320px, 34vw, 480px); display: flex; flex-direction: column; align-items: flex-start; }
-  .wordmark-wrap { display: block; width: 100%; position: relative; }
   .wordmark { display: block; width: 100%; margin: 0; padding: 0;
     font-family: var(--fh); font-weight: var(--fh-w-display);
     font-size: var(--fs-display); line-height: 1; letter-spacing: var(--fh-ls); text-align: left;
-    text-shadow: var(--glow); white-space: nowrap; }
-  .wordmark--spacer { visibility: hidden; pointer-events: none; user-select: none; }
-  @media (min-width: 901px) {
-    .wordmark.is-floating {
-      position: fixed; z-index: 110; width: auto; margin: 0; padding: 0;
-      text-align: center; pointer-events: none; will-change: left, top, font-size, transform;
-    }
-    .wordmark.is-docked { text-shadow: none; }
-  }
+    text-shadow: var(--glow); }
   .hero-eyebrow { margin-top: 1rem; font-family: var(--fm); font-size: var(--fs-micro); font-weight: 600; letter-spacing: .16em;
     text-transform: uppercase; color: var(--accent-2); }
   .hero-subline { margin-top: .75rem; font-family: var(--fb); font-size: var(--fs-sm); font-weight: var(--fb-w); line-height: var(--fb-lh); color: var(--fg); max-width: 42ch; }
@@ -687,10 +678,7 @@
     <canvas id="field"></canvas>
 
     <div class="hero-inner">
-      <div class="wordmark-wrap">
-        <span class="wordmark" id="damarosWordmark">DAMAROS</span>
-        <span class="wordmark wordmark--spacer" aria-hidden="true">DAMAROS</span>
-      </div>
+      <span class="wordmark">DAMAROS</span>
       <p class="hero-tag">The governed execution infrastructure for distributed clinical trials. Damaros™ makes protocols executable across site terrain, turning fragmented evidence into verified signal while the trial is still moving.</p>
       <div class="hero-actions">
         <a class="dmx-cta dmx-cta--sm" href="mailto:anirudh@damaros.ai?subject=Damaros%20Inquiry">Request a walkthrough</a>
@@ -1755,73 +1743,6 @@
   }
   window.addEventListener("scroll", syncCue, { passive: true });
   syncCue();
-})();
-
-(function () {
-  var wm = document.getElementById("damarosWordmark");
-  var spacer = document.querySelector(".wordmark--spacer");
-  var hero = document.querySelector(".hero");
-  if (!wm || !spacer || !hero) return;
-  var desktop = window.matchMedia("(min-width: 901px)");
-  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
-  var dockFs = 18;
-  var tick = 0;
-  var range = { start: 20, end: 200 };
-
-  function clamp(n, lo, hi) { return n < lo ? lo : n > hi ? hi : n; }
-  function smooth(t) { return t * t * (3 - 2 * t); }
-
-  function scrollRange() {
-    range.end = clamp(hero.offsetHeight * 0.38, 120, 240);
-  }
-
-  function measure() {
-    var nav = document.querySelector(".dmx-nav");
-    var s = spacer.getBoundingClientRect();
-    var n = nav ? nav.getBoundingClientRect() : { left: 0, width: innerWidth, top: 0, height: 60 };
-    return {
-      fromCx: s.left + s.width * 0.5,
-      fromCy: s.top + s.height * 0.5,
-      toCx: n.left + n.width * 0.5,
-      toCy: n.top + n.height * 0.5,
-      fromFs: parseFloat(getComputedStyle(spacer).fontSize) || 48
-    };
-  }
-
-  function clearFloat() {
-    wm.classList.remove("is-floating", "is-docked");
-    wm.removeAttribute("style");
-  }
-
-  function apply() {
-    if (!desktop.matches) { clearFloat(); return; }
-    scrollRange();
-    var y = window.scrollY;
-    var raw = clamp((y - range.start) / (range.end - range.start), 0, 1);
-    var t = reduce.matches ? (raw >= 0.5 ? 1 : 0) : smooth(raw);
-    if (t <= 0) { clearFloat(); return; }
-    var m = measure();
-    wm.classList.add("is-floating");
-    wm.classList.toggle("is-docked", t >= 0.995);
-    var cx = m.fromCx + (m.toCx - m.fromCx) * t;
-    var cy = m.fromCy + (m.toCy - m.fromCy) * t;
-    var fs = m.fromFs + (dockFs - m.fromFs) * t;
-    wm.style.left = cx + "px";
-    wm.style.top = cy + "px";
-    wm.style.fontSize = fs + "px";
-    wm.style.transform = "translate(-50%, -50%)";
-  }
-
-  function queue() {
-    if (tick) return;
-    tick = requestAnimationFrame(function () { tick = 0; apply(); });
-  }
-
-  scrollRange();
-  window.addEventListener("scroll", queue, { passive: true });
-  window.addEventListener("resize", function () { scrollRange(); queue(); });
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(queue);
-  queue();
 })();
 </script>
 </body>
