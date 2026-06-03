@@ -1,7 +1,7 @@
 /* ============================================================
  * Damaros — shared design tokens + base.
  * Steel-on-black operator console DNA. Dark + light parity.
- * Type: Yantramanav (display) · Sohne (body + UI register).
+ * Type: IBM Plex Sans (display) · Inter (body + UI).
  *
  * THEME MODEL (robust, JS-optional):
  *   1. :root carries the DARK tokens as the default.
@@ -11,20 +11,19 @@
  *      theme-system.js never sets data-theme; it only clears stale pins.
  * ============================================================ */
 
-@import url("yantramanav.css");
-@import url("sohne.css");
+@import url("ibm-plex-sans.css");
+@import url("inter.css");
 
 :root {
-  --fh: 'Yantramanav', system-ui, sans-serif;   /* logo / headings */
-  --fb: 'Sohne', system-ui, sans-serif;   /* body */
-  --fm: 'Sohne', system-ui, sans-serif;   /* labels / UI register */
-  /* Yantramanav — light display weights for readable headings */
-  --fh-w-display: 300;   /* wordmark only */
-  --fh-w-med: 400;
+  --fh: 'IBM Plex Sans', system-ui, sans-serif;   /* logo / headings */
+  --fb: 'Inter', system-ui, sans-serif;          /* body */
+  --fm: 'Inter', system-ui, sans-serif;          /* labels / UI */
+  --fh-w-display: 500;
+  --fh-w-med: 500;
   --fh-w: 500;
-  --fh-w-strong: 500;
-  --fh-ls: -.006em;
-  --fh-lh: 1.12;
+  --fh-w-strong: 600;
+  --fh-ls: -.02em;
+  --fh-lh: 1.08;
 
   --ease: cubic-bezier(.16,1,.3,1);
   --t-fast: 140ms;
