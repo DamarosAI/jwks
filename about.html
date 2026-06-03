@@ -14,7 +14,7 @@
   .about { max-width: 1140px; margin: 0 auto; padding: calc(60px + clamp(3rem, 9vh, 6rem)) clamp(1.1rem, 4vw, 2.4rem) 4rem; position: relative; z-index: 1; }
   .a-eyebrow { font-family: var(--fm); font-size: .6rem; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); opacity: .75; margin-bottom: .8rem; }
   .a-eyebrow::before { content: '// '; }
-  .a-title { font-family: var(--fh); font-weight: 600; font-size: clamp(2.4rem, 6vw, 3.8rem); letter-spacing: -.015em; line-height: 1; }
+  .a-title { font-family: var(--fh); font-weight: var(--fh-w); font-size: clamp(2.4rem, 6vw, 3.8rem); letter-spacing: -.015em; line-height: 1; }
   .a-sub { color: var(--fg-2); font-size: clamp(1rem, 1.4vw, 1.14rem); line-height: 1.6; margin: 1.1rem 0 0; max-width: 56ch; }
 
   /* the rectangle: founder identity header + the about prose, in one bordered block */
@@ -31,7 +31,7 @@
     background: color-mix(in srgb, var(--accent) 4%, transparent);
   }
   .a-id { display: flex; flex-direction: column; gap: .28rem; }
-  .a-name { font-family: var(--fh); font-weight: 700; font-size: 1.3rem; letter-spacing: -.01em; }
+  .a-name { font-family: var(--fh); font-weight: var(--fh-w-strong); font-size: 1.3rem; letter-spacing: -.01em; }
   .a-role { font-family: var(--fm); font-size: .62rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--accent-2); }
 
   .a-linkedin { flex: 0 0 auto; }
@@ -44,7 +44,7 @@
   .a-close {
     margin: clamp(1.6rem, 4vh, 2.4rem) 0 0 !important; padding-top: clamp(1.4rem, 3.5vh, 2rem);
     border-top: 1px solid var(--bd-soft);
-    font-family: var(--fh); font-weight: 600; font-size: clamp(1.15rem, 2vw, 1.5rem) !important;
+    font-family: var(--fh); font-weight: var(--fh-w); font-size: clamp(1.15rem, 2vw, 1.5rem) !important;
     line-height: 1.2 !important; color: var(--fg) !important; letter-spacing: -.01em;
   }
   .a-close b { color: var(--accent-2); font-weight: 600; }
