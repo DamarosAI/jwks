@@ -14,8 +14,8 @@
   .about { max-width: 1140px; margin: 0 auto; padding: calc(60px + clamp(3rem, 9vh, 6rem)) clamp(1.1rem, 4vw, 2.4rem) 4rem; position: relative; z-index: 1; }
   .a-eyebrow { font-family: var(--fm); font-size: .6rem; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); opacity: .75; margin-bottom: .8rem; }
   .a-eyebrow::before { content: '// '; }
-  .a-title { font-family: var(--fh); font-weight: var(--fh-w); font-size: clamp(2.05rem, 5.1vw, 3.15rem); letter-spacing: var(--fh-ls); line-height: 1; }
-  .a-sub { color: var(--fg-2); font-size: clamp(1rem, 1.4vw, 1.14rem); line-height: 1.6; margin: 1.1rem 0 0; max-width: 56ch; }
+  .a-title { font-family: var(--fh); font-weight: var(--fh-w); font-size: var(--fs-hero); letter-spacing: var(--fh-ls); line-height: 1; }
+  .a-sub { color: var(--fg-2); font-family: var(--fb); font-size: var(--fs-sm); font-weight: var(--fb-w); line-height: var(--fb-lh); margin: 1.1rem 0 0; max-width: 56ch; }
 
   /* the rectangle: founder identity header + the about prose, in one bordered block */
   .a-block {
@@ -38,13 +38,13 @@
   .a-linkedin svg { width: 16px; height: 16px; display: block; flex-shrink: 0; }
 
   .a-body { padding: clamp(1.6rem, 4vw, 2.6rem) clamp(1.4rem, 3.6vw, 2.4rem) clamp(1.8rem, 4vw, 2.6rem); }
-  .a-body p { margin: 0 0 1.15rem; color: var(--fg-2); font-size: 1rem; line-height: 1.78; }
-  .a-body p:first-child { color: var(--fg); font-size: clamp(1.08rem, 1.5vw, 1.22rem); line-height: 1.6; }
+  .a-body p { margin: 0 0 1.15rem; color: var(--fg-2); font-family: var(--fb); font-size: var(--fs-base); font-weight: var(--fb-w); line-height: 1.75; }
+  .a-body p:first-child { color: var(--fg); font-size: var(--fs-sm); font-weight: var(--fb-w); line-height: var(--fb-lh); }
   .a-body strong { color: var(--fg); font-weight: 600; }
   .a-close {
     margin: clamp(1.6rem, 4vh, 2.4rem) 0 0 !important; padding-top: clamp(1.4rem, 3.5vh, 2rem);
     border-top: 1px solid var(--bd-soft);
-    font-family: var(--fh); font-weight: var(--fh-w); font-size: clamp(1.02rem, 1.75vw, 1.28rem) !important;
+    font-family: var(--fh); font-weight: var(--fh-w); font-size: var(--fs-md) !important;
     line-height: 1.2 !important; color: var(--fg) !important; letter-spacing: -.01em;
   }
   .a-close b { color: var(--accent-2); font-weight: 600; }

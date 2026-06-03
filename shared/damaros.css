@@ -18,12 +18,29 @@
   --fh: 'IBM Plex Sans', system-ui, sans-serif;   /* logo / headings */
   --fb: 'Inter', system-ui, sans-serif;          /* body */
   --fm: 'Inter', system-ui, sans-serif;          /* labels / UI */
+  /* display register — medium default, regular for secondary lines */
   --fh-w-display: 500;
-  --fh-w-med: 500;
   --fh-w: 500;
+  --fh-w-sub: 400;
   --fh-w-strong: 600;
   --fh-ls: -.02em;
   --fh-lh: 1.08;
+  /* body register */
+  --fb-w: 400;
+  --fb-w-med: 500;
+  --fb-w-strong: 600;
+  --fb-lh: 1.6;
+  /* type scale (1rem = 16px) */
+  --fs-display: clamp(2.25rem, 4.8vw, 3.75rem);
+  --fs-hero: clamp(2rem, 5.5vw, 3.25rem);
+  --fs-xl: clamp(1.75rem, 3.2vw, 2.35rem);
+  --fs-lg: clamp(1.35rem, 2.5vw, 1.875rem);
+  --fs-md: clamp(1.125rem, 1.75vw, 1.375rem);
+  --fs-sm: clamp(1rem, 1.15vw, 1.0625rem);
+  --fs-base: 1rem;
+  --fs-ui: .8125rem;
+  --fs-caption: .75rem;
+  --fs-micro: .6875rem;
 
   --ease: cubic-bezier(.16,1,.3,1);
   --t-fast: 140ms;
@@ -273,14 +290,19 @@ a { color: inherit; text-decoration: none; }
 /* ---- type registers ---- */
 .eyebrow {
   font-family: var(--fm);
-  font-size: .64rem;
+  font-size: var(--fs-micro);
   font-weight: 600;
-  letter-spacing: .2em;
+  letter-spacing: .16em;
   text-transform: uppercase;
   color: var(--accent-2);
 }
 .mono { font-family: var(--fm); font-variant-numeric: tabular-nums; letter-spacing: .01em; }
 h1,h2,h3 { font-family: var(--fh); font-weight: var(--fh-w); letter-spacing: var(--fh-ls); line-height: var(--fh-lh); margin: 0; }
+h1 { font-size: var(--fs-xl); }
+h2 { font-size: var(--fs-lg); }
+h3 { font-size: var(--fs-md); }
+p { line-height: var(--fb-lh); }
+strong, b { font-weight: var(--fb-w-strong); }
 
 /* ---- shared chrome: top nav ---- */
 .dmx-nav {
@@ -355,7 +377,7 @@ h1,h2,h3 { font-family: var(--fh); font-weight: var(--fh-w); letter-spacing: var
 .dmx-cta {
   position: relative; isolation: isolate;
   display: inline-flex; align-items: center; justify-content: center; gap: .6rem;
-  font-family: var(--fm); font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+  font-family: var(--fm); font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
   border-radius: 8px; color: var(--cta-color); text-decoration: none;
   border: 1px solid var(--cta-border);
   background: var(--cta-bg);
@@ -376,8 +398,8 @@ h1,h2,h3 { font-family: var(--fh); font-weight: var(--fh-w); letter-spacing: var
   opacity: var(--cta-grain-opacity);
 }
 .dmx-cta > * { position: relative; z-index: 1; }
-.dmx-cta--sm { font-size: .72rem; padding: .82rem 1.3rem; }
-.dmx-cta--md { font-size: .76rem; padding: 1rem 1.7rem; margin-top: 2rem; }
+.dmx-cta--sm { font-size: var(--fs-caption); padding: .82rem 1.3rem; }
+.dmx-cta--md { font-size: var(--fs-ui); padding: 1rem 1.7rem; margin-top: 2rem; }
 .dmx-cta:hover {
   border-color: var(--cta-border-hover);
   color: var(--cta-color-hover);
