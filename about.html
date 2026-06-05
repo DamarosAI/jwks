@@ -57,9 +57,7 @@
   footer a { justify-self: end; color: var(--fg-3); text-decoration: none; }
   footer a:hover { color: var(--fg); }
 
-  /* nav: no wordmark, no theme toggle. tabs top-left, theme follows system */
-  .dmx-nav { justify-content: flex-start; }
-
+  /* nav: Damaros wordmark top-left, tabs top-right (matches the homepage), theme follows system */
   @media (max-width: 560px) {
     .a-head { flex-direction: column; align-items: flex-start; }
     .a-linkedin { width: 100%; justify-content: center; }
@@ -74,6 +72,7 @@
 <body>
 
 <nav class="dmx-nav">
+  <a class="dmx-brand" href="/" aria-label="Damaros">Damaros<sup>™</sup></a>
   <div class="dmx-nav-links">
     <a class="dmx-nav-link" href="/">HOME</a>
     <a class="dmx-nav-link" href="/trust-boundary">TRUST</a>

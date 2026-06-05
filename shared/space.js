@@ -617,7 +617,7 @@ function setCaps(idx) {
   }
 }
 function revealEndCap() { setCaps(9); }
-const END_HOLD_MS = REDUCED ? 500 : 1500;
+const END_HOLD_MS = REDUCED ? 500 : 1000;
 let endHoldTimer = null;
 function clearEndHold() { clearTimeout(endHoldTimer); endHoldTimer = null; document.body.classList.remove('end-hold'); }
 function arriveAt(idx) {
@@ -809,7 +809,7 @@ try { renderer.compile(scene, camera); } catch (e) { /* older three builds */ }
 warmed = true;
 requestAnimationFrame(frame);
 setTimeout(function () { document.body.classList.add('world-ready'); }, 800);   // safety net: reveal the canvas even if rAF is throttled at load
-const INTRO_MS = REDUCED ? 500 : 2000;
+const INTRO_MS = REDUCED ? 500 : 1000;
 setTimeout(() => {
   document.body.classList.remove('intro-hold');
   document.documentElement.classList.remove('intro-hold');

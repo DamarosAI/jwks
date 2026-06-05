@@ -13,8 +13,8 @@
 <link rel="stylesheet" href="shared/archivo.css">
 <link rel="stylesheet" href="shared/hanken-grotesk.css">
 <link rel="stylesheet" href="shared/journey.css?v=reset46">
-<link rel="stylesheet" href="shared/terrain.css?v=reset37">
-<link rel="stylesheet" href="shared/sections.css?v=27">
+<link rel="stylesheet" href="shared/terrain.css?v=reset38">
+<link rel="stylesheet" href="shared/sections.css?v=28">
 <script type="importmap">
 { "imports": { "three": "./assets/vendor/three/three.module.js", "three/addons/": "./assets/vendor/three/addons/" } }
 </script>
@@ -170,14 +170,14 @@
     </div>
   </div>
 
-  <!-- station nav · stone-blue diamonds (click to skip around) · also scroll · keys · swipe -->
-  <nav class="deck-nav" aria-label="Stations">
+  <!-- station nav · labeled section cards (jump straight to any section) · also scroll · keys · swipe -->
+  <nav class="deck-nav" aria-label="Sections">
     <div class="deck-dots">
-      <button class="deck-dot" type="button" data-dot data-go="0" aria-label="Stop 01: Home"></button>
-      <button class="deck-dot" type="button" data-dot data-go="1" aria-label="Stop 02: Execution Spine"></button>
-      <button class="deck-dot" type="button" data-dot data-go="5" aria-label="Stop 03: Platform Substrate"></button>
-      <button class="deck-dot" type="button" data-dot data-go="7" aria-label="Stop 04: Trial Intelligence"></button>
-      <button class="deck-dot" type="button" data-dot data-go="9" aria-label="Stop 05: Damaros"></button>
+      <button class="deck-dot deck-dot--home" type="button" data-dot data-go="0" aria-label="Home"><span class="deck-mark"></span></button>
+      <button class="deck-dot deck-dot--card" type="button" data-dot data-go="1" aria-label="Execution Spine"><span class="deck-mark"></span><span class="deck-label"><span class="deck-label-full">Execution Spine</span><span class="deck-label-short">Spine</span></span></button>
+      <button class="deck-dot deck-dot--card" type="button" data-dot data-go="5" aria-label="Platform Substrate"><span class="deck-mark"></span><span class="deck-label"><span class="deck-label-full">Platform Substrate</span><span class="deck-label-short">Platform</span></span></button>
+      <button class="deck-dot deck-dot--card" type="button" data-dot data-go="7" aria-label="Trial Intelligence"><span class="deck-mark"></span><span class="deck-label"><span class="deck-label-full">Trial Intelligence</span><span class="deck-label-short">Trial</span></span></button>
+      <button class="deck-dot deck-dot--card" type="button" data-dot data-go="9" aria-label="Damaros"><span class="deck-mark"></span><span class="deck-label"><span class="deck-label-full">Damaros</span><span class="deck-label-short">Damaros</span></span></button>
     </div>
     <span class="deck-counter" data-counter aria-hidden="true">01 / 05</span>
   </nav>
@@ -327,6 +327,6 @@
 </script>
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="shared/cap-intro.js?v=2"></script>
 <script src="shared/cta-dock.js?v=5"></script>
-<script type="module" src="shared/space.js?v=reset43"></script>
+<script type="module" src="shared/space.js?v=reset44"></script>
 </body>
 </html>
