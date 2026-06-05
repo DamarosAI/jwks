@@ -569,7 +569,7 @@ function setCaps(idx) {
   });
 }
 function revealEndCap() { setCaps(9); }
-const END_HOLD_MS = REDUCED ? 500 : 2000;
+const END_HOLD_MS = REDUCED ? 500 : 1500;
 let endHoldTimer = null;
 function clearEndHold() { clearTimeout(endHoldTimer); endHoldTimer = null; document.body.classList.remove('end-hold'); }
 function arriveAt(idx) {
