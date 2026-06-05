@@ -313,8 +313,17 @@ strong, b { font-weight: var(--fb-w-strong); }
   backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--bd-soft);
 }
-.dmx-brand { display: inline-flex; align-items: baseline; gap: .04em; font-family: var(--fh); font-weight: var(--fh-w-strong); font-size: 1.18rem; letter-spacing: -.01em; color: var(--fg); }
+.dmx-nav-start { display: flex; align-items: center; gap: clamp(.5rem, 1.2vw, .85rem); min-width: 0; }
+.dmx-brand { display: inline-flex; align-items: baseline; gap: .04em; font-family: var(--fh); font-weight: var(--fh-w-strong); font-size: 1.18rem; letter-spacing: -.01em; color: var(--fg); text-decoration: none; }
 .dmx-brand sup { font-size: .46em; color: var(--accent-2); top: -.7em; }
+.dmx-back {
+  display: inline-flex; align-items: center; gap: .32rem; font-family: var(--fm); font-size: .6rem; font-weight: 500;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--accent-2); text-decoration: none;
+  transition: color var(--t) var(--ease); white-space: nowrap;
+}
+.dmx-back-arrow { font-size: 1.1em; line-height: 1; color: var(--accent-2); transition: color var(--t) var(--ease), transform var(--t) var(--ease); }
+.dmx-back:hover, .dmx-back:hover .dmx-back-arrow { color: var(--fg); }
+.dmx-back:hover .dmx-back-arrow { transform: translateX(-2px); }
 .dmx-nav-links { display: flex; align-items: center; gap: clamp(.6rem,2vw,1.6rem); }
 .dmx-nav-link {
   font-family: var(--fm); font-size: .6rem; font-weight: 500; letter-spacing: .16em;
@@ -324,6 +333,7 @@ strong, b { font-weight: var(--fb-w-strong); }
 /* narrow phones: keep the wordmark + tabs on one line without crowding */
 @media (max-width: 560px) {
   .dmx-brand { font-size: 1rem; }
+  .dmx-back { font-size: .56rem; letter-spacing: .1em; gap: .26rem; }
   .dmx-nav-links { gap: .7rem; }
   .dmx-nav-link { font-size: .56rem; letter-spacing: .12em; }
 }
