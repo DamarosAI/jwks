@@ -51,7 +51,6 @@ async function settle(page) {
 }
 const HELPERS = `
   window.__st = () => window.DamarosSpace.state();
-  window.__counter = () => document.querySelector('[data-counter]').textContent.trim();
   window.__activeDot = () => [].slice.call(document.querySelectorAll('[data-dot]')).findIndex(d=>d.classList.contains('active'));
   window.__activeCap = () => [].slice.call(document.querySelectorAll('[data-cap]')).findIndex(c=>c.classList.contains('cap--active'));
 `;
@@ -94,17 +93,17 @@ async function run() {
     // 3) navigation
     check('navigation: API present', await page.evaluate(() => !!(window.DamarosSpace && window.DamarosSpace.next)));
     await page.evaluate(() => window.DamarosSpace.next()); await settle(page);
-    const nav = await page.evaluate(() => ({ c: window.__counter(), dot: window.__activeDot(), cap: window.__activeCap() }));
-    check('navigation: next() flies to station 02', nav.c === '02 / 10', `counter=${nav.c}`);
+    const nav = await page.evaluate(() => ({ dot: window.__activeDot(), cap: window.__activeCap() }));
+    check('navigation: next() flies to station 02', nav.dot === 1, `dot=${nav.dot}`);
     check('navigation: diamond + caption commit on arrival', nav.dot === 1 && nav.cap === 1, `dot=${nav.dot} cap=${nav.cap}`);
     await page.evaluate(() => window.DamarosSpace.go(0)); await settle(page);
-    check('navigation: go(0) returns to start', (await page.evaluate(() => window.__counter())) === '01 / 10');
+    check('navigation: go(0) returns to start', (await page.evaluate(() => window.__activeDot())) === 0);
 
     // 4) all 10 reachable
     let reached = true;
     for (let i = 1; i < 10; i++) { await page.evaluate(() => window.DamarosSpace.next()); await settle(page); }
-    const term = await page.evaluate(() => ({ c: window.__counter(), cap: window.__activeCap() }));
-    check('landmarks: all 10 reachable; terminal is 10 / 10 with caption', term.c === '10 / 10' && term.cap === 9, `counter=${term.c}, cap=${term.cap}`);
+    const term = await page.evaluate(() => ({ dot: window.__activeDot(), cap: window.__activeCap() }));
+    check('landmarks: all 10 reachable; terminal dot + caption', term.dot === 4 && term.cap === 9, `dot=${term.dot}, cap=${term.cap}`);
 
     // 5) alive when idle (no input)
     const a0 = await page.evaluate(() => window.__st().frames);
@@ -141,9 +140,9 @@ async function run() {
     await page.evaluate(HELPERS);
     await page.waitForFunction(() => !document.getElementById('boot'), null, { timeout: 9000 }).catch(() => {});
     await page.evaluate(() => window.DamarosSpace.go(4)); await settle(page);
-    const r = await page.evaluate(() => ({ media: matchMedia('(prefers-reduced-motion: reduce)').matches, c: window.__counter(), cap: window.__activeCap() }));
+    const r = await page.evaluate(() => ({ media: matchMedia('(prefers-reduced-motion: reduce)').matches, dot: window.__activeDot(), cap: window.__activeCap() }));
     check('reduced-motion: media active', r.media);
-    check('reduced-motion: jump lands (caption resolved)', r.c === '05 / 10' && r.cap === 4, `counter=${r.c}, cap=${r.cap}`);
+    check('reduced-motion: jump lands (caption resolved)', r.dot === 2 && r.cap === 4, `dot=${r.dot}, cap=${r.cap}`);
     check('reduced-motion: no runtime/console errors', errors.length === 0, errors.join(' | ') || undefined);
     await ctx.close();
   }
