@@ -51,7 +51,7 @@ const canvas = document.getElementById('world');
 // antialias only matters for the DIRECT-render path (mobile / software GL). On desktop the EffectComposer
 // owns AA (MSAA RT + SSAA), so a multisampled default framebuffer here would be pure wasted VRAM/bandwidth.
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: MOBILE, powerPreference: 'high-performance', alpha: false });
-renderer.setPixelRatio(Math.min(devicePixelRatio || 1, MOBILE ? 1.5 : 2));
+renderer.setPixelRatio(Math.min(devicePixelRatio || 1, MOBILE ? 1.25 : 2));
 renderer.setSize(innerWidth, innerHeight);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 let SOFT = false;
@@ -286,7 +286,7 @@ const W = { uTime: { value: 0 }, uSection: { value: 0 }, uHue: { value: COL.stee
 syncViewport();
 W.uBurst = { value: 0 };   // star-twinkle burst (Node hover) — shared by both star shells
 const W_PROV = [0.06, 0.10, 0.30, 0.12, 0.55, 0.14, 0.95, 0.20, 0.24, 0.34];
-const SEG_X = SOFT ? 70 : (MOBILE ? 104 : 176), SEG_Y = SOFT ? 74 : (MOBILE ? 118 : 184);   // mobile: denser mesh so wireframe fills portrait bottoms
+const SEG_X = SOFT ? 70 : (MOBILE ? 88 : 176), SEG_Y = SOFT ? 74 : (MOBILE ? 100 : 184);   // mobile: lighter mesh for smoother fps
 const PLANE_D = MOBILE ? 520 : 440;
 const NODE_N = SOFT ? 90 : (MOBILE ? 160 : 300);   // fewer distant nodes — quieter, darker background
 const FILAMENTS = !SOFT;
@@ -350,7 +350,7 @@ function makeDeepTerrain() {
       vec4 mv = modelViewMatrix * vec4(p,1.0); vWorld = p; vFog = clamp((-mv.z-60.0)/220.0,0.0,1.0);
       gl_Position = projectionMatrix * mv;
     }`;
-  const GO = SOFT ? 1 : 2;
+  const GO = (MOBILE || SOFT) ? 1 : 2;
   const gGrid = MOBILE ? 0.56 : 0.42, gCont = MOBILE ? 0.76 : 0.6;
   const gLineL = MOBILE ? 0.48 : 0.35, gLineH = MOBILE ? 0.52 : 0.65;
   const gAlphaB = MOBILE ? 0.12 : 0.08, gAlphaL = MOBILE ? 0.82 : 0.7;
@@ -489,7 +489,7 @@ addStarShell(SOFT ? 220 : (MOBILE ? 520 : 840), 205, 48, 0.94, 16, MOBILE ? '0.2
 const camera = new THREE.PerspectiveCamera(52, innerWidth / innerHeight, 0.1, 400);
 // deliberate framing per form
 // calm cinematic glide over the terrain — gentle per-station variation, no dramatic object-framing swings
-const AZ = [-0.30, -0.22, 0.22, -0.12, 0.05, -0.18, 0.20, -0.10, 0.16, 0.10];
+const AZ = [-0.14, -0.22, 0.22, -0.12, 0.05, -0.18, 0.20, -0.10, 0.16, 0.10];
 const EL = [0.16, 0.15, 0.17, 0.19, 0.21, 0.18, 0.23, 0.20, 0.22, 0.18];
 const DIST = [25, 25, 26, 25, 24, 26, 25, 24, 27, 25];
 const LOOK0 = new THREE.Vector3(0, 0, 0);

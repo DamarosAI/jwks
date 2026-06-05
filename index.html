@@ -247,6 +247,16 @@
     wire(document.querySelector('.ps-half:not(.ps-half--luna)'), '.nn-edge, .nn-dot', 'is-live');
     wire(document.querySelector('.ps-half--luna'), '.luna-ring', 'is-live');
 
+    /* auto-run each section's animations as soon as it becomes the active station */
+    [].forEach.call(document.querySelectorAll('[data-cap]'), function (cap) {
+      var panels = [].slice.call(cap.querySelectorAll('.ti-node, .ti-sponsor, .ps-half'));
+      if (!panels.length) return;
+      new MutationObserver(function () {
+        var on = cap.classList.contains('cap--active');
+        panels.forEach(function (p) { if (on) { if (p._hOn) p._hOn(); } else if (p._hOff) p._hOff(); });
+      }).observe(cap, { attributes: true, attributeFilter: ['class'] });
+    });
+
     /* mobile: two-panel sections become a horizontal swipe carousel with indicator dots */
     if (TOUCH) {
       [].forEach.call(document.querySelectorAll('[data-hswipe]'), function (split) {
