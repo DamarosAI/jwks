@@ -18,6 +18,10 @@
   --ease:cubic-bezier(.16,1,.3,1);
   --fh:'Archivo', system-ui, sans-serif;
   --fb:'Hanken Grotesk', system-ui, sans-serif;
+  --page-gutter:clamp(1.2rem,4vw,2.4rem);
+}
+@media (min-width:821px){
+  :root{ --page-gutter:clamp(2rem,5.2vw,3.6rem); }
 }
 
 *{ box-sizing:border-box; }
@@ -60,7 +64,7 @@ body.intro-hold .brand-motif img{
 
 /* ---------------- chrome: brand · progress · HUD · veil ---------------- */
 .j-top{ position:fixed; inset:0 0 auto 0; z-index:20; display:flex; align-items:center; justify-content:space-between;
-  padding:1.15rem clamp(1.2rem,4vw,2.4rem); pointer-events:none; }
+  padding:1.15rem var(--page-gutter); pointer-events:none; }
 .j-brand{ pointer-events:auto; display:inline-flex; align-items:baseline; gap:.12em; font-family:var(--fh);
   font-weight:750; font-size:1.04rem; letter-spacing:.02em; color:var(--cold); }
 .j-brand sup{ font-size:.46em; color:var(--steel); top:-.7em; }
@@ -88,7 +92,7 @@ body.intro-hold .brand-motif img{
   background:linear-gradient(90deg, var(--deep), var(--steel)); }
 
 /* vertical chapter index — the four axes you move through */
-.hud{ position:fixed; left:clamp(1.2rem,3vw,2.2rem); top:50%; transform:translateY(-50%); z-index:20;
+.hud{ position:fixed; left:var(--page-gutter); top:50%; transform:translateY(-50%); z-index:20;
   display:flex; flex-direction:column; gap:1.05rem; pointer-events:none; }
 .hud-item{ display:flex; align-items:center; gap:.7rem; font-family:var(--fb); font-size:.6rem; font-weight:600;
   letter-spacing:.2em; text-transform:uppercase; color:var(--dim); opacity:.5; transition:opacity .4s var(--ease), color .4s var(--ease); }
@@ -110,7 +114,7 @@ canvas.cv{ position:absolute; inset:0; width:100%; height:100%; display:block; z
 
 /* captions — the copy IS the product. Centered + dominant; the topology is the world behind it. */
 .cap{ position:absolute; z-index:3; left:50%; top:50%; transform:translate(-50%,-50%);
-  width:min(54rem,90vw); max-width:min(54rem,90vw); text-align:center; }
+  width:min(52rem,calc(100vw - 2 * var(--page-gutter))); max-width:min(52rem,calc(100vw - 2 * var(--page-gutter))); text-align:center; }
 .cap-ax{ display:inline-flex; align-items:center; gap:.55rem; justify-content:center; font-family:var(--fb);
   font-size:.66rem; font-weight:600; letter-spacing:.28em; text-transform:uppercase; color:var(--steel); }
 .cap-ax .x{ font-variant-numeric:tabular-nums; color:var(--dim); }
@@ -227,7 +231,7 @@ body[data-station="9"] .brand-motif img{ --mo:.13; --flare:.58; }
 /* ===== layout archetypes — scenes alternate between centered (cards beneath) and split (cards beside) ===== */
 .cap-cards{ margin-top:1.5rem; }                         /* kicker label rides directly above the field-note cards */
 /* SPLIT — headline block beside the stacked cards block; kicker stays above the cards */
-.cap--split{ width:min(72rem,90vw); max-width:min(72rem,90vw); text-align:left;
+.cap--split{ width:min(68rem,calc(100vw - 2 * var(--page-gutter))); max-width:min(68rem,calc(100vw - 2 * var(--page-gutter))); text-align:left;
   display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr);
   column-gap:clamp(1.6rem,4.6vw,4rem); align-items:center; }
 .cap--split .cap-head{ grid-column:1; }

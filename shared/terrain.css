@@ -82,7 +82,7 @@ body { overflow: hidden; }                 /* the journey is stepped, not scroll
 @keyframes deckhint { to { opacity: 0; } }
 
 /* minimal legal access — Privacy stays reachable without breaking the terminal frame */
-.deck-legal { position: fixed; right: clamp(1rem, 3vw, 1.9rem); bottom: clamp(1rem, 3.2vh, 1.7rem); z-index: 22;
+.deck-legal { position: fixed; right: var(--page-gutter); bottom: clamp(1rem, 3.2vh, 1.7rem); z-index: 22;
   font-family: var(--fb); font-size: .56rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase;
   color: var(--dim); opacity: .55; pointer-events: auto; transition: color .3s var(--ease), opacity .3s var(--ease); }
 .deck-legal:hover { color: var(--steel); opacity: 1; }
