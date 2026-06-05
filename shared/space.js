@@ -697,41 +697,19 @@ if (!MOBILE && !REDUCED) {
   }
 }
 
-/* ---------- boot loader ---------- */
-(function loader() {
-  const box = document.getElementById('boot'); if (!box) return;
-  const html = document.documentElement; html.classList.add('booting'); setTimeout(() => html.classList.remove('booting'), 6500);
-  const bar = box.querySelector('[data-boot-bar]'), pctEl = box.querySelector('[data-boot-pct]');   // bar = solid stone-blue fill (CSS width)
-  // Held a beat longer on purpose: the bar fills while the engine (already rendering behind this screen)
-  // warms its shaders + pipeline, so the reveal is smooth even on mobile / weaker GPUs.
-  const MIN_MS = (MOBILE || SOFT) ? 2600 : 2200, CAP_MS = 5200;
-  const start = performance.now(); let prog = 0, fontsReady = false, done = false;
-  if (document.fonts?.ready) { document.fonts.ready.then(() => fontsReady = true); setTimeout(() => fontsReady = true, 3000); } else fontsReady = true;
-  (function step() {
-    const el = performance.now() - start;
-    let tg = 0.05 + 0.92 * Math.min(el / MIN_MS, 1);                 // smooth, time-paced fill
-    const ready = (fontsReady && firstFrame && warmed && el > MIN_MS) || el > CAP_MS;
-    if (ready) tg = 1;
-    prog += (tg - prog) * (tg >= 1 ? 0.22 : 0.1); if (tg >= 1 && prog > 0.995) prog = 1;
-    const shown = prog >= 1 ? 100 : Math.min(99, Math.round(prog * 100));
-    if (bar) bar.style.setProperty('--fill', (prog * 100).toFixed(2) + '%'); if (pctEl) pctEl.textContent = shown; box.setAttribute('aria-valuenow', shown);
-    if (prog >= 1 && !done) {
-      done = true; html.classList.remove('booting');
-      // hold the full stone-blue bar a beat, then expand the whole screen outward into the home hero landing
-      setTimeout(() => box.classList.add('boot--open'), 170);
-      setTimeout(() => box.remove(), 1000);
-      return;
-    }
-    requestAnimationFrame(step);
-  })();
-})();
-
 // home wayfinding hint: touch devices swipe, pointer devices scroll (set from what the device reports)
 { const hint = document.querySelector('[data-hint]'); if (hint) hint.textContent = matchMedia('(hover: none),(pointer: coarse)').matches ? 'Swipe to travel' : 'Scroll to travel'; }
 
-setCaps(0); syncUI();
+syncUI();
+setCaps(-1);   // drum logo + topology only for the opening beat — hero copy lands after INTRO_MS
 // warm the GPU before the first visible frame: precompile scene shaders so weaker devices don't stall on the reveal
 try { renderer.compile(scene, camera); } catch (e) { /* older three builds */ }
 warmed = true;
 requestAnimationFrame(frame);
+const INTRO_MS = REDUCED ? 500 : 2000;
+setTimeout(() => {
+  document.body.classList.remove('intro-hold');
+  document.documentElement.classList.remove('intro-hold');
+  setCaps(0);
+}, INTRO_MS);
 window.DamarosSpace = { go, next, prev, state: () => ({ cur, target, flying, frames }) };
