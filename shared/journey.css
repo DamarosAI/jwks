@@ -273,6 +273,13 @@ body[data-station="9"] .brand-motif img{ --mo:.13; --flare:.58; }
   .cap--split .cap-kicker, .cap--split.cap--mirror .cap-kicker{ text-align:center; }
   .cap--split .cap-sub, .cap--split.cap--mirror .cap-sub{ flex-direction:column; }
   .j-top .j-cta{ display:none; }
+  /* touch: no cursor-proximity glow — hold a brighter resting motif on hero + closer */
+  body[data-station="0"] .brand-motif img,
+  body[data-station="9"] .brand-motif img{
+    --mo:.26; --flare:.58; --glow:.48;
+    filter:brightness(1.18) drop-shadow(0 0 22px rgba(169,192,214,.38));
+  }
+  body[data-station="9"] .brand-motif img{ --mo:.32; --flare:.68; --glow:.55; }
 }
 @media (prefers-reduced-motion: reduce){
   .cap-line{ opacity:1; transform:none; transition:none; }

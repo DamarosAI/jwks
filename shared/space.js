@@ -59,7 +59,7 @@ try { const gl = renderer.getContext(); const dbg = gl.getExtension('WEBGL_debug
 const HI = location.search.indexOf('hi') >= 0;          // QA: force full fidelity under headless software GL
 const BLOOM = HI || (!MOBILE && !SOFT);
 const N = HI ? 48000 : (SOFT ? 12000 : (MOBILE ? 18000 : 48000));
-renderer.toneMappingExposure = (SOFT && !HI) ? 0.84 : 0.62;   // low exposure = HDR headroom so cores roll off, not clip
+renderer.toneMappingExposure = (SOFT && !HI) ? 0.84 : (MOBILE ? 0.80 : 0.62);   // mobile: brighter — no bloom pass, smaller OLED panels need more lift
 try { renderer.outputColorSpace = THREE.SRGBColorSpace; } catch (e) { /* older builds */ }
 
 /* ============================================================
@@ -268,7 +268,7 @@ const cloud = new THREE.Points(geo, mat);
  * Scene + the three depth layers
  * ============================================================ */
 const scene = new THREE.Scene();
-scene.background = new THREE.Color('#0a121b');           // match the horizon so the first frame is never pure black
+scene.background = new THREE.Color(MOBILE ? '#101a28' : '#0a121b');   // match the horizon; mobile lifts the floor so wireframe never reads as void black
 // PARTICLE FIELD PURGED — the morphing dust cloud is no longer added to the scene (no dots, no dust at all).
 // The cloud/material/uniforms remain defined (the loop still eases their values harmlessly) but render NOTHING.
 // scene.add(cloud);
@@ -289,7 +289,7 @@ scene.add(deepLayer, midLayer);
 (function () {
   const m = new THREE.ShaderMaterial({
     side: THREE.BackSide, depthWrite: false, depthTest: false, fog: false,
-    uniforms: { uTop: { value: new THREE.Color('#03050a') }, uMid: { value: new THREE.Color('#0a1320') }, uHoriz: { value: new THREE.Color('#16263a') } },
+    uniforms: { uTop: { value: new THREE.Color(MOBILE ? '#080d16' : '#03050a') }, uMid: { value: new THREE.Color(MOBILE ? '#121e30' : '#0a1320') }, uHoriz: { value: new THREE.Color(MOBILE ? '#243a54' : '#16263a') } },
     vertexShader: 'varying vec3 vP; void main(){ vP=position; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);} ',
     fragmentShader: 'precision highp float; varying vec3 vP; uniform vec3 uTop,uMid,uHoriz; void main(){ float h=clamp(vP.y/180.0*0.5+0.5,0.0,1.0); vec3 lower=mix(uHoriz,uMid,smoothstep(0.0,0.5,h)); vec3 col=mix(lower,uTop,smoothstep(0.46,1.0,h)); col*=1.0-0.06*smoothstep(0.6,1.0,h); gl_FragColor=vec4(col,1.0);} '
   });
@@ -335,6 +335,10 @@ function makeDeepTerrain() {
       gl_Position = projectionMatrix * mv;
     }`;
   const GO = SOFT ? 1 : 2;
+  const gGrid = MOBILE ? 0.56 : 0.42, gCont = MOBILE ? 0.76 : 0.6;
+  const gLineL = MOBILE ? 0.48 : 0.35, gLineH = MOBILE ? 0.52 : 0.65;
+  const gAlphaB = MOBILE ? 0.12 : 0.08, gAlphaL = MOBILE ? 0.82 : 0.7;
+  const gFog = MOBILE ? 0.84 : 0.92, gRevA = MOBILE ? 0.38 : 0.25, gRevB = MOBILE ? 0.62 : 0.75;
   const frag = `
     precision highp float; uniform float uTime, uReveal, uSection, uProv, uFinal, uSoft; uniform vec3 uHue, uOk, uAmber, uBreach, uLuna;
     varying vec3 vWorld; varying float vFog, vH, vRidge;
@@ -357,9 +361,9 @@ function makeDeepTerrain() {
       float rad = length(vWorld.xz); float ang = atan(vWorld.z, vWorld.x);
       gw = mix(gw, vec2(rad, ang*6.0), wRepl);          // replay: polar rings + spokes
       float gx = gridLine(gw.x*gf.x, 0.012), gz = gridLine(gw.y*gf.y, 0.012);
-      float grid = max(gx,gz)*0.42;
+      float grid = max(gx,gz)*${gGrid};
       float contFreq = mix(0.18, 0.34, wTri), contW = mix(0.05, 0.035, wTri);
-      float contour = gridLine(vH*contFreq, contW)*0.6;
+      float contour = gridLine(vH*contFreq, contW)*${gCont};
       float memArc = gridLine(rad*0.085 - uTime*0.04, 0.05);
       contour = mix(contour, max(contour, memArc*0.35), wRepl);
       float gr = grain(gl_FragCoord.xy*0.5 + floor(uTime*7.0)) * mix(0.035, 0.008, wTri);
@@ -372,11 +376,13 @@ function makeDeepTerrain() {
       // LUNA — violet provenance overlay (extra wandering filaments)
       { float fil = gridLine(vWorld.x*0.21 + sin(vWorld.z*0.05+uTime*0.1)*0.4, 0.02); lineHue = mix(lineHue, uLuna, wLuna*0.55); lines += fil*0.2*wLuna*(0.3+0.7*uProv); base += uLuna*0.015*wLuna; }
       float contrast = 1.0 + wTri*0.8;                  // trident: lines punch harder
-      vec3 col = base + lineHue*lines*contrast*(0.35+0.65*uReveal) + gr;
-      col *= (1.0 - vFog*0.92);
-      float a = (0.08 + lines*0.7)*(1.0 - vFog)*(0.25+0.75*uReveal);   // calmer, darker terrain
+      vec3 col = base + lineHue*lines*contrast*(${gLineL}+${gLineH}*uReveal) + gr;
+      col *= (1.0 - vFog*${gFog});
+      float a = (${gAlphaB} + lines*${gAlphaL})*(1.0 - vFog)*(${gRevA}+${gRevB}*uReveal);
       col *= 1.0 + uFinal*0.85;          // FINAL: glow everything for the closing frame
       a   *= 1.0 + uFinal*0.55;
+      col *= ${MOBILE ? '1.16' : '1.0'};
+      a   *= ${MOBILE ? '1.12' : '1.0'};
       gl_FragColor = vec4(col, a);
     }`;
   const m = new THREE.ShaderMaterial({ uniforms: { uTime: W.uTime, uReveal: W.uReveal, uHue: W.uHue, uSection: W.uSection, uProv: W.uProvenance, uHover: W.uHover, uFinal: W.uFinal, uSoft: W.uSoft, uOk: { value: COL.ok.clone() }, uAmber: { value: COL.amber.clone() }, uBreach: { value: COL.breach.clone() }, uLuna: { value: COL.luna.clone() } }, vertexShader: vert, fragmentShader: frag, transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending });
@@ -433,7 +439,7 @@ deepLayer.add(makeDeepTerrain());
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(sp, 3)); g.setAttribute('aRnd', new THREE.BufferAttribute(sr, 1));
   const m = new THREE.ShaderMaterial({
     uniforms: { uTime: W.uTime }, transparent: true, depthWrite: false, depthTest: false, blending: THREE.NormalBlending,
-    vertexShader: 'attribute float aRnd; uniform float uTime; varying float vA; void main(){ vec4 mv = modelViewMatrix * vec4(position,1.0); gl_Position = projectionMatrix * mv; float tw = 0.78 + 0.22*sin(uTime*0.4 + aRnd*40.0); vA = (0.14 + aRnd*0.34) * tw; gl_PointSize = aRnd > 0.9 ? 1.7 : 1.0; }',
+    vertexShader: `attribute float aRnd; uniform float uTime; varying float vA; void main(){ vec4 mv = modelViewMatrix * vec4(position,1.0); gl_Position = projectionMatrix * mv; float tw = 0.78 + 0.22*sin(uTime*0.4 + aRnd*40.0); vA = (${MOBILE ? '0.30 + aRnd*0.44' : '0.14 + aRnd*0.34'}) * tw; gl_PointSize = aRnd > 0.9 ? ${MOBILE ? '2.2' : '1.7'} : ${MOBILE ? '1.35' : '1.0'}; }`,
     fragmentShader: 'precision highp float; varying float vA; void main(){ vec2 uv = gl_PointCoord - 0.5; if (dot(uv,uv) > 0.25) discard; gl_FragColor = vec4(vec3(0.80,0.86,0.94), vA); }'
   });
   const stars = new THREE.Points(g, m); stars.renderOrder = -9; scene.add(stars);
@@ -447,7 +453,7 @@ deepLayer.add(makeDeepTerrain());
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(sp, 3)); g.setAttribute('aRnd', new THREE.BufferAttribute(sr, 1));
   const m = new THREE.ShaderMaterial({
     uniforms: { uTime: W.uTime }, transparent: true, depthWrite: false, depthTest: false, blending: THREE.NormalBlending,
-    vertexShader: 'attribute float aRnd; uniform float uTime; varying float vA; void main(){ vec4 mv = modelViewMatrix * vec4(position,1.0); gl_Position = projectionMatrix * mv; float tw = 0.82 + 0.18*sin(uTime*0.3 + aRnd*50.0); vA = (0.06 + aRnd*0.16) * tw; gl_PointSize = aRnd > 0.92 ? 1.3 : 1.0; }',
+    vertexShader: `attribute float aRnd; uniform float uTime; varying float vA; void main(){ vec4 mv = modelViewMatrix * vec4(position,1.0); gl_Position = projectionMatrix * mv; float tw = 0.82 + 0.18*sin(uTime*0.3 + aRnd*50.0); vA = (${MOBILE ? '0.16 + aRnd*0.28' : '0.06 + aRnd*0.16'}) * tw; gl_PointSize = aRnd > 0.92 ? ${MOBILE ? '1.6' : '1.3'} : ${MOBILE ? '1.2' : '1.0'}; }`,
     fragmentShader: 'precision highp float; varying float vA; void main(){ vec2 uv = gl_PointCoord - 0.5; if (dot(uv,uv) > 0.25) discard; gl_FragColor = vec4(vec3(0.74,0.80,0.90), vA); }'
   });
   const farStars = new THREE.Points(g, m); farStars.renderOrder = -9; scene.add(farStars);
@@ -505,7 +511,7 @@ if (BLOOM) {
 }
 
 // vignette
-(function () { const v = document.createElement('div'); v.style.cssText = 'position:fixed;inset:0;z-index:2;pointer-events:none;background:radial-gradient(ellipse at center, rgba(0,0,0,0) 54%, rgba(4,6,10,.5) 100%);'; document.body.appendChild(v); })();
+(function () { const v = document.createElement('div'); const vig = MOBILE ? 0.30 : 0.5, mid = MOBILE ? 50 : 54; v.style.cssText = `position:fixed;inset:0;z-index:2;pointer-events:none;background:radial-gradient(ellipse at center, rgba(0,0,0,0) ${mid}%, rgba(4,6,10,${vig}) 100%);`; document.body.appendChild(v); })();
 
 /* ============================================================
  * Navigation + morph (wall-clock so it never runs in slow-motion)
@@ -674,21 +680,30 @@ if (!MOBILE && !REDUCED) {
   });
 }
 
-/* ---------- brand motif: glows ONLY when the cursor is near it (hero + closer) ---------- */
-if (!MOBILE && !REDUCED) {
+/* ---------- brand motif: glows when the cursor is near it (desktop) or holds steady on hero/closer (mobile) ---------- */
+{
   const motif = document.querySelector('.brand-motif img');
   if (motif) {
     const setGlow = (v) => motif.style.setProperty('--glow', v.toFixed(3));
-    addEventListener('pointermove', (e) => {
-      if (e.pointerType === 'touch') return;
-      const st = document.body.dataset.station;
-      if (st !== '0' && st !== '9') { setGlow(0); return; }            // motif only visible on landing + closer
-      const logoH = Math.min(innerHeight * 0.70, innerWidth * 0.58);   // matches CSS height:min(70vh,58vw)
-      const reach = logoH * 0.50, fade = logoH * 0.62;                 // full glow over the logo, easing out past it
-      const d = Math.hypot(e.clientX - innerWidth * 0.5, e.clientY - innerHeight * 0.5);
-      setGlow(clamp(1 - (d - reach) / fade, 0, 1));
-    }, { passive: true });
-    addEventListener('blur', () => setGlow(0));
+    if (MOBILE && !REDUCED) {
+      const syncMotif = () => {
+        const st = document.body.dataset.station;
+        setGlow(st === '9' ? 0.55 : st === '0' ? 0.48 : 0);
+      };
+      syncMotif();
+      new MutationObserver(syncMotif).observe(document.body, { attributes: true, attributeFilter: ['data-station'] });
+    } else if (!REDUCED) {
+      addEventListener('pointermove', (e) => {
+        if (e.pointerType === 'touch') return;
+        const st = document.body.dataset.station;
+        if (st !== '0' && st !== '9') { setGlow(0); return; }
+        const logoH = Math.min(innerHeight * 0.70, innerWidth * 0.58);
+        const reach = logoH * 0.50, fade = logoH * 0.62;
+        const d = Math.hypot(e.clientX - innerWidth * 0.5, e.clientY - innerHeight * 0.5);
+        setGlow(clamp(1 - (d - reach) / fade, 0, 1));
+      }, { passive: true });
+      addEventListener('blur', () => setGlow(0));
+    }
   }
 }
 
