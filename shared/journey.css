@@ -151,9 +151,9 @@ canvas.cv{ position:absolute; inset:0; width:100%; height:100%; display:block; z
   pointer-events:none; visibility:hidden; }
 .j-cta-row--touch{ display:none; }
 body[data-station="9"] .cap--end{ opacity:1; }
-body[data-station="9"] .cap--end .cap-line{ opacity:1; }
-body[data-station="9"] .cap--end .cap-title{ transform:translate(-50%,-50%); }
-body[data-station="9"] .cap--end .j-cta-row{ transform:translateX(-50%); }
+body[data-station="9"] .cap--end.cap--active .cap-title{ transform:translate(-50%,-50%); }
+body[data-station="9"] .cap--end.cap--active .j-cta-row{ transform:translateX(-50%); }
+body.end-hold .cap--end .cap-line{ opacity:0 !important; transform:translateY(14px) !important; pointer-events:none; }
 /* page CTA — glass fill so the monogram reads through (navbar CTA stays solid until docked) */
 .j-top .j-cta.is-docked,
 .cap--end .j-btn{ color:var(--cold); background:rgba(169,192,214,.34); border-color:rgba(169,192,214,.5);
@@ -189,7 +189,6 @@ body[data-station="0"] .brand-motif, body[data-station="9"] .brand-motif{ opacit
   transition:opacity .5s var(--ease), filter .5s var(--ease);
   animation:motifDrift 22s var(--ease) infinite; }
 /* closer: a touch brighter at rest and a stronger peak when the cursor is near */
-body[data-station="9"] .brand-motif img{ --mo:.13; --flare:.58; }
 @keyframes motifDrift{ 0%,100%{ transform:translateY(0) scale(1); } 50%{ transform:translateY(-1.2%) scale(1.018); } }
 @media (prefers-reduced-motion: reduce){ .brand-motif img{ animation:none; opacity:var(--mo); filter:none; } .j-brand,.brand-motif{ transition:none; } }
 
@@ -298,13 +297,12 @@ body[data-station="9"] .brand-motif img{ --mo:.13; --flare:.58; }
   .cap--center.cap--end .cap-title{ font-size:clamp(1.55rem,7.2vw,2rem); max-width:14ch; }
   .cap--center.cap--end .j-cta-row{ top:calc(50% + clamp(1.15rem,5.2vw,1.65rem)); margin-top:.55rem; }
   .cap--end .j-btn{ font-size:clamp(.54rem,2.5vw,.64rem); padding:.52rem .85rem; letter-spacing:.1em; border-radius:8px; }
-  /* touch: no cursor-proximity glow — hold a brighter resting motif on hero + closer */
+  /* touch: no cursor-proximity glow — hold a resting motif on hero + closer */
   body[data-station="0"] .brand-motif img,
   body[data-station="9"] .brand-motif img{
     --mo:.26; --flare:.58; --glow:.48;
     filter:brightness(1.18) drop-shadow(0 0 22px rgba(169,192,214,.38));
   }
-  body[data-station="9"] .brand-motif img{ --mo:.32; --flare:.68; --glow:.55; }
 }
 @media (prefers-reduced-motion: reduce){
   .cap-line{ opacity:1; transform:none; transition:none; }

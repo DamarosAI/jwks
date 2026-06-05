@@ -548,7 +548,7 @@ function go(i) {
   const uM = uniforms.uMorph.value;
   for (let p = 0; p < N; p++) { const stg = rndArr[p] * 0.26, mL = clamp((uM - stg) / (1 - stg), 0, 1), me = smoother(mL), k = p * 3; posArr[k] += (toArr[k] - posArr[k]) * me; posArr[k + 1] += (toArr[k + 1] - posArr[k + 1]) * me; posArr[k + 2] += (toArr[k + 2] - posArr[k + 2]) * me; }
   toArr.set(SHAPES[i]); subArr.set(SUB[i]); geo.attributes.position.needsUpdate = true; geo.attributes.aTo.needsUpdate = true; geo.attributes.aSub.needsUpdate = true;
-  uniforms.uMorph.value = 0; morphStart = performance.now(); target = i; flying = true; camDist.set(DIST[i]); setCaps(-1);
+  uniforms.uMorph.value = 0; morphStart = performance.now(); target = i; flying = true; camDist.set(DIST[i]); if (i !== 9) clearEndHold(); setCaps(-1);
 }
 function next() { go((flying ? target : cur) + 1); }
 function prev() { go((flying ? target : cur) - 1); }
@@ -559,6 +559,19 @@ const counterEl = document.querySelector('[data-counter]');
 const progEl = document.querySelector('[data-deck-progress]');
 const dots = [...document.querySelectorAll('[data-dot]')];   // stone-blue diamond station nav (click to skip around)
 function setCaps(idx) { caps.forEach((b, i) => { const on = i === idx; b.querySelectorAll('.cap-line').forEach((l) => l.classList.toggle('on', on)); b.classList.toggle('cap--active', on); }); }
+const END_HOLD_MS = REDUCED ? 500 : 2000;
+let endHoldTimer = null;
+function clearEndHold() { clearTimeout(endHoldTimer); endHoldTimer = null; document.body.classList.remove('end-hold'); }
+function arriveAt(idx) {
+  clearEndHold();
+  if (idx === 9 && !REDUCED) {
+    document.body.classList.add('end-hold');
+    setCaps(9);
+    endHoldTimer = setTimeout(() => { document.body.classList.remove('end-hold'); endHoldTimer = null; }, END_HOLD_MS);
+    return;
+  }
+  setCaps(idx);
+}
 function syncUI() { const shown = flying ? target : cur; if (document.body.dataset.station !== String(shown)) document.body.dataset.station = String(shown); if (counterEl) counterEl.textContent = ('0' + (shown + 1)).slice(-2) + ' / ' + ('0' + NS).slice(-2); if (progEl) progEl.style.transform = `scaleX(${(shown / (NS - 1)).toFixed(4)})`; for (let i = 0; i < dots.length; i++) dots[i].classList.toggle('active', i === shown); const bp = document.querySelector('[data-prev]'), bn = document.querySelector('[data-next]'); if (bp) bp.disabled = shown <= 0 && !flying; if (bn) bn.disabled = shown >= NS - 1 && !flying; }
 
 /* ---------- micro-interactions ---------- */
@@ -588,7 +601,7 @@ function frame() {
   // morph (wall-clock) + settle taper
   const mp = REDUCED ? 1 : clamp((now - morphStart) / morphMs, 0, 1); uniforms.uMorph.value = mp;
   const settle = ss(mp); uniforms.uFlow.value = (REDUCED ? 0.4 : 0.9) * (0.6 + 0.4 * settle);
-  if (flying && mp >= 1) { posArr.set(SHAPES[target]); geo.attributes.position.needsUpdate = true; flying = false; cur = target; uniforms.uKind.value = target; setCaps(cur); }
+  if (flying && mp >= 1) { posArr.set(SHAPES[target]); geo.attributes.position.needsUpdate = true; flying = false; cur = target; uniforms.uKind.value = target; arriveAt(cur); }
   const shown = flying ? target : cur;
 
   // ---- camera: damped spherical pose (no chord-swim, no wrap-spin) + cursor shear ----
@@ -613,7 +626,7 @@ function frame() {
   // sub-block hover: eased intensity (fast in, slow out) — brighten/ripple only, hue stays stone blue
   hoverBoost = damp(hoverBoost, hoverTarget, hoverTarget > hoverBoost ? 9 : 3.2, dt); W.uHover.value = hoverBoost;
   if (hoverBoost > 0.001) W.uReveal.value = Math.min(1, W.uReveal.value + hoverBoost * 0.5);
-  finalGlow = damp(finalGlow, (shown === 9) ? 1 : 0, 2.2, dt); W.uFinal.value = finalGlow;
+  finalGlow = damp(finalGlow, 0, 2.2, dt); W.uFinal.value = finalGlow;
   W.uSoft.value = REDUCED ? 0 : (1 - settle) * 0.045;   // feather the topology lines only while a transition is in motion (0 at rest -> static look unchanged)
   _wPar.x = damp(_wPar.x, ptrHas && !REDUCED ? pointer.x : 0, 3.5, dt); _wPar.y = damp(_wPar.y, ptrHas && !REDUCED ? pointer.y : 0, 3.5, dt);
   deepLayer.position.x = -_wPar.x * 4.0; deepLayer.position.y = -_wPar.y * 1.6; midLayer.position.x = -_wPar.x * 8.5; midLayer.position.y = -_wPar.y * 5.0;   // trimmed deep-layer vertical parallax so it can't lift the terrain off the bottom
@@ -623,7 +636,7 @@ function frame() {
   stateMixCur = damp(stateMixCur, STATEMIX[shown], 2.0, dt); uniforms.uStateMix.value = stateMixCur;
   uniforms.uCloudDim.value = damp(uniforms.uCloudDim.value, CLOUD_DIM[shown], 2.5, dt);
   tmpFog.copy(baseFog).lerp(accentCur, 0.10); uniforms.uFogCol.value.copy(tmpFog);
-  if (bloomPass) bloomPass.strength = damp(bloomPass.strength, KINDS[shown] === 'final' ? 0.46 : (KINDS[shown] === 'luna' ? 0.15 : 0.14), 1.5, dt);
+  if (bloomPass) bloomPass.strength = damp(bloomPass.strength, KINDS[shown] === 'luna' ? 0.15 : 0.14, 1.5, dt);
 
   // ---- cursor field + PER-SECTION physics (the verb is selected per section, blended pop-free) ----
   const havePtr = ptrHas && !REDUCED;
@@ -701,7 +714,7 @@ if (!MOBILE && !REDUCED) {
     if (MOBILE && !REDUCED) {
       const syncMotif = () => {
         const st = document.body.dataset.station;
-        setGlow(st === '9' ? 0.55 : st === '0' ? 0.48 : 0);
+        setGlow(st === '9' || st === '0' ? 0.48 : 0);
       };
       syncMotif();
       new MutationObserver(syncMotif).observe(document.body, { attributes: true, attributeFilter: ['data-station'] });

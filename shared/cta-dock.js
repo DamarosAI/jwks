@@ -51,21 +51,23 @@
     cta.addEventListener('transitionend', clear);
   }
 
-  function onStation(st) {
-    if (st === '9') {
+  function shouldDock() {
+    return document.body.dataset.station === '9' && !document.body.classList.contains('end-hold');
+  }
+
+  function onStation() {
+    if (shouldDock()) {
       requestAnimationFrame(function () { requestAnimationFrame(dock); });
     } else {
       undock();
     }
   }
 
-  function sync() {
-    onStation(document.body.dataset.station || '0');
-  }
+  function sync() { onStation(); }
 
-  new MutationObserver(sync).observe(document.body, { attributes: true, attributeFilter: ['data-station'] });
+  new MutationObserver(sync).observe(document.body, { attributes: true, attributeFilter: ['data-station', 'class'] });
   new MutationObserver(function () {
-    if (document.body.dataset.station === '9' && docked) dock();
+    if (shouldDock() && docked) dock();
   }).observe(endCap, { attributes: true, attributeFilter: ['class'] });
   window.addEventListener('resize', function () { if (docked) dock(); });
   sync();
