@@ -71,10 +71,21 @@ html.booting, html.booting body{ overflow:hidden; }
 .j-link{ font-family:var(--fb); font-size:.64rem; font-weight:600; letter-spacing:.18em; text-transform:uppercase;
   color:var(--dim); transition:color .3s var(--ease); }
 .j-link:hover{ color:var(--cold); }
-.j-top .j-cta{ pointer-events:auto; font-family:var(--fb); font-size:.64rem; font-weight:600; letter-spacing:.18em;
-  text-transform:uppercase; color:var(--dim); display:inline-flex; align-items:center; gap:.5rem;
-  border:1px solid rgba(124,138,153,.32); border-radius:999px; padding:.5rem .9rem; transition:color .3s var(--ease), border-color .3s var(--ease); }
-.j-top .j-cta:hover{ color:var(--cold); border-color:var(--steel); }
+/* top-right CTA — matches the closing .j-btn (solid steel fill, jet text, 10px radius); a touch smaller for the header */
+.j-top .j-cta{ pointer-events:auto; position:relative; z-index:21; display:inline-flex; align-items:center; justify-content:center;
+  gap:.5rem; font-family:var(--fb); font-size:.7rem; font-weight:600; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--jet); background:var(--steel); border:1px solid var(--steel); border-radius:10px; padding:.72rem 1.3rem;
+  transform-origin:50% 50%;
+  transition:transform .25s var(--ease), box-shadow .25s var(--ease), background .25s var(--ease); }
+.j-top .j-cta:hover{ transform:translateY(-2px); box-shadow:0 12px 36px rgba(169,192,214,.28); background:#c2d5e6; }
+/* docked: the FLIP target is set inline by cta-dock.js; here we just light it up like the final CTA (box-shadow only,
+   so the keyframes never fight the inline translate). */
+.j-top .j-cta.is-docked{ z-index:30; background:var(--steel); animation:ctaGlowDock 2.8s var(--ease) infinite; }
+.j-top .j-cta.is-docked:hover{ background:#c2d5e6; }
+@keyframes ctaGlowDock{ 0%,100%{ box-shadow:0 10px 34px rgba(169,192,214,.3); }
+  50%{ box-shadow:0 0 44px rgba(169,192,214,.6), 0 16px 50px rgba(169,192,214,.46); } }
+/* the closing section's own button steps aside while the top CTA docks into its slot */
+.cap--end.cta-docked .j-cta-row{ opacity:0 !important; pointer-events:none; }
 
 .j-progress{ position:fixed; top:0; left:0; right:0; height:2px; z-index:24; transform-origin:left; transform:scaleX(0);
   background:linear-gradient(90deg, var(--deep), var(--steel)); }
@@ -106,13 +117,16 @@ canvas.cv{ position:absolute; inset:0; width:100%; height:100%; display:block; z
 .cap-ax{ display:inline-flex; align-items:center; gap:.55rem; justify-content:center; font-family:var(--fb);
   font-size:.66rem; font-weight:600; letter-spacing:.28em; text-transform:uppercase; color:var(--steel); }
 .cap-ax .x{ font-variant-numeric:tabular-nums; color:var(--dim); }
-.cap-title{ margin:.45rem 0 0; font-family:var(--fh); font-weight:700; font-size:clamp(2.1rem,4.8vw,3.7rem);
-  line-height:1.0; letter-spacing:-.035em; color:var(--cold); text-wrap:balance; }
+.cap-title{ margin:.45rem 0 0; font-family:var(--fh); font-weight:700; font-size:clamp(2.6rem,7vw,6rem);
+  line-height:.9; letter-spacing:-.045em; color:var(--cold); text-wrap:balance; max-width:100%; }
 .cap-title em{ font-style:normal; color:var(--steel); }
 /* the high-conviction declaration — the manifesto line, centerpiece of each panel */
 .cap-lead{ margin:.55rem auto 0; max-width:52ch; font-family:var(--fh); font-weight:600;
   font-size:clamp(1.25rem,1.9vw,1.7rem); line-height:1.18; letter-spacing:-.02em; color:var(--cold); text-wrap:balance; }
 .cap-lead em{ font-style:normal; color:var(--steel); }
+/* verdict kicker — the hard two-word beat between the declaration and the field-note cards */
+.cap-kicker{ display:block; margin:0 0 .9rem; font-family:var(--fb); font-size:.62rem; font-weight:600;
+  letter-spacing:.22em; text-transform:uppercase; color:var(--steel); }
 /* supporting paragraph — the bridge between the declaration and the field-note cards (what's broken → what's now possible) */
 .cap-support{ margin:.7rem auto 0; max-width:56ch; font-family:var(--fb); font-weight:400;
   font-size:clamp(.96rem,1.1vw,1.06rem); line-height:1.5; color:rgba(232,236,240,.82); text-wrap:pretty; }
@@ -132,7 +146,7 @@ canvas.cv{ position:absolute; inset:0; width:100%; height:100%; display:block; z
 /* ===== brand identity: landing wordmark, nav handoff, floating motif ===== */
 /* landing logo — the official Damaros lockup as the hero centerpiece (Archivo + stone-blue superscript TM) */
 .cap-logo{ margin:0; font-family:var(--fh); font-weight:750; line-height:.9; letter-spacing:-.012em; color:var(--cold); }
-.cap-logo .cap-logo-mark{ display:inline-flex; align-items:baseline; gap:.04em; font-size:clamp(3.4rem,10.5vw,8rem); }
+.cap-logo .cap-logo-mark{ display:inline-flex; align-items:baseline; gap:.04em; font-size:clamp(4.2rem,12.5vw,9.6rem); }
 .cap-logo sup{ font-size:.28em; color:var(--steel); top:-1.05em; letter-spacing:0; }
 .cap--hero .cap-lead{ margin-top:1.15rem; color:var(--cold); }
 .cap--hero .cap-body--one{ color:rgba(234,238,242,.74); }
@@ -179,20 +193,47 @@ body[data-station="9"] .brand-motif img{ --mo:.13; --flare:.58; }
   box-shadow:0 0 18px color-mix(in srgb, var(--c) 30%, transparent); }
 
 /* two contrastive field-note cards — card 1 = what Damaros eliminates · card 2 = what it creates */
-.cap-sub{ display:flex; gap:1rem; justify-content:center; margin:1.2rem auto 0; max-width:46rem; text-align:left; }
-.cap-box{ flex:1 1 0; min-width:0; padding:1rem 1.15rem; border:1px solid rgba(169,192,214,.28); border-radius:12px;
-  background:linear-gradient(180deg, rgba(169,192,214,.08), rgba(169,192,214,.025));
+.cap-sub{ display:flex; gap:1rem; justify-content:center; margin:0 auto; max-width:37rem; text-align:left; }
+.cap-box{ flex:1 1 0; min-width:0; padding:1rem 1.15rem; border:1px solid rgba(169,192,214,.3); border-radius:12px;
+  background:linear-gradient(180deg, rgba(169,192,214,.1), rgba(169,192,214,.035)), rgba(9,12,18,.62);
   -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px);
   transition:border-color .3s var(--ease), background .3s var(--ease), box-shadow .3s var(--ease), transform .3s var(--ease); }
-.cap-box:hover{ border-color:var(--steel); background:linear-gradient(180deg, rgba(169,192,214,.15), rgba(169,192,214,.05));
+.cap-box:hover{ border-color:var(--steel); background:linear-gradient(180deg, rgba(169,192,214,.17), rgba(169,192,214,.06)), rgba(12,16,23,.72);
   box-shadow:0 12px 34px rgba(5,7,11,.5); transform:translateY(-2px); }
 .cap-box-h{ display:block; font-family:var(--fb); font-weight:700; font-size:.9rem; letter-spacing:.005em; color:#f4f7fa; }
 .cap-box-b{ margin:.45rem 0 0; font-family:var(--fb); font-size:.84rem; line-height:1.5; color:rgba(232,236,240,.8); }
 .cap-box .kw{ white-space:normal; }
 
+/* ===== layout archetypes — scenes alternate between centered (cards beneath) and split (cards beside) ===== */
+.cap-cards{ margin-top:1.5rem; }                         /* kicker label rides directly above the field-note cards */
+/* SPLIT — headline block beside the stacked cards block; kicker stays above the cards */
+.cap--split{ width:min(72rem,90vw); max-width:min(72rem,90vw); text-align:left;
+  display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  column-gap:clamp(1.6rem,4.6vw,4rem); align-items:center; }
+.cap--split .cap-head{ grid-column:1; }
+.cap--split .cap-cards{ grid-column:2; margin-top:0; }
+.cap--split .cap-lead{ max-width:none; margin-left:0; margin-right:0; white-space:nowrap; text-wrap:nowrap;
+  font-size:clamp(1.05rem,1.7vw,1.55rem); }
+.cap--split .cap-sub{ flex-direction:column; gap:.85rem; max-width:none; }
+.cap--split .cap-kicker{ text-align:left; }
+/* MIRROR — headline on the right, cards on the left */
+.cap--split.cap--mirror .cap-head{ grid-column:2; text-align:right; }
+.cap--split.cap--mirror .cap-cards{ grid-column:1; }
+.cap--split.cap--mirror .cap-lead{ margin-left:auto; }
+
 /* scrubbed reveal unit */
 .cap-line{ opacity:0; transform:translateY(14px); transition:opacity .7s var(--ease), transform .7s var(--ease); will-change:opacity,transform; }
 .cap-line.on{ opacity:1; transform:none; }
+/* scramble-resolve headline — each letter tumbles through random letters (same case, no symbols) and locks
+   into place left to right. Letters hold a FIXED width (set inline by cap-intro.js) so nothing reflows / bounces. */
+.deck-caps [data-type]{ opacity:1 !important; transform:none !important; }
+.deck-caps [data-type] .rc{ display:inline-block; text-align:center; white-space:nowrap;
+  opacity:0; filter:blur(2px); transition:opacity .42s ease, filter .42s ease, color .42s ease; will-change:opacity, filter; }
+.deck-caps [data-type] .rc.scram{ opacity:.5; color:var(--steel); filter:blur(2px); }
+.deck-caps [data-type] .rc.in{ opacity:1; color:inherit; filter:blur(0); }
+@media (prefers-reduced-motion: reduce){
+  .deck-caps [data-type] .rc{ opacity:1; filter:none; color:inherit; transition:none; }
+}
 
 /* scroll cue (opening) */
 .cue{ position:absolute; left:50%; bottom:clamp(1.6rem,5vh,2.6rem); transform:translateX(-50%); z-index:4;
@@ -224,6 +265,13 @@ body[data-station="9"] .brand-motif img{ --mo:.13; --flare:.58; }
   .cap-support{ max-width:none; }
   .cap-body{ max-width:none; }
   .cap-sub{ flex-direction:column; gap:.7rem; max-width:none; }
+  /* split archetypes collapse back to a single centered column on small screens */
+  .cap--split, .cap--split.cap--mirror{ display:block; grid-template-columns:none; text-align:center; }
+  .cap--split .cap-head, .cap--split.cap--mirror .cap-head{ text-align:center; }
+  .cap--split .cap-lead, .cap--split.cap--mirror .cap-lead{ max-width:none; margin-left:auto; margin-right:auto; white-space:normal; text-wrap:balance; }
+  .cap--split .cap-cards, .cap--split.cap--mirror .cap-cards{ grid-column:auto; margin-top:1.3rem; }
+  .cap--split .cap-kicker, .cap--split.cap--mirror .cap-kicker{ text-align:center; }
+  .cap--split .cap-sub, .cap--split.cap--mirror .cap-sub{ flex-direction:column; }
   .j-top .j-cta{ display:none; }
 }
 @media (prefers-reduced-motion: reduce){
