@@ -61,19 +61,19 @@ body { overflow: hidden; }                 /* the journey is stepped, not scroll
 .deck-label { font-family: var(--fb); font-size: clamp(.6rem, .82vw, .68rem); font-weight: 600;
   letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; transition: color .3s var(--ease); }
 .deck-label-short { display: none; }
-/* the bare home marker carries no label */
-.deck-dot--home { padding: clamp(.32rem, .9vw, .42rem); }
-.deck-dot--card { padding: clamp(.42rem, .9vw, .5rem) clamp(.7rem, 1.4vw, 1rem); border-color: rgba(169,192,214,.16);
+/* endpoints (home + closer) stay bare diamonds; the three content sections are text tabs */
+.deck-dot--mark { padding: clamp(.32rem, .9vw, .42rem); }
+.deck-dot--label { padding: clamp(.42rem, .9vw, .5rem) clamp(.7rem, 1.4vw, 1rem); border-color: rgba(169,192,214,.16);
   background: rgba(12,17,24,.42); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
-.deck-dot:hover .deck-mark { border-color: var(--steel); background: rgba(169,192,214,.32);
+.deck-dot--mark:hover .deck-mark { border-color: var(--steel); background: rgba(169,192,214,.32);
   box-shadow: 0 0 12px rgba(169,192,214,.55); transform: rotate(45deg) scale(1.16); }
 .deck-dot:hover { color: var(--cold); }
-.deck-dot--card:hover { border-color: rgba(169,192,214,.4); background: rgba(16,22,31,.6);
+.deck-dot--label:hover { border-color: rgba(169,192,214,.4); background: rgba(16,22,31,.6);
   box-shadow: 0 8px 26px rgba(5,7,11,.45); }
 .deck-dot.active { color: var(--cold); }
-.deck-dot.active .deck-mark { background: var(--steel); border-color: var(--steel);
+.deck-dot--mark.active .deck-mark { background: var(--steel); border-color: var(--steel);
   box-shadow: 0 0 14px rgba(169,192,214,.78); transform: rotate(45deg) scale(1.18); }
-.deck-dot--card.active { border-color: var(--steel); background: rgba(169,192,214,.12);
+.deck-dot--label.active { border-color: var(--steel); background: rgba(169,192,214,.12); color: var(--cold);
   box-shadow: 0 0 18px rgba(169,192,214,.28), inset 0 1px 0 rgba(232,236,240,.08); }
 
 /* arrows: a directional sheen leans the way you will travel */
@@ -125,6 +125,6 @@ body { overflow: hidden; }                 /* the journey is stepped, not scroll
   .deck-mark, .deck-arrow::before { transition: none; }
 }
 @media (hover: none) {
-  .deck-dot--card:hover { border-color: rgba(169,192,214,.16); background: rgba(12,17,24,.42); box-shadow: none; }
-  .deck-dot:hover .deck-mark { box-shadow: none; transform: rotate(45deg); }
+  .deck-dot--label:hover { border-color: rgba(169,192,214,.16); background: rgba(12,17,24,.42); box-shadow: none; }
+  .deck-dot--mark:hover .deck-mark { box-shadow: none; transform: rotate(45deg); }
 }

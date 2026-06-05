@@ -50,102 +50,47 @@ body.world-ready #world { opacity: 1; }
   font-family: var(--fh); font-weight: 600; letter-spacing: -.012em; font-size: 1rem; color: #f5f8fb;
 }
 
-/* ---- the stage rail: conduit + four octahedron nodes ---- */
-.es-rail {
-  position: relative; z-index: 3; display: grid; grid-template-columns: repeat(4, 1fr);
-  align-items: start; margin: clamp(1.3rem, 3.2vh, 2rem) auto 0;
-  width: min(46rem, 100%);
+/* ---- the four stages, shown at once: a 4-up grid on desktop / laptop,
+   a horizontal swipe carousel on mobile (Protocol · Evidence · Screening · Replay) ---- */
+.es-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); align-items: stretch;
+  gap: clamp(.7rem, 1.5vw, 1.15rem); margin: clamp(1.1rem, 3vh, 1.7rem) auto 0; text-align: left;
 }
-.es-conduit {
-  position: absolute; left: 12.5%; right: 12.5%; top: 10px; height: 2px;
-  background: rgba(169, 192, 214, .18); border-radius: 2px; overflow: hidden;
+.es-stage-card {
+  position: relative; display: flex; flex-direction: column; gap: clamp(.7rem, 1.4vw, 1rem);
+  padding: clamp(.85rem, 1.5vw, 1.2rem); border: 1px solid rgba(169, 192, 214, .2); border-radius: 14px;
+  background: linear-gradient(180deg, rgba(169, 192, 214, .07), rgba(169, 192, 214, .02)), rgba(8, 11, 17, .55);
+  -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+  transition: border-color .4s var(--ease), box-shadow .4s var(--ease), transform .4s var(--ease);
 }
-.es-conduit-fill {
-  display: block; height: 100%; width: 100%; transform-origin: left; transform: scaleX(0);
-  background: linear-gradient(90deg, var(--deep), var(--steel));
-  box-shadow: 0 0 12px rgba(169, 192, 214, .5);
-  transition: transform .9s var(--ease);
+.es-stage-card:hover { border-color: rgba(169, 192, 214, .42); box-shadow: 0 14px 40px rgba(5, 7, 11, .5); transform: translateY(-2px); }
+.es-stage-head { display: flex; flex-direction: column; gap: .2rem; }
+.es-stage-tag {
+  font-family: var(--fb); font-size: .56rem; font-weight: 600; letter-spacing: .22em;
+  text-transform: uppercase; color: var(--steel);
 }
-.es-node {
-  position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center;
-  justify-self: center; gap: .62rem; padding: 0; border: 0; background: none; cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
+.es-stage-head h3 {
+  margin: .1rem 0 0; font-family: var(--fh); font-weight: 700;
+  font-size: clamp(1.15rem, 1.7vw, 1.5rem); letter-spacing: -.02em; color: var(--cold);
 }
-/* the wire-octahedron motif → a stone-blue diamond that resolves green when active */
-.es-diamond {
-  width: 14px; height: 14px; margin-top: 3px; transform: rotate(45deg);
-  border: 1.5px solid rgba(169, 192, 214, .55); background: rgba(169, 192, 214, .06);
-  transition: background .4s var(--ease), border-color .4s var(--ease),
-              box-shadow .4s var(--ease), transform .4s var(--ease);
-}
-.es-node-label {
-  font-family: var(--fb); font-size: .62rem; font-weight: 600; letter-spacing: .16em;
-  text-transform: uppercase; color: var(--dim); white-space: nowrap;
-  transition: color .4s var(--ease);
-}
-.es-node:hover .es-diamond {
-  border-color: var(--steel); background: rgba(169, 192, 214, .26);
-  box-shadow: 0 0 12px rgba(169, 192, 214, .5); transform: rotate(45deg) scale(1.12);
-}
-.es-node:hover .es-node-label { color: var(--steel); }
-/* completed stages — filled steel */
-.es-node.is-done .es-diamond { background: var(--steel); border-color: var(--steel); }
-.es-node.is-done .es-node-label { color: rgba(169, 192, 214, .8); }
-/* the active stage — lit stone-blue (no green on the spine) */
-.es-node.is-active .es-diamond {
-  background: var(--steel); border-color: var(--steel);
-  box-shadow: 0 0 16px rgba(169, 192, 214, .7); transform: rotate(45deg) scale(1.18);
-}
-.es-node.is-active .es-node-label { color: var(--cold); }
-.es-node:focus-visible { outline: none; }
-.es-node:focus-visible .es-diamond { outline: 2px solid rgba(169, 192, 214, .85); outline-offset: 4px; }
-
-/* ---- the stage: all facets share one grid cell → container sizes to the tallest, no reflow ---- */
-.es-stage {
-  position: relative; margin: clamp(.7rem, 2vh, 1.2rem) auto 0; width: 100%;
-}
-.es-facet {
-  position: absolute; top: 0; left: 0; right: 0; display: flex; flex-direction: column; align-items: center;
-  opacity: 0; transform: translateY(12px); visibility: hidden; pointer-events: none;
-  transition: opacity .55s var(--ease), transform .55s var(--ease);
-}
-.es-facet.facet--active { position: relative; opacity: 1; transform: none; visibility: visible; }
-.es-lead {
-  margin: 0 auto; max-width: 44ch; font-family: var(--fb); font-weight: 600;
-  font-size: clamp(1.05rem, 1.65vw, 1.38rem); line-height: 1.28; letter-spacing: -.005em;
+.es-stage-sub {
+  margin: .15rem 0 0; font-family: var(--fb); font-weight: 600;
+  font-size: clamp(.86rem, 1.05vw, .96rem); line-height: 1.32; letter-spacing: -.005em;
   color: var(--steel); text-wrap: balance;
 }
-.es-lead em { font-style: normal; color: var(--cold); }
-.es-cards {
-  display: flex; gap: clamp(1rem, 2.4vw, 1.5rem); justify-content: center; margin: clamp(1.5rem, 3.6vh, 2.1rem) auto 0;
-  max-width: 47rem; text-align: left;
-}
-.es-cards .cap-box { padding: clamp(1.15rem, 2.3vw, 1.5rem) clamp(1.2rem, 2.5vw, 1.6rem); }
-.es-cards .cap-box-h { font-size: .98rem; }
-.es-cards .cap-box-b { font-size: .9rem; margin-top: .55rem; }
-.es-stage .chips { margin-top: 1.1rem; }
+.es-stage-sub em { font-style: normal; color: var(--cold); }
+.es-stage-cards { display: flex; flex-direction: column; gap: clamp(.5rem, 1vw, .7rem); }
+.es-stage-cards .cap-box { padding: clamp(.8rem, 1.4vw, 1.05rem) clamp(.85rem, 1.5vw, 1.15rem); }
+.es-stage-cards .cap-box-h { font-size: clamp(.84rem, 1vw, .92rem); }
+.es-stage-cards .cap-box-b { font-size: clamp(.8rem, .95vw, .86rem); margin-top: .45rem; }
 
-/* three verdict dots — top-right of the screening card, on the header line */
+/* three verdict dots — on the screening card's header line */
 .es-card--verdict .cap-box-h { display: flex; align-items: center; justify-content: space-between; gap: .6rem; }
 .es-dots { display: flex; gap: .4rem; flex: none; }
 .es-dots i { width: 7px; height: 7px; border-radius: 50%; }
 .es-dots .ev--pass { background: var(--ok); box-shadow: 0 0 6px color-mix(in srgb, var(--ok) 55%, transparent); }
 .es-dots .ev--review { background: var(--amber); box-shadow: 0 0 6px color-mix(in srgb, var(--amber) 55%, transparent); }
 .es-dots .ev--fail { background: var(--breach); box-shadow: 0 0 6px color-mix(in srgb, var(--breach) 55%, transparent); }
-
-/* facet readout — small counter under the stage */
-.es-meta {
-  display: flex; align-items: center; justify-content: center; gap: .7rem;
-  margin-top: clamp(1.7rem, 4.2vh, 2.5rem);
-}
-.es-count {
-  font-family: var(--fb); font-size: .62rem; font-weight: 600; letter-spacing: .22em;
-  text-transform: uppercase; color: var(--dim); font-variant-numeric: tabular-nums;
-}
-.es-hint {
-  font-family: var(--fb); font-size: .56rem; font-weight: 600; letter-spacing: .2em;
-  text-transform: uppercase; color: rgba(124, 138, 153, .7);
-}
 
 /* ============================================================
  * TRIAL INTELLIGENCE  (Node ↔ Sponsor)
@@ -354,8 +299,10 @@ body.world-ready #world { opacity: 1; }
  * every interior element scale to viewport HEIGHT (min() caps do nothing on tall
  * screens, shrink gracefully on short ones) so it always clears the header. */
 @media (min-width: 821px) {
-  .cap.ps, .cap.ti { top: calc(50% + clamp(.4rem, 1.8vh, 1.4rem)); }
-  .ps-title, .ti-title { font-size: min(clamp(2.2rem, 5vw, 3.7rem), 6.2vh); }
+  .cap.es, .cap.ps, .cap.ti { top: calc(50% + clamp(.4rem, 1.8vh, 1.4rem)); }
+  .es-title, .ps-title, .ti-title { font-size: min(clamp(2.2rem, 5vw, 3.7rem), 6.2vh); }
+  .es-grid { margin-top: min(clamp(1.1rem, 3vh, 1.7rem), 2.6vh); }
+  .es-stage-head h3 { font-size: min(clamp(1.15rem, 1.7vw, 1.5rem), 3vh); }
   .cap.ps .cap-subhead, .cap.ti .cap-subhead {
     font-size: min(clamp(1.05rem, 1.65vw, 1.38rem), 2.5vh); margin-top: clamp(.35rem, 1.2vh, .55rem);
   }
@@ -372,39 +319,34 @@ body.world-ready #world { opacity: 1; }
 @media (max-width: 820px) {
   .cap.es, .cap.ti, .cap.ps { width: min(34rem, 92vw); max-width: min(34rem, 92vw); }
 
-  /* Execution Spine */
-  .es-rail { width: 100%; }
-  .es-node-label { font-size: .54rem; letter-spacing: .08em; }
-  .es-cards { flex-direction: column; gap: .6rem; max-width: none; width: 100%; }
-
   /* section headlines — nudge down for breathing room above the carousel */
-  .cap.ti .ti-title, .cap.ps .ps-title { margin-top: clamp(.85rem, 3.6vh, 1.2rem); }
+  .cap.es .es-title, .cap.ti .ti-title, .cap.ps .ps-title { margin-top: clamp(.85rem, 3.6vh, 1.2rem); }
   .cap.ti .cap-subhead, .cap.ps .cap-subhead { margin-top: clamp(.55rem, 2.2vh, .75rem); }
 
-  /* two-panel sections → a horizontal swipe carousel (one panel at a time) */
-  .ti-split, .ps-split {
+  /* every multi-panel section → a horizontal swipe carousel (one panel at a time) */
+  .es-grid, .ti-split, .ps-split {
     grid-template-columns: none; display: flex; flex-wrap: nowrap;
     gap: clamp(.75rem, 4.2vw, 1.1rem); overflow-x: auto; overflow-y: visible;
     scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none;
     margin-top: clamp(.85rem, 2.6vh, 1.25rem);
   }
-  .ti-split::-webkit-scrollbar, .ps-split::-webkit-scrollbar { display: none; }
-  .ti-half, .ps-half {
+  .es-grid::-webkit-scrollbar, .ti-split::-webkit-scrollbar, .ps-split::-webkit-scrollbar { display: none; }
+  .es-stage-card, .ti-half, .ps-half {
     flex: 0 0 100%; scroll-snap-align: center; gap: clamp(.65rem, 3vw, .85rem);
     padding: clamp(.82rem, 3.6vw, 1.1rem) clamp(.88rem, 3.8vw, 1.15rem);
   }
 
   /* compact internals so one panel fits the viewport */
-  .ti-half-head h3, .ps-half-head h3 { font-size: clamp(1.38rem, 6.8vw, 1.72rem); }
-  .ti-sub, .ps-sub { font-size: clamp(.82rem, 3.6vw, .88rem); margin-top: clamp(.28rem, 1.2vw, .38rem); }
+  .es-stage-head h3, .ti-half-head h3, .ps-half-head h3 { font-size: clamp(1.38rem, 6.8vw, 1.72rem); }
+  .es-stage-sub, .ti-sub, .ps-sub { font-size: clamp(.82rem, 3.6vw, .88rem); margin-top: clamp(.28rem, 1.2vw, .38rem); }
   .ps-field, .ti-node-viz, .ti-matrix { height: clamp(68px, 11vh, 90px); margin: .05rem 0; }
-  .ti-cards, .ps-cards { gap: clamp(.42rem, 2vw, .5rem); }
-  .ti-half .cap-box, .ps-half .cap-box { padding: clamp(.72rem, 3.2vw, .95rem) clamp(.82rem, 3.5vw, 1.05rem); }
-  .ti-half .cap-box-h, .ps-half .cap-box-h { font-size: clamp(.82rem, 3.6vw, .88rem); }
-  .ti-half .cap-box-b, .ps-half .cap-box-b { font-size: clamp(.78rem, 3.4vw, .84rem); margin-top: clamp(.38rem, 1.6vw, .48rem); }
+  .es-stage-cards, .ti-cards, .ps-cards { gap: clamp(.42rem, 2vw, .5rem); }
+  .es-stage-cards .cap-box, .ti-half .cap-box, .ps-half .cap-box { padding: clamp(.72rem, 3.2vw, .95rem) clamp(.82rem, 3.5vw, 1.05rem); }
+  .es-stage-cards .cap-box-h, .ti-half .cap-box-h, .ps-half .cap-box-h { font-size: clamp(.82rem, 3.6vw, .88rem); }
+  .es-stage-cards .cap-box-b, .ti-half .cap-box-b, .ps-half .cap-box-b { font-size: clamp(.78rem, 3.4vw, .84rem); margin-top: clamp(.38rem, 1.6vw, .48rem); }
 
   /* mobile panel switcher — mirrors the Execution Spine rail (tap a node to switch panels) */
-  .hswipe-nav { position: relative; display: grid; grid-auto-flow: column; justify-content: center; gap: clamp(2.2rem, 12vw, 3.4rem); width: fit-content; margin: clamp(.45rem, 1.8vh, .7rem) auto 0; }
+  .hswipe-nav { position: relative; display: grid; grid-auto-flow: column; justify-content: center; gap: clamp(1.3rem, 7vw, 2.8rem); width: fit-content; max-width: 100%; margin: clamp(.45rem, 1.8vh, .7rem) auto 0; }
   .hswipe-nav::before { content: ""; position: absolute; left: 14%; right: 14%; top: 9px; height: 2px; background: rgba(169, 192, 214, .18); }
   .hswipe-node { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: .5rem; padding: 0; border: 0; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
   .hswipe-node .d { width: 13px; height: 13px; transform: rotate(45deg); border: 1.5px solid rgba(169, 192, 214, .5); background: rgba(169, 192, 214, .06); transition: background .35s var(--ease), border-color .35s var(--ease), box-shadow .35s var(--ease), transform .35s var(--ease); }
@@ -414,7 +356,7 @@ body.world-ready #world { opacity: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .es-conduit-fill, .es-facet, .es-diamond, .es-node-label,
+  .es-stage-card,
   .ti-half, .ti-cell, .ti-sq, .ps-half { transition: none; }
   .ti-node.is-firing .ti-sq, .ti-node.is-firing .ti-sq::after,
   .ti-sponsor.is-reading .ti-cell,

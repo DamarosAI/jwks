@@ -560,7 +560,7 @@ function go(i) {
   if (tgtCap && tgtCap === activeCapEl) updateFacets(tgtCap, i);   // same combined section → swap facet in place (keep title, no re-scramble)
   else setCaps(-1);                                               // crossing into a different section → clear copy during the flight
 }
-const SEQ = [0, 1, 2, 3, 4, 5, 7, 9];   // reachable vantages in order (Luna/6 + Console/8 fold into their section's single stop)
+const SEQ = [0, 1, 5, 7, 9];   // reachable vantages in order — Execution Spine (1) now shows all four stages at once, so 2/3/4 are no longer separate stops; Luna/6 + Console/8 fold in too
 function seqStep(dir) { const s = flying ? target : cur; let i = SEQ.indexOf(s); if (i < 0) { i = 0; for (let k = 0; k < SEQ.length; k++) if (SEQ[k] <= s) i = k; } return SEQ[Math.max(0, Math.min(SEQ.length - 1, i + dir))]; }
 function next() { go(seqStep(1)); }
 function prev() { go(seqStep(-1)); }
@@ -575,7 +575,7 @@ const dots = [...document.querySelectorAll('[data-dot]')];   // 5-stop diamond n
 /* ---- station grouping: 10 engine vantages collapse into 5 navigable stops ----
    each combined section spans several vantages; the camera/terrain still fly to the
    exact vantage, but the journey reads as one stop with internal facets. */
-const GROUPS = [[0], [1, 2, 3, 4], [5], [7], [9]];
+const GROUPS = [[0], [1], [5], [7], [9]];
 function groupOf(v) { for (let g = 0; g < GROUPS.length; g++) if (GROUPS[g].indexOf(v) >= 0) return g; return 0; }
 
 let activeCapEl = null;

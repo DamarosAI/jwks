@@ -13,8 +13,8 @@
 <link rel="stylesheet" href="shared/archivo.css">
 <link rel="stylesheet" href="shared/hanken-grotesk.css">
 <link rel="stylesheet" href="shared/journey.css?v=reset46">
-<link rel="stylesheet" href="shared/terrain.css?v=reset38">
-<link rel="stylesheet" href="shared/sections.css?v=28">
+<link rel="stylesheet" href="shared/terrain.css?v=reset39">
+<link rel="stylesheet" href="shared/sections.css?v=29">
 <script type="importmap">
 { "imports": { "three": "./assets/vendor/three/three.module.js", "three/addons/": "./assets/vendor/three/addons/" } }
 </script>
@@ -44,52 +44,55 @@
       <h1 class="cap-logo cap-line" data-from="0"><span class="cap-logo-mark"><span class="tw" data-type>Damaros</span><sup>™</sup></span></h1>
       <p class="cap-lead cap-line" data-from="0">AI-native execution infrastructure for <em>distributed clinical trials.</em></p>
     </div>
-    <!-- 01–04 EXECUTION SPINE · Protocol · Evidence · Screening · Replay -->
-    <div class="cap es" data-cap="1" data-cap-range="1-4" data-screen-label="Execution Spine">
+    <!-- 01 EXECUTION SPINE · Protocol · Evidence · Screening · Replay (all four at once; swipe on mobile) -->
+    <div class="cap es" data-cap="1" data-screen-label="Execution Spine">
       <h2 class="es-title cap-line" data-type data-from="0">Execution Spine</h2>
 
-      <div class="es-stage">
-        <div class="es-facet" data-facet="1">
-          <p class="es-lead">Static protocol does not <em>deploy.</em></p>
-          <div class="es-cards">
+      <div class="es-grid cap-line" data-from="0" data-hswipe>
+        <div class="es-stage-card">
+          <div class="es-stage-head">
+            <span class="es-stage-tag">Stage 01</span>
+            <h3>Protocol</h3>
+            <p class="es-stage-sub">Static protocol does not <em>deploy.</em></p>
+          </div>
+          <div class="es-stage-cards">
             <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Intent compiled to logic.</span><p class="cap-box-b">Versioned criteria deploy identically across every node in the network.</p></div>
             <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Ambiguity surfaced pre-deploy.</span><p class="cap-box-b">Questions resolve as executable requirements before sites absorb burden.</p></div>
           </div>
         </div>
-        <div class="es-facet" data-facet="2">
-          <p class="es-lead">No visibility. <em>No screening.</em></p>
-          <div class="es-cards">
+        <div class="es-stage-card">
+          <div class="es-stage-head">
+            <span class="es-stage-tag">Stage 02</span>
+            <h3>Evidence</h3>
+            <p class="es-stage-sub">No visibility. <em>No screening.</em></p>
+          </div>
+          <div class="es-stage-cards">
             <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Single evidence surface.</span><p class="cap-box-b">Fragmented records fuse into one traceable, protocol-ready operating plane.</p></div>
             <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Facts arrive mission-ready.</span><p class="cap-box-b">Every artifact loads with provenance, status, and screening clearance.</p></div>
           </div>
         </div>
-        <div class="es-facet" data-facet="3">
-          <p class="es-lead">Eligibility is a verdict, <em>not a guess.</em></p>
-          <div class="es-cards">
+        <div class="es-stage-card">
+          <div class="es-stage-head">
+            <span class="es-stage-tag">Stage 03</span>
+            <h3>Screening</h3>
+            <p class="es-stage-sub">Eligibility is a verdict, <em>not a guess.</em></p>
+          </div>
+          <div class="es-stage-cards">
             <div class="cap-box" data-topo="fail"><span class="cap-box-h">Verdicts in the clear.</span><p class="cap-box-b">Every criterion resolves with attributable logic and a locked reasoning chain. </p></div>
             <div class="cap-box es-card--verdict" data-topo="pass"><span class="cap-box-h">Criterion-level resolution.<span class="es-dots"><i class="ev--pass"></i><i class="ev--review"></i><i class="ev--fail"></i></span></span><p class="cap-box-b">Each subject runs against live logic; REVIEW held apart and accountable.</p></div>
           </div>
         </div>
-        <div class="es-facet" data-facet="4">
-          <p class="es-lead">Not a report. <em>A reconstructable chain.</em></p>
-          <div class="es-cards">
+        <div class="es-stage-card">
+          <div class="es-stage-head">
+            <span class="es-stage-tag">Stage 04</span>
+            <h3>Replay</h3>
+            <p class="es-stage-sub">Not a report. <em>A reconstructable chain.</em></p>
+          </div>
+          <div class="es-stage-cards">
             <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Rebuild any verdict.</span><p class="cap-box-b">Outcomes reconstruct from protocol version, evidence, review, authorization.</p></div>
             <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Record survives the run.</span><p class="cap-box-b">Decisions stay auditable long after the trial closes and teams rotate.</p></div>
           </div>
         </div>
-      </div>
-
-      <div class="es-rail cap-line" data-from="0" aria-label="Execution stages">
-        <span class="es-conduit"><span class="es-conduit-fill" data-rail-fill></span></span>
-        <button class="es-node" type="button" data-rail="1"><span class="es-diamond"></span><span class="es-node-label">Protocol</span></button>
-        <button class="es-node" type="button" data-rail="2"><span class="es-diamond"></span><span class="es-node-label">Evidence</span></button>
-        <button class="es-node" type="button" data-rail="3"><span class="es-diamond"></span><span class="es-node-label">Screening</span></button>
-        <button class="es-node" type="button" data-rail="4"><span class="es-diamond"></span><span class="es-node-label">Replay</span></button>
-      </div>
-
-      <div class="es-meta cap-line" data-from="0">
-        <span class="es-count" data-facet-count>01 / 04</span>
-        <span class="es-hint">Click a stage · scroll to advance</span>
       </div>
     </div>
     <!-- 05–06 PLATFORM SUBSTRATE · Trident · Luna -->
@@ -173,11 +176,11 @@
   <!-- station nav · labeled section cards (jump straight to any section) · also scroll · keys · swipe -->
   <nav class="deck-nav" aria-label="Sections">
     <div class="deck-dots">
-      <button class="deck-dot deck-dot--home" type="button" data-dot data-go="0" aria-label="Home"><span class="deck-mark"></span></button>
-      <button class="deck-dot deck-dot--card" type="button" data-dot data-go="1" aria-label="Execution Spine"><span class="deck-mark"></span><span class="deck-label"><span class="deck-label-full">Execution Spine</span><span class="deck-label-short">Spine</span></span></button>
-      <button class="deck-dot deck-dot--card" type="button" data-dot data-go="5" aria-label="Platform Substrate"><span class="deck-mark"></span><span class="deck-label"><span class="deck-label-full">Platform Substrate</span><span class="deck-label-short">Platform</span></span></button>
-      <button class="deck-dot deck-dot--card" type="button" data-dot data-go="7" aria-label="Trial Intelligence"><span class="deck-mark"></span><span class="deck-label"><span class="deck-label-full">Trial Intelligence</span><span class="deck-label-short">Trial</span></span></button>
-      <button class="deck-dot deck-dot--card" type="button" data-dot data-go="9" aria-label="Damaros"><span class="deck-mark"></span><span class="deck-label"><span class="deck-label-full">Damaros</span><span class="deck-label-short">Damaros</span></span></button>
+      <button class="deck-dot deck-dot--mark" type="button" data-dot data-go="0" aria-label="Home"><span class="deck-mark"></span></button>
+      <button class="deck-dot deck-dot--label" type="button" data-dot data-go="1" aria-label="Execution Spine"><span class="deck-label"><span class="deck-label-full">Execution Spine</span><span class="deck-label-short">Spine</span></span></button>
+      <button class="deck-dot deck-dot--label" type="button" data-dot data-go="5" aria-label="Platform Substrate"><span class="deck-label"><span class="deck-label-full">Platform Substrate</span><span class="deck-label-short">Platform</span></span></button>
+      <button class="deck-dot deck-dot--label" type="button" data-dot data-go="7" aria-label="Trial Intelligence"><span class="deck-label"><span class="deck-label-full">Trial Intelligence</span><span class="deck-label-short">Trial</span></span></button>
+      <button class="deck-dot deck-dot--mark" type="button" data-dot data-go="9" aria-label="Damaros"><span class="deck-mark"></span></button>
     </div>
     <span class="deck-counter" data-counter aria-hidden="true">01 / 05</span>
   </nav>
@@ -327,6 +330,6 @@
 </script>
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="shared/cap-intro.js?v=2"></script>
 <script src="shared/cta-dock.js?v=5"></script>
-<script type="module" src="shared/space.js?v=reset44"></script>
+<script type="module" src="shared/space.js?v=reset45"></script>
 </body>
 </html>
