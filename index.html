@@ -14,6 +14,7 @@
 <link rel="stylesheet" href="shared/hanken-grotesk.css">
 <link rel="stylesheet" href="shared/journey.css?v=reset46">
 <link rel="stylesheet" href="shared/terrain.css?v=reset36">
+<link rel="stylesheet" href="shared/sections.css?v=24">
 <script type="importmap">
 { "imports": { "three": "./assets/vendor/three/three.module.js", "three/addons/": "./assets/vendor/three/addons/" } }
 </script>
@@ -43,112 +44,117 @@
       <h1 class="cap-logo cap-line" data-from="0"><span class="cap-logo-mark"><span class="tw" data-type>Damaros</span><sup>™</sup></span></h1>
       <p class="cap-lead cap-line" data-from="0">AI-native execution infrastructure for <em>distributed clinical trials.</em></p>
     </div>
-    <!-- 01 PROTOCOL -->
-    <div class="cap cap--split" data-cap="1">
-      <div class="cap-head">
-        <h2 class="cap-title cap-line" data-type data-from="0">Protocol</h2>
-        <p class="cap-lead cap-line" data-from="0">Static protocol does not <em>deploy.</em></p>
+    <!-- 01–04 EXECUTION SPINE · Protocol · Evidence · Screening · Replay -->
+    <div class="cap es" data-cap="1" data-cap-range="1-4" data-screen-label="Execution Spine">
+      <h2 class="es-title cap-line" data-type data-from="0">Execution Spine</h2>
+
+      <div class="es-stage">
+        <div class="es-facet" data-facet="1">
+          <p class="es-lead">Static protocol does not <em>deploy.</em></p>
+          <div class="es-cards">
+            <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Intent compiled to logic.</span><p class="cap-box-b">Versioned criteria deploy identically across every node in the network.</p></div>
+            <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Ambiguity surfaced pre-deploy.</span><p class="cap-box-b">Questions resolve as executable requirements before sites absorb burden.</p></div>
+          </div>
+        </div>
+        <div class="es-facet" data-facet="2">
+          <p class="es-lead">No visibility. <em>No screening.</em></p>
+          <div class="es-cards">
+            <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Single evidence surface.</span><p class="cap-box-b">Fragmented records fuse into one traceable, protocol-ready operating plane.</p></div>
+            <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Facts arrive mission-ready.</span><p class="cap-box-b">Every artifact loads with provenance, status, and screening clearance.</p></div>
+          </div>
+        </div>
+        <div class="es-facet" data-facet="3">
+          <p class="es-lead">Eligibility is a verdict, <em>not a guess.</em></p>
+          <div class="es-cards">
+            <div class="cap-box" data-topo="fail"><span class="cap-box-h">Verdicts in the clear.</span><p class="cap-box-b">Every criterion resolves with attributable logic and a locked reasoning chain. </p></div>
+            <div class="cap-box es-card--verdict" data-topo="pass"><span class="cap-box-h">Criterion-level resolution.<span class="es-dots"><i class="ev--pass"></i><i class="ev--review"></i><i class="ev--fail"></i></span></span><p class="cap-box-b">Each subject runs against live logic; REVIEW held apart and accountable.</p></div>
+          </div>
+        </div>
+        <div class="es-facet" data-facet="4">
+          <p class="es-lead">Not a report. <em>A reconstructable chain.</em></p>
+          <div class="es-cards">
+            <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Rebuild any verdict.</span><p class="cap-box-b">Outcomes reconstruct from protocol version, evidence, review, authorization.</p></div>
+            <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Record survives the run.</span><p class="cap-box-b">Decisions stay auditable long after the trial closes and teams rotate.</p></div>
+          </div>
+        </div>
       </div>
-      <div class="cap-cards">
-        <div class="cap-sub cap-line" data-from="0">
-          <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Intent compiled to logic.</span><p class="cap-box-b">Versioned criteria deploy identically across every node in the network.</p></div>
-          <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Ambiguity surfaced pre-deploy.</span><p class="cap-box-b">Questions resolve as executable requirements before sites absorb burden.</p></div>
+
+      <div class="es-rail cap-line" data-from="0" aria-label="Execution stages">
+        <span class="es-conduit"><span class="es-conduit-fill" data-rail-fill></span></span>
+        <button class="es-node" type="button" data-rail="1"><span class="es-diamond"></span><span class="es-node-label">Protocol</span></button>
+        <button class="es-node" type="button" data-rail="2"><span class="es-diamond"></span><span class="es-node-label">Evidence</span></button>
+        <button class="es-node" type="button" data-rail="3"><span class="es-diamond"></span><span class="es-node-label">Screening</span></button>
+        <button class="es-node" type="button" data-rail="4"><span class="es-diamond"></span><span class="es-node-label">Replay</span></button>
+      </div>
+
+      <div class="es-meta cap-line" data-from="0">
+        <span class="es-count" data-facet-count>01 / 04</span>
+        <span class="es-hint">Click a stage · scroll to advance</span>
+      </div>
+    </div>
+    <!-- 05–06 PLATFORM SUBSTRATE · Trident · Luna -->
+    <div class="cap ps" data-cap="5" data-screen-label="Platform Substrate">
+      <h2 class="ps-title cap-line" data-type data-from="0">Platform Substrate</h2>
+      <p class="cap-subhead cap-line" data-from="0">Reasoning that scales. <em>Proof that holds.</em></p>
+
+      <div class="ps-split cap-line" data-from="0">
+        <div class="ps-half">
+          <div class="ps-half-head">
+            <span class="ps-tag">Semantics</span>
+            <h3>Trident</h3>
+            <p class="ps-sub">Ambiguity is cost. <em>Surface it first.</em></p>
+          </div>
+          <div class="ps-field ps-neural" aria-hidden="true"></div>
+          <div class="ps-cards">
+            <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Protocol intelligence substrate.</span><p class="cap-box-b">Dense language compiles to executable logic and evidence requirements.</p></div>
+            <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Model tightens per deployment.</span><p class="cap-box-b">Substrate sharpens with every protocol release and site execution cycle.</p></div>
+          </div>
+        </div>
+
+        <div class="ps-half ps-half--luna">
+          <div class="ps-half-head">
+            <span class="ps-tag">Provenance</span>
+            <h3>Luna</h3>
+            <p class="ps-sub">Agents accelerate. <em>Humans decide.</em></p>
+          </div>
+          <div class="ps-field ps-rings" aria-hidden="true"></div>
+          <div class="ps-cards">
+            <div class="cap-box" data-topo="prov"><span class="cap-box-h">Every agent on-record.</span><p class="cap-box-b">Every AI action tagged: origin, policy scope, and authorization chain.</p></div>
+            <div class="cap-box" data-topo="prov"><span class="cap-box-h">Verdicts stay deterministic.</span><p class="cap-box-b">Agents scale throughput; coordinators retain governed judgment.</p></div>
+          </div>
         </div>
       </div>
     </div>
-    <!-- 02 EVIDENCE -->
-    <div class="cap cap--split cap--mirror" data-cap="2">
-      <div class="cap-head">
-        <h2 class="cap-title cap-line" data-type data-from="0">Evidence</h2>
-        <p class="cap-lead cap-line" data-from="0">No visibility. No <em>screening.</em></p>
-      </div>
-      <div class="cap-cards">
-        <div class="cap-sub cap-line" data-from="0">
-          <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Single evidence surface.</span><p class="cap-box-b">Fragmented records fuse into one traceable, protocol-ready operating plane.</p></div>
-          <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Facts arrive mission-ready.</span><p class="cap-box-b">Every artifact loads with provenance, status, and screening clearance.</p></div>
+    <!-- 07–08 TRIAL INTELLIGENCE · Node ↔ Sponsor -->
+    <div class="cap ti" data-cap="7" data-screen-label="Trial Intelligence">
+      <h2 class="ti-title cap-line" data-type data-from="0">Trial Intelligence</h2>
+      <p class="cap-subhead cap-line" data-from="0">Every site in one pane. <em>Total command.</em></p>
+
+      <div class="ti-split cap-line" data-from="0">
+        <div class="ti-half ti-node" data-half="7" data-burst>
+          <div class="ti-half-head">
+            <span class="ti-tag">The site</span>
+            <h3>Node</h3>
+            <p class="ti-sub">The site, <em>fully instrumented.</em></p>
+          </div>
+          <div class="ti-node-viz"><span class="ti-sq ti-sq--s"></span><span class="ti-sq ti-sq--m"></span><span class="ti-sq ti-sq--l"></span><span class="ti-sq ti-sq--m"></span><span class="ti-sq ti-sq--s"></span></div>
+          <div class="ti-cards">
+            <div class="cap-box" data-topo="pass"><span class="cap-box-h">Community sites, trial-ready.</span><p class="cap-box-b">Evidence in. Criteria resolved. REVIEW bounded. Judgment logged.</p></div>
+            <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Site sovereignty preserved.</span><p class="cap-box-b">Sponsor capital deploys; operational control never leaves the site.</p></div>
+          </div>
         </div>
-      </div>
-    </div>
-    <!-- 03 SCREENING -->
-    <div class="cap cap--split" data-cap="3">
-      <div class="cap-head">
-        <h2 class="cap-title cap-line" data-type data-from="0">Screening</h2>
-        <p class="cap-lead cap-line" data-from="0">Eligibility is a verdict, not a <em>guess.</em></p>
-      </div>
-      <div class="cap-cards">
-        <div class="cap-sub cap-line" data-from="0">
-          <div class="cap-box" data-topo="fail"><span class="cap-box-h">Verdicts in the clear.</span><p class="cap-box-b">Every criterion resolves with attributable logic and a locked reasoning chain.</p></div>
-          <div class="cap-box" data-topo="pass"><span class="cap-box-h">Criterion-level resolution.</span><p class="cap-box-b">Each subject runs against live logic; REVIEW held apart and accountable.</p></div>
-        </div>
-        <div class="chips cap-line" data-from="0">
-          <span class="chip chip--pass" data-topo="pass">PASS</span>
-          <span class="chip chip--review" data-topo="review">REVIEW</span>
-          <span class="chip chip--fail" data-topo="fail">FAIL</span>
-        </div>
-      </div>
-    </div>
-    <!-- 04 REPLAY -->
-    <div class="cap cap--split cap--mirror" data-cap="4">
-      <div class="cap-head">
-        <h2 class="cap-title cap-line" data-type data-from="0">Replay</h2>
-        <p class="cap-lead cap-line" data-from="0">Not a report. A <em>reconstructable chain.</em></p>
-      </div>
-      <div class="cap-cards">
-        <div class="cap-sub cap-line" data-from="0">
-          <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Rebuild any verdict.</span><p class="cap-box-b">Outcomes reconstruct from protocol version, evidence, review, authorization.</p></div>
-          <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Record survives the run.</span><p class="cap-box-b">Decisions stay auditable long after the trial closes and teams rotate.</p></div>
-        </div>
-      </div>
-    </div>
-    <!-- 05 TRIDENT -->
-    <div class="cap cap--split" data-cap="5">
-      <div class="cap-head">
-        <h2 class="cap-title cap-line" data-type data-from="0">Trident</h2>
-        <p class="cap-lead cap-line" data-from="0">Ambiguity is cost. <em class="kw-topo" data-topo="lattice">Surface it first.</em></p>
-      </div>
-      <div class="cap-cards">
-        <div class="cap-sub cap-line" data-from="0">
-          <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Protocol intelligence substrate.</span><p class="cap-box-b">Dense language compiles to executable logic and evidence requirements.</p></div>
-          <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Model tightens per deployment.</span><p class="cap-box-b">Substrate sharpens with every protocol release and site execution cycle.</p></div>
-        </div>
-      </div>
-    </div>
-    <!-- 06 LUNA -->
-    <div class="cap cap--split cap--mirror" data-cap="6">
-      <div class="cap-head">
-        <h2 class="cap-title cap-line" data-type data-from="0">Luna</h2>
-        <p class="cap-lead cap-line" data-from="0">Agents accelerate. <em>Humans decide.</em></p>
-      </div>
-      <div class="cap-cards">
-        <div class="cap-sub cap-line" data-from="0">
-          <div class="cap-box" data-topo="prov"><span class="cap-box-h">Every agent on-record.</span><p class="cap-box-b">Every AI action tagged: origin, policy scope, and authorization chain.</p></div>
-          <div class="cap-box" data-topo="prov"><span class="cap-box-h">Verdicts stay deterministic.</span><p class="cap-box-b">Agents scale throughput; clinicians retain governed, attributable judgment.</p></div>
-        </div>
-      </div>
-    </div>
-    <!-- 07 NODE -->
-    <div class="cap cap--split" data-cap="7">
-      <div class="cap-head">
-        <h2 class="cap-title cap-line" data-type data-from="0">Node</h2>
-        <p class="cap-lead cap-line" data-from="0">The site, <em>fully instrumented.</em></p>
-      </div>
-      <div class="cap-cards">
-        <div class="cap-sub cap-line" data-from="0">
-          <div class="cap-box" data-topo="pass"><span class="cap-box-h">Community sites, trial-ready.</span><p class="cap-box-b">Evidence in. Criteria resolved. REVIEW bounded. Judgment logged.</p></div>
-          <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Site sovereignty preserved.</span><p class="cap-box-b">Sponsor capital deploys; operational control never leaves the site.</p></div>
-        </div>
-      </div>
-    </div>
-    <!-- 08 CONSOLE -->
-    <div class="cap cap--split cap--mirror" data-cap="8">
-      <div class="cap-head">
-        <h2 class="cap-title cap-line" data-type data-from="0">Console</h2>
-        <p class="cap-lead cap-line" data-from="0">Site terrain. <em>Live feed.</em></p>
-      </div>
-      <div class="cap-cards">
-        <div class="cap-sub cap-line" data-from="0">
-          <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Signal over status reports.</span><p class="cap-box-b">Verified execution, not lagging activity feeds from legacy systems.</p></div>
-          <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Command the field.</span><p class="cap-box-b">Track resolution, criterion failure, and run adaptation in real time.</p></div>
+
+        <div class="ti-half ti-sponsor" data-half="8">
+          <div class="ti-half-head">
+            <span class="ti-tag">The sponsor</span>
+            <h3>Console</h3>
+            <p class="ti-sub">The aggregated <em>operating picture.</em></p>
+          </div>
+          <div class="ti-matrix" data-matrix></div>
+          <div class="ti-cards" style="padding: 4px 0px 0px 1px">
+            <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Signal over status reports.</span><p class="cap-box-b">Verified execution, not lagging activity feeds from legacy systems.</p></div>
+            <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Command the field.</span><p class="cap-box-b">Track resolution, criterion failure, and run adaptation in real time.</p></div>
+          </div>
         </div>
       </div>
     </div>
@@ -167,24 +173,125 @@
   <!-- station nav · stone-blue diamonds (click to skip around) · also scroll · keys · swipe -->
   <nav class="deck-nav" aria-label="Stations">
     <div class="deck-dots">
-      <button class="deck-dot" type="button" data-dot data-go="0" aria-label="Station 01: Home"></button>
-      <button class="deck-dot" type="button" data-dot data-go="1" aria-label="Station 02: Protocol"></button>
-      <button class="deck-dot" type="button" data-dot data-go="2" aria-label="Station 03: Evidence"></button>
-      <button class="deck-dot" type="button" data-dot data-go="3" aria-label="Station 04: Screening"></button>
-      <button class="deck-dot" type="button" data-dot data-go="4" aria-label="Station 05: Replay"></button>
-      <button class="deck-dot" type="button" data-dot data-go="5" aria-label="Station 06: Trident"></button>
-      <button class="deck-dot" type="button" data-dot data-go="6" aria-label="Station 07: Luna"></button>
-      <button class="deck-dot" type="button" data-dot data-go="7" aria-label="Station 08: Node"></button>
-      <button class="deck-dot" type="button" data-dot data-go="8" aria-label="Station 09: Console"></button>
-      <button class="deck-dot" type="button" data-dot data-go="9" aria-label="Station 10: Damaros"></button>
+      <button class="deck-dot" type="button" data-dot data-go="0" aria-label="Stop 01: Home"></button>
+      <button class="deck-dot" type="button" data-dot data-go="1" aria-label="Stop 02: Execution Spine"></button>
+      <button class="deck-dot" type="button" data-dot data-go="5" aria-label="Stop 03: Platform Substrate"></button>
+      <button class="deck-dot" type="button" data-dot data-go="7" aria-label="Stop 04: Trial Intelligence"></button>
+      <button class="deck-dot" type="button" data-dot data-go="9" aria-label="Stop 05: Damaros"></button>
     </div>
-    <span class="deck-counter" data-counter aria-hidden="true">01 / 10</span>
+    <span class="deck-counter" data-counter aria-hidden="true">01 / 05</span>
   </nav>
   <div class="deck-progress" aria-hidden="true"><span data-deck-progress></span></div>
   <div class="deck-hint" data-hint aria-hidden="true">Scroll to travel</div>
   <a class="deck-legal" href="privacy.html">Privacy</a>
 </main>
 
+<script>
+/* combined-section interactions — rail/toggle drive the engine vantage;
+   Trial Intelligence's two halves react in different ways. */
+(function () {
+  function DS() { return window.DamarosSpace; }
+  var TOUCH = matchMedia('(hover: none),(pointer: coarse)').matches;
+  function ready(fn) { if (document.readyState !== 'loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
+  function rnd(a, b) { return a + Math.random() * (b - a); }
+  function pick(arr, n) { var p = arr.slice(), o = []; while (o.length < n && p.length) o.push(p.splice(Math.floor(Math.random() * p.length), 1)[0]); return o; }
+
+  ready(function () {
+    /* rail nodes (Execution Spine) → jump vantage */
+    [].forEach.call(document.querySelectorAll('[data-rail]'), function (el) {
+      el.addEventListener('click', function () { var ds = DS(); if (ds) ds.go(Number(el.dataset.rail)); });
+    });
+
+    /* Console operating matrix — 24 cells, flagged at random on each read */
+    var matrix = document.querySelector('[data-matrix]');
+    if (matrix) { for (var i = 0; i < 24; i++) { var c = document.createElement('span'); c.className = 'ti-cell'; matrix.appendChild(c); } }
+
+    /* every field pulses on its own random clock — re-rolled on each hover so it never repeats */
+    function randTiming(cells) {
+      cells.forEach(function (c) {
+        c.style.setProperty('--d', rnd(0, 0.85).toFixed(2) + 's');
+        c.style.setProperty('--dur', rnd(0.9, 2.1).toFixed(2) + 's');
+      });
+    }
+    function wire(panel, cellSel, stateClass, opts) {
+      if (!panel) return; opts = opts || {};
+      var trigger = opts.trigger || panel, lt;
+      var cells = [].slice.call(panel.querySelectorAll(cellSel));
+      function on() {
+        randTiming(cells);
+        if (opts.flag) {
+          cells.forEach(function (c) { c.classList.remove('ti-cell--ok', 'ti-cell--review', 'ti-cell--fail'); });
+          var pool = cells.slice();
+          function grab(n) { var got = pick(pool, n); pool = pool.filter(function (c) { return got.indexOf(c) < 0; }); return got; }
+          grab(5 + (Math.random() * 3 | 0)).forEach(function (c) { c.classList.add('ti-cell--ok'); });
+          grab(3 + (Math.random() * 2 | 0)).forEach(function (c) { c.classList.add('ti-cell--review'); });
+          grab(4 + (Math.random() * 3 | 0)).forEach(function (c) { c.classList.add('ti-cell--fail'); });
+        }
+        if (opts.enter) opts.enter();
+        panel.classList.add(stateClass);
+      }
+      function off() { panel.classList.remove(stateClass); if (opts.leave) opts.leave(); }
+      if (TOUCH) trigger.addEventListener('click', function () { on(); clearTimeout(lt); lt = setTimeout(off, opts.touchMs || 2600); });
+      else { trigger.addEventListener('pointerenter', on); trigger.addEventListener('pointerleave', off); }
+    }
+
+    var trident = document.querySelector('.ps-neural');
+    if (trident) buildNeural(trident);
+    var lunaHost = document.querySelector('.ps-rings');
+    if (lunaHost) buildLunaRings(lunaHost);
+
+    var burst = function (v) { var ds = DS(); if (ds && ds.starBurst) ds.starBurst(v); };
+    wire(document.querySelector('.ti-node'), '.ti-sq', 'is-firing', { enter: function () { burst(1); [].forEach.call(document.querySelectorAll('.ti-node .ti-sq'), function (s) { s.classList.toggle('ti-sq--steel', Math.random() < 0.4); }); }, leave: function () { burst(0); } });
+    wire(document.querySelector('.ti-sponsor'), '.ti-cell', 'is-reading', { flag: true });
+    wire(document.querySelector('.ps-half:not(.ps-half--luna)'), '.nn-edge, .nn-dot', 'is-live');
+    wire(document.querySelector('.ps-half--luna'), '.luna-ring', 'is-live');
+  });
+
+  function buildNeural(host) {
+    var NS = 'http://www.w3.org/2000/svg';
+    var svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('class', 'nn'); svg.setAttribute('viewBox', '0 0 272 120'); svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    var pts = [], c, r, COLS = 6;
+    for (c = 0; c < COLS; c++) for (r = 0; r < 3; r++) pts.push({ x: 26 + c * 44, y: 24 + r * 36, c: c });
+    for (var i = 0; i < pts.length; i++) {
+      var from = pts[i]; if (from.c === COLS - 1) continue;
+      var rows = [0, 1, 2].sort(function () { return Math.random() - 0.5; }).slice(0, 1 + (Math.random() < 0.6 ? 1 : 0));
+      rows.forEach(function (nr) {
+        var to = pts[(from.c + 1) * 3 + nr];
+        var l = document.createElementNS(NS, 'line');
+        l.setAttribute('x1', from.x); l.setAttribute('y1', from.y); l.setAttribute('x2', to.x); l.setAttribute('y2', to.y);
+        l.setAttribute('class', 'nn-edge'); svg.appendChild(l);
+      });
+    }
+    pts.forEach(function (p) {
+      var ci = document.createElementNS(NS, 'circle');
+      ci.setAttribute('cx', p.x); ci.setAttribute('cy', p.y); ci.setAttribute('r', '3.2'); ci.setAttribute('class', 'nn-dot');
+      svg.appendChild(ci);
+    });
+    host.appendChild(svg);
+  }
+
+  function buildLunaRings(host) {
+    var NS = 'http://www.w3.org/2000/svg';
+    var svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('class', 'luna-svg'); svg.setAttribute('viewBox', '0 0 160 120'); svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    function ring(rx, ry, n, cls) {
+      var g = document.createElementNS(NS, 'g'); g.setAttribute('class', 'luna-ring ' + cls);
+      for (var i = 0; i < n; i++) {
+        var a = (i / n) * Math.PI * 2, ci = document.createElementNS(NS, 'circle');
+        ci.setAttribute('cx', (80 + Math.cos(a) * rx).toFixed(2));
+        ci.setAttribute('cy', (60 + Math.sin(a) * ry).toFixed(2));
+        ci.setAttribute('r', '1.6'); g.appendChild(ci);
+      }
+      svg.appendChild(g);
+    }
+    ring(66, 42, 32, 'luna-ring--1');
+    ring(37, 23, 22, 'luna-ring--2');
+    ring(20, 12, 14, 'luna-ring--3');
+    host.appendChild(svg);
+  }
+})();
+</script>
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="shared/cap-intro.js?v=2"></script>
 <script src="shared/cta-dock.js?v=5"></script>
 <script type="module" src="shared/space.js?v=reset43"></script>
