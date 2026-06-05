@@ -274,8 +274,7 @@ scene.background = new THREE.Color(MOBILE ? '#101a28' : '#0a121b');   // match t
 // scene.add(cloud);
 
 // shared world clock + eased state (one source the world materials animate from)
-const W = { uTime: { value: 0 }, uSection: { value: 0 }, uHue: { value: COL.deep.clone() }, uReveal: { value: 0 }, uProvenance: { value: 0 }, uHover: { value: 0 }, uFinal: { value: 0 }, uSoft: { value: 0 } };   // uSoft: extra line feather during transitions (0 at rest)
-const W_ACCENT = [COL.deep, COL.deep, COL.steel, COL.deep, COL.steel, COL.deep, COL.luna, COL.ok, COL.deep, COL.steel];
+const W = { uTime: { value: 0 }, uSection: { value: 0 }, uHue: { value: COL.steel.clone() }, uReveal: { value: 0 }, uProvenance: { value: 0 }, uHover: { value: 0 }, uFinal: { value: 0 }, uSoft: { value: 0 } };   // uSoft: extra line feather during transitions (0 at rest)
 const W_PROV = [0.06, 0.10, 0.30, 0.12, 0.55, 0.14, 0.95, 0.20, 0.24, 0.34];
 const SEG_X = SOFT ? 70 : (MOBILE ? 96 : 176), SEG_Y = SOFT ? 74 : (MOBILE ? 99 : 184);   // denser desktop mesh -> smoother contour curves; SEG_Y scaled with the deeper plane (keeps visible density)
 const NODE_N = SOFT ? 90 : (MOBILE ? 160 : 300);   // fewer distant nodes — quieter, darker background
@@ -369,12 +368,7 @@ function makeDeepTerrain() {
       float gr = grain(gl_FragCoord.xy*0.5 + floor(uTime*7.0)) * mix(0.035, 0.008, wTri);
       float lines = grid + contour;
       vec3 base = mix(vec3(0.012,0.018,0.030), vec3(0.02,0.035,0.06), clamp(-vH*0.04,0.0,1.0));
-      vec3 lineHue = uHue;
-      // SCREENING — zone color by height band: high=pass(green) mid=review(amber) low=fail(red)
-      { float zUp = smoothstep(2.0,10.0,vH), zDn = smoothstep(2.0,10.0,-vH); float zMid = clamp(1.0-zUp-zDn,0.0,1.0);
-        vec3 zoneC = uOk*zUp + uAmber*zMid + uBreach*zDn; lineHue = mix(lineHue, mix(lineHue, zoneC, 0.6), wScr); base += zoneC*0.015*wScr; }
-      // LUNA — violet provenance overlay (extra wandering filaments)
-      { float fil = gridLine(vWorld.x*0.21 + sin(vWorld.z*0.05+uTime*0.1)*0.4, 0.02); lineHue = mix(lineHue, uLuna, wLuna*0.55); lines += fil*0.2*wLuna*(0.3+0.7*uProv); base += uLuna*0.015*wLuna; }
+      vec3 lineHue = uHue;                              // stone blue everywhere — no per-section state tint on lines
       float contrast = 1.0 + wTri*0.8;                  // trident: lines punch harder
       vec3 col = base + lineHue*lines*contrast*(${gLineL}+${gLineH}*uReveal) + gr;
       col *= (1.0 - vFog*${gFog});
@@ -560,10 +554,9 @@ if (!MOBILE) document.querySelectorAll('.j-cta, .j-btn').forEach((c) => c.addEve
  * ============================================================ */
 let t0 = performance.now(), last = t0, firstFrame = false, running = true, warmed = false;
 const _v = new THREE.Vector3(), accentCur = ACCENT[0].clone(), baseFog = new THREE.Color('#0e151f'), tmpFog = new THREE.Color();
-const _camPar = new THREE.Vector2(0, 0), _wPar = new THREE.Vector2(0, 0), _wHue = new THREE.Color();
+const _camPar = new THREE.Vector2(0, 0), _wPar = new THREE.Vector2(0, 0);
 let _wReveal = 0, stateMixCur = 0, cursorMode = 0, cursorBlend = 0, _trailAcc = 0;
-let hoverTarget = 0, hoverBoost = 0, finalGlow = 0;   // sub-block hover drives a topology tint + brighten + a gentle ripple
-const hoverColTarget = new THREE.Color(COL.steel), hoverColCur = new THREE.Color(COL.steel);   // eased hover color (no snap)
+let hoverTarget = 0, hoverBoost = 0, finalGlow = 0;   // sub-block hover drives brighten + a gentle ripple (hue locked to steel)
 
 function frame() {
   if (!running) return;
@@ -593,11 +586,10 @@ function frame() {
   // ---- world layers: eased state + parallax (deep drifts less than mid) ----
   W.uSection.value += (shown - W.uSection.value) * (REDUCED ? 1 : (1 - Math.exp(-dt * 2.4)));
   _wReveal += ((firstFrame ? 1 : 0) - _wReveal) * (1 - Math.exp(-dt * 0.8)); W.uReveal.value = REDUCED ? 1 : _wReveal;
-  const si = Math.round(W.uSection.value); _wHue.copy(W_ACCENT[si]); W.uHue.value.lerp(_wHue, 1 - Math.exp(-dt * 1.6)); W.uProvenance.value += (W_PROV[si] - W.uProvenance.value) * (1 - Math.exp(-dt * 1.4));
-  // sub-block hover: eased intensity (fast in, slow out) + eased color (no snap) so transitions never stutter
+  const si = Math.round(W.uSection.value); W.uHue.value.copy(COL.steel); W.uProvenance.value += (W_PROV[si] - W.uProvenance.value) * (1 - Math.exp(-dt * 1.4));
+  // sub-block hover: eased intensity (fast in, slow out) — brighten/ripple only, hue stays stone blue
   hoverBoost = damp(hoverBoost, hoverTarget, hoverTarget > hoverBoost ? 9 : 3.2, dt); W.uHover.value = hoverBoost;
-  hoverColCur.lerp(hoverColTarget, 1 - Math.exp(-dt * 9));
-  if (hoverBoost > 0.001) { W.uHue.value.lerp(hoverColCur, hoverBoost * 0.85); W.uReveal.value = Math.min(1, W.uReveal.value + hoverBoost * 0.5); }
+  if (hoverBoost > 0.001) W.uReveal.value = Math.min(1, W.uReveal.value + hoverBoost * 0.5);
   finalGlow = damp(finalGlow, (shown === 9) ? 1 : 0, 2.2, dt); W.uFinal.value = finalGlow;
   W.uSoft.value = REDUCED ? 0 : (1 - settle) * 0.045;   // feather the topology lines only while a transition is in motion (0 at rest -> static look unchanged)
   _wPar.x = damp(_wPar.x, ptrHas && !REDUCED ? pointer.x : 0, 3.5, dt); _wPar.y = damp(_wPar.y, ptrHas && !REDUCED ? pointer.y : 0, 3.5, dt);
@@ -672,10 +664,8 @@ dots.forEach((d, i) => d.addEventListener('click', () => go(i)));   // diamond n
    Key words / state chips / the Trident phrase nudge the topology hue + brightness
    while hovered, then settle back. Background-level only; disabled for reduced-motion. */
 if (!MOBILE && !REDUCED) {
-  const TOPO = { pass: COL.ok, review: COL.amber, fail: COL.breach, prov: COL.luna, lattice: COL.steel };
   document.querySelectorAll('[data-topo]').forEach((el) => {
-    const c = TOPO[el.getAttribute('data-topo')] || COL.steel;
-    el.addEventListener('pointerenter', () => { hoverColTarget.copy(c); hoverTarget = 1; });
+    el.addEventListener('pointerenter', () => { hoverTarget = 1; });
     el.addEventListener('pointerleave', () => { hoverTarget = 0; });
   });
 }
