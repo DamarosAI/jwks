@@ -35,29 +35,27 @@ a{ color:inherit; text-decoration:none; }
 .skip:focus{ top:1rem; }
 
 /* ---------------- boot loader: INITIALIZING ---------------- */
-/* The bar is a long, thin, vertically-centered WINDOW into the real WebGL terrain (#world): a big box-shadow
-   on the track blacks the rest of the screen, the track interior is transparent so the actual topology shows
-   through, a shrinking cover reveals it left->right, and on completion the window OPENS OUT into the full
-   landing. Scroll is locked only while JS drives it (class + 6.5s failsafe). */
+/* A self-contained, vertically-centered loader: a long thin white-outlined rectangle that fills left->right
+   with solid stone blue, then the whole screen expands + dissolves into the home hero landing on completion.
+   Scroll is locked only while JS drives it (class + 6.5s failsafe). */
 html.booting, html.booting body{ overflow:hidden; }
-html.booting #world{ z-index:79; filter:brightness(1.3) saturate(1.18); }   /* lift the live terrain under the loader + give the waves a little punch */
-.boot{ position:fixed; inset:0; z-index:80; background:transparent; color:var(--cold);
-  opacity:1; visibility:visible; transition:opacity .55s var(--ease), visibility .55s var(--ease); }
-.boot--done{ opacity:0; visibility:hidden; pointer-events:none; }
-.boot-panel{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-  display:flex; flex-direction:column; gap:.85rem; width:min(760px,90vw); }
-.boot-label{ position:relative; z-index:2; font-family:var(--fh); font-weight:600; font-size:.78rem;
-  letter-spacing:.36em; text-transform:uppercase; color:var(--steel); transition:opacity .3s var(--ease); }
+.boot{ position:fixed; inset:0; z-index:80; display:grid; place-items:center; background:#000; color:var(--cold);
+  opacity:1; visibility:visible; transform-origin:50% 50%;
+  transition:opacity .75s var(--ease), transform .75s var(--ease), visibility .75s var(--ease); }
+.boot--open{ opacity:0; visibility:hidden; pointer-events:none; transform:scale(1.6); }   /* expands into the hero landing */
+.boot-panel{ display:flex; flex-direction:column; gap:.85rem; width:min(760px,90vw);
+  transition:transform .75s var(--ease), opacity .5s var(--ease); }
+.boot--open .boot-panel{ transform:scale(1.25); opacity:0; }   /* the bar rushes outward as it dissolves */
+.boot-label{ font-family:var(--fh); font-weight:600; font-size:.58rem; letter-spacing:.3em; text-transform:uppercase;
+  color:var(--steel); transition:opacity .3s var(--ease); }
 .boot-row{ display:flex; align-items:center; gap:1.1rem; }
-.boot-track{ position:relative; flex:1; height:22px; border:1px solid rgba(255,255,255,.9); border-radius:3px;
-  overflow:hidden; background:transparent; box-shadow:0 0 0 100vmax #000; transform-origin:center;
-  transition:transform .75s var(--ease), border-color .4s var(--ease), border-radius .6s var(--ease); }   /* cutout + opens out on done */
-.boot-cover{ position:absolute; top:0; bottom:0; right:0; left:var(--fill,0%); background:#000; transition:left .12s linear; }
-.boot-pct{ position:relative; z-index:2; font-family:var(--fh); font-weight:600; font-size:1rem; letter-spacing:.01em;
-  color:var(--cold); font-variant-numeric:tabular-nums; min-width:3.4ch; text-align:right; transition:opacity .3s var(--ease); }
-.boot--open .boot-track{ border-color:transparent; border-radius:0; }   /* JS sets the scale; the window expands into the landing */
-.boot--open .boot-label, .boot--open .boot-pct, .boot--open .boot-cover{ opacity:0; }
-@media (prefers-reduced-motion: reduce){ .boot{ transition:opacity .2s linear; } .boot-track{ transition:border-color .2s linear; } .boot-cover{ transition:none; } }
+.boot-track{ position:relative; flex:1; height:12px; border:1px solid rgba(255,255,255,.85); border-radius:2px;
+  overflow:hidden; background:linear-gradient(180deg, rgba(10,17,28,.6), rgba(4,7,12,.72)); }
+.boot-fill{ position:absolute; left:0; top:0; bottom:0; width:var(--fill,0%); background:var(--steel); transition:width .12s linear; }
+.boot-pct{ font-family:var(--fh); font-weight:600; font-size:1rem; letter-spacing:.01em; color:var(--cold);
+  font-variant-numeric:tabular-nums; min-width:3.4ch; text-align:right; transition:opacity .3s var(--ease); }
+.boot--open .boot-label, .boot--open .boot-pct{ opacity:0; }
+@media (prefers-reduced-motion: reduce){ .boot, .boot-panel{ transition:opacity .3s linear; } .boot--open{ transform:none; } .boot-fill{ transition:none; } }
 
 /* aberration overlay — fixed refraction layer above scenes, below captions/chrome */
 #fxo{ position:fixed; inset:0; z-index:2; pointer-events:none; }

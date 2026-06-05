@@ -274,10 +274,10 @@ scene.background = new THREE.Color('#0a121b');           // match the horizon so
 // scene.add(cloud);
 
 // shared world clock + eased state (one source the world materials animate from)
-const W = { uTime: { value: 0 }, uSection: { value: 0 }, uHue: { value: COL.deep.clone() }, uReveal: { value: 0 }, uProvenance: { value: 0 }, uHover: { value: 0 }, uFinal: { value: 0 } };
+const W = { uTime: { value: 0 }, uSection: { value: 0 }, uHue: { value: COL.deep.clone() }, uReveal: { value: 0 }, uProvenance: { value: 0 }, uHover: { value: 0 }, uFinal: { value: 0 }, uSoft: { value: 0 } };   // uSoft: extra line feather during transitions (0 at rest)
 const W_ACCENT = [COL.deep, COL.deep, COL.steel, COL.deep, COL.steel, COL.deep, COL.luna, COL.ok, COL.deep, COL.steel];
 const W_PROV = [0.06, 0.10, 0.30, 0.12, 0.55, 0.14, 0.95, 0.20, 0.24, 0.34];
-const SEG_X = SOFT ? 70 : (MOBILE ? 96 : 140), SEG_Y = SOFT ? 40 : (MOBILE ? 54 : 80);
+const SEG_X = SOFT ? 70 : (MOBILE ? 96 : 176), SEG_Y = SOFT ? 74 : (MOBILE ? 99 : 184);   // denser desktop mesh -> smoother contour curves; SEG_Y scaled with the deeper plane (keeps visible density)
 const NODE_N = SOFT ? 90 : (MOBILE ? 160 : 300);   // fewer distant nodes — quieter, darker background
 const FILAMENTS = !SOFT;
 
@@ -298,7 +298,7 @@ scene.add(deepLayer, midLayer);
 
 // DEEP — one curved topology terrain plane (grid + contour lines + grain)
 function makeDeepTerrain() {
-  const g = new THREE.PlaneGeometry(420, 240, SEG_X, SEG_Y); g.rotateX(-Math.PI * 0.5);
+  const g = new THREE.PlaneGeometry(420, 440, SEG_X, SEG_Y); g.rotateX(-Math.PI * 0.5);   // deeper plane: the near edge now overshoots far past the camera so the bottom never runs out of terrain
   // the terrain BECOMES each instrument as uSection eases (triangular weights = pop-free crossfade)
   const vert = SNOISE + `
     uniform float uTime, uSection, uHover, uFinal; varying vec3 vWorld; varying float vFog, vH, vRidge;
@@ -327,18 +327,23 @@ function makeDeepTerrain() {
       { float radf = length(p.xz); float surge = sin(radf*0.05 - uTime*0.9)*2.0 + sin(uTime*0.5 + radf*0.02)*1.2; h = mix(h, bowl*0.7 + s1*2.0 + surge*(0.45+0.55*uFinal), wFin); }
       // CARD HOVER — the topology breathes upward and ripples while a sub-block is hovered (leaned-in interaction)
       if (uHover > 0.001){ float radh = length(p.xz); h += (sin(radh*0.06 - uTime*1.7)*1.7 + exp(-radh*radh*0.00018)*2.8) * uHover; }
+      // near apron: the plane now overshoots toward the camera; flatten that overshoot so it always fills the
+      // bottom of the frame during flights / parallax (instead of black). Visible range (p.z <= ~135) untouched.
+      float apron = smoothstep(135.0, 215.0, p.z); h = mix(h, h * 0.25 - 3.0, apron);
       vH = h; p.y -= 26.0; p.y += h;
       vec4 mv = modelViewMatrix * vec4(p,1.0); vWorld = p; vFog = clamp((-mv.z-60.0)/220.0,0.0,1.0);
       gl_Position = projectionMatrix * mv;
     }`;
   const GO = SOFT ? 1 : 2;
   const frag = `
-    precision highp float; uniform float uTime, uReveal, uSection, uProv, uFinal; uniform vec3 uHue, uOk, uAmber, uBreach, uLuna;
+    precision highp float; uniform float uTime, uReveal, uSection, uProv, uFinal, uSoft; uniform vec3 uHue, uOk, uAmber, uBreach, uLuna;
     varying vec3 vWorld; varying float vFog, vH, vRidge;
     float secW(float s, float k){ return clamp(1.0 - abs(s-k), 0.0, 1.0); }
     float hash21(vec2 p){ p=fract(p*vec2(123.34,345.45)); p+=dot(p,p+34.345); return fract(p.x*p.y); }
     float grain(vec2 uv){ float g=0.0,amp=0.5; vec2 q=uv; for(int i=0;i<${GO};i++){ g+=(hash21(floor(q))-0.5)*amp; q*=2.03; amp*=0.5; } return g; }
-    float gridLine(float c, float w){ float d=abs(fract(c)-0.5); float aa=fwidth(c)+1e-4; float hw=max(w, aa*0.5); return 1.0-smoothstep(hw, hw+aa*2.4, d); }
+    // feathered line: a soft falloff plus a constant softness floor so lines never resolve to a razor-hard
+    // edge (even head-on in the foreground where fwidth is tiny) -> kills the hard edges on every topology line
+    float gridLine(float c, float w){ float d=abs(fract(c)-0.5); float aa=fwidth(c)+1e-4; float hw=max(w, aa*0.5); float soft=aa*4.5+0.022+uSoft; return 1.0-smoothstep(hw*0.5, hw+soft, d); }
     void main(){
       float wProt=secW(uSection,1.0), wEvid=secW(uSection,2.0), wScr=secW(uSection,3.0), wRepl=secW(uSection,4.0), wTri=secW(uSection,5.0), wLuna=secW(uSection,6.0), wNode=secW(uSection,7.0), wCons=secW(uSection,8.0);
       vec2 gf = vec2(0.05);                             // evidence reference spacing — every section clusters near this now
@@ -374,7 +379,7 @@ function makeDeepTerrain() {
       a   *= 1.0 + uFinal*0.55;
       gl_FragColor = vec4(col, a);
     }`;
-  const m = new THREE.ShaderMaterial({ uniforms: { uTime: W.uTime, uReveal: W.uReveal, uHue: W.uHue, uSection: W.uSection, uProv: W.uProvenance, uHover: W.uHover, uFinal: W.uFinal, uOk: { value: COL.ok.clone() }, uAmber: { value: COL.amber.clone() }, uBreach: { value: COL.breach.clone() }, uLuna: { value: COL.luna.clone() } }, vertexShader: vert, fragmentShader: frag, transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending });
+  const m = new THREE.ShaderMaterial({ uniforms: { uTime: W.uTime, uReveal: W.uReveal, uHue: W.uHue, uSection: W.uSection, uProv: W.uProvenance, uHover: W.uHover, uFinal: W.uFinal, uSoft: W.uSoft, uOk: { value: COL.ok.clone() }, uAmber: { value: COL.amber.clone() }, uBreach: { value: COL.breach.clone() }, uLuna: { value: COL.luna.clone() } }, vertexShader: vert, fragmentShader: frag, transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending });
   const mesh = new THREE.Mesh(g, m); mesh.renderOrder = -8; return mesh;
 }
 
@@ -482,11 +487,11 @@ if (BLOOM) {
   try { bloomPass.highPassUniforms['smoothWidth'].value = 0.06; } catch (e) { /* ignore */ }
   composer.addPass(bloomPass);
   aberr = new ShaderPass({
-    uniforms: { tDiffuse: { value: null }, uAmt: { value: 0 }, uDir: { value: new THREE.Vector2(0, 0) }, uTile: { value: 0 } },
+    uniforms: { tDiffuse: { value: null }, uAmt: { value: 0 }, uDir: { value: new THREE.Vector2(0, 0) } },
     vertexShader: 'varying vec2 vUv; void main(){ vUv=uv; gl_Position=vec4(position,1.0);} ',
-    fragmentShader: `uniform sampler2D tDiffuse; uniform float uAmt,uTile; uniform vec2 uDir; varying vec2 vUv;
+    fragmentShader: `uniform sampler2D tDiffuse; uniform float uAmt; uniform vec2 uDir; varying vec2 vUv;
       void main(){ vec2 c=vUv-0.5; float edge=dot(c,c); vec2 off=(uDir*0.6+c*1.2)*uAmt*(0.4+edge);
-        vec2 tile=floor(vUv*48.0)/48.0-vUv; vec2 b=vUv+tile*uTile;
+        vec2 b=vUv;                                  // tile/block quantization removed -> no stair-stepped edges in transitions
         float r=texture2D(tDiffuse,b+off).r, g=texture2D(tDiffuse,b).g, bl=texture2D(tDiffuse,b-off).b;
         gl_FragColor=vec4(r,g,bl,1.0); }`
   });
@@ -588,8 +593,9 @@ function frame() {
   hoverColCur.lerp(hoverColTarget, 1 - Math.exp(-dt * 9));
   if (hoverBoost > 0.001) { W.uHue.value.lerp(hoverColCur, hoverBoost * 0.85); W.uReveal.value = Math.min(1, W.uReveal.value + hoverBoost * 0.5); }
   finalGlow = damp(finalGlow, (shown === 9) ? 1 : 0, 2.2, dt); W.uFinal.value = finalGlow;
+  W.uSoft.value = REDUCED ? 0 : (1 - settle) * 0.045;   // feather the topology lines only while a transition is in motion (0 at rest -> static look unchanged)
   _wPar.x = damp(_wPar.x, ptrHas && !REDUCED ? pointer.x : 0, 3.5, dt); _wPar.y = damp(_wPar.y, ptrHas && !REDUCED ? pointer.y : 0, 3.5, dt);
-  deepLayer.position.x = -_wPar.x * 4.0; deepLayer.position.y = -_wPar.y * 2.4; midLayer.position.x = -_wPar.x * 8.5; midLayer.position.y = -_wPar.y * 5.0;
+  deepLayer.position.x = -_wPar.x * 4.0; deepLayer.position.y = -_wPar.y * 1.6; midLayer.position.x = -_wPar.x * 8.5; midLayer.position.y = -_wPar.y * 5.0;   // trimmed deep-layer vertical parallax so it can't lift the terrain off the bottom
 
   // ---- accent (slower than the camera = deliberate) + state mix + atmosphere agreement ----
   accentCur.lerp(ACCENT[shown], 1 - Math.exp(-dt * 1.8)); uniforms.uAccent.value.copy(accentCur);
@@ -625,7 +631,7 @@ function frame() {
   // (evidence membrane + authored geometry rigs removed in the hard reset — nothing to drive here)
 
   // ---- aberration (whisper, cursor-driven) ----
-  if (aberr) { aberr.uniforms.uDir.value.x = damp(aberr.uniforms.uDir.value.x, ptrHas ? pointer.x : 0, 4, dt); aberr.uniforms.uDir.value.y = damp(aberr.uniforms.uDir.value.y, ptrHas ? pointer.y : 0, 4, dt); aberr.uniforms.uAmt.value = 0.0008 + (1 - mp) * 0.0024; aberr.uniforms.uTile.value = (1 - mp) * 0.12; }
+  if (aberr) { aberr.uniforms.uDir.value.x = damp(aberr.uniforms.uDir.value.x, ptrHas ? pointer.x : 0, 4, dt); aberr.uniforms.uDir.value.y = damp(aberr.uniforms.uDir.value.y, ptrHas ? pointer.y : 0, 4, dt); aberr.uniforms.uAmt.value = 0.0008 + (1 - mp) * 0.0010; }   // gentle RGB whisper only; block-tile glitch removed
 
   // ---- adaptive AA governor: if the GPU sustains < ~45fps, ease the supersample down a step (one-way, floored at native) ----
   if (composer && !aaSettled && !flying && frames > 90) {
@@ -690,9 +696,9 @@ if (!MOBILE && !REDUCED) {
 (function loader() {
   const box = document.getElementById('boot'); if (!box) return;
   const html = document.documentElement; html.classList.add('booting'); setTimeout(() => html.classList.remove('booting'), 6500);
-  const bar = box.querySelector('[data-boot-bar]'), pctEl = box.querySelector('[data-boot-pct]');
-  // Held a beat longer on purpose: the topology fill plays while the engine (already rendering behind
-  // this screen) warms its shaders + pipeline, so the reveal is smooth even on mobile / weaker GPUs.
+  const bar = box.querySelector('[data-boot-bar]'), pctEl = box.querySelector('[data-boot-pct]');   // bar = solid stone-blue fill (CSS width)
+  // Held a beat longer on purpose: the bar fills while the engine (already rendering behind this screen)
+  // warms its shaders + pipeline, so the reveal is smooth even on mobile / weaker GPUs.
   const MIN_MS = (MOBILE || SOFT) ? 2600 : 2200, CAP_MS = 5200;
   const start = performance.now(); let prog = 0, fontsReady = false, done = false;
   if (document.fonts?.ready) { document.fonts.ready.then(() => fontsReady = true); setTimeout(() => fontsReady = true, 3000); } else fontsReady = true;
@@ -705,13 +711,10 @@ if (!MOBILE && !REDUCED) {
     const shown = prog >= 1 ? 100 : Math.min(99, Math.round(prog * 100));
     if (bar) bar.style.setProperty('--fill', (prog * 100).toFixed(2) + '%'); if (pctEl) pctEl.textContent = shown; box.setAttribute('aria-valuenow', shown);
     if (prog >= 1 && !done) {
-      done = true; html.classList.remove('booting');                 // the landing (terrain + hero) is what we open into
-      const tk = box.querySelector('.boot-track');
-      if (tk && !REDUCED) { const r = tk.getBoundingClientRect();
-        tk.style.transform = `scale(${(innerWidth / Math.max(r.width, 1) + 1).toFixed(2)}, ${(innerHeight / Math.max(r.height, 1) + 1).toFixed(2)})`; }
-      box.classList.add('boot--open');                               // window expands out into the home landing page
-      setTimeout(() => box.classList.add('boot--done'), 640);
-      setTimeout(() => box.remove(), 1240);
+      done = true; html.classList.remove('booting');
+      // hold the full stone-blue bar a beat, then expand the whole screen outward into the home hero landing
+      setTimeout(() => box.classList.add('boot--open'), 170);
+      setTimeout(() => box.remove(), 1000);
       return;
     }
     requestAnimationFrame(step);
