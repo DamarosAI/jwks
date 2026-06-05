@@ -355,25 +355,34 @@ body.world-ready #world { opacity: 1; }
   .es-node-label { font-size: .54rem; letter-spacing: .08em; }
   .es-cards { flex-direction: column; gap: .6rem; max-width: none; width: 100%; }
 
+  /* section headlines — nudge down for breathing room above the carousel */
+  .cap.ti .ti-title, .cap.ps .ps-title { margin-top: clamp(.85rem, 3.6vh, 1.2rem); }
+  .cap.ti .cap-subhead, .cap.ps .cap-subhead { margin-top: clamp(.55rem, 2.2vh, .75rem); }
+
   /* two-panel sections → a horizontal swipe carousel (one panel at a time) */
   .ti-split, .ps-split {
     grid-template-columns: none; display: flex; flex-wrap: nowrap;
-    gap: clamp(.9rem, 5vw, 1.3rem); overflow-x: auto; overflow-y: visible;
+    gap: clamp(.75rem, 4.2vw, 1.1rem); overflow-x: auto; overflow-y: visible;
     scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none;
-    margin-top: clamp(1rem, 3vh, 1.5rem);
+    margin-top: clamp(.85rem, 2.6vh, 1.25rem);
   }
   .ti-split::-webkit-scrollbar, .ps-split::-webkit-scrollbar { display: none; }
-  .ti-half, .ps-half { flex: 0 0 100%; scroll-snap-align: center; padding: clamp(1rem, 4.5vw, 1.35rem); }
+  .ti-half, .ps-half {
+    flex: 0 0 100%; scroll-snap-align: center; gap: clamp(.65rem, 3vw, .85rem);
+    padding: clamp(.82rem, 3.6vw, 1.1rem) clamp(.88rem, 3.8vw, 1.15rem);
+  }
 
   /* compact internals so one panel fits the viewport */
-  .ti-half-head h3, .ps-half-head h3 { font-size: clamp(1.5rem, 7.5vw, 1.9rem); }
-  .ps-field, .ti-node-viz, .ti-matrix { height: clamp(80px, 13vh, 102px); margin: .1rem 0; }
-  .ti-cards, .ps-cards { gap: .55rem; }
-  .ti-half .cap-box, .ps-half .cap-box { padding: clamp(.9rem, 3.8vw, 1.15rem) clamp(1rem, 4vw, 1.25rem); }
-  .cap-box-b { font-size: .86rem; }
+  .ti-half-head h3, .ps-half-head h3 { font-size: clamp(1.38rem, 6.8vw, 1.72rem); }
+  .ti-sub, .ps-sub { font-size: clamp(.82rem, 3.6vw, .88rem); margin-top: clamp(.28rem, 1.2vw, .38rem); }
+  .ps-field, .ti-node-viz, .ti-matrix { height: clamp(68px, 11vh, 90px); margin: .05rem 0; }
+  .ti-cards, .ps-cards { gap: clamp(.42rem, 2vw, .5rem); }
+  .ti-half .cap-box, .ps-half .cap-box { padding: clamp(.72rem, 3.2vw, .95rem) clamp(.82rem, 3.5vw, 1.05rem); }
+  .ti-half .cap-box-h, .ps-half .cap-box-h { font-size: clamp(.82rem, 3.6vw, .88rem); }
+  .ti-half .cap-box-b, .ps-half .cap-box-b { font-size: clamp(.78rem, 3.4vw, .84rem); margin-top: clamp(.38rem, 1.6vw, .48rem); }
 
   /* mobile panel switcher — mirrors the Execution Spine rail (tap a node to switch panels) */
-  .hswipe-nav { position: relative; display: grid; grid-auto-flow: column; justify-content: center; gap: clamp(2.2rem, 12vw, 3.4rem); width: fit-content; margin: 1.1rem auto 0; }
+  .hswipe-nav { position: relative; display: grid; grid-auto-flow: column; justify-content: center; gap: clamp(2.2rem, 12vw, 3.4rem); width: fit-content; margin: clamp(.45rem, 1.8vh, .7rem) auto 0; }
   .hswipe-nav::before { content: ""; position: absolute; left: 14%; right: 14%; top: 9px; height: 2px; background: rgba(169, 192, 214, .18); }
   .hswipe-node { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: .5rem; padding: 0; border: 0; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
   .hswipe-node .d { width: 13px; height: 13px; transform: rotate(45deg); border: 1.5px solid rgba(169, 192, 214, .5); background: rgba(169, 192, 214, .06); transition: background .35s var(--ease), border-color .35s var(--ease), box-shadow .35s var(--ease), transform .35s var(--ease); }
