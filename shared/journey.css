@@ -83,7 +83,7 @@ body.intro-hold .brand-motif img{
 @keyframes ctaGlowDock{ 0%,100%{ box-shadow:0 10px 34px rgba(169,192,214,.3); }
   50%{ box-shadow:0 0 44px rgba(169,192,214,.6), 0 16px 50px rgba(169,192,214,.46); } }
 /* the closing section's own button steps aside while the top CTA docks into its slot */
-.cap--end.cta-docked .j-cta-row{ opacity:0 !important; pointer-events:none; }
+.cap--end.cta-docked .j-cta-row:has(.j-cta-dock-slot){ opacity:0 !important; pointer-events:none; }
 
 .j-progress{ position:fixed; top:0; left:0; right:0; height:2px; z-index:24; transform-origin:left; transform:scaleX(0);
   background:linear-gradient(90deg, var(--deep), var(--steel)); }
@@ -134,7 +134,14 @@ canvas.cv{ position:absolute; inset:0; width:100%; height:100%; display:block; z
   color:rgba(232,236,240,.66); max-width:52ch; }
 /* hero sentence + final sign-off read as a statement (no one-word title) */
 .cap--center .cap-title{ font-size:clamp(1.9rem,4.4vw,3.4rem); line-height:1.08; letter-spacing:-.025em; }
-.cap--center.cap--end .cap-title{ font-size:clamp(2.3rem,5.6vw,4.6rem); line-height:1.02; letter-spacing:-.035em; }
+.cap--center.cap--end{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0; text-align:center; }
+.cap--center.cap--end .cap-title{ margin:0; font-size:clamp(2.1rem,5.2vw,4.2rem); line-height:1.06; letter-spacing:-.03em; text-wrap:balance; max-width:18ch; }
+.cap--center.cap--end .cap-title em{ font-style:normal; color:var(--steel); }
+.cap--center.cap--end .j-cta-row{ margin-top:1.75rem; }
+.j-cta-dock-slot{ display:inline-block; width:10.5rem; height:2.85rem; pointer-events:none; visibility:hidden; }
+.j-cta-row--touch{ display:none; }
+body[data-station="9"] .cap--end{ opacity:1; }
+body[data-station="9"] .cap--end .cap-line{ opacity:1; transform:none; }
 .cap--center .cap-body{ max-width:46ch; }
 /* hero subheading — ONE clear line beneath the label (not a stacked block); brighter + larger than body copy */
 .cap--center .cap-body--one{ max-width:none; white-space:nowrap; font-weight:500;
@@ -250,11 +257,6 @@ body[data-station="9"] .brand-motif img{ --mo:.13; --flare:.58; }
 .j-btn:hover{ transform:translateY(-2px); box-shadow:0 14px 40px rgba(169,192,214,.28); background:#c2d5e6; }
 .j-btn--ghost{ color:var(--cold); background:transparent; border-color:rgba(169,192,214,.4); }
 .j-btn--ghost:hover{ background:rgba(169,192,214,.08); box-shadow:none; border-color:var(--steel); }
-/* final CTA: the "here we go" moment. Once the closing frame lands, the button breathes light. */
-.deck-caps .cap--end.cap--active .j-btn{ animation:ctaGlow 2.8s var(--ease) infinite; }
-@keyframes ctaGlow{ 0%,100%{ box-shadow:0 10px 34px rgba(169,192,214,.28); }
-  50%{ box-shadow:0 0 42px rgba(169,192,214,.62), 0 14px 48px rgba(169,192,214,.5); transform:translateY(-2px); } }
-
 /* ---------------- responsive ---------------- */
 @media (max-width: 820px){
   .hud{ display:none; }
@@ -271,6 +273,8 @@ body[data-station="9"] .brand-motif img{ --mo:.13; --flare:.58; }
   .cap--split .cap-kicker, .cap--split.cap--mirror .cap-kicker{ text-align:center; }
   .cap--split .cap-sub, .cap--split.cap--mirror .cap-sub{ flex-direction:column; }
   .j-top .j-cta{ display:none; }
+  .j-cta-row--touch{ display:flex; }
+  .j-cta-dock-slot{ display:none; }
   /* touch: no cursor-proximity glow — hold a brighter resting motif on hero + closer */
   body[data-station="0"] .brand-motif img,
   body[data-station="9"] .brand-motif img{
@@ -282,6 +286,7 @@ body[data-station="9"] .brand-motif img{ --mo:.13; --flare:.58; }
 @media (prefers-reduced-motion: reduce){
   .cap-line{ opacity:1; transform:none; transition:none; }
   .cue .bar::after{ animation:none; top:0; height:100%; opacity:.5; }
-  .deck-caps .cap--end.cap--active .j-btn{ animation:none; }
+  .j-top .j-cta.is-docked{ animation:none; }
+  .j-cta-row--touch .j-btn{ animation:none; }
   .veil{ display:none; }
 }

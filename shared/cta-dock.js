@@ -13,26 +13,27 @@
   var cta = document.querySelector('.j-top .j-cta');
   var endCap = document.querySelector('.cap--end');
   if (!cta || !endCap) return;
-  var target = endCap.querySelector('.j-btn') || endCap.querySelector('.j-cta-row');
-  if (!target) return;
+  var slot = endCap.querySelector('.j-cta-dock-slot');
+  if (!slot) return;
 
   var docked = false;
+  var DOCK_MS = 1150;
+  var UNDOCK_MS = 620;
 
   function dock() {
     if (getComputedStyle(cta).display === 'none') return; // hidden on mobile
-    // reset any existing dock transform so we measure the button's true home
     cta.style.transition = 'none';
     cta.style.transform = '';
     var a = cta.getBoundingClientRect();
-    var b = target.getBoundingClientRect();
+    var b = slot.getBoundingClientRect();
     if (!b.width || !b.height) return;
     var dx = (b.left + b.width / 2) - (a.left + a.width / 2);
     var dy = (b.top + b.height / 2) - (a.top + a.height / 2);
     var scale = b.height / a.height;
     endCap.classList.add('cta-docked');
-    // force the reset to commit, then animate to the docked transform
+    document.body.classList.add('cta-docked');
     void cta.offsetWidth;
-    cta.style.transition = 'transform .72s cubic-bezier(.62,0,.2,1)';
+    cta.style.transition = 'transform ' + DOCK_MS + 'ms cubic-bezier(.62,0,.2,1)';
     cta.classList.add('is-docked');
     cta.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(' + scale + ')';
     docked = true;
@@ -41,23 +42,31 @@
   function undock() {
     if (!docked) return;
     docked = false;
-    cta.style.transition = 'transform .55s cubic-bezier(.62,0,.2,1)';
+    cta.style.transition = 'transform ' + UNDOCK_MS + 'ms cubic-bezier(.62,0,.2,1)';
     cta.classList.remove('is-docked');
     cta.style.transform = '';
     endCap.classList.remove('cta-docked');
+    document.body.classList.remove('cta-docked');
     var clear = function () { cta.style.transition = ''; cta.removeEventListener('transitionend', clear); };
     cta.addEventListener('transitionend', clear);
   }
 
-  function sync() {
-    if (endCap.classList.contains('cap--active')) {
+  function onStation(st) {
+    if (st === '9') {
       requestAnimationFrame(function () { requestAnimationFrame(dock); });
     } else {
       undock();
     }
   }
 
-  new MutationObserver(sync).observe(endCap, { attributes: true, attributeFilter: ['class'] });
+  function sync() {
+    onStation(document.body.dataset.station || '0');
+  }
+
+  new MutationObserver(sync).observe(document.body, { attributes: true, attributeFilter: ['data-station'] });
+  new MutationObserver(function () {
+    if (document.body.dataset.station === '9' && docked) dock();
+  }).observe(endCap, { attributes: true, attributeFilter: ['class'] });
   window.addEventListener('resize', function () { if (docked) dock(); });
   sync();
 })();
