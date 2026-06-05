@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="shared/hanken-grotesk.css">
 <link rel="stylesheet" href="shared/journey.css?v=reset46">
 <link rel="stylesheet" href="shared/terrain.css?v=reset36">
-<link rel="stylesheet" href="shared/sections.css?v=25">
+<link rel="stylesheet" href="shared/sections.css?v=26">
 <script type="importmap">
 { "imports": { "three": "./assets/vendor/three/three.module.js", "three/addons/": "./assets/vendor/three/addons/" } }
 </script>
@@ -260,14 +260,21 @@
     /* mobile: two-panel sections become a horizontal swipe carousel with indicator dots */
     if (TOUCH) {
       [].forEach.call(document.querySelectorAll('[data-hswipe]'), function (split) {
-        var n = split.children.length; if (n < 2) return;
-        var dots = document.createElement('div'); dots.className = 'hswipe-dots';
-        for (var i = 0; i < n; i++) { var d = document.createElement('span'); if (i === 0) d.className = 'on'; dots.appendChild(d); }
-        split.parentNode.insertBefore(dots, split.nextSibling);
+        var panels = [].slice.call(split.children); if (panels.length < 2) return;
+        var nav = document.createElement('div'); nav.className = 'hswipe-nav';
+        panels.forEach(function (p, i) {
+          var h = p.querySelector('h3'), label = h ? h.textContent : String(i + 1);
+          var b = document.createElement('button'); b.type = 'button'; b.className = 'hswipe-node' + (i === 0 ? ' on' : '');
+          b.innerHTML = '<span class="d"></span><span class="l"></span>';
+          b.querySelector('.l').textContent = label;
+          b.addEventListener('click', function () { var delta = p.getBoundingClientRect().left - split.getBoundingClientRect().left; split.scrollBy({ left: delta, behavior: 'smooth' }); });
+          nav.appendChild(b);
+        });
+        split.parentNode.insertBefore(nav, split.nextSibling);
         split.addEventListener('scroll', function () {
           var idx = Math.round(split.scrollLeft / Math.max(1, split.clientWidth));
-          [].forEach.call(dots.children, function (dd, i) { dd.className = i === idx ? 'on' : ''; });
-          [].forEach.call(split.children, function (p, i) { if (i === idx) { if (p._hOn) p._hOn(); } else { if (p._hOff) p._hOff(); } });
+          [].forEach.call(nav.children, function (b, i) { b.classList.toggle('on', i === idx); });
+          panels.forEach(function (p, i) { if (i === idx) { if (p._hOn) p._hOn(); } else if (p._hOff) p._hOff(); });
         }, { passive: true });
       });
     }

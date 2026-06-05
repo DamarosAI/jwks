@@ -342,7 +342,7 @@ body.world-ready #world { opacity: 1; }
 @keyframes lunaCW { to { transform: rotate(360deg); } }
 @keyframes lunaCCW { to { transform: rotate(-360deg); } }
 
-.hswipe-dots { display: none; }
+.hswipe-nav { display: none; }
 
 /* ============================================================
  * RESPONSIVE
@@ -372,10 +372,14 @@ body.world-ready #world { opacity: 1; }
   .ti-half .cap-box, .ps-half .cap-box { padding: clamp(.9rem, 3.8vw, 1.15rem) clamp(1rem, 4vw, 1.25rem); }
   .cap-box-b { font-size: .86rem; }
 
-  /* swipe indicator dots */
-  .hswipe-dots { display: flex; gap: .5rem; justify-content: center; margin-top: .9rem; }
-  .hswipe-dots span { width: 7px; height: 7px; border-radius: 50%; background: rgba(169, 192, 214, .25); transition: background .3s var(--ease), box-shadow .3s var(--ease); }
-  .hswipe-dots span.on { background: var(--steel); box-shadow: 0 0 8px rgba(169, 192, 214, .5); }
+  /* mobile panel switcher — mirrors the Execution Spine rail (tap a node to switch panels) */
+  .hswipe-nav { position: relative; display: grid; grid-auto-flow: column; justify-content: center; gap: clamp(2.2rem, 12vw, 3.4rem); width: fit-content; margin: 1.1rem auto 0; }
+  .hswipe-nav::before { content: ""; position: absolute; left: 14%; right: 14%; top: 9px; height: 2px; background: rgba(169, 192, 214, .18); }
+  .hswipe-node { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: .5rem; padding: 0; border: 0; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .hswipe-node .d { width: 13px; height: 13px; transform: rotate(45deg); border: 1.5px solid rgba(169, 192, 214, .5); background: rgba(169, 192, 214, .06); transition: background .35s var(--ease), border-color .35s var(--ease), box-shadow .35s var(--ease), transform .35s var(--ease); }
+  .hswipe-node .l { font-family: var(--fb); font-size: .58rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); white-space: nowrap; transition: color .35s var(--ease); }
+  .hswipe-node.on .d { background: var(--steel); border-color: var(--steel); box-shadow: 0 0 14px rgba(169, 192, 214, .6); transform: rotate(45deg) scale(1.16); }
+  .hswipe-node.on .l { color: var(--cold); }
 }
 
 @media (prefers-reduced-motion: reduce) {
