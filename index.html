@@ -47,6 +47,7 @@
     <!-- 01 EXECUTION SPINE · Protocol · Evidence · Screening · Replay (all four at once; swipe on mobile) -->
     <div class="cap es" data-cap="1" data-screen-label="Execution Spine">
       <h2 class="es-title cap-line" data-type data-from="0">Execution Spine</h2>
+      <p class="cap-subhead cap-line" data-from="0">From sponsor to audit. <em>One governed chain.</em></p>
 
       <div class="es-grid cap-line" data-from="0" data-hswipe>
         <div class="es-stage-card">
@@ -102,12 +103,14 @@
 
       <div class="ps-split cap-line" data-from="0" data-hswipe>
         <div class="ps-half ps-half--trident">
-          <div class="ps-half-head">
-            <span class="ps-tag">Semantics</span>
-            <h3>Trident</h3>
-            <p class="ps-sub">Ambiguity is cost. <em>Surface it first.</em></p>
+          <div class="ps-topline">
+            <div class="ps-half-head">
+              <span class="ps-tag">Semantics</span>
+              <h3>Trident</h3>
+              <p class="ps-sub">Ambiguity is cost. <em>Surface it first.</em></p>
+            </div>
+            <div class="ps-field ps-neural" aria-hidden="true"></div>
           </div>
-          <div class="ps-field ps-neural" aria-hidden="true"></div>
           <div class="ps-cards">
             <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Protocol intelligence substrate.</span><p class="cap-box-b">Dense language compiles to executable logic and evidence requirements.</p></div>
             <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Model tightens per deployment.</span><p class="cap-box-b">Substrate sharpens with every protocol release and site execution cycle.</p></div>
@@ -115,12 +118,14 @@
         </div>
 
         <div class="ps-half ps-half--luna">
-          <div class="ps-half-head">
-            <span class="ps-tag">Provenance</span>
-            <h3>Luna</h3>
-            <p class="ps-sub">Agents accelerate. <em>Humans decide.</em></p>
+          <div class="ps-topline">
+            <div class="ps-half-head">
+              <span class="ps-tag">Provenance</span>
+              <h3>Luna</h3>
+              <p class="ps-sub">Agents accelerate. <em>Humans decide.</em></p>
+            </div>
+            <div class="ps-field ps-rings" aria-hidden="true"></div>
           </div>
-          <div class="ps-field ps-rings" aria-hidden="true"></div>
           <div class="ps-cards">
             <div class="cap-box" data-topo="prov"><span class="cap-box-h">Every agent on-record.</span><p class="cap-box-b">Every AI action tagged: origin, policy scope, and authorization chain.</p></div>
             <div class="cap-box" data-topo="prov"><span class="cap-box-h">Verdicts stay deterministic.</span><p class="cap-box-b">Agents scale throughput; coordinators retain governed judgment.</p></div>
@@ -135,12 +140,14 @@
 
       <div class="ti-split cap-line" data-from="0" data-hswipe>
         <div class="ti-half ti-node" data-half="7" data-burst>
-          <div class="ti-half-head">
-            <span class="ti-tag">The site</span>
-            <h3>Node</h3>
-            <p class="ti-sub">The site, <em>fully instrumented.</em></p>
+          <div class="ti-topline">
+            <div class="ti-half-head">
+              <span class="ti-tag">The site</span>
+              <h3>Node</h3>
+              <p class="ti-sub">The site, <em>fully instrumented.</em></p>
+            </div>
+            <div class="ti-node-viz"><span class="ti-sq ti-sq--s"></span><span class="ti-sq ti-sq--m"></span><span class="ti-sq ti-sq--l"></span><span class="ti-sq ti-sq--m"></span><span class="ti-sq ti-sq--s"></span></div>
           </div>
-          <div class="ti-node-viz"><span class="ti-sq ti-sq--s"></span><span class="ti-sq ti-sq--m"></span><span class="ti-sq ti-sq--l"></span><span class="ti-sq ti-sq--m"></span><span class="ti-sq ti-sq--s"></span></div>
           <div class="ti-cards">
             <div class="cap-box" data-topo="pass"><span class="cap-box-h">Community sites, trial-ready.</span><p class="cap-box-b">Evidence in. Criteria resolved. REVIEW bounded. Judgment logged.</p></div>
             <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Site sovereignty preserved.</span><p class="cap-box-b">Sponsor capital deploys; operational control never leaves the site.</p></div>
@@ -148,12 +155,14 @@
         </div>
 
         <div class="ti-half ti-sponsor" data-half="8">
-          <div class="ti-half-head">
-            <span class="ti-tag">The sponsor</span>
-            <h3>Console</h3>
-            <p class="ti-sub">The aggregated <em>operating picture.</em></p>
+          <div class="ti-topline">
+            <div class="ti-half-head">
+              <span class="ti-tag">The sponsor</span>
+              <h3>Console</h3>
+              <p class="ti-sub">The aggregated <em>operating picture.</em></p>
+            </div>
+            <div class="ti-matrix" data-matrix></div>
           </div>
-          <div class="ti-matrix" data-matrix></div>
           <div class="ti-cards" style="padding: 4px 0px 0px 1px">
             <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Signal over status reports.</span><p class="cap-box-b">Verified execution, not lagging activity feeds from legacy systems.</p></div>
             <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Command the field.</span><p class="cap-box-b">Track resolution, criterion failure, and run adaptation in real time.</p></div>
@@ -320,7 +329,7 @@
         var a = (i / n) * Math.PI * 2, ci = document.createElementNS(NS, 'circle');
         ci.setAttribute('cx', (80 + Math.cos(a) * rx).toFixed(2));
         ci.setAttribute('cy', (60 + Math.sin(a) * ry).toFixed(2));
-        ci.setAttribute('r', '1.6'); g.appendChild(ci);
+        ci.setAttribute('r', '1.92'); g.appendChild(ci);
       }
       svg.appendChild(g);
     }

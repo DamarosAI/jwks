@@ -16,8 +16,8 @@ body.world-ready #world { opacity: 1; }
  * EXECUTION SPINE
  * ============================================================ */
 .cap.es {
-  width: min(100rem, calc(100vw - 2 * var(--page-gutter)));
-  max-width: min(100rem, calc(100vw - 2 * var(--page-gutter)));
+  width: min(70rem, calc(100vw - 2 * var(--page-gutter)));
+  max-width: min(70rem, calc(100vw - 2 * var(--page-gutter)));
   text-align: center;
 }
 .es-title {
@@ -50,40 +50,40 @@ body.world-ready #world { opacity: 1; }
   font-family: var(--fh); font-weight: 600; letter-spacing: -.012em; font-size: 1rem; color: #f5f8fb;
 }
 
-/* ---- the four stages, shown at once: a 4-up grid on desktop / laptop,
+/* ---- the four stages, shown at once: a clean 2x2 grid on desktop / laptop
+   (same two-panel grammar as Platform Substrate / Trial Intelligence),
    a horizontal swipe carousel on mobile (Protocol · Evidence · Screening · Replay) ---- */
 .es-grid {
-  display: grid; grid-template-columns: repeat(4, 1fr); align-items: stretch;
-  gap: clamp(1.2rem, 2vw, 2.2rem); margin: clamp(1.6rem, 4vh, 2.6rem) auto 0; text-align: left;
+  display: grid; grid-template-columns: repeat(2, 1fr); align-items: stretch;
+  gap: clamp(1rem, 1.8vw, 1.6rem); margin: clamp(1.4rem, 3.4vh, 2.2rem) auto 0; text-align: left;
 }
 .es-stage-card {
-  position: relative; display: flex; flex-direction: column; gap: clamp(1rem, 1.6vw, 1.4rem);
-  padding: clamp(1.3rem, 1.9vw, 1.9rem) clamp(1.3rem, 1.8vw, 1.75rem);
-  border: 1px solid rgba(169, 192, 214, .2); border-radius: 18px;
+  position: relative; display: flex; flex-direction: column; gap: clamp(.75rem, 1.1vw, 1rem);
+}
+/* heading + subhead now sit OUTSIDE the surface, free on the field, for more negative space */
+.es-stage-head { display: flex; flex-direction: column; gap: .2rem; padding: 0 clamp(.15rem, .4vw, .45rem); }
+.es-stage-tag { display: none; }
+.es-stage-head h3 {
+  margin: .1rem 0 0; font-family: var(--fh); font-weight: 700;
+  font-size: clamp(1.15rem, 1.7vw, 1.5rem); letter-spacing: -.02em; color: var(--steel);
+}
+.es-stage-sub { display: none; }
+.es-stage-sub em { font-style: normal; color: var(--cold); }
+.es-stage-cards {
+  display: flex; flex-direction: column; gap: clamp(.85rem, 1.5vw, 1.25rem);
+  padding: clamp(1rem, 1.5vw, 1.45rem) clamp(1.05rem, 1.5vw, 1.45rem);
+  border: 1px solid rgba(169, 192, 214, .2); border-radius: 16px;
   background: linear-gradient(180deg, rgba(169, 192, 214, .07), rgba(169, 192, 214, .02)), rgba(8, 11, 17, .55);
   -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
   transition: border-color .4s var(--ease), box-shadow .4s var(--ease), transform .4s var(--ease);
 }
-.es-stage-card:hover { border-color: rgba(169, 192, 214, .42); box-shadow: 0 14px 40px rgba(5, 7, 11, .5); transform: translateY(-2px); }
-.es-stage-head { display: flex; flex-direction: column; gap: .2rem; }
-.es-stage-tag {
-  font-family: var(--fb); font-size: .56rem; font-weight: 600; letter-spacing: .22em;
-  text-transform: uppercase; color: var(--steel);
-}
-.es-stage-head h3 {
-  margin: .1rem 0 0; font-family: var(--fh); font-weight: 700;
-  font-size: clamp(1.15rem, 1.7vw, 1.5rem); letter-spacing: -.02em; color: var(--cold);
-}
-.es-stage-sub {
-  margin: .15rem 0 0; font-family: var(--fb); font-weight: 600;
-  font-size: clamp(.86rem, 1.05vw, .96rem); line-height: 1.32; letter-spacing: -.005em;
-  color: var(--steel); text-wrap: balance;
-}
-.es-stage-sub em { font-style: normal; color: var(--cold); }
-.es-stage-cards { display: flex; flex-direction: column; gap: clamp(.6rem, 1vw, .85rem); }
-.es-stage-cards .cap-box { padding: clamp(.95rem, 1.5vw, 1.25rem) clamp(1rem, 1.5vw, 1.3rem); }
-.es-stage-cards .cap-box-h { font-size: clamp(.88rem, 1vw, .96rem); }
-.es-stage-cards .cap-box-b { font-size: clamp(.82rem, .95vw, .9rem); margin-top: .5rem; }
+.es-stage-card:hover .es-stage-cards { border-color: rgba(169, 192, 214, .42); box-shadow: 0 14px 40px rgba(5, 7, 11, .5); transform: translateY(-2px); }
+/* open, editorial rows (no box-in-box) so the section breathes instead of reading as a wall of text */
+.es-stage-cards .cap-box { padding: 0; border: 0; background: none; box-shadow: none; border-radius: 0; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.es-stage-cards .cap-box:hover { border: 0; background: none; box-shadow: none; transform: none; }
+.es-stage-cards .cap-box + .cap-box { border-top: 1px solid rgba(169, 192, 214, .12); padding-top: clamp(.85rem, 1.5vw, 1.25rem); }
+.es-stage-cards .cap-box-h { font-size: clamp(.9rem, 1vw, .98rem); }
+.es-stage-cards .cap-box-b { font-size: clamp(.82rem, .95vw, .9rem); margin-top: .42rem; line-height: 1.5; color: rgba(232, 236, 240, .64); }
 
 /* three verdict dots — on the screening card's header line */
 .es-card--verdict .cap-box-h { display: flex; align-items: center; justify-content: space-between; gap: .6rem; }
@@ -291,6 +291,33 @@ body.world-ready #world { opacity: 1; }
 @keyframes lunaCW { to { transform: rotate(360deg); } }
 @keyframes lunaCCW { to { transform: rotate(-360deg); } }
 
+/* ============================================================
+ * COMPACT SYMBOL — the live field parks at the TOP-RIGHT of each panel head
+ * (Platform Substrate + Trial Intelligence), capped to the head's own height
+ * so it never out-sizes the title + subhead. Same treatment, mobile + desktop.
+ * ============================================================ */
+.ps-topline, .ti-topline {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: clamp(.7rem, 1.7vw, 1.2rem);
+}
+.ps-topline .ps-half-head, .ti-topline .ti-half-head { flex: 1 1 auto; min-width: 0; }
+.ps-field, .ti-node-viz, .ti-matrix {
+  flex: 0 0 auto; align-self: flex-start; margin: 0;
+  width: var(--viz-w, clamp(88px, 10vw, 116px));
+  height: var(--viz-h, clamp(52px, 7vh, 72px));
+}
+/* Luna · Trident · Node run a touch larger than the Console matrix */
+.ps-field, .ti-node-viz { height: calc(var(--viz-h, clamp(52px, 7vh, 72px)) * 1.13); }
+.ps-field { width: calc(var(--viz-w, clamp(88px, 10vw, 116px)) * 1.13); }
+.ti-node-viz { width: auto; }
+.luna-svg { width: 100%; height: 100%; }
+.ti-topline .ti-matrix { gap: 4px; }
+/* compact node-site cluster — small enough to live in the header corner */
+.ti-topline .ti-node-viz { gap: 4px; }
+.ti-topline .ti-sq--s { width: 15px; height: 15px; border-radius: 4px; }
+.ti-topline .ti-sq--m { width: 22px; height: 22px; border-radius: 5px; }
+.ti-topline .ti-sq--l { width: 28px; height: 28px; border-radius: 7px; }
+
 .hswipe-nav { display: none; }
 
 /* ============================================================
@@ -303,19 +330,26 @@ body.world-ready #world { opacity: 1; }
  * every interior element scale to viewport HEIGHT (min() caps do nothing on tall
  * screens, shrink gracefully on short ones) so it always clears the header. */
 @media (min-width: 821px) {
-  .cap.es, .cap.ps, .cap.ti { top: calc(50% + clamp(.4rem, 1.8vh, 1.4rem)); }
-  .es-title, .ps-title, .ti-title { font-size: min(clamp(2.2rem, 5vw, 3.7rem), 6.2vh); }
-  .es-grid { margin-top: min(clamp(1.1rem, 3vh, 1.7rem), 2.6vh); }
-  .es-stage-head h3 { font-size: min(clamp(1.15rem, 1.7vw, 1.5rem), 3vh); }
+  .cap.ps, .cap.ti { top: calc(50% + clamp(.4rem, 1.8vh, 1.4rem)); }
+  .cap.es { top: calc(50% - clamp(.6rem, 2.2vh, 1.4rem)); }
+  .ps-title, .ti-title { font-size: min(clamp(2.2rem, 5vw, 3.7rem), 6.2vh); }
+  .es-title { font-size: min(clamp(2rem, 4.4vw, 3.2rem), 5.2vh); }
+  .cap.es .cap-subhead { font-size: min(clamp(1.05rem, 1.6vw, 1.32rem), 2.4vh); margin-top: clamp(.3rem, 1.1vh, .5rem); }
+  .es-grid { margin-top: min(clamp(1.2rem, 3vh, 2rem), 3.2vh); gap: min(clamp(.8rem, 1.5vw, 1.3rem), 1.7vh); }
+  .es-stage-card { gap: min(clamp(.7rem, 1.1vw, 1rem), 1.5vh); }
+  .es-stage-head h3 { font-size: min(clamp(1.05rem, 1.55vw, 1.35rem), 2.5vh); }
+  .cap.es .es-stage-sub { font-size: min(.9rem, 1.9vh); margin-top: .12rem; }
+  .es-stage-cards { gap: min(clamp(.85rem, 1.5vw, 1.25rem), 1.8vh); padding: min(1.6vh, 1.3rem) clamp(1.1rem, 1.5vw, 1.4rem); }
+  .es-stage-cards .cap-box + .cap-box { padding-top: min(clamp(.85rem, 1.5vw, 1.25rem), 1.8vh); }
+  .es-stage-cards .cap-box-h { font-size: min(.94rem, 2vh); }
+  .es-stage-cards .cap-box-b { margin-top: min(.42rem, .8vh); line-height: 1.5; }
   .cap.ps .cap-subhead, .cap.ti .cap-subhead {
     font-size: min(clamp(1.05rem, 1.65vw, 1.38rem), 2.5vh); margin-top: clamp(.35rem, 1.2vh, .55rem);
   }
   .ps-split, .ti-split { margin-top: min(clamp(1.2rem, 3vh, 1.8rem), 2.6vh); }
   .ps-half-head h3, .ti-half-head h3 { font-size: min(clamp(1.5rem, 2.7vw, 2.15rem), 3.4vh); }
   .ps-sub, .ti-sub { font-size: min(.95rem, 2vh); margin-top: min(.4rem, 1vh); }
-  .ps-field { height: min(clamp(124px, 17vh, 154px), 15vh); }
-  .ti-node-viz { height: min(clamp(96px, 14vh, 126px), 12.6vh); }
-  .ti-matrix { height: min(clamp(94px, 13vh, 116px), 12vh); }
+  .cap.ps, .cap.ti { --viz-h: min(72px, 9vh); --viz-w: min(118px, 12.5vw); }
   .ti-half .cap-box, .ps-half .cap-box { padding: min(1rem, 1.7vh) 1.15rem; }
   .ti-cards, .ps-cards { gap: min(.7rem, 1.4vh); }
 }
@@ -341,9 +375,9 @@ body.world-ready #world { opacity: 1; }
   }
 
   /* compact internals so one panel fits the viewport */
+  .cap.ps, .cap.ti { --viz-h: clamp(46px, 9vw, 64px); --viz-w: clamp(74px, 19vw, 104px); }
   .es-stage-head h3, .ti-half-head h3, .ps-half-head h3 { font-size: clamp(1.38rem, 6.8vw, 1.72rem); }
   .es-stage-sub, .ti-sub, .ps-sub { font-size: clamp(.82rem, 3.6vw, .88rem); margin-top: clamp(.28rem, 1.2vw, .38rem); }
-  .ps-field, .ti-node-viz, .ti-matrix { height: clamp(68px, 11vh, 90px); margin: .05rem 0; }
   .es-stage-cards, .ti-cards, .ps-cards { gap: clamp(.42rem, 2vw, .5rem); }
   .es-stage-cards .cap-box, .ti-half .cap-box, .ps-half .cap-box { padding: clamp(.72rem, 3.2vw, .95rem) clamp(.82rem, 3.5vw, 1.05rem); }
   .es-stage-cards .cap-box-h, .ti-half .cap-box-h, .ps-half .cap-box-h { font-size: clamp(.82rem, 3.6vw, .88rem); }
@@ -360,7 +394,7 @@ body.world-ready #world { opacity: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .es-stage-card,
+  .es-stage-card, .es-stage-cards,
   .ti-half, .ti-cell, .ti-sq, .ps-half { transition: none; }
   .ti-node.is-firing .ti-sq, .ti-node.is-firing .ti-sq::after,
   .ti-sponsor.is-reading .ti-cell,
