@@ -568,10 +568,7 @@ function setCaps(idx) {
     else b.querySelectorAll('.cap-line').forEach((l) => l.classList.toggle('on', on));
   });
 }
-function revealEndCap() {
-  setCaps(9);
-  window.DamarosCapIntro?.kick?.();
-}
+function revealEndCap() { setCaps(9); }
 const END_HOLD_MS = REDUCED ? 500 : 2000;
 let endHoldTimer = null;
 function clearEndHold() { clearTimeout(endHoldTimer); endHoldTimer = null; document.body.classList.remove('end-hold'); }

@@ -88,9 +88,10 @@ body.end-hold[data-station="9"] .brand-motif img{
 .j-top .j-cta:hover{ transform:translateY(-2px); box-shadow:0 12px 36px rgba(169,192,214,.28); background:#c2d5e6; }
 /* docked: the FLIP target is set inline by cta-dock.js; here we just light it up like the final CTA (box-shadow only,
    so the keyframes never fight the inline translate). */
-.j-top .j-cta.is-docked{ z-index:30; animation:ctaGlowDock 2.8s var(--ease) infinite; }
-@keyframes ctaGlowDock{ 0%,100%{ box-shadow:0 8px 28px rgba(5,7,11,.32); }
-  50%{ box-shadow:0 0 32px rgba(169,192,214,.38), 0 12px 36px rgba(5,7,11,.4); } }
+.j-top .j-cta.is-docked{ z-index:30; background:var(--steel); animation:ctaGlowDock 2.8s var(--ease) infinite; }
+.j-top .j-cta.is-docked:hover{ background:#c2d5e6; }
+@keyframes ctaGlowDock{ 0%,100%{ box-shadow:0 10px 34px rgba(169,192,214,.3); }
+  50%{ box-shadow:0 0 44px rgba(169,192,214,.6), 0 16px 50px rgba(169,192,214,.46); } }
 /* the closing section's own button steps aside while the top CTA docks into its slot */
 .cap--end.cta-docked .j-cta-row:has(.j-cta-dock-slot){ opacity:0 !important; pointer-events:none; }
 
@@ -148,8 +149,10 @@ canvas.cv{ position:absolute; inset:0; width:100%; height:100%; display:block; z
 .deck-caps .cap--end::before{ display:none; }
 .cap--center.cap--end{ display:block; text-align:center; }
 .cap--center.cap--end .cap-title{ position:absolute; left:50%; top:50%; margin:0; z-index:1;
-  font-size:clamp(2.1rem,5.2vw,4.2rem); line-height:1.06; letter-spacing:-.03em; text-wrap:balance; max-width:18ch;
+  font-size:clamp(2.1rem,5.2vw,4.2rem); line-height:1.06; letter-spacing:-.03em; max-width:min(54rem,92vw);
   transform:translate(-50%,-50%); }
+.cap--center.cap--end [data-type],
+.cap--center.cap--end [data-type] .rc{ white-space:nowrap; }
 .cap--end [data-type] .rc.in:nth-last-child(-n+8){ color:var(--steel); }
 .cap--center.cap--end .j-cta-row{ position:absolute; left:50%; top:calc(50% + clamp(1.7rem,4.8vw,2.6rem));
   transform:translateX(-50%); margin:clamp(.75rem,2vh,1.2rem) 0 0; }
@@ -162,13 +165,9 @@ body[data-station="9"] .cap--end.cap--active .j-cta-row{ transform:translateX(-5
 body.end-hold .cap--end .cap-line{ opacity:0 !important; transform:translateY(14px) !important; pointer-events:none; }
 body.end-hold .cap--end [data-type]{ opacity:0 !important; }
 body.end-hold .cap--end [data-type] .rc{ opacity:0 !important; filter:none !important; }
-/* page CTA — glass fill so the monogram reads through (navbar CTA stays solid until docked) */
-.j-top .j-cta.is-docked,
-.cap--end .j-btn{ color:var(--cold); background:rgba(169,192,214,.34); border-color:rgba(169,192,214,.5);
-  -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
-  box-shadow:0 8px 28px rgba(5,7,11,.32); }
-.j-top .j-cta.is-docked:hover,
-.cap--end .j-btn:hover{ background:rgba(169,192,214,.5); box-shadow:0 10px 32px rgba(5,7,11,.38); }
+.cap--end .j-btn{ animation:ctaGlow 2.8s var(--ease) infinite; }
+@keyframes ctaGlow{ 0%,100%{ box-shadow:0 10px 34px rgba(169,192,214,.28); }
+  50%{ box-shadow:0 0 42px rgba(169,192,214,.62), 0 14px 48px rgba(169,192,214,.5); transform:translateY(-2px); } }
 .cap--center .cap-body{ max-width:46ch; }
 /* hero subheading — ONE clear line beneath the label (not a stacked block); brighter + larger than body copy */
 .cap--center .cap-body--one{ max-width:none; white-space:nowrap; font-weight:500;
@@ -302,8 +301,8 @@ body[data-station="0"] .brand-motif, body[data-station="9"] .brand-motif{ opacit
   .j-top .j-cta{ display:none; }
   .j-cta-row--touch{ display:flex; }
   .j-cta-dock-slot{ display:none; }
-  .cap--center.cap--end .cap-title{ font-size:clamp(1.55rem,7.2vw,2rem); max-width:14ch; }
-  .cap--center.cap--end .j-cta-row{ top:calc(50% + clamp(1.15rem,5.2vw,1.65rem)); margin-top:.55rem; }
+  .cap--center.cap--end .cap-title{ font-size:clamp(1.28rem,5.8vw,1.85rem); max-width:92vw; }
+  .cap--center.cap--end .j-cta-row{ top:calc(50% + clamp(2.1rem,9vw,2.85rem)); margin-top:1.15rem; }
   .cap--end .j-btn{ font-size:clamp(.54rem,2.5vw,.64rem); padding:.52rem .85rem; letter-spacing:.1em; border-radius:8px; }
   /* touch: no cursor-proximity glow — hold a resting motif on hero + closer */
   body[data-station="0"] .brand-motif img,
@@ -316,6 +315,7 @@ body[data-station="0"] .brand-motif, body[data-station="9"] .brand-motif{ opacit
   .cap-line{ opacity:1; transform:none; transition:none; }
   .cue .bar::after{ animation:none; top:0; height:100%; opacity:.5; }
   .j-top .j-cta.is-docked{ animation:none; }
+  .cap--end .j-btn{ animation:none; }
   .j-cta-row--touch .j-btn{ animation:none; }
   .veil{ display:none; }
 }

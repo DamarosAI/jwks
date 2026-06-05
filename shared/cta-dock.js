@@ -21,6 +21,7 @@
   var DOCK_MS = 1150;
   var UNDOCK_MS = 620;
   var dockRetry = null;
+  var syncQueued = false;
 
   function slotReady() {
     return endCap.classList.contains('cap--active')
@@ -75,13 +76,25 @@
   function sync() {
     if (shouldDock()) {
       requestAnimationFrame(function () { requestAnimationFrame(function () { dock(12); }); });
-    } else {
+    } else if (docked) {
       undock();
     }
   }
 
-  new MutationObserver(sync).observe(document.body, { attributes: true, attributeFilter: ['data-station', 'class'] });
-  new MutationObserver(sync).observe(endCap, { attributes: true, attributeFilter: ['class'], subtree: true, attributeOldValue: false });
+  function queueSync() {
+    if (syncQueued) return;
+    syncQueued = true;
+    requestAnimationFrame(function () {
+      syncQueued = false;
+      sync();
+    });
+  }
+
+  new MutationObserver(queueSync).observe(document.body, { attributes: true, attributeFilter: ['data-station', 'class'] });
+  new MutationObserver(queueSync).observe(endCap, { attributes: true, attributeFilter: ['class'] });
+  if (slotRow) {
+    new MutationObserver(queueSync).observe(slotRow, { attributes: true, attributeFilter: ['class'] });
+  }
   window.addEventListener('resize', function () { if (docked) dock(4); });
-  sync();
+  queueSync();
 })();
