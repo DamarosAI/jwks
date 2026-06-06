@@ -35,7 +35,7 @@ a{ color:inherit; text-decoration:none; }
 
 .sr-only{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; }
 .skip{ position:fixed; top:-120px; left:1rem; z-index:60; background:var(--jet2); color:var(--cold);
-  padding:.7rem 1rem; border:1px solid rgba(169,192,214,.3); border-radius:8px; transition:top .2s var(--ease); }
+  padding:.7rem 1rem; border:1px solid rgba(169,192,214,.3); border-radius:8px; transition:top .1s var(--ease); }
 .skip:focus{ top:1rem; }
 
 /* ---------------- opening beat: drum logo + topology, then hero copy ---------------- */
@@ -44,7 +44,7 @@ body.intro-hold .j-top,
 body.intro-hold .deck-nav,
 body.intro-hold .deck-progress,
 body.intro-hold .deck-hint,
-body.intro-hold .deck-legal{ opacity:0; pointer-events:none; transition:opacity .6s var(--ease); }
+body.intro-hold .deck-legal{ opacity:0; pointer-events:none; transition:opacity .3s var(--ease); }
 body:not(.intro-hold) .j-top,
 body:not(.intro-hold) .deck-nav,
 body:not(.intro-hold) .deck-progress,
@@ -53,7 +53,7 @@ body:not(.intro-hold) .deck-legal{ opacity:1; pointer-events:auto; }
 body.intro-hold .brand-motif img{
   --mo:.34; --flare:.72; --glow:.62;
   filter:brightness(1.22) drop-shadow(0 0 32px rgba(169,192,214,.48));
-  transition:opacity .8s var(--ease), filter .8s var(--ease);
+  transition:opacity .4s var(--ease), filter .4s var(--ease);
 }
 @media (prefers-reduced-motion: reduce){
   body.intro-hold .brand-motif img{ --mo:.28; --flare:.58; --glow:.5; filter:none; }
@@ -62,7 +62,7 @@ body.intro-hold .brand-motif img{
 body.end-hold[data-station="9"] .brand-motif img{
   --mo:.34; --flare:.72; --glow:.62;
   filter:brightness(1.22) drop-shadow(0 0 32px rgba(169,192,214,.48));
-  transition:opacity .8s var(--ease), filter .8s var(--ease);
+  transition:opacity .4s var(--ease), filter .4s var(--ease);
 }
 
 /* aberration overlay — fixed refraction layer above scenes, below captions/chrome */
@@ -77,14 +77,14 @@ body.end-hold[data-station="9"] .brand-motif img{
 .j-nav{ pointer-events:none; display:flex; align-items:center; gap:clamp(.7rem,1.8vw,1.5rem); }
 .j-nav > *{ pointer-events:auto; }
 .j-link{ font-family:var(--fb); font-size:.64rem; font-weight:600; letter-spacing:.18em; text-transform:uppercase;
-  color:var(--dim); transition:color .3s var(--ease); }
+  color:var(--dim); transition:color .15s var(--ease); }
 .j-link:hover{ color:var(--cold); }
 /* top-right CTA — matches the closing .j-btn (solid steel fill, jet text, 10px radius); a touch smaller for the header */
 .j-top .j-cta{ pointer-events:auto; position:relative; z-index:21; display:inline-flex; align-items:center; justify-content:center;
   gap:.5rem; font-family:var(--fb); font-size:.7rem; font-weight:600; letter-spacing:.16em; text-transform:uppercase;
   color:var(--jet); background:var(--steel); border:1px solid var(--steel); border-radius:10px; padding:.72rem 1.3rem;
   transform-origin:50% 50%;
-  transition:transform .25s var(--ease), box-shadow .25s var(--ease), background .25s var(--ease); }
+  transition:transform .125s var(--ease), box-shadow .125s var(--ease), background .125s var(--ease); }
 .j-top .j-cta:hover{ transform:translateY(-2px); box-shadow:0 12px 36px rgba(169,192,214,.28); background:#c2d5e6; }
 /* docked: the FLIP target is set inline by cta-dock.js; here we just light it up like the final CTA (box-shadow only,
    so the keyframes never fight the inline translate). */
@@ -102,9 +102,9 @@ body.end-hold[data-station="9"] .brand-motif img{
 .hud{ position:fixed; left:var(--page-gutter); top:50%; transform:translateY(-50%); z-index:20;
   display:flex; flex-direction:column; gap:1.05rem; pointer-events:none; }
 .hud-item{ display:flex; align-items:center; gap:.7rem; font-family:var(--fb); font-size:.6rem; font-weight:600;
-  letter-spacing:.2em; text-transform:uppercase; color:var(--dim); opacity:.5; transition:opacity .4s var(--ease), color .4s var(--ease); }
+  letter-spacing:.2em; text-transform:uppercase; color:var(--dim); opacity:.5; transition:opacity .2s var(--ease), color .2s var(--ease); }
 .hud-item .m{ width:7px; height:7px; border:1px solid var(--dim); transform:rotate(45deg);
-  transition:background .4s var(--ease), border-color .4s var(--ease), box-shadow .4s var(--ease); }
+  transition:background .2s var(--ease), border-color .2s var(--ease), box-shadow .2s var(--ease); }
 .hud-item .x{ font-variant-numeric:tabular-nums; color:var(--dim); }
 .hud-item.active{ opacity:1; color:var(--cold); }
 .hud-item.active .m{ background:var(--steel); border-color:var(--steel); box-shadow:0 0 10px rgba(169,192,214,.6); }
@@ -182,27 +182,27 @@ body.end-hold .cap--end [data-type] .rc{ opacity:0 !important; filter:none !impo
 .cap--hero .cap-lead{ margin-top:1.15rem; color:var(--cold); }
 .cap--hero .cap-body--one{ color:rgba(234,238,242,.74); }
 /* nav brand — hidden while the big landing logo owns the screen; settles into the top-left as you leave the hero */
-.j-brand{ transition:opacity .6s var(--ease), transform .6s var(--ease); }
+.j-brand{ transition:opacity .3s var(--ease), transform .3s var(--ease); }
 body[data-station="0"] .j-brand{ opacity:0; transform:translate(7px,5px) scale(1.14); pointer-events:none; }
 /* floating motif — the faint Damaros monogram behind the landing + closing; it GLOWS only when the cursor is near it */
 .brand-motif{ position:fixed; inset:0; z-index:2; display:grid; place-items:center; pointer-events:none;
-  opacity:0; transition:opacity 1s var(--ease); }
+  opacity:0; transition:opacity .5s var(--ease); }
 body[data-station="0"] .brand-motif, body[data-station="9"] .brand-motif{ opacity:1; }
 /* --glow (0..1) is set from cursor proximity in space.js; at --glow:0 there is NO halo at all (resting = faint mark only) */
 .brand-motif img{ width:auto; height:min(70vh,58vw); object-fit:contain; image-rendering:auto; user-select:none;
   --mo:.085; --flare:.42; --glow:0;
   opacity:calc(var(--mo) + (var(--flare) - var(--mo))*var(--glow));
   filter:drop-shadow(0 0 calc(26px*var(--glow)) rgba(169,192,214, calc(.6*var(--glow))));
-  transition:opacity .5s var(--ease), filter .5s var(--ease);
+  transition:opacity .25s var(--ease), filter .25s var(--ease);
   animation:motifDrift 22s var(--ease) infinite; }
 /* closer: a touch brighter at rest and a stronger peak when the cursor is near */
 @keyframes motifDrift{ 0%,100%{ transform:translateY(0) scale(1); } 50%{ transform:translateY(-1.2%) scale(1.018); } }
 @media (prefers-reduced-motion: reduce){ .brand-motif img{ animation:none; opacity:var(--mo); filter:none; } .j-brand,.brand-motif{ transition:none; } }
 
 /* micro-interactions — key words gain an underline trace + a small lock-in tick on hover */
-.kw{ position:relative; color:var(--cold); white-space:nowrap; cursor:default; transition:color .3s var(--ease); }
-.kw::after{ content:""; position:absolute; left:0; right:100%; bottom:-2px; height:1px; background:var(--steel); transition:right .45s var(--ease); }
-.kw::before{ content:""; position:absolute; right:-1px; bottom:-3.5px; width:3px; height:3px; transform:rotate(45deg) scale(0); background:var(--steel); transition:transform .3s var(--ease) .14s; }
+.kw{ position:relative; color:var(--cold); white-space:nowrap; cursor:default; transition:color .15s var(--ease); }
+.kw::after{ content:""; position:absolute; left:0; right:100%; bottom:-2px; height:1px; background:var(--steel); transition:right .23s var(--ease); }
+.kw::before{ content:""; position:absolute; right:-1px; bottom:-3.5px; width:3px; height:3px; transform:rotate(45deg) scale(0); background:var(--steel); transition:transform .15s var(--ease) .07s; }
 .kw:hover{ color:#fff; }
 .kw:hover::after{ right:0; }
 .kw:hover::before{ transform:rotate(45deg) scale(1); }
@@ -215,7 +215,7 @@ body[data-station="0"] .brand-motif, body[data-station="9"] .brand-motif{ opacit
 .chips{ display:flex; gap:.7rem; justify-content:center; margin-top:1rem; }
 .chip{ font-family:var(--fb); font-size:.62rem; font-weight:600; letter-spacing:.18em; text-transform:uppercase;
   padding:.42rem .8rem; border-radius:999px; border:1px solid rgba(124,138,153,.34); color:var(--dim); cursor:default;
-  transition:color .3s var(--ease), border-color .3s var(--ease), background .3s var(--ease), box-shadow .3s var(--ease); }
+  transition:color .15s var(--ease), border-color .15s var(--ease), background .15s var(--ease), box-shadow .15s var(--ease); }
 .chip--pass{ --c:var(--ok); }
 .chip--review{ --c:var(--amber); }
 .chip--fail{ --c:var(--breach); }
@@ -227,7 +227,7 @@ body[data-station="0"] .brand-motif, body[data-station="9"] .brand-motif{ opacit
 .cap-box{ flex:1 1 0; min-width:0; padding:1rem 1.15rem; border:1px solid rgba(169,192,214,.3); border-radius:12px;
   background:linear-gradient(180deg, rgba(169,192,214,.1), rgba(169,192,214,.035)), rgba(9,12,18,.62);
   -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px);
-  transition:border-color .3s var(--ease), background .3s var(--ease), box-shadow .3s var(--ease), transform .3s var(--ease); }
+  transition:border-color .15s var(--ease), background .15s var(--ease), box-shadow .15s var(--ease), transform .15s var(--ease); }
 .cap-box:hover{ border-color:var(--steel); background:linear-gradient(180deg, rgba(169,192,214,.17), rgba(169,192,214,.06)), rgba(12,16,23,.72);
   box-shadow:0 12px 34px rgba(5,7,11,.5); transform:translateY(-2px); }
 .cap-box-h{ display:block; font-family:var(--fb); font-weight:700; font-size:.9rem; letter-spacing:.005em; color:#f4f7fa; }
@@ -252,13 +252,13 @@ body[data-station="0"] .brand-motif, body[data-station="9"] .brand-motif{ opacit
 .cap--split.cap--mirror .cap-lead{ margin-left:auto; }
 
 /* scrubbed reveal unit */
-.cap-line{ opacity:0; transform:translateY(14px); transition:opacity .7s var(--ease), transform .7s var(--ease); will-change:opacity,transform; }
+.cap-line{ opacity:0; transform:translateY(14px); transition:opacity .35s var(--ease), transform .35s var(--ease); will-change:opacity,transform; }
 .cap-line.on{ opacity:1; transform:none; }
 /* scramble-resolve headline — each letter tumbles through random letters (same case, no symbols) and locks
    into place left to right. Letters hold a FIXED width (set inline by cap-intro.js) so nothing reflows / bounces. */
 .deck-caps [data-type]{ opacity:1 !important; transform:none !important; }
 .deck-caps [data-type] .rc{ display:inline-block; text-align:center; white-space:nowrap;
-  opacity:0; filter:blur(2px); transition:opacity .42s ease, filter .42s ease, color .42s ease; will-change:opacity, filter; }
+  opacity:0; filter:blur(2px); transition:opacity .21s ease, filter .21s ease, color .21s ease; will-change:opacity, filter; }
 .deck-caps [data-type] .rc.scram{ opacity:.5; color:var(--steel); filter:blur(2px); }
 .deck-caps [data-type] .rc.in{ opacity:1; color:inherit; filter:blur(0); }
 @media (prefers-reduced-motion: reduce){
@@ -278,7 +278,7 @@ body[data-station="0"] .brand-motif, body[data-station="9"] .brand-motif{ opacit
 .j-btn{ position:relative; display:inline-flex; align-items:center; justify-content:center; gap:.6rem;
   font-family:var(--fb); font-weight:600; font-size:.74rem; letter-spacing:.16em; text-transform:uppercase;
   padding:1.05rem 1.9rem; border-radius:10px; color:var(--jet); background:var(--steel);
-  border:1px solid var(--steel); transition:transform .25s var(--ease), box-shadow .25s var(--ease), background .25s var(--ease); }
+  border:1px solid var(--steel); transition:transform .125s var(--ease), box-shadow .125s var(--ease), background .125s var(--ease); }
 .j-btn:hover{ transform:translateY(-2px); box-shadow:0 14px 40px rgba(169,192,214,.28); background:#c2d5e6; }
 .j-btn--ghost{ color:var(--cold); background:transparent; border-color:rgba(169,192,214,.4); }
 .j-btn--ghost:hover{ background:rgba(169,192,214,.08); box-shadow:none; border-color:var(--steel); }

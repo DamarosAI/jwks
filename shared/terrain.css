@@ -16,18 +16,18 @@ body { overflow: hidden; }                 /* the journey is stepped, not scroll
 /* One block per station; only the active one is shown. Positioning + type are
    inherited from journey.css (.cap / .cap--center / .cap--right / .cap-title …). */
 .deck-caps { position: fixed; inset: 0; z-index: 3; pointer-events: none; }
-.deck-caps .cap { opacity: 0; transition: opacity .5s var(--ease); }
+.deck-caps .cap { opacity: 0; transition: opacity .25s var(--ease); }
 .deck-caps .cap.cap--active { opacity: 1; }
 .deck-caps .cap.cap--active a, .deck-caps .cap.cap--active button,
 .deck-caps .cap.cap--active .kw, .deck-caps .cap.cap--active .chip,
 .deck-caps .cap.cap--active .cap-box { pointer-events: auto; }
 /* gentle stagger of the lines as a station resolves */
-.deck-caps .cap-line { transition: opacity .7s var(--ease), transform .7s var(--ease); }
-.deck-caps .cap-line:nth-child(2) { transition-delay: .06s; }
-.deck-caps .cap-line:nth-child(3) { transition-delay: .14s; }
-.deck-caps .cap-line:nth-child(4) { transition-delay: .22s; }
-.deck-caps .cap-line:nth-child(5) { transition-delay: .30s; }
-.deck-caps .cap-line:nth-child(6) { transition-delay: .38s; }
+.deck-caps .cap-line { transition: opacity .35s var(--ease), transform .35s var(--ease); }
+.deck-caps .cap-line:nth-child(2) { transition-delay: .03s; }
+.deck-caps .cap-line:nth-child(3) { transition-delay: .07s; }
+.deck-caps .cap-line:nth-child(4) { transition-delay: .11s; }
+.deck-caps .cap-line:nth-child(5) { transition-delay: .15s; }
+.deck-caps .cap-line:nth-child(6) { transition-delay: .19s; }
 /* legibility over bright WebGL landmarks */
 .deck-caps .cap-ax, .deck-caps .cap-title, .deck-caps .cap-lead, .deck-caps .cap-support, .deck-caps .cap-body { text-shadow: 0 1px 16px rgba(5,7,11,.72), 0 0 5px rgba(5,7,11,.55); }
 /* every panel is centered now — give them all a soft radial backdrop so copy stays legible over the topology */
@@ -44,7 +44,7 @@ body { overflow: hidden; }                 /* the journey is stepped, not scroll
 .deck-arrow { display: inline-flex; align-items: center; justify-content: center; width: clamp(2.65rem, 6.5vw, 2.85rem); height: clamp(2.65rem, 6.5vw, 2.85rem);
   border-radius: 999px; border: 1px solid rgba(169,192,214,.28); background: rgba(12,17,24,.5);
   color: var(--steel); font-size: 1.2rem; line-height: 1; cursor: pointer; backdrop-filter: blur(6px);
-  transition: color .25s var(--ease), border-color .25s var(--ease), background .25s var(--ease), transform .25s var(--ease); }
+  transition: color .125s var(--ease), border-color .125s var(--ease), background .125s var(--ease), transform .125s var(--ease); }
 .deck-arrow:hover { color: var(--cold); border-color: var(--steel); transform: translateY(-1px); }
 .deck-arrow:disabled { opacity: .3; cursor: default; transform: none; }
 
@@ -54,12 +54,12 @@ body { overflow: hidden; }                 /* the journey is stepped, not scroll
 .deck-dot { position: relative; display: inline-flex; align-items: center; gap: .55rem; padding: 0;
   border: 1px solid transparent; border-radius: 999px; background: none; cursor: pointer;
   -webkit-tap-highlight-color: transparent; color: var(--dim);
-  transition: color .3s var(--ease), background .3s var(--ease), border-color .3s var(--ease), box-shadow .3s var(--ease); }
+  transition: color .15s var(--ease), background .15s var(--ease), border-color .15s var(--ease), box-shadow .15s var(--ease); }
 .deck-mark { display: block; width: clamp(11px, 1.15vw, 13px); height: clamp(11px, 1.15vw, 13px); flex: none;
   border: 1.5px solid rgba(169,192,214,.5); background: rgba(169,192,214,.07); transform: rotate(45deg);
-  transition: background .3s var(--ease), border-color .3s var(--ease), box-shadow .3s var(--ease), transform .3s var(--ease); }
+  transition: background .15s var(--ease), border-color .15s var(--ease), box-shadow .15s var(--ease), transform .15s var(--ease); }
 .deck-label { font-family: var(--fb); font-size: clamp(.6rem, .82vw, .68rem); font-weight: 600;
-  letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; transition: color .3s var(--ease); }
+  letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; transition: color .15s var(--ease); }
 /* endpoints (home + closer) stay bare diamonds; the three content sections are text tabs */
 .deck-dot--mark { padding: clamp(.32rem, .9vw, .42rem); }
 .deck-dot--label { padding: clamp(.42rem, .9vw, .5rem) clamp(.7rem, 1.4vw, 1rem); border-color: rgba(169,192,214,.16);
@@ -78,7 +78,7 @@ body { overflow: hidden; }                 /* the journey is stepped, not scroll
 /* arrows: a directional sheen leans the way you will travel */
 .deck-arrow { position: relative; overflow: hidden; }
 .deck-arrow::before { content: ""; position: absolute; inset: 0; border-radius: inherit; opacity: 0;
-  transition: opacity .3s var(--ease); pointer-events: none;
+  transition: opacity .15s var(--ease); pointer-events: none;
   background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--steel) 22%, transparent)); }
 .deck-arrow[data-next]:hover::before { background: linear-gradient(90deg, transparent 30%, color-mix(in srgb, var(--steel) 26%, transparent)); opacity: 1; }
 .deck-arrow[data-prev]:hover::before { background: linear-gradient(270deg, transparent 30%, color-mix(in srgb, var(--steel) 26%, transparent)); opacity: 1; }
@@ -86,19 +86,19 @@ body { overflow: hidden; }                 /* the journey is stepped, not scroll
 /* a thin global progress line at the very bottom */
 .deck-progress { position: fixed; left: 0; right: 0; bottom: 0; height: 2px; z-index: 22; background: rgba(169,192,214,.1); }
 .deck-progress span { display: block; height: 100%; transform-origin: left; transform: scaleX(0);
-  background: linear-gradient(90deg, var(--deep), var(--steel)); transition: transform .6s var(--ease); }
+  background: linear-gradient(90deg, var(--deep), var(--steel)); transition: transform .3s var(--ease); }
 
 /* one-time wayfinding hint, fades out on its own */
 .deck-hint { position: fixed; left: 50%; bottom: clamp(4.2rem, 11vh, 6rem); transform: translateX(-50%);
   z-index: 22; font-family: var(--fb); font-size: .58rem; font-weight: 600; letter-spacing: .22em;
   text-transform: uppercase; color: var(--dim); white-space: nowrap; pointer-events: none;
-  animation: deckhint 2.4s var(--ease) 5s forwards; }
+  animation: deckhint 1.2s var(--ease) 2.5s forwards; }
 @keyframes deckhint { to { opacity: 0; } }
 
 /* minimal legal access — Privacy stays reachable without breaking the terminal frame */
 .deck-legal { position: fixed; right: var(--page-gutter); bottom: clamp(1rem, 3.2vh, 1.7rem); z-index: 22;
   font-family: var(--fb); font-size: .56rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase;
-  color: var(--dim); opacity: .55; pointer-events: auto; transition: color .3s var(--ease), opacity .3s var(--ease); }
+  color: var(--dim); opacity: .55; pointer-events: auto; transition: color .15s var(--ease), opacity .15s var(--ease); }
 .deck-legal:hover { color: var(--steel); opacity: 1; }
 
 /* ---------------- responsive ---------------- */

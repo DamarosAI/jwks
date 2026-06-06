@@ -97,14 +97,14 @@
     return;
   }
 
-  var START_DELAY = 150;
-  var MIN_SCRAMBLE = 260;
-  var STAGGER = 58;          // per-letter cadence for the hero "Damaros" lockup (7 chars)
-  var SCRAMBLE_MS = 62;
-  var LOCK_DUR = 420;
+  var START_DELAY = 75;
+  var MIN_SCRAMBLE = 130;
+  var STAGGER = 29;          // per-letter cadence for the hero "Damaros" lockup (7 chars)
+  var SCRAMBLE_MS = 31;
+  var LOCK_DUR = 210;
   var REF_LAST_LOCK = START_DELAY + MIN_SCRAMBLE + 6 * STAGGER; // when "Damaros" fully resolves
   var REF_DONE = START_DELAY + MIN_SCRAMBLE + (7 - 2) * STAGGER + LOCK_DUR * 0.4; // tagline float-in beat
-  var FLOAT_STAGGER = 95;
+  var FLOAT_STAGGER = 48;
 
   function randCh(ch) {
     if (ch >= 'A' && ch <= 'Z') return String.fromCharCode(65 + (Math.random() * 26 | 0));

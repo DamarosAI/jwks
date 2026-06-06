@@ -539,7 +539,7 @@ if (BLOOM) {
  * ============================================================ */
 let cur = 0, target = 0, flying = false, morphStart = performance.now() - 9999, frames = 0;
 let starBurstT = 0;   // Node-hover star-burst target (the loop eases W.uBurst toward this)
-const MORPH_MS = 1700;
+const MORPH_MS = 850;
 let morphMs = MORPH_MS, flightAssemble = 1;   // per-flight: skips reconfigure faster + compress harder through a shared core
 const pointer = new THREE.Vector2(0, 0); let ptrHas = false;
 
@@ -547,7 +547,7 @@ function go(i) {
   i = Math.max(0, Math.min(NS - 1, Math.round(i))); if (i === target && !flying) return;
   // transition character by jump distance: adjacent = full cinematic morph; skip = faster "system reconfiguration"
   const fromS = flying ? target : cur, jump = Math.abs(i - fromS);
-  morphMs = jump >= 3 ? 1300 : (jump === 2 ? 1500 : 1700);
+  morphMs = jump >= 3 ? 650 : (jump === 2 ? 750 : 850);
   flightAssemble = (fromS === 0 && i === 1) ? 2.1 : (1.0 + Math.min(Math.max(jump - 1, 0), 8) * 0.16);   // compress through a shared core on skips; lightspeed into Protocol
   // snapshot the CURRENT interpolated positions into the 'from' buffer (seamless continuation).
   // MUST mirror the shader's per-particle stagger + smootherstep exactly.
@@ -617,7 +617,7 @@ function setCaps(idx) {
   }
 }
 function revealEndCap() { setCaps(9); }
-const END_HOLD_MS = REDUCED ? 500 : 900;
+const END_HOLD_MS = REDUCED ? 250 : 450;
 let endHoldTimer = null;
 function clearEndHold() { clearTimeout(endHoldTimer); endHoldTimer = null; document.body.classList.remove('end-hold'); }
 function arriveAt(idx) {
@@ -808,8 +808,8 @@ setCaps(-1);   // drum logo + topology only for the opening beat — hero copy l
 try { renderer.compile(scene, camera); } catch (e) { /* older three builds */ }
 warmed = true;
 requestAnimationFrame(frame);
-setTimeout(function () { document.body.classList.add('world-ready'); }, 800);   // safety net: reveal the canvas even if rAF is throttled at load
-const INTRO_MS = REDUCED ? 500 : 900;
+setTimeout(function () { document.body.classList.add('world-ready'); }, 400);   // safety net: reveal the canvas even if rAF is throttled at load
+const INTRO_MS = REDUCED ? 250 : 450;
 setTimeout(() => {
   document.body.classList.remove('intro-hold');
   document.documentElement.classList.remove('intro-hold');

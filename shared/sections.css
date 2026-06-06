@@ -3,7 +3,7 @@
  * ============================================================ */
 
 /* smooth WebGL fade-in — no glitchy first-frame pop */
-#world { opacity: 0; transition: opacity 1.1s ease; }
+#world { opacity: 0; transition: opacity .55s ease; }
 body.world-ready #world { opacity: 1; }
  *   · Execution Spine  (Protocol · Evidence · Screening · Replay)
  *       a governed pipeline scrubbed through one stage-rail.
@@ -75,7 +75,7 @@ body.world-ready #world { opacity: 1; }
   border: 1px solid rgba(169, 192, 214, .2); border-radius: 16px;
   background: linear-gradient(180deg, rgba(169, 192, 214, .07), rgba(169, 192, 214, .02)), rgba(8, 11, 17, .55);
   -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
-  transition: border-color .4s var(--ease), box-shadow .4s var(--ease), transform .4s var(--ease);
+  transition: border-color .2s var(--ease), box-shadow .2s var(--ease), transform .2s var(--ease);
 }
 .es-stage-card:hover .es-stage-cards { border-color: rgba(169, 192, 214, .42); box-shadow: 0 14px 40px rgba(5, 7, 11, .5); transform: translateY(-2px); }
 /* open, editorial rows (no box-in-box) so the section breathes instead of reading as a wall of text */
@@ -117,8 +117,8 @@ body.world-ready #world { opacity: 1; }
   padding: clamp(1.1rem, 2.4vw, 1.5rem); border: 1px solid rgba(169, 192, 214, .22); border-radius: 14px;
   background: linear-gradient(180deg, rgba(169, 192, 214, .07), rgba(169, 192, 214, .02)), rgba(8, 11, 17, .55);
   -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
-  transition: border-color .4s var(--ease), background .4s var(--ease),
-              box-shadow .4s var(--ease), opacity .5s var(--ease);
+  transition: border-color .2s var(--ease), background .2s var(--ease),
+              box-shadow .2s var(--ease), opacity .25s var(--ease);
 }
 .ti-half:hover { border-color: rgba(169, 192, 214, .42); box-shadow: 0 14px 40px rgba(5, 7, 11, .5); }
 /* the active vantage half (terrain emphasis follows scroll 7↔8) leans forward; the other recedes slightly */
@@ -151,14 +151,14 @@ body.world-ready #world { opacity: 1; }
     repeating-linear-gradient(90deg, rgba(169, 192, 214, .1) 0 1px, transparent 1px 9px),
     rgba(169, 192, 214, .03);
   box-shadow: inset 0 0 14px rgba(5, 7, 11, .5);
-  transition: border-color .45s var(--ease), box-shadow .45s var(--ease);
+  transition: border-color .23s var(--ease), box-shadow .23s var(--ease);
 }
 .ti-sq--s { width: clamp(33px, 4.4vw, 44px); height: clamp(33px, 4.4vw, 44px); border-radius: 8px; }
 .ti-sq--m { width: clamp(46px, 5.9vw, 62px); height: clamp(46px, 5.9vw, 62px); }
 .ti-sq--l { width: clamp(59px, 7.7vw, 79px); height: clamp(59px, 7.7vw, 79px); border-radius: 12px; }
 .ti-sq::after {
   content: ""; position: absolute; inset: 30%; border-radius: 3px;
-  background: rgba(169, 192, 214, .16); transition: background .45s var(--ease), box-shadow .45s var(--ease);
+  background: rgba(169, 192, 214, .16); transition: background .23s var(--ease), box-shadow .23s var(--ease);
 }
 /* node emit — each site pulses green on its own random clock (re-rolled per hover in JS) */
 .ti-node.is-firing .ti-sq { will-change: border-color, box-shadow; animation: tiSite var(--dur, 1.4s) var(--ease) var(--d, 0s) infinite; }
@@ -191,7 +191,7 @@ body.world-ready #world { opacity: 1; }
 .ti-cell {
   border-radius: 3px; background: rgba(169, 192, 214, .08);
   border: 1px solid rgba(169, 192, 214, .12);
-  transition: background .45s var(--ease), border-color .45s var(--ease), box-shadow .45s var(--ease);
+  transition: background .23s var(--ease), border-color .23s var(--ease), box-shadow .23s var(--ease);
 }
 /* reading — cells pulse on their own random clock; a few flag green / amber each pass */
 .ti-sponsor.is-reading .ti-cell { will-change: background, border-color, box-shadow; animation: tiCell var(--dur, 1.6s) var(--ease) var(--d, 0s) infinite; }
@@ -239,7 +239,7 @@ body.world-ready #world { opacity: 1; }
   padding: clamp(1.1rem, 2.4vw, 1.5rem); border: 1px solid rgba(169, 192, 214, .22); border-radius: 14px;
   background: linear-gradient(180deg, rgba(169, 192, 214, .07), rgba(169, 192, 214, .02)), rgba(8, 11, 17, .55);
   -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
-  transition: border-color .4s var(--ease), box-shadow .4s var(--ease), transform .4s var(--ease);
+  transition: border-color .2s var(--ease), box-shadow .2s var(--ease), transform .2s var(--ease);
 }
 .ps-half:hover { border-color: rgba(169, 192, 214, .42); box-shadow: 0 14px 40px rgba(5, 7, 11, .5); transform: translateY(-2px); }
 .ps-half--luna { border-color: color-mix(in srgb, var(--luna) 32%, rgba(169, 192, 214, .22)); }
@@ -289,7 +289,7 @@ body.world-ready #world { opacity: 1; }
 
 /* LUNA — three oblique governance rings built from cleanly-spaced dots; turn CW · CCW · CW on engage */
 .luna-svg { width: clamp(136px, 19.8vw, 178px); height: auto; }
-.luna-ring circle { fill: var(--luna); opacity: .42; transition: opacity .4s var(--ease); }
+.luna-ring circle { fill: var(--luna); opacity: .42; transition: opacity .2s var(--ease); }
 .luna-ring {
   transform-box: fill-box; transform-origin: center;
   -webkit-backface-visibility: hidden; backface-visibility: hidden;
@@ -399,8 +399,8 @@ body.world-ready #world { opacity: 1; }
   .hswipe-nav { position: relative; display: grid; grid-auto-flow: column; justify-content: center; gap: clamp(1.3rem, 7vw, 2.8rem); width: fit-content; max-width: 100%; margin: clamp(.75rem, 2.6vh, 1.05rem) auto 0; }
   .hswipe-nav::before { content: ""; position: absolute; left: 14%; right: 14%; top: 9px; height: 2px; background: rgba(169, 192, 214, .18); }
   .hswipe-node { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: .5rem; padding: 0; border: 0; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-  .hswipe-node .d { width: 13px; height: 13px; transform: rotate(45deg); border: 1.5px solid rgba(169, 192, 214, .5); background: rgba(169, 192, 214, .06); transition: background .35s var(--ease), border-color .35s var(--ease), box-shadow .35s var(--ease), transform .35s var(--ease); }
-  .hswipe-node .l { font-family: var(--fb); font-size: .58rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); white-space: nowrap; transition: color .35s var(--ease); }
+  .hswipe-node .d { width: 13px; height: 13px; transform: rotate(45deg); border: 1.5px solid rgba(169, 192, 214, .5); background: rgba(169, 192, 214, .06); transition: background .18s var(--ease), border-color .18s var(--ease), box-shadow .18s var(--ease), transform .18s var(--ease); }
+  .hswipe-node .l { font-family: var(--fb); font-size: .58rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); white-space: nowrap; transition: color .18s var(--ease); }
   .hswipe-node.on .d { background: var(--steel); border-color: var(--steel); box-shadow: 0 0 14px rgba(169, 192, 214, .6); transform: rotate(45deg) scale(1.16); }
   .hswipe-node.on .l { color: var(--cold); }
 }

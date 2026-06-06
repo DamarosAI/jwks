@@ -18,8 +18,8 @@
   var slotRow = slot.closest('.cap-line');
 
   var docked = false;
-  var DOCK_MS = 1150;
-  var UNDOCK_MS = 620;
+  var DOCK_MS = 575;
+  var UNDOCK_MS = 310;
   var dockRetry = null;
   var syncQueued = false;
 
