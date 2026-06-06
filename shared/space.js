@@ -637,7 +637,25 @@ function sectionRevealLocked() {
   return intro && intro.revealUntil != null && performance.now() < intro.revealUntil;
 }
 function syncNavLockClass() { document.body.classList.toggle('deck-nav-locked', navLocked()); }
-function syncUI() { const shown = flying ? target : cur; const g = groupOf(shown); if (document.body.dataset.station !== String(shown)) document.body.dataset.station = String(shown); if (counterEl) counterEl.textContent = ('0' + (g + 1)).slice(-2) + ' / ' + ('0' + GROUPS.length).slice(-2); if (progEl) progEl.style.transform = `scaleX(${(g / (GROUPS.length - 1)).toFixed(4)})`; for (let i = 0; i < dots.length; i++) dots[i].classList.toggle('active', i === g); const bp = document.querySelector('[data-prev]'), bn = document.querySelector('[data-next]'); if (bp) bp.disabled = navLocked() || (shown <= 0 && !flying); if (bn) bn.disabled = navLocked() || (shown >= NS - 1 && !flying); syncNavLockClass(); }
+let _idleKey = '', _idleSince = 0;
+const SWIPE_IDLE_MS = 5000;
+function idlePageKey() {
+  if (flying || navLocked() || document.body.classList.contains('intro-hold')) return '';
+  const hs = MOBILE ? activeHSwipeEl() : null;
+  const sub = hs && hs._hswipeCommitted != null ? hs._hswipeCommitted : 0;
+  return cur + ':' + sub;
+}
+function syncFooterChrome() {
+  document.body.classList.toggle('deck-on-home', !flying && cur === 0);
+  if (!MOBILE) { document.body.classList.remove('deck-swipe-on', 'deck-swipe--flash'); return; }
+  const showSwipe = !flying && cur !== 9 && !document.body.classList.contains('intro-hold');
+  document.body.classList.toggle('deck-swipe-on', showSwipe);
+  const key = showSwipe ? idlePageKey() : '';
+  if (!key) { _idleKey = ''; document.body.classList.remove('deck-swipe--flash'); return; }
+  if (key !== _idleKey) { _idleKey = key; _idleSince = performance.now(); document.body.classList.remove('deck-swipe--flash'); }
+  else if (performance.now() - _idleSince >= SWIPE_IDLE_MS) document.body.classList.add('deck-swipe--flash');
+}
+function syncUI() { const shown = flying ? target : cur; const g = groupOf(shown); if (document.body.dataset.station !== String(shown)) document.body.dataset.station = String(shown); if (counterEl) counterEl.textContent = ('0' + (g + 1)).slice(-2) + ' / ' + ('0' + GROUPS.length).slice(-2); if (progEl) progEl.style.transform = `scaleX(${(g / (GROUPS.length - 1)).toFixed(4)})`; for (let i = 0; i < dots.length; i++) dots[i].classList.toggle('active', i === g); const bp = document.querySelector('[data-prev]'), bn = document.querySelector('[data-next]'); if (bp) bp.disabled = navLocked() || (shown <= 0 && !flying); if (bn) bn.disabled = navLocked() || (shown >= NS - 1 && !flying); syncNavLockClass(); syncFooterChrome(); }
 
 /* ---------- micro-interactions ---------- */
 // arrow hover → directional current
