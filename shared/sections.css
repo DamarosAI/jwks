@@ -121,8 +121,7 @@ body.world-ready #world { opacity: 1; }
               box-shadow .2s var(--ease), opacity .25s var(--ease);
 }
 .ti-half:hover { border-color: rgba(169, 192, 214, .42); box-shadow: 0 14px 40px rgba(5, 7, 11, .5); }
-/* the active vantage half (terrain emphasis follows scroll 7↔8) leans forward; the other recedes slightly */
-.ti-split.has-emph .ti-half:not(.is-emph) { opacity: .62; }
+/* active half gets a stronger border; both halves stay full opacity side-by-side */
 .ti-half.is-emph { border-color: rgba(169, 192, 214, .4); }
 
 .ti-half-head h3 {
