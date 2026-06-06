@@ -110,23 +110,30 @@ body.deck-nav-locked .deck-nav { pointer-events: none; opacity: .55; }
 body.deck-on-home:not(.intro-hold) .deck-legal { opacity: .55; visibility: visible; pointer-events: auto; }
 .deck-legal:hover { color: var(--steel); opacity: 1; }
 
-/* mobile wayfinding — bottom-right, above Privacy */
+/* mobile wayfinding — bottom-right */
 .deck-swipe { display: none; }
 .deck-swipe__label {
   font-family: var(--fb); font-size: .56rem; font-weight: 600; letter-spacing: .2em;
-  text-transform: uppercase; color: var(--dim); opacity: .62; white-space: nowrap;
+  text-transform: uppercase; color: var(--cold); opacity: .88; white-space: nowrap; line-height: 1;
 }
 .deck-swipe__arrow {
-  display: block; width: 1px; height: 13px; margin: 0 auto .38rem;
+  display: block; width: 1px; height: 8px; margin: 0 auto;
   background: linear-gradient(to top, transparent, var(--steel));
-  opacity: .72; position: relative;
+  opacity: .92; position: relative;
 }
 .deck-swipe__arrow::before {
   content: ""; position: absolute; top: 0; left: 50%;
-  width: 5px; height: 5px; margin-left: -2.5px;
+  width: 3px; height: 3px; margin-left: -1.5px;
   border-top: 1px solid var(--steel); border-left: 1px solid var(--steel);
   transform: rotate(45deg); transform-origin: center;
 }
+.deck-swipe__arrow--up { margin-bottom: .14rem; }
+.deck-swipe__arrow--down {
+  margin-top: .14rem;
+  transform: scaleY(-1);
+}
+body.deck-swipe-mode-up .deck-swipe__arrow--down { display: none; }
+body.deck-swipe-mode-down .deck-swipe__arrow--up { display: none; }
 
 /* ---------------- responsive ---------------- */
 @media (max-width: 820px) {
@@ -141,32 +148,34 @@ body.deck-on-home:not(.intro-hold) .deck-legal { opacity: .55; visibility: visib
   .deck-swipe {
     display: none; flex-direction: column; align-items: center;
     position: fixed; right: var(--page-gutter); z-index: 22; pointer-events: none;
-    bottom: clamp(1rem, 3.2vh, 1.7rem); opacity: .34;
-    transition: opacity .25s var(--ease);
+    bottom: clamp(1rem, 3.2vh, 1.7rem); opacity: .82;
+    transition: opacity .35s var(--ease);
   }
   body.deck-swipe-on .deck-swipe { display: flex; }
   body.deck-on-home.deck-swipe-on .deck-swipe { bottom: clamp(2.35rem, 5.8vh, 3.15rem); }
-  body.deck-swipe--flash .deck-swipe { animation: swipeCue 1.05s var(--ease) infinite; }
-  body.deck-swipe--flash .deck-swipe__arrow { animation: swipeArrowCue 1.05s var(--ease) infinite; }
-  body.deck-swipe--flash .deck-swipe__label { animation: swipeLabelCue 1.05s var(--ease) infinite; }
+  body.deck-swipe--pulse .deck-swipe { animation: swipePulse 2.8s ease-in-out infinite; }
+  body.deck-swipe--pulse.deck-swipe-mode-up .deck-swipe__arrow--up { animation: swipeNudgeUp 2.8s ease-in-out infinite; }
+  body.deck-swipe--pulse.deck-swipe-mode-down .deck-swipe__arrow--down { animation: swipeNudgeDown 2.8s ease-in-out infinite; }
+  body.deck-swipe--pulse.deck-swipe-mode-both .deck-swipe__arrow--up { animation: swipeNudgeUp 2.8s ease-in-out infinite; }
+  body.deck-swipe--pulse.deck-swipe-mode-both .deck-swipe__arrow--down { animation: swipeNudgeDown 2.8s ease-in-out infinite; }
 }
-@keyframes swipeCue {
-  0%, 100% { opacity: .34; }
+@keyframes swipePulse {
+  0%, 100% { opacity: .82; }
   50% { opacity: 1; }
 }
-@keyframes swipeArrowCue {
-  0%, 100% { opacity: .55; transform: translateY(0); }
-  50% { opacity: 1; transform: translateY(-4px); }
+@keyframes swipeNudgeUp {
+  0%, 100% { opacity: .88; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(-2px); }
 }
-@keyframes swipeLabelCue {
-  0%, 100% { opacity: .5; }
-  50% { opacity: 1; }
+@keyframes swipeNudgeDown {
+  0%, 100% { opacity: .88; transform: scaleY(-1) translateY(0); }
+  50% { opacity: 1; transform: scaleY(-1) translateY(-2px); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .deck-caps .cap, .deck-caps .cap-line { transition: none; }
   .deck-hint { animation: none; opacity: .4; }
-  body.deck-swipe--flash .deck-swipe { animation: none; opacity: .85; }
+  body.deck-swipe--pulse .deck-swipe { animation: none; opacity: .95; }
   .deck-mark, .deck-arrow::before { transition: none; }
 }
 @media (hover: none) {
