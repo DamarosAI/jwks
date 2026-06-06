@@ -286,6 +286,7 @@ const W = { uTime: { value: 0 }, uSection: { value: 0 }, uHue: { value: COL.stee
 syncViewport();
 W.uBurst = { value: 0 };   // star-twinkle burst (Node hover) — shared by both star shells
 const W_PROV = [0.06, 0.10, 0.30, 0.12, 0.55, 0.14, 0.95, 0.20, 0.24, 0.34];
+const TERRAIN_PROV = [W_PROV[0], W_PROV[1], W_PROV[5], W_PROV[7], W_PROV[9]];   // 5 deck stops only — home · spine · substrate · intel · closer
 const SEG_X = SOFT ? 70 : (MOBILE ? 88 : 176), SEG_Y = SOFT ? 74 : (MOBILE ? 100 : 184);   // mobile: lighter mesh for smoother fps
 const PLANE_D = MOBILE ? 520 : 440;
 const NODE_N = SOFT ? 90 : (MOBILE ? 160 : 300);   // fewer distant nodes — quieter, darker background
@@ -309,7 +310,7 @@ scene.add(deepLayer, midLayer);
 // DEEP — one curved topology terrain plane (grid + contour lines + grain)
 function makeDeepTerrain() {
   const g = new THREE.PlaneGeometry(420, PLANE_D, SEG_X, SEG_Y); g.rotateX(-Math.PI * 0.5);   // deeper plane: the near edge overshoots toward the camera so the bottom never runs out of terrain
-  // the terrain BECOMES each instrument as uSection eases (triangular weights = pop-free crossfade)
+  // terrain morphs across 5 deck stops only (home · spine · substrate · intel · closer) — not per-vantage
   const vert = SNOISE + `
     uniform float uTime, uSection, uHover, uFinal; uniform vec2 uViewport;
     varying vec3 vWorld; varying float vFog, vH, vRidge, vFill;
@@ -320,22 +321,16 @@ function makeDeepTerrain() {
       float s1 = snoise(vec3(p.x*0.010, p.z*0.010, uTime*0.015));
       float s2 = snoise(vec3(p.x*0.026+4.0, p.z*0.022-2.0, uTime*0.022));
       float h = bowl + s1*7.0 + s2*3.0;
-      float wProt=secW(uSection,1.0), wEvid=secW(uSection,2.0), wRepl=secW(uSection,4.0), wTri=secW(uSection,5.0), wNode=secW(uSection,7.0), wCons=secW(uSection,8.0), wFin=secW(uSection,9.0);
+      float wSpine=secW(uSection,1.0), wSub=secW(uSection,2.0), wIntel=secW(uSection,3.0), wClose=secW(uSection,4.0);
       vRidge = 0.0;
-      // PROTOCOL — vertical strata: kill Z swell, raise standing X ridges
-      { float ridgeX = sin(p.x*0.05)*4.5; float flatZ = mix(h, bowl + s1*7.0*0.3, 0.85); h = mix(h, mix(flatZ, ridgeX, 0.5), wProt); }
-      // EVIDENCE — a ridge + flanking troughs at the trust boundary x=0
-      { float d = p.x/26.0; float ridge = exp(-d*d)*9.0; float trough = -exp(-(abs(d)-0.6)*(abs(d)-0.6)*6.0)*2.2; vRidge = exp(-d*d*4.0)*wEvid; h = mix(h, h*0.5 + ridge + trough, wEvid); }
-      // REPLAY — concentric memory waves, gently dished to center
-      { float rad = length(p.xz); float arcs = sin(rad*0.10 - uTime*0.25)*1.3; h = mix(h, h*0.72 + arcs - rad*0.012, wRepl); }
-      // TRIDENT — calibration: flatten the swells
-      h = mix(h, bowl + s1*1.5, wTri);
-      // NODE — lift toward camera + tighten (closer, tactile)
-      { float local = h*0.45 + sin(p.x*0.12)*0.6 + cos(p.z*0.12)*0.6; h = mix(h, local + 4.0, wNode); }
-      // CONSOLE — widen to a broad routing plain (network scale)
-      { float wide = bowl*0.5 + snoise(vec3(p.x*0.006, p.z*0.006, uTime*0.01))*5.0; h = mix(h, wide, wCons); }
-      // FINAL — the closing climax: a rising, surging field that builds with uFinal
-      { float radf = length(p.xz); float surge = sin(radf*0.05 - uTime*0.9)*2.0 + sin(uTime*0.5 + radf*0.02)*1.2; h = mix(h, bowl*0.7 + s1*2.0 + surge*(0.45+0.55*uFinal), wFin); }
+      // SPINE — vertical strata (unified execution spine)
+      { float ridgeX = sin(p.x*0.05)*4.5; float flatZ = mix(h, bowl + s1*7.0*0.3, 0.85); h = mix(h, mix(flatZ, ridgeX, 0.5), wSpine); }
+      // SUBSTRATE — calibration: flatten the swells
+      h = mix(h, bowl + s1*1.5, wSub);
+      // INTEL — lift toward camera + tighten
+      { float local = h*0.45 + sin(p.x*0.12)*0.6 + cos(p.z*0.12)*0.6; h = mix(h, local + 4.0, wIntel); }
+      // CLOSER — rising, surging field
+      { float radf = length(p.xz); float surge = sin(radf*0.05 - uTime*0.9)*2.0 + sin(uTime*0.5 + radf*0.02)*1.2; h = mix(h, bowl*0.7 + s1*2.0 + surge*(0.45+0.55*uFinal), wClose); }
       // CARD HOVER — the topology breathes upward and ripples while a sub-block is hovered (leaned-in interaction)
       if (uHover > 0.001){ float radh = length(p.xz); h += (sin(radh*0.09 - uTime*1.4)*0.75 + exp(-radh*radh*0.00028)*1.05) * uHover; }
       // near apron: flatten overshoot toward camera so wireframe fills the bottom of tall/mobile viewports
@@ -351,10 +346,10 @@ function makeDeepTerrain() {
       gl_Position = projectionMatrix * mv;
     }`;
   const GO = (MOBILE || SOFT) ? 1 : 2;
-  const gGrid = MOBILE ? 0.56 : 0.42, gCont = MOBILE ? 0.76 : 0.6;
-  const gLineL = MOBILE ? 0.48 : 0.35, gLineH = MOBILE ? 0.52 : 0.65;
-  const gAlphaB = MOBILE ? 0.07 : 0.05, gAlphaL = MOBILE ? 0.52 : 0.42;
-  const gFog = MOBILE ? 0.88 : 0.94, gRevA = MOBILE ? 0.26 : 0.18, gRevB = MOBILE ? 0.44 : 0.52;
+  const gGrid = MOBILE ? 0.504 : 0.378, gCont = MOBILE ? 0.684 : 0.54;
+  const gLineL = MOBILE ? 0.432 : 0.315, gLineH = MOBILE ? 0.468 : 0.585;
+  const gAlphaB = MOBILE ? 0.063 : 0.045, gAlphaL = MOBILE ? 0.468 : 0.378;
+  const gFog = MOBILE ? 0.88 : 0.94, gRevA = MOBILE ? 0.234 : 0.162, gRevB = MOBILE ? 0.396 : 0.468;
   const frag = `
     precision highp float; uniform float uTime, uReveal, uSection, uProv, uFinal, uSoft; uniform vec3 uHue, uOk, uAmber, uBreach, uLuna;
     varying vec3 vWorld; varying float vFog, vH, vRidge, vFill;
@@ -365,27 +360,21 @@ function makeDeepTerrain() {
     // edge (even head-on in the foreground where fwidth is tiny) -> kills the hard edges on every topology line
     float gridLine(float c, float w){ float d=abs(fract(c)-0.5); float aa=fwidth(c)+1e-4; float hw=max(w, aa*0.5); float soft=aa*4.5+0.022+uSoft; return 1.0-smoothstep(hw*0.5, hw+soft, d); }
     void main(){
-      float wProt=secW(uSection,1.0), wEvid=secW(uSection,2.0), wScr=secW(uSection,3.0), wRepl=secW(uSection,4.0), wTri=secW(uSection,5.0), wLuna=secW(uSection,6.0), wNode=secW(uSection,7.0), wCons=secW(uSection,8.0);
-      vec2 gf = vec2(0.05);                             // evidence reference spacing — every section clusters near this now
-      gf = mix(gf, vec2(0.060,0.050), wProt);           // protocol: faint vertical lean, evidence-like density
-      gf = mix(gf, vec2(0.055), wTri);                  // trident: evidence-like (a hair finer)
-      gf = mix(gf, vec2(0.058), wNode);                 // node: evidence-like
-      gf = mix(gf, vec2(0.045), wCons);                 // console: evidence-like (a hair wider)
-      gf = mix(gf, vec2(0.044), wRepl);                 // replay: evidence-like (rings stay readable)
+      float wSpine=secW(uSection,1.0), wSub=secW(uSection,2.0), wIntel=secW(uSection,3.0), wClose=secW(uSection,4.0);
+      vec2 gf = vec2(0.05);
+      gf = mix(gf, vec2(0.060,0.050), wSpine);
+      gf = mix(gf, vec2(0.055), wSub);
+      gf = mix(gf, vec2(0.058), wIntel);
       vec2 gw = vWorld.xz;
-      float rad = length(vWorld.xz); float ang = atan(vWorld.z, vWorld.x);
-      gw = mix(gw, vec2(rad, ang*6.0), wRepl);          // replay: polar rings + spokes
-      float gx = gridLine(gw.x*gf.x, 0.012), gz = gridLine(gw.y*gf.y, 0.012);
+      float gx = gridLine(gw.x*gf.x, 0.0096), gz = gridLine(gw.y*gf.y, 0.0096);
       float grid = max(gx,gz)*${gGrid};
-      float contFreq = mix(0.18, 0.34, wTri), contW = mix(0.05, 0.035, wTri);
+      float contFreq = mix(0.18, 0.34, wSub), contW = mix(0.04, 0.028, wSub);
       float contour = gridLine(vH*contFreq, contW)*${gCont};
-      float memArc = gridLine(rad*0.085 - uTime*0.04, 0.05);
-      contour = mix(contour, max(contour, memArc*0.35), wRepl);
-      float gr = grain(gl_FragCoord.xy*0.5 + floor(uTime*7.0)) * mix(0.035, 0.008, wTri);
+      float gr = grain(gl_FragCoord.xy*0.5 + floor(uTime*7.0)) * mix(0.035, 0.008, wSub);
       float lines = grid + contour;
       vec3 base = mix(vec3(0.012,0.018,0.030), vec3(0.02,0.035,0.06), clamp(-vH*0.04,0.0,1.0));
-      vec3 lineHue = uHue;                              // stone blue everywhere — no per-section state tint on lines
-      float contrast = 1.0 + wTri*0.8;                  // trident: lines punch harder
+      vec3 lineHue = uHue;
+      float contrast = 1.0 + wSub*0.8;
       vec3 col = base + lineHue*lines*contrast*(${gLineL}+${gLineH}*uReveal) + gr;
       float fogK = vFog * mix(${gFog}, ${MOBILE ? '0.68' : '0.86'}, vFill * 0.9);
       col *= (1.0 - fogK);
@@ -689,10 +678,13 @@ function frame() {
   }
   camera.lookAt(lookCur); camera.updateMatrixWorld();
 
-  // ---- world layers: eased state + parallax (deep drifts less than mid) ----
-  W.uSection.value += (shown - W.uSection.value) * (REDUCED ? 1 : (1 - Math.exp(-dt * 2.4)));
+  // ---- world layers: terrain morphs only during main-deck flights (5 stops, not per-vantage) ----
+  const deckFrom = groupOf(cur), deckTo = groupOf(target);
+  if (flying) W.uSection.value = deckFrom + (deckTo - deckFrom) * smoother(mp);
+  else W.uSection.value = groupOf(cur);
   _wReveal += ((firstFrame ? 1 : 0) - _wReveal) * (1 - Math.exp(-dt * 0.8)); W.uReveal.value = REDUCED ? 1 : _wReveal;
-  const si = Math.round(W.uSection.value); W.uHue.value.copy(COL.steel); W.uProvenance.value += (W_PROV[si] - W.uProvenance.value) * (1 - Math.exp(-dt * 1.4));
+  const si = clamp(Math.round(W.uSection.value), 0, TERRAIN_PROV.length - 1);
+  W.uHue.value.copy(COL.steel); W.uProvenance.value += (TERRAIN_PROV[si] - W.uProvenance.value) * (1 - Math.exp(-dt * 1.4));
   // sub-block hover: eased intensity (fast in, slow out) — brighten/ripple only, hue stays stone blue
   hoverBoost = damp(hoverBoost, hoverTarget, hoverTarget > hoverBoost ? 9 : 3.2, dt); W.uHover.value = hoverBoost;
   if (hoverBoost > 0.001) W.uReveal.value = Math.min(1, W.uReveal.value + hoverBoost * 0.5);
