@@ -114,12 +114,12 @@ body.deck-on-home:not(.intro-hold) .deck-legal { opacity: .55; visibility: visib
 .deck-swipe { display: none; }
 .deck-swipe__label {
   font-family: var(--fb); font-size: .56rem; font-weight: 600; letter-spacing: .2em;
-  text-transform: uppercase; color: var(--cold); opacity: .88; white-space: nowrap; line-height: 1;
+  text-transform: uppercase; color: var(--cold); opacity: .7; white-space: nowrap; line-height: 1;
 }
 .deck-swipe__arrow {
   display: block; width: 1px; height: 8px; margin: 0 auto;
   background: linear-gradient(to top, transparent, var(--steel));
-  opacity: .92; position: relative;
+  opacity: .74; position: relative;
 }
 .deck-swipe__arrow::before {
   content: ""; position: absolute; top: 0; left: 50%;
@@ -148,7 +148,7 @@ body.deck-swipe-mode-down .deck-swipe__arrow--up { display: none; }
   .deck-swipe {
     display: none; flex-direction: column; align-items: center;
     position: fixed; right: var(--page-gutter); z-index: 22; pointer-events: none;
-    bottom: clamp(1rem, 3.2vh, 1.7rem); opacity: .82;
+    bottom: clamp(1rem, 3.2vh, 1.7rem); opacity: .66;
     transition: opacity .35s var(--ease);
   }
   body.deck-swipe-on .deck-swipe { display: flex; }
@@ -160,15 +160,15 @@ body.deck-swipe-mode-down .deck-swipe__arrow--up { display: none; }
   body.deck-swipe--pulse.deck-swipe-mode-both .deck-swipe__arrow--down { animation: swipeNudgeDown 2.8s ease-in-out infinite; }
 }
 @keyframes swipePulse {
-  0%, 100% { opacity: .82; }
+  0%, 100% { opacity: .66; }
   50% { opacity: 1; }
 }
 @keyframes swipeNudgeUp {
-  0%, 100% { opacity: .88; transform: translateY(0); }
+  0%, 100% { opacity: .7; transform: translateY(0); }
   50% { opacity: 1; transform: translateY(-2px); }
 }
 @keyframes swipeNudgeDown {
-  0%, 100% { opacity: .88; transform: scaleY(-1) translateY(0); }
+  0%, 100% { opacity: .7; transform: scaleY(-1) translateY(0); }
   50% { opacity: 1; transform: scaleY(-1) translateY(-2px); }
 }
 
