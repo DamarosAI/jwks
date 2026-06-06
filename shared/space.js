@@ -984,9 +984,10 @@ if (!MOBILE && !REDUCED) {
         const logoH = Math.min(innerHeight * 0.70, innerWidth * 0.58);
         const reach = logoH * 0.50, fade = logoH * 0.62;
         const d = Math.hypot(e.clientX - innerWidth * 0.5, e.clientY - innerHeight * 0.5);
-        setGlow(clamp(1 - (d - reach) / fade, 0, 1));
+        const raw = clamp(1 - (d - reach) / fade, 0, 1);
+        setGlow(0.22 + raw * 0.78);   /* floor keeps motif readable between hover passes */
       }, { passive: true });
-      addEventListener('blur', () => setGlow(0));
+      addEventListener('blur', () => setGlow(0.22));
     }
   }
 }

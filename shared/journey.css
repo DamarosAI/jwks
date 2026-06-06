@@ -189,6 +189,12 @@ body[data-station="0"] .j-brand{ opacity:0; transform:translate(7px,5px) scale(1
 .brand-motif{ position:fixed; inset:0; z-index:2; display:grid; place-items:center; pointer-events:none;
   opacity:0; transition:opacity .5s var(--ease); }
 body[data-station="0"] .brand-motif, body[data-station="9"] .brand-motif{ opacity:1; }
+/* hero + closer (after intro/end pulse): stay legible at rest; cursor still lifts toward --flare */
+body[data-station="0"]:not(.intro-hold) .brand-motif img,
+body[data-station="9"]:not(.end-hold) .brand-motif img{
+  --mo:.30; --flare:.66;
+  filter:brightness(1.16) drop-shadow(0 0 calc(14px + 18px*var(--glow)) rgba(169,192,214, calc(.28 + .34*var(--glow))));
+}
 /* --glow (0..1) is set from cursor proximity in space.js; at --glow:0 there is NO halo at all (resting = faint mark only) */
 .brand-motif img{ width:auto; height:min(70vh,58vw); object-fit:contain; image-rendering:auto; user-select:none;
   --mo:.085; --flare:.42; --glow:0;
@@ -308,7 +314,7 @@ body[data-station="0"] .brand-motif, body[data-station="9"] .brand-motif{ opacit
   /* touch: no cursor-proximity glow — hold a resting motif on hero + closer */
   body[data-station="0"] .brand-motif img,
   body[data-station="9"] .brand-motif img{
-    --mo:.26; --flare:.58; --glow:.48;
+    --mo:.30; --flare:.64; --glow:.48;
     filter:brightness(1.18) drop-shadow(0 0 22px rgba(169,192,214,.38));
   }
 }
