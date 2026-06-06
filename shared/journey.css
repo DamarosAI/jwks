@@ -87,14 +87,11 @@ body.end-hold[data-station="9"] .brand-motif img{
   transform-origin:50% 50%;
   transition:transform .125s var(--ease), box-shadow .125s var(--ease), background .125s var(--ease); }
 .j-top .j-cta:hover{ transform:translateY(-2px); box-shadow:0 12px 36px rgba(169,192,214,.28); background:#c2d5e6; }
-/* docked: the FLIP target is set inline by cta-dock.js; here we just light it up like the final CTA (box-shadow only,
-   so the keyframes never fight the inline translate). */
-.j-top .j-cta.is-docked{ z-index:30; background:var(--steel); animation:ctaGlowDock 2.8s var(--ease) infinite; }
-.j-top .j-cta.is-docked:hover{ background:#c2d5e6; }
-@keyframes ctaGlowDock{ 0%,100%{ box-shadow:0 10px 34px rgba(169,192,214,.3); }
-  50%{ box-shadow:0 0 44px rgba(169,192,214,.6), 0 16px 50px rgba(169,192,214,.46); } }
-/* the closing section's own button steps aside while the top CTA docks into its slot */
-.cap--end.cta-docked .j-cta-row:has(.j-cta-dock-slot){ opacity:0 !important; pointer-events:none; }
+/* hide header CTA during the closing approach — only the center CTA on the end cap is visible */
+body.cta-nav-hidden .j-top .j-cta{
+  opacity:0; visibility:hidden; pointer-events:none;
+  transition:opacity .22s var(--ease), visibility .22s var(--ease);
+}
 
 .j-progress{ position:fixed; top:0; left:0; right:0; height:2px; z-index:24; transform-origin:left; transform:scaleX(0);
   background:linear-gradient(90deg, var(--deep), var(--steel)); }
@@ -157,8 +154,9 @@ canvas.cv{ position:absolute; inset:0; width:100%; height:100%; display:block; z
 .cap--end [data-type] .rc.in:nth-last-child(-n+8){ color:var(--steel); }
 .cap--center.cap--end .j-cta-row{ position:absolute; left:50%; top:calc(50% + clamp(1.7rem,4.8vw,2.6rem));
   transform:translateX(-50%); margin:clamp(.75rem,2vh,1.2rem) 0 0; }
-.j-cta-dock-slot{ display:inline-block; width:clamp(7.4rem,26vw,10.5rem); height:clamp(2rem,6.8vw,2.85rem);
-  pointer-events:none; visibility:hidden; }
+.j-cta-row--end{ flex-direction:column; align-items:center; gap:clamp(.65rem,1.8vh,.85rem); }
+.j-cta-docs{ display:flex; flex-wrap:wrap; justify-content:center; gap:.55rem .65rem; }
+.j-cta-row--end .j-btn--ghost{ font-size:.62rem; padding:.55rem 1rem; letter-spacing:.14em; animation:none; }
 .j-cta-row--touch{ display:none; }
 body[data-station="9"] .cap--end{ opacity:1; }
 body[data-station="9"] .cap--end.cap--active .cap-title{ transform:translate(-50%,-50%); }
@@ -166,9 +164,9 @@ body[data-station="9"] .cap--end.cap--active .j-cta-row{ transform:translateX(-5
 body.end-hold .cap--end .cap-line{ opacity:0 !important; transform:translateY(14px) !important; pointer-events:none; }
 body.end-hold .cap--end [data-type]{ opacity:0 !important; }
 body.end-hold .cap--end [data-type] .rc{ opacity:0 !important; filter:none !important; }
-.cap--end .j-btn{ animation:ctaGlow 2.8s var(--ease) infinite; }
-@keyframes ctaGlow{ 0%,100%{ box-shadow:0 10px 34px rgba(169,192,214,.28); }
-  50%{ box-shadow:0 0 42px rgba(169,192,214,.62), 0 14px 48px rgba(169,192,214,.5); transform:translateY(-2px); } }
+.cap--end .j-btn--primary{ animation:ctaGlow 2.8s var(--ease) infinite; }
+@keyframes ctaGlow{ 0%,100%{ box-shadow:0 10px 34px rgba(169,192,214,.3); }
+  50%{ box-shadow:0 0 44px rgba(169,192,214,.6), 0 16px 50px rgba(169,192,214,.46); } }
 .cap--center .cap-body{ max-width:46ch; }
 /* hero subheading — ONE clear line beneath the label (not a stacked block); brighter + larger than body copy */
 .cap--center .cap-body--one{ max-width:none; white-space:nowrap; font-weight:500;
@@ -306,11 +304,10 @@ body[data-station="9"]:not(.end-hold) .brand-motif img{
   .cap--split .cap-kicker, .cap--split.cap--mirror .cap-kicker{ text-align:center; }
   .cap--split .cap-sub, .cap--split.cap--mirror .cap-sub{ flex-direction:column; }
   .j-top .j-cta{ display:none; }
-  .j-cta-row--touch{ display:flex; }
-  .j-cta-dock-slot{ display:none; }
   .cap--center.cap--end .cap-title{ font-size:clamp(1.28rem,5.8vw,1.85rem); max-width:92vw; }
   .cap--center.cap--end .j-cta-row{ top:calc(50% + clamp(2.1rem,9vw,2.85rem)); margin-top:1.15rem; }
-  .cap--end .j-btn{ font-size:clamp(.54rem,2.5vw,.64rem); padding:.52rem .85rem; letter-spacing:.1em; border-radius:8px; }
+  .j-cta-row--end .j-btn--primary{ font-size:clamp(.54rem,2.5vw,.64rem); padding:.52rem .85rem; letter-spacing:.1em; border-radius:8px; }
+  .j-cta-row--end .j-btn--ghost{ font-size:clamp(.5rem,2.3vw,.58rem); padding:.48rem .72rem; }
   /* touch: no cursor-proximity glow — hold a resting motif on hero + closer */
   body[data-station="0"] .brand-motif img,
   body[data-station="9"] .brand-motif img{
@@ -321,8 +318,6 @@ body[data-station="9"]:not(.end-hold) .brand-motif img{
 @media (prefers-reduced-motion: reduce){
   .cap-line{ opacity:1; transform:none; transition:none; }
   .cue .bar::after{ animation:none; top:0; height:100%; opacity:.5; }
-  .j-top .j-cta.is-docked{ animation:none; }
-  .cap--end .j-btn{ animation:none; }
-  .j-cta-row--touch .j-btn{ animation:none; }
+  .cap--end .j-btn--primary{ animation:none; }
   .veil{ display:none; }
 }

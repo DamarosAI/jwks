@@ -678,6 +678,8 @@ function idlePageKey() {
 }
 function syncFooterChrome() {
   document.body.classList.toggle('deck-on-home', !flying && cur === 0);
+  const hideNavCta = !MOBILE && (document.body.classList.contains('end-hold') || cur === 9 || (flying && target === 9));
+  document.body.classList.toggle('cta-nav-hidden', hideNavCta);
   if (!MOBILE) {
     document.body.classList.remove('deck-swipe-on', 'deck-swipe--pulse', 'deck-swipe-mode-up', 'deck-swipe-mode-both', 'deck-swipe-mode-down');
     return;
