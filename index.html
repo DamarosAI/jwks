@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="shared/hanken-grotesk.css">
 <link rel="stylesheet" href="shared/journey.css?v=reset46">
 <link rel="stylesheet" href="shared/terrain.css?v=reset40">
-<link rel="stylesheet" href="shared/sections.css?v=33">
+<link rel="stylesheet" href="shared/sections.css?v=34">
 <script type="importmap">
 { "imports": { "three": "./assets/vendor/three/three.module.js", "three/addons/": "./assets/vendor/three/addons/" } }
 </script>
@@ -297,7 +297,7 @@
   function buildNeural(host) {
     var NS = 'http://www.w3.org/2000/svg';
     var svg = document.createElementNS(NS, 'svg');
-    svg.setAttribute('class', 'nn'); svg.setAttribute('viewBox', '0 0 272 120'); svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    svg.setAttribute('class', 'nn'); svg.setAttribute('viewBox', '0 0 272 120'); svg.setAttribute('preserveAspectRatio', 'xMidYMid meet'); svg.setAttribute('shape-rendering', 'geometricPrecision');
     var pts = [], c, r, COLS = 6;
     for (c = 0; c < COLS; c++) for (r = 0; r < 3; r++) pts.push({ x: 26 + c * 44, y: 24 + r * 36, c: c });
     for (var i = 0; i < pts.length; i++) {
@@ -312,7 +312,7 @@
     }
     pts.forEach(function (p) {
       var ci = document.createElementNS(NS, 'circle');
-      ci.setAttribute('cx', p.x); ci.setAttribute('cy', p.y); ci.setAttribute('r', '3.2'); ci.setAttribute('class', 'nn-dot');
+      ci.setAttribute('cx', p.x); ci.setAttribute('cy', p.y); ci.setAttribute('r', '3.52'); ci.setAttribute('class', 'nn-dot');
       svg.appendChild(ci);
     });
     host.appendChild(svg);
@@ -321,14 +321,14 @@
   function buildLunaRings(host) {
     var NS = 'http://www.w3.org/2000/svg';
     var svg = document.createElementNS(NS, 'svg');
-    svg.setAttribute('class', 'luna-svg'); svg.setAttribute('viewBox', '0 0 160 120'); svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    svg.setAttribute('class', 'luna-svg'); svg.setAttribute('viewBox', '0 0 160 120'); svg.setAttribute('preserveAspectRatio', 'xMidYMid meet'); svg.setAttribute('shape-rendering', 'geometricPrecision');
     function ring(rx, ry, n, cls) {
       var g = document.createElementNS(NS, 'g'); g.setAttribute('class', 'luna-ring ' + cls);
       for (var i = 0; i < n; i++) {
         var a = (i / n) * Math.PI * 2, ci = document.createElementNS(NS, 'circle');
         ci.setAttribute('cx', (80 + Math.cos(a) * rx).toFixed(2));
         ci.setAttribute('cy', (60 + Math.sin(a) * ry).toFixed(2));
-        ci.setAttribute('r', '1.92'); g.appendChild(ci);
+        ci.setAttribute('r', '2.11'); g.appendChild(ci);
       }
       svg.appendChild(g);
     }

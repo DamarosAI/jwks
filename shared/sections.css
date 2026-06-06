@@ -141,8 +141,8 @@ body.world-ready #world { opacity: 1; }
 
 /* ---- NODE visual: a small cluster of community sites that pulse green from the hub ---- */
 .ti-node-viz {
-  display: flex; align-items: center; justify-content: center; gap: clamp(8px, 1.5vw, 14px);
-  height: clamp(96px, 14vh, 126px); margin: .2rem 0;
+  display: flex; align-items: center; justify-content: center; gap: clamp(9px, 1.65vw, 15px);
+  height: clamp(106px, 15.4vh, 139px); margin: .2rem 0;
 }
 .ti-sq {
   position: relative; border: 1.5px solid rgba(169, 192, 214, .4); border-radius: 9px;
@@ -153,16 +153,16 @@ body.world-ready #world { opacity: 1; }
   box-shadow: inset 0 0 14px rgba(5, 7, 11, .5);
   transition: border-color .45s var(--ease), box-shadow .45s var(--ease);
 }
-.ti-sq--s { width: clamp(30px, 4vw, 40px); height: clamp(30px, 4vw, 40px); border-radius: 7px; }
-.ti-sq--m { width: clamp(42px, 5.4vw, 56px); height: clamp(42px, 5.4vw, 56px); }
-.ti-sq--l { width: clamp(54px, 7vw, 72px); height: clamp(54px, 7vw, 72px); border-radius: 11px; }
+.ti-sq--s { width: clamp(33px, 4.4vw, 44px); height: clamp(33px, 4.4vw, 44px); border-radius: 8px; }
+.ti-sq--m { width: clamp(46px, 5.9vw, 62px); height: clamp(46px, 5.9vw, 62px); }
+.ti-sq--l { width: clamp(59px, 7.7vw, 79px); height: clamp(59px, 7.7vw, 79px); border-radius: 12px; }
 .ti-sq::after {
   content: ""; position: absolute; inset: 30%; border-radius: 3px;
   background: rgba(169, 192, 214, .16); transition: background .45s var(--ease), box-shadow .45s var(--ease);
 }
 /* node emit — each site pulses green on its own random clock (re-rolled per hover in JS) */
-.ti-node.is-firing .ti-sq { animation: tiSite var(--dur, 1.4s) var(--ease) var(--d, 0s) infinite; }
-.ti-node.is-firing .ti-sq::after { animation: tiSiteCore var(--dur, 1.4s) var(--ease) var(--d, 0s) infinite; }
+.ti-node.is-firing .ti-sq { will-change: border-color, box-shadow; animation: tiSite var(--dur, 1.4s) var(--ease) var(--d, 0s) infinite; }
+.ti-node.is-firing .ti-sq::after { will-change: background, box-shadow; animation: tiSiteCore var(--dur, 1.4s) var(--ease) var(--d, 0s) infinite; }
 @keyframes tiSite {
   0%, 100% { border-color: rgba(169, 192, 214, .4); box-shadow: inset 0 0 14px rgba(5,7,11,.5); }
   42% { border-color: var(--ok); box-shadow: inset 0 0 14px color-mix(in srgb, var(--ok) 20%, rgba(5,7,11,.5)), 0 0 16px color-mix(in srgb, var(--ok) 45%, transparent); }
@@ -186,7 +186,7 @@ body.world-ready #world { opacity: 1; }
 /* ---- SPONSOR visual: the aggregated operating matrix ---- */
 .ti-matrix {
   display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px;
-  height: clamp(94px, 13vh, 116px); margin: .2rem 0;
+  height: clamp(103px, 14.3vh, 128px); margin: .2rem 0;
 }
 .ti-cell {
   border-radius: 3px; background: rgba(169, 192, 214, .08);
@@ -194,7 +194,7 @@ body.world-ready #world { opacity: 1; }
   transition: background .45s var(--ease), border-color .45s var(--ease), box-shadow .45s var(--ease);
 }
 /* reading — cells pulse on their own random clock; a few flag green / amber each pass */
-.ti-sponsor.is-reading .ti-cell { animation: tiCell var(--dur, 1.6s) var(--ease) var(--d, 0s) infinite; }
+.ti-sponsor.is-reading .ti-cell { will-change: background, border-color, box-shadow; animation: tiCell var(--dur, 1.6s) var(--ease) var(--d, 0s) infinite; }
 .ti-sponsor.is-reading .ti-cell--ok { animation-name: tiCellOk; }
 .ti-sponsor.is-reading .ti-cell--review { animation-name: tiCellReview; }
 .ti-sponsor.is-reading .ti-cell--fail { animation-name: tiCellFail; }
@@ -263,17 +263,24 @@ body.world-ready #world { opacity: 1; }
 .ps-cards { display: flex; flex-direction: column; gap: .7rem; margin-top: .3rem; }
 
 /* layer fields — parallel to the Node cluster / Console matrix */
-.ps-field { display: flex; align-items: center; justify-content: center; height: clamp(124px, 17vh, 154px); margin: .2rem 0; }
+.ps-field { display: flex; align-items: center; justify-content: center; height: clamp(136px, 18.7vh, 169px); margin: .2rem 0; }
 
 /* TRIDENT — a grid of dots; connections are invisible at rest and only fire (green) on hover, in random order */
-.nn { width: 100%; height: 100%; overflow: visible; }
-.nn-edge { stroke: transparent; stroke-width: 1.2; }
+.nn, .luna-svg {
+  width: 100%; height: 100%; overflow: visible;
+  shape-rendering: geometricPrecision;
+  -webkit-backface-visibility: hidden; backface-visibility: hidden;
+}
+.nn-edge {
+  stroke: transparent; stroke-width: 1.35; stroke-linecap: round; stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
 .nn-dot { fill: rgba(169, 192, 214, .34); }
 .ps-half.is-live .nn-edge { animation: nnEdge var(--dur, 1.4s) var(--ease) var(--d, 0s) infinite; }
 .ps-half.is-live .nn-dot { animation: nnDot var(--dur, 1.4s) var(--ease) var(--d, 0s) infinite; }
 @keyframes nnEdge {
-  0%, 100% { stroke: transparent; filter: none; }
-  45% { stroke: var(--ok); filter: drop-shadow(0 0 3px color-mix(in srgb, var(--ok) 70%, transparent)); }
+  0%, 100% { stroke: transparent; stroke-opacity: 0; }
+  45% { stroke: var(--ok); stroke-opacity: 1; }
 }
 @keyframes nnDot {
   0%, 100% { fill: rgba(169, 192, 214, .34); }
@@ -281,15 +288,18 @@ body.world-ready #world { opacity: 1; }
 }
 
 /* LUNA — three oblique governance rings built from cleanly-spaced dots; turn CW · CCW · CW on engage */
-.luna-svg { width: clamp(124px, 18vw, 162px); height: auto; overflow: visible; }
+.luna-svg { width: clamp(136px, 19.8vw, 178px); height: auto; }
 .luna-ring circle { fill: var(--luna); opacity: .42; transition: opacity .4s var(--ease); }
-.luna-ring { transform-box: fill-box; transform-origin: center; }
-.ps-half--luna.is-live .luna-ring circle { opacity: 1; filter: drop-shadow(0 0 3px color-mix(in srgb, var(--luna) 55%, transparent)); }
-.ps-half--luna.is-live .luna-ring--1 { animation: lunaCW 13s linear infinite; }
-.ps-half--luna.is-live .luna-ring--2 { animation: lunaCCW 10s linear infinite; }
-.ps-half--luna.is-live .luna-ring--3 { animation: lunaCW 7s linear infinite; }
-@keyframes lunaCW { to { transform: rotate(360deg); } }
-@keyframes lunaCCW { to { transform: rotate(-360deg); } }
+.luna-ring {
+  transform-box: fill-box; transform-origin: center;
+  -webkit-backface-visibility: hidden; backface-visibility: hidden;
+}
+.ps-half--luna.is-live .luna-ring circle { opacity: 1; }
+.ps-half--luna.is-live .luna-ring--1 { will-change: transform; animation: lunaCW 13s linear infinite; }
+.ps-half--luna.is-live .luna-ring--2 { will-change: transform; animation: lunaCCW 10s linear infinite; }
+.ps-half--luna.is-live .luna-ring--3 { will-change: transform; animation: lunaCW 7s linear infinite; }
+@keyframes lunaCW { to { transform: rotate(360deg) translateZ(0); } }
+@keyframes lunaCCW { to { transform: rotate(-360deg) translateZ(0); } }
 
 /* ============================================================
  * COMPACT SYMBOL — the live field parks at the TOP-RIGHT of each panel head
@@ -303,20 +313,22 @@ body.world-ready #world { opacity: 1; }
 .ps-topline .ps-half-head, .ti-topline .ti-half-head { flex: 1 1 auto; min-width: 0; }
 .ps-field, .ti-node-viz, .ti-matrix {
   flex: 0 0 auto; align-self: flex-start; margin: 0;
-  width: var(--viz-w, clamp(88px, 10vw, 116px));
-  height: var(--viz-h, clamp(52px, 7vh, 72px));
+  width: var(--viz-w, clamp(97px, 11vw, 128px));
+  height: var(--viz-h, clamp(57px, 7.7vh, 79px));
+  -webkit-backface-visibility: hidden; backface-visibility: hidden;
+  transform: translateZ(0);
 }
 /* Luna · Trident · Node run a touch larger than the Console matrix */
-.ps-field, .ti-node-viz { height: calc(var(--viz-h, clamp(52px, 7vh, 72px)) * 1.13); }
-.ps-field { width: calc(var(--viz-w, clamp(88px, 10vw, 116px)) * 1.13); }
+.ps-field, .ti-node-viz { height: calc(var(--viz-h, clamp(57px, 7.7vh, 79px)) * 1.13); }
+.ps-field { width: calc(var(--viz-w, clamp(97px, 11vw, 128px)) * 1.13); }
 .ti-node-viz { width: auto; }
 .luna-svg { width: 100%; height: 100%; }
 .ti-topline .ti-matrix { gap: 4px; }
 /* compact node-site cluster — small enough to live in the header corner */
 .ti-topline .ti-node-viz { gap: 4px; }
-.ti-topline .ti-sq--s { width: 15px; height: 15px; border-radius: 4px; }
-.ti-topline .ti-sq--m { width: 22px; height: 22px; border-radius: 5px; }
-.ti-topline .ti-sq--l { width: 28px; height: 28px; border-radius: 7px; }
+.ti-topline .ti-sq--s { width: 17px; height: 17px; border-radius: 4px; }
+.ti-topline .ti-sq--m { width: 24px; height: 24px; border-radius: 6px; }
+.ti-topline .ti-sq--l { width: 31px; height: 31px; border-radius: 8px; }
 
 .hswipe-nav { display: none; }
 
@@ -349,7 +361,7 @@ body.world-ready #world { opacity: 1; }
   .ps-split, .ti-split { margin-top: min(clamp(1.2rem, 3vh, 1.8rem), 2.6vh); }
   .ps-half-head h3, .ti-half-head h3 { font-size: min(clamp(1.5rem, 2.7vw, 2.15rem), 3.4vh); }
   .ps-sub, .ti-sub { font-size: min(.95rem, 2vh); margin-top: min(.4rem, 1vh); }
-  .cap.ps, .cap.ti { --viz-h: min(72px, 9vh); --viz-w: min(118px, 12.5vw); }
+  .cap.ps, .cap.ti { --viz-h: min(79px, 9.9vh); --viz-w: min(130px, 13.75vw); }
   .ti-half .cap-box, .ps-half .cap-box { padding: min(1rem, 1.7vh) 1.15rem; }
   .ti-cards, .ps-cards { gap: min(.7rem, 1.4vh); }
 }
@@ -375,7 +387,7 @@ body.world-ready #world { opacity: 1; }
   }
 
   /* compact internals so one panel fits the viewport */
-  .cap.ps, .cap.ti { --viz-h: clamp(46px, 9vw, 64px); --viz-w: clamp(74px, 19vw, 104px); }
+  .cap.ps, .cap.ti { --viz-h: clamp(51px, 9.9vw, 70px); --viz-w: clamp(81px, 20.9vw, 114px); }
   .es-stage-head h3, .ti-half-head h3, .ps-half-head h3 { font-size: clamp(1.38rem, 6.8vw, 1.72rem); }
   .es-stage-sub, .ti-sub, .ps-sub { font-size: clamp(.82rem, 3.6vw, .88rem); margin-top: clamp(.28rem, 1.2vw, .38rem); }
   .es-stage-cards, .ti-cards, .ps-cards { gap: clamp(.42rem, 2vw, .5rem); }
