@@ -629,7 +629,7 @@ function arriveAt(idx) {
   if (MOBILE) {
     const cap = capForVantage(idx);
     const hs = cap && cap.querySelector('[data-hswipe]');
-    if (hs && hs.children.length > 1) requestAnimationFrame(() => hswipeGo(hs, 0));
+    if (hs && hs.children.length > 1) requestAnimationFrame(() => { hs._hswipeCommitted = null; hswipeGo(hs, 0); });
   }
 }
 function sectionRevealLocked() {
@@ -782,29 +782,50 @@ function activeHSwipeEl() {
   const el = cap.querySelector('[data-hswipe]');
   return el && el.children.length > 1 ? el : null;
 }
-function hswipeIdx(el) {
-  const w = Math.max(1, el.clientWidth);
-  return Math.max(0, Math.min(el.children.length - 1, Math.round(el.scrollLeft / w)));
+function hswipeNearest(el) {
+  const panels = el.children;
+  let idx = 0, best = Infinity;
+  const sl = el.scrollLeft;
+  for (let i = 0; i < panels.length; i++) {
+    const d = Math.abs(panels[i].offsetLeft - sl);
+    if (d < best) { best = d; idx = i; }
+  }
+  return idx;
 }
-function syncHSwipeNav(el, idx) {
+function hswipeIdx(el) { return el._hswipeCommitted != null ? el._hswipeCommitted : hswipeNearest(el); }
+function commitHSwipe(el, idx) {
+  if (el._hswipeCommitted === idx) return;
+  el._hswipeCommitted = idx;
   const nav = el.nextElementSibling;
-  if (!nav || !nav.classList.contains('hswipe-nav')) return;
-  [].forEach.call(nav.children, (b, i) => b.classList.toggle('on', i === idx));
+  if (nav && nav.classList.contains('hswipe-nav')) {
+    [].forEach.call(nav.children, (b, i) => b.classList.toggle('on', i === idx));
+  }
   const panel = el.children[idx];
   if (panel) {
     panel._hOn && panel._hOn();
     [].forEach.call(el.children, (p, i) => { if (i !== idx && p._hOff) p._hOff(); });
   }
 }
+function settleHSwipe(el) {
+  if (!el || el.children.length < 2) return;
+  const idx = hswipeNearest(el);
+  const panel = el.children[idx];
+  if (!panel) return;
+  const target = panel.offsetLeft;
+  const drift = Math.abs(el.scrollLeft - target);
+  if (drift > 3) {
+    const instant = REDUCED || drift <= 48;
+    el.scrollTo({ left: target, behavior: instant ? 'auto' : 'smooth' });
+    if (instant) commitHSwipe(el, idx);
+    return;
+  }
+  commitHSwipe(el, idx);
+}
 function hswipeGo(el, idx) {
   const panel = el.children[idx];
   if (!panel) return;
   el.scrollTo({ left: panel.offsetLeft, behavior: REDUCED ? 'auto' : 'smooth' });
-  syncHSwipeNav(el, idx);
-}
-function snapHSwipe(el) {
-  if (!el || el.children.length < 2) return;
-  hswipeGo(el, hswipeIdx(el));
+  if (REDUCED) commitHSwipe(el, idx);
 }
 function navStep(dir) {
   if (navLocked()) return false;
@@ -827,12 +848,19 @@ function feedNav(delta, dir) {
   NAV.acc += delta;
   if (Math.abs(NAV.acc) >= NAV.THRESH) navStep(NAV.acc > 0 ? 1 : -1);
 }
-[].forEach.call(document.querySelectorAll('[data-hswipe]'), (split) => {
-  if (split.children.length < 2) return;
-  const snap = () => snapHSwipe(split);
-  split.addEventListener('scrollend', snap, { passive: true });
-  split.addEventListener('scroll', () => { clearTimeout(split._snapT); split._snapT = setTimeout(snap, 120); }, { passive: true });
-});
+function wireHSwipes() {
+  [].forEach.call(document.querySelectorAll('[data-hswipe]'), (split) => {
+    if (split._hswipeWired || split.children.length < 2) return;
+    split._hswipeWired = true;
+    if (split._hswipeCommitted == null) split._hswipeCommitted = 0;
+    commitHSwipe(split, split._hswipeCommitted);
+    const settle = () => settleHSwipe(split);
+    split.addEventListener('scrollend', settle, { passive: true });
+    split.addEventListener('scroll', () => { clearTimeout(split._settleT); split._settleT = setTimeout(settle, 140); }, { passive: true });
+  });
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wireHSwipes);
+else wireHSwipes();
 addEventListener('wheel', (e) => {
   if (navLocked()) return;
   if (e.target && e.target.closest && e.target.closest('[data-hswipe]') && Math.abs(e.deltaX) > Math.abs(e.deltaY) * 0.8) return;

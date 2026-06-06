@@ -281,15 +281,10 @@
           var b = document.createElement('button'); b.type = 'button'; b.className = 'hswipe-node' + (i === 0 ? ' on' : '');
           b.innerHTML = '<span class="d"></span><span class="l"></span>';
           b.querySelector('.l').textContent = label;
-          b.addEventListener('click', function () { var delta = p.getBoundingClientRect().left - split.getBoundingClientRect().left; split.scrollBy({ left: delta, behavior: 'smooth' }); });
+          b.addEventListener('click', function () { split.scrollTo({ left: p.offsetLeft, behavior: 'smooth' }); });
           nav.appendChild(b);
         });
         split.parentNode.insertBefore(nav, split.nextSibling);
-        split.addEventListener('scroll', function () {
-          var idx = Math.round(split.scrollLeft / Math.max(1, split.clientWidth));
-          [].forEach.call(nav.children, function (b, i) { b.classList.toggle('on', i === idx); });
-          panels.forEach(function (p, i) { if (i === idx) { if (p._hOn) p._hOn(); } else if (p._hOff) p._hOff(); });
-        }, { passive: true });
       });
     }
   });
@@ -341,6 +336,6 @@
 </script>
 <script src="shared/cap-intro.js?v=5"></script>
 <script src="shared/cta-dock.js?v=6"></script>
-<script type="module" src="shared/space.js?v=reset50"></script>
+<script type="module" src="shared/space.js?v=reset51"></script>
 </body>
 </html>
