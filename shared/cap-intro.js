@@ -99,9 +99,11 @@
 
   var START_DELAY = 150;
   var MIN_SCRAMBLE = 260;
-  var STAGGER = 58;
+  var STAGGER = 58;          // per-letter cadence for the hero "Damaros" lockup (7 chars)
   var SCRAMBLE_MS = 62;
   var LOCK_DUR = 420;
+  var REF_LAST_LOCK = START_DELAY + MIN_SCRAMBLE + 6 * STAGGER; // when "Damaros" fully resolves
+  var REF_DONE = START_DELAY + MIN_SCRAMBLE + (7 - 2) * STAGGER + LOCK_DUR * 0.4; // tagline float-in beat
   var FLOAT_STAGGER = 95;
 
   function randCh(ch) {
@@ -132,6 +134,7 @@
     if (!t.querySelector('.rc[data-w]')) fit(cap);
     var chars = [].slice.call(t.querySelectorAll('.rc'));
     var locked = [];
+    var stagger = chars.length <= 1 ? 0 : (REF_LAST_LOCK - START_DELAY - MIN_SCRAMBLE) / (chars.length - 1);
 
     chars.forEach(function (s, i) {
       var space = s.getAttribute('data-space');
@@ -141,7 +144,7 @@
       locked[i] = false;
       if (space) s.innerHTML = '&nbsp;'; else s.textContent = randCh(fin);
 
-      var lockAt = START_DELAY + MIN_SCRAMBLE + i * STAGGER;
+      var lockAt = START_DELAY + MIN_SCRAMBLE + i * stagger;
       timers.push(setTimeout(function () {
         if (active !== cap) return;
         locked[i] = true;
@@ -165,7 +168,7 @@
       if (!anyLeft && scrambleTimer) { cancelAnimationFrame(scrambleTimer); scrambleTimer = null; }
     })(performance.now());
 
-    var done = START_DELAY + MIN_SCRAMBLE + Math.max(0, chars.length - 2) * STAGGER + LOCK_DUR * 0.4;
+    var done = REF_DONE;
     timers.push(setTimeout(function () { if (active === cap) floatIn(others, cap); }, done));
   }
 
