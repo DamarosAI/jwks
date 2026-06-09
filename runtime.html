@@ -85,19 +85,17 @@
   </div>
 </nav>
 
-<div class="mono-bg mono-bg--docs" aria-hidden="true"><div class="mono-grid" data-mono-src="assets/damaros-white-transparent.png"></div></div>
+<div class="mono-bg mono-bg--full" aria-hidden="true"><div class="mono-grid" data-mono-src="assets/damaros-white-transparent.png"></div></div>
 <div class="dmx-texture" aria-hidden="true"></div>
 
 <main class="docs">
   <div class="d-eyebrow">Execution fabric</div>
   <h1 class="d-title">Damaros Runtime</h1>
-  <p class="d-lead"><strong>Governed cloud execution that makes care sites trial-capable.</strong> Damaros Runtime is the execution fabric beneath Node, Console, Trident, Luna, Forge, Router, the deterministic engine, and Replay.</p>
-  <p class="d-lead">The homepage tells the story: protocol intent becomes governed execution. Runtime explains how that execution is actually carried, governed, replayed, and defended.</p>
-  <p class="d-lead">Every consequential action in Damaros becomes a <strong>run</strong>: protocol compile, evidence sync, deterministic screening, REVIEW routing, human adjudication, Replay reconstruction, or governed agent task.</p>
-  <p class="d-lead">It is also the equalizer. Runtime lets a community clinic execute a protocol with the rigor, attributability, and inspectability of an NCI center, and lets a major center bolt governed execution onto whatever it already runs.</p>
+  <p class="d-lead"><strong>The governed execution layer that makes any care site trial-capable.</strong> Runtime carries every Damaros run: protocol compile, evidence sync, deterministic screening, REVIEW routing, human adjudication, Replay, and governed agent tasks.</p>
+  <p class="d-lead">Community clinics and major centers share the same run model. A community site executes with NCI-grade rigor. A major center bolts governed execution onto whatever it already runs.</p>
 
   <div class="foil" style="margin-top:1.4rem">
-    <p>A run is not a chat. It is not a dashboard refresh. It is not a model answer. It is a typed execution event with versioned inputs, policy scope, actor identity, output state, provenance, and replay linkage. Damaros does not ask institutions to trust AI. It asks them to <em>inspect the run.</em></p>
+    <p>A run is not a chat, a dashboard refresh, or a model answer. It is a typed execution event with versioned inputs, policy scope, actor identity, output state, provenance, and replay linkage. Damaros does not ask institutions to trust AI. It asks them to <em>inspect the run.</em></p>
   </div>
 
   <a class="cross-link" href="/docs/fhir">Enterprise FHIR, JWT, and JWKS reference <span aria-hidden="true">&rarr;</span></a>
@@ -108,8 +106,8 @@
     <h2 class="sec-head">Why Runtime exists</h2>
     <div class="body">
       <p>Clinical trials have systems of record. They do not have a system of execution.</p>
-      <p>CTMS records trial activity. EDC captures trial data. eTMF stores essential documents. EHRs preserve longitudinal care. Spreadsheets and emails hold the missing operational truth.</p>
-      <p>But the highest-friction moment in distributed trials still happens manually: <strong>Does this patient, at this site, under this protocol version, with this evidence snapshot, survive the actual criteria?</strong> That decision is rebuilt from fragments. Damaros turns it into governed execution.</p>
+      <p>CTMS, EDC, eTMF, and the EHR each hold a fragment. None owns the moment a patient meets the protocol.</p>
+      <p><strong>Does this patient, at this site, under this protocol version, with this evidence, meet the criteria?</strong> That answer still gets rebuilt by hand. Damaros makes it a governed run.</p>
     </div>
     <ul class="bullets" style="margin-top:1rem">
       <li>Protocol becomes logic.</li>
@@ -118,7 +116,7 @@
       <li>REVIEW becomes accountable.</li>
       <li>Replay becomes proof.</li>
     </ul>
-    <div class="callout em"><strong>~80% of cancer care happens in community clinics. Almost none of the trials do.</strong> The science is the same. The execution infrastructure is not. Runtime is the layer that closes that gap.</div>
+    <div class="callout em"><strong>~80% of cancer care happens in community clinics. Almost none of the trials do.</strong> Runtime is the layer that closes the gap.</div>
   </section>
 
   <section class="doc">
@@ -142,7 +140,7 @@
   <section class="doc">
     <div class="sec-label">03_GOVERNED_CHAIN</div>
     <h2 class="sec-head">The governed run chain</h2>
-    <div class="body"><p>Protocol → Evidence → Screening → Review → Replay. The homepage frames it as one governed run, from protocol intent to inspectable proof. Runtime explains that chain as actual system behavior.</p></div>
+    <div class="body"><p>Protocol → Evidence → Screening → Review → Replay. One governed run from protocol intent to inspectable proof.</p></div>
     <div class="chain-mini">
       <div class="chain-step"><span class="cs-n">01</span><span class="cs-t">Protocol compile</span><p class="cs-d"><strong>Trident</strong> structures protocol language into executable eligibility logic and evidence expectations. Surfaces criterion structure, temporal windows, lab thresholds, mapping candidates, ambiguity flags, and amendment deltas. Trident does not screen patients or issue eligibility verdicts.</p></div>
       <div class="chain-step"><span class="cs-n">02</span><span class="cs-t">Evidence sync</span><p class="cs-d"><strong>Forge</strong> and <strong>Node</strong> admit site-approved evidence. FHIR R4, Epic Backend Services, Cerner/Oracle Health FHIR, bulk FHIR where approved, REDCap, CSV/TSV/Excel, warehouse extracts, pathology and lab tables, site-approved file drops. Output is a protocol-scoped evidence snapshot, not a shadow chart.</p></div>
@@ -245,7 +243,7 @@
   <section class="doc">
     <div class="sec-label">08_DEPLOYMENT</div>
     <h2 class="sec-head">Deployment models</h2>
-    <div class="body"><p>Runs in Damaros Cloud, your cloud, or inside the institution boundary. <strong>The run model stays the same. The boundary changes.</strong></p></div>
+    <div class="body"><p>Runs in Damaros Cloud, your cloud, institution-hosted Node, or air-gapped for federal and zero-trust environments. <strong>The run model stays the same. The boundary changes.</strong></p></div>
     <div class="deploy-grid">
       <article class="scard">
         <span class="sc-tag">Model A</span>

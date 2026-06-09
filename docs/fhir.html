@@ -87,13 +87,13 @@
   </div>
 </nav>
 
-<div class="mono-bg mono-bg--docs" aria-hidden="true"><div class="mono-grid" data-mono-src="../assets/damaros-white-transparent.png"></div></div>
+<div class="mono-bg mono-bg--full" aria-hidden="true"><div class="mono-grid" data-mono-src="../assets/damaros-white-transparent.png"></div></div>
 <div class="dmx-texture" aria-hidden="true"></div>
 
 <main class="docs">
   <div class="d-eyebrow">Epic / FHIR / JWKS</div>
   <h1 class="d-title">Enterprise integration reference</h1>
-  <p class="d-lead">This document describes how Damaros clinic nodes integrate with Epic through SMART on FHIR Backend Services: OAuth client assertions, public JWKS discovery, read-only cohort access, data minimization, and deterministic execution on governed evidence. Written for hospital integration teams, security reviewers, and sponsor diligence.</p>
+  <p class="d-lead"><b>Read-only FHIR for governed trial execution.</b> How Damaros clinic nodes connect to Epic through SMART Backend Services: JWT assertions, JWKS discovery, cohort-scoped evidence, deterministic screening, and replay lineage. For integration teams, security reviewers, and sponsor diligence.</p>
 
   <a class="cross-link" href="/runtime.html">Damaros Runtime <span aria-hidden="true">&rarr;</span></a>
 
@@ -116,11 +116,11 @@
     <div class="sec-label">01_OPERATING_MODEL</div>
     <h2 class="sec-head">Research execution on approved cohorts</h2>
     <div class="body">
-      <p>Damaros is trial-capable care infrastructure. Site-approved FHIR access binds locked protocol logic to a defined evidence cohort, evaluates eligibility deterministically, and preserves criterion-level evidence with replay lineage on one audit path.</p>
-      <p><strong>Deterministic core.</strong> Versioned protocol logic plus normalized clinical facts from REST and optional bulk export feed a single eligibility engine. Outputs are PASS, REVIEW, or FAIL at criterion granularity with evidence and sync provenance. No generative verdict on the screening path.</p>
-      <p><strong>Trident</strong> compiles protocol language into executable eligibility structure. <strong>Luna</strong> records AI origin, policy boundaries, provenance, and execution constraints for upstream non-PHI work only.</p>
+      <p>Damaros is trial-capable care infrastructure. Site-approved FHIR binds locked protocol logic to a defined cohort, evaluates eligibility deterministically, and preserves criterion-level evidence on one audit path.</p>
+      <p><strong>Deterministic core.</strong> Versioned protocol logic plus normalized clinical facts feed one eligibility engine. PASS, REVIEW, or FAIL at criterion granularity. No generative verdict on the screening path.</p>
+      <p><strong>Trident</strong> compiles protocols. <strong>Luna</strong> makes every AI step inspectable. Neither issues eligibility verdicts.</p>
     </div>
-    <div class="callout"><strong>No shadow EHR.</strong> Damaros is not a secondary warehouse. Ingest ends in protocol-scoped screening artifacts. Epic remains system of record for longitudinal care.</div>
+    <div class="callout"><strong>No shadow EHR.</strong> Evidence ends in protocol-scoped screening artifacts. Epic remains system of record for longitudinal care.</div>
   </section>
 
   <section class="doc">

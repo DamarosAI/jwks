@@ -92,11 +92,6 @@
   @media (max-width: 560px) {
     .a-founder { flex-direction: column; align-items: flex-start; }
     .a-linkedin { width: 100%; justify-content: center; }
-    .mono-bg { -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 24%, transparent 62%); mask-image: linear-gradient(180deg, #000 0%, #000 24%, transparent 62%); }
-    .mono-grid { left: -8%; top: -8%; width: 116%; height: 128%; transform: rotate(-6deg);
-      grid-template-columns: repeat(auto-fill, 92px); grid-auto-rows: 92px; gap: 34px; opacity: calc(var(--mono-op) * 1.35); }
-    .mono-grid img { width: 92px; height: 92px; }
-    @keyframes monoDrift { 0%{transform:rotate(-6deg) translate3d(0,0,0)} 50%{transform:rotate(-6deg) translate3d(0,-22px,0)} 100%{transform:rotate(-6deg) translate3d(0,0,0)} }
   }
 </style>
 </head>
@@ -115,7 +110,7 @@
   </div>
 </nav>
 
-<div class="mono-bg mono-bg--about" aria-hidden="true"><div class="mono-grid" data-mono-src="assets/damaros-white-transparent.png"></div></div>
+<div class="mono-bg mono-bg--full" aria-hidden="true"><div class="mono-grid" data-mono-src="assets/damaros-white-transparent.png"></div></div>
 <div class="dmx-texture" aria-hidden="true"></div>
 
 <main class="about">
@@ -134,22 +129,22 @@
   </div>
 
   <div class="a-prose">
-    <p class="a-lead">I founded Damaros from inside clinical medicine.</p>
+    <p class="a-lead">I founded Damaros from inside clinical medicine because the trial rift is visible there first.</p>
 
     <div class="a-stat">
       <span class="a-stat-n">~80%</span>
       <span class="a-stat-l"><strong>of people with cancer are treated in community clinics, not academic centers.</strong> Almost none of the trials run there. The science is the same. The execution infrastructure is not.<span class="a-stat-s">Community Oncology Alliance</span></span>
     </div>
 
-    <p>A handful of elite centers, the MSKs and Mount Sinais and NCI networks, can run complex protocols at scale because they have the people, the systems, and the institutional machinery to govern execution. The community oncology clinic down the road, treating most of the patients, cannot. So the patient who lives there never gets the trial.</p>
+    <p>A handful of elite centers can run complex protocols at scale. The community clinic down the road, treating most of the patients, cannot. So the patient who lives there never gets the trial.</p>
 
     <p>That is not a medicine problem. It is an execution problem, and execution can be built.</p>
 
     <p class="a-pull">Damaros gives any clinic the infrastructure to run the trial.</p>
 
-    <p>Damaros turns a community site into a fully instrumented, audit-ready trial site: protocol logic compiled to executable criteria, patient evidence admitted with provenance, deterministic screening, human review, and Replay. The clinic keeps control of its patients and its care. The trial simply becomes runnable, with the rigor and inspectability of a major center.</p>
+    <p>Damaros turns a community site into an audit-ready trial site: protocol logic compiled to executable criteria, evidence admitted with provenance, deterministic screening, human review, and Replay. The clinic keeps its patients and its care. The trial becomes runnable.</p>
 
-    <p>The same governed execution layer bolts onto the large centers too. Whatever they already run, Triomics or any other stack, Damaros sits underneath as the layer that makes execution attributable and replayable. We do not replace Epic, CTMS, EDC, or eTMF. We create the governed execution record upstream of them.</p>
+    <p>The same layer bolts onto major centers too. Damaros sits underneath as governed execution that is attributable and replayable. We do not replace Epic, CTMS, EDC, or eTMF. We create the execution record upstream of them.</p>
 
     <p>Discovery is accelerating. Protocols are becoming more complex. Patient evidence is expanding across fragmented systems. Sites are being asked to operationalize work their software stack was never built to run. That gap becomes infrastructure.</p>
 
@@ -157,7 +152,7 @@
 
     <p class="a-doctrine">The doctrine stays constant: the model is not the system of record. Agents accelerate. Humans decide. Replay proves.</p>
 
-    <p class="a-close">Damaros is the governed execution system for clinical research: <em>protocol logic, patient evidence, deterministic screening, human review, and Replay</em> in one governed chain. Damaros owns the run.</p>
+    <p class="a-close">Damaros is governed execution for clinical research: <em>protocol logic, patient evidence, deterministic screening, human review, and Replay</em> in one chain. Damaros owns the run.</p>
   </div>
 </main>
 
