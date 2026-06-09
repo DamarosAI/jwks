@@ -29,9 +29,9 @@ body.world-ready #world { opacity: 1; }
 
 /* punchy subheading that sits close under every section headline */
 .cap-subhead {
-  margin: .5rem auto 0; max-width: none; font-family: var(--fb); font-weight: 600;
+  margin: .5rem auto 0; max-width: 46ch; font-family: var(--fb); font-weight: 600;
   font-size: clamp(1.05rem, 1.65vw, 1.38rem); line-height: 1.28; letter-spacing: -.005em;
-  color: var(--steel); white-space: nowrap; text-wrap: nowrap;
+  color: var(--steel); text-wrap: balance;
 }
 .cap-subhead em { font-style: normal; color: var(--cold); }
 
@@ -434,9 +434,9 @@ body.world-ready #world { opacity: 1; }
 
   /* section headlines — nudge down for breathing room above the carousel */
   .cap.es .es-title, .cap.ti .ti-title, .cap.ps .ps-title, .cap.gapcap .gap-title { margin-top: clamp(.85rem, 3.6vh, 1.2rem); }
-  .cap.ti .cap-subhead, .cap.ps .cap-subhead, .cap.es .cap-subhead { margin-top: clamp(.55rem, 2.2vh, .75rem); font-size: clamp(.88rem, 4vw, 1.05rem); }
+  .cap.ti .cap-subhead, .cap.ps .cap-subhead, .cap.gapcap .gap-lead { margin-top: clamp(.55rem, 2.2vh, .75rem); }
 
-  /* every multi-panel section → horizontal swipe carousel (one panel at a time, no sub-nav) */
+  /* every multi-panel section → a horizontal swipe carousel (one panel at a time) */
   .es-grid, .ti-split, .ps-split, .gap-grid {
     grid-template-columns: none; display: flex; flex-wrap: nowrap;
     gap: clamp(.75rem, 4.2vw, 1.1rem); overflow-x: auto; overflow-y: visible;
@@ -448,10 +448,8 @@ body.world-ready #world { opacity: 1; }
   .es-stage-card, .ti-half, .ps-half, .gap-col {
     flex: 0 0 100%; scroll-snap-align: center; scroll-snap-stop: always; gap: clamp(.65rem, 3vw, .85rem);
     padding: clamp(.82rem, 3.6vw, 1.1rem) clamp(.88rem, 3.8vw, 1.15rem);
-    transform: none;
+    transform: none;   /* touch must not lift cards — hover translateY was clipping the colored top edge */
   }
-  .es-stage-sub { display: block; white-space: nowrap; font-size: clamp(.78rem, 3.4vw, .86rem); }
-  .ps-sub, .ti-sub { white-space: nowrap; font-size: clamp(.78rem, 3.4vw, .86rem); }
   .ps-half.is-live {
     --panel-ring: rgba(169, 192, 214, .42);
     box-shadow: inset 0 0 0 1px var(--panel-ring), 0 14px 40px rgba(5, 7, 11, .5);
@@ -466,7 +464,7 @@ body.world-ready #world { opacity: 1; }
   .es-stage-cards .cap-box-h, .ti-half .cap-box-h, .ps-half .cap-box-h { font-size: clamp(.82rem, 3.6vw, .88rem); }
   .es-stage-cards .cap-box-b, .ti-half .cap-box-b, .ps-half .cap-box-b { font-size: clamp(.78rem, 3.4vw, .84rem); margin-top: clamp(.38rem, 1.6vw, .48rem); }
 
-  /* sub-nav removed — swipe carousel only */
+  /* mobile panel switcher — disabled; swipe-only carousels */
   .hswipe-nav { display: none !important; }
 }
 
