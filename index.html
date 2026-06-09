@@ -143,11 +143,26 @@
   .gstat-l{ font-size:min(.88rem,1.6vh); }
 }
 @media (max-width:820px){
+  .cap.gapcap{ width:min(34rem,92vw); max-width:min(34rem,92vw); }
+  .cap.gapcap .gap-title{ margin-top:clamp(.85rem,3.6vh,1.2rem); }
   .gap-stats{ grid-template-columns:repeat(3,1fr); gap:.6rem; max-width:none; }
   .gstat{ padding:.85rem .7rem; }
   .gstat-n{ font-size:clamp(1.4rem,7vw,2rem); }
   .gstat-l{ font-size:clamp(.62rem,2.8vw,.72rem); }
   .gstat-s{ display:none; }
+  .gap-grid{
+    grid-template-columns:none; display:flex; flex-wrap:nowrap;
+    gap:clamp(.75rem,4.2vw,1.1rem); overflow-x:auto; overflow-y:visible;
+    scroll-snap-type:x mandatory; scroll-snap-stop:always; overscroll-behavior-x:contain;
+    -webkit-overflow-scrolling:touch; scrollbar-width:none; touch-action:pan-x pinch-zoom;
+    margin-top:clamp(.85rem,2.6vh,1.25rem);
+  }
+  .gap-grid::-webkit-scrollbar{ display:none; }
+  .gap-col{
+    flex:0 0 100%; scroll-snap-align:center; scroll-snap-stop:always;
+    padding:clamp(.82rem,3.6vw,1.1rem) clamp(.88rem,3.8vw,1.15rem);
+    transform:none;
+  }
 }
 .gap-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:clamp(.9rem,1.5vw,1.3rem); text-align:left;
   margin:clamp(1.7rem,3.8vh,2.4rem) auto 0; }
@@ -175,12 +190,6 @@
   .gap-grid{ margin-top:min(clamp(1.6rem,4vh,2.6rem),3.6vh); }
   .gap-col{ padding-top:min(1.8vh,1.7rem); padding-bottom:min(1.8vh,1.7rem); }
   .gap-list li{ font-size:min(.94rem,1.75vh); padding:min(.6rem,1.1vh) 0; }
-}
-@media (max-width:820px){
-  .cap.gapcap{ width:min(34rem,92vw); max-width:min(34rem,92vw); }
-  .gap-grid{ grid-template-columns:none; gap:.8rem; }
-  .gap-col{ padding:1.05rem 1.15rem; }
-  .cap.gapcap .gap-title{ margin-top:clamp(.85rem,3.6vh,1.2rem); }
 }
 
 /* GOVERNED AGENTS, four subsystems, compact 2×2, subordinate to the chain */
@@ -245,8 +254,12 @@
   letter-spacing:-.012em; color:var(--steel); line-height:1.24; text-wrap:balance; }
 .ti-coexist .co-line em{ font-style:normal; color:var(--cold); }
 .ti-coexist .co-deploy{ margin:.55rem auto 0; max-width:64ch; font-family:var(--fb); font-weight:400;
-  font-size:clamp(.76rem,.95vw,.86rem); line-height:1.5; color:rgba(232,236,240,.56); }
+  font-size:clamp(.68rem,.82vw,.78rem); line-height:1.45; color:rgba(232,236,240,.48); }
 .ti-coexist .co-deploy em{ font-style:normal; color:rgba(232,236,240,.78); }
+.cap.ti .ti-title sup.ti-tm{ font-size:.28em; color:var(--steel); position:relative; top:-0.55em; letter-spacing:0; font-weight:400; line-height:0; }
+.cap.ti .ti-title .ti-title-suffix{ font-weight:700; }
+@media (min-width:821px){ .cap.ti .ti-title{ white-space:nowrap; } }
+@media (max-width:820px){ .cap.ti .ti-title{ font-size:clamp(1.55rem,7.2vw,2.15rem); letter-spacing:-.03em; } }
 @media (min-width:821px){
   .ti-coexist{ margin-top:min(1.2rem,1.9vh); }
   .ti-coexist .co-line{ font-size:min(1.3rem,2.4vh); }
@@ -343,30 +356,30 @@
         <div class="gstat"><span class="gstat-n">20+</span><span class="gstat-l">disconnected systems the average site runs daily, with no execution layer above them</span><span class="gstat-s">SCRS · WCG</span></div>
       </div>
 
-      <div class="gap-grid cap-line" data-from="0">
+      <div class="gap-grid cap-line" data-from="0" data-hswipe>
         <div class="gap-col gap-col--break">
           <div class="gap-head"><span class="gap-num">01</span><span class="gap-k">Where it breaks</span></div>
           <ul class="gap-list">
-            <li>Protocol intent trapped in PDFs</li>
-            <li>Eligibility held in coordinator memory</li>
-            <li>REVIEW negotiated in side channels</li>
-            <li>Audit reconstructed after the finding</li>
+            <li>Protocol trapped in PDFs</li>
+            <li>Eligibility trapped in memory</li>
+            <li>REVIEW trapped in side channels</li>
+            <li>Audit rebuilt after the finding</li>
           </ul>
         </div>
         <div class="gap-col gap-col--trend">
           <div class="gap-head"><span class="gap-num">02</span><span class="gap-k">Why it compounds</span></div>
           <ul class="gap-list">
-            <li>Trials decentralizing across sites</li>
+            <li>Trials spreading across sites</li>
             <li>Protocols growing more complex</li>
-            <li>Sites juggling 20+ disconnected systems</li>
-            <li>AI entering faster than governance</li>
+            <li>Sites running 20+ systems</li>
+            <li>AI moving faster than governance</li>
           </ul>
         </div>
         <div class="gap-col gap-col--need">
           <div class="gap-head"><span class="gap-num">03</span><span class="gap-k">What it demands</span></div>
           <ul class="gap-list">
             <li>Not another system of record</li>
-            <li>A governed execution layer</li>
+            <li>A governed execution runtime</li>
             <li>Every decision attributable</li>
             <li>Every decision replayable</li>
           </ul>
@@ -448,7 +461,7 @@
           <div class="ps-topline">
             <div class="ps-half-head">
               <h3>Luna</h3>
-              <p class="ps-sub">Keeps AI <em>under control.</em></p>
+              <p class="ps-sub">Makes AI <em>inspectable.</em></p>
             </div>
             <div class="ps-field ps-rings" aria-hidden="true"></div>
           </div>
@@ -485,9 +498,9 @@
       </div>
     </div>
     <!-- 06 THE NETWORK -->
-    <div class="cap ti" data-cap="7" data-screen-label="The Network">
-      <h2 class="ti-title cap-line" data-type data-from="0">The Network</h2>
-      <p class="cap-subhead cap-line" data-from="0">Clinical research, <em>deployed at the care edge.</em></p>
+    <div class="cap ti" data-cap="7" data-screen-label="The Damaros Network">
+      <h2 class="ti-title cap-line" data-from="0"><span data-type>The Damaros</span><sup class="ti-tm">™</sup><span class="ti-title-suffix"> Network</span></h2>
+      <p class="cap-subhead cap-line" data-from="0">Research moves <em>where care lives.</em></p>
 
       <div class="ti-split cap-line" data-from="0" data-hswipe>
         <div class="ti-half ti-node" data-half="7" data-burst>
@@ -522,12 +535,13 @@
       </div>
 
       <div class="ti-coexist cap-line" data-from="0">
-        <p class="co-deploy">Deploy as Damaros Cloud, dedicated customer cloud, institution-hosted Node, or restricted-egress / air-gapped, <em>for VA, DHA, and high-control research environments.</em></p>
+        <p class="co-line">Care becomes trial infrastructure. <em>Research moves where care lives.</em></p>
+        <p class="co-deploy">Cloud, dedicated cloud, institution-hosted, or restricted-egress — the Network deploys where trust requires.</p>
       </div>
     </div>
     <!-- 09 FINAL -->
     <div class="cap cap--center cap--end" data-cap="9">
-      <h2 class="cap-title"><span class="cap-line" data-type data-from="0">Clinical trials, rewired for the care edge.</span></h2>
+      <h2 class="cap-title"><span class="cap-line" data-type data-from="0">Clinical trials, rewired.</span></h2>
       <div class="j-cta-row j-cta-row--end cap-line" data-from="0">
         <a class="j-btn j-btn--primary" href="/cdn-cgi/l/email-protection#096867607b7c6d61496d6864687b667a276860367a7c6b636c6a7d344d6864687b667a2c3b394067787c607b70">Get in Touch</a>
         <div class="j-cta-docs">
@@ -698,7 +712,8 @@
         var panels = [].slice.call(split.children); if (panels.length < 2) return;
         var nav = document.createElement('div'); nav.className = 'hswipe-nav';
         panels.forEach(function (p, i) {
-          var h = p.querySelector('h3'), label = h ? h.textContent : String(i + 1);
+          var h = p.querySelector('h3') || p.querySelector('.gap-k');
+          var label = h ? h.textContent : String(i + 1);
           var b = document.createElement('button'); b.type = 'button'; b.className = 'hswipe-node' + (i === 0 ? ' on' : '');
           b.innerHTML = '<span class="d"></span><span class="l"></span>';
           b.querySelector('.l').textContent = label;
