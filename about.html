@@ -13,7 +13,7 @@
 
   .about { max-width: 1040px; margin: 0 auto; padding: calc(60px + clamp(2.8rem, 7vh, 4rem)) clamp(1.1rem, 4vw, 2.4rem) 6rem; position: relative; z-index: 1; }
   .a-eyebrow { font-family: var(--fm); font-size: .6rem; letter-spacing: .18em; text-transform: uppercase; color: var(--accent-2); margin-bottom: .7rem; }
-  .a-title { font-family: var(--fh); font-weight: var(--fh-w); font-size: var(--fs-xl); letter-spacing: var(--fh-ls); line-height: var(--fh-lh); max-width: 16ch; }
+  .a-title { font-family: var(--fh); font-weight: var(--fh-w); font-size: var(--fs-xl); letter-spacing: var(--fh-ls); line-height: var(--fh-lh); max-width: 18ch; }
 
   .a-founder {
     display: flex; align-items: center; justify-content: space-between; gap: 1.4rem; flex-wrap: wrap;
@@ -38,6 +38,21 @@
   .a-prose p:last-child { margin-bottom: 0; }
   .a-prose .a-lead { color: var(--fg); font-size: var(--fs-sm); line-height: var(--fb-lh); }
   .a-prose strong { color: var(--fg); font-weight: 600; }
+
+  /* the equalizer stat — most cancer care is community, the trials are not */
+  .a-stat {
+    margin: clamp(1.8rem, 4.5vh, 2.6rem) 0 !important;
+    padding: clamp(1.3rem, 3vh, 1.8rem) clamp(1.3rem, 3vw, 1.9rem);
+    border: 1px solid var(--bd-soft); border-radius: 14px;
+    background: var(--surface-1, rgba(127,127,127,.04));
+    display: grid; grid-template-columns: auto 1fr; align-items: center; gap: clamp(1rem, 3vw, 1.9rem);
+  }
+  .a-stat-n { font-family: var(--fh); font-weight: var(--fh-w-strong); font-size: clamp(2.8rem, 7vw, 4.2rem); line-height: .9; letter-spacing: -.04em; color: var(--fg); }
+  .a-stat-l { font-family: var(--fb); font-size: var(--fs-sm); line-height: 1.4; color: var(--fg-2); }
+  .a-stat-l strong { color: var(--fg); font-weight: 600; }
+  .a-stat-s { display: block; margin-top: .5rem; font-family: var(--fm); font-size: .56rem; letter-spacing: .16em; text-transform: uppercase; color: var(--accent-2); }
+  @media (max-width: 560px) { .a-stat { grid-template-columns: 1fr; gap: .6rem; } }
+
   .a-pull {
     margin: clamp(1.4rem, 3.5vh, 2rem) 0 !important;
     padding-left: 1rem;
@@ -105,7 +120,7 @@
 
 <main class="about">
   <div class="a-eyebrow">Founder</div>
-  <h1 class="a-title">About</h1>
+  <h1 class="a-title">Every clinic deserves to run the trial.</h1>
 
   <div class="a-founder">
     <div class="a-id">
@@ -121,23 +136,28 @@
   <div class="a-prose">
     <p class="a-lead">I founded Damaros from inside clinical medicine.</p>
 
-    <p>Clinical trial execution is not a generic automation problem. It is a regulated clinical workflow problem where protocol logic, patient evidence, human judgment, privacy boundaries, and auditability determine whether AI can be trusted at all.</p>
+    <div class="a-stat">
+      <span class="a-stat-n">~80%</span>
+      <span class="a-stat-l"><strong>of people with cancer are treated in community clinics, not academic centers.</strong> Almost none of the trials run there. The science is the same. The execution infrastructure is not.<span class="a-stat-s">Community Oncology Alliance</span></span>
+    </div>
 
-    <p>Discovery is accelerating. Protocols are becoming more complex. Patient evidence is expanding across fragmented systems. Sites are being asked to operationalize work their software stack was never built to run.</p>
+    <p>A handful of elite centers, the MSKs and Mount Sinais and NCI networks, can run complex protocols at scale because they have the people, the systems, and the institutional machinery to govern execution. The community oncology clinic down the road, treating most of the patients, cannot. So the patient who lives there never gets the trial.</p>
 
-    <p class="a-pull">That gap becomes infrastructure.</p>
+    <p>That is not a medicine problem. It is an execution problem, and execution can be built.</p>
 
-    <p>I am building Damaros from the intersection of medicine, AI systems, and institutional trust. From inside the clinical environment, the missing layer is visible earlier: not another dashboard, not another chatbot, not another workflow wrapper, but a governed execution system for the moment protocol intent meets patient evidence.</p>
+    <p class="a-pull">Damaros gives any clinic the infrastructure to run the trial.</p>
 
-    <p>The next clinical AI companies will not be built by wrapping models around workflows they do not understand. Regulated medicine does not adopt intelligence because it sounds powerful. It adopts systems that understand the work deeply enough to encode boundaries, provenance, human review, and replay.</p>
+    <p>Damaros turns a community site into a fully instrumented, audit-ready trial site: protocol logic compiled to executable criteria, patient evidence admitted with provenance, deterministic screening, human review, and Replay. The clinic keeps control of its patients and its care. The trial simply becomes runnable, with the rigor and inspectability of a major center.</p>
 
-    <p>Clinical trials expose the failure first. They compress the hospital's execution problem into one chain: therapeutic intent, fragmented evidence, site review, institutional risk, and decisions reconstructed after the fact.</p>
+    <p>The same governed execution layer bolts onto the large centers too. Whatever they already run, Triomics or any other stack, Damaros sits underneath as the layer that makes execution attributable and replayable. We do not replace Epic, CTMS, EDC, or eTMF. We create the governed execution record upstream of them.</p>
 
-    <p>Damaros begins there because the need is immediate, the cost is visible, and the workflow is already breaking.</p>
+    <p>Discovery is accelerating. Protocols are becoming more complex. Patient evidence is expanding across fragmented systems. Sites are being asked to operationalize work their software stack was never built to run. That gap becomes infrastructure.</p>
 
-    <p class="a-doctrine">The doctrine stays constant: the model is not the system of record.</p>
+    <p>The next clinical AI companies will not be built by wrapping models around workflows they do not understand. Regulated medicine does not adopt intelligence because it sounds powerful. It adopts systems that understand the work deeply enough to encode boundaries, provenance, human review, and replay. Clinical trials expose the failure first, so Damaros begins there: the need is immediate, the cost is visible, and the workflow is already breaking.</p>
 
-    <p class="a-close">Damaros is building the AI-native execution infrastructure for clinical research: <em>protocol logic, patient evidence, deterministic screening, human review, and Replay</em> in one governed chain.</p>
+    <p class="a-doctrine">The doctrine stays constant: the model is not the system of record. Agents accelerate. Humans decide. Replay proves.</p>
+
+    <p class="a-close">Damaros is the governed execution system for clinical research: <em>protocol logic, patient evidence, deterministic screening, human review, and Replay</em> in one governed chain. Damaros owns the run.</p>
   </div>
 </main>
 

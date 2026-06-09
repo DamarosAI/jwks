@@ -557,7 +557,7 @@ function go(i) {
   if (tgtCap && tgtCap === activeCapEl) updateFacets(tgtCap, i);   // same combined section → swap facet in place (keep title, no re-scramble)
   else setCaps(-1);                                               // crossing into a different section → clear copy during the flight
 }
-const SEQ = [0, 1, 5, 6, 7, 9];   // reachable vantages in order — Operations Mesh (6) sits between Logic Engine (5) and Trial Intelligence (7)
+const SEQ = [0, 2, 1, 5, 7, 9];   // reachable vantages in order — vantage 2 hosts the new 'Execution Gap' problem/vision stop before Spine
 function seqIndex(v) { let i = SEQ.indexOf(v); if (i < 0) { i = 0; for (let k = 0; k < SEQ.length; k++) if (SEQ[k] <= v) i = k; } return i; }
 function seqStep(dir) { return SEQ[Math.max(0, Math.min(SEQ.length - 1, seqIndex(flying ? target : cur) + dir))]; }
 function syncSubsectionPanels(cap, idx) {
@@ -601,7 +601,11 @@ const dots = [...document.querySelectorAll('[data-dot]')];   // 5-stop diamond n
 /* ---- station grouping: 10 engine vantages collapse into 5 navigable stops ----
    each combined section spans several vantages; the camera/terrain still fly to the
    exact vantage, but the journey reads as one stop with internal facets. */
-const GROUPS = [[0], [1], [5], [6], [7], [9]];
+const GROUPS = [[0], [2], [1], [5], [7], [9]];
+// terrain morph is authored for 6 looks (0 home·1 spine·2 substrate·3 mesh·4 intel·5 closer); decouple it from
+// the nav-stop count so consolidating/adding stations never touches the GLSL. Each nav group picks an authored look.
+const SECMAP = [0, 3, 1, 2, 4, 5];   // home · gap→mesh-weave · spine · agents→substrate · intel · closer→surge
+function terrSection(g) { return SECMAP[Math.max(0, Math.min(SECMAP.length - 1, g))]; }
 function groupOf(v) { for (let g = 0; g < GROUPS.length; g++) if (GROUPS[g].indexOf(v) >= 0) return g; return 0; }
 
 let activeCapEl = null;
@@ -746,9 +750,9 @@ function frame() {
   camera.lookAt(lookCur); camera.updateMatrixWorld();
 
   // ---- world layers: terrain morphs only during main-deck flights (5 stops, not per-vantage) ----
-  const deckFrom = groupOf(cur), deckTo = groupOf(target);
+  const deckFrom = terrSection(groupOf(cur)), deckTo = terrSection(groupOf(target));
   if (flying) W.uSection.value = deckFrom + (deckTo - deckFrom) * smoother(mp);
-  else W.uSection.value = groupOf(cur);
+  else W.uSection.value = terrSection(groupOf(cur));
   _wReveal += ((firstFrame ? 1 : 0) - _wReveal) * (1 - Math.exp(-dt * 0.8)); W.uReveal.value = REDUCED ? 1 : _wReveal;
   const si = clamp(Math.round(W.uSection.value), 0, TERRAIN_PROV.length - 1);
   W.uHue.value.copy(COL.steel); W.uProvenance.value += (TERRAIN_PROV[si] - W.uProvenance.value) * (1 - Math.exp(-dt * 1.4));

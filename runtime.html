@@ -91,9 +91,10 @@
 <main class="docs">
   <div class="d-eyebrow">Execution fabric</div>
   <h1 class="d-title">Damaros Runtime</h1>
-  <p class="d-lead"><strong>Governed cloud execution for distributed clinical trials.</strong> Damaros Runtime is the execution fabric beneath Node, Console, Trident, Luna, Forge, Router, the deterministic engine, and Replay.</p>
+  <p class="d-lead"><strong>Governed cloud execution that makes care sites trial-capable.</strong> Damaros Runtime is the execution fabric beneath Node, Console, Trident, Luna, Forge, Router, the deterministic engine, and Replay.</p>
   <p class="d-lead">The homepage tells the story: protocol intent becomes governed execution. Runtime explains how that execution is actually carried, governed, replayed, and defended.</p>
   <p class="d-lead">Every consequential action in Damaros becomes a <strong>run</strong>: protocol compile, evidence sync, deterministic screening, REVIEW routing, human adjudication, Replay reconstruction, or governed agent task.</p>
+  <p class="d-lead">It is also the equalizer. Runtime lets a community clinic execute a protocol with the rigor, attributability, and inspectability of an NCI center, and lets a major center bolt governed execution onto whatever it already runs.</p>
 
   <div class="foil" style="margin-top:1.4rem">
     <p>A run is not a chat. It is not a dashboard refresh. It is not a model answer. It is a typed execution event with versioned inputs, policy scope, actor identity, output state, provenance, and replay linkage. Damaros does not ask institutions to trust AI. It asks them to <em>inspect the run.</em></p>
@@ -117,6 +118,7 @@
       <li>REVIEW becomes accountable.</li>
       <li>Replay becomes proof.</li>
     </ul>
+    <div class="callout em"><strong>~80% of cancer care happens in community clinics. Almost none of the trials do.</strong> The science is the same. The execution infrastructure is not. Runtime is the layer that closes that gap.</div>
   </section>
 
   <section class="doc">
@@ -140,12 +142,12 @@
   <section class="doc">
     <div class="sec-label">03_GOVERNED_CHAIN</div>
     <h2 class="sec-head">The governed run chain</h2>
-    <div class="body"><p>Protocol → Evidence → Screening → Review → Replay. The homepage says “From sponsor to audit. One governed chain.” Runtime explains that chain as actual system behavior.</p></div>
+    <div class="body"><p>Protocol → Evidence → Screening → Review → Replay. The homepage frames it as one governed run, from protocol intent to inspectable proof. Runtime explains that chain as actual system behavior.</p></div>
     <div class="chain-mini">
       <div class="chain-step"><span class="cs-n">01</span><span class="cs-t">Protocol compile</span><p class="cs-d"><strong>Trident</strong> structures protocol language into executable eligibility logic and evidence expectations. Surfaces criterion structure, temporal windows, lab thresholds, mapping candidates, ambiguity flags, and amendment deltas. Trident does not screen patients or issue eligibility verdicts.</p></div>
       <div class="chain-step"><span class="cs-n">02</span><span class="cs-t">Evidence sync</span><p class="cs-d"><strong>Forge</strong> and <strong>Node</strong> admit site-approved evidence. FHIR R4, Epic Backend Services, Cerner/Oracle Health FHIR, bulk FHIR where approved, REDCap, CSV/TSV/Excel, warehouse extracts, pathology and lab tables, site-approved file drops. Output is a protocol-scoped evidence snapshot, not a shadow chart.</p></div>
       <div class="chain-step"><span class="cs-n">03</span><span class="cs-t">Screening</span><p class="cs-d">The deterministic engine evaluates locked protocol logic against an admitted evidence snapshot. Same protocol version, same evidence snapshot, same engine version, same <code>evaluation_as_of</code>, same outcome. AI can assist upstream. The engine governs the decision state.</p></div>
-      <div class="chain-step"><span class="cs-n">04</span><span class="cs-t">Review</span><p class="cs-d"><strong>Router</strong> owns uncertainty. REVIEW is emitted when evidence is missing, stale, conflicting, ambiguous, unmapped, or judgment-dependent. Records reviewer identity, role, timestamp, criterion state, adjudication action, rationale, and Replay linkage. REVIEW is not failure — it is Damaros refusing to fabricate certainty.</p></div>
+      <div class="chain-step"><span class="cs-n">04</span><span class="cs-t">Review</span><p class="cs-d"><strong>Router</strong> owns uncertainty. REVIEW is emitted when evidence is missing, stale, conflicting, ambiguous, unmapped, or judgment-dependent. Records reviewer identity, role, timestamp, criterion state, adjudication action, rationale, and Replay linkage. REVIEW is not failure, it is Damaros refusing to fabricate certainty.</p></div>
       <div class="chain-step"><span class="cs-n">05</span><span class="cs-t">Replay</span><p class="cs-d">Replay reconstructs protocol version, Trident compile lineage, evidence snapshot, screening run, engine version, criterion outcomes, REVIEW events, human adjudication, authorization, artifact hash, export lineage, and AI-origin metadata where relevant. Not a report, PDF, or model transcript.</p></div>
     </div>
   </section>
@@ -200,7 +202,7 @@
 
   <section class="doc">
     <div class="sec-label">06_NODE</div>
-    <h2 class="sec-head">Node boundary — site-governed execution</h2>
+    <h2 class="sec-head">Node boundary, site-governed execution</h2>
     <div class="body"><p><strong>Node</strong> is where patient evidence is admitted, screened, reviewed, and confirmed. The clinic holds the reins.</p></div>
     <div class="dual" style="margin-top:.8rem">
       <div class="dual-card allow">
@@ -222,13 +224,13 @@
         </ul>
       </div>
     </div>
-    <div class="callout em">Node gives the protocol contact with reality while preserving local control.</div>
+    <div class="callout em">Node gives the protocol contact with reality while preserving local control. It is what lets a community clinic run a complex protocol at the standard of a major academic center, for the patients already in its care.</div>
   </section>
 
   <section class="doc">
     <div class="sec-label">07_CONSOLE</div>
-    <h2 class="sec-head">Console boundary — sponsor command without patient-data exposure</h2>
-    <div class="body"><p><strong>Console</strong> receives permissioned, de-identified execution signals — not raw PHI by default.</p></div>
+    <h2 class="sec-head">Console boundary, sponsor command without patient-data exposure</h2>
+    <div class="body"><p><strong>Console</strong> receives permissioned, de-identified execution signals, not raw PHI by default.</p></div>
     <ul class="bullets" style="margin-top:.6rem">
       <li>Site readiness, protocol deployment state, evidence gaps, REVIEW burden</li>
       <li>Criterion friction, screening throughput, Replay completeness, artifact status</li>
