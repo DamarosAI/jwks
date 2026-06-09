@@ -539,13 +539,13 @@ function go(i) {
   i = Math.max(0, Math.min(NS - 1, Math.round(i)));
   if (navLocked()) return;
   if (i === target && !flying) return;
-  // transition character by jump distance: adjacent = full cinematic morph; skip = faster "system reconfiguration"
-  const fromS = flying ? target : cur, jump = Math.abs(i - fromS);
-  const fromSeq = seqIndex(fromS), toSeq = seqIndex(i);
-  navDir = toSeq > fromSeq ? 1 : toSeq < fromSeq ? -1 : navDir;
-  morphMs = jump >= 3 ? 650 : (jump === 2 ? 750 : 850);
+  // transition character by jump distance: adjacent nav stops = full cinematic morph; skips = faster reconfiguration
+  const fromS = flying ? target : cur;
+  const seqJump = Math.abs(seqIndex(i) - seqIndex(fromS));
+  navDir = seqIndex(i) > seqIndex(fromS) ? 1 : seqIndex(i) < seqIndex(fromS) ? -1 : navDir;
+  morphMs = seqJump >= 3 ? 650 : (seqJump === 2 ? 750 : 850);
   armNavLock(morphMs + (REDUCED ? 120 : 320));
-  flightAssemble = (fromS === 0 && i === 1) ? 2.1 : (1.0 + Math.min(Math.max(jump - 1, 0), 8) * 0.16);   // compress through a shared core on skips; lightspeed into Protocol
+  flightAssemble = (fromS === 0 && i === 1) ? 2.1 : (1.0 + Math.min(Math.max(seqJump - 1, 0), 8) * 0.16);
   // snapshot the CURRENT interpolated positions into the 'from' buffer (seamless continuation).
   // MUST mirror the shader's per-particle stagger + smootherstep exactly.
   const uM = uniforms.uMorph.value;
@@ -603,7 +603,7 @@ const dots = [...document.querySelectorAll('[data-dot]')];   // 5-stop diamond n
 const GROUPS = [[0], [2], [1], [5], [7], [9]];
 // terrain morph is authored for 6 looks (0 home·1 spine·2 substrate·3 mesh·4 intel·5 closer); decouple it from
 // the nav-stop count so consolidating/adding stations never touches the GLSL. Each nav group picks an authored look.
-const SECMAP = [0, 3, 1, 2, 4, 5];   // home · gap→mesh-weave · spine · agents→substrate · intel · closer→surge
+const SECMAP = [0, 3, 1, 3, 4, 5];   // home · gap→mesh-weave · spine · mesh→weave · intel · closer→surge
 function terrSection(g) { return SECMAP[Math.max(0, Math.min(SECMAP.length - 1, g))]; }
 function groupOf(v) { for (let g = 0; g < GROUPS.length; g++) if (GROUPS[g].indexOf(v) >= 0) return g; return 0; }
 
