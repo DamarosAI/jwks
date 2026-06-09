@@ -388,7 +388,7 @@ body.world-ready #world { opacity: 1; }
 .luna-svg { width: 100%; height: 100%; }
 .ti-topline .ti-matrix { gap: 4px; }
 /* compact node-site cluster — small enough to live in the header corner */
-.ti-topline .ti-node-viz { gap: 4px; width: var(--viz-w, clamp(97px, 11vw, 128px)); max-width: var(--viz-w, clamp(97px, 11vw, 128px)); justify-content: flex-end; }
+.ti-topline .ti-node-viz { gap: 4px; width: var(--viz-w, clamp(97px, 11vw, 128px)); max-width: var(--viz-w, clamp(97px, 11vw, 128px)); height: var(--viz-h, clamp(57px, 7.7vh, 79px)); justify-content: center; align-items: center; overflow: hidden; }
 .ti-topline .ti-sq--s { width: 17px; height: 17px; border-radius: 4px; }
 .ti-topline .ti-sq--m { width: 24px; height: 24px; border-radius: 6px; }
 .ti-topline .ti-sq--l { width: 31px; height: 31px; border-radius: 8px; }
@@ -463,10 +463,21 @@ body.world-ready #world { opacity: 1; }
   .es-stage-cards .cap-box, .ti-half .cap-box, .ps-half .cap-box { padding: clamp(.72rem, 3.2vw, .95rem) clamp(.82rem, 3.5vw, 1.05rem); }
   .es-stage-cards .cap-box-h, .ti-half .cap-box-h, .ps-half .cap-box-h { font-size: clamp(.82rem, 3.6vw, .88rem); }
   .es-stage-cards .cap-box-b, .ti-half .cap-box-b, .ps-half .cap-box-b { font-size: clamp(.78rem, 3.4vw, .84rem); margin-top: clamp(.38rem, 1.6vw, .48rem); }
-  .ti-node .ti-cards .cap-box + .cap-box { display: none; }
-  .ti-topline .ti-sq--s { width: 14px; height: 14px; border-radius: 3px; }
-  .ti-topline .ti-sq--m { width: 19px; height: 19px; border-radius: 5px; }
-  .ti-topline .ti-sq--l { width: 24px; height: 24px; border-radius: 6px; }
+  .ti-topline .ti-node-viz,
+  .ti-topline .ti-matrix {
+    width: var(--viz-w); height: var(--viz-h); flex: 0 0 var(--viz-w);
+    max-width: var(--viz-w); max-height: var(--viz-h); margin: 0; overflow: hidden;
+  }
+  .ti-topline .ti-node-viz {
+    gap: 3px; justify-content: center; align-items: center;
+  }
+  .ti-topline .ti-sq--s { width: 11px; height: 11px; border-radius: 3px; }
+  .ti-topline .ti-sq--m { width: 15px; height: 15px; border-radius: 4px; }
+  .ti-topline .ti-sq--l { width: 19px; height: 19px; border-radius: 5px; }
+  .ti-half.ti-node,
+  .ti-half.ti-sponsor { min-height: 0; }
+  .ti-half .ti-topline { gap: clamp(.55rem, 2.8vw, .75rem); align-items: flex-start; }
+  .ti-half .ti-cards { margin-top: 0; }
   .cap.ti .ti-coexist { margin-top: clamp(.45rem, 1.2vh, .65rem); }
   .cap.ti .ti-coexist .co-deploy { font-size: clamp(.62rem, 2.7vw, .72rem); line-height: 1.28; }
 
