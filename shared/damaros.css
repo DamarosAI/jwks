@@ -299,6 +299,18 @@ a { color: inherit; text-decoration: none; }
 .mono { font-family: var(--fm); font-variant-numeric: tabular-nums; letter-spacing: .01em; }
 h1,h2,h3 { font-family: var(--fh); font-weight: var(--fh-w); letter-spacing: var(--fh-ls); line-height: var(--fh-lh); margin: 0; }
 h1 { font-size: var(--fs-xl); }
+/* doc page heroes — one line, fluid scale; no ch-width caps */
+.d-title, .a-title {
+  max-width: none;
+  white-space: nowrap;
+  text-wrap: nowrap;
+  line-height: 1.05;
+  letter-spacing: -.025em;
+  font-size: clamp(1.05rem, 0.35rem + 2.4vw, 2.35rem);
+}
+.a-title {
+  font-size: clamp(0.82rem, 0.38rem + 2.65vw, 2.35rem);
+}
 h2 { font-size: var(--fs-lg); }
 h3 { font-size: var(--fs-md); }
 p { line-height: var(--fb-lh); }
