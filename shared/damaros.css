@@ -361,12 +361,36 @@ strong, b { font-weight: var(--fb-w-strong); }
   background: color-mix(in srgb, var(--accent-2) 88%, #fff);
 }
 /* narrow phones: keep the wordmark + tabs on one line without crowding */
+@media (max-width: 820px) {
+  body:has(.docs) .dmx-back,
+  body:has(.about) .dmx-back { display: none; }
+  body:has(.docs) .dmx-nav-start,
+  body:has(.about) .dmx-nav-start { gap: 0; }
+  body:has(.docs) .dmx-brand,
+  body:has(.about) .dmx-brand {
+    animation: dmxBrandPulse 3s ease-in-out infinite;
+  }
+  body:has(.docs) .dmx-nav-cta,
+  body:has(.about) .dmx-nav-cta {
+    padding: .5rem .68rem;
+    letter-spacing: .1em;
+  }
+}
+@keyframes dmxBrandPulse {
+  0%, 100% { opacity: 1; color: var(--fg); }
+  50% { opacity: .78; color: color-mix(in srgb, var(--fg) 82%, var(--accent-2)); }
+}
 @media (max-width: 560px) {
   .dmx-brand { font-size: 1rem; }
-  .dmx-back { font-size: .56rem; letter-spacing: .1em; gap: .26rem; }
   .dmx-nav-links { gap: .7rem; }
   .dmx-nav-link { font-size: .56rem; letter-spacing: .12em; padding: .48rem .72rem; min-height: 2.1rem; }
-  .dmx-nav-cta { font-size: .56rem; padding: .5rem .82rem; letter-spacing: .12em; min-height: 2.1rem; }
+  .dmx-nav-cta { font-size: .56rem; min-height: 2.1rem; }
+  body:has(.docs) .dmx-nav-cta,
+  body:has(.about) .dmx-nav-cta { padding: .48rem .58rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body:has(.docs) .dmx-brand,
+  body:has(.about) .dmx-brand { animation: none; }
 }
 
 /* theme toggle */
