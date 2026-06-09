@@ -3,8 +3,38 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/.well-known/jwks-prod.json",
+      "destination": "/jwks/jwks-prod.json"
+    },
+    {
+      "source": "/.well-known/jwks-nonprod.json",
+      "destination": "/jwks/jwks-nonprod.json"
+    },
+    {
       "source": "/favicon.ico",
       "destination": "/assets/damaros-favicon.png"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/.well-known/jwks-prod.json",
+      "headers": [
+        { "key": "Content-Type", "value": "application/json; charset=utf-8" },
+        { "key": "Cache-Control", "value": "public, max-age=3600" }
+      ]
+    },
+    {
+      "source": "/.well-known/jwks-nonprod.json",
+      "headers": [
+        { "key": "Content-Type", "value": "application/json; charset=utf-8" },
+        { "key": "Cache-Control", "value": "no-store" }
+      ]
+    },
+    {
+      "source": "/jwks/(.*)",
+      "headers": [
+        { "key": "Content-Type", "value": "application/json; charset=utf-8" }
+      ]
     }
   ]
 }
