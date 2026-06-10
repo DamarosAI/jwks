@@ -13,6 +13,7 @@
 
 @import url("archivo.css");
 @import url("hanken-grotesk.css");
+@import url("nav-chrome.css");
 
 :root {
   --fh: 'Archivo', system-ui, sans-serif;        /* display / headings / wordmark */
