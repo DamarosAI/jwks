@@ -1,6 +1,6 @@
-/* Damaros — clear legacy theme pins; OS scheme is handled in CSS. */
+/* Damaros — dark mode only for now; clear legacy light pins. */
 (function () {
   var root = document.documentElement;
   try { localStorage.removeItem("damaros-theme"); } catch (e) {}
-  root.removeAttribute("data-theme");
+  root.setAttribute("data-theme", "dark");
 })();
