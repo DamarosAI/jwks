@@ -4,9 +4,15 @@
   var full = grid.closest('.mono-bg--full');
   if (!full) return;
   var src = grid.getAttribute('data-mono-src');
-
-  function rowBlockHeight(rows, cell, gap) {
-    return rows * cell + (rows - 1) * gap;
+  function syncClip() {
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        var fullTop = full.getBoundingClientRect().top;
+        var gridRect = grid.getBoundingClientRect();
+        var clipH = Math.ceil(gridRect.bottom - fullTop + 2);
+        if (clipH > 0) full.style.setProperty('--mono-field-h', clipH + 'px');
+      });
+    });
   }
 
   function layout() {
@@ -16,11 +22,9 @@
     var ROW = CELL + GAP;
     var TARGET = window.innerHeight * 0.5;
     var rows = Math.max(1, Math.floor((TARGET + GAP) / ROW));
-    var fieldH = rowBlockHeight(rows, CELL, GAP);
     var fieldW = full.clientWidth || window.innerWidth;
     var cols = Math.ceil((fieldW * 1.08) / ROW) + 1;
 
-    full.style.setProperty('--mono-field-h', fieldH + 'px');
     full.style.setProperty('--mono-gap', GAP + 'px');
     full.style.setProperty('--mono-rows', String(rows));
     grid.style.setProperty('--mono-cols', String(cols));
@@ -38,12 +42,7 @@
       grid.appendChild(im);
     }
 
-    requestAnimationFrame(function () {
-      var measured = grid.offsetHeight;
-      if (measured > 0 && measured !== fieldH) {
-        full.style.setProperty('--mono-field-h', measured + 'px');
-      }
-    });
+    syncClip();
   }
 
   layout();

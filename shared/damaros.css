@@ -179,14 +179,15 @@ strong, b { font-weight: var(--fb-w-strong); }
 }
 .mono-bg--full .mono-grid {
   top: 0; left: -4%; width: 108%;
-  height: var(--mono-field-h, auto);
   grid-template-columns: repeat(var(--mono-cols, auto-fill), 84px);
   grid-template-rows: repeat(var(--mono-rows, auto-fill), 84px);
   gap: var(--mono-gap, 26px);
   align-content: start;
   opacity: var(--mono-full-op, .06);
-  transform: none;
-  animation: none;
+  transform: rotate(-8deg);
+  transform-origin: 50% 50%;
+  animation: monoDrift 28s linear infinite;
+  will-change: transform;
 }
 .mono-bg--full .mono-grid img {
   display: block; width: 84px; height: 84px;
