@@ -218,8 +218,10 @@
 .ps-pill{ display:inline-block; vertical-align:middle; transform:translateY(-.18em); margin-left:.45em;
   padding:.2em .55em; border:1px solid rgba(169,192,214,.34); border-radius:999px;
   font-family:var(--fb); font-weight:600; font-size:.4em; letter-spacing:.16em; text-transform:uppercase; color:var(--steel); }
-/* Mesh: drop the eyebrow tags */
+/* Mesh: AGENT eyebrows on Forge + Router only */
 .cap.ps.agents .ps-tag{ display:none; }
+.ps-half--forge .ps-tag,
+.ps-half--router .ps-tag{ display:block; margin-bottom:.45rem; }
 /* Closer headline: uniform color (no steel tail) + calmer size on desktop */
 .deck-caps .cap--end [data-type] .rc.in{ color:var(--cold) !important; }
 .deck-caps .cap--center.cap--end [data-type] .rc:nth-last-child(-n+10){ color:var(--steel) !important; }
@@ -514,6 +516,7 @@
         <div class="ps-half ps-half--forge">
           <div class="ps-topline">
             <div class="ps-half-head">
+              <span class="ps-tag">Agent</span>
               <h3>Forge</h3>
               <p class="ps-sub">Builds the <em>work packet.</em></p>
             </div>
@@ -527,6 +530,7 @@
         <div class="ps-half ps-half--router">
           <div class="ps-topline">
             <div class="ps-half-head">
+              <span class="ps-tag">Agent</span>
               <h3>Router</h3>
               <p class="ps-sub">Moves work to the <em>right decision.</em></p>
             </div>
