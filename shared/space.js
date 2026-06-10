@@ -710,7 +710,7 @@ if (!MOBILE) { bnEl && bnEl.addEventListener('pointerenter', () => { arrowHover 
 // CTA hover → one-shot tighten+brighten (cooldown prevents pulsing)
 let focusTween = null, focusCool = 0;
 function triggerFocus() { const now = performance.now(); if (REDUCED || now < focusCool) return; focusCool = now + 1400; const t0 = now, RISE = 260, HOLD = 220, FALL = 520; focusTween = (ms) => { const e = ms - t0; let v; if (e < RISE) v = ss(e / RISE); else if (e < RISE + HOLD) v = 1; else if (e < RISE + HOLD + FALL) v = 1 - ss((e - RISE - HOLD) / FALL); else { v = 0; focusTween = null; } uniforms.uFocus.value = v; }; }
-if (!MOBILE) document.querySelectorAll('.j-cta, .j-btn').forEach((c) => c.addEventListener('pointerenter', triggerFocus));
+if (!MOBILE) document.querySelectorAll('.dmx-nav-cta, .j-btn').forEach((c) => c.addEventListener('pointerenter', triggerFocus));
 
 /* ============================================================
  * Loop

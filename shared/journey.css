@@ -18,6 +18,15 @@
   --ease:cubic-bezier(.16,1,.3,1);
   --fh:'Archivo', system-ui, sans-serif;
   --fb:'Hanken Grotesk', system-ui, sans-serif;
+  --fm:var(--fb);
+  --fh-w-strong:750;
+  --fg:var(--cold);
+  --fg-3:var(--dim);
+  --accent:var(--steel);
+  --accent-2:var(--steel);
+  --bg:var(--jet);
+  --bd-soft:rgba(169,192,214,.12);
+  --t:220ms;
   --page-gutter:clamp(1.2rem,4vw,2.4rem);
 }
 @media (min-width:821px){
@@ -70,28 +79,13 @@ body.end-hold[data-station="9"] .brand-motif img{
 #fxo{ position:fixed; inset:0; z-index:2; pointer-events:none; }
 
 /* ---------------- chrome: brand · progress · HUD · veil ---------------- */
-.j-top{ position:fixed; inset:0 0 auto 0; z-index:20; display:flex; align-items:center; justify-content:space-between;
-  padding:1.15rem var(--page-gutter); pointer-events:none; }
-.j-brand{ pointer-events:auto; display:inline-flex; align-items:baseline; gap:.12em; font-family:var(--fh);
-  font-weight:750; font-size:1.04rem; letter-spacing:.02em; color:var(--cold); }
-.j-brand sup{ font-size:.46em; color:var(--steel); top:-.7em; }
-.j-nav{ pointer-events:none; display:flex; align-items:center; gap:clamp(.7rem,1.8vw,1.5rem); }
-.j-nav > *{ pointer-events:auto; }
-.j-link{ display:inline-flex; align-items:center; justify-content:center;
-  font-family:var(--fb); font-size:.64rem; font-weight:600; letter-spacing:.18em; text-transform:uppercase;
-  color:var(--dim); transition:color .15s var(--ease), background .15s var(--ease);
-  padding:.58rem .95rem; min-height:2.35rem; min-width:2.35rem; border-radius:8px;
-  -webkit-tap-highlight-color:transparent; }
-.j-link:hover{ color:var(--cold); background:rgba(169,192,214,.08); }
-/* top-right CTA — matches the closing .j-btn (solid steel fill, jet text, 10px radius); a touch smaller for the header */
-.j-top .j-cta{ pointer-events:auto; position:relative; z-index:21; display:inline-flex; align-items:center; justify-content:center;
-  gap:.5rem; font-family:var(--fb); font-size:.7rem; font-weight:600; letter-spacing:.16em; text-transform:uppercase;
-  color:var(--jet); background:var(--steel); border:1px solid var(--steel); border-radius:10px; padding:.72rem 1.3rem;
-  transform-origin:50% 50%;
-  transition:transform .125s var(--ease), box-shadow .125s var(--ease), background .125s var(--ease); }
-.j-top .j-cta:hover{ transform:translateY(-2px); box-shadow:0 12px 36px rgba(169,192,214,.28); background:#c2d5e6; }
+.j-top.dmx-nav{ pointer-events:none; }
+.j-top.dmx-nav .dmx-nav-start,
+.j-top.dmx-nav .dmx-nav-links,
+.j-top.dmx-nav a{ pointer-events:auto; }
+.j-top .dmx-nav-cta{ position:relative; z-index:21; transform-origin:50% 50%; }
 /* hide header CTA during the closing approach — only the center CTA on the end cap is visible */
-body.cta-nav-hidden .j-top .j-cta{
+body.cta-nav-hidden .j-top .dmx-nav-cta{
   opacity:0; visibility:hidden; pointer-events:none;
   transition:opacity .22s var(--ease), visibility .22s var(--ease);
 }
@@ -184,8 +178,8 @@ body.end-hold .cap--end [data-type] .rc{ opacity:0 !important; filter:none !impo
 .cap--hero .cap-lead{ margin-top:1.15rem; color:var(--cold); }
 .cap--hero .cap-body--one{ color:rgba(234,238,242,.74); }
 /* nav brand — hidden while the big landing logo owns the screen; settles into the top-left as you leave the hero */
-.j-brand{ transition:opacity .3s var(--ease), transform .3s var(--ease); }
-body[data-station="0"] .j-brand{ opacity:0; transform:translate(7px,5px) scale(1.14); pointer-events:none; }
+.j-top .dmx-brand{ transition:opacity .3s var(--ease), transform .3s var(--ease); }
+body[data-station="0"] .j-top .dmx-brand{ opacity:0; transform:translate(7px,5px) scale(1.14); pointer-events:none; animation:none; }
 /* floating motif — the faint Damaros monogram behind the landing + closing; it GLOWS only when the cursor is near it */
 .brand-motif{ position:fixed; inset:0; z-index:2; display:grid; place-items:center; pointer-events:none;
   opacity:0; transition:opacity .5s var(--ease); }
@@ -205,7 +199,7 @@ body[data-station="9"]:not(.end-hold) .brand-motif img{
   animation:motifDrift 22s var(--ease) infinite; }
 /* closer: a touch brighter at rest and a stronger peak when the cursor is near */
 @keyframes motifDrift{ 0%,100%{ transform:translateY(0) scale(1); } 50%{ transform:translateY(-1.2%) scale(1.018); } }
-@media (prefers-reduced-motion: reduce){ .brand-motif img{ animation:none; opacity:var(--mo); filter:none; } .j-brand,.brand-motif{ transition:none; } }
+@media (prefers-reduced-motion: reduce){ .brand-motif img{ animation:none; opacity:var(--mo); filter:none; } .j-top .dmx-brand,.brand-motif{ transition:none; } }
 
 /* micro-interactions — key words gain an underline trace + a small lock-in tick on hover */
 .kw{ position:relative; color:var(--cold); white-space:nowrap; cursor:default; transition:color .15s var(--ease); }
@@ -307,7 +301,6 @@ body[data-station="9"]:not(.end-hold) .brand-motif img{
   .cap--split .cap-cards, .cap--split.cap--mirror .cap-cards{ grid-column:auto; margin-top:1.3rem; }
   .cap--split .cap-kicker, .cap--split.cap--mirror .cap-kicker{ text-align:center; }
   .cap--split .cap-sub, .cap--split.cap--mirror .cap-sub{ flex-direction:column; }
-  .j-top .j-cta{ display:none; }
   .cap--center.cap--end .cap-title{ font-size:clamp(1.28rem,5.8vw,1.85rem); max-width:92vw; }
   .cap--center.cap--end .j-cta-row{ top:calc(50% + clamp(2.1rem,9vw,2.85rem)); margin-top:1.15rem; }
   .j-cta-row--end .j-btn--primary{ font-size:clamp(.54rem,2.5vw,.64rem); padding:.52rem .85rem; letter-spacing:.1em; border-radius:8px; }

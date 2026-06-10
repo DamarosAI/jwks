@@ -10,7 +10,7 @@
   var RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (RM) return;
 
-  var cta = document.querySelector('.j-top .j-cta');
+  var cta = document.querySelector('.j-top .dmx-nav-cta');
   var endCap = document.querySelector('.cap--end');
   if (!cta || !endCap) return;
   var slot = endCap.querySelector('.j-cta-dock-slot');
