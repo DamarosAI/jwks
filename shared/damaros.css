@@ -172,21 +172,26 @@ strong, b { font-weight: var(--fb-w-strong); }
 .mono-bg.mono-bg--full {
   inset: 0 auto auto 0;
   width: 100%;
-  height: var(--mono-field-h, 50vh);
-  max-height: 50vh;
+  height: var(--mono-field-h, auto);
   bottom: auto;
   -webkit-mask-image: none;
           mask-image: none;
 }
 .mono-bg--full .mono-grid {
-  top: 0; left: -4%; width: 108%; height: auto;
+  top: 0; left: -4%; width: 108%;
+  height: var(--mono-field-h, auto);
   grid-template-columns: repeat(var(--mono-cols, auto-fill), 84px);
-  grid-auto-rows: 84px;
+  grid-template-rows: repeat(var(--mono-rows, auto-fill), 84px);
   gap: var(--mono-gap, 26px);
+  align-content: start;
   opacity: var(--mono-full-op, .06);
-  animation-duration: 28s;
+  transform: none;
+  animation: none;
 }
-.mono-bg--full .mono-grid img { width: 84px; height: 84px; }
+.mono-bg--full .mono-grid img {
+  display: block; width: 84px; height: 84px;
+  object-fit: contain; filter: var(--mono-filter);
+}
 .mono-bg--about {
   -webkit-mask-image: linear-gradient(135deg, #000 0%, #000 30%, transparent 62%);
           mask-image: linear-gradient(135deg, #000 0%, #000 30%, transparent 62%);
@@ -195,10 +200,6 @@ strong, b { font-weight: var(--fb-w-strong); }
   -webkit-mask-image: radial-gradient(ellipse at 44% 40%, #000 0%, #000 26%, transparent 66%);
           mask-image: radial-gradient(ellipse at 44% 40%, #000 0%, #000 26%, transparent 66%);
 }
-@media (max-width: 900px) {
-  .mono-bg--full .mono-grid { animation: none; }
-}
-
 /* ---- metallic glass CTA ---- */
 .dmx-cta {
   position: relative; isolation: isolate;
