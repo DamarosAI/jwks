@@ -802,7 +802,8 @@
   }
 
   /* FORGE, fragmented evidence on the left converges along drawn edges and
-     ASSEMBLES into a stacked criterion artifact on the right (steel -> cold proof). */
+     ASSEMBLES into a stacked criterion artifact on the right (steel -> cold proof).
+     Top / middle / bottom thirds of fragments route to matching bars only. */
   function buildForge(host) {
     var NS = 'http://www.w3.org/2000/svg';
     var svg = document.createElementNS(NS, 'svg');
@@ -811,14 +812,19 @@
     var frags = [];
     var seed = [[18,22],[40,15],[14,52],[46,46],[24,78],[52,74],[12,98],[44,100],[68,32],[64,90],[34,36],[30,62]];
     seed.forEach(function (p) { frags.push({ x: p[0], y: p[1] }); });
-    // the assembled artifact, a tight stack of bars on the right
-    var BX = 150, BW = 34, BH = 13, GAP = 5, ROWS = 4, BY = 60 - (ROWS * (BH + GAP) - GAP) / 2;
+    // the assembled artifact, three stacked bars on the right
+    var BX = 150, BW = 34, BH = 13, GAP = 5, ROWS = 3, BY = 60 - (ROWS * (BH + GAP) - GAP) / 2;
     var anchorX = BX - 4;
-    // converging edges: each fragment plots a line to the artifact's near edge
+    // assign each fragment to top / middle / bottom bar by vertical third
+    var boxOf = [];
+    var ranked = frags.map(function (f, i) { return { y: f.y, i: i }; }).sort(function (a, b) { return a.y - b.y; });
+    var tier = Math.ceil(frags.length / 3);
+    ranked.forEach(function (f, idx) { boxOf[f.i] = Math.min(2, Math.floor(idx / tier)); });
+    function barY(box) { return BY + (BH + GAP) * box + BH / 2; }
+    // converging edges: each fragment plots one line to its tier's bar only
     frags.forEach(function (f, i) {
-      var ay = BY + (BH + GAP) * (i % ROWS) + BH / 2;
       var l = document.createElementNS(NS, 'line');
-      l.setAttribute('x1', f.x); l.setAttribute('y1', f.y); l.setAttribute('x2', anchorX); l.setAttribute('y2', ay);
+      l.setAttribute('x1', f.x); l.setAttribute('y1', f.y); l.setAttribute('x2', anchorX); l.setAttribute('y2', barY(boxOf[i]));
       l.setAttribute('class', 'fg-edge'); l.style.setProperty('--i', i); svg.appendChild(l);
     });
     // the artifact bars (resolve top-to-bottom, last in the wave)
