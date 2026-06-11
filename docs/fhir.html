@@ -1,105 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
 <title>Damaros · Enterprise FHIR integration</title>
 <link rel="icon" href="../assets/damaros-favicon.png" type="image/png">
-<script src="../shared/theme-system.js"></script>
-<link rel="stylesheet" href="../shared/damaros.css?v=6">
+<link rel="preload" as="font" type="font/woff2" href="../assets/fonts/archivo/archivo-latin.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="../assets/fonts/hanken-grotesk/hanken-grotesk-latin.woff2" crossorigin>
+<link rel="stylesheet" href="../shared/damaros.css">
+<link rel="stylesheet" href="../shared/nav-chrome.css">
+<link rel="stylesheet" href="../shared/journey-doc.css">
+<script type="importmap">
+{ "imports": { "three": "../assets/vendor/three/three.module.js" } }
+</script>
 <style>
   body { scrollbar-gutter: stable; }
-  .docs { max-width: 1040px; margin: 0 auto; padding: calc(60px + clamp(2.8rem, 7vh, 4rem)) clamp(1.1rem, 4vw, 2.4rem) 6rem; position: relative; z-index: 1; }
-  .d-eyebrow { font-family: var(--fm); font-size: .6rem; letter-spacing: .18em; text-transform: uppercase; color: var(--accent-2); margin-bottom: .7rem; }
-  .d-title { font-family: var(--fh); font-weight: var(--fh-w); letter-spacing: var(--fh-ls); line-height: var(--fh-lh); }
-  .d-lead { color: var(--fg-2); font-family: var(--fb); font-size: var(--fs-sm); font-weight: var(--fb-w); line-height: var(--fb-lh); margin: 1.15rem 0 0; max-width: 64ch; }
-  .d-lead b { color: var(--fg); font-weight: var(--fb-w-strong); }
-  .cross-link { display: inline-flex; align-items: center; gap: .45rem; margin-top: 1.1rem; font-family: var(--fm); font-size: .66rem; letter-spacing: .14em; text-transform: uppercase; color: var(--accent-2); text-decoration: none; border-bottom: 1px solid transparent; padding-bottom: 2px; transition: color var(--t) var(--ease), border-color var(--t) var(--ease); }
-  .cross-link:hover { color: var(--fg); border-color: var(--accent); }
-
-  .divider { height: 1px; background: var(--bd-soft); margin: clamp(2.4rem, 5vh, 3.2rem) 0; }
-
-  section.doc { margin-bottom: clamp(2rem, 4vh, 2.8rem); scroll-margin-top: 80px; }
-  .sec-label { font-family: var(--fm); font-size: .58rem; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); opacity: .7; margin-bottom: .5rem; }
-  .sec-label::before { content: '// '; }
-  .sec-head { font-family: var(--fh); font-weight: var(--fh-w); font-size: var(--fs-base); letter-spacing: var(--fh-ls); padding-bottom: .55rem; border-bottom: 1px solid var(--bd-soft); margin: 0 0 1rem; }
-  .body { color: var(--fg-2); font-family: var(--fb); font-size: var(--fs-base); font-weight: var(--fb-w); line-height: var(--fb-lh); }
-  .body p { margin: 0 0 .8rem; } .body p:last-child { margin-bottom: 0; }
-  .body strong { color: var(--fg); font-weight: 600; }
-  .body code, .kv code, .scopes code, .flow code { font-family: var(--fm); color: var(--accent-2); font-size: .85em; }
-  .body a { color: var(--accent-2); }
-
-  .flow { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem; margin: 1rem 0 0; }
-  .flow .f-step { font-family: var(--fm); font-size: .72rem; letter-spacing: .02em; color: var(--fg); padding: .42rem .65rem; border: 1px solid var(--bd-soft); border-radius: 7px; background: var(--chip-bg); white-space: nowrap; }
-  .flow .f-arrow { color: var(--accent-2); font-size: .72rem; opacity: .65; }
-
-  .kv { width: 100%; border-collapse: collapse; font-family: var(--fm); font-size: .8rem; }
-  .kv tr { border-bottom: 1px solid var(--bd-soft); }
-  .kv tr:last-child { border-bottom: 0; }
-  .kv td { padding: .62rem 0; vertical-align: top; line-height: 1.55; }
-  .kv td:first-child { width: 230px; padding-right: 1.4rem; color: var(--accent); opacity: .82; white-space: nowrap; }
-  .kv td:last-child { color: var(--fg-2); }
-  .kv a { color: var(--accent-2); } .kv a:hover { text-decoration: underline; }
-
-  .scopes { list-style: none; padding: 0; margin: 0; }
-  .scopes li { display: grid; grid-template-columns: 280px 1fr; gap: 1rem; align-items: baseline; padding: .5rem 0; border-bottom: 1px solid var(--bd-soft); font-size: .82rem; }
-  .scopes li:last-child { border-bottom: 0; }
-  .scopes .sn { font-family: var(--fm); color: var(--accent-2); }
-  .scopes .sd { color: var(--fg-2); }
-
-  .callout { margin: 1.1rem 0 0; padding: .85rem 1.15rem; border-left: 2px solid var(--bd-strong); background: var(--chip-bg); color: var(--fg-2); font-family: var(--fm); font-size: .76rem; line-height: 1.65; border-radius: 0 6px 6px 0; }
-  .callout strong { color: var(--fg); }
-  .callout.em { border-left-color: var(--accent-2); }
-  .bullets { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .55rem; color: var(--fg-2); font-size: .88rem; line-height: 1.58; }
-  .bullets li { padding-left: 1rem; position: relative; }
-  .bullets li::before { content: '>'; position: absolute; left: 0; color: var(--accent); font-family: var(--fm); }
-  .bullets strong { color: var(--fg); }
-
-  pre.code { margin: 1rem 0 0; padding: 1rem 1.15rem; border: 1px solid var(--bd-soft); border-radius: 8px; background: var(--bg-1); font-family: var(--fm); font-size: .72rem; line-height: 1.55; color: var(--fg-2); overflow-x: auto; }
-  .pre-cap { font-family: var(--fm); font-size: .58rem; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); opacity: .85; margin: 1.3rem 0 .3rem; }
-  .pre-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-  .contact a { color: var(--accent-2); } .contact a:hover { text-decoration: underline; }
-  .contact { font-family: var(--fm); font-size: .85rem; line-height: 2; color: var(--fg-2); }
-
-  footer { border-top: 1px solid var(--bd-soft); padding: 2.2rem clamp(1.1rem,4vw,2.4rem); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; font-family: var(--fm); font-size: .6rem; letter-spacing: .1em; color: var(--fg-3); max-width: 1040px; margin: 0 auto; text-transform: uppercase; }
-  footer .geo { justify-self: start; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  footer .geo.pending { opacity: .45; }
-  footer .cp { justify-self: center; }
-  footer a { justify-self: end; color: var(--fg-3); text-decoration: none; }
-  footer a:hover { color: var(--fg); }
-
-  @media (max-width: 820px) { .pre-grid { grid-template-columns: 1fr; } }
-  @media (max-width: 620px) { .kv td:first-child { width: 140px; font-size: .72rem; white-space: normal; } .scopes li { grid-template-columns: 1fr; gap: .1rem; } }
 </style>
 </head>
 <body>
 <nav class="dmx-nav">
   <div class="dmx-nav-start">
-    <a class="dmx-brand" href="/" aria-label="Damaros">Damaros<sup>™</sup></a>
-    <a class="dmx-back" href="/"><span class="dmx-back-arrow" aria-hidden="true">←</span> Go back</a>
+    <a class="dmx-brand" href="../index.html" aria-label="Damaros">Damaros<sup>™</sup></a>
+    <a class="dmx-back" href="../index.html"><span class="dmx-back-arrow" aria-hidden="true">←</span> Go back</a>
   </div>
   <div class="dmx-nav-links">
-    <a class="dmx-nav-link" href="/runtime.html">Runtime</a>
-    <a class="dmx-nav-link" href="/docs/fhir" aria-current="true">FHIR</a>
-    <a class="dmx-nav-link" href="/about">About</a>
-    <a class="dmx-nav-cta" href="/cdn-cgi/l/email-protection#1d7c73746f6879755d797c707c6f726e337c74226e687f77787e6920597c707c6f726e382f2d54736c68746f64" aria-label="Get in touch"><span class="dmx-nav-cta-label">Get in Touch</span><svg class="dmx-nav-cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg></a>
+    <a class="dmx-nav-link" href="../runtime.html">Runtime</a>
+    <a class="dmx-nav-link" href="fhir.html" aria-current="true">FHIR</a>
+    <a class="dmx-nav-link" href="../about.html">About</a>
+    <a class="dmx-nav-cta" href="/cdn-cgi/l/email-protection#1d7c73746f6879755d797c707c6f726e337c74226e687f77787e6920597c707c6f726e382f2d54736c68746f64" aria-label="Get in touch"><span class="dmx-nav-cta-label">Get in Touch</span><svg class="dmx-nav-cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"></path><path d="M22 2 15 22l-4-9-9-4 20-7z"></path></svg></a>
   </div>
 </nav>
 
-<div class="dmx-texture" aria-hidden="true"></div>
+<canvas id="world" aria-hidden="true"></canvas>
+<div class="world-scrim" aria-hidden="true"></div>
 
 <main class="docs">
   <div class="d-eyebrow">Epic / FHIR / JWKS</div>
   <h1 class="d-title">Enterprise integration reference</h1>
   <p class="d-lead"><b>Read-only FHIR for governed trial execution.</b> How Damaros clinic nodes connect to Epic through SMART Backend Services: JWT assertions, JWKS discovery, cohort-scoped evidence, deterministic screening, and replay lineage. For integration teams, security reviewers, and sponsor diligence.</p>
 
-  <a class="cross-link" href="/runtime.html">Damaros Runtime <span aria-hidden="true">&rarr;</span></a>
+  <a class="cross-link" href="../runtime.html">Damaros Runtime <span aria-hidden="true">&rarr;</span></a>
 
   <div class="divider"></div>
 
   <section class="doc">
-    <div class="sec-label">00_SCOPE</div>
+    <div class="sec-label"><span class="sl-n">00</span><span class="sl-k">SCOPE</span></div>
     <h2 class="sec-head">Document scope</h2>
     <div class="body">
       <p>Damaros connects to Epic as a Backend Systems application. Integration is read-only by default, cohort-scoped, and server-side only. This page covers authentication, JWKS, requested scopes, sync behavior, clinical boundaries, audit, and cutover posture.</p>
@@ -107,12 +53,12 @@
     <table class="kv">
       <tr><td>IN_SCOPE</td><td>OAuth flow, JWT assertions, JWKS URLs and rotation, FHIR scopes, sync model, data minimization, network egress, replay provenance</td></tr>
       <tr><td>OUT_OF_SCOPE</td><td>Customer Epic client IDs, private signing PEM, internal service topology, hospital-specific firewall rules</td></tr>
-      <tr><td>RUNTIME</td><td>Eligibility verdicts are deterministic. PHI never reaches an LLM. See <a href="/runtime.html">Damaros Runtime</a>.</td></tr>
+      <tr><td>RUNTIME</td><td>Eligibility verdicts are deterministic. PHI never reaches an LLM. See <a href="../runtime.html">Damaros Runtime</a>.</td></tr>
     </table>
   </section>
 
   <section class="doc">
-    <div class="sec-label">01_OPERATING_MODEL</div>
+    <div class="sec-label"><span class="sl-n">01</span><span class="sl-k">OPERATING MODEL</span></div>
     <h2 class="sec-head">Research execution on approved cohorts</h2>
     <div class="body">
       <p>Damaros is trial-capable care infrastructure. Site-approved FHIR binds locked protocol logic to a defined cohort, evaluates eligibility deterministically, and preserves criterion-level evidence on one audit path.</p>
@@ -123,7 +69,7 @@
   </section>
 
   <section class="doc">
-    <div class="sec-label">02_SYNC_PIPELINE</div>
+    <div class="sec-label"><span class="sl-n">02</span><span class="sl-k">SYNC PIPELINE</span></div>
     <h2 class="sec-head">FHIR sync to screening</h2>
     <div class="flow" aria-label="Sync pipeline">
       <span class="f-step">Resolve cohort</span><span class="f-arrow">&rarr;</span>
@@ -143,7 +89,7 @@
   </section>
 
   <section class="doc">
-    <div class="sec-label">03_OAUTH_FLOW</div>
+    <div class="sec-label"><span class="sl-n">03</span><span class="sl-k">OAUTH FLOW</span></div>
     <h2 class="sec-head">Backend Services token exchange</h2>
     <div class="body">
       <p>Production uses SMART on FHIR Backend Services. Damaros signs a short-lived JWT client assertion, posts it to Epic's token URL, and receives an access token. PKCE does not apply to Backend Systems. User-facing OAuth and browser token storage are not used for FHIR access.</p>
@@ -186,7 +132,7 @@ grant_type=client_credentials
   </section>
 
   <section class="doc">
-    <div class="sec-label">04_PLATFORM_ARCHITECTURE</div>
+    <div class="sec-label"><span class="sl-n">04</span><span class="sl-k">PLATFORM ARCHITECTURE</span></div>
     <h2 class="sec-head">Integration architecture summary</h2>
     <table class="kv">
       <tr><td>APPLICATION_AUDIENCE</td><td>Backend Systems (Epic-registered Backend Services app)</td></tr>
@@ -202,7 +148,7 @@ grant_type=client_credentials
   </section>
 
   <section class="doc">
-    <div class="sec-label">05_JWKS_AND_KEYS</div>
+    <div class="sec-label"><span class="sl-n">05</span><span class="sl-k">JWKS AND KEYS</span></div>
     <h2 class="sec-head">Environment separation, JWKS hosting, and rotation</h2>
     <div class="body">
       <p>Epic validates Damaros client assertions against public keys published in JWKS documents. Private signing material never leaves secret stores. Public keys are the only cryptographic material exposed on the wire or in public JSON.</p>
@@ -246,7 +192,7 @@ grant_type=client_credentials
   </section>
 
   <section class="doc">
-    <div class="sec-label">06_OAUTH_SCOPES</div>
+    <div class="sec-label"><span class="sl-n">06</span><span class="sl-k">OAUTH SCOPES</span></div>
     <h2 class="sec-head">Initial requested scopes</h2>
     <div class="body"><p>An OAuth floor of eight <code>system/*.read</code> scopes covers the per-patient eligibility bundle plus cohort membership via <code>GET Group/{id}</code>. No write scopes on first deployment. The connector never calls FHIR Binary; DocumentReference ingest keeps metadata only.</p></div>
     <ul class="scopes">
@@ -267,7 +213,7 @@ grant_type=client_credentials
   </section>
 
   <section class="doc">
-    <div class="sec-label">07_RESOURCE_HANDLING</div>
+    <div class="sec-label"><span class="sl-n">07</span><span class="sl-k">RESOURCE HANDLING</span></div>
     <h2 class="sec-head">FHIR resource handling and minimization</h2>
     <table class="kv">
       <tr><td>Patient</td><td>Demographics and identifiers needed for cohort binding and criterion evaluation. Stored per deployment retention policy.</td></tr>
@@ -284,7 +230,7 @@ grant_type=client_credentials
   <div class="divider"></div>
 
   <section class="doc">
-    <div class="sec-label">08_CLINICAL_DATA_BOUNDARY</div>
+    <div class="sec-label"><span class="sl-n">08</span><span class="sl-k">CLINICAL DATA BOUNDARY</span></div>
     <h2 class="sec-head">Clinical data boundary</h2>
     <ul class="bullets">
       <li><strong>Evidence cohorts</strong> (Epic cohorts) are defined by approved protocol logic or institutional configuration.</li>
@@ -292,12 +238,12 @@ grant_type=client_credentials
       <li><strong>PHI never reaches an LLM.</strong> Criterion PASS / REVIEW / FAIL comes only from the deterministic engine on ingested FHIR. No patient identifiers or cohort-linked fields are serialized into any optional external request path.</li>
       <li>Helm deployments ship deny-by-default API egress <code>NetworkPolicy</code> with explicit CIDR allowlists for Epic FHIR, OIDC, in-cluster Postgres/Redis, and DNS.</li>
       <li>Screening outputs are criterion-level PASS, REVIEW, or FAIL with evidence references, never an ungrounded generative verdict.</li>
-      <li>Sponsor and CRO visibility stays permissioned and de-identified by default. See <a href="/runtime.html">Damaros Runtime</a> for the full visibility model.</li>
+      <li>Sponsor and CRO visibility stays permissioned and de-identified by default. See <a href="../runtime.html">Damaros Runtime</a> for the full visibility model.</li>
     </ul>
   </section>
 
   <section class="doc">
-    <div class="sec-label">09_AUDIT_AND_REPLAY</div>
+    <div class="sec-label"><span class="sl-n">09</span><span class="sl-k">AUDIT AND REPLAY</span></div>
     <h2 class="sec-head">Audit, determinism, and replay</h2>
     <ul class="bullets">
       <li>Decisions are reproducible for a fixed protocol version, cohort snapshot, evidence snapshot, and <code>evaluation_as_of</code>.</li>
@@ -310,7 +256,7 @@ grant_type=client_credentials
   </section>
 
   <section class="doc">
-    <div class="sec-label">10_SECURITY_AND_LOGGING</div>
+    <div class="sec-label"><span class="sl-n">10</span><span class="sl-k">SECURITY AND LOGGING</span></div>
     <h2 class="sec-head">Security, privacy, and logging</h2>
     <ul class="bullets">
       <li>Signing keys and Epic access tokens are server-side secrets; FHIR traffic uses TLS.</li>
@@ -323,7 +269,7 @@ grant_type=client_credentials
   </section>
 
   <section class="doc">
-    <div class="sec-label">11_EPIC_REGISTRATION</div>
+    <div class="sec-label"><span class="sl-n">11</span><span class="sl-k">EPIC REGISTRATION</span></div>
     <h2 class="sec-head">Epic app registration posture</h2>
     <div class="body">
       <p>Each deployment registers as a Backend Systems application in Epic App Orchard or the institution's equivalent process. Registration lists the JWKS URL, requested scopes, and Backend Services audience. Sandbox and production registrations remain separate.</p>
@@ -338,7 +284,7 @@ grant_type=client_credentials
   </section>
 
   <section class="doc">
-    <div class="sec-label">12_VALIDATION_CUTOVER</div>
+    <div class="sec-label"><span class="sl-n">12</span><span class="sl-k">VALIDATION CUTOVER</span></div>
     <h2 class="sec-head">Validation to production cutover</h2>
     <div class="body">
       <p>Validation and production share the same eligibility engine, protocol compiler, and replay model. Sandbox FHIR credentials, JWKS URLs, and signing keys stay isolated from production. Retrospective validation runs produce replay artifacts that carry the same structure sponsors expect in live operations.</p>
@@ -353,12 +299,12 @@ grant_type=client_credentials
   </section>
 
   <section class="doc">
-    <div class="sec-label">13_RELATED_DOCUMENTS</div>
+    <div class="sec-label"><span class="sl-n">13</span><span class="sl-k">RELATED DOCUMENTS</span></div>
     <h2 class="sec-head">Related documents</h2>
     <ul class="bullets">
-      <li><a href="/runtime.html">Damaros Runtime</a></li>
-      <li><a href="/docs/privacy">Platform privacy and data handling</a></li>
-      <li><a href="/privacy">Public website privacy notice</a> (covers public JWKS hosting)</li>
+      <li><a href="../runtime.html">Damaros Runtime</a></li>
+      <li><a href="privacy.html">Platform privacy and data handling</a></li>
+      <li><a href="../privacy.html">Public website privacy notice</a> (covers public JWKS hosting)</li>
       <li>Customer BAA / DPA and deployment security addendum (provided under contract)</li>
     </ul>
   </section>
@@ -366,7 +312,7 @@ grant_type=client_credentials
   <div class="divider"></div>
 
   <section class="doc contact">
-    <div class="sec-label">14_CONTACT</div>
+    <div class="sec-label"><span class="sl-n">14</span><span class="sl-k">CONTACT</span></div>
     <h2 class="sec-head">Contact</h2>
     <div>Website &nbsp;&nbsp; <a href="https://damaros.ai">damaros.ai</a></div>
     <div>JWKS (prod) &nbsp;&nbsp; <a href="https://www.damaros.ai/.well-known/jwks-prod.json">/.well-known/jwks-prod.json</a></div>
@@ -378,8 +324,10 @@ grant_type=client_credentials
 <footer>
   <span class="geo pending" id="geo">Locating</span>
   <span class="cp">© 2026 Damaros™</span>
-  <a href="/privacy">Privacy</a>
+  <a href="../privacy.html">Privacy</a>
 </footer>
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="/shared/geo-footer.js"></script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="../shared/geo-footer.js"></script>
+<script type="module" src="../shared/doc-world.js"></script>
+<script src="../shared/doc-ui.js"></script>
 </body>
 </html>

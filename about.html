@@ -1,139 +1,83 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
 <title>Damaros · About</title>
 <link rel="icon" href="assets/damaros-favicon.png" type="image/png">
-<script src="shared/theme-system.js"></script>
-<link rel="stylesheet" href="shared/damaros.css?v=6">
-<style>
-  body { overflow-x: hidden; }
-
-  .about { max-width: 1040px; margin: 0 auto; padding: calc(60px + clamp(2.8rem, 7vh, 4rem)) clamp(1.1rem, 4vw, 2.4rem) 6rem; position: relative; z-index: 1; }
-  .a-eyebrow { font-family: var(--fm); font-size: .6rem; letter-spacing: .18em; text-transform: uppercase; color: var(--accent-2); margin-bottom: .7rem; }
-  .a-title { font-family: var(--fh); font-weight: var(--fh-w); letter-spacing: var(--fh-ls); line-height: var(--fh-lh); }
-
-  .a-founder {
-    display: flex; align-items: center; justify-content: space-between; gap: 1.4rem; flex-wrap: wrap;
-    margin-top: clamp(2rem, 5vh, 3rem);
-    padding-bottom: clamp(1.4rem, 3.5vh, 2rem);
-    border-bottom: 1px solid var(--bd-soft);
-  }
-  .a-id { display: flex; flex-direction: column; gap: .32rem; }
-  .a-name { font-family: var(--fh); font-weight: var(--fh-w-strong); font-size: 1.12rem; letter-spacing: var(--fh-ls); color: var(--fg); }
-  .a-role { font-family: var(--fm); font-size: .62rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); opacity: .85; }
-  .a-linkedin svg { width: 16px; height: 16px; display: block; flex-shrink: 0; }
-
-  .a-prose {
-    padding-top: clamp(1.6rem, 4vh, 2.4rem);
-    color: var(--fg-2);
-    font-family: var(--fb);
-    font-size: var(--fs-base);
-    font-weight: var(--fb-w);
-    line-height: var(--fb-lh);
-  }
-  .a-prose p { margin: 0 0 .8rem; }
-  .a-prose p:last-child { margin-bottom: 0; }
-  .a-prose .a-lead { color: var(--fg); font-size: var(--fs-sm); line-height: var(--fb-lh); }
-  .a-prose strong { color: var(--fg); font-weight: 600; }
-
-  .a-pull {
-    margin: clamp(1.4rem, 3.5vh, 2rem) 0 !important;
-    padding-left: 1rem;
-    border-left: 2px solid var(--accent-2);
-    font-family: var(--fh);
-    font-weight: var(--fh-w);
-    font-size: var(--fs-md);
-    line-height: 1.25;
-    color: var(--fg) !important;
-    letter-spacing: -.01em;
-  }
-  .a-doctrine {
-    margin-top: clamp(1.6rem, 4vh, 2.4rem) !important;
-    padding-top: clamp(1.4rem, 3.5vh, 2rem);
-    border-top: 1px solid var(--bd-soft);
-    color: var(--fg) !important;
-    font-family: var(--fh);
-    font-weight: var(--fh-w);
-    font-size: var(--fs-sm);
-    line-height: 1.35;
-  }
-
-  footer { border-top: 1px solid var(--bd-soft); padding: 2.2rem clamp(1.1rem,4vw,2.4rem); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; font-family: var(--fm); font-size: .6rem; letter-spacing: .1em; text-transform: uppercase; color: var(--fg-3); max-width: 1040px; margin: 0 auto; }
-  footer .geo { justify-self: start; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  footer .geo.pending { opacity: .45; }
-  footer .cp { justify-self: center; }
-  footer a { justify-self: end; color: var(--fg-3); text-decoration: none; }
-  footer a:hover { color: var(--fg); }
-
-  @media (max-width: 560px) {
-    .a-founder { flex-direction: column; align-items: flex-start; }
-    .a-linkedin { width: 100%; justify-content: center; }
-  }
-</style>
+<link rel="preload" as="font" type="font/woff2" href="assets/fonts/archivo/archivo-latin.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="assets/fonts/hanken-grotesk/hanken-grotesk-latin.woff2" crossorigin>
+<link rel="stylesheet" href="shared/damaros.css">
+<link rel="stylesheet" href="shared/nav-chrome.css">
+<link rel="stylesheet" href="shared/journey-doc.css">
+<script type="importmap">
+{ "imports": { "three": "./assets/vendor/three/three.module.js" } }
+</script>
 </head>
 <body>
-
 <nav class="dmx-nav">
   <div class="dmx-nav-start">
-    <a class="dmx-brand" href="/" aria-label="Damaros">Damaros<sup>™</sup></a>
-    <a class="dmx-back" href="/"><span class="dmx-back-arrow" aria-hidden="true">←</span> Go back</a>
+    <a class="dmx-brand" href="index.html" aria-label="Damaros">Damaros<sup>™</sup></a>
+    <a class="dmx-back" href="index.html"><span class="dmx-back-arrow" aria-hidden="true">←</span> Go back</a>
   </div>
   <div class="dmx-nav-links">
-    <a class="dmx-nav-link" href="/runtime.html">Runtime</a>
-    <a class="dmx-nav-link" href="/docs/fhir">FHIR</a>
-    <a class="dmx-nav-link" href="/about" aria-current="true">About</a>
-    <a class="dmx-nav-cta" href="/cdn-cgi/l/email-protection#1d7c73746f6879755d797c707c6f726e337c74226e687f77787e6920597c707c6f726e382f2d54736c68746f64" aria-label="Get in touch"><span class="dmx-nav-cta-label">Get in Touch</span><svg class="dmx-nav-cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg></a>
+    <a class="dmx-nav-link" href="runtime.html">Runtime</a>
+    <a class="dmx-nav-link" href="docs/fhir.html">FHIR</a>
+    <a class="dmx-nav-link" href="about.html" aria-current="true">About</a>
+    <a class="dmx-nav-cta" href="/cdn-cgi/l/email-protection#1d7c73746f6879755d797c707c6f726e337c74226e687f77787e6920597c707c6f726e382f2d54736c68746f64" aria-label="Get in touch"><span class="dmx-nav-cta-label">Get in Touch</span><svg class="dmx-nav-cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"></path><path d="M22 2 15 22l-4-9-9-4 20-7z"></path></svg></a>
   </div>
 </nav>
 
-<div class="dmx-texture" aria-hidden="true"></div>
+<canvas id="world" aria-hidden="true"></canvas>
+<div class="world-scrim" aria-hidden="true"></div>
 
 <main class="about">
   <div class="a-eyebrow">Founder</div>
   <h1 class="a-title">Every clinic deserves to run the trial.</h1>
 
-  <div class="a-founder">
-    <div class="a-id">
-      <span class="a-name">Anirudh C. Nimmagadda</span>
-      <span class="a-role">Founder &amp; CEO · MD/MSAI Candidate</span>
+  <div class="a-grid">
+    <div class="a-prose">
+      <p class="a-lead">I founded Damaros from inside clinical medicine because the trial rift is visible there first.</p>
+
+      <p>A handful of elite centers can run complex protocols at scale. The community clinic down the road, treating most of the patients, cannot. So the patient who lives there never gets the trial.</p>
+
+      <p>That is not a medicine problem. It is an execution problem, and execution can be built.</p>
+
+      <p class="a-pull">Damaros gives any clinic the infrastructure to <em>run the trial.</em></p>
+
+      <p>Damaros turns a community site into an audit-ready trial site: protocol logic compiled to executable criteria, evidence admitted with provenance, deterministic screening, human review, and Replay. The clinic keeps its patients and its care. The trial becomes runnable.</p>
+
+      <p>The same layer bolts onto major centers too. Damaros sits underneath as governed execution that is attributable and replayable. We do not replace Epic, CTMS, EDC, or eTMF. We create the execution record upstream of them.</p>
+
+      <p>Discovery is accelerating. Protocols are becoming more complex. Patient evidence is expanding across fragmented systems. Sites are being asked to operationalize work their software stack was never built to run. That gap becomes infrastructure.</p>
+
+      <p>The next clinical AI companies will not be built by wrapping models around workflows they do not understand. Regulated medicine does not adopt intelligence because it sounds powerful. It adopts systems that understand the work deeply enough to encode boundaries, provenance, human review, and replay. Clinical trials expose the failure first, so Damaros begins there: the need is immediate, the cost is visible, and the workflow is already breaking.</p>
+
+      <p class="a-doctrine">The doctrine stays constant: the model is not the system of record. Agents accelerate. <em>Humans decide. Replay proves.</em></p>
     </div>
-    <a class="a-linkedin dmx-cta dmx-cta--sm" href="https://www.linkedin.com/in/acnimma/" target="_blank" rel="noopener noreferrer">
-      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
-      Connect on LinkedIn
-    </a>
-  </div>
 
-  <div class="a-prose">
-    <p class="a-lead">I founded Damaros from inside clinical medicine because the trial rift is visible there first.</p>
-
-    <p>A handful of elite centers can run complex protocols at scale. The community clinic down the road, treating most of the patients, cannot. So the patient who lives there never gets the trial.</p>
-
-    <p>That is not a medicine problem. It is an execution problem, and execution can be built.</p>
-
-    <p class="a-pull">Damaros gives any clinic the infrastructure to run the trial.</p>
-
-    <p>Damaros turns a community site into an audit-ready trial site: protocol logic compiled to executable criteria, evidence admitted with provenance, deterministic screening, human review, and Replay. The clinic keeps its patients and its care. The trial becomes runnable.</p>
-
-    <p>The same layer bolts onto major centers too. Damaros sits underneath as governed execution that is attributable and replayable. We do not replace Epic, CTMS, EDC, or eTMF. We create the execution record upstream of them.</p>
-
-    <p>Discovery is accelerating. Protocols are becoming more complex. Patient evidence is expanding across fragmented systems. Sites are being asked to operationalize work their software stack was never built to run. That gap becomes infrastructure.</p>
-
-    <p>The next clinical AI companies will not be built by wrapping models around workflows they do not understand. Regulated medicine does not adopt intelligence because it sounds powerful. It adopts systems that understand the work deeply enough to encode boundaries, provenance, human review, and replay. Clinical trials expose the failure first, so Damaros begins there: the need is immediate, the cost is visible, and the workflow is already breaking.</p>
-
-    <p class="a-doctrine">The doctrine stays constant: the model is not the system of record. Agents accelerate. Humans decide. Replay proves.</p>
+    <div class="a-side">
+      <div class="a-card">
+        <span class="a-name">Anirudh C. Nimmagadda</span>
+        <span class="a-role">Founder &amp; CEO · MD/MSAI Candidate</span>
+        <a class="a-linkedin dmx-cta dmx-cta--sm" href="https://www.linkedin.com/in/acnimma/" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+          Connect on LinkedIn
+        </a>
+      </div>
+    </div>
   </div>
 </main>
 
 <footer>
   <span class="geo pending" id="geo">Locating</span>
   <span class="cp">© 2026 Damaros™</span>
-  <a href="/privacy">Privacy</a>
+  <a href="privacy.html">Privacy</a>
 </footer>
 
-<script src="/shared/geo-footer.js"></script>
-
+<script src="shared/geo-footer.js"></script>
+<script type="module" src="shared/doc-world.js"></script>
+<script src="shared/doc-ui.js"></script>
 </body>
 </html>

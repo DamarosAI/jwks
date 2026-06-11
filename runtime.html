@@ -1,91 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
 <title>Damaros · Runtime</title>
 <link rel="icon" href="assets/damaros-favicon.png" type="image/png">
-<script src="shared/theme-system.js"></script>
-<link rel="stylesheet" href="shared/damaros.css?v=6">
-<style>
-  .docs { max-width: 1040px; margin: 0 auto; padding: calc(60px + clamp(2.8rem, 7vh, 4rem)) clamp(1.1rem, 4vw, 2.4rem) 6rem; position: relative; z-index: 1; }
-  .d-eyebrow { font-family: var(--fm); font-size: .6rem; letter-spacing: .18em; text-transform: uppercase; color: var(--accent-2); margin-bottom: .7rem; }
-  .d-title { font-family: var(--fh); font-weight: var(--fh-w); letter-spacing: var(--fh-ls); line-height: var(--fh-lh); }
-  .d-lead { color: var(--fg-2); font-family: var(--fb); font-size: var(--fs-sm); font-weight: var(--fb-w); line-height: var(--fb-lh); margin: 1.15rem 0 0; max-width: 68ch; }
-  .d-lead strong { color: var(--fg); font-weight: 600; }
-  .cross-link { display: inline-flex; align-items: center; gap: .45rem; margin-top: 1.4rem; font-family: var(--fm); font-size: .66rem; letter-spacing: .14em; text-transform: uppercase; color: var(--accent-2); text-decoration: none; border-bottom: 1px solid transparent; padding-bottom: 2px; transition: color var(--t) var(--ease), border-color var(--t) var(--ease); }
-  .cross-link:hover { color: var(--fg); border-color: var(--accent); }
-  .divider { height: 1px; background: var(--bd-soft); margin: clamp(2.4rem, 5vh, 3.2rem) 0; }
-  section.doc { margin-bottom: clamp(2rem, 4vh, 2.8rem); scroll-margin-top: 80px; }
-  .sec-label { font-family: var(--fm); font-size: .58rem; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); opacity: .7; margin-bottom: .5rem; }
-  .sec-label::before { content: '// '; }
-  .sec-head { font-family: var(--fh); font-weight: var(--fh-w); font-size: var(--fs-base); letter-spacing: var(--fh-ls); padding-bottom: .55rem; border-bottom: 1px solid var(--bd-soft); margin: 0 0 1rem; }
-  .body { color: var(--fg-2); font-family: var(--fb); font-size: var(--fs-base); font-weight: var(--fb-w); line-height: var(--fb-lh); }
-  .body p { margin: 0 0 .8rem; } .body p:last-child { margin-bottom: 0; }
-  .body strong { color: var(--fg); font-weight: 600; }
-  .body code, .kv code { font-family: var(--fm); color: var(--accent-2); font-size: .85em; }
-  .body a { color: var(--accent-2); }
-  .kv { width: 100%; border-collapse: collapse; font-family: var(--fm); font-size: .8rem; margin-top: .6rem; }
-  .kv tr { border-bottom: 1px solid var(--bd-soft); }
-  .kv tr:last-child { border-bottom: 0; }
-  .kv td { padding: .62rem 0; vertical-align: top; line-height: 1.55; }
-  .kv td:first-child { width: 220px; padding-right: 1.2rem; color: var(--accent); opacity: .82; }
-  .kv td:last-child { color: var(--fg-2); }
-  .dual { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(.85rem, 2vw, 1.2rem); margin-top: .2rem; }
-  .dual-card { border: 1px solid var(--bd); border-radius: 12px; background: var(--panel); padding: 1.15rem 1.2rem; box-shadow: var(--shadow-panel); }
-  .dual-card.allow { border-top: 2px solid var(--pass); }
-  .dual-card.deny { border-top: 2px solid var(--fail); }
-  .dual-card h3 { font-family: var(--fm); font-size: .58rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; margin: 0 0 .85rem; }
-  .dual-card.allow h3 { color: var(--pass); }
-  .dual-card.deny h3 { color: var(--fail); }
-  .bullets { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .55rem; color: var(--fg-2); font-size: .88rem; line-height: 1.58; }
-  .bullets li { padding-left: 1rem; position: relative; }
-  .bullets li::before { content: '>'; position: absolute; left: 0; color: var(--accent); font-family: var(--fm); }
-  .bullets strong { color: var(--fg); }
-  .chain-mini { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: var(--bd-soft); border: 1px solid var(--bd-soft); border-radius: 10px; overflow: hidden; margin-top: 1rem; }
-  .chain-step { background: var(--chip-bg); padding: .85rem .75rem; }
-  .chain-step .cs-n { font-family: var(--fm); font-size: .52rem; letter-spacing: .14em; text-transform: uppercase; color: var(--accent-2); }
-  .chain-step .cs-t { display: block; margin-top: .35rem; font-family: var(--fh); font-weight: var(--fh-w-sub); font-size: .82rem; color: var(--fg); letter-spacing: var(--fh-ls); line-height: 1.25; }
-  .chain-step .cs-d { margin: .4rem 0 0; font-size: .74rem; line-height: 1.48; color: var(--fg-3); }
-  .split-cards { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(.85rem, 2vw, 1.2rem); margin-top: .2rem; }
-  .scard { border: 1px solid var(--bd); border-radius: 12px; background: var(--panel); padding: 1.2rem 1.25rem; }
-  .scard .sc-tag { font-family: var(--fm); font-size: .54rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
-  .scard h3 { font-size: 1.05rem; margin: .5rem 0 .55rem; letter-spacing: -.01em; font-family: var(--fh); }
-  .scard p { margin: 0; color: var(--fg-2); font-size: .86rem; line-height: 1.6; }
-  .deploy-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(.85rem, 2vw, 1.2rem); margin-top: .2rem; }
-  .callout { margin: 1.1rem 0 0; padding: .85rem 1.15rem; border-left: 2px solid var(--bd-strong); background: var(--chip-bg); color: var(--fg-2); font-family: var(--fm); font-size: .76rem; line-height: 1.65; border-radius: 0 6px 6px 0; }
-  .callout strong { color: var(--fg); }
-  .callout.em { border-left-color: var(--accent-2); }
-  .foil { border: 1px solid var(--bd); border-radius: 12px; padding: 1.15rem 1.25rem; background: var(--panel); margin-top: .2rem; box-shadow: var(--shadow-panel); }
-  .foil p { margin: 0; color: var(--fg-2); font-size: .92rem; line-height: 1.68; }
-  .foil em { font-style: normal; color: var(--accent-2); font-weight: 600; }
-  footer { border-top: 1px solid var(--bd-soft); padding: 2.2rem clamp(1.1rem,4vw,2.4rem); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; font-family: var(--fm); font-size: .6rem; letter-spacing: .1em; color: var(--fg-3); max-width: 1040px; margin: 0 auto; text-transform: uppercase; }
-  footer .geo { justify-self: start; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  footer .geo.pending { opacity: .45; }
-  footer .cp { justify-self: center; }
-  footer a { justify-self: end; color: var(--fg-3); text-decoration: none; }
-  footer a:hover { color: var(--fg); }
-  @media (max-width: 900px) { .chain-mini { grid-template-columns: repeat(2, 1fr); } .deploy-grid { grid-template-columns: 1fr; } }
-  @media (max-width: 820px) { .dual, .split-cards { grid-template-columns: 1fr; } .kv td:first-child { width: 130px; font-size: .72rem; } }
-  @media (max-width: 480px) { .chain-mini { grid-template-columns: 1fr; } }
-</style>
+<link rel="preload" as="font" type="font/woff2" href="assets/fonts/archivo/archivo-latin.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="assets/fonts/hanken-grotesk/hanken-grotesk-latin.woff2" crossorigin>
+<link rel="stylesheet" href="shared/damaros.css">
+<link rel="stylesheet" href="shared/nav-chrome.css">
+<link rel="stylesheet" href="shared/journey-doc.css">
+<script type="importmap">
+{ "imports": { "three": "./assets/vendor/three/three.module.js" } }
+</script>
 </head>
 <body>
 <nav class="dmx-nav">
   <div class="dmx-nav-start">
-    <a class="dmx-brand" href="/" aria-label="Damaros">Damaros<sup>™</sup></a>
-    <a class="dmx-back" href="/"><span class="dmx-back-arrow" aria-hidden="true">←</span> Go back</a>
+    <a class="dmx-brand" href="index.html" aria-label="Damaros">Damaros<sup>™</sup></a>
+    <a class="dmx-back" href="index.html"><span class="dmx-back-arrow" aria-hidden="true">←</span> Go back</a>
   </div>
   <div class="dmx-nav-links">
-    <a class="dmx-nav-link" href="/runtime.html" aria-current="true">Runtime</a>
-    <a class="dmx-nav-link" href="/docs/fhir">FHIR</a>
-    <a class="dmx-nav-link" href="/about">About</a>
-    <a class="dmx-nav-cta" href="/cdn-cgi/l/email-protection#1d7c73746f6879755d797c707c6f726e337c74226e687f77787e6920597c707c6f726e382f2d54736c68746f64" aria-label="Get in touch"><span class="dmx-nav-cta-label">Get in Touch</span><svg class="dmx-nav-cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg></a>
+    <a class="dmx-nav-link" href="runtime.html" aria-current="true">Runtime</a>
+    <a class="dmx-nav-link" href="docs/fhir.html">FHIR</a>
+    <a class="dmx-nav-link" href="about.html">About</a>
+    <a class="dmx-nav-cta" href="/cdn-cgi/l/email-protection#1d7c73746f6879755d797c707c6f726e337c74226e687f77787e6920597c707c6f726e382f2d54736c68746f64" aria-label="Get in touch"><span class="dmx-nav-cta-label">Get in Touch</span><svg class="dmx-nav-cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"></path><path d="M22 2 15 22l-4-9-9-4 20-7z"></path></svg></a>
   </div>
 </nav>
 
-<div class="dmx-texture" aria-hidden="true"></div>
+<canvas id="world" aria-hidden="true"></canvas>
+<div class="world-scrim" aria-hidden="true"></div>
 
 <main class="docs">
   <div class="d-eyebrow">Execution fabric</div>
@@ -97,11 +42,11 @@
     <p>A run is not a chat, a dashboard refresh, or a model answer. It is a typed execution event with versioned inputs, policy scope, actor identity, output state, provenance, and replay linkage. Damaros does not ask institutions to trust AI. It asks them to <em>inspect the run.</em></p>
   </div>
 
-  <a class="cross-link" href="/docs/fhir">Enterprise FHIR, JWT, and JWKS reference <span aria-hidden="true">&rarr;</span></a>
+  <a class="cross-link" href="docs/fhir.html">Enterprise FHIR, JWT, and JWKS reference <span aria-hidden="true">&rarr;</span></a>
   <div class="divider"></div>
 
   <section class="doc">
-    <div class="sec-label">01_WHY</div>
+    <div class="sec-label"><span class="sl-n">01</span><span class="sl-k">WHY</span></div>
     <h2 class="sec-head">Why Runtime exists</h2>
     <div class="body">
       <p>Clinical trials have systems of record. They do not have a system of execution.</p>
@@ -119,7 +64,7 @@
   </section>
 
   <section class="doc">
-    <div class="sec-label">02_RUN_MODEL</div>
+    <div class="sec-label"><span class="sl-n">02</span><span class="sl-k">RUN MODEL</span></div>
     <h2 class="sec-head">Run model</h2>
     <div class="body"><p>The run is the atomic unit of Damaros. Every run carries a manifest.</p></div>
     <table class="kv">
@@ -137,7 +82,7 @@
   </section>
 
   <section class="doc">
-    <div class="sec-label">03_GOVERNED_CHAIN</div>
+    <div class="sec-label"><span class="sl-n">03</span><span class="sl-k">GOVERNED CHAIN</span></div>
     <h2 class="sec-head">The governed run chain</h2>
     <div class="body"><p>Protocol → Evidence → Screening → Review → Replay. One governed run from protocol intent to inspectable proof.</p></div>
     <div class="chain-mini">
@@ -150,7 +95,7 @@
   </section>
 
   <section class="doc">
-    <div class="sec-label">04_AI_BOUNDARY</div>
+    <div class="sec-label"><span class="sl-n">04</span><span class="sl-k">AI BOUNDARY</span></div>
     <h2 class="sec-head">AI boundary</h2>
     <div class="body"><p><strong>Agents accelerate. Humans decide. The engine governs.</strong> Luna governs agent task runs through explicit task contracts.</p></div>
     <table class="kv" style="margin-top:.8rem">
@@ -183,7 +128,7 @@
   </section>
 
   <section class="doc">
-    <div class="sec-label">05_EVIDENCE</div>
+    <div class="sec-label"><span class="sl-n">05</span><span class="sl-k">EVIDENCE</span></div>
     <h2 class="sec-head">Evidence boundary</h2>
     <div class="body">
       <p>Patient evidence stays protocol-scoped. Damaros is read-only by default, does not request write scopes initially, omits Binary, keeps DocumentReference metadata only, excludes narrative content from deterministic screening, and PHI never reaches an LLM.</p>
@@ -198,7 +143,7 @@
   </section>
 
   <section class="doc">
-    <div class="sec-label">06_NODE</div>
+    <div class="sec-label"><span class="sl-n">06</span><span class="sl-k">NODE</span></div>
     <h2 class="sec-head">Node boundary, site-governed execution</h2>
     <div class="body"><p><strong>Node</strong> is where patient evidence is admitted, screened, reviewed, and confirmed. The clinic holds the reins.</p></div>
     <div class="dual" style="margin-top:.8rem">
@@ -225,7 +170,7 @@
   </section>
 
   <section class="doc">
-    <div class="sec-label">07_CONSOLE</div>
+    <div class="sec-label"><span class="sl-n">07</span><span class="sl-k">CONSOLE</span></div>
     <h2 class="sec-head">Console boundary, sponsor command without patient-data exposure</h2>
     <div class="body"><p><strong>Console</strong> receives permissioned, de-identified execution signals, not raw PHI by default.</p></div>
     <ul class="bullets" style="margin-top:.6rem">
@@ -240,7 +185,7 @@
   </section>
 
   <section class="doc">
-    <div class="sec-label">08_DEPLOYMENT</div>
+    <div class="sec-label"><span class="sl-n">08</span><span class="sl-k">DEPLOYMENT</span></div>
     <h2 class="sec-head">Deployment models</h2>
     <div class="body"><p>Runs in Damaros Cloud, your cloud, institution-hosted Node, or air-gapped for federal and zero-trust environments. <strong>The run model stays the same. The boundary changes.</strong></p></div>
     <div class="deploy-grid">
@@ -268,7 +213,7 @@
   </section>
 
   <section class="doc">
-    <div class="sec-label">09_SECURITY</div>
+    <div class="sec-label"><span class="sl-n">09</span><span class="sl-k">SECURITY</span></div>
     <h2 class="sec-head">Security and observability</h2>
     <div class="body"><p>Every run is attributable. Server-side secrets, TLS, JWKS endpoints with public key material only, private PEM never in logs or public JSON, structured logs with non-PHI identifiers, time-bound sessions, RBAC, and retention by BAA/DPA.</p></div>
     <ul class="bullets" style="margin-top:.6rem">
@@ -284,7 +229,7 @@
   </section>
 
   <section class="doc">
-    <div class="sec-label">10_VALIDATION</div>
+    <div class="sec-label"><span class="sl-n">10</span><span class="sl-k">VALIDATION</span></div>
     <h2 class="sec-head">Validation</h2>
     <div class="body">
       <p><strong>Execution integrity, not clinical efficacy.</strong> Validation and production share the same eligibility engine, protocol compiler, and Replay model. Cutover is a credential/environment swap rather than a workflow rebuild.</p>
@@ -300,12 +245,12 @@
   </section>
 
   <section class="doc">
-    <div class="sec-label">11_RELATED</div>
+    <div class="sec-label"><span class="sl-n">11</span><span class="sl-k">RELATED</span></div>
     <h2 class="sec-head">Related documents</h2>
     <ul class="bullets">
-      <li><a href="/docs/fhir">Enterprise FHIR integration reference</a> (OAuth, JWKS, scopes, sync, security)</li>
-      <li><a href="/docs/privacy">Platform privacy and data handling</a></li>
-      <li><a href="/privacy">Public website privacy notice</a></li>
+      <li><a href="docs/fhir.html">Enterprise FHIR integration reference</a> (OAuth, JWKS, scopes, sync, security)</li>
+      <li><a href="docs/privacy.html">Platform privacy and data handling</a></li>
+      <li><a href="privacy.html">Public website privacy notice</a></li>
       <li>Customer BAA / DPA and deployment security addendum (provided under contract)</li>
     </ul>
   </section>
@@ -314,8 +259,10 @@
 <footer>
   <span class="geo pending" id="geo">Locating</span>
   <span class="cp">© 2026 Damaros™</span>
-  <a href="/privacy">Privacy</a>
+  <a href="privacy.html">Privacy</a>
 </footer>
-<script src="/shared/geo-footer.js"></script>
+<script src="shared/geo-footer.js"></script>
+<script type="module" src="shared/doc-world.js"></script>
+<script src="shared/doc-ui.js"></script>
 </body>
 </html>
