@@ -1,9 +1,17 @@
 /* ============================================================
  * DAMAROS — doc-world.js
  * The home journey's WebGL world (skydome + curved datum terrain
- * + distant node constellation) as a CALM AMBIENT BACKDROP for
- * the document pages. Shaders and palette are lifted directly
- * from shared/space.js, pinned to the HOME vantage:
+ * + twin star shells) as a CALM AMBIENT BACKDROP for the document
+ * pages, pinned to the HOME vantage (section 0).
+ *
+ * RENDER PIPELINE IS A 1:1 CLONE OF shared/space.js so color and
+ * brightness match the home page exactly on every device class:
+ *   · desktop: EffectComposer (MSAA + SSAA) → UnrealBloom → OutputPass
+ *     with ACES tone mapping at the home exposure
+ *   · mobile / software GL: direct render, antialiased, with the same
+ *     authored mobile brightness lifts space.js ships
+ *   · same skydome, terrain constants, star shells, and vignette
+ * Differences from home are BEHAVIORAL only:
  *   · no station navigation, no scroll/wheel hijack
  *   · terrain reveals once on load, then only breathes
  *   · pointer parallax leans the camera a few degrees
@@ -11,32 +19,37 @@
  *   · paused when the tab is hidden
  * ============================================================ */
 import * as THREE from 'three';
-
-// Direct-render path (no EffectComposer/OutputPass): custom ShaderMaterials write
-// straight to the framebuffer, so keep authored hex values un-converted — otherwise
-// ColorManagement feeds LINEAR uniforms to shaders that never re-encode (~10x too dark).
-THREE.ColorManagement.enabled = false;
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 const MOBILE = matchMedia('(hover: none),(pointer: coarse)').matches || innerWidth <= 820;
 const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const clamp = THREE.MathUtils.clamp;
+const TAU = Math.PI * 2;
 
 const css = getComputedStyle(document.documentElement);
 const hx = (n, f) => { const v = css.getPropertyValue(n).trim(); return v ? new THREE.Color(v) : new THREE.Color(f); };
-const COL = { steel: hx('--steel', '#a9c0d6'), deep: hx('--deep', '#2f5f8c') };
+const COL = { steel: hx('--steel', '#a9c0d6') };
 
 const canvas = document.getElementById('world');
 if (canvas) { try { boot(); } catch (e) { canvas.remove(); } }
 
 function boot() {
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance', alpha: false, preserveDrawingBuffer: true });
+  /* ---------- renderer — identical config to space.js ---------- */
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: MOBILE, powerPreference: 'high-performance', alpha: false });
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, MOBILE ? 1.25 : 2));
   renderer.setSize(innerWidth, innerHeight);
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
   let SOFT = false;
   try { const gl = renderer.getContext(); const dbg = gl.getExtension('WEBGL_debug_renderer_info'); const r = dbg ? String(gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL)) : ''; SOFT = /swiftshader|llvmpipe|software|basic render|microsoft/i.test(r); } catch (e) { SOFT = false; }
+  const BLOOM = !MOBILE && !SOFT;
+  renderer.toneMappingExposure = SOFT ? 0.84 : (MOBILE ? 0.80 : 0.62);   // home exposure: mobile brighter (no bloom pass)
+  try { renderer.outputColorSpace = THREE.SRGBColorSpace; } catch (e) { /* older builds */ }
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(MOBILE ? '#101a28' : '#0a121b');
+  scene.background = new THREE.Color(MOBILE ? '#101a28' : '#0a121b');   // match the horizon (same as home)
 
   /* ---------- shared uniforms (the doc vantage is HOME: section 0) ---------- */
   function viewportFillBoost() {
@@ -48,9 +61,12 @@ function boot() {
   const W = {
     uTime: { value: 0 },
     uReveal: { value: REDUCED ? 1 : 0 },
+    uSection: { value: 0 },                         // pinned: home look
     uHue: { value: COL.steel.clone() },
     uHover: { value: 0 },
-    uSoft: { value: SOFT ? 0.35 : 0 },
+    uFinal: { value: 0 },
+    uSoft: { value: 0 },                            // home at rest: no extra line feathering
+    uBurst: { value: 0 },
     uViewport: { value: new THREE.Vector2(innerWidth / innerHeight, viewportFillBoost()) }
   };
 
@@ -156,48 +172,72 @@ function boot() {
     const mesh = new THREE.Mesh(g, m); mesh.renderOrder = -8; deepLayer.add(mesh);
   }
 
-  /* ---------- MID: distant node constellation (quiet steel points) ---------- */
-  {
-    const n = SOFT ? 70 : (MOBILE ? 120 : 220);
-    const pos = new Float32Array(n * 3), rnd = new Float32Array(n);
-    for (let i = 0; i < n; i++) {
-      const ang = Math.random() * Math.PI * 2, rad = 40 + Math.random() * 120, k = i * 3;
-      pos[k] = Math.cos(ang) * rad; pos[k + 1] = (Math.random() - 0.5) * 70 + 6; pos[k + 2] = -Math.random() * 90 - 10;
-      rnd[i] = Math.random();
+  /* ---------- STAR LAYERS — the home page's twin pulsing star shells (verbatim) ---------- */
+  function onSphere(r) { const u = Math.random() * 2 - 1, a = Math.random() * TAU, s = Math.sqrt(1 - u * u); return [Math.cos(a) * s * r, u * r, Math.sin(a) * s * r]; }
+  const STAR_VERT = (alphaExpr, bigSz, smSz) => `attribute float aRnd, aPhase, aRate; uniform float uTime, uBurst; varying float vA;
+    void main(){
+      vec4 mv = modelViewMatrix * vec4(position,1.0);
+      gl_Position = projectionMatrix * mv;
+      float pulse = 0.50 + 0.50 * sin(uTime * aRate + aPhase);
+      float flicker = 0.82 + 0.18 * sin(uTime * (aRate * 2.35 + 0.55) + aPhase * 4.2);
+      float base = (${alphaExpr}) * pulse * flicker;
+      float dormant = step(aRnd, 0.34);
+      float spark = 0.5 + 0.5 * sin(uTime * (3.0 + aRnd * 7.0) + aPhase * 9.0);
+      vA = base * (1.0 + uBurst * 0.5) + uBurst * dormant * spark * (0.55 + aRnd);
+      float sz = aRnd > 0.9 ? ${bigSz} : ${smSz};
+      sz *= 1.0 + uBurst * (0.45 + dormant * 0.85);
+      gl_PointSize = sz * (260.0 / max(1.0, -mv.z));
+    }`;
+  const STAR_FRAG = 'precision highp float; varying float vA; void main(){ vec2 uv = gl_PointCoord - 0.5; if (dot(uv,uv) > 0.25) discard; gl_FragColor = vec4(vec3(0.82,0.88,0.96), vA); }';
+  function addStarShell(sn, r0, r1, yMul, yOff, alphaExpr, bigSz, smSz) {
+    const sp = new Float32Array(sn * 3), sr = new Float32Array(sn), sph = new Float32Array(sn), srt = new Float32Array(sn);
+    for (let i = 0; i < sn; i++) {
+      const [x, y, z] = onSphere(r0 + Math.random() * r1), k = i * 3;
+      sp[k] = x; sp[k + 1] = Math.abs(y) * yMul + yOff; sp[k + 2] = z;
+      sr[i] = Math.random(); sph[i] = Math.random() * TAU; srt[i] = 0.4 + Math.random() * 2.2;
     }
     const g = new THREE.BufferGeometry();
-    g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    g.setAttribute('aRnd', new THREE.BufferAttribute(rnd, 1));
+    g.setAttribute('position', new THREE.BufferAttribute(sp, 3));
+    g.setAttribute('aRnd', new THREE.BufferAttribute(sr, 1));
+    g.setAttribute('aPhase', new THREE.BufferAttribute(sph, 1));
+    g.setAttribute('aRate', new THREE.BufferAttribute(srt, 1));
     const m = new THREE.ShaderMaterial({
-      uniforms: { uTime: W.uTime, uReveal: W.uReveal, uHue: { value: COL.steel.clone() } },
-      vertexShader: `attribute float aRnd; uniform float uTime; varying float vTw, vDepth;
-        void main(){
-          vec4 mv = modelViewMatrix * vec4(position,1.0);
-          vDepth = clamp((-mv.z-40.0)/180.0, 0.0, 1.0);
-          vTw = 0.5 + 0.5*sin(uTime*(0.4+aRnd*0.8) + aRnd*6.2831);
-          gl_PointSize = (1.4 + aRnd*2.2) * (300.0 / max(-mv.z, 1.0)) * 0.22;
-          gl_Position = projectionMatrix * mv;
-        }`,
-      fragmentShader: `precision highp float; uniform vec3 uHue; uniform float uReveal; varying float vTw, vDepth;
-        void main(){
-          vec2 c = gl_PointCoord - 0.5; float d = length(c);
-          float core = 1.0 - smoothstep(0.0, 0.5, d);
-          float a = core*core * (0.05 + 0.16*vTw) * (1.0 - vDepth*0.75) * uReveal;
-          gl_FragColor = vec4(uHue * (0.5 + 0.5*vTw), a);
-        }`,
-      transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending
+      uniforms: { uTime: W.uTime, uBurst: W.uBurst }, transparent: true, depthWrite: false, depthTest: false, blending: THREE.NormalBlending,
+      vertexShader: STAR_VERT(alphaExpr, bigSz, smSz), fragmentShader: STAR_FRAG
     });
-    const pts = new THREE.Points(g, m); pts.renderOrder = -6; midLayer.add(pts);
+    const pts = new THREE.Points(g, m); pts.renderOrder = -9; scene.add(pts);
   }
+  addStarShell(SOFT ? 320 : (MOBILE ? 760 : 1100), 150, 28, 0.82, 10, MOBILE ? '0.44 + aRnd*0.54' : '0.22 + aRnd*0.44', MOBILE ? '2.4' : '1.9', MOBILE ? '1.45' : '1.15');
+  addStarShell(SOFT ? 220 : (MOBILE ? 520 : 840), 205, 48, 0.94, 16, MOBILE ? '0.26 + aRnd*0.38' : '0.12 + aRnd*0.26', MOBILE ? '1.75' : '1.45', MOBILE ? '1.3' : '1.05');
 
   /* ---------- camera: the home framing, breathing, pointer-leaned ---------- */
-  const camera = new THREE.PerspectiveCamera(52, innerWidth / innerHeight, 0.1, 400);
+  const camera = new THREE.PerspectiveCamera(MOBILE ? 56.5 : 52, innerWidth / innerHeight, 0.1, 400);
   const AZ = -0.14, EL = 0.16, DIST = 25;
   const look = new THREE.Vector3(0, 0, 0);
   const basePos = new THREE.Vector3();
   { const ce = Math.cos(EL); basePos.set(Math.sin(AZ) * ce * DIST, Math.sin(EL) * DIST, Math.cos(AZ) * ce * DIST); }
   camera.position.copy(basePos); camera.lookAt(look);
 
+  /* ---------- post: the home composer (bloom at the rest strength) ---------- */
+  let composer = null;
+  if (BLOOM) {
+    const _dpr = Math.min(devicePixelRatio || 1, 2);
+    const _targetRatio = Math.min(_dpr * 1.5, 2);
+    const _msaaRT = new THREE.WebGLRenderTarget(innerWidth, innerHeight, { type: THREE.HalfFloatType, samples: 2 });
+    composer = new EffectComposer(renderer, _msaaRT);
+    composer.addPass(new RenderPass(scene, camera));
+    const bloomPass = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.14, 0.5, 0.90);   // home's at-rest bloom strength
+    try { bloomPass.highPassUniforms['smoothWidth'].value = 0.06; } catch (e) { /* ignore */ }
+    composer.addPass(bloomPass);
+    composer.addPass(new OutputPass());
+    composer.setPixelRatio(_targetRatio);
+    composer.setSize(innerWidth, innerHeight);
+  }
+
+  /* ---------- vignette (verbatim from space.js) ---------- */
+  { const v = document.createElement('div'); const vig = MOBILE ? 0.30 : 0.5, mid = MOBILE ? 50 : 54; v.style.cssText = `position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at center, rgba(0,0,0,0) ${mid}%, rgba(4,6,10,${vig}) 100%);`; document.body.appendChild(v); }
+
+  /* ---------- pointer + hover state ---------- */
   const ptr = { x: 0, y: 0, tx: 0, ty: 0 };
   const hover = { v: 0, t: 0 };
   window.DocWorld = { hover(x) { hover.t = clamp(x, 0, 1); } };
@@ -210,7 +250,7 @@ function boot() {
     addEventListener('pointerleave', () => { ptr.tx = 0; ptr.ty = 0; });
   }
 
-  /* ---------- loop ---------- */
+  /* ---------- loop (home damp rates) ---------- */
   const _v = new THREE.Vector3();
   let raf = 0, last = performance.now(), shown = false;
   function frame(now) {
@@ -218,15 +258,16 @@ function boot() {
     const dt = Math.min((now - last) / 1000, 0.1); last = now;
     if (!REDUCED) {
       W.uTime.value += dt;
-      W.uReveal.value = Math.min(1, W.uReveal.value + dt * 0.55);
-      hover.v += (hover.t - hover.v) * (1 - Math.exp(-5 * dt));
+      W.uReveal.value += (1 - W.uReveal.value) * (1 - Math.exp(-dt * 0.8));   // home reveal ease
+      const lam = hover.t > hover.v ? 9 : 3.2;                                // home hover damp: fast in, slow out
+      hover.v = hover.t + (hover.v - hover.t) * Math.exp(-lam * dt);
       W.uHover.value = hover.v;
       const t = W.uTime.value;
       camera.position.copy(basePos);
       camera.position.x += Math.sin(t * 0.12) * 0.8;
       camera.position.y += Math.sin(t * 0.16) * 0.5;
       // pointer parallax — same grammar as the deck: yaw/pitch the offset, aim stays glued
-      const e = Math.exp(-3.2 * dt);
+      const e = Math.exp(-3.5 * dt);
       ptr.x = ptr.tx + (ptr.x - ptr.tx) * e; ptr.y = ptr.ty + (ptr.y - ptr.ty) * e;
       const yaw = ptr.x * 0.040, pitch = -ptr.y * 0.026;
       const off = _v.copy(camera.position).sub(look);
@@ -234,9 +275,12 @@ function boot() {
       const nx = off.x * cy - off.z * sy, nz = off.x * sy + off.z * cy;
       off.x = nx; off.z = nz; off.y += pitch * off.length();
       camera.position.copy(look).add(off);
+      // home layer parallax (deep drifts less than mid)
+      deepLayer.position.x = -ptr.x * 4.0; deepLayer.position.y = -ptr.y * 1.6;
+      midLayer.position.x = -ptr.x * 8.5; midLayer.position.y = -ptr.y * 5.0;
     }
     camera.lookAt(look);
-    renderer.render(scene, camera);
+    if (composer) composer.render(); else renderer.render(scene, camera);
     if (!shown) { shown = true; if (REDUCED) cancelAnimationFrame(raf); }
   }
   raf = requestAnimationFrame(frame);
@@ -250,6 +294,7 @@ function boot() {
     renderer.setSize(innerWidth, innerHeight);
     camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
     W.uViewport.value.set(innerWidth / innerHeight, viewportFillBoost());
-    if (REDUCED) renderer.render(scene, camera);
+    if (composer) composer.setSize(innerWidth, innerHeight);
+    if (REDUCED) { if (composer) composer.render(); else renderer.render(scene, camera); }
   });
 }

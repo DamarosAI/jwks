@@ -58,10 +58,11 @@ body { background:var(--jet); }
 #world {
   position:fixed; inset:0; width:100vw; height:100vh; display:block; z-index:0;
 }
-/* legibility scrim — keeps the horizon glow, calms the field behind running text */
+/* legibility scrim — a whisper only: doc-world.js now ships the home page's own
+   vignette, so the world reads at the same brightness as the home deck */
 .world-scrim {
   position:fixed; inset:0; z-index:0; pointer-events:none;
-  background:linear-gradient(180deg, rgba(6,8,11,.04) 0%, rgba(6,8,11,.30) 32%, rgba(6,8,11,.44) 100%);
+  background:linear-gradient(180deg, rgba(6,8,11,0) 0%, rgba(6,8,11,.10) 38%, rgba(6,8,11,.16) 100%);
 }
 
 /* ============================================================
