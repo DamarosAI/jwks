@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="shared/journey.css?v=reset55">
 <link rel="stylesheet" href="shared/nav-chrome.css?v=1">
 <link rel="stylesheet" href="shared/terrain.css?v=reset49">
-<link rel="stylesheet" href="shared/sections.css?v=46">
+<link rel="stylesheet" href="shared/sections.css?v=47">
 <link rel="stylesheet" href="shared/page-transition.css?v=1">
 <style id="reposition-2026">
 /* ============================================================
@@ -101,55 +101,65 @@
   .es-step::before{ position:static; display:block; margin-bottom:.5rem; }
 }
 
-/* SPINE — match Mesh block style, width, and headline sizing */
-.cap.es{ width:min(74rem, calc(100vw - 2*var(--page-gutter))); max-width:min(74rem, calc(100vw - 2*var(--page-gutter))); }
+/* SPINE — wide canvas so the 2x2 + solo Replay reads as square cards */
+.cap.es{ width:min(80rem, calc(100vw - 2*var(--page-gutter))); max-width:min(80rem, calc(100vw - 2*var(--page-gutter))); }
 .cap.es .es-title{ font-size:clamp(2.2rem,5vw,3.7rem); letter-spacing:-.04em; }
 @media (min-width:821px){
   .cap.es .es-spine{
     display:grid;
-    grid-template-columns:1fr 1fr minmax(10.5rem,.76fr);
-    grid-template-rows:repeat(2,minmax(0,1fr));
-    gap:clamp(.7rem,1.3vw,1rem);
-    margin-top:clamp(1.2rem,2.8vh,1.8rem);
+    grid-template-columns:1fr 1fr 1.12fr;
+    grid-auto-rows:1fr;
+    gap:clamp(.85rem,1.4vw,1.15rem);
+    margin-top:clamp(1.1rem,2.6vh,1.7rem);
     text-align:left;
-    align-items:stretch;
-    min-height:clamp(15rem,28vh,21rem);
   }
   .cap.es .es-spine-step:nth-child(1){ grid-column:1; grid-row:1; }
   .cap.es .es-spine-step:nth-child(2){ grid-column:2; grid-row:1; }
   .cap.es .es-spine-step:nth-child(3){ grid-column:1; grid-row:2; }
   .cap.es .es-spine-step--resolve{ grid-column:2; grid-row:2; }
+  .cap.es .es-spine-step--replay{ grid-column:3; grid-row:1 / span 2; }
+  .cap.es .es-spine-step{
+    display:flex; flex-direction:column; justify-content:center;
+    gap:clamp(.5rem,.9vw,.75rem);
+    padding:clamp(1.1rem,1.7vw,1.55rem) clamp(1.1rem,1.6vw,1.5rem);
+    border-radius:16px;
+    box-shadow:inset 0 0 0 1px rgba(169,192,214,.2);
+    background:linear-gradient(180deg, rgba(169,192,214,.07), rgba(169,192,214,.02)), rgba(8,11,17,.55);
+    -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px);
+    transition:box-shadow .2s var(--ease), transform .2s var(--ease);
+  }
+  @media (hover:hover) and (pointer:fine){
+    .cap.es .es-spine-step:hover{ box-shadow:inset 0 0 0 1px rgba(169,192,214,.42), 0 14px 40px rgba(5,7,11,.5); transform:translateY(-2px); }
+    .cap.es .es-spine-step--replay:hover{ box-shadow:inset 0 0 0 1px rgba(232,236,240,.5), 0 14px 40px rgba(5,7,11,.5); }
+  }
+  .cap.es .es-spine-step--resolve{ box-shadow:inset 0 0 0 1px rgba(169,192,214,.3); }
   .cap.es .es-spine-step--replay{
-    grid-column:3; grid-row:1 / span 2;
-    align-self:center;
-    min-height:clamp(11rem,22vh,16rem);
-    box-shadow:inset 0 0 0 1px rgba(232,236,240,.28), 0 0 28px rgba(169,192,214,.06);
-    background:linear-gradient(180deg, rgba(232,236,240,.08), rgba(169,192,214,.02)), rgba(8,11,17,.58);
+    box-shadow:inset 0 0 0 1px rgba(232,236,240,.3), 0 0 30px rgba(169,192,214,.07);
+    background:linear-gradient(180deg, rgba(232,236,240,.09), rgba(169,192,214,.025)), rgba(8,11,17,.6);
   }
-  .cap.es .es-spine-step:not(.es-spine-step--replay){
-    aspect-ratio:1.05 / 1;
-    max-height:100%;
-  }
-  .cap.es .es-spine-step{ display:flex; flex-direction:column; gap:.5rem; padding:clamp(.85rem,1.5vw,1.15rem); border-radius:14px; box-shadow:inset 0 0 0 1px rgba(169,192,214,.22); background:linear-gradient(180deg, rgba(169,192,214,.07), rgba(169,192,214,.02)), rgba(8,11,17,.55); -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px); transition:box-shadow .2s var(--ease), transform .2s var(--ease); }
-  @media (hover:hover) and (pointer:fine){ .cap.es .es-spine-step:hover{ box-shadow:inset 0 0 0 1px rgba(169,192,214,.42), 0 14px 40px rgba(5,7,11,.5); transform:translateY(-2px); } }
-  @media (hover:hover) and (pointer:fine){ .cap.es .es-spine-step--replay:hover{ box-shadow:inset 0 0 0 1px rgba(232,236,240,.42), 0 14px 40px rgba(5,7,11,.5); } }
-  .cap.es .es-spine-step--resolve{ box-shadow:inset 0 0 0 1px rgba(169,192,214,.24); }
-  .cap.es .es-spine-step{ gap:.5rem; padding:clamp(.85rem,1.5vw,1.15rem); }
-  .cap.es .es-spine-step .ps-half-head h3{ font-size:clamp(1.2rem,1.85vw,1.52rem); letter-spacing:-.02em; color:var(--cold); }
-  .cap.es .es-spine-step .ps-sub{ margin:.25rem 0 0; }
-  .cap.es .es-spine-step .ps-cards{ margin-top:.1rem; }
+  .cap.es .es-spine-step .ps-half-head h3{ margin:0; font-size:clamp(1.45rem,2.1vw,1.85rem); letter-spacing:-.025em; color:var(--cold); }
+  .cap.es .es-spine-step .ps-sub{ margin:.3rem 0 0; font-size:clamp(1rem,1.25vw,1.18rem); color:var(--steel); }
+  .cap.es .es-spine-step .ps-sub em{ font-style:normal; color:var(--cold); }
+  .cap.es .es-spine-step .ps-cards{ margin-top:clamp(.55rem,1vw,.85rem); }
   .cap.es .es-spine-step .cap-box{ padding:0; border:0; background:none; box-shadow:none; border-radius:0; -webkit-backdrop-filter:none; backdrop-filter:none; }
   .cap.es .es-spine-step .cap-box:hover{ border:0; background:none; box-shadow:none; transform:none; }
+  .cap.es .es-spine-step .cap-box-b{ font-size:clamp(.9rem,1.05vw,1rem); line-height:1.5; color:rgba(232,236,240,.7); }
   .cap.es .es-title{ font-size:min(clamp(2.2rem,5vw,3.7rem),6.2vh); }
-  .cap.es .cap-subhead{ font-size:min(clamp(1.05rem,1.65vw,1.38rem),2.5vh); }
-  .cap.es .es-spine-step .ps-half-head h3{ font-size:min(clamp(1.2rem,1.85vw,1.52rem),2.6vh); }
-  .cap.es .es-spine-step .ps-sub{ font-size:min(.88rem,1.75vh); }
-  .cap.es .es-spine-step .cap-box-b{ font-size:min(.82rem,1.65vh); line-height:1.46; }
+  .cap.es .cap-subhead{ font-size:min(clamp(1.1rem,1.7vw,1.42rem),2.6vh); }
 }
-@media (min-width:821px) and (max-height:780px){
-  .cap.es .es-spine{ gap:min(.55rem,1.1vh); margin-top:min(1rem,1.8vh); }
-  .cap.es .es-spine-step{ padding:min(.75rem,1.4vh) clamp(.75rem,1.2vw,1rem); }
-  .cap.es .es-spine-step .cap-box-b{ font-size:min(.78rem,1.5vh); }
+/* tall desktop: let cards breathe into a more generous square */
+@media (min-width:821px) and (min-height:860px){
+  .cap.es .es-spine{ gap:1.2rem; }
+  .cap.es .es-spine-step{ padding:1.7rem 1.6rem; }
+}
+/* short laptop: tighten so the five cards still clear the nav without overlap */
+@media (min-width:821px) and (max-height:820px){
+  .cap.es .es-spine{ gap:.7rem; margin-top:min(1rem,1.8vh); }
+  .cap.es .es-spine-step{ padding:min(1.2vh,1.05rem) clamp(.95rem,1.3vw,1.2rem); gap:.4rem; }
+  .cap.es .es-spine-step .ps-half-head h3{ font-size:min(clamp(1.45rem,2.1vw,1.85rem),3vh); }
+  .cap.es .es-spine-step .ps-sub{ font-size:min(1.18rem,2.1vh); margin-top:.2rem; }
+  .cap.es .es-spine-step .ps-cards{ margin-top:min(.85rem,1.4vh); }
+  .cap.es .es-spine-step .cap-box-b{ font-size:min(1rem,1.85vh); line-height:1.45; }
 }
 
 /* ============================================================
@@ -488,7 +498,7 @@
     <!-- 01 EXECUTION SPINE · Protocol · Evidence · Screening · Resolve · Replay -->
     <div class="cap es" data-cap="1" data-screen-label="Execution Spine">
       <h2 class="es-title cap-line" data-type data-from="0">Execution Spine</h2>
-      <p class="cap-subhead cap-line" data-from="0">Pipeline plus accountability. <em>One governed run.</em></p>
+      <p class="cap-subhead cap-line" data-from="0">An engine decides. A human signs. <em>Every run rebuilds itself.</em></p>
 
       <div class="es-spine cap-line" data-from="0" data-hswipe>
         <div class="es-spine-step">
@@ -497,16 +507,16 @@
             <p class="ps-sub">Intent becomes <em>logic.</em></p>
           </div>
           <div class="ps-cards">
-            <div class="cap-box" data-topo="lattice"><p class="cap-box-b">Sponsor criteria, windows, and evidence rules compile once, then deploy identically to every site.</p></div>
+            <div class="cap-box" data-topo="lattice"><p class="cap-box-b">The protocol becomes executable law. Criteria, windows, and evidence rules compile once into versioned, locked logic, then deploy byte-identical to every site.</p></div>
           </div>
         </div>
         <div class="es-spine-step">
           <div class="ps-half-head">
             <h3>Evidence</h3>
-            <p class="ps-sub">Records become <em>admissible.</em></p>
+            <p class="ps-sub">Records become <em>evidence.</em></p>
           </div>
           <div class="ps-cards">
-            <div class="cap-box" data-topo="lattice"><p class="cap-box-b">Site-approved data arrives with source lineage, freshness, and mapping, ready to screen against.</p></div>
+            <div class="cap-box" data-topo="lattice"><p class="cap-box-b">Site-approved patient data arrives screening-ready, with source lineage, freshness, and mapping. The messy chart becomes admissible input; PHI never meets a model.</p></div>
           </div>
         </div>
         <div class="es-spine-step">
@@ -515,7 +525,7 @@
             <p class="ps-sub">A verdict, <em>not a guess.</em></p>
           </div>
           <div class="ps-cards">
-            <div class="cap-box" data-topo="fail"><p class="cap-box-b">Every criterion runs against locked logic. Anything unclear becomes review, never a fabricated answer.</p></div>
+            <div class="cap-box" data-topo="fail"><p class="cap-box-b">A deterministic engine, not a model's opinion. Every criterion runs against locked logic for a PASS, REVIEW, or FAIL with evidence pointers. Anything unclear routes to a human.</p></div>
           </div>
         </div>
         <div class="es-spine-step es-spine-step--resolve">
@@ -524,7 +534,7 @@
             <p class="ps-sub">Judgment, then <em>signature.</em></p>
           </div>
           <div class="ps-cards">
-            <div class="cap-box" data-topo="prov"><p class="cap-box-b">Node's accountability layer beside the pipeline: agents stage triage and attestation, humans commit. Every signature is immutable, chain-anchored, and bound to Replay.</p></div>
+            <div class="cap-box" data-topo="prov"><p class="cap-box-b">Node's accountability layer, standing beside the pipeline. Agents triage, rank, and stage every decision; an accountable human commits, immutable and bound to Replay. Prepared by machines, owned by a person.</p></div>
           </div>
         </div>
         <div class="es-spine-step es-spine-step--replay">
@@ -533,7 +543,7 @@
             <p class="ps-sub">Execution becomes <em>proof.</em></p>
           </div>
           <div class="ps-cards">
-            <div class="cap-box" data-topo="lattice"><p class="cap-box-b">Any decision rebuilds on demand: Protocol, Evidence, Screening, Resolve, and who authorized it.</p></div>
+            <div class="cap-box" data-topo="lattice"><p class="cap-box-b">Reconstruct any run end-to-end: Protocol, Evidence, Screening, Resolve, and who authorized it. Hash-verified, signed, and PHI-free. Not a log you trust, a proof you can replay.</p></div>
           </div>
         </div>
       </div>
