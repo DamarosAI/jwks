@@ -528,7 +528,7 @@
             <div class="ps-field ps-forge" aria-hidden="true"></div>
           </div>
           <div class="ps-cards">
-            <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Each open question becomes one resolvable packet.</span><p class="cap-box-b">Forge assembles the criterion, the missing fact, and where to look into one packet — references only, never patient data.</p></div>
+            <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Each open question becomes one resolvable packet.</span><p class="cap-box-b">Forge assembles the criterion, the missing fact, and where to look into a single packet that carries references only, never patient data.</p></div>
           </div>
         </div>
 
@@ -542,7 +542,7 @@
             <div class="ps-field ps-router" aria-hidden="true"></div>
           </div>
           <div class="ps-cards">
-            <div class="cap-box" data-topo="fail"><span class="cap-box-h">One patient, every trial they qualify for.</span><p class="cap-box-b">Router screens each patient against every open trial and ranks who fits best — deterministic, PHI-bounded, no model.</p></div>
+            <div class="cap-box" data-topo="fail"><span class="cap-box-h">One patient, every trial they qualify for.</span><p class="cap-box-b">Router screens each patient against every open trial and ranks who fits best, staying deterministic and PHI-bounded with no model in the loop.</p></div>
           </div>
         </div>
       </div>
@@ -711,19 +711,11 @@
     wire(document.querySelector('.ps-half--trident'), '.nn-edge, .nn-dot', 'is-live');
     wire(document.querySelector('.ps-half--luna'), '.luna-ring', 'is-live');
     var forgePanel = document.querySelector('.ps-half--forge');
-    wire(forgePanel, '.fg-frag, .fg-edge, .fg-box', 'is-live', { enter: function () {
-      var pairs = {};
-      [].forEach.call(forgePanel.querySelectorAll('.fg-frag, .fg-edge'), function (c) {
-        var k = c.getAttribute('data-fg');
-        if (!pairs[k]) pairs[k] = [];
-        pairs[k].push(c);
-      });
-      Object.keys(pairs).forEach(function (k) {
-        var d = (parseInt(k, 10) * 0.18 + rnd(0, 0.4)).toFixed(2) + 's', dur = rnd(2.8, 3.8).toFixed(2) + 's';
-        pairs[k].forEach(function (c) {
-          c.style.setProperty('--d', d);
-          c.style.setProperty('--dur', dur);
-        });
+    wire(forgePanel, '.fg-frag, .fg-box', 'is-live', { enter: function () {
+      [].forEach.call(forgePanel.querySelectorAll('.fg-frag'), function (c) {
+        var k = parseInt(c.getAttribute('data-fg'), 10);
+        c.style.setProperty('--d', (k * 0.18 + rnd(0, 0.3)).toFixed(2) + 's');
+        c.style.setProperty('--dur', rnd(2.8, 3.8).toFixed(2) + 's');
       });
       [].forEach.call(forgePanel.querySelectorAll('.fg-box'), function (c) {
         c.style.setProperty('--d', rnd(0, 0.6).toFixed(2) + 's');
@@ -838,28 +830,22 @@
     host.appendChild(svg);
   }
 
-  /* FORGE — scattered evidence fragments converge along curved edges into ONE packet box.
-     Deliberately the inverse of Router: many → one (assembly), not one → many (dispatch). */
+  /* FORGE, scattered evidence fragments gather into ONE packet box. No connecting
+     lines: the fragments pulse in a left-to-right sweep into the box (many into one,
+     the inverse of Router's one-to-many fan-out). */
   function buildForge(host) {
     var NS = 'http://www.w3.org/2000/svg';
     var svg = document.createElementNS(NS, 'svg');
     svg.setAttribute('class', 'fg-svg'); svg.setAttribute('viewBox', '0 0 200 120'); svg.setAttribute('preserveAspectRatio', 'xMidYMid meet'); svg.setAttribute('shape-rendering', 'geometricPrecision');
-    var boxW = 32, boxH = 42, boxX = 152, boxY = 60 - boxH / 2, anchorX = boxX - 2, anchorY = 60;
+    var boxW = 32, boxH = 42, boxX = 152, boxY = 60 - boxH / 2;
     var box = document.createElementNS(NS, 'rect');
     box.setAttribute('x', boxX); box.setAttribute('y', boxY); box.setAttribute('width', boxW); box.setAttribute('height', boxH); box.setAttribute('rx', '3');
     box.setAttribute('class', 'fg-box'); svg.appendChild(box);
     var frags = [
-      { x: 16, y: 26 }, { x: 30, y: 60 }, { x: 20, y: 94 },
-      { x: 52, y: 18 }, { x: 60, y: 52 }, { x: 48, y: 88 },
-      { x: 86, y: 32 }, { x: 92, y: 70 }, { x: 78, y: 100 }
+      { x: 16, y: 26 }, { x: 20, y: 94 }, { x: 30, y: 60 },
+      { x: 48, y: 88 }, { x: 52, y: 18 }, { x: 60, y: 52 },
+      { x: 78, y: 100 }, { x: 86, y: 32 }, { x: 92, y: 70 }
     ];
-    frags.forEach(function (p, i) {
-      var cx = (p.x + anchorX) / 2;
-      var path = document.createElementNS(NS, 'path');
-      path.setAttribute('d', 'M' + p.x + ' ' + p.y + ' Q' + cx + ' ' + p.y + ' ' + anchorX + ' ' + anchorY);
-      path.setAttribute('class', 'fg-edge'); path.setAttribute('data-fg', i); path.style.setProperty('--i', i);
-      svg.appendChild(path);
-    });
     frags.forEach(function (p, j) {
       var ci = document.createElementNS(NS, 'circle');
       ci.setAttribute('cx', p.x); ci.setAttribute('cy', p.y); ci.setAttribute('r', '3.2'); ci.setAttribute('class', 'fg-frag'); ci.setAttribute('data-fg', j); ci.style.setProperty('--i', j);

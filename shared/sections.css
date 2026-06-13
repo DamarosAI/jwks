@@ -298,8 +298,8 @@ body.world-ready #world { opacity: 1; }
 /* ============================================================
  * OPERATIONS MESH  (Forge · Router)
  * Two agents, deliberately opposite motions so they read as distinct:
- *   Forge  — ASSEMBLES: scattered fragments converge into ONE packet (many → one).
- *   Router — MATCHES:   one patient fans across the portfolio to the trials they fit (one → many).
+ *   Forge, ASSEMBLES: scattered fragments gather into ONE packet (many into one).
+ *   Router, MATCHES: one patient fans across the portfolio to the trials they fit (one into many).
  * ============================================================ */
 
 .fg-svg, .rt-svg {
@@ -308,9 +308,8 @@ body.world-ready #world { opacity: 1; }
   -webkit-backface-visibility: hidden; backface-visibility: hidden;
 }
 
-/* FORGE — scattered fragments pulse and converge into one packet; edges stay hidden. */
+/* FORGE, scattered fragments pulse in a sweep and gather into one packet. No lines. */
 .fg-frag { fill: rgba(169, 192, 214, .26); }
-.fg-edge { display: none; }
 .fg-box { fill: rgba(169, 192, 214, .06); stroke: rgba(169, 192, 214, .22); stroke-width: 1; vector-effect: non-scaling-stroke; }
 .ps-half--forge.is-live .fg-frag { animation: fgFrag var(--dur, 3.2s) var(--ease) var(--d, 0s) infinite; }
 .ps-half--forge.is-live .fg-box { animation: fgBox var(--dur, 3.4s) var(--ease) var(--d, 0s) infinite; }
@@ -484,7 +483,7 @@ body.world-ready #world { opacity: 1; }
   .ti-node.is-firing .ti-sq, .ti-node.is-firing .ti-sq::after,
   .ti-sponsor.is-reading .ti-cell,
   .ps-half.is-live .nn-edge, .ps-half.is-live .nn-dot, .luna-ring,
-  .ps-half--forge.is-live .fg-frag, .ps-half--forge.is-live .fg-edge, .ps-half--forge.is-live .fg-box,
+  .ps-half--forge.is-live .fg-frag, .ps-half--forge.is-live .fg-box,
   .ps-half--router.is-live .rt-trunk, .ps-half--router.is-live .rt-lane, .ps-half--router.is-live .rt-node { animation: none; }
   .es-facet { opacity: 1; visibility: visible; position: static; }
   .es-facet:not(.facet--active) { display: none; }
