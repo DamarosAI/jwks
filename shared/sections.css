@@ -299,7 +299,7 @@ body.world-ready #world { opacity: 1; }
  * OPERATIONS MESH  (Forge · Router)
  * Two agents, deliberately opposite motions so they read as distinct:
  *   Forge, ASSEMBLES: scattered fragments gather into ONE packet (many into one).
- *   Router, MATCHES: one patient fans across the portfolio to the trials they fit (one into many).
+ *   Router, MATCHES: ATC scope — radar sweep, dashed vectors to trial gates (one into many).
  * ============================================================ */
 
 .fg-svg, .rt-svg {
@@ -308,52 +308,99 @@ body.world-ready #world { opacity: 1; }
   -webkit-backface-visibility: hidden; backface-visibility: hidden;
 }
 
-/* FORGE, scattered fragments pulse in a sweep and gather into one packet. No lines. */
-.fg-frag { fill: rgba(169, 192, 214, .26); }
-.fg-box { fill: rgba(169, 192, 214, .06); stroke: rgba(169, 192, 214, .22); stroke-width: 1; vector-effect: non-scaling-stroke; }
+/* FORGE, scattered fragments pulse in a sweep and gather into one packet. Sky blue, no lines. */
+.ps-half--forge { --fg-sky: #7ec8e9; --fg-sky-dim: rgba(126, 200, 233, .28); }
+.fg-frag { fill: var(--fg-sky-dim); }
+.fg-box { fill: rgba(126, 200, 233, .06); stroke: rgba(126, 200, 233, .24); stroke-width: 1; vector-effect: non-scaling-stroke; }
 .ps-half--forge.is-live .fg-frag { animation: fgFrag var(--dur, 3.2s) var(--ease) var(--d, 0s) infinite; }
 .ps-half--forge.is-live .fg-box { animation: fgBox var(--dur, 3.4s) var(--ease) var(--d, 0s) infinite; }
 @keyframes fgFrag {
-  0%, 100% { fill: rgba(169, 192, 214, .24); opacity: 1; }
-  38% { fill: var(--steel); opacity: 1; }
-  52% { fill: var(--steel); opacity: .25; }
-  68% { fill: rgba(169, 192, 214, .24); opacity: 1; }
+  0%, 100% { fill: rgba(126, 200, 233, .26); opacity: 1; }
+  38% { fill: var(--fg-sky); opacity: 1; }
+  52% { fill: var(--fg-sky); opacity: .25; }
+  68% { fill: rgba(126, 200, 233, .26); opacity: 1; }
 }
 @keyframes fgBox {
-  0%, 100% { fill: rgba(169, 192, 214, .06); stroke: rgba(169, 192, 214, .22); }
-  48% { fill: color-mix(in srgb, var(--steel) 22%, transparent); stroke: var(--steel); }
-  72% { fill: color-mix(in srgb, var(--steel) 32%, transparent); stroke: var(--steel); }
+  0%, 100% { fill: rgba(126, 200, 233, .06); stroke: rgba(126, 200, 233, .24); }
+  48% { fill: color-mix(in srgb, var(--fg-sky) 22%, transparent); stroke: var(--fg-sky); }
+  72% { fill: color-mix(in srgb, var(--fg-sky) 32%, transparent); stroke: var(--fg-sky); }
 }
 
-/* ROUTER — the trunk pulses steel; each lane + terminal resolves to its triage state */
-.rt-trunk, .rt-lane { stroke: rgba(169, 192, 214, .2); stroke-width: 1.4; fill: none; stroke-linecap: round; vector-effect: non-scaling-stroke; }
-.rt-node { fill: rgba(169, 192, 214, .14); stroke: rgba(169, 192, 214, .28); stroke-width: 1; vector-effect: non-scaling-stroke; }
-.rt-in { fill: rgba(169, 192, 214, .5); }
-.ps-half--router.is-live .rt-trunk { animation: rtTrunk var(--dur, 1.4s) var(--ease) var(--d, 0s) infinite; }
-.ps-half--router.is-live .rt-lane { animation: rtLaneOk var(--dur, 1.4s) var(--ease) var(--d, 0s) infinite; }
-.ps-half--router.is-live .rt-node { animation: rtNodeOk var(--dur, 1.4s) var(--ease) var(--d, 0s) infinite; }
-.ps-half--router.is-live .rt-lane--review { animation-name: rtLaneReview; }
-.ps-half--router.is-live .rt-lane--fail { animation-name: rtLaneFail; }
-.ps-half--router.is-live .rt-node--review { animation-name: rtNodeReview; }
-.ps-half--router.is-live .rt-node--fail { animation-name: rtNodeFail; }
-@keyframes rtTrunk {
-  0%, 100% { stroke: rgba(169, 192, 214, .2); }
-  40% { stroke: var(--steel); stroke-opacity: 1; }
+/* ROUTER — ATC scope: radar rings, rotating sweep, dashed vectors to trial gates */
+.rt-ring { fill: none; stroke: rgba(169, 192, 214, .11); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.rt-grid { stroke: rgba(169, 192, 214, .06); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.rt-sweep-g { transform-origin: 68px 60px; transform-box: fill-box; }
+.rt-sweep { stroke: rgba(126, 200, 233, .5); stroke-width: 1.2; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.rt-ping { fill: none; stroke: rgba(126, 200, 233, .35); stroke-width: 1; vector-effect: non-scaling-stroke; transform-origin: 68px 60px; transform-box: fill-box; opacity: 0; }
+.rt-core { fill: rgba(232, 236, 240, .72); stroke: rgba(169, 192, 214, .38); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.rt-vector { stroke: rgba(169, 192, 214, .2); stroke-width: 1.1; stroke-dasharray: 4 5; fill: none; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.rt-gate { fill: rgba(169, 192, 214, .07); stroke: rgba(169, 192, 214, .26); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.rt-blip { fill: rgba(169, 192, 214, .4); opacity: 0; vector-effect: non-scaling-stroke; }
+.ps-half--router.is-live .rt-sweep-g { animation: rtSweep 5.2s linear infinite; }
+.ps-half--router.is-live .rt-ping { animation: rtPing 3.2s ease-out infinite; }
+.ps-half--router.is-live .rt-core { animation: rtCore 2.6s ease-in-out infinite; }
+.ps-half--router.is-live .rt-vector { animation: rtVectorOk var(--dur, 2.8s) var(--ease) var(--d, 0s) infinite; }
+.ps-half--router.is-live .rt-gate { animation: rtGateOk var(--dur, 2.8s) var(--ease) var(--d, 0s) infinite; }
+.ps-half--router.is-live .rt-blip { animation: rtBlipOk var(--dur, 2.8s) var(--ease) var(--d, 0s) infinite; }
+.ps-half--router.is-live .rt-vector--review { animation-name: rtVectorReview; }
+.ps-half--router.is-live .rt-gate--review { animation-name: rtGateReview; }
+.ps-half--router.is-live .rt-blip--review { animation-name: rtBlipReview; }
+.ps-half--router.is-live .rt-vector--fail { animation-name: rtVectorFail; }
+.ps-half--router.is-live .rt-gate--fail { animation-name: rtGateFail; }
+.ps-half--router.is-live .rt-blip--fail { animation-name: rtBlipFail; }
+@keyframes rtSweep { to { transform: rotate(360deg); } }
+@keyframes rtPing {
+  0% { transform: scale(1); opacity: .55; stroke-opacity: .45; }
+  100% { transform: scale(2.6); opacity: 0; stroke-opacity: 0; }
 }
-@keyframes rtLaneOk { 0%, 100% { stroke: rgba(169, 192, 214, .18); } 50% { stroke: var(--ok); stroke-opacity: 1; } }
-@keyframes rtLaneReview { 0%, 100% { stroke: rgba(169, 192, 214, .18); } 50% { stroke: var(--amber); stroke-opacity: 1; } }
-@keyframes rtLaneFail { 0%, 100% { stroke: rgba(169, 192, 214, .18); } 50% { stroke: var(--breach); stroke-opacity: 1; } }
-@keyframes rtNodeOk {
-  0%, 100% { fill: rgba(169, 192, 214, .14); stroke: rgba(169, 192, 214, .28); box-shadow: none; }
-  50% { fill: color-mix(in srgb, var(--ok) 50%, transparent); stroke: var(--ok); }
+@keyframes rtCore {
+  0%, 100% { fill: rgba(232, 236, 240, .62); }
+  50% { fill: rgba(232, 236, 240, .95); }
 }
-@keyframes rtNodeReview {
-  0%, 100% { fill: rgba(169, 192, 214, .14); stroke: rgba(169, 192, 214, .28); }
-  50% { fill: color-mix(in srgb, var(--amber) 50%, transparent); stroke: var(--amber); }
+@keyframes rtVectorOk {
+  0%, 100% { stroke: rgba(169, 192, 214, .16); stroke-dashoffset: 0; }
+  42% { stroke: var(--ok); stroke-dashoffset: -10; }
+  68% { stroke: rgba(169, 192, 214, .16); stroke-dashoffset: -18; }
 }
-@keyframes rtNodeFail {
-  0%, 100% { fill: rgba(169, 192, 214, .14); stroke: rgba(169, 192, 214, .28); }
-  50% { fill: color-mix(in srgb, var(--breach) 50%, transparent); stroke: var(--breach); }
+@keyframes rtVectorReview {
+  0%, 100% { stroke: rgba(169, 192, 214, .16); stroke-dashoffset: 0; }
+  42% { stroke: var(--amber); stroke-dashoffset: -10; }
+  68% { stroke: rgba(169, 192, 214, .16); stroke-dashoffset: -18; }
+}
+@keyframes rtVectorFail {
+  0%, 100% { stroke: rgba(169, 192, 214, .16); stroke-dashoffset: 0; }
+  42% { stroke: var(--breach); stroke-dashoffset: -10; }
+  68% { stroke: rgba(169, 192, 214, .16); stroke-dashoffset: -18; }
+}
+@keyframes rtGateOk {
+  0%, 100% { fill: rgba(169, 192, 214, .07); stroke: rgba(169, 192, 214, .26); }
+  50% { fill: color-mix(in srgb, var(--ok) 38%, transparent); stroke: var(--ok); }
+}
+@keyframes rtGateReview {
+  0%, 100% { fill: rgba(169, 192, 214, .07); stroke: rgba(169, 192, 214, .26); }
+  50% { fill: color-mix(in srgb, var(--amber) 38%, transparent); stroke: var(--amber); }
+}
+@keyframes rtGateFail {
+  0%, 100% { fill: rgba(169, 192, 214, .07); stroke: rgba(169, 192, 214, .26); }
+  50% { fill: color-mix(in srgb, var(--breach) 38%, transparent); stroke: var(--breach); }
+}
+@keyframes rtBlipOk {
+  0%, 22% { opacity: 0; fill: rgba(169, 192, 214, .35); }
+  38% { opacity: .95; fill: var(--ok); }
+  58% { opacity: .7; }
+  100% { opacity: 0; fill: rgba(169, 192, 214, .35); }
+}
+@keyframes rtBlipReview {
+  0%, 22% { opacity: 0; fill: rgba(169, 192, 214, .35); }
+  38% { opacity: .95; fill: var(--amber); }
+  58% { opacity: .7; }
+  100% { opacity: 0; fill: rgba(169, 192, 214, .35); }
+}
+@keyframes rtBlipFail {
+  0%, 22% { opacity: 0; fill: rgba(169, 192, 214, .35); }
+  38% { opacity: .95; fill: var(--breach); }
+  58% { opacity: .7; }
+  100% { opacity: 0; fill: rgba(169, 192, 214, .35); }
 }
 
 /* ============================================================
@@ -484,7 +531,8 @@ body.world-ready #world { opacity: 1; }
   .ti-sponsor.is-reading .ti-cell,
   .ps-half.is-live .nn-edge, .ps-half.is-live .nn-dot, .luna-ring,
   .ps-half--forge.is-live .fg-frag, .ps-half--forge.is-live .fg-box,
-  .ps-half--router.is-live .rt-trunk, .ps-half--router.is-live .rt-lane, .ps-half--router.is-live .rt-node { animation: none; }
+  .ps-half--router.is-live .rt-sweep-g, .ps-half--router.is-live .rt-ping, .ps-half--router.is-live .rt-core,
+  .ps-half--router.is-live .rt-vector, .ps-half--router.is-live .rt-gate, .ps-half--router.is-live .rt-blip { animation: none; }
   .es-facet { opacity: 1; visibility: visible; position: static; }
   .es-facet:not(.facet--active) { display: none; }
 }
