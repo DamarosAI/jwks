@@ -794,11 +794,13 @@
       });
     } });
     var routerPanel = document.querySelector('.ps-half--router');
-    wire(routerPanel, '.rt-vector, .rt-gate, .rt-blip', 'is-live', { enter: function () {
-      [].forEach.call(routerPanel.querySelectorAll('.rt-vector, .rt-gate, .rt-blip'), function (c) {
-        var k = parseInt(c.getAttribute('data-rt'), 10) || 0;
-        c.style.setProperty('--d', (k * 0.55 + rnd(0, 0.35)).toFixed(2) + 's');
-        c.style.setProperty('--dur', rnd(2.2, 3.4).toFixed(2) + 's');
+    wire(routerPanel, '.rt-dot', 'is-live', { enter: function () {
+      var SWEEP = 4.8;
+      routerPanel.style.setProperty('--rt-sweep-dur', SWEEP + 's');
+      [].forEach.call(routerPanel.querySelectorAll('.rt-dot'), function (c) {
+        var b = parseFloat(c.getAttribute('data-bearing')) || 0;
+        c.style.setProperty('--d', (b / 360 * SWEEP).toFixed(3) + 's');
+        c.style.setProperty('--dur', SWEEP + 's');
       });
     } });
 
@@ -926,49 +928,45 @@
     host.appendChild(svg);
   }
 
-  /* ROUTER — ATC scope: one patient blip on radar, sweep rotates, dashed vectors
-     route to three trial gates (strong / partial / not eligible). One → many. */
+  /* ROUTER — compact ATC radar: stone sweep spins, amber blips flash on contact. */
   function buildRouter(host) {
     var NS = 'http://www.w3.org/2000/svg';
     var svg = document.createElementNS(NS, 'svg');
-    svg.setAttribute('class', 'rt-svg'); svg.setAttribute('viewBox', '0 0 200 120'); svg.setAttribute('preserveAspectRatio', 'xMidYMid meet'); svg.setAttribute('shape-rendering', 'geometricPrecision');
-    var CX = 68, CY = 60;
-    [18, 30, 42].forEach(function (r) {
+    svg.setAttribute('class', 'rt-svg'); svg.setAttribute('viewBox', '0 0 100 100'); svg.setAttribute('preserveAspectRatio', 'xMidYMid meet'); svg.setAttribute('shape-rendering', 'geometricPrecision');
+    var CX = 50, CY = 50, RMAX = 36;
+    [12, 22, 32].forEach(function (r) {
       var ring = document.createElementNS(NS, 'circle');
       ring.setAttribute('cx', CX); ring.setAttribute('cy', CY); ring.setAttribute('r', r);
       ring.setAttribute('class', 'rt-ring'); svg.appendChild(ring);
     });
     var hGrid = document.createElementNS(NS, 'line');
-    hGrid.setAttribute('x1', CX - 42); hGrid.setAttribute('y1', CY); hGrid.setAttribute('x2', CX + 42); hGrid.setAttribute('y2', CY);
+    hGrid.setAttribute('x1', CX - RMAX); hGrid.setAttribute('y1', CY); hGrid.setAttribute('x2', CX + RMAX); hGrid.setAttribute('y2', CY);
     hGrid.setAttribute('class', 'rt-grid'); svg.appendChild(hGrid);
     var vGrid = document.createElementNS(NS, 'line');
-    vGrid.setAttribute('x1', CX); vGrid.setAttribute('y1', CY - 42); vGrid.setAttribute('x2', CX); vGrid.setAttribute('y2', CY + 42);
+    vGrid.setAttribute('x1', CX); vGrid.setAttribute('y1', CY - RMAX); vGrid.setAttribute('x2', CX); vGrid.setAttribute('y2', CY + RMAX);
     vGrid.setAttribute('class', 'rt-grid'); svg.appendChild(vGrid);
-    var ping = document.createElementNS(NS, 'circle');
-    ping.setAttribute('cx', CX); ping.setAttribute('cy', CY); ping.setAttribute('r', '8');
-    ping.setAttribute('class', 'rt-ping'); svg.appendChild(ping);
+    var dotCount = 6 + (Math.random() * 3 | 0);
+    for (var j = 0; j < dotCount; j++) {
+      var bearing = rnd(0, 360);
+      var rad = bearing * Math.PI / 180;
+      var dist = rnd(0.38, 0.92) * RMAX;
+      var dot = document.createElementNS(NS, 'circle');
+      dot.setAttribute('cx', (CX + Math.cos(rad) * dist).toFixed(2));
+      dot.setAttribute('cy', (CY + Math.sin(rad) * dist).toFixed(2));
+      dot.setAttribute('r', rnd(1.8, 2.6).toFixed(2));
+      dot.setAttribute('class', 'rt-dot');
+      dot.setAttribute('data-bearing', bearing.toFixed(2));
+      svg.appendChild(dot);
+    }
     var sweepG = document.createElementNS(NS, 'g');
     sweepG.setAttribute('class', 'rt-sweep-g');
     var sweep = document.createElementNS(NS, 'line');
-    sweep.setAttribute('x1', CX); sweep.setAttribute('y1', CY); sweep.setAttribute('x2', CX + 40); sweep.setAttribute('y2', CY);
+    sweep.setAttribute('x1', CX); sweep.setAttribute('y1', CY);
+    sweep.setAttribute('x2', CX + RMAX - 2); sweep.setAttribute('y2', CY);
     sweep.setAttribute('class', 'rt-sweep'); sweepG.appendChild(sweep);
     svg.appendChild(sweepG);
-    var gates = [{ x: 168, y: 26, k: 'ok', i: 0 }, { x: 168, y: 60, k: 'review', i: 1 }, { x: 168, y: 92, k: 'fail', i: 2 }];
-    gates.forEach(function (g) {
-      var vec = document.createElementNS(NS, 'line');
-      vec.setAttribute('x1', CX + 5); vec.setAttribute('y1', CY); vec.setAttribute('x2', g.x - 16); vec.setAttribute('y2', g.y);
-      vec.setAttribute('class', 'rt-vector rt-vector--' + g.k); vec.setAttribute('data-rt', g.i); svg.appendChild(vec);
-      var gate = document.createElementNS(NS, 'rect');
-      gate.setAttribute('x', g.x - 10); gate.setAttribute('y', g.y - 3); gate.setAttribute('width', 20); gate.setAttribute('height', 6); gate.setAttribute('rx', '1');
-      gate.setAttribute('class', 'rt-gate rt-gate--' + g.k); gate.setAttribute('data-rt', g.i); svg.appendChild(gate);
-      var bx = g.x - 19.5, by = g.y;
-      var blip = document.createElementNS(NS, 'rect');
-      blip.setAttribute('x', bx - 2.5); blip.setAttribute('y', by - 2.5); blip.setAttribute('width', 5); blip.setAttribute('height', 5);
-      blip.setAttribute('transform', 'rotate(45 ' + bx + ' ' + by + ')');
-      blip.setAttribute('class', 'rt-blip rt-blip--' + g.k); blip.setAttribute('data-rt', g.i); svg.appendChild(blip);
-    });
     var core = document.createElementNS(NS, 'circle');
-    core.setAttribute('cx', CX); core.setAttribute('cy', CY); core.setAttribute('r', '3.5');
+    core.setAttribute('cx', CX); core.setAttribute('cy', CY); core.setAttribute('r', '2.2');
     core.setAttribute('class', 'rt-core'); svg.appendChild(core);
     host.appendChild(svg);
   }
