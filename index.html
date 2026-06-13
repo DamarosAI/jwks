@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="shared/journey.css?v=reset55">
 <link rel="stylesheet" href="shared/nav-chrome.css?v=1">
 <link rel="stylesheet" href="shared/terrain.css?v=reset49">
-<link rel="stylesheet" href="shared/sections.css?v=47">
+<link rel="stylesheet" href="shared/sections.css?v=48">
 <link rel="stylesheet" href="shared/page-transition.css?v=1">
 <style id="reposition-2026">
 /* ============================================================
@@ -107,21 +107,22 @@
 @media (min-width:821px){
   .cap.es .es-spine{
     display:grid;
-    grid-template-columns:1fr 1fr 1.12fr;
+    grid-template-columns:1fr 1fr 1fr;
     grid-auto-rows:1fr;
-    gap:clamp(.85rem,1.4vw,1.15rem);
-    margin-top:clamp(1.1rem,2.6vh,1.7rem);
+    gap:clamp(1.1rem,1.7vw,1.5rem);
+    margin-top:clamp(1.3rem,3vh,2rem);
     text-align:left;
   }
   .cap.es .es-spine-step:nth-child(1){ grid-column:1; grid-row:1; }
   .cap.es .es-spine-step:nth-child(2){ grid-column:2; grid-row:1; }
   .cap.es .es-spine-step:nth-child(3){ grid-column:1; grid-row:2; }
   .cap.es .es-spine-step--resolve{ grid-column:2; grid-row:2; }
-  .cap.es .es-spine-step--replay{ grid-column:3; grid-row:1 / span 2; }
+  /* Replay: same single-card footprint as the others, just centered across both rows */
+  .cap.es .es-spine-step--replay{ grid-column:3; grid-row:1 / span 2; align-self:center; }
   .cap.es .es-spine-step{
     display:flex; flex-direction:column; justify-content:center;
-    gap:clamp(.5rem,.9vw,.75rem);
-    padding:clamp(1.1rem,1.7vw,1.55rem) clamp(1.1rem,1.6vw,1.5rem);
+    gap:clamp(.6rem,1vw,.85rem);
+    padding:clamp(1.35rem,2vw,1.85rem) clamp(1.3rem,1.8vw,1.7rem);
     border-radius:16px;
     box-shadow:inset 0 0 0 1px rgba(169,192,214,.2);
     background:linear-gradient(180deg, rgba(169,192,214,.07), rgba(169,192,214,.02)), rgba(8,11,17,.55);
@@ -137,29 +138,29 @@
     box-shadow:inset 0 0 0 1px rgba(232,236,240,.3), 0 0 30px rgba(169,192,214,.07);
     background:linear-gradient(180deg, rgba(232,236,240,.09), rgba(169,192,214,.025)), rgba(8,11,17,.6);
   }
-  .cap.es .es-spine-step .ps-half-head h3{ margin:0; font-size:clamp(1.45rem,2.1vw,1.85rem); letter-spacing:-.025em; color:var(--cold); }
-  .cap.es .es-spine-step .ps-sub{ margin:.3rem 0 0; font-size:clamp(1rem,1.25vw,1.18rem); color:var(--steel); }
+  .cap.es .es-spine-step .ps-half-head h3{ margin:0; font-size:clamp(1.3rem,1.85vw,1.62rem); letter-spacing:-.025em; color:var(--cold); }
+  .cap.es .es-spine-step .ps-sub{ margin:.3rem 0 0; font-size:clamp(.9rem,1.1vw,1.04rem); color:var(--steel); }
   .cap.es .es-spine-step .ps-sub em{ font-style:normal; color:var(--cold); }
-  .cap.es .es-spine-step .ps-cards{ margin-top:clamp(.55rem,1vw,.85rem); }
+  .cap.es .es-spine-step .ps-cards{ margin-top:clamp(.6rem,1vw,.9rem); }
   .cap.es .es-spine-step .cap-box{ padding:0; border:0; background:none; box-shadow:none; border-radius:0; -webkit-backdrop-filter:none; backdrop-filter:none; }
   .cap.es .es-spine-step .cap-box:hover{ border:0; background:none; box-shadow:none; transform:none; }
-  .cap.es .es-spine-step .cap-box-b{ font-size:clamp(.9rem,1.05vw,1rem); line-height:1.5; color:rgba(232,236,240,.7); }
+  .cap.es .es-spine-step .cap-box-b{ font-size:clamp(.82rem,.95vw,.9rem); line-height:1.58; color:rgba(232,236,240,.68); }
   .cap.es .es-title{ font-size:min(clamp(2.2rem,5vw,3.7rem),6.2vh); }
-  .cap.es .cap-subhead{ font-size:min(clamp(1.1rem,1.7vw,1.42rem),2.6vh); }
+  .cap.es .cap-subhead{ font-size:min(clamp(1.05rem,1.6vw,1.34rem),2.5vh); }
 }
-/* tall desktop: let cards breathe into a more generous square */
+/* tall desktop: let cards breathe further */
 @media (min-width:821px) and (min-height:860px){
-  .cap.es .es-spine{ gap:1.2rem; }
-  .cap.es .es-spine-step{ padding:1.7rem 1.6rem; }
+  .cap.es .es-spine{ gap:1.5rem; }
+  .cap.es .es-spine-step{ padding:1.9rem 1.7rem; }
 }
-/* short laptop: tighten so the five cards still clear the nav without overlap */
+/* short laptop: tighten gently so the five cards still clear the nav without overlap */
 @media (min-width:821px) and (max-height:820px){
-  .cap.es .es-spine{ gap:.7rem; margin-top:min(1rem,1.8vh); }
-  .cap.es .es-spine-step{ padding:min(1.2vh,1.05rem) clamp(.95rem,1.3vw,1.2rem); gap:.4rem; }
-  .cap.es .es-spine-step .ps-half-head h3{ font-size:min(clamp(1.45rem,2.1vw,1.85rem),3vh); }
-  .cap.es .es-spine-step .ps-sub{ font-size:min(1.18rem,2.1vh); margin-top:.2rem; }
-  .cap.es .es-spine-step .ps-cards{ margin-top:min(.85rem,1.4vh); }
-  .cap.es .es-spine-step .cap-box-b{ font-size:min(1rem,1.85vh); line-height:1.45; }
+  .cap.es .es-spine{ gap:min(1rem,1.7vh); margin-top:min(1.1rem,2vh); }
+  .cap.es .es-spine-step{ padding:min(1.6vh,1.35rem) clamp(1.1rem,1.5vw,1.4rem); gap:.45rem; }
+  .cap.es .es-spine-step .ps-half-head h3{ font-size:min(clamp(1.3rem,1.85vw,1.62rem),2.7vh); }
+  .cap.es .es-spine-step .ps-sub{ font-size:min(1.04rem,1.95vh); margin-top:.2rem; }
+  .cap.es .es-spine-step .ps-cards{ margin-top:min(.7rem,1.3vh); }
+  .cap.es .es-spine-step .cap-box-b{ font-size:min(.9rem,1.7vh); line-height:1.5; }
 }
 
 /* ============================================================
