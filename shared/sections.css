@@ -307,30 +307,30 @@ body.world-ready #world { opacity: 1; }
   -webkit-backface-visibility: hidden; backface-visibility: hidden;
 }
 
-/* FORGE — dim fragments converge along drawn edges and resolve into a bright
-   artifact that blooms cool cyan (structure → proof). Each element runs on its
-   own re-rolled random clock (calm, never in lockstep). */
-.fg-frag { fill: rgba(169, 192, 214, .22); }
+/* FORGE — one row of same-color dots flows along horizontal edges into one packet box. */
+.fg-frag { fill: rgba(169, 192, 214, .26); }
 .fg-edge {
   stroke: transparent; stroke-width: 1.1; stroke-linecap: round; stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
 }
-.fg-bar { fill: rgba(169, 192, 214, .06); stroke: rgba(169, 192, 214, .22); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.fg-box { fill: rgba(169, 192, 214, .06); stroke: rgba(169, 192, 214, .22); stroke-width: 1; vector-effect: non-scaling-stroke; }
 .ps-half--forge.is-live .fg-frag { animation: fgFrag var(--dur, 3.2s) var(--ease) var(--d, 0s) infinite; }
 .ps-half--forge.is-live .fg-edge { animation: fgEdge var(--dur, 3.2s) var(--ease) var(--d, 0s) infinite; }
-.ps-half--forge.is-live .fg-bar { animation: fgBar var(--dur, 3.4s) var(--ease) var(--d, 0s) infinite; }
+.ps-half--forge.is-live .fg-box { animation: fgBox var(--dur, 3.4s) var(--ease) var(--d, 0s) infinite; }
 @keyframes fgFrag {
-  0%, 100% { fill: rgba(169, 192, 214, .2); }
-  40%, 60% { fill: color-mix(in srgb, var(--steel) 68%, oklch(0.82 0.13 208)); }
+  0%, 100% { fill: rgba(169, 192, 214, .24); opacity: 1; }
+  38% { fill: var(--steel); opacity: 1; }
+  52% { fill: var(--steel); opacity: .25; }
+  68% { fill: rgba(169, 192, 214, .24); opacity: 1; }
 }
 @keyframes fgEdge {
   0%, 100% { stroke: transparent; stroke-opacity: 0; }
-  40%, 60% { stroke: color-mix(in srgb, var(--steel) 68%, oklch(0.82 0.13 208)); stroke-opacity: .62; }
+  38%, 52% { stroke: var(--steel); stroke-opacity: .58; }
 }
-@keyframes fgBar {
+@keyframes fgBox {
   0%, 100% { fill: rgba(169, 192, 214, .06); stroke: rgba(169, 192, 214, .22); }
-  46% { fill: color-mix(in srgb, var(--cold) 26%, transparent); stroke: var(--cold); }
-  82% { fill: color-mix(in srgb, oklch(0.82 0.13 208) 42%, transparent); stroke: oklch(0.87 0.13 208); }
+  48% { fill: color-mix(in srgb, var(--steel) 22%, transparent); stroke: var(--steel); }
+  72% { fill: color-mix(in srgb, var(--steel) 32%, transparent); stroke: var(--steel); }
 }
 
 /* ROUTER — the trunk pulses steel; each lane + terminal resolves to its triage state */
@@ -491,7 +491,7 @@ body.world-ready #world { opacity: 1; }
   .ti-node.is-firing .ti-sq, .ti-node.is-firing .ti-sq::after,
   .ti-sponsor.is-reading .ti-cell,
   .ps-half.is-live .nn-edge, .ps-half.is-live .nn-dot, .luna-ring,
-  .ps-half--forge.is-live .fg-frag, .ps-half--forge.is-live .fg-edge, .ps-half--forge.is-live .fg-bar,
+  .ps-half--forge.is-live .fg-frag, .ps-half--forge.is-live .fg-edge, .ps-half--forge.is-live .fg-box,
   .ps-half--router.is-live .rt-trunk, .ps-half--router.is-live .rt-lane, .ps-half--router.is-live .rt-node { animation: none; }
   .es-facet { opacity: 1; visibility: visible; position: static; }
   .es-facet:not(.facet--active) { display: none; }
