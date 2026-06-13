@@ -297,8 +297,9 @@ body.world-ready #world { opacity: 1; }
 
 /* ============================================================
  * OPERATIONS MESH  (Forge · Router)
- * Two agents in the Platform-Substrate grammar: Forge assembles raw evidence
- * (amber → green artifact); Router triages REVIEW into pass / review / fail.
+ * Two agents, deliberately opposite motions so they read as distinct:
+ *   Forge  — ASSEMBLES: scattered fragments converge into ONE packet (many → one).
+ *   Router — MATCHES:   one patient fans across the portfolio to the trials they fit (one → many).
  * ============================================================ */
 
 .fg-svg, .rt-svg {

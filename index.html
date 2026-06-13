@@ -521,28 +521,28 @@
         <div class="ps-half ps-half--forge">
           <div class="ps-topline">
             <div class="ps-half-head">
-              <span class="ps-tag">Agent</span>
+              <span class="ps-tag">Agent · Assembles</span>
               <h3>Forge</h3>
-              <p class="ps-sub">Turns ambiguity into <em>action.</em></p>
+              <p class="ps-sub">Builds the <em>resolution packet.</em></p>
             </div>
             <div class="ps-field ps-forge" aria-hidden="true"></div>
           </div>
           <div class="ps-cards">
-            <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Every review becomes a resolvable packet.</span><p class="cap-box-b">Forge assembles the criterion, the gap, and where to look, so humans clear ambiguity faster without records leaving the boundary.</p></div>
+            <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Each open question becomes one resolvable packet.</span><p class="cap-box-b">Forge gathers the criterion, the missing fact, and pointers to where the answer lives into a single packet a human can clear in one pass. It packages references only, never patient data.</p></div>
           </div>
         </div>
 
         <div class="ps-half ps-half--router">
           <div class="ps-topline">
             <div class="ps-half-head">
-              <span class="ps-tag">Agent</span>
+              <span class="ps-tag">Agent · Matches</span>
               <h3>Router</h3>
-              <p class="ps-sub">Moves work to the <em>right decision.</em></p>
+              <p class="ps-sub">Maps patients to <em>the trials they fit.</em></p>
             </div>
             <div class="ps-field ps-router" aria-hidden="true"></div>
           </div>
           <div class="ps-cards">
-            <div class="cap-box" data-topo="fail"><span class="cap-box-h">Nothing ambiguous gets buried.</span><p class="cap-box-b">Router sends gaps, conflicts, exceptions, and judgment calls to the right human or deterministic path.</p></div>
+            <div class="cap-box" data-topo="fail"><span class="cap-box-h">One patient, every trial they qualify for.</span><p class="cap-box-b">Router runs each patient against the locked criteria of every open trial and ranks the strongest fits, so a site sees who belongs in which study. Matching stays deterministic and PHI-bounded — no records reach a model.</p></div>
           </div>
         </div>
       </div>
@@ -838,33 +838,39 @@
     host.appendChild(svg);
   }
 
-  /* FORGE — one row of same-color dots flows along horizontal edges into a single packet box. */
+  /* FORGE — scattered evidence fragments converge along curved edges into ONE packet box.
+     Deliberately the inverse of Router: many → one (assembly), not one → many (dispatch). */
   function buildForge(host) {
     var NS = 'http://www.w3.org/2000/svg';
     var svg = document.createElementNS(NS, 'svg');
     svg.setAttribute('class', 'fg-svg'); svg.setAttribute('viewBox', '0 0 200 120'); svg.setAttribute('preserveAspectRatio', 'xMidYMid meet'); svg.setAttribute('shape-rendering', 'geometricPrecision');
-    var MY = 60, N = 9, startX = 14, spacing = 13;
-    var boxX = 154, boxW = 34, boxH = 38, boxY = MY - boxH / 2, anchorX = boxX - 5;
+    var boxW = 32, boxH = 42, boxX = 152, boxY = 60 - boxH / 2, anchorX = boxX - 2, anchorY = 60;
     var box = document.createElementNS(NS, 'rect');
     box.setAttribute('x', boxX); box.setAttribute('y', boxY); box.setAttribute('width', boxW); box.setAttribute('height', boxH); box.setAttribute('rx', '3');
     box.setAttribute('class', 'fg-box'); svg.appendChild(box);
-    for (var i = 0; i < N; i++) {
-      var x = startX + i * spacing;
-      var l = document.createElementNS(NS, 'line');
-      l.setAttribute('x1', x); l.setAttribute('y1', MY); l.setAttribute('x2', anchorX); l.setAttribute('y2', MY);
-      l.setAttribute('class', 'fg-edge'); l.setAttribute('data-fg', i); l.style.setProperty('--i', i); svg.appendChild(l);
-    }
-    for (var j = 0; j < N; j++) {
-      var cx = startX + j * spacing;
+    var frags = [
+      { x: 16, y: 26 }, { x: 30, y: 60 }, { x: 20, y: 94 },
+      { x: 52, y: 18 }, { x: 60, y: 52 }, { x: 48, y: 88 },
+      { x: 86, y: 32 }, { x: 92, y: 70 }, { x: 78, y: 100 }
+    ];
+    frags.forEach(function (p, i) {
+      var cx = (p.x + anchorX) / 2;
+      var path = document.createElementNS(NS, 'path');
+      path.setAttribute('d', 'M' + p.x + ' ' + p.y + ' Q' + cx + ' ' + p.y + ' ' + anchorX + ' ' + anchorY);
+      path.setAttribute('class', 'fg-edge'); path.setAttribute('data-fg', i); path.style.setProperty('--i', i);
+      svg.appendChild(path);
+    });
+    frags.forEach(function (p, j) {
       var ci = document.createElementNS(NS, 'circle');
-      ci.setAttribute('cx', cx); ci.setAttribute('cy', MY); ci.setAttribute('r', '3.2'); ci.setAttribute('class', 'fg-frag'); ci.setAttribute('data-fg', j); ci.style.setProperty('--i', j);
+      ci.setAttribute('cx', p.x); ci.setAttribute('cy', p.y); ci.setAttribute('r', '3.2'); ci.setAttribute('class', 'fg-frag'); ci.setAttribute('data-fg', j); ci.style.setProperty('--i', j);
       svg.appendChild(ci);
-    }
+    });
     host.appendChild(svg);
   }
 
-  /* ROUTER, one ambiguous case enters, the trunk pulses, then it ROUTES down
-     three triage lanes that resolve to pass / review / fail terminals. */
+  /* ROUTER — one patient enters, the trunk pulses, then it fans across the portfolio:
+     three candidate-trial lanes resolve by fit strength (strong / partial / not eligible).
+     Deliberately the inverse of Forge: one → many (cross-trial matching), not many → one. */
   function buildRouter(host) {
     var NS = 'http://www.w3.org/2000/svg';
     var svg = document.createElementNS(NS, 'svg');
