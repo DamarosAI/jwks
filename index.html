@@ -2,7 +2,10 @@
 <html lang="en" data-theme="dark" class="intro-hold">
 <head>
 <meta charset="utf-8">
-<script src="shared/nav-warm.js?v=2"></script>
+<script type="importmap">
+{ "imports": { "three": "./assets/vendor/three/three.module.js", "three/addons/": "./assets/vendor/three/addons/" } }
+</script>
+<script src="shared/nav-warm.js?v=3"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
 <title>Damaros™</title>
@@ -423,9 +426,6 @@
   .cap-subhead,.gap-lead,.cap.ps .cap-subhead,.cap.ti .cap-subhead{ white-space:nowrap; max-width:none; }
 }
 </style>
-<script type="importmap">
-{ "imports": { "three": "./assets/vendor/three/three.module.js", "three/addons/": "./assets/vendor/three/addons/" } }
-</script>
 </head>
 <body data-station="0" class="intro-hold">
 <script>if(document.documentElement.classList.contains('nav-warm')){document.body.classList.remove('intro-hold');document.documentElement.classList.remove('intro-hold');document.body.classList.add('world-ready');}</script>

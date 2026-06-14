@@ -2,7 +2,10 @@
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="utf-8">
-<script src="shared/nav-warm.js?v=2"></script>
+<script type="importmap">
+{ "imports": { "three": "./assets/vendor/three/three.module.js", "three/addons/": "./assets/vendor/three/addons/" } }
+</script>
+<script src="shared/nav-warm.js?v=3"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
 <title>Damaros · About</title>
@@ -13,9 +16,6 @@
 <link rel="stylesheet" href="shared/nav-chrome.css">
 <link rel="stylesheet" href="shared/journey-doc.css">
 <link rel="stylesheet" href="shared/page-transition.css?v=2">
-<script type="importmap">
-{ "imports": { "three": "./assets/vendor/three/three.module.js", "three/addons/": "./assets/vendor/three/addons/" } }
-</script>
 </head>
 <body>
 <script>if(document.documentElement.classList.contains('nav-warm')){document.body.classList.remove('doc-intro');document.body.classList.add('world-ready');}</script>

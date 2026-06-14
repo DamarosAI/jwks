@@ -1,13 +1,16 @@
 /* Sync head script: warm fast path only for in-session link navigations (not reload). */
 (function () {
   var d = document.documentElement;
-  var nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
-  var navType = (nav && nav.type) || 'navigate';
   var warm = false;
+  var isReload = false;
   try {
-    if (navType === 'reload') {
+    var nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+    if (nav && nav.type === 'reload') isReload = true;
+    /* Legacy Navigation Timing — still sync in head when nav entry is missing (mobile WebViews). */
+    if (performance.navigation && performance.navigation.type === 1) isReload = true;
+    if (isReload) {
       sessionStorage.removeItem('damaros-warm');
-    } else if (navType === 'navigate' && sessionStorage.getItem('damaros-warm') === '1') {
+    } else if ((!nav || nav.type === 'navigate') && sessionStorage.getItem('damaros-warm') === '1') {
       warm = true;
     }
   } catch (e) { /* private mode */ }
