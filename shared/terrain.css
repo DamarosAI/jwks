@@ -25,6 +25,11 @@ body.deck-nav-locked .deck-nav { pointer-events: none; opacity: .55; }
 .deck-caps .cap.cap--active { opacity: 1; content-visibility: visible; }
 .deck-caps .cap.cap--active a, .deck-caps .cap.cap--active button,
 .deck-caps .cap.cap--active .kw, .deck-caps .cap.cap--active .chip,
+.deck-caps .cap.cap--active .gstat,
+.deck-caps .cap.cap--active .gap-col,
+.deck-caps .cap.cap--active .es-spine-step,
+.deck-caps .cap.cap--active .ps-half,
+.deck-caps .cap.cap--active .ti-half,
 .deck-caps .cap.cap--active .cap-box { pointer-events: auto; }
 /* gentle stagger of the lines as a station resolves */
 .deck-caps .cap-line { transition: opacity .35s var(--ease), transform .35s var(--ease); }
