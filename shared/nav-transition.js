@@ -64,4 +64,16 @@
   setTimeout(function () {
     document.documentElement.classList.add('page-enter-ready');
   }, ENTER_FALLBACK_MS);
+
+  // Hard anti-brick safety net: the deck ships with intro-hold on <html>/<body>
+  // (overflow:hidden, caps hidden) and relies on the space.js module to lift it.
+  // If that module ever stalls or fails to execute on a reload, the page would
+  // stay frozen. This guarantees the lock is released regardless.
+  setTimeout(function () {
+    document.documentElement.classList.remove('intro-hold');
+    if (document.body) {
+      document.body.classList.remove('intro-hold');
+      document.body.classList.add('world-ready');
+    }
+  }, 4000);
 })();

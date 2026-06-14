@@ -197,6 +197,12 @@
       }, lockAt));
     });
 
+    // reveal the headline's OWN cap-line container (e.g. the hero <h1> logo wraps the
+    // [data-type] span, so it carries .cap-line opacity:0 until .on). Do it now, with
+    // letters already in scramble state, so the container never flashes final text.
+    var headLine = lines.filter(function (el) { return el === t || el.contains(t); })[0];
+    if (headLine) headLine.classList.add('on');
+
     (function loop(ts) {
       if (active !== cap) return;
       scrambleTimer = requestAnimationFrame(loop);
