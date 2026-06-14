@@ -650,9 +650,21 @@ function setCaps(idx) {
   // and re-animates it. So only drive .on directly when there is no animated intro
   // (reduced motion, or the intro script failed to load).
   if (!tgt.querySelector('[data-facet]')) {
-    const capAnim = !REDUCED && !!window.DamarosCapIntro;
-    if (tgt.classList.contains('cap--end') && !REDUCED) tgt.querySelectorAll('.cap-line').forEach((l) => l.classList.remove('on'));
-    else if (!capAnim) tgt.querySelectorAll('.cap-line').forEach((l) => l.classList.add('on'));
+    const intro = window.DamarosCapIntro;
+    const capAnim = !REDUCED && !!intro;
+    if (tgt.classList.contains('cap--end') && !REDUCED) {
+      // closing cap reveals later, on the end-hold timer (via the observer)
+      tgt.querySelectorAll('.cap-line').forEach((l) => l.classList.remove('on'));
+    } else if (capAnim && intro.reveal) {
+      // Drive the animated reveal SYNCHRONOUSLY here, in the same task that adds
+      // .cap--active, so the copy is already in its scramble/hidden state before the
+      // browser paints. Relying on the async MutationObserver instead let a frame
+      // slip through showing the final copy, which then "disappeared" and re-animated.
+      intro.reveal(tgt);
+    } else {
+      // reduced motion, or intro script missing: show immediately, no animation
+      tgt.querySelectorAll('.cap-line').forEach((l) => l.classList.add('on'));
+    }
   }
   if (!MOBILE && window.DamarosPanels?.syncHover) requestAnimationFrame(() => window.DamarosPanels.syncHover());
 }

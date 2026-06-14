@@ -261,7 +261,13 @@
     rt = setTimeout(function () { layoutAll(true); }, 160);
   });
 
-  window.DamarosCapIntro = { kick: kick, revealDuration: revealDuration, get revealUntil() { return revealUntil; } };
+  // reveal(cap): synchronous entry point so the caller (space.js) can start the
+  // scramble/float-in in the SAME task that adds .cap--active — before any paint —
+  // instead of relying on the async MutationObserver, which can let one frame slip
+  // through with the copy in its final state (the "shows, disappears, animates" flash).
+  function reveal(cap) { if (cap && active !== cap) activate(cap); }
+
+  window.DamarosCapIntro = { kick: kick, reveal: reveal, revealDuration: revealDuration, get revealUntil() { return revealUntil; } };
 
   window.addEventListener('pageshow', function (e) {
     if (!e.persisted || RM) return;
