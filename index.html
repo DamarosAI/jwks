@@ -235,10 +235,20 @@
   .gap-body{ font-size:min(.98rem,1.8vh); line-height:1.5; }
 }
 
-/* GOVERNED AGENTS, four subsystems, compact 2×2, subordinate to the chain */
+/* GOVERNED AGENTS — hero row: Trident · Luna; Forge centered beneath */
 .cap.ps.agents{ width:min(74rem, calc(100vw - 2*var(--page-gutter))); max-width:min(74rem, calc(100vw - 2*var(--page-gutter))); }
 @media (min-width:821px){
-  .cap.ps.agents .ps-split{ grid-template-columns:repeat(2,1fr); grid-auto-rows:1fr; gap:clamp(.85rem,1.6vw,1.25rem); }
+  .cap.ps.agents .ps-split{
+    grid-template-columns:repeat(2,1fr);
+    grid-template-rows:auto auto;
+    gap:clamp(.85rem,1.6vw,1.25rem);
+  }
+  .cap.ps.agents .ps-half--trident{ grid-column:1; grid-row:1; }
+  .cap.ps.agents .ps-half--luna{ grid-column:2; grid-row:1; }
+  .cap.ps.agents .ps-half--forge{
+    grid-column:1 / -1; grid-row:2; justify-self:center;
+    width:calc((100% - clamp(.85rem,1.6vw,1.25rem)) / 2);
+  }
 }
 .cap.ps.agents .ps-half{ gap:.55rem; padding:clamp(.95rem,1.7vw,1.25rem); }
 .cap.ps.agents .ps-cards{ margin-top:0; }
@@ -271,10 +281,9 @@
 .ps-pill{ display:inline-block; vertical-align:middle; transform:translateY(-.18em); margin-left:.45em;
   padding:.2em .55em; border:1px solid rgba(169,192,214,.34); border-radius:999px;
   font-family:var(--fb); font-weight:600; font-size:.4em; letter-spacing:.16em; text-transform:uppercase; color:var(--steel); }
-/* Mesh: AGENT eyebrows on Forge + Router only */
+/* Mesh: AGENT eyebrow on Forge only */
 .cap.ps.agents .ps-tag{ display:none; }
-.ps-half--forge .ps-tag,
-.ps-half--router .ps-tag{ display:block; margin-bottom:.45rem; }
+.ps-half--forge .ps-tag{ display:block; margin-bottom:.45rem; }
 /* Closer headline: cold body, stone-blue accent on "treatment delays" only */
 .deck-caps .cap--end [data-type] .rc.in{ color:var(--cold) !important; }
 .deck-caps .cap--center.cap--end [data-type] .rc.in:nth-last-child(n+2):nth-last-child(-n+17){ color:var(--steel) !important; }
@@ -586,20 +595,6 @@
             <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Each open question becomes one resolvable packet.</span><p class="cap-box-b">Forge assembles the criterion, the missing fact, and where to look into a single packet that carries references only, never patient data.</p></div>
           </div>
         </div>
-
-        <div class="ps-half ps-half--router">
-          <div class="ps-topline">
-            <div class="ps-half-head">
-              <span class="ps-tag">Agent · Matches</span>
-              <h3>Router</h3>
-              <p class="ps-sub">Maps patients to <em>the trials they fit.</em></p>
-            </div>
-            <div class="ps-field ps-router" aria-hidden="true"></div>
-          </div>
-          <div class="ps-cards">
-            <div class="cap-box" data-topo="fail"><span class="cap-box-h">One patient, every trial they qualify for.</span><p class="cap-box-b">Router screens each patient against every open trial and ranks who fits best, staying deterministic and PHI-bounded with no model in the loop.</p></div>
-          </div>
-        </div>
       </div>
     </div>
     <!-- 06 TRIAL INTELLIGENCE -->
@@ -741,8 +736,7 @@
       var jobs = [
         ['.ps-neural', buildNeural],
         ['.ps-rings', buildLunaRings],
-        ['.ps-forge', buildForge],
-        ['.ps-router', buildRouter]
+        ['.ps-forge', buildForge]
       ];
       function runNext(i) {
         if (i >= jobs.length) return;
@@ -845,32 +839,6 @@
         c.style.setProperty('--dur', rnd(3, 4.2).toFixed(2) + 's');
       });
     } });
-    var routerPanel = document.querySelector('.ps-half--router');
-    var ROUTER_SWEEP = 4.8;
-    function applyRouterDotTiming(panel) {
-      panel.style.setProperty('--rt-sweep-dur', ROUTER_SWEEP + 's');
-      [].forEach.call(panel.querySelectorAll('.rt-dot'), function (c) {
-        var b = parseFloat(c.getAttribute('data-bearing')) || 0;
-        c.style.setProperty('--d', (b / 360 * ROUTER_SWEEP).toFixed(3) + 's');
-        c.style.setProperty('--dur', ROUTER_SWEEP + 's');
-      });
-    }
-    function onRouterCycle() {
-      rebuildRouterDots(routerPanel);
-      applyRouterDotTiming(routerPanel);
-    }
-    wire(routerPanel, '.rt-dot', 'is-live', {
-      skipRandTiming: true,
-      enter: function () {
-        onRouterCycle();
-        var sweepG = routerPanel.querySelector('.rt-sweep-g');
-        if (sweepG && !sweepG._rtCycleBound) {
-          sweepG._rtCycleBound = true;
-          sweepG.addEventListener('animationiteration', onRouterCycle);
-        }
-      },
-      leave: function () { clearRouterDots(routerPanel); }
-    });
 
     /* desktop: sync card animations to pointer position (no fresh hover required) */
     var hoverRaf = 0;
@@ -1001,9 +969,7 @@
     host.appendChild(svg);
   }
 
-  /* FORGE, scattered evidence fragments gather into ONE packet box. No connecting
-     lines: the fragments pulse in a left-to-right sweep into the box (many into one,
-     the inverse of Router's one-to-many fan-out). */
+  /* FORGE — scattered evidence fragments gather into ONE packet box. */
   function buildForge(host) {
     var NS = 'http://www.w3.org/2000/svg';
     var svg = document.createElementNS(NS, 'svg');
@@ -1023,83 +989,6 @@
       svg.appendChild(ci);
     });
     host.appendChild(svg);
-  }
-
-  /* ROUTER — compact ATC radar: a center-anchored amber line spins at a constant
-     rate dragging a fading wake; amber contacts light as it passes, then trail off. */
-  function buildRouter(host) {
-    var NS = 'http://www.w3.org/2000/svg';
-    var svg = document.createElementNS(NS, 'svg');
-    svg.setAttribute('class', 'rt-svg'); svg.setAttribute('viewBox', '0 0 100 100'); svg.setAttribute('preserveAspectRatio', 'xMidYMid meet'); svg.setAttribute('shape-rendering', 'geometricPrecision');
-    var CX = 50, CY = 50, RMAX = 36, RL = RMAX - 2;
-    function pt(deg, r) { var a = deg * Math.PI / 180; return (CX + Math.cos(a) * r).toFixed(2) + ' ' + (CY + Math.sin(a) * r).toFixed(2); }
-    [12, 22, 32].forEach(function (r) {
-      var ring = document.createElementNS(NS, 'circle');
-      ring.setAttribute('cx', CX); ring.setAttribute('cy', CY); ring.setAttribute('r', r);
-      ring.setAttribute('class', 'rt-ring'); svg.appendChild(ring);
-    });
-    var hGrid = document.createElementNS(NS, 'line');
-    hGrid.setAttribute('x1', CX - RMAX); hGrid.setAttribute('y1', CY); hGrid.setAttribute('x2', CX + RMAX); hGrid.setAttribute('y2', CY);
-    hGrid.setAttribute('class', 'rt-grid'); svg.appendChild(hGrid);
-    var vGrid = document.createElementNS(NS, 'line');
-    vGrid.setAttribute('x1', CX); vGrid.setAttribute('y1', CY - RMAX); vGrid.setAttribute('x2', CX); vGrid.setAttribute('y2', CY + RMAX);
-    vGrid.setAttribute('class', 'rt-grid'); svg.appendChild(vGrid);
-    var sweepG = document.createElementNS(NS, 'g');
-    sweepG.setAttribute('class', 'rt-sweep-g');
-    /* wake trails behind the leading edge (negative local angles) */
-    var w1 = document.createElementNS(NS, 'path');
-    w1.setAttribute('d', 'M' + CX + ' ' + CY + ' L' + pt(0, RL) + ' L' + pt(-22, RL) + ' Z');
-    w1.setAttribute('class', 'rt-wake rt-wake--1'); sweepG.appendChild(w1);
-    var w2 = document.createElementNS(NS, 'path');
-    w2.setAttribute('d', 'M' + CX + ' ' + CY + ' L' + pt(-22, RL) + ' L' + pt(-52, RL) + ' Z');
-    w2.setAttribute('class', 'rt-wake rt-wake--2'); sweepG.appendChild(w2);
-    var sweep = document.createElementNS(NS, 'line');
-    sweep.setAttribute('x1', CX); sweep.setAttribute('y1', CY);
-    sweep.setAttribute('x2', CX + RL); sweep.setAttribute('y2', CY);
-    sweep.setAttribute('class', 'rt-sweep'); sweepG.appendChild(sweep);
-    svg.appendChild(sweepG);
-    var core = document.createElementNS(NS, 'circle');
-    core.setAttribute('cx', CX); core.setAttribute('cy', CY); core.setAttribute('r', '2.2');
-    core.setAttribute('class', 'rt-core'); svg.appendChild(core);
-    host.appendChild(svg);
-  }
-
-  /* ROUTER contacts — random scatter on each engage, cleared at rest */
-  function clearRouterDots(panel) {
-    var svg = panel && panel.querySelector('.rt-svg');
-    if (!svg) return;
-    [].forEach.call(svg.querySelectorAll('.rt-dot'), function (el) { el.remove(); });
-  }
-  function rebuildRouterDots(panel) {
-    var svg = panel && panel.querySelector('.rt-svg');
-    if (!svg) return;
-    var NS = 'http://www.w3.org/2000/svg';
-    var CX = 50, CY = 50, RADAR_R = 36, RMAX = RADAR_R * 0.85, RMIN = 9, MIN_SEP = 10;
-    clearRouterDots(panel);
-    var placed = [], want = 6 + (Math.random() * 4 | 0), added = 0, tries = 0;
-    while (added < want && tries < want * 14) {
-      tries++;
-      var ang = Math.random() * Math.PI * 2;
-      var dist = RMIN + Math.random() * (RMAX - RMIN);
-      var x = CX + Math.cos(ang) * dist;
-      var y = CY + Math.sin(ang) * dist;
-      var clash = false;
-      for (var k = 0; k < placed.length; k++) {
-        var dx = x - placed[k].x, dy = y - placed[k].y;
-        if (dx * dx + dy * dy < MIN_SEP * MIN_SEP) { clash = true; break; }
-      }
-      if (clash) continue;
-      placed.push({ x: x, y: y });
-      var bearing = (Math.atan2(y - CY, x - CX) * 180 / Math.PI + 360) % 360;
-      var dot = document.createElementNS(NS, 'circle');
-      dot.setAttribute('cx', x.toFixed(2));
-      dot.setAttribute('cy', y.toFixed(2));
-      dot.setAttribute('r', rnd(1.6, 2.6).toFixed(2));
-      dot.setAttribute('class', 'rt-dot');
-      dot.setAttribute('data-bearing', bearing.toFixed(2));
-      svg.insertBefore(dot, svg.querySelector('.rt-sweep-g'));
-      added++;
-    }
   }
 })();
 </script>
