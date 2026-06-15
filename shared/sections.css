@@ -266,7 +266,7 @@ body.world-ready #world { opacity: 1; }
   -webkit-backface-visibility: hidden; backface-visibility: hidden;
 }
 .nn-edge {
-  stroke: var(--ok); stroke-width: 1.35; stroke-linecap: round; stroke-linejoin: round;
+  stroke: var(--ok); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
   vector-effect: non-scaling-stroke; stroke-opacity: 0;
 }
 .nn-dot { fill: rgba(169, 192, 214, .32); }
@@ -279,15 +279,15 @@ body.world-ready #world { opacity: 1; }
 @keyframes nnEdgeFlow {
   0%, 100% { stroke-opacity: 0; }
   10% { stroke-opacity: 0; }
-  26% { stroke-opacity: .52; }
-  40% { stroke-opacity: .24; }
+  26% { stroke-opacity: 1; }
+  40% { stroke-opacity: .62; }
   56% { stroke-opacity: 0; }
 }
 @keyframes nnDotFlow {
   0%, 100% { fill: rgba(169, 192, 214, .32); }
   10% { fill: rgba(169, 192, 214, .32); }
-  28% { fill: rgba(91, 185, 140, .82); }
-  42% { fill: rgba(126, 200, 160, .48); }
+  28% { fill: var(--ok); }
+  42% { fill: color-mix(in srgb, var(--ok) 72%, rgba(169, 192, 214, .32)); }
   58% { fill: rgba(169, 192, 214, .34); }
 }
 
