@@ -712,7 +712,6 @@
       function on() {
         if (panel._hLive) return;
         panel._hLive = true;
-        randTiming(cells);
         if (opts.flag) {
           cells.forEach(function (c) { c.classList.remove('ti-cell--ok', 'ti-cell--review', 'ti-cell--fail'); });
           var pool = cells.slice();
@@ -722,6 +721,7 @@
           grab(4 + (Math.random() * 3 | 0)).forEach(function (c) { c.classList.add('ti-cell--fail'); });
         }
         if (opts.enter) opts.enter();
+        randTiming([].slice.call(panel.querySelectorAll(cellSel)));
         panel.classList.add(stateClass);
       }
       function off() {
@@ -763,7 +763,11 @@
     var burst = function (v) { var ds = DS(); if (ds && ds.starBurst) ds.starBurst(v); };
     wire(document.querySelector('.ti-node'), '.ti-sq', 'is-firing', { enter: function () { burst(1); [].forEach.call(document.querySelectorAll('.ti-node .ti-sq'), function (s) { s.classList.toggle('ti-sq--steel', Math.random() < 0.4); }); }, leave: function () { burst(0); } });
     wire(document.querySelector('.ti-sponsor'), '.ti-cell', 'is-reading', { flag: true });
-    wire(document.querySelector('.ps-half--trident'), '.nn-edge, .nn-dot', 'is-live');
+    var tridentPanel = document.querySelector('.ps-half--trident');
+    wire(tridentPanel, '.nn-edge, .nn-dot', 'is-live', {
+      enter: function () { rebuildNeuralEdges(tridentPanel); },
+      leave: function () { clearNeuralEdges(tridentPanel); }
+    });
     wire(document.querySelector('.ps-half--luna'), '.luna-ring', 'is-live');
     var forgePanel = document.querySelector('.ps-half--forge');
     wire(forgePanel, '.fg-frag, .fg-box', 'is-live', { enter: function () {
@@ -849,23 +853,45 @@
     var svg = document.createElementNS(NS, 'svg');
     svg.setAttribute('class', 'nn'); svg.setAttribute('viewBox', '0 0 272 120'); svg.setAttribute('preserveAspectRatio', 'xMidYMid meet'); svg.setAttribute('shape-rendering', 'geometricPrecision');
     var pts = [], c, r, COLS = 6;
-    for (c = 0; c < COLS; c++) for (r = 0; r < 3; r++) pts.push({ x: 26 + c * 44, y: 24 + r * 36, c: c });
-    for (var i = 0; i < pts.length; i++) {
-      var from = pts[i]; if (from.c === COLS - 1) continue;
-      var rows = [0, 1, 2].sort(function () { return Math.random() - 0.5; }).slice(0, 1 + (Math.random() < 0.6 ? 1 : 0));
-      rows.forEach(function (nr) {
-        var to = pts[(from.c + 1) * 3 + nr];
-        var l = document.createElementNS(NS, 'line');
-        l.setAttribute('x1', from.x); l.setAttribute('y1', from.y); l.setAttribute('x2', to.x); l.setAttribute('y2', to.y);
-        l.setAttribute('class', 'nn-edge'); svg.appendChild(l);
-      });
-    }
+    for (c = 0; c < COLS; c++) for (r = 0; r < 3; r++) pts.push({ x: 26 + c * 44, y: 24 + r * 36 });
     pts.forEach(function (p) {
       var ci = document.createElementNS(NS, 'circle');
       ci.setAttribute('cx', p.x); ci.setAttribute('cy', p.y); ci.setAttribute('r', '3.52'); ci.setAttribute('class', 'nn-dot');
       svg.appendChild(ci);
     });
     host.appendChild(svg);
+  }
+
+  /* TRIDENT — dots at rest; on engage, random pairs light green in random order */
+  function clearNeuralEdges(panel) {
+    var svg = panel && panel.querySelector('.nn');
+    if (!svg) return;
+    [].forEach.call(svg.querySelectorAll('.nn-edge'), function (el) { el.remove(); });
+  }
+  function rebuildNeuralEdges(panel) {
+    var svg = panel && panel.querySelector('.nn');
+    if (!svg) return;
+    var NS = 'http://www.w3.org/2000/svg';
+    clearNeuralEdges(panel);
+    var dots = [].slice.call(svg.querySelectorAll('.nn-dot'));
+    var n = dots.length;
+    if (n < 2) return;
+    var want = 6 + (Math.random() * 7 | 0), used = {}, added = 0, tries = 0;
+    while (added < want && tries < want * 6) {
+      tries++;
+      var i = Math.random() * n | 0, j = Math.random() * n | 0;
+      if (i === j) continue;
+      var lo = i < j ? i : j, hi = i < j ? j : i, key = lo + ',' + hi;
+      if (used[key]) continue;
+      used[key] = 1;
+      var d1 = dots[lo], d2 = dots[hi];
+      var l = document.createElementNS(NS, 'line');
+      l.setAttribute('x1', d1.getAttribute('cx')); l.setAttribute('y1', d1.getAttribute('cy'));
+      l.setAttribute('x2', d2.getAttribute('cx')); l.setAttribute('y2', d2.getAttribute('cy'));
+      l.setAttribute('class', 'nn-edge');
+      svg.insertBefore(l, svg.firstChild);
+      added++;
+    }
   }
 
   function buildLunaRings(host) {
