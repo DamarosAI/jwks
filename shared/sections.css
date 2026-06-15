@@ -259,7 +259,7 @@ body.world-ready #world { opacity: 1; }
 /* layer fields — parallel to the Node cluster / Console matrix */
 .ps-field { display: flex; align-items: center; justify-content: center; height: clamp(136px, 18.7vh, 169px); margin: .2rem 0; }
 
-/* TRIDENT — a grid of dots; connections are invisible at rest and only fire (green) on hover, in random order */
+/* TRIDENT — grid of dots; on engage, random cross-row hops re-roll on a jittered clock */
 .nn, .luna-svg {
   width: 100%; height: 100%; overflow: visible;
   shape-rendering: geometricPrecision;
@@ -271,14 +271,41 @@ body.world-ready #world { opacity: 1; }
 }
 .nn-dot { fill: rgba(169, 192, 214, .34); }
 .ps-half.is-live .nn-edge { animation: nnEdge var(--dur, 1.4s) var(--ease) var(--d, 0s) infinite; }
-.ps-half.is-live .nn-dot { animation: nnDot var(--dur, 1.4s) var(--ease) var(--d, 0s) infinite; }
+.ps-half.is-live .nn-edge.nn-edge--b { animation-name: nnEdgeB; }
+.ps-half.is-live .nn-edge.nn-edge--c { animation-name: nnEdgeC; }
+.ps-half.is-live .nn-dot.nn-dot--live { animation: nnDot var(--dur, 1.4s) var(--ease) var(--d, 0s) infinite; }
+.ps-half.is-live .nn-dot.nn-dot--live.nn-dot--b { animation-name: nnDotB; }
+.ps-half.is-live .nn-dot.nn-dot--live.nn-dot--c { animation-name: nnDotC; }
 @keyframes nnEdge {
   0%, 100% { stroke: transparent; stroke-opacity: 0; }
-  45% { stroke: var(--ok); stroke-opacity: 1; }
+  32% { stroke: var(--ok); stroke-opacity: 1; }
+  58% { stroke: transparent; stroke-opacity: 0; }
+}
+@keyframes nnEdgeB {
+  0%, 100% { stroke: transparent; stroke-opacity: 0; }
+  18% { stroke: transparent; stroke-opacity: 0; }
+  46% { stroke: var(--ok); stroke-opacity: 1; }
+  72% { stroke: transparent; stroke-opacity: 0; }
+}
+@keyframes nnEdgeC {
+  0%, 100% { stroke: transparent; stroke-opacity: 0; }
+  24% { stroke: var(--ok); stroke-opacity: .85; }
+  38% { stroke: transparent; stroke-opacity: 0; }
+  61% { stroke: var(--ok); stroke-opacity: 1; }
 }
 @keyframes nnDot {
   0%, 100% { fill: rgba(169, 192, 214, .34); }
-  45% { fill: var(--ok); }
+  32% { fill: var(--ok); }
+  58% { fill: rgba(169, 192, 214, .34); }
+}
+@keyframes nnDotB {
+  0%, 100% { fill: rgba(169, 192, 214, .34); }
+  46% { fill: var(--ok); }
+}
+@keyframes nnDotC {
+  0%, 100% { fill: rgba(169, 192, 214, .34); }
+  24%, 61% { fill: var(--ok); }
+  38% { fill: rgba(169, 192, 214, .34); }
 }
 
 /* LUNA — three oblique governance rings built from cleanly-spaced dots; turn CW · CCW · CW on engage */
