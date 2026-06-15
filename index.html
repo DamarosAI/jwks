@@ -235,19 +235,20 @@
   .gap-body{ font-size:min(.98rem,1.8vh); line-height:1.5; }
 }
 
-/* GOVERNED AGENTS — hero row: Trident · Luna; Forge centered beneath */
+/* OPERATIONS MESH — Trident · Luna, vertically centered in the cap */
 .cap.ps.agents{ width:min(74rem, calc(100vw - 2*var(--page-gutter))); max-width:min(74rem, calc(100vw - 2*var(--page-gutter))); }
 @media (min-width:821px){
+  .cap.ps.agents{
+    display:flex; flex-direction:column; justify-content:center;
+    gap:clamp(1rem,2.4vh,1.75rem);
+    min-height:calc(100vh - 78px - 58px - 20px);
+  }
   .cap.ps.agents .ps-split{
     grid-template-columns:repeat(2,1fr);
-    grid-template-rows:auto auto;
+    grid-template-rows:1fr;
+    align-items:stretch;
     gap:clamp(.85rem,1.6vw,1.25rem);
-  }
-  .cap.ps.agents .ps-half--trident{ grid-column:1; grid-row:1; }
-  .cap.ps.agents .ps-half--luna{ grid-column:2; grid-row:1; }
-  .cap.ps.agents .ps-half--forge{
-    grid-column:1 / -1; grid-row:2; justify-self:center;
-    width:calc((100% - clamp(.85rem,1.6vw,1.25rem)) / 2);
+    margin-top:0;
   }
 }
 .cap.ps.agents .ps-half{ gap:.55rem; padding:clamp(.95rem,1.7vw,1.25rem); }
@@ -281,9 +282,7 @@
 .ps-pill{ display:inline-block; vertical-align:middle; transform:translateY(-.18em); margin-left:.45em;
   padding:.2em .55em; border:1px solid rgba(169,192,214,.34); border-radius:999px;
   font-family:var(--fb); font-weight:600; font-size:.4em; letter-spacing:.16em; text-transform:uppercase; color:var(--steel); }
-/* Mesh: AGENT eyebrow on Forge only */
 .cap.ps.agents .ps-tag{ display:none; }
-.ps-half--forge .ps-tag{ display:block; margin-bottom:.45rem; }
 /* Closer headline: cold body, stone-blue accent on "treatment delays" only */
 .deck-caps .cap--end [data-type] .rc.in{ color:var(--cold) !important; }
 .deck-caps .cap--center.cap--end [data-type] .rc.in:nth-last-child(n+2):nth-last-child(-n+17){ color:var(--steel) !important; }
@@ -392,6 +391,11 @@
     top:calc(50% + 4px);
     transform:translate(-50%,-50%) scale(var(--capScale,1));
     transform-origin:50% 50%;
+  }
+  .cap.ps.agents{
+    display:flex; flex-direction:column; justify-content:center;
+    gap:clamp(.85rem,2vh,1.25rem);
+    min-height:calc(100vh - 68px - 74px - 12px);
   }
   .ti-coexist{ margin-top:clamp(.65rem,1.8vh,.95rem); }
   .ti-coexist .co-deploy{ font-size:clamp(.66rem,2.9vw,.78rem); max-width:94%; line-height:1.3; }
@@ -581,20 +585,6 @@
             <div class="cap-box" data-topo="prov"><span class="cap-box-h">Every AI step is governed and recorded.</span><p class="cap-box-b">Luna tracks each suggestion, task, handoff, and output against policy, PHI limits, source evidence, human review, and Replay.</p></div>
           </div>
         </div>
-
-        <div class="ps-half ps-half--forge">
-          <div class="ps-topline">
-            <div class="ps-half-head">
-              <span class="ps-tag">Agent · Assembles</span>
-              <h3>Forge</h3>
-              <p class="ps-sub">Builds the <em>resolution packet.</em></p>
-            </div>
-            <div class="ps-field ps-forge" aria-hidden="true"></div>
-          </div>
-          <div class="ps-cards">
-            <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Each open question becomes one resolvable packet.</span><p class="cap-box-b">Forge assembles the criterion, the missing fact, and where to look into a single packet that carries references only, never patient data.</p></div>
-          </div>
-        </div>
       </div>
     </div>
     <!-- 06 TRIAL INTELLIGENCE -->
@@ -735,8 +725,7 @@
     function scheduleVizBuilds() {
       var jobs = [
         ['.ps-neural', buildNeural],
-        ['.ps-rings', buildLunaRings],
-        ['.ps-forge', buildForge]
+        ['.ps-rings', buildLunaRings]
       ];
       function runNext(i) {
         if (i >= jobs.length) return;
@@ -827,18 +816,6 @@
       }
     });
     wire(document.querySelector('.ps-half--luna'), '.luna-ring', 'is-live');
-    var forgePanel = document.querySelector('.ps-half--forge');
-    wire(forgePanel, '.fg-frag, .fg-box', 'is-live', { enter: function () {
-      [].forEach.call(forgePanel.querySelectorAll('.fg-frag'), function (c) {
-        var k = parseInt(c.getAttribute('data-fg'), 10);
-        c.style.setProperty('--d', (k * 0.18 + rnd(0, 0.3)).toFixed(2) + 's');
-        c.style.setProperty('--dur', rnd(2.8, 3.8).toFixed(2) + 's');
-      });
-      [].forEach.call(forgePanel.querySelectorAll('.fg-box'), function (c) {
-        c.style.setProperty('--d', rnd(0, 0.6).toFixed(2) + 's');
-        c.style.setProperty('--dur', rnd(3, 4.2).toFixed(2) + 's');
-      });
-    } });
 
     /* desktop: sync card animations to pointer position (no fresh hover required) */
     var hoverRaf = 0;
@@ -966,28 +943,6 @@
     ring(66, 42, 32, 'luna-ring--1');
     ring(37, 23, 22, 'luna-ring--2');
     ring(20, 12, 14, 'luna-ring--3');
-    host.appendChild(svg);
-  }
-
-  /* FORGE — scattered evidence fragments gather into ONE packet box. */
-  function buildForge(host) {
-    var NS = 'http://www.w3.org/2000/svg';
-    var svg = document.createElementNS(NS, 'svg');
-    svg.setAttribute('class', 'fg-svg'); svg.setAttribute('viewBox', '0 0 200 120'); svg.setAttribute('preserveAspectRatio', 'xMidYMid meet'); svg.setAttribute('shape-rendering', 'geometricPrecision');
-    var boxW = 32, boxH = 42, boxX = 152, boxY = 60 - boxH / 2;
-    var box = document.createElementNS(NS, 'rect');
-    box.setAttribute('x', boxX); box.setAttribute('y', boxY); box.setAttribute('width', boxW); box.setAttribute('height', boxH); box.setAttribute('rx', '3');
-    box.setAttribute('class', 'fg-box'); svg.appendChild(box);
-    var frags = [
-      { x: 16, y: 26 }, { x: 20, y: 94 }, { x: 30, y: 60 },
-      { x: 48, y: 88 }, { x: 52, y: 18 }, { x: 60, y: 52 },
-      { x: 78, y: 100 }, { x: 86, y: 32 }, { x: 92, y: 70 }
-    ];
-    frags.forEach(function (p, j) {
-      var ci = document.createElementNS(NS, 'circle');
-      ci.setAttribute('cx', p.x); ci.setAttribute('cy', p.y); ci.setAttribute('r', '3.2'); ci.setAttribute('class', 'fg-frag'); ci.setAttribute('data-fg', j); ci.style.setProperty('--i', j);
-      svg.appendChild(ci);
-    });
     host.appendChild(svg);
   }
 })();
