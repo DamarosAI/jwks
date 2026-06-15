@@ -470,7 +470,7 @@
       <div class="gap-grid cap-line" data-from="0" data-hswipe>
         <div class="gap-col gap-col--break">
           <div class="gap-head"><span class="gap-num">01</span><span class="gap-k">The geographic lottery</span></div>
-          <p class="gap-body">Trials concentrate in a few academic centers while patients are treated in community clinics that will never open one. Whether the science reaches them collapses to <em>an accident of geography</em>.</p>
+          <p class="gap-body">NCI-designated comprehensive centers cluster in a handful of metros. Everywhere else, patients fight the same cancer with a fraction of the trial access — not because they don't qualify, but because the nearest center that runs trials is hundreds of miles away. The map decides who gets a shot at the science; <em>for most Americans, that gate is unfair by design</em>.</p>
         </div>
         <div class="gap-col gap-col--trend">
           <div class="gap-head"><span class="gap-num">02</span><span class="gap-k">The enrollment cliff</span></div>
@@ -782,17 +782,28 @@
       });
     } });
     var routerPanel = document.querySelector('.ps-half--router');
+    var ROUTER_SWEEP = 4.8;
+    function applyRouterDotTiming(panel) {
+      panel.style.setProperty('--rt-sweep-dur', ROUTER_SWEEP + 's');
+      [].forEach.call(panel.querySelectorAll('.rt-dot'), function (c) {
+        var b = parseFloat(c.getAttribute('data-bearing')) || 0;
+        c.style.setProperty('--d', (b / 360 * ROUTER_SWEEP).toFixed(3) + 's');
+        c.style.setProperty('--dur', ROUTER_SWEEP + 's');
+      });
+    }
+    function onRouterCycle() {
+      rebuildRouterDots(routerPanel);
+      applyRouterDotTiming(routerPanel);
+    }
     wire(routerPanel, '.rt-dot', 'is-live', {
       skipRandTiming: true,
       enter: function () {
-        rebuildRouterDots(routerPanel);
-        var SWEEP = 4.8;
-        routerPanel.style.setProperty('--rt-sweep-dur', SWEEP + 's');
-        [].forEach.call(routerPanel.querySelectorAll('.rt-dot'), function (c) {
-          var b = parseFloat(c.getAttribute('data-bearing')) || 0;
-          c.style.setProperty('--d', (b / 360 * SWEEP).toFixed(3) + 's');
-          c.style.setProperty('--dur', SWEEP + 's');
-        });
+        onRouterCycle();
+        var sweepG = routerPanel.querySelector('.rt-sweep-g');
+        if (sweepG && !sweepG._rtCycleBound) {
+          sweepG._rtCycleBound = true;
+          sweepG.addEventListener('animationiteration', onRouterCycle);
+        }
       },
       leave: function () { clearRouterDots(routerPanel); }
     });
@@ -946,7 +957,7 @@
     host.appendChild(svg);
   }
 
-  /* ROUTER — compact ATC radar: a center-anchored stone line spins at a constant
+  /* ROUTER — compact ATC radar: a center-anchored amber line spins at a constant
      rate dragging a fading wake; amber contacts light as it passes, then trail off. */
   function buildRouter(host) {
     var NS = 'http://www.w3.org/2000/svg';

@@ -327,16 +327,16 @@ body.world-ready #world { opacity: 1; }
   72% { fill: color-mix(in srgb, var(--fg-sky) 32%, transparent); stroke: var(--fg-sky); }
 }
 
-/* ROUTER — compact ATC radar: a stone sweep line anchored at center spins at a
+/* ROUTER — compact ATC radar: an amber sweep line anchored at center spins at a
    constant rate, dragging a fading wake; amber contacts light as it passes and
    trail off behind it. */
 .rt-ring { fill: none; stroke: rgba(169, 192, 214, .13); stroke-width: 1; vector-effect: non-scaling-stroke; }
 .rt-grid { stroke: rgba(169, 192, 214, .07); stroke-width: 1; vector-effect: non-scaling-stroke; }
 .rt-sweep-g { transform-box: view-box; transform-origin: 50px 50px; }
-.rt-wake { fill: var(--steel); }
+.rt-wake { fill: var(--amber); }
 .rt-wake--1 { opacity: .2; }
 .rt-wake--2 { opacity: .085; }
-.rt-sweep { stroke: var(--steel); stroke-width: 1.35; stroke-linecap: round; vector-effect: non-scaling-stroke; opacity: .9; }
+.rt-sweep { stroke: var(--amber); stroke-width: 1.35; stroke-linecap: round; vector-effect: non-scaling-stroke; opacity: .9; }
 .rt-core { fill: rgba(169, 192, 214, .5); stroke: rgba(169, 192, 214, .6); stroke-width: 1; vector-effect: non-scaling-stroke; }
 .rt-dot { fill: var(--amber); opacity: .1; vector-effect: non-scaling-stroke; transform-box: fill-box; transform-origin: center; }
 .ps-half--router.is-live .rt-sweep-g { animation: rtSweep var(--rt-sweep-dur, 4.8s) linear infinite; }
