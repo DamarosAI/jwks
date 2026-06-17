@@ -21,7 +21,7 @@
 <link rel="stylesheet" href="shared/journey.css?v=reset55">
 <link rel="stylesheet" href="shared/nav-chrome.css?v=1">
 <link rel="stylesheet" href="shared/terrain.css?v=reset50">
-<link rel="stylesheet" href="shared/sections.css?v=52">
+<link rel="stylesheet" href="shared/sections.css?v=53">
 <link rel="stylesheet" href="shared/page-transition.css?v=2">
 <style id="reposition-2026">
 /* ============================================================
@@ -998,30 +998,26 @@
     var NS = 'http://www.w3.org/2000/svg';
     var svg = document.createElementNS(NS, 'svg');
     svg.setAttribute('class', 'ey-svg'); svg.setAttribute('viewBox', '0 0 160 120'); svg.setAttribute('preserveAspectRatio', 'xMidYMid meet'); svg.setAttribute('shape-rendering', 'geometricPrecision');
+    var MAP_L = 48, MAP_R = 112, MAP_T = 26, MAP_B = 94;
     var gridG = document.createElementNS(NS, 'g'); gridG.setAttribute('class', 'ey-map');
     var gy, gx, gl;
-    for (gy = 24; gy <= 96; gy += 18) {
+    for (gy = MAP_T; gy <= MAP_B; gy += 17) {
       gl = document.createElementNS(NS, 'line');
-      gl.setAttribute('x1', 42); gl.setAttribute('y1', gy); gl.setAttribute('x2', 118); gl.setAttribute('y2', gy);
+      gl.setAttribute('x1', MAP_L); gl.setAttribute('y1', gy); gl.setAttribute('x2', MAP_R); gl.setAttribute('y2', gy);
       gl.setAttribute('class', 'ey-map-line'); gridG.appendChild(gl);
     }
-    for (gx = 52; gx <= 108; gx += 19) {
+    for (gx = MAP_L; gx <= MAP_R; gx += 16) {
       gl = document.createElementNS(NS, 'line');
-      gl.setAttribute('x1', gx); gl.setAttribute('y1', 20); gl.setAttribute('x2', gx); gl.setAttribute('y2', 100);
+      gl.setAttribute('x1', gx); gl.setAttribute('y1', MAP_T); gl.setAttribute('x2', gx); gl.setAttribute('y2', MAP_B);
       gl.setAttribute('class', 'ey-map-line'); gridG.appendChild(gl);
     }
     svg.appendChild(gridG);
     var node = document.createElementNS(NS, 'rect');
-    node.setAttribute('x', 5); node.setAttribute('y', 14); node.setAttribute('width', 32); node.setAttribute('height', 92);
+    node.setAttribute('x', 10); node.setAttribute('y', 30); node.setAttribute('width', 28); node.setAttribute('height', 60);
     node.setAttribute('rx', 4); node.setAttribute('class', 'ey-zone ey-zone--node'); svg.appendChild(node);
     var sponsor = document.createElementNS(NS, 'rect');
-    sponsor.setAttribute('x', 123); sponsor.setAttribute('y', 14); sponsor.setAttribute('width', 32); sponsor.setAttribute('height', 92);
+    sponsor.setAttribute('x', 122); sponsor.setAttribute('y', 30); sponsor.setAttribute('width', 28); sponsor.setAttribute('height', 60);
     sponsor.setAttribute('rx', 4); sponsor.setAttribute('class', 'ey-zone ey-zone--sponsor'); svg.appendChild(sponsor);
-    [[17, 32, 'node'], [17, 60, 'node'], [17, 88, 'node'], [143, 36, 'sponsor'], [143, 60, 'sponsor'], [143, 84, 'sponsor']].forEach(function (p) {
-      var pin = document.createElementNS(NS, 'circle');
-      pin.setAttribute('cx', p[0]); pin.setAttribute('cy', p[1]); pin.setAttribute('r', '1.9');
-      pin.setAttribute('class', 'ey-pin ey-pin--' + p[2]); svg.appendChild(pin);
-    });
     var sigLayer = document.createElementNS(NS, 'g');
     sigLayer.setAttribute('class', 'ey-signals'); svg.appendChild(sigLayer);
     host.appendChild(svg);
@@ -1038,7 +1034,7 @@
     var want = 7 + (Math.random() * 5 | 0), i;
     for (i = 0; i < want; i++) {
       var fromLeft = Math.random() < 0.5;
-      var y = 24 + Math.random() * 72;
+      var y = 28 + Math.random() * 64;
       var x = fromLeft ? 38 : 122;
       var sky = Math.random() < 0.52;
       var dot = document.createElementNS(NS, 'circle');

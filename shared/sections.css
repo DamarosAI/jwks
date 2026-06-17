@@ -364,8 +364,6 @@ body.world-ready #world { opacity: 1; }
 .ey-zone { fill: rgba(8, 11, 17, .35); stroke-width: 1; vector-effect: non-scaling-stroke; }
 .ey-zone--node { stroke: rgba(126, 200, 233, .38); fill: rgba(126, 200, 233, .06); }
 .ey-zone--sponsor { stroke: rgba(169, 192, 214, .36); fill: rgba(169, 192, 214, .05); }
-.ey-pin--node { fill: rgba(126, 200, 233, .48); }
-.ey-pin--sponsor { fill: rgba(169, 192, 214, .44); }
 .ey-signal { opacity: 0; vector-effect: non-scaling-stroke; transform-box: fill-box; transform-origin: center; }
 .ey-signal--sky { fill: var(--eye-sky); }
 .ey-signal--steel { fill: var(--steel); }
