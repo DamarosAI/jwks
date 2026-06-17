@@ -110,7 +110,7 @@ body.world-ready #world { opacity: 1; }
   gap: clamp(1rem, 2.6vw, 1.8rem); margin: clamp(1.2rem, 3vh, 1.8rem) auto 0; text-align: left;
 }
 
-/* product panel shell — Node · Console · Trident · Luna · Forge · Router */
+/* product panel shell — Node · Console · Trident · Luna · Eye · Sentinel */
 .cap.cap--active .ti-half, .cap.cap--active .ps-half { pointer-events: auto; }
 .ti-half,
 .ps-half {
@@ -306,18 +306,17 @@ body.world-ready #world { opacity: 1; }
 @keyframes lunaCCW { to { transform: rotate(-360deg) translateZ(0); } }
 
 /* ============================================================
- * OPERATIONS MESH  (Forge · Router)
- * Two agents, deliberately opposite motions so they read as distinct:
- *   Forge, ASSEMBLES: scattered fragments gather into ONE packet (many into one).
- *   Router, MATCHES: compact ATC radar — stone sweep, amber blips (one into many).
+ * OPERATIONS MESH  (Eye · Sentinel)
+ * Eye, LIVE: compact execution radar — sky-blue sweep, live contacts.
+ * Sentinel, OVERLAP: twin concept rings with shared overlap nodes.
  * ============================================================ */
 
-.fg-svg, .rt-svg {
+.fg-svg, .rt-svg, .sn-svg {
   width: 100%; height: 100%; overflow: hidden;
   shape-rendering: geometricPrecision;
   -webkit-backface-visibility: hidden; backface-visibility: hidden;
 }
-.ps-field.ps-router { overflow: hidden; border-radius: 50%; }
+.ps-field.ps-eye, .ps-field.ps-router { overflow: hidden; border-radius: 50%; }
 
 /* FORGE, scattered fragments pulse in a sweep and gather into one packet. Sky blue, no lines. */
 .ps-half--forge { --fg-sky: #7ec8e9; --fg-sky-dim: rgba(126, 200, 233, .28); }
@@ -357,6 +356,39 @@ body.world-ready #world { opacity: 1; }
   10% { opacity: .8; transform: scale(1); filter: none; }
   45% { opacity: 0; transform: scale(1); filter: none; }
   100% { opacity: 0; transform: scale(1); filter: none; }
+}
+
+/* EYE — sky-blue live execution radar (repurposed Router sweep) */
+.ps-half--eye { --eye-sky: #7ec8e9; --eye-sky-dim: rgba(126, 200, 233, .28); }
+.ps-half--eye .rt-wake { fill: var(--eye-sky); }
+.ps-half--eye .rt-wake--1 { opacity: .22; }
+.ps-half--eye .rt-wake--2 { opacity: .09; }
+.ps-half--eye .rt-sweep { stroke: var(--eye-sky); opacity: .92; }
+.ps-half--eye .rt-dot { fill: var(--eye-sky); }
+.ps-half--eye.is-live .rt-sweep-g { animation: rtSweep var(--rt-sweep-dur, 4.8s) linear infinite; }
+.ps-half--eye.is-live .rt-dot { animation: rtDotWakeEye var(--dur, 4.8s) linear infinite var(--d, 0s); }
+@keyframes rtDotWakeEye {
+  0% { opacity: 1; transform: scale(1.7); filter: drop-shadow(0 0 3px rgba(126, 200, 233, .75)); }
+  10% { opacity: .8; transform: scale(1); filter: none; }
+  45% { opacity: 0; transform: scale(1); filter: none; }
+  100% { opacity: 0; transform: scale(1); filter: none; }
+}
+
+/* SENTINEL — twin concept rings, overlap nodes brighten on engage */
+.sn-ring circle { fill: rgba(169, 192, 214, .22); }
+.sn-dot--overlap { fill: rgba(217, 162, 62, .35); }
+.ps-half--sentinel.is-live .sn-ring--a { animation: snRingCW 11s linear infinite; transform-box: fill-box; transform-origin: 58px 60px; }
+.ps-half--sentinel.is-live .sn-ring--b { animation: snRingCCW 9s linear infinite; transform-box: fill-box; transform-origin: 102px 60px; }
+.ps-half--sentinel.is-live .sn-dot--overlap { animation: snOverlap 2.4s var(--ease) infinite; }
+.ps-half--sentinel.is-live .sn-dot--overlap[data-sn="1"] { animation-delay: .35s; }
+.ps-half--sentinel.is-live .sn-dot--overlap[data-sn="2"] { animation-delay: .7s; }
+.ps-half--sentinel.is-live .sn-dot--overlap[data-sn="3"] { animation-delay: 1.05s; }
+.ps-half--sentinel.is-live .sn-dot--overlap[data-sn="4"] { animation-delay: 1.4s; }
+@keyframes snRingCW { to { transform: rotate(8deg); } }
+@keyframes snRingCCW { to { transform: rotate(-8deg); } }
+@keyframes snOverlap {
+  0%, 100% { fill: rgba(217, 162, 62, .35); transform: scale(1); }
+  50% { fill: var(--amber); transform: scale(1.35); filter: drop-shadow(0 0 4px rgba(217, 162, 62, .55)); }
 }
 
 /* ============================================================
@@ -487,7 +519,9 @@ body.world-ready #world { opacity: 1; }
   .ti-sponsor.is-reading .ti-cell,
   .ps-half.is-live .nn-edge, .ps-half.is-live .nn-dot, .luna-ring,
   .ps-half--forge.is-live .fg-frag, .ps-half--forge.is-live .fg-box,
-  .ps-half--router.is-live .rt-sweep-g, .ps-half--router.is-live .rt-dot { animation: none; }
+  .ps-half--eye.is-live .rt-sweep-g, .ps-half--eye.is-live .rt-dot,
+  .ps-half--router.is-live .rt-sweep-g, .ps-half--router.is-live .rt-dot,
+  .ps-half--sentinel.is-live .sn-ring, .ps-half--sentinel.is-live .sn-dot--overlap { animation: none; }
   .es-facet { opacity: 1; visibility: visible; position: static; }
   .es-facet:not(.facet--active) { display: none; }
 }
