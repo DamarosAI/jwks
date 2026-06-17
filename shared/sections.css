@@ -307,8 +307,7 @@ body.world-ready #world { opacity: 1; }
 
 /* ============================================================
  * OPERATIONS MESH  (Eye · Sentinel)
- * Eye, LIVE: compact execution radar — sky-blue sweep, live contacts.
- * Sentinel, OVERLAP: twin concept rings with shared overlap nodes.
+ * Eye, LIVE: Node/Console map zones with sky/stone signals crossing the field.
  * ============================================================ */
 
 .fg-svg, .rt-svg, .ey-svg {
@@ -359,30 +358,40 @@ body.world-ready #world { opacity: 1; }
   100% { opacity: 0; transform: scale(1); filter: none; }
 }
 
-/* EYE — bidirectional site ↔ sponsor signal diffusion, sky blue */
+/* EYE — Node ↔ Console map: vertical zones, terrain grid, bidirectional signals */
 .ps-half--eye { --eye-sky: #7ec8e9; --eye-sky-dim: rgba(126, 200, 233, .28); }
-.ey-link { stroke: rgba(126, 200, 233, .18); stroke-width: 1; vector-effect: non-scaling-stroke; }
-.ey-node { fill: rgba(126, 200, 233, .32); }
-.ey-hub { fill: rgba(126, 200, 233, .45); stroke: rgba(126, 200, 233, .55); stroke-width: 1; vector-effect: non-scaling-stroke; }
-.ey-pulse { fill: var(--eye-sky); opacity: 0; vector-effect: non-scaling-stroke; transform-box: fill-box; transform-origin: center; }
-.ps-half--eye.is-live .ey-hub { animation: eyHubPulse 2.8s var(--ease) infinite; }
-.ps-half--eye.is-live .ey-pulse--lr { animation: eyPulseLR var(--dur, 2.8s) linear infinite var(--d, 0s); }
-.ps-half--eye.is-live .ey-pulse--rl { animation: eyPulseRL var(--dur, 2.8s) linear infinite calc(var(--d, 0s) + 1.4s); }
-@keyframes eyPulseLR {
-  0% { transform: translateX(0); opacity: 0; }
-  10% { opacity: 1; filter: drop-shadow(0 0 3px rgba(126, 200, 233, .7)); }
-  88% { opacity: .85; filter: none; }
-  100% { transform: translateX(100px); opacity: 0; filter: none; }
+.ey-map-line { stroke: rgba(169, 192, 214, .1); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.ey-zone { fill: rgba(8, 11, 17, .35); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.ey-zone--node { stroke: rgba(126, 200, 233, .38); fill: rgba(126, 200, 233, .06); }
+.ey-zone--sponsor { stroke: rgba(169, 192, 214, .36); fill: rgba(169, 192, 214, .05); }
+.ey-pin--node { fill: rgba(126, 200, 233, .48); }
+.ey-pin--sponsor { fill: rgba(169, 192, 214, .44); }
+.ey-signal { opacity: 0; vector-effect: non-scaling-stroke; transform-box: fill-box; transform-origin: center; }
+.ey-signal--sky { fill: var(--eye-sky); }
+.ey-signal--steel { fill: var(--steel); }
+.ps-half--eye.is-live .ey-zone--node { animation: eyZoneGlowNode 3.2s var(--ease) infinite; }
+.ps-half--eye.is-live .ey-zone--sponsor { animation: eyZoneGlowSponsor 3.2s var(--ease) infinite .8s; }
+.ps-half--eye.is-live .ey-signal--lr { animation: eySignalLR var(--dur, 3s) linear infinite var(--d, 0s); }
+.ps-half--eye.is-live .ey-signal--rl { animation: eySignalRL var(--dur, 3s) linear infinite var(--d, 0s); }
+@keyframes eySignalLR {
+  0% { transform: translate(0, 0); opacity: 0; }
+  10% { opacity: 1; filter: drop-shadow(0 0 3px rgba(126, 200, 233, .55)); }
+  88% { opacity: .88; filter: none; }
+  100% { transform: translate(84px, var(--ey-y, 0)); opacity: 0; filter: none; }
 }
-@keyframes eyPulseRL {
-  0% { transform: translateX(0); opacity: 0; }
-  10% { opacity: 1; filter: drop-shadow(0 0 3px rgba(126, 200, 233, .7)); }
-  88% { opacity: .85; filter: none; }
-  100% { transform: translateX(-100px); opacity: 0; filter: none; }
+@keyframes eySignalRL {
+  0% { transform: translate(0, 0); opacity: 0; }
+  10% { opacity: 1; filter: drop-shadow(0 0 3px rgba(169, 192, 214, .55)); }
+  88% { opacity: .88; filter: none; }
+  100% { transform: translate(-84px, var(--ey-y, 0)); opacity: 0; filter: none; }
 }
-@keyframes eyHubPulse {
-  0%, 100% { fill: rgba(126, 200, 233, .38); transform: scale(1); }
-  50% { fill: var(--eye-sky); transform: scale(1.35); filter: drop-shadow(0 0 4px rgba(126, 200, 233, .55)); }
+@keyframes eyZoneGlowNode {
+  0%, 100% { stroke: rgba(126, 200, 233, .32); }
+  50% { stroke: rgba(126, 200, 233, .55); }
+}
+@keyframes eyZoneGlowSponsor {
+  0%, 100% { stroke: rgba(169, 192, 214, .3); }
+  50% { stroke: rgba(169, 192, 214, .52); }
 }
 
 /* SENTINEL — opportunity radar sweep (amber, repurposed Router viz) */
@@ -517,7 +526,7 @@ body.world-ready #world { opacity: 1; }
   .ti-sponsor.is-reading .ti-cell,
   .ps-half.is-live .nn-edge, .ps-half.is-live .nn-dot, .luna-ring,
   .ps-half--forge.is-live .fg-frag, .ps-half--forge.is-live .fg-box,
-  .ps-half--eye.is-live .ey-pulse, .ps-half--eye.is-live .ey-hub,
+  .ps-half--eye.is-live .ey-signal, .ps-half--eye.is-live .ey-zone,
   .ps-half--sentinel.is-live .rt-sweep-g, .ps-half--sentinel.is-live .rt-dot,
   .ps-half--router.is-live .rt-sweep-g, .ps-half--router.is-live .rt-dot { animation: none; }
   .es-facet { opacity: 1; visibility: visible; position: static; }

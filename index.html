@@ -21,7 +21,7 @@
 <link rel="stylesheet" href="shared/journey.css?v=reset55">
 <link rel="stylesheet" href="shared/nav-chrome.css?v=1">
 <link rel="stylesheet" href="shared/terrain.css?v=reset50">
-<link rel="stylesheet" href="shared/sections.css?v=51">
+<link rel="stylesheet" href="shared/sections.css?v=52">
 <link rel="stylesheet" href="shared/page-transition.css?v=2">
 <style id="reposition-2026">
 /* ============================================================
@@ -253,6 +253,11 @@
 .cap.ps.agents .ps-half .cap-box{ padding:clamp(.65rem,1.2vh,.85rem) clamp(.85rem,1vw,1rem); }
 @media (min-width:821px){
   .cap.ps.agents{ --viz-h:min(46px,5.4vh); --viz-w:min(84px,8.6vw); }
+  .cap.ps.agents .ps-half--eye .ps-field,
+  .cap.ps.agents .ps-half--sentinel .ps-field{
+    width:calc(var(--viz-w) * 1.13 * 1.18);
+    height:calc(var(--viz-h) * 1.13 * 1.18);
+  }
   .cap.ps.agents .ps-half-head h3{ font-size:min(clamp(1.3rem,2vw,1.62rem),2.9vh); }
   .cap.ps.agents .ps-sub{ font-size:min(.88rem,1.75vh); margin-top:.12rem; }
   .cap.ps.agents .ps-cards .cap-box-h{ font-size:min(.88rem,1.85vh); line-height:1.3; }
@@ -430,6 +435,11 @@
     flex:none; width:100%;
     padding:clamp(.82rem,3.6vw,1.1rem) clamp(.88rem,3.8vw,1.15rem);
     transform:none;
+  }
+  .cap.ps.agents .ps-half--eye .ps-field,
+  .cap.ps.agents .ps-half--sentinel .ps-field{
+    width:calc(var(--viz-w, clamp(81px, 20.9vw, 114px)) * 1.13 * 1.18);
+    height:calc(var(--viz-h, clamp(51px, 9.9vw, 70px)) * 1.13 * 1.18);
   }
   .cap.ti .ti-half,
   .cap.gapcap .gap-col{
@@ -823,14 +833,10 @@
     });
     wire(document.querySelector('.ps-half--luna'), '.luna-ring', 'is-live');
     var eyePanel = document.querySelector('.ps-half--eye');
-    wire(eyePanel, '.ey-pulse', 'is-live', {
+    wire(eyePanel, '.ey-signal', 'is-live', {
       skipRandTiming: true,
-      enter: function () {
-        [].forEach.call(eyePanel.querySelectorAll('.ey-pulse'), function (c, i) {
-          c.style.setProperty('--d', (i * 0.38 + rnd(0, 0.18)).toFixed(2) + 's');
-          c.style.setProperty('--dur', rnd(2.5, 3.4).toFixed(2) + 's');
-        });
-      }
+      enter: function () { rebuildEyeSignals(eyePanel); },
+      leave: function () { clearEyeSignals(eyePanel); }
     });
     var sentinelPanel = document.querySelector('.ps-half--sentinel');
     var SENTINEL_SWEEP = 4.8;
@@ -987,33 +993,64 @@
     host.appendChild(svg);
   }
 
-  /* EYE — bidirectional signal diffusion: site ↔ sponsor lanes, sky-blue pulses */
+  /* EYE — map view: Node + Console vertical zones, sky/stone signals cross the field */
   function buildEye(host) {
     var NS = 'http://www.w3.org/2000/svg';
     var svg = document.createElementNS(NS, 'svg');
     svg.setAttribute('class', 'ey-svg'); svg.setAttribute('viewBox', '0 0 160 120'); svg.setAttribute('preserveAspectRatio', 'xMidYMid meet'); svg.setAttribute('shape-rendering', 'geometricPrecision');
-    var LX = 30, RX = 130, SPAN = RX - LX;
-    [32, 48, 64, 80, 96].forEach(function (y, i) {
-      var lane = document.createElementNS(NS, 'g'); lane.setAttribute('class', 'ey-lane');
-      var link = document.createElementNS(NS, 'line');
-      link.setAttribute('x1', LX); link.setAttribute('y1', y); link.setAttribute('x2', RX); link.setAttribute('y2', y);
-      link.setAttribute('class', 'ey-link'); lane.appendChild(link);
-      var nl = document.createElementNS(NS, 'circle');
-      nl.setAttribute('cx', LX); nl.setAttribute('cy', y); nl.setAttribute('r', '2.4'); nl.setAttribute('class', 'ey-node ey-node--l'); lane.appendChild(nl);
-      var nr = document.createElementNS(NS, 'circle');
-      nr.setAttribute('cx', RX); nr.setAttribute('cy', y); nr.setAttribute('r', '2.4'); nr.setAttribute('class', 'ey-node ey-node--r'); lane.appendChild(nr);
-      var plr = document.createElementNS(NS, 'circle');
-      plr.setAttribute('cx', LX); plr.setAttribute('cy', y); plr.setAttribute('r', '2'); plr.setAttribute('class', 'ey-pulse ey-pulse--lr');
-      plr.setAttribute('data-span', SPAN); lane.appendChild(plr);
-      var prl = document.createElementNS(NS, 'circle');
-      prl.setAttribute('cx', RX); prl.setAttribute('cy', y); prl.setAttribute('r', '2'); prl.setAttribute('class', 'ey-pulse ey-pulse--rl');
-      prl.setAttribute('data-span', SPAN); lane.appendChild(prl);
-      svg.appendChild(lane);
+    var gridG = document.createElementNS(NS, 'g'); gridG.setAttribute('class', 'ey-map');
+    var gy, gx, gl;
+    for (gy = 24; gy <= 96; gy += 18) {
+      gl = document.createElementNS(NS, 'line');
+      gl.setAttribute('x1', 42); gl.setAttribute('y1', gy); gl.setAttribute('x2', 118); gl.setAttribute('y2', gy);
+      gl.setAttribute('class', 'ey-map-line'); gridG.appendChild(gl);
+    }
+    for (gx = 52; gx <= 108; gx += 19) {
+      gl = document.createElementNS(NS, 'line');
+      gl.setAttribute('x1', gx); gl.setAttribute('y1', 20); gl.setAttribute('x2', gx); gl.setAttribute('y2', 100);
+      gl.setAttribute('class', 'ey-map-line'); gridG.appendChild(gl);
+    }
+    svg.appendChild(gridG);
+    var node = document.createElementNS(NS, 'rect');
+    node.setAttribute('x', 5); node.setAttribute('y', 14); node.setAttribute('width', 32); node.setAttribute('height', 92);
+    node.setAttribute('rx', 4); node.setAttribute('class', 'ey-zone ey-zone--node'); svg.appendChild(node);
+    var sponsor = document.createElementNS(NS, 'rect');
+    sponsor.setAttribute('x', 123); sponsor.setAttribute('y', 14); sponsor.setAttribute('width', 32); sponsor.setAttribute('height', 92);
+    sponsor.setAttribute('rx', 4); sponsor.setAttribute('class', 'ey-zone ey-zone--sponsor'); svg.appendChild(sponsor);
+    [[17, 32, 'node'], [17, 60, 'node'], [17, 88, 'node'], [143, 36, 'sponsor'], [143, 60, 'sponsor'], [143, 84, 'sponsor']].forEach(function (p) {
+      var pin = document.createElementNS(NS, 'circle');
+      pin.setAttribute('cx', p[0]); pin.setAttribute('cy', p[1]); pin.setAttribute('r', '1.9');
+      pin.setAttribute('class', 'ey-pin ey-pin--' + p[2]); svg.appendChild(pin);
     });
-    var hub = document.createElementNS(NS, 'circle');
-    hub.setAttribute('cx', '80'); hub.setAttribute('cy', '60'); hub.setAttribute('r', '2.6'); hub.setAttribute('class', 'ey-hub');
-    svg.appendChild(hub);
+    var sigLayer = document.createElementNS(NS, 'g');
+    sigLayer.setAttribute('class', 'ey-signals'); svg.appendChild(sigLayer);
     host.appendChild(svg);
+  }
+  function clearEyeSignals(panel) {
+    var layer = panel && panel.querySelector('.ey-signals');
+    if (layer) layer.textContent = '';
+  }
+  function rebuildEyeSignals(panel) {
+    var layer = panel && panel.querySelector('.ey-signals');
+    if (!layer) return;
+    var NS = 'http://www.w3.org/2000/svg';
+    clearEyeSignals(panel);
+    var want = 7 + (Math.random() * 5 | 0), i;
+    for (i = 0; i < want; i++) {
+      var fromLeft = Math.random() < 0.5;
+      var y = 24 + Math.random() * 72;
+      var x = fromLeft ? 38 : 122;
+      var sky = Math.random() < 0.52;
+      var dot = document.createElementNS(NS, 'circle');
+      dot.setAttribute('cx', x.toFixed(1));
+      dot.setAttribute('cy', y.toFixed(1));
+      dot.setAttribute('r', rnd(1.9, 2.9).toFixed(2));
+      dot.setAttribute('class', 'ey-signal ' + (sky ? 'ey-signal--sky' : 'ey-signal--steel') + (fromLeft ? ' ey-signal--lr' : ' ey-signal--rl'));
+      dot.style.setProperty('--d', rnd(0, 2.4).toFixed(2) + 's');
+      dot.style.setProperty('--dur', rnd(2.1, 3.9).toFixed(2) + 's');
+      dot.style.setProperty('--ey-y', rnd(-5, 5).toFixed(1) + 'px');
+      layer.appendChild(dot);
+    }
   }
 
   /* SENTINEL — opportunity radar: amber sweep, contacts light as the beam passes */
