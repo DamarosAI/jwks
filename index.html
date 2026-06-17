@@ -21,7 +21,7 @@
 <link rel="stylesheet" href="shared/journey.css?v=reset55">
 <link rel="stylesheet" href="shared/nav-chrome.css?v=1">
 <link rel="stylesheet" href="shared/terrain.css?v=reset50">
-<link rel="stylesheet" href="shared/sections.css?v=50">
+<link rel="stylesheet" href="shared/sections.css?v=51">
 <link rel="stylesheet" href="shared/page-transition.css?v=2">
 <style id="reposition-2026">
 /* ============================================================
@@ -237,24 +237,26 @@
 
 /* OPERATIONS MESH — Trident · Luna · Eye · Sentinel, 2×2 grid */
 .cap.ps.agents{ width:min(74rem, calc(100vw - 2*var(--page-gutter))); max-width:min(74rem, calc(100vw - 2*var(--page-gutter))); }
+.cap.ps.agents .cap-subhead{ margin-top:clamp(.95rem,2.2vh,1.35rem); }
 @media (min-width:821px){
   .cap.ps.agents .ps-split{
     grid-template-columns:repeat(2,1fr);
     grid-auto-rows:1fr;
-    gap:clamp(.85rem,1.6vw,1.25rem);
-    margin-top:0;
+    gap:clamp(.75rem,1.45vw,1.1rem);
+    margin-top:clamp(1.15rem,2.6vh,1.65rem);
     width:100%;
   }
 }
-.cap.ps.agents .ps-half{ gap:.55rem; padding:clamp(.95rem,1.7vw,1.25rem); }
+.cap.ps.agents .ps-half{ gap:.38rem; padding:clamp(.72rem,1.35vw,.95rem); }
 .cap.ps.agents .ps-cards{ margin-top:0; }
 .cap.ps.agents .ps-cards .cap-box + .cap-box{ display:none; } /* one tight descriptor per agent */
+.cap.ps.agents .ps-half .cap-box{ padding:clamp(.65rem,1.2vh,.85rem) clamp(.85rem,1vw,1rem); }
 @media (min-width:821px){
-  .cap.ps.agents{ --viz-h:min(54px,6.6vh); --viz-w:min(92px,9.6vw); }
+  .cap.ps.agents{ --viz-h:min(46px,5.4vh); --viz-w:min(84px,8.6vw); }
   .cap.ps.agents .ps-half-head h3{ font-size:min(clamp(1.3rem,2vw,1.62rem),2.9vh); }
-  .cap.ps.agents .ps-sub{ font-size:min(.9rem,1.85vh); }
-  .cap.ps.agents .ps-cards .cap-box-h{ font-size:min(.9rem,1.9vh); }
-  .cap.ps.agents .ps-cards .cap-box-b{ font-size:min(.84rem,1.7vh); margin-top:.34rem; line-height:1.46; }
+  .cap.ps.agents .ps-sub{ font-size:min(.88rem,1.75vh); margin-top:.12rem; }
+  .cap.ps.agents .ps-cards .cap-box-h{ font-size:min(.88rem,1.85vh); line-height:1.3; }
+  .cap.ps.agents .ps-cards .cap-box-b{ font-size:min(.82rem,1.55vh); margin-top:.26rem; line-height:1.42; }
 }
 
 /* GOVERNED RUNTIME, five task-specific agent cards (agents are the mechanism; the runtime is the product) */
@@ -596,7 +598,7 @@
             <div class="ps-field ps-eye" aria-hidden="true"></div>
           </div>
           <div class="ps-cards">
-            <div class="cap-box" data-topo="lattice"><span class="cap-box-h">CTMS tells you what was entered. Eye shows you what is happening.</span><p class="cap-box-b">Live execution intelligence between sites and sponsors: protocol signals, bottlenecks, evidence gaps, REVIEW burden, criterion friction, and amendment pressure. Console gets the command map; Node gets the site pulse. Sponsor-legible execution without exposing PHI or taking control from the clinic.</p></div>
+            <div class="cap-box" data-topo="lattice"><span class="cap-box-h">CTMS tells you what was entered. Eye shows you what is happening.</span><p class="cap-box-b">Live signals flow between sites and sponsors: bottlenecks, evidence gaps, REVIEW burden, and protocol friction. Console reads the field; Node keeps control.</p></div>
           </div>
         </div>
 
@@ -609,7 +611,7 @@
             <div class="ps-field ps-sentinel" aria-hidden="true"></div>
           </div>
           <div class="ps-cards">
-            <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Cross-trial opportunity scan, not patient matching.</span><p class="cap-box-b">Compares concept-keyed evidence facts a site already has against enrolling trial criteria to show where protocol requirements may already be covered. PHI-free, guarded, and never a per-patient eligibility verdict. Screening still does the real execution.</p></div>
+            <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Cross-trial opportunity scan, not patient matching.</span><p class="cap-box-b">Compares site evidence facts against enrolling trial criteria to surface concept overlap across protocols. PHI-free, guarded, and never a per-patient eligibility verdict.</p></div>
           </div>
         </div>
       </div>
@@ -821,32 +823,41 @@
     });
     wire(document.querySelector('.ps-half--luna'), '.luna-ring', 'is-live');
     var eyePanel = document.querySelector('.ps-half--eye');
-    var EYE_SWEEP = 4.8;
-    function applyEyeDotTiming(panel) {
-      panel.style.setProperty('--rt-sweep-dur', EYE_SWEEP + 's');
-      [].forEach.call(panel.querySelectorAll('.rt-dot'), function (c) {
-        var b = parseFloat(c.getAttribute('data-bearing')) || 0;
-        c.style.setProperty('--d', (b / 360 * EYE_SWEEP).toFixed(3) + 's');
-        c.style.setProperty('--dur', EYE_SWEEP + 's');
-      });
-    }
-    function onEyeCycle() {
-      rebuildEyeDots(eyePanel);
-      applyEyeDotTiming(eyePanel);
-    }
-    wire(eyePanel, '.rt-dot', 'is-live', {
+    wire(eyePanel, '.ey-pulse', 'is-live', {
       skipRandTiming: true,
       enter: function () {
-        onEyeCycle();
-        var sweepG = eyePanel.querySelector('.rt-sweep-g');
+        [].forEach.call(eyePanel.querySelectorAll('.ey-pulse'), function (c, i) {
+          c.style.setProperty('--d', (i * 0.38 + rnd(0, 0.18)).toFixed(2) + 's');
+          c.style.setProperty('--dur', rnd(2.5, 3.4).toFixed(2) + 's');
+        });
+      }
+    });
+    var sentinelPanel = document.querySelector('.ps-half--sentinel');
+    var SENTINEL_SWEEP = 4.8;
+    function applySentinelDotTiming(panel) {
+      panel.style.setProperty('--rt-sweep-dur', SENTINEL_SWEEP + 's');
+      [].forEach.call(panel.querySelectorAll('.rt-dot'), function (c) {
+        var b = parseFloat(c.getAttribute('data-bearing')) || 0;
+        c.style.setProperty('--d', (b / 360 * SENTINEL_SWEEP).toFixed(3) + 's');
+        c.style.setProperty('--dur', SENTINEL_SWEEP + 's');
+      });
+    }
+    function onSentinelCycle() {
+      rebuildSentinelDots(sentinelPanel);
+      applySentinelDotTiming(sentinelPanel);
+    }
+    wire(sentinelPanel, '.rt-dot', 'is-live', {
+      skipRandTiming: true,
+      enter: function () {
+        onSentinelCycle();
+        var sweepG = sentinelPanel.querySelector('.rt-sweep-g');
         if (sweepG && !sweepG._rtCycleBound) {
           sweepG._rtCycleBound = true;
-          sweepG.addEventListener('animationiteration', onEyeCycle);
+          sweepG.addEventListener('animationiteration', onSentinelCycle);
         }
       },
-      leave: function () { clearEyeDots(eyePanel); }
+      leave: function () { clearSentinelDots(sentinelPanel); }
     });
-    wire(document.querySelector('.ps-half--sentinel'), '.sn-dot--overlap', 'is-live', { skipRandTiming: true });
 
     /* desktop: sync card animations to pointer position (no fresh hover required) */
     var hoverRaf = 0;
@@ -976,8 +987,37 @@
     host.appendChild(svg);
   }
 
-  /* EYE — live execution radar: sky-blue sweep, contacts light as the beam passes */
+  /* EYE — bidirectional signal diffusion: site ↔ sponsor lanes, sky-blue pulses */
   function buildEye(host) {
+    var NS = 'http://www.w3.org/2000/svg';
+    var svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('class', 'ey-svg'); svg.setAttribute('viewBox', '0 0 160 120'); svg.setAttribute('preserveAspectRatio', 'xMidYMid meet'); svg.setAttribute('shape-rendering', 'geometricPrecision');
+    var LX = 30, RX = 130, SPAN = RX - LX;
+    [32, 48, 64, 80, 96].forEach(function (y, i) {
+      var lane = document.createElementNS(NS, 'g'); lane.setAttribute('class', 'ey-lane');
+      var link = document.createElementNS(NS, 'line');
+      link.setAttribute('x1', LX); link.setAttribute('y1', y); link.setAttribute('x2', RX); link.setAttribute('y2', y);
+      link.setAttribute('class', 'ey-link'); lane.appendChild(link);
+      var nl = document.createElementNS(NS, 'circle');
+      nl.setAttribute('cx', LX); nl.setAttribute('cy', y); nl.setAttribute('r', '2.4'); nl.setAttribute('class', 'ey-node ey-node--l'); lane.appendChild(nl);
+      var nr = document.createElementNS(NS, 'circle');
+      nr.setAttribute('cx', RX); nr.setAttribute('cy', y); nr.setAttribute('r', '2.4'); nr.setAttribute('class', 'ey-node ey-node--r'); lane.appendChild(nr);
+      var plr = document.createElementNS(NS, 'circle');
+      plr.setAttribute('cx', LX); plr.setAttribute('cy', y); plr.setAttribute('r', '2'); plr.setAttribute('class', 'ey-pulse ey-pulse--lr');
+      plr.setAttribute('data-span', SPAN); lane.appendChild(plr);
+      var prl = document.createElementNS(NS, 'circle');
+      prl.setAttribute('cx', RX); prl.setAttribute('cy', y); prl.setAttribute('r', '2'); prl.setAttribute('class', 'ey-pulse ey-pulse--rl');
+      prl.setAttribute('data-span', SPAN); lane.appendChild(prl);
+      svg.appendChild(lane);
+    });
+    var hub = document.createElementNS(NS, 'circle');
+    hub.setAttribute('cx', '80'); hub.setAttribute('cy', '60'); hub.setAttribute('r', '2.6'); hub.setAttribute('class', 'ey-hub');
+    svg.appendChild(hub);
+    host.appendChild(svg);
+  }
+
+  /* SENTINEL — opportunity radar: amber sweep, contacts light as the beam passes */
+  function buildSentinel(host) {
     var NS = 'http://www.w3.org/2000/svg';
     var svg = document.createElementNS(NS, 'svg');
     svg.setAttribute('class', 'rt-svg'); svg.setAttribute('viewBox', '0 0 100 100'); svg.setAttribute('preserveAspectRatio', 'xMidYMid meet'); svg.setAttribute('shape-rendering', 'geometricPrecision');
@@ -1012,17 +1052,17 @@
     core.setAttribute('class', 'rt-core'); svg.appendChild(core);
     host.appendChild(svg);
   }
-  function clearEyeDots(panel) {
+  function clearSentinelDots(panel) {
     var svg = panel && panel.querySelector('.rt-svg');
     if (!svg) return;
     [].forEach.call(svg.querySelectorAll('.rt-dot'), function (el) { el.remove(); });
   }
-  function rebuildEyeDots(panel) {
+  function rebuildSentinelDots(panel) {
     var svg = panel && panel.querySelector('.rt-svg');
     if (!svg) return;
     var NS = 'http://www.w3.org/2000/svg';
     var CX = 50, CY = 50, RADAR_R = 36, RMAX = RADAR_R * 0.85, RMIN = 9, MIN_SEP = 10;
-    clearEyeDots(panel);
+    clearSentinelDots(panel);
     var placed = [], want = 6 + (Math.random() * 4 | 0), added = 0, tries = 0;
     while (added < want && tries < want * 14) {
       tries++;
@@ -1047,34 +1087,6 @@
       svg.insertBefore(dot, svg.querySelector('.rt-sweep-g'));
       added++;
     }
-  }
-
-  /* SENTINEL — twin concept rings, overlap nodes pulse on engage */
-  function buildSentinel(host) {
-    var NS = 'http://www.w3.org/2000/svg';
-    var svg = document.createElementNS(NS, 'svg');
-    svg.setAttribute('class', 'sn-svg'); svg.setAttribute('viewBox', '0 0 160 120'); svg.setAttribute('preserveAspectRatio', 'xMidYMid meet'); svg.setAttribute('shape-rendering', 'geometricPrecision');
-    function ringDots(cx, cy, rx, ry, n, cls) {
-      var g = document.createElementNS(NS, 'g'); g.setAttribute('class', 'sn-ring ' + cls);
-      for (var i = 0; i < n; i++) {
-        var a = (i / n) * Math.PI * 2;
-        var ci = document.createElementNS(NS, 'circle');
-        ci.setAttribute('cx', (cx + Math.cos(a) * rx).toFixed(2));
-        ci.setAttribute('cy', (cy + Math.sin(a) * ry).toFixed(2));
-        ci.setAttribute('r', '2.11'); ci.setAttribute('class', 'sn-dot'); g.appendChild(ci);
-      }
-      svg.appendChild(g);
-    }
-    ringDots(58, 60, 38, 28, 18, 'sn-ring--a');
-    ringDots(102, 60, 38, 28, 18, 'sn-ring--b');
-    var overlap = [[78, 48], [82, 60], [78, 72], [88, 54], [88, 66]];
-    overlap.forEach(function (p, j) {
-      var ci = document.createElementNS(NS, 'circle');
-      ci.setAttribute('cx', p[0]); ci.setAttribute('cy', p[1]); ci.setAttribute('r', '2.6');
-      ci.setAttribute('class', 'sn-dot sn-dot--overlap'); ci.setAttribute('data-sn', j);
-      svg.appendChild(ci);
-    });
-    host.appendChild(svg);
   }
 })();
 </script>

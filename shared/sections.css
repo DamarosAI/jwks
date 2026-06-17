@@ -311,12 +311,13 @@ body.world-ready #world { opacity: 1; }
  * Sentinel, OVERLAP: twin concept rings with shared overlap nodes.
  * ============================================================ */
 
-.fg-svg, .rt-svg, .sn-svg {
+.fg-svg, .rt-svg, .ey-svg {
   width: 100%; height: 100%; overflow: hidden;
   shape-rendering: geometricPrecision;
   -webkit-backface-visibility: hidden; backface-visibility: hidden;
 }
-.ps-field.ps-eye, .ps-field.ps-router { overflow: hidden; border-radius: 50%; }
+.ps-field.ps-eye { overflow: hidden; }
+.ps-field.ps-sentinel, .ps-field.ps-router { overflow: hidden; border-radius: 50%; }
 
 /* FORGE, scattered fragments pulse in a sweep and gather into one packet. Sky blue, no lines. */
 .ps-half--forge { --fg-sky: #7ec8e9; --fg-sky-dim: rgba(126, 200, 233, .28); }
@@ -358,38 +359,35 @@ body.world-ready #world { opacity: 1; }
   100% { opacity: 0; transform: scale(1); filter: none; }
 }
 
-/* EYE — sky-blue live execution radar (repurposed Router sweep) */
+/* EYE — bidirectional site ↔ sponsor signal diffusion, sky blue */
 .ps-half--eye { --eye-sky: #7ec8e9; --eye-sky-dim: rgba(126, 200, 233, .28); }
-.ps-half--eye .rt-wake { fill: var(--eye-sky); }
-.ps-half--eye .rt-wake--1 { opacity: .22; }
-.ps-half--eye .rt-wake--2 { opacity: .09; }
-.ps-half--eye .rt-sweep { stroke: var(--eye-sky); opacity: .92; }
-.ps-half--eye .rt-dot { fill: var(--eye-sky); }
-.ps-half--eye.is-live .rt-sweep-g { animation: rtSweep var(--rt-sweep-dur, 4.8s) linear infinite; }
-.ps-half--eye.is-live .rt-dot { animation: rtDotWakeEye var(--dur, 4.8s) linear infinite var(--d, 0s); }
-@keyframes rtDotWakeEye {
-  0% { opacity: 1; transform: scale(1.7); filter: drop-shadow(0 0 3px rgba(126, 200, 233, .75)); }
-  10% { opacity: .8; transform: scale(1); filter: none; }
-  45% { opacity: 0; transform: scale(1); filter: none; }
-  100% { opacity: 0; transform: scale(1); filter: none; }
+.ey-link { stroke: rgba(126, 200, 233, .18); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.ey-node { fill: rgba(126, 200, 233, .32); }
+.ey-hub { fill: rgba(126, 200, 233, .45); stroke: rgba(126, 200, 233, .55); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.ey-pulse { fill: var(--eye-sky); opacity: 0; vector-effect: non-scaling-stroke; transform-box: fill-box; transform-origin: center; }
+.ps-half--eye.is-live .ey-hub { animation: eyHubPulse 2.8s var(--ease) infinite; }
+.ps-half--eye.is-live .ey-pulse--lr { animation: eyPulseLR var(--dur, 2.8s) linear infinite var(--d, 0s); }
+.ps-half--eye.is-live .ey-pulse--rl { animation: eyPulseRL var(--dur, 2.8s) linear infinite calc(var(--d, 0s) + 1.4s); }
+@keyframes eyPulseLR {
+  0% { transform: translateX(0); opacity: 0; }
+  10% { opacity: 1; filter: drop-shadow(0 0 3px rgba(126, 200, 233, .7)); }
+  88% { opacity: .85; filter: none; }
+  100% { transform: translateX(100px); opacity: 0; filter: none; }
+}
+@keyframes eyPulseRL {
+  0% { transform: translateX(0); opacity: 0; }
+  10% { opacity: 1; filter: drop-shadow(0 0 3px rgba(126, 200, 233, .7)); }
+  88% { opacity: .85; filter: none; }
+  100% { transform: translateX(-100px); opacity: 0; filter: none; }
+}
+@keyframes eyHubPulse {
+  0%, 100% { fill: rgba(126, 200, 233, .38); transform: scale(1); }
+  50% { fill: var(--eye-sky); transform: scale(1.35); filter: drop-shadow(0 0 4px rgba(126, 200, 233, .55)); }
 }
 
-/* SENTINEL — twin concept rings, overlap nodes brighten on engage */
-.sn-ring circle { fill: rgba(169, 192, 214, .22); }
-.sn-dot--overlap { fill: rgba(217, 162, 62, .35); }
-.ps-half--sentinel.is-live .sn-ring--a { animation: snRingCW 11s linear infinite; transform-box: fill-box; transform-origin: 58px 60px; }
-.ps-half--sentinel.is-live .sn-ring--b { animation: snRingCCW 9s linear infinite; transform-box: fill-box; transform-origin: 102px 60px; }
-.ps-half--sentinel.is-live .sn-dot--overlap { animation: snOverlap 2.4s var(--ease) infinite; }
-.ps-half--sentinel.is-live .sn-dot--overlap[data-sn="1"] { animation-delay: .35s; }
-.ps-half--sentinel.is-live .sn-dot--overlap[data-sn="2"] { animation-delay: .7s; }
-.ps-half--sentinel.is-live .sn-dot--overlap[data-sn="3"] { animation-delay: 1.05s; }
-.ps-half--sentinel.is-live .sn-dot--overlap[data-sn="4"] { animation-delay: 1.4s; }
-@keyframes snRingCW { to { transform: rotate(8deg); } }
-@keyframes snRingCCW { to { transform: rotate(-8deg); } }
-@keyframes snOverlap {
-  0%, 100% { fill: rgba(217, 162, 62, .35); transform: scale(1); }
-  50% { fill: var(--amber); transform: scale(1.35); filter: drop-shadow(0 0 4px rgba(217, 162, 62, .55)); }
-}
+/* SENTINEL — opportunity radar sweep (amber, repurposed Router viz) */
+.ps-half--sentinel.is-live .rt-sweep-g { animation: rtSweep var(--rt-sweep-dur, 4.8s) linear infinite; }
+.ps-half--sentinel.is-live .rt-dot { animation: rtDotWake var(--dur, 4.8s) linear infinite var(--d, 0s); }
 
 /* ============================================================
  * COMPACT SYMBOL — the live field parks at the TOP-RIGHT of each panel head
@@ -519,9 +517,9 @@ body.world-ready #world { opacity: 1; }
   .ti-sponsor.is-reading .ti-cell,
   .ps-half.is-live .nn-edge, .ps-half.is-live .nn-dot, .luna-ring,
   .ps-half--forge.is-live .fg-frag, .ps-half--forge.is-live .fg-box,
-  .ps-half--eye.is-live .rt-sweep-g, .ps-half--eye.is-live .rt-dot,
-  .ps-half--router.is-live .rt-sweep-g, .ps-half--router.is-live .rt-dot,
-  .ps-half--sentinel.is-live .sn-ring, .ps-half--sentinel.is-live .sn-dot--overlap { animation: none; }
+  .ps-half--eye.is-live .ey-pulse, .ps-half--eye.is-live .ey-hub,
+  .ps-half--sentinel.is-live .rt-sweep-g, .ps-half--sentinel.is-live .rt-dot,
+  .ps-half--router.is-live .rt-sweep-g, .ps-half--router.is-live .rt-dot { animation: none; }
   .es-facet { opacity: 1; visibility: visible; position: static; }
   .es-facet:not(.facet--active) { display: none; }
 }
