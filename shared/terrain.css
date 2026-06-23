@@ -167,8 +167,9 @@ body.deck-swipe-mode-down .deck-swipe__arrow--up { display: none; }
   .deck-hint { display: none; }
   .deck-swipe {
     display: none; flex-direction: column; align-items: center;
-    position: fixed; right: var(--page-gutter); z-index: 22; pointer-events: none;
-    bottom: calc(var(--deck-mark-axis) - var(--deck-swipe-label-rise)); opacity: .66;
+    position: fixed; left: 50%; z-index: 22; pointer-events: none;
+    transform: translateX(-50%);
+    bottom: calc(var(--deck-nav-bottom) + 2.7rem); opacity: .66;
     transition: opacity .35s var(--ease);
   }
   body.deck-swipe-on .deck-swipe { display: flex; }

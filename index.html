@@ -248,7 +248,9 @@
   }
 }
 .cap.ps.agents .ps-half{ gap:.38rem; padding:clamp(.72rem,1.35vw,.95rem); }
-.cap.ps.agents .ps-cards{ margin-top:0; }
+/* descriptor card fills the panel so no dead space sits under the nested card */
+.cap.ps.agents .ps-cards{ margin-top:0; flex:1 1 auto; display:flex; flex-direction:column; }
+.cap.ps.agents .ps-cards .cap-box{ flex:1 1 auto; }
 .cap.ps.agents .ps-cards .cap-box + .cap-box{ display:none; } /* one tight descriptor per agent */
 .cap.ps.agents .ps-half .cap-box{ padding:clamp(.65rem,1.2vh,.85rem) clamp(.85rem,1vw,1rem); }
 @media (min-width:821px){
@@ -419,7 +421,7 @@
   .cap.gapcap .gap-grid::-webkit-scrollbar{ display:none; }
   .cap.es .es-spine-step{
     flex:0 0 min(88vw,22rem); scroll-snap-align:center; scroll-snap-stop:always;
-    display:flex; flex-direction:column; gap:.32rem;
+    display:flex; flex-direction:column; gap:.32rem; text-align:left;
     padding:clamp(.95rem,4vw,1.15rem) clamp(1rem,4.2vw,1.2rem);
     transform:none;
     border-radius:14px; box-shadow:inset 0 0 0 1px rgba(169,192,214,.22);
@@ -430,7 +432,7 @@
   .cap.es .es-spine-step .ps-cards{ margin-top:.28rem; }
   .cap.es .es-spine-step .cap-box-b{ margin-top:0; line-height:1.48; font-size:clamp(.78rem,3.5vw,.86rem); color:rgba(232,236,240,.66); }
   .cap.es .es-spine-step .cap-box{ padding:0; border:0; background:none; box-shadow:none; }
-  .cap.es .cap-subhead{ white-space:normal; text-wrap:balance; max-width:18em; margin-left:auto; margin-right:auto; }
+  .cap.es .cap-subhead{ white-space:nowrap; text-wrap:nowrap; max-width:none; }
   .cap.ps.agents .ps-half{
     flex:none; width:100%;
     padding:clamp(.82rem,3.6vw,1.1rem) clamp(.88rem,3.8vw,1.15rem);
@@ -511,7 +513,7 @@
     <!-- 01 EXECUTION SPINE · Protocol · Evidence · Screening · Resolve · Replay -->
     <div class="cap es" data-cap="1" data-screen-label="Execution Spine">
       <h2 class="es-title cap-line" data-type data-from="0">Execution Spine</h2>
-      <p class="cap-subhead cap-line" data-from="0">An engine decides. A human signs. <em>Every run rebuilds itself.</em></p>
+      <p class="cap-subhead cap-line" data-from="0">Engine accelerates. <em>Humans decide.</em></p>
 
       <div class="es-spine cap-line" data-from="0" data-hswipe>
         <div class="es-spine-step">
@@ -621,7 +623,7 @@
             <div class="ps-field ps-sentinel" aria-hidden="true"></div>
           </div>
           <div class="ps-cards">
-            <div class="cap-box" data-topo="lattice"><span class="cap-box-h">A cross-trial opportunity scan, not patient matching.</span><p class="cap-box-b">Compares PHI-free site evidence facts against enrolling criteria to surface where protocols and site reality overlap. Guarded, replayable, and never a per-patient verdict.</p></div>
+            <div class="cap-box" data-topo="lattice"><span class="cap-box-h">A cross-trial opportunity, not matching.</span><p class="cap-box-b">Compares PHI-free site evidence facts against enrolling criteria to surface where protocols and site reality overlap. Guarded & replayable.</p></div>
           </div>
         </div>
       </div>
@@ -661,10 +663,6 @@
             <div class="cap-box" data-topo="lattice"><span class="cap-box-h">Oversight without exposure.</span><p class="cap-box-b">Track site readiness, resolution, failure, and execution drift across the network without raw patient data crossing the boundary.</p></div>
           </div>
         </div>
-      </div>
-
-      <div class="ti-coexist cap-line" data-from="0">
-        <p class="co-deploy">Cloud, dedicated, institution-hosted, or air-gapped for federal and zero-trust environments.</p>
       </div>
     </div>
     <!-- 09 FINAL -->

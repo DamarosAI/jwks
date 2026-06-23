@@ -546,7 +546,8 @@ function go(i) {
   const seqJump = Math.abs(seqIndex(i) - seqIndex(fromS));
   navDir = seqIndex(i) > seqIndex(fromS) ? 1 : seqIndex(i) < seqIndex(fromS) ? -1 : navDir;
   morphMs = seqJump >= 3 ? 650 : (seqJump === 2 ? 750 : 850);
-  armNavLock(morphMs + (REDUCED ? 120 : 320));
+  if (i === 9 && MOBILE) morphMs = Math.min(morphMs, 560);   // closer must land fast on touch — no long stall into the final beat
+  armNavLock(morphMs + (REDUCED ? 120 : (MOBILE ? 180 : 320)));
   flightAssemble = (fromS === 0 && i === 1) ? 2.1 : (1.0 + Math.min(Math.max(seqJump - 1, 0), 8) * 0.16);
   if (CLOUD_LIVE) {
     // snapshot the CURRENT interpolated positions into the 'from' buffer (seamless continuation).
@@ -658,7 +659,7 @@ function setCaps(idx) {
   if (!MOBILE && window.DamarosPanels?.syncHover) requestAnimationFrame(() => window.DamarosPanels.syncHover());
 }
 function revealEndCap() { setCaps(9); }
-const END_HOLD_MS = REDUCED ? 250 : 450;
+const END_HOLD_MS = REDUCED ? 120 : (MOBILE ? 150 : 450);
 let endHoldTimer = null;
 function clearEndHold() { clearTimeout(endHoldTimer); endHoldTimer = null; document.body.classList.remove('end-hold'); }
 function arriveAt(idx) {
