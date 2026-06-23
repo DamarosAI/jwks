@@ -136,6 +136,14 @@ body.deck-nav-locked .deck-nav { pointer-events: none; opacity: .55; }
   font-family: var(--fb); font-size: .56rem; font-weight: 600; letter-spacing: .2em;
   text-transform: uppercase; color: var(--cold); opacity: .7; white-space: nowrap; line-height: 1;
 }
+/* per-section card counter (e.g. 2 / 4) so swiping never silently skips a card */
+.deck-swipe__count {
+  display: none; margin-bottom: .42rem;
+  font-family: var(--fb); font-size: .58rem; font-weight: 700; letter-spacing: .16em;
+  color: var(--steel); opacity: .9; white-space: nowrap; line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+body.deck-swipe-count-on .deck-swipe__count { display: block; }
 .deck-swipe__arrow {
   display: block; width: 1px; height: 8px; margin: 0 auto;
   background: linear-gradient(to top, transparent, var(--steel));

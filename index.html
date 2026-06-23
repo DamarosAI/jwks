@@ -449,6 +449,8 @@
     padding:clamp(.82rem,3.6vw,1.1rem) clamp(.88rem,3.8vw,1.15rem);
     transform:none;
   }
+  /* Node / Console read a touch smaller than full-bleed on phones — scales with the viewport */
+  .cap.ti .ti-half{ transform:scale(.93); transform-origin:center center; }
 }
 @media (min-width:821px) and (max-height:780px){
   .cap-subhead,.gap-lead,.cap.ps .cap-subhead,.cap.ti .cap-subhead{ white-space:nowrap; max-width:none; }
@@ -693,6 +695,7 @@
   <div class="deck-progress" aria-hidden="true"><span data-deck-progress></span></div>
   <div class="deck-hint" data-hint aria-hidden="true">Scroll to travel</div>
   <div class="deck-swipe" data-swipe-hint aria-hidden="true">
+    <span class="deck-swipe__count" data-swipe-count></span>
     <span class="deck-swipe__arrow deck-swipe__arrow--up" aria-hidden="true"></span>
     <span class="deck-swipe__label">Swipe</span>
     <span class="deck-swipe__arrow deck-swipe__arrow--down" aria-hidden="true"></span>
