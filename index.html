@@ -68,7 +68,8 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
     @keyframes rpPulse{0%,100%{opacity:0.28;}45%{opacity:1;}}
     @keyframes dmPulse{0%,100%{opacity:0.55;transform:scale(1);}50%{opacity:1;transform:scale(1.03);}}
     .dmPulse{animation:dmPulse 1.6s ease-in-out infinite;transform-origin:center;}
-    @keyframes dmTargetPulse{0%,100%{box-shadow:inset 0 0 0 2px color-mix(in srgb,#3d72a8 55%,transparent),inset 0 0 12px color-mix(in srgb,#2f6193 22%,transparent);}50%{box-shadow:inset 0 0 0 2.5px color-mix(in srgb,#3d72a8 95%,transparent),inset 0 0 22px color-mix(in srgb,#2f6193 42%,transparent);}}
+    @keyframes dmTargetPulse{0%,100%{box-shadow:inset 0 0 0 2px color-mix(in srgb,#2f6193 65%,transparent),inset 0 0 0 200px color-mix(in srgb,#2f6193 5%,transparent);}50%{box-shadow:inset 0 0 0 4px #2f6193,inset 0 0 0 200px color-mix(in srgb,#2f6193 16%,transparent);}}
+    @keyframes dmTargetPulseLight{0%,100%{box-shadow:inset 0 0 0 2px rgba(255,255,255,0.55),inset 0 0 0 200px rgba(255,255,255,0);}50%{box-shadow:inset 0 0 0 3px rgba(255,255,255,1),inset 0 0 0 200px rgba(255,255,255,0.2);}}
     @keyframes rpSweep{0%{left:-32%;}100%{left:100%;}}
     @keyframes chevBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(5px);}}
     #instrument{position:relative;}
@@ -556,8 +557,11 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
         </div>
       </div>
     </div>
-    <button onClick="{{ onMore }}" aria-label="Scroll to learn more about Damaros" class="dm-scroll-more" style="margin:12px auto 0;display:flex;justify-content:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:2px 8px;position:relative;z-index:1;">
-      <svg data-anim="" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 2s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    <button onClick="{{ onMore }}" aria-label="Scroll to learn more about Damaros" class="dm-scroll-more" style="margin:18px auto 0;display:flex;flex-direction:column;align-items:center;gap:7px;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 8px;position:relative;z-index:3;">
+      <span style="font-family:var(--font-display);font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-steel);">Keep scrolling</span>
+      <span style="display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:color-mix(in srgb,#2f6193 11%,transparent);border:1.5px solid color-mix(in srgb,#2f6193 48%,transparent);box-shadow:0 8px 22px rgba(20,46,82,0.18);">
+        <svg data-anim="" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.5s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </span>
     </button>
   </section>
 
@@ -960,9 +964,9 @@ class Component extends DCLogic {
     if (enabled) return Object.assign({}, base, { cursor: "pointer", color: "#ffffff", background: "linear-gradient(180deg,#3d72a8,#2f6193)", border: "none" });
     return Object.assign({}, base, { cursor: "not-allowed", color: "var(--ink-dim)", background: "rgba(20,33,48,0.05)" });
   }
-  mergePulse(base, on) {
+  mergePulse(base, on, onBlue) {
     if (!on) return base;
-    return Object.assign({}, base, { animation: "dmTargetPulse 1.35s ease-in-out infinite" });
+    return Object.assign({}, base, { animation: (onBlue ? "dmTargetPulseLight" : "dmTargetPulse") + " 1s ease-in-out infinite" });
   }
   guideState() {
     const s = this.state;
@@ -1074,7 +1078,7 @@ class Component extends DCLogic {
     const detC = (f) => f === "ok" ? "#2e9e6b" : f === "warn" ? "#bf831f" : f === "ref" ? "var(--ink-dim)" : "var(--ink-cold)";
     const sel = { event:se.ev, time:se.t, eid:se.eid, exc: se.exc === "none" ? "" : se.exc.toUpperCase(), excStyle: se.exc==="none" ? {display:"none"} : this.chip("#bf831f"), rows: se.rows.map((r)=>({k:r[0], v:r[1], c: detC(r[2])})), related: se.rel };
     const rpExported = !!this.state.rpExported;
-    const rp = { runId: "RPL-2026-0622-018-1047", ledger, filters, sel, exportLabel: rpExported ? "✓ Export Ready" : "Export Replay", exportStyle: this.mergePulse(this.primaryBtn(rpExported, !rpExported, { sm: true, mt: 0, align: "auto" }), tgt === "rp-export" && !rpExported), onExport: () => { if (!rpExported) { this.setState({ rpExported: true }); setTimeout(() => this.scrollTo("integrations"), 650); } } };
+    const rp = { runId: "RPL-2026-0622-018-1047", ledger, filters, sel, exportLabel: rpExported ? "✓ Export Ready" : "Export Replay", exportStyle: this.mergePulse(this.primaryBtn(rpExported, !rpExported, { sm: true, mt: 0, align: "auto" }), tgt === "rp-export" && !rpExported, true), onExport: () => { if (!rpExported) { this.setState({ rpExported: true }); setTimeout(() => this.scrollTo("integrations"), 650); } } };
     
 
     const SCm = { conflict: "#dc3a52", missing: "#c06a1e", stale: "#bf831f", judgment: "#a9c0d6" };
@@ -1111,7 +1115,7 @@ class Component extends DCLogic {
     const EVCLS = (s) => ({ missing: "Source-dependent", conflict: "Subjective", stale: "Temporal", ambiguous: "Temporal", ready: "Computable", review: "Subjective" })[s] || "Source-dependent";
     const reqRows = this.evReqs.map((r, i) => { const on = i === evSel, col = this.EVC(r.state); return { code: r.code, fact: r.fact, color: col, stLabel: this.EVL(r.state), cls: EVCLS(r.state), blocks: r.blocks, action: r.action, onClick: () => this.setState({ evSel: i }), style: this.mergePulse({ display: "flex", flexDirection: "column", width: "100%", textAlign: "left", cursor: "pointer", padding: "11px 13px", borderRadius: 11, border: "1px solid " + (on ? "color-mix(in srgb,#2f6193 42%,transparent)" : "rgba(31,45,61,0.1)"), background: on ? "color-mix(in srgb,#2f6193 7%,transparent)" : "#ffffff", transition: "all 140ms ease" }, tgt === "ev-E-4.2" && r.code === "E-4.2"), chipStyle: this.chip(col) }; });
     const dq = this.evReqs[evSel], dcol = this.EVC(dq.state), acted = !!this.state.evActed[dq.code];
-    const detail = { code: dq.code, color: dcol, stLabel: this.EVL(dq.state), trigger: dq.trigger.replace(/_/g, " "), fact: dq.fact, requiredBy: dq.requiredBy, cls: EVCLS(dq.state), coord: (dq.state === "conflict" || dq.state === "ambiguous") ? (dq.state === "conflict" ? "Subjective criterion. A clinician confirms which source governs." : "Ambiguous timing. The coordinator resolves it by chart review.") : "", computable: !(dq.state === "conflict" || dq.state === "ambiguous"), arm: (dq.code.charAt(0) === "E" ? "Exclusion · blocks both arms" : "Inclusion · gates Arm A"), current: dq.current, sourcesText: dq.sources, checked: dq.checked, actionLabel: acted ? "✓ " + dq.action : dq.action, actionStyle: this.mergePulse(this.primaryBtn(acted, !acted), tgt === "ev-action" && !acted), acted: acted, actedTicket: "TASK-" + dq.code.replace(/[^0-9]/g, "") + "-1047", actedInfo: "Sent to " + (dq.code.charAt(0) === "E" ? "PI / Sub-I" : "the coordinator") + " for " + dq.fact + ". No model casts a verdict — a human resolves the conflict and the decision is written to the immutable ledger.", actedSteps: ["→ Owner notified · Maya R. (Coordinator)", "→ SLA: review within 24h · protocol v2.1", "→ Resolution links back to this evidence node"], chipStyle: this.chip(dcol), onAction: () => { if (!acted) this.setState((st) => { const m = Object.assign({}, st.evActed); m[dq.code] = true; return { evActed: m }; }); }, patients: dq.patients.slice(0, 2).map((p) => ({ n: p.n, src: p.src, date: p.date, dotStyle: { width: 7, height: 7, borderRadius: "50%", flexShrink: 0, background: this.EVC(p.st) } })) };
+    const detail = { code: dq.code, color: dcol, stLabel: this.EVL(dq.state), trigger: dq.trigger.replace(/_/g, " "), fact: dq.fact, requiredBy: dq.requiredBy, cls: EVCLS(dq.state), coord: (dq.state === "conflict" || dq.state === "ambiguous") ? (dq.state === "conflict" ? "Subjective criterion. A clinician confirms which source governs." : "Ambiguous timing. The coordinator resolves it by chart review.") : "", computable: !(dq.state === "conflict" || dq.state === "ambiguous"), arm: (dq.code.charAt(0) === "E" ? "Exclusion · blocks both arms" : "Inclusion · gates Arm A"), current: dq.current, sourcesText: dq.sources, checked: dq.checked, actionLabel: acted ? "✓ " + dq.action : dq.action, actionStyle: this.mergePulse(this.primaryBtn(acted, !acted), tgt === "ev-action" && !acted, true), acted: acted, actedTicket: "TASK-" + dq.code.replace(/[^0-9]/g, "") + "-1047", actedInfo: "Sent to " + (dq.code.charAt(0) === "E" ? "PI / Sub-I" : "the coordinator") + " for " + dq.fact + ". No model casts a verdict — a human resolves the conflict and the decision is written to the immutable ledger.", actedSteps: ["→ Owner notified · Maya R. (Coordinator)", "→ SLA: review within 24h · protocol v2.1", "→ Resolution links back to this evidence node"], chipStyle: this.chip(dcol), onAction: () => { if (!acted) this.setState((st) => { const m = Object.assign({}, st.evActed); m[dq.code] = true; return { evActed: m }; }); }, patients: dq.patients.slice(0, 2).map((p) => ({ n: p.n, src: p.src, date: p.date, dotStyle: { width: 7, height: 7, borderRadius: "50%", flexShrink: 0, background: this.EVC(p.st) } })) };
     const covSegs = [ { n: 25, c: "#2e9e6b", label: "Mapped" }, { n: 4, c: "#c06a1e", label: "Missing" }, { n: 3, c: "#dc3a52", label: "Conflict" }, { n: 4, c: "#bf831f", label: "Stale" } ];
     const coverage = covSegs.map((s) => ({ n: s.n, label: s.label, style: { width: (s.n / 36 * 100) + "%", background: s.c }, dot: { width: 7, height: 7, borderRadius: "50%", background: s.c, display: "inline-block", flexShrink: 0 } }));
     const ev = { connectors, coverage, reqRows, detail };
@@ -1128,7 +1132,7 @@ class Component extends DCLogic {
     const sp = fq.find((p) => p.id === scSelId) || fq[0] || this.scQueue[0];
     const spTg = this.TRIG(sp.trig);
     const resolveOpened = this.state.step >= 3;
-    const why = { name: sp.name, id: sp.id, st: sp.st === "ELIGIBLE" ? "CONFIRM" : sp.st, stStyle: this.chip(this.SCS(sp.st)), blocker: sp.blocker, rule: sp.rule, facts: sp.facts, sources: sp.sources, result: sp.result, resultColor: this.SCS(sp.st), reason: sp.reason, trigger: spTg[0] || "·", rec: sp.rec, hasResolve: sp.ci != null, resolveLabel: resolveOpened ? "✓ Opened in Resolve" : "Open in Resolve →", resolveStyle: this.mergePulse(this.primaryBtn(resolveOpened, sp.ci != null && !resolveOpened, { sm: true, mt: 13 }), tgt === "sc-resolve" && sp.ci != null && !resolveOpened), onResolve: sp.ci != null ? (() => this.setState({ ci: sp.ci, pick: null, step: 3 })) : (() => {}) };
+    const why = { name: sp.name, id: sp.id, st: sp.st === "ELIGIBLE" ? "CONFIRM" : sp.st, stStyle: this.chip(this.SCS(sp.st)), blocker: sp.blocker, rule: sp.rule, facts: sp.facts, sources: sp.sources, result: sp.result, resultColor: this.SCS(sp.st), reason: sp.reason, trigger: spTg[0] || "·", rec: sp.rec, hasResolve: sp.ci != null, resolveLabel: resolveOpened ? "✓ Opened in Resolve" : "Open in Resolve →", resolveStyle: this.mergePulse(this.primaryBtn(resolveOpened, sp.ci != null && !resolveOpened, { sm: true, mt: 13 }), tgt === "sc-resolve" && sp.ci != null && !resolveOpened, true), onResolve: sp.ci != null ? (() => this.setState({ ci: sp.ci, pick: null, step: 3 })) : (() => {}) };
     const sc = { isBoard: this.state.scView === "board", isMap: this.state.scView === "map", onBoard: () => this.setState({ scView: "board" }), onMap: () => this.setState({ scView: "map" }), boardTabStyle: this.segTab(this.state.scView === "board"), mapTabStyle: this.segTab(this.state.scView === "map"), summary: scSummary, queue, why };
 
     return {
@@ -1139,7 +1143,7 @@ class Component extends DCLogic {
       candChips, opts, cur,
       awaiting: this.cands.length - committedCount, committedCount,
       onCommit: this.commit,
-      commitStyle: this.mergePulse({ padding: "11px 20px", borderRadius: 10, cursor: canCommit ? "pointer" : "not-allowed", border: "none", fontFamily: "var(--font-display)", fontSize: 14, fontWeight: 600, color: canCommit ? "#ffffff" : "var(--ink-dim)", background: canCommit ? "linear-gradient(180deg,#3d72a8,#2f6193)" : "rgba(20,33,48,0.05)", flexShrink: 0, transition: "all 150ms ease" }, tgt === "resolve-sign" && !committed),
+      commitStyle: this.mergePulse({ padding: "11px 20px", borderRadius: 10, cursor: canCommit ? "pointer" : "not-allowed", border: "none", fontFamily: "var(--font-display)", fontSize: 14, fontWeight: 600, color: canCommit ? "#ffffff" : "var(--ink-dim)", background: canCommit ? "linear-gradient(180deg,#3d72a8,#2f6193)" : "rgba(20,33,48,0.05)", flexShrink: 0, transition: "all 150ms ease" }, tgt === "resolve-sign" && !committed, true),
       segPassStyle: { width: Math.round(scSeg.pass / scSeg.evaluated * 100) + "%", height: "100%", background: "#2e9e6b" },
       segReviewStyle: { width: Math.round(scSeg.review / scSeg.evaluated * 100) + "%", height: "100%", background: "#bf831f" },
       segFailStyle: { width: Math.round(scSeg.fail / scSeg.evaluated * 100) + "%", height: "100%", background: "rgba(124,138,153,0.5)" },
