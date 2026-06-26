@@ -68,6 +68,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
     @keyframes rpPulse{0%,100%{opacity:0.28;}45%{opacity:1;}}
     @keyframes dmPulse{0%,100%{opacity:0.55;transform:scale(1);}50%{opacity:1;transform:scale(1.03);}}
     .dmPulse{animation:dmPulse 1.6s ease-in-out infinite;transform-origin:center;}
+    @keyframes dmTargetPulse{0%,100%{box-shadow:0 0 0 2px color-mix(in srgb,#3d72a8 55%,transparent),0 0 14px color-mix(in srgb,#2f6193 30%,transparent);}50%{box-shadow:0 0 0 3px color-mix(in srgb,#3d72a8 90%,transparent),0 0 26px color-mix(in srgb,#2f6193 50%,transparent);}}
     @keyframes rpSweep{0%{left:-32%;}100%{left:100%;}}
     @keyframes chevBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(5px);}}
     #instrument{position:relative;}
@@ -914,20 +915,24 @@ class Component extends DCLogic {
     if (enabled) return Object.assign({}, base, { cursor: "pointer", color: "#ffffff", background: "linear-gradient(180deg,#3d72a8,#2f6193)", border: "none" });
     return Object.assign({}, base, { cursor: "not-allowed", color: "var(--ink-dim)", background: "rgba(20,33,48,0.05)" });
   }
+  mergePulse(base, on) {
+    if (!on) return base;
+    return Object.assign({}, base, { animation: "dmTargetPulse 1.35s ease-in-out infinite" });
+  }
   guideState() {
     const s = this.state;
-    let hint = "Explore the rest of the page below";
-    if (s.step === 0) hint = "Click Evidence in the left rail";
-    else if (s.step === 1 && s.evSel !== 1) hint = "Select ECOG performance status (E-4.2)";
-    else if (s.step === 1 && !s.evActed["E-4.2"]) hint = "Click Route to PI review";
-    else if (s.step === 1) hint = "Open Screening in the left rail";
-    else if (s.step === 2 && s.scSel !== "S-1047") hint = "Select Marcus Bell in the patient queue";
-    else if (s.step === 2) hint = "Click Open in Resolve →";
-    else if (s.step === 3 && !s.pick) hint = "Choose Accept note · ECOG 2";
-    else if (s.step === 3 && !s.committed["S-1047"]) hint = "Click Sign decision";
-    else if (s.step === 3) hint = "Open Replay in the left rail";
-    else if (s.step === 4 && !s.rpExported) hint = "Click Export Replay";
-    return { hint };
+    let hint = "Explore the rest of the page below", target = null;
+    if (s.step === 0) { hint = "Click Evidence in the left rail"; target = "rail-1"; }
+    else if (s.step === 1 && s.evSel !== 1) { hint = "Select ECOG performance status (E-4.2)"; target = "ev-E-4.2"; }
+    else if (s.step === 1 && !s.evActed["E-4.2"]) { hint = "Click Route to PI review"; target = "ev-action"; }
+    else if (s.step === 1) { hint = "Open Screening in the left rail"; target = "rail-2"; }
+    else if (s.step === 2 && s.scSel !== "S-1047") { hint = "Select Marcus Bell in the patient queue"; target = "sc-S-1047"; }
+    else if (s.step === 2) { hint = "Click Open in Resolve →"; target = "sc-resolve"; }
+    else if (s.step === 3 && !s.pick) { hint = "Choose Accept note · ECOG 2"; target = "resolve-b"; }
+    else if (s.step === 3 && !s.committed["S-1047"]) { hint = "Click Sign decision"; target = "resolve-sign"; }
+    else if (s.step === 3) { hint = "Open Replay in the left rail"; target = "rail-4"; }
+    else if (s.step === 4 && !s.rpExported) { hint = "Click Export Replay"; target = "rp-export"; }
+    return { hint, target };
   }
 
   setStep = (n) => this.setState({ step: n });
@@ -938,13 +943,14 @@ class Component extends DCLogic {
 
   renderVals() {
     const step = this.state.step, A = "#2f6193";
+    const guide = this.guideState(), tgt = guide.target;
     const committedCount = Object.keys(this.state.committed).length;
     const railStatus = ["Locked", "16 blocked", "13 review", (this.cands.length - committedCount) + " to do", "7 complete · 2 partial"];
     const rail = this.steps.map((label, i) => {
       const on = step === i;
       return {
         label, status: railStatus[i], onClick: () => this.setStep(i),
-        rowStyle: { display: "flex", alignItems: "center", gap: 10, padding: "7px 10px", borderRadius: 7, cursor: "pointer", border: "none", width: "100%", textAlign: "left", background: on ? "color-mix(in srgb," + A + " 16%, transparent)" : "transparent", transition: "background 140ms ease" },
+        rowStyle: this.mergePulse({ display: "flex", alignItems: "center", gap: 10, padding: "7px 10px", borderRadius: 7, cursor: "pointer", border: "none", width: "100%", textAlign: "left", background: on ? "color-mix(in srgb," + A + " 16%, transparent)" : "transparent", transition: "background 140ms ease" }, tgt === "rail-" + i),
         iconStyle: { color: on ? "var(--ink-cold)" : "var(--ink-dim)", display: "flex", flexShrink: 0, transition: "color 140ms ease" },
         labelStyle: { flex: 1, fontFamily: "var(--font-body)", fontSize: 13.5, fontWeight: on ? 600 : 500, letterSpacing: "-0.005em", color: on ? "var(--ink-cold)" : "color-mix(in srgb, var(--ink-cold) 60%, transparent)" },
         statusStyle: { fontFamily: "var(--font-display)", fontSize: 9.5, letterSpacing: "0.03em", color: on ? A : "var(--ink-dim)", flexShrink: 0 }
@@ -963,7 +969,7 @@ class Component extends DCLogic {
       const col = this.C(o.tone);
       return {
         label: o.label, onClick: () => { if (!committed) this.setPick(o.id); },
-        style: { display: "flex", alignItems: "center", gap: 12, width: "100%", textAlign: "left", cursor: committed ? "default" : "pointer", padding: "14px 16px", borderRadius: 13, border: "1px solid " + (act ? col : "rgba(31,45,61,0.14)"), background: act ? ("color-mix(in srgb," + col + " 12%, transparent)") : "rgba(31,45,61,0.02)", opacity: committed && !isC ? 0.4 : 1, transition: "all 150ms ease" },
+        style: this.mergePulse({ display: "flex", alignItems: "center", gap: 12, width: "100%", textAlign: "left", cursor: committed ? "default" : "pointer", padding: "14px 16px", borderRadius: 13, border: "1px solid " + (act ? col : "rgba(31,45,61,0.14)"), background: act ? ("color-mix(in srgb," + col + " 12%, transparent)") : "rgba(31,45,61,0.02)", opacity: committed && !isC ? 0.4 : 1, transition: "all 150ms ease" }, tgt === "resolve-b" && o.id === "b" && !committed),
         ringStyle: { width: 17, height: 17, borderRadius: "50%", flexShrink: 0, display: "grid", placeItems: "center", border: "1.5px solid " + (act ? col : "rgba(31,45,61,0.3)") },
         dotStyle: { width: 7, height: 7, borderRadius: "50%", background: col, opacity: act ? 1 : 0 },
         labelStyle: { fontSize: 14, fontWeight: 500, color: act ? "var(--ink-cold)" : "var(--ink-quiet)" }
@@ -1023,7 +1029,7 @@ class Component extends DCLogic {
     const detC = (f) => f === "ok" ? "#2e9e6b" : f === "warn" ? "#bf831f" : f === "ref" ? "var(--ink-dim)" : "var(--ink-cold)";
     const sel = { event:se.ev, time:se.t, eid:se.eid, exc: se.exc === "none" ? "" : se.exc.toUpperCase(), excStyle: se.exc==="none" ? {display:"none"} : this.chip("#bf831f"), rows: se.rows.map((r)=>({k:r[0], v:r[1], c: detC(r[2])})), related: se.rel };
     const rpExported = !!this.state.rpExported;
-    const rp = { runId: "RPL-2026-0622-018-1047", ledger, filters, sel, exportLabel: rpExported ? "✓ Export Ready" : "Export Replay", exportStyle: this.primaryBtn(rpExported, !rpExported, { sm: true, mt: 0, align: "auto" }), onExport: () => { if (!rpExported) { this.setState({ rpExported: true }); setTimeout(() => this.scrollTo("integrations"), 650); } } };
+    const rp = { runId: "RPL-2026-0622-018-1047", ledger, filters, sel, exportLabel: rpExported ? "✓ Export Ready" : "Export Replay", exportStyle: this.mergePulse(this.primaryBtn(rpExported, !rpExported, { sm: true, mt: 0, align: "auto" }), tgt === "rp-export" && !rpExported), onExport: () => { if (!rpExported) { this.setState({ rpExported: true }); setTimeout(() => this.scrollTo("integrations"), 650); } } };
     
 
     const SCm = { conflict: "#dc3a52", missing: "#c06a1e", stale: "#bf831f", judgment: "#a9c0d6" };
@@ -1058,9 +1064,9 @@ class Component extends DCLogic {
     const mkStat = (n, label, c) => ({ n, label, style: { flex: 1, minWidth: 0, display: "flex", flexDirection: "column", padding: "10px 12px", borderRadius: 11, background: "color-mix(in srgb," + c + " 6%,transparent)", border: "1px solid color-mix(in srgb," + c + " 20%,transparent)" }, nStyle: { fontFamily: "var(--font-display)", fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em", lineHeight: 1, color: c, fontVariantNumeric: "tabular-nums" } });
     const evStats = this.evStatsData.map((s) => mkStat(s.n, s.label, this.tone(s.tone)));
     const EVCLS = (s) => ({ missing: "Source-dependent", conflict: "Subjective", stale: "Temporal", ambiguous: "Temporal", ready: "Computable", review: "Subjective" })[s] || "Source-dependent";
-    const reqRows = this.evReqs.map((r, i) => { const on = i === evSel, col = this.EVC(r.state); return { code: r.code, fact: r.fact, color: col, stLabel: this.EVL(r.state), cls: EVCLS(r.state), blocks: r.blocks, action: r.action, onClick: () => this.setState({ evSel: i }), style: { display: "flex", flexDirection: "column", width: "100%", textAlign: "left", cursor: "pointer", padding: "11px 13px", borderRadius: 11, border: "1px solid " + (on ? "color-mix(in srgb,#2f6193 42%,transparent)" : "rgba(31,45,61,0.1)"), background: on ? "color-mix(in srgb,#2f6193 7%,transparent)" : "#ffffff", transition: "all 140ms ease" }, chipStyle: this.chip(col) }; });
+    const reqRows = this.evReqs.map((r, i) => { const on = i === evSel, col = this.EVC(r.state); return { code: r.code, fact: r.fact, color: col, stLabel: this.EVL(r.state), cls: EVCLS(r.state), blocks: r.blocks, action: r.action, onClick: () => this.setState({ evSel: i }), style: this.mergePulse({ display: "flex", flexDirection: "column", width: "100%", textAlign: "left", cursor: "pointer", padding: "11px 13px", borderRadius: 11, border: "1px solid " + (on ? "color-mix(in srgb,#2f6193 42%,transparent)" : "rgba(31,45,61,0.1)"), background: on ? "color-mix(in srgb,#2f6193 7%,transparent)" : "#ffffff", transition: "all 140ms ease" }, tgt === "ev-E-4.2" && r.code === "E-4.2"), chipStyle: this.chip(col) }; });
     const dq = this.evReqs[evSel], dcol = this.EVC(dq.state), acted = !!this.state.evActed[dq.code];
-    const detail = { code: dq.code, color: dcol, stLabel: this.EVL(dq.state), trigger: dq.trigger.replace(/_/g, " "), fact: dq.fact, requiredBy: dq.requiredBy, cls: EVCLS(dq.state), coord: (dq.state === "conflict" || dq.state === "ambiguous") ? (dq.state === "conflict" ? "Subjective criterion. A clinician confirms which source governs." : "Ambiguous timing. The coordinator resolves it by chart review.") : "", computable: !(dq.state === "conflict" || dq.state === "ambiguous"), arm: (dq.code.charAt(0) === "E" ? "Exclusion · blocks both arms" : "Inclusion · gates Arm A"), current: dq.current, sourcesText: dq.sources, checked: dq.checked, actionLabel: acted ? "✓ " + dq.action : dq.action, actionStyle: this.primaryBtn(acted, !acted), acted: acted, actedTicket: "TASK-" + dq.code.replace(/[^0-9]/g, "") + "-1047", actedInfo: "Sent to " + (dq.code.charAt(0) === "E" ? "PI / Sub-I" : "the coordinator") + " for " + dq.fact + ". No model casts a verdict — a human resolves the conflict and the decision is written to the immutable ledger.", actedSteps: ["→ Owner notified · Maya R. (Coordinator)", "→ SLA: review within 24h · protocol v2.1", "→ Resolution links back to this evidence node"], chipStyle: this.chip(dcol), onAction: () => { if (!acted) this.setState((st) => { const m = Object.assign({}, st.evActed); m[dq.code] = true; return { evActed: m }; }); }, patients: dq.patients.slice(0, 2).map((p) => ({ n: p.n, src: p.src, date: p.date, dotStyle: { width: 7, height: 7, borderRadius: "50%", flexShrink: 0, background: this.EVC(p.st) } })) };
+    const detail = { code: dq.code, color: dcol, stLabel: this.EVL(dq.state), trigger: dq.trigger.replace(/_/g, " "), fact: dq.fact, requiredBy: dq.requiredBy, cls: EVCLS(dq.state), coord: (dq.state === "conflict" || dq.state === "ambiguous") ? (dq.state === "conflict" ? "Subjective criterion. A clinician confirms which source governs." : "Ambiguous timing. The coordinator resolves it by chart review.") : "", computable: !(dq.state === "conflict" || dq.state === "ambiguous"), arm: (dq.code.charAt(0) === "E" ? "Exclusion · blocks both arms" : "Inclusion · gates Arm A"), current: dq.current, sourcesText: dq.sources, checked: dq.checked, actionLabel: acted ? "✓ " + dq.action : dq.action, actionStyle: this.mergePulse(this.primaryBtn(acted, !acted), tgt === "ev-action" && !acted), acted: acted, actedTicket: "TASK-" + dq.code.replace(/[^0-9]/g, "") + "-1047", actedInfo: "Sent to " + (dq.code.charAt(0) === "E" ? "PI / Sub-I" : "the coordinator") + " for " + dq.fact + ". No model casts a verdict — a human resolves the conflict and the decision is written to the immutable ledger.", actedSteps: ["→ Owner notified · Maya R. (Coordinator)", "→ SLA: review within 24h · protocol v2.1", "→ Resolution links back to this evidence node"], chipStyle: this.chip(dcol), onAction: () => { if (!acted) this.setState((st) => { const m = Object.assign({}, st.evActed); m[dq.code] = true; return { evActed: m }; }); }, patients: dq.patients.slice(0, 2).map((p) => ({ n: p.n, src: p.src, date: p.date, dotStyle: { width: 7, height: 7, borderRadius: "50%", flexShrink: 0, background: this.EVC(p.st) } })) };
     const covSegs = [ { n: 25, c: "#2e9e6b", label: "Mapped" }, { n: 4, c: "#c06a1e", label: "Missing" }, { n: 3, c: "#dc3a52", label: "Conflict" }, { n: 4, c: "#bf831f", label: "Stale" } ];
     const coverage = covSegs.map((s) => ({ n: s.n, label: s.label, style: { width: (s.n / 36 * 100) + "%", background: s.c }, dot: { width: 7, height: 7, borderRadius: "50%", background: s.c, display: "inline-block", flexShrink: 0 } }));
     const ev = { connectors, coverage, reqRows, detail };
@@ -1073,14 +1079,12 @@ class Component extends DCLogic {
     const cnt = (fn) => this.scQueue.filter(fn).length;
     const scCats = [ { n: String(cnt((p) => p.st === "ELIGIBLE")), label: "Pass", c: "#2e9e6b", key: "ELIGIBLE" }, { n: String(cnt((p) => p.st === "REVIEW")), label: "Review", c: "#bf831f", key: "REVIEW" }, { n: String(cnt((p) => p.st === "FAIL")), label: "Fail", c: "#7c8a99", key: "FAIL" } ];
     const scSummary = scCats.map((s) => { const active = SCFILT === s.key; return { n: s.n, label: s.label, onClick: () => { const first = active ? null : this.scQueue.find((p) => p.st === s.key); this.setState({ scFilter: active ? null : s.key, scSel: first ? first.id : this.state.scSel }); }, style: { flex: 1, minWidth: 0, display: "flex", flexDirection: "column", padding: "10px 12px", borderRadius: 11, cursor: "pointer", textAlign: "left", border: "1px solid " + (active ? "color-mix(in srgb," + s.c + " 55%,transparent)" : "rgba(31,45,61,0.1)"), background: active ? "color-mix(in srgb," + s.c + " 13%,transparent)" : "color-mix(in srgb," + s.c + " 5%,transparent)", transition: "all 140ms ease" }, nStyle: { fontFamily: "var(--font-display)", fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em", lineHeight: 1, color: s.c, fontVariantNumeric: "tabular-nums" } }; });
-    const queue = fq.map((p) => { const on = p.id === scSelId, scol = this.SCS(p.st), tg = this.TRIG(p.trig); return { onClick: () => this.setState({ scSel: p.id }), style: { display: "flex", alignItems: "center", gap: 11, width: "100%", textAlign: "left", cursor: "pointer", padding: "9px 12px", borderRadius: 11, border: "1px solid " + (on ? "color-mix(in srgb,#2f6193 42%,transparent)" : "rgba(31,45,61,0.08)"), background: on ? "color-mix(in srgb,#2f6193 7%,transparent)" : "#ffffff", transition: "all 140ms ease" }, barStyle: { width: 3, alignSelf: "stretch", borderRadius: 2, background: scol, flexShrink: 0 }, name: p.name, idText: p.id, crit: p.crit, stLabel: p.st === "ELIGIBLE" ? "CONFIRM" : p.st, stStyle: this.chip(scol), trigLabel: tg[0], trigStyle: tg[0] ? this.chip(tg[1]) : { display: "none" }, owner: p.owner }; });
+    const queue = fq.map((p) => { const on = p.id === scSelId, scol = this.SCS(p.st), tg = this.TRIG(p.trig); return { onClick: () => this.setState({ scSel: p.id }), style: this.mergePulse({ display: "flex", alignItems: "center", gap: 11, width: "100%", textAlign: "left", cursor: "pointer", padding: "9px 12px", borderRadius: 11, border: "1px solid " + (on ? "color-mix(in srgb,#2f6193 42%,transparent)" : "rgba(31,45,61,0.08)"), background: on ? "color-mix(in srgb,#2f6193 7%,transparent)" : "#ffffff", transition: "all 140ms ease" }, tgt === "sc-S-1047" && p.id === "S-1047"), barStyle: { width: 3, alignSelf: "stretch", borderRadius: 2, background: scol, flexShrink: 0 }, name: p.name, idText: p.id, crit: p.crit, stLabel: p.st === "ELIGIBLE" ? "CONFIRM" : p.st, stStyle: this.chip(scol), trigLabel: tg[0], trigStyle: tg[0] ? this.chip(tg[1]) : { display: "none" }, owner: p.owner }; });
     const sp = fq.find((p) => p.id === scSelId) || fq[0] || this.scQueue[0];
     const spTg = this.TRIG(sp.trig);
     const resolveOpened = this.state.step >= 3;
-    const why = { name: sp.name, id: sp.id, st: sp.st === "ELIGIBLE" ? "CONFIRM" : sp.st, stStyle: this.chip(this.SCS(sp.st)), blocker: sp.blocker, rule: sp.rule, facts: sp.facts, sources: sp.sources, result: sp.result, resultColor: this.SCS(sp.st), reason: sp.reason, trigger: spTg[0] || "·", rec: sp.rec, hasResolve: sp.ci != null, resolveLabel: resolveOpened ? "✓ Opened in Resolve" : "Open in Resolve →", resolveStyle: this.primaryBtn(resolveOpened, sp.ci != null && !resolveOpened, { sm: true, mt: 13 }), onResolve: sp.ci != null ? (() => this.setState({ ci: sp.ci, pick: null, step: 3 })) : (() => {}) };
+    const why = { name: sp.name, id: sp.id, st: sp.st === "ELIGIBLE" ? "CONFIRM" : sp.st, stStyle: this.chip(this.SCS(sp.st)), blocker: sp.blocker, rule: sp.rule, facts: sp.facts, sources: sp.sources, result: sp.result, resultColor: this.SCS(sp.st), reason: sp.reason, trigger: spTg[0] || "·", rec: sp.rec, hasResolve: sp.ci != null, resolveLabel: resolveOpened ? "✓ Opened in Resolve" : "Open in Resolve →", resolveStyle: this.mergePulse(this.primaryBtn(resolveOpened, sp.ci != null && !resolveOpened, { sm: true, mt: 13 }), tgt === "sc-resolve" && sp.ci != null && !resolveOpened), onResolve: sp.ci != null ? (() => this.setState({ ci: sp.ci, pick: null, step: 3 })) : (() => {}) };
     const sc = { isBoard: this.state.scView === "board", isMap: this.state.scView === "map", onBoard: () => this.setState({ scView: "board" }), onMap: () => this.setState({ scView: "map" }), boardTabStyle: this.segTab(this.state.scView === "board"), mapTabStyle: this.segTab(this.state.scView === "map"), summary: scSummary, queue, why };
-
-    const guide = this.guideState();
 
     return {
       rail, rP: rail[0], rE: rail[1], rS: rail[2], rR: rail[3], rRp: rail[4],
@@ -1090,7 +1094,7 @@ class Component extends DCLogic {
       candChips, opts, cur,
       awaiting: this.cands.length - committedCount, committedCount,
       onCommit: this.commit,
-      commitStyle: { padding: "11px 20px", borderRadius: 10, cursor: canCommit ? "pointer" : "not-allowed", border: "none", fontFamily: "var(--font-display)", fontSize: 14, fontWeight: 600, color: canCommit ? "#ffffff" : "var(--ink-dim)", background: canCommit ? "linear-gradient(180deg,#3d72a8,#2f6193)" : "rgba(20,33,48,0.05)", flexShrink: 0, transition: "all 150ms ease" },
+      commitStyle: this.mergePulse({ padding: "11px 20px", borderRadius: 10, cursor: canCommit ? "pointer" : "not-allowed", border: "none", fontFamily: "var(--font-display)", fontSize: 14, fontWeight: 600, color: canCommit ? "#ffffff" : "var(--ink-dim)", background: canCommit ? "linear-gradient(180deg,#3d72a8,#2f6193)" : "rgba(20,33,48,0.05)", flexShrink: 0, transition: "all 150ms ease" }, tgt === "resolve-sign" && !committed),
       segPassStyle: { width: Math.round(scSeg.pass / scSeg.evaluated * 100) + "%", height: "100%", background: "#2e9e6b" },
       segReviewStyle: { width: Math.round(scSeg.review / scSeg.evaluated * 100) + "%", height: "100%", background: "#bf831f" },
       segFailStyle: { width: Math.round(scSeg.fail / scSeg.evaluated * 100) + "%", height: "100%", background: "rgba(124,138,153,0.5)" },
