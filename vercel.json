@@ -17,15 +17,15 @@
   ],
   "headers": [
     {
-      "source": "/((?!assets/).*)",
+      "source": "/((?!assets/|_ds/|uploads/).*)",
       "headers": [
         { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
       ]
     },
     {
-      "source": "/shared/(.*)",
+      "source": "/(_ds|uploads)/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]
     },
     {

@@ -1,89 +1,138 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html>
 <head>
 <meta charset="utf-8">
-<script type="importmap">
-{ "imports": { "three": "./assets/vendor/three/three.module.js", "three/addons/": "./assets/vendor/three/addons/" } }
-</script>
-<script src="shared/nav-warm.js?v=3"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="color-scheme" content="dark">
-<title>Damaros · About</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About — Damaros™</title>
+<meta name="description" content="Care happens everywhere. The trials that save lives don't. Damaros is built to get more patients to therapeutic options faster, on an execution platform that scales with any site size.">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#ffffff">
+<link rel="canonical" href="https://www.damaros.ai/about">
 <link rel="icon" href="assets/damaros-favicon.png" type="image/png">
-<link rel="preload" as="font" type="font/woff2" href="assets/fonts/archivo/archivo-latin.woff2" crossorigin>
-<link rel="preload" as="font" type="font/woff2" href="assets/fonts/hanken-grotesk/hanken-grotesk-latin.woff2" crossorigin>
-<link rel="stylesheet" href="shared/damaros.css">
-<link rel="stylesheet" href="shared/nav-chrome.css">
-<link rel="stylesheet" href="shared/journey-doc.css">
-<link rel="stylesheet" href="shared/page-transition.css?v=2">
+<meta property="og:type" content="website">
+<meta property="og:title" content="About — Damaros™">
+<meta property="og:description" content="Care happens everywhere. The trials that save lives don't.">
+<meta property="og:url" content="https://www.damaros.ai/about">
+<script src="./support.js"></script>
 </head>
 <body>
-<script>if(document.documentElement.classList.contains('nav-warm')){document.body.classList.remove('doc-intro');document.body.classList.add('world-ready');}</script>
-<nav class="dmx-nav">
-  <div class="dmx-nav-start">
-    <a class="dmx-brand" href="index.html" aria-label="Damaros">Damaros<sup>™</sup></a>
-    <a class="dmx-back" href="index.html"><span class="dmx-back-arrow" aria-hidden="true">←</span> Go back</a>
-  </div>
-  <div class="dmx-nav-links">
-    <a class="dmx-nav-link" href="runtime.html">Runtime</a>
-    <a class="dmx-nav-link" href="docs/fhir.html">FHIR</a>
-    <a class="dmx-nav-link" href="about.html" aria-current="true">About</a>
-    <a class="dmx-nav-cta" href="/cdn-cgi/l/email-protection#1d7c73746f6879755d797c707c6f726e337c74226e687f77787e6920597c707c6f726e382f2d54736c68746f64" aria-label="Get in touch"><span class="dmx-nav-cta-label">Get in Touch</span><svg class="dmx-nav-cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"></path><path d="M22 2 15 22l-4-9-9-4 20-7z"></path></svg></a>
-  </div>
-</nav>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/field-damaros-design-system-4f31ac24-d8ba-43d3-a92f-3828bab7dce7/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/field-damaros-design-system-4f31ac24-d8ba-43d3-a92f-3828bab7dce7/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/field-damaros-design-system-4f31ac24-d8ba-43d3-a92f-3828bab7dce7/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/field-damaros-design-system-4f31ac24-d8ba-43d3-a92f-3828bab7dce7/tokens/spacing.css">
+  <link rel="stylesheet" href="_ds/field-damaros-design-system-4f31ac24-d8ba-43d3-a92f-3828bab7dce7/tokens/effects.css">
+  <link rel="stylesheet" href="_ds/field-damaros-design-system-4f31ac24-d8ba-43d3-a92f-3828bab7dce7/styles.css">
+  <script src="_ds/field-damaros-design-system-4f31ac24-d8ba-43d3-a92f-3828bab7dce7/_ds_bundle.js"></script>
+  <style>
+    *{box-sizing:border-box;}
+    :root{
+      --ink-cold:#10161d;
+      --ink-steel:#2f6193;
+      --ink-quiet:#3c4955;
+      --ink-faint:#586674;
+      --ink-dim:#7b8794;
+      --steel:#2f6193;
+      --accent:#2f6193;
+      --state-pass:#2e9e6b;
+      --state-review:#bf831f;
+      --state-fail:#dc3a52;
+    }
+    html{scroll-behavior:smooth;}
+    body{margin:0;background:#ffffff;color:var(--ink-cold);font-family:var(--font-body);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+    a{color:inherit;text-decoration:none;}
+    @keyframes dmDrift{0%,100%{transform:translate(-50%,-50%) rotate(0deg);}50%{transform:translate(-49%,-51%) rotate(2.5deg);}}
+    @media (prefers-reduced-motion:reduce){[data-anim]{animation:none !important;}}
+  </style>
+</helmet>
 
-<canvas id="world" aria-hidden="true"></canvas>
-<div class="world-scrim" aria-hidden="true"></div>
+<div style="min-height:100vh;background:#ffffff;overflow-x:hidden;">
 
-<main class="about">
-  <div class="a-eyebrow">Founder</div>
-  <h1 class="a-title">Every patient deserves the trial that could save them.</h1>
+  <!-- ============ NAV ============ -->
+  <header style="position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:18px;height:62px;padding:0 clamp(18px,5vw,40px);background:rgba(255,255,255,0.72);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);border-bottom:1px solid rgba(31,45,61,0.10);">
+    <a href="index.html" style="display:inline-flex;align-items:center;gap:8px;">
+      <span style="font-family:var(--font-display);font-weight:700;font-size:18px;letter-spacing:-0.022em;line-height:1;color:var(--ink-cold);">Damaros<sup style="font-size:0.46em;font-weight:500;letter-spacing:0;color:var(--ink-dim);margin-left:1.5px;">™</sup></span>
+    </a>
+    <nav style="margin-left:auto;display:flex;align-items:center;gap:4px;">
+      <a href="index.html" style="padding:8px 13px;font-size:13px;font-weight:500;color:var(--ink-quiet);border-radius:6px;">Home</a>
+      <a href="about.html" style="padding:8px 13px;font-size:13px;font-weight:600;color:var(--ink-cold);border-radius:6px;">About</a>
+      <div style="width:1px;height:20px;background:rgba(31,45,61,0.14);margin:0 8px;"></div>
+      <a href="mailto:anirudh@damaros.ai" style="display:inline-flex;align-items:center;justify-content:center;height:36px;padding:0 16px;border-radius:999px;font-family:var(--font-mono);font-size:12px;font-weight:500;letter-spacing:0.03em;text-transform:uppercase;color:#ffffff;background:linear-gradient(180deg,#3d72a8,#2f6193);border:1px solid color-mix(in srgb,#2f6193 50%,rgba(255,255,255,0.22));box-shadow:inset 0 1px 0 rgba(255,255,255,0.2), 0 8px 20px rgba(20,46,82,0.16);white-space:nowrap;">Start a pilot</a>
+    </nav>
+  </header>
 
-  <div class="a-grid">
-    <div class="a-prose">
-      <p class="a-lead">I founded Damaros from inside clinical medicine, where the trial rift is not an abstraction. A patient exhausts the standard options. The trial that could help them is open somewhere they will never reach. For some, that distance is fatal.</p>
-
-      <p>A handful of elite centers can run complex protocols at scale. The community clinic down the road, where most patients are treated, cannot. The same patient, with the same disease and the same eligibility, gets the trial in one building and never hears of it in the other. Geography decides, not medicine.</p>
-
-      <p>That is not a medicine problem. It is an execution problem, and execution can be built.</p>
-
-      <p class="a-pull">The point is not better software. It is the patient who finally <em>reaches the trial.</em></p>
-
-      <p>Damaros turns a community site into an audit-ready trial site: protocol logic compiled to executable criteria, evidence admitted with provenance, deterministic screening, human review, and Replay. The clinic keeps its patients and its care. The trial becomes runnable where the patient already is.</p>
-
-      <p>The same layer bolts onto major centers too. Damaros sits underneath as governed execution that is attributable and replayable. We do not replace Epic, CTMS, EDC, or eTMF. We create the execution record upstream of them.</p>
-
-      <p>Discovery is accelerating. Protocols are becoming more complex. Patient evidence is expanding across fragmented systems. Sites are being asked to operationalize work their software stack was never built to run. That gap becomes infrastructure.</p>
-
-      <p>The next clinical AI companies will not be built by wrapping models around workflows they do not understand. Regulated medicine does not adopt intelligence because it sounds powerful. It adopts systems that understand the work deeply enough to encode boundaries, provenance, human review, and replay. Clinical trials expose the failure first, so Damaros begins there: the need is immediate, the cost is counted in patients, and the workflow is already breaking.</p>
-
-      <p>Strip away the runtime, the agents, and the governance, and one question is left: did a patient who could have been saved ever reach the trial in time? Everything Damaros builds answers to that.</p>
-
-      <p class="a-doctrine">The doctrine stays constant: the model is not the system of record. Agents accelerate. <em>Humans decide. Replay proves.</em></p>
+  <!-- ============ HERO ============ -->
+  <section data-screen-label="About hero" style="position:relative;padding:clamp(72px,9vw,124px) clamp(20px,5vw,40px) clamp(44px,5vw,68px);background:radial-gradient(120% 80% at 50% -8%, #f6fafc 0%, #eef3f8 44%, #ffffff 80%);overflow:hidden;">
+    <div aria-hidden="true" data-anim="" style="position:absolute;top:46%;left:50%;width:min(560px,92%);height:min(560px,92%);transform:translate(-50%,-50%);color:rgba(31,45,61,0.11);pointer-events:none;animation:dmDrift 30s ease-in-out infinite;"><svg viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="30" stroke-linejoin="round" stroke-linecap="round" style="width:100%;height:100%;"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg></div>
+    <div style="position:relative;max-width:880px;margin:0 auto;text-align:center;">
+      <div style="font-family:var(--font-body);font-size:11.5px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:24px;">About Damaros<sup style="font-size:0.5em;letter-spacing:0;">™</sup></div>
+      <h1 style="margin:0;font-family:var(--font-display);font-weight:700;font-size:clamp(2.3rem,5vw,3.8rem);line-height:1.02;letter-spacing:-0.03em;text-wrap:balance;">Care happens everywhere. <span style="color:var(--ink-steel);">The trials that save lives don't.</span></h1>
+      <p style="margin:24px auto 0;max-width:50ch;font-size:clamp(1.08rem,1.6vw,1.3rem);line-height:1.5;color:var(--ink-quiet);">One mission: get more patients to therapeutic options faster</p>
     </div>
+  </section>
 
-    <div class="a-side">
-      <div class="a-card">
-        <span class="a-name">Anirudh C. Nimmagadda</span>
-        <span class="a-role">Founder &amp; CEO · MD/MSAI Candidate</span>
-        <a class="a-linkedin dmx-cta dmx-cta--sm" href="https://www.linkedin.com/in/acnimma/" target="_blank" rel="noopener noreferrer">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
-          Connect on LinkedIn
-        </a>
+  <!-- ============ WHY NOW ============ -->
+  <section data-screen-label="Why now" style="position:relative;padding:clamp(56px,7vw,92px) clamp(20px,5vw,40px);background:#f3f6f9;border-top:1px solid rgba(31,45,61,0.08);">
+    <div style="max-width:1080px;margin:0 auto;">
+      <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Why now</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:clamp(28px,5vw,56px);align-items:start;">
+        <div>
+          <h2 style="margin:0;max-width:16ch;font-family:var(--font-display);font-weight:700;font-size:clamp(1.8rem,3.6vw,2.7rem);line-height:1.04;letter-spacing:-0.03em;text-wrap:balance;">AI doesn't fix the bottleneck. <span style="color:var(--ink-steel);">It makes it worse.</span></h2>
+          <p style="margin:20px 0 0;max-width:46ch;font-size:clamp(1.02rem,1.4vw,1.16rem);line-height:1.55;color:var(--ink-quiet);">AI is accelerating discovery, more candidates, more protocols, more amendments, tighter eligibility. None of it reaches a patient until a site executes. The constraint was never discovery. It is execution, and every model upstream multiplies the work downstream.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="padding:20px 22px;border-radius:14px;border:1px solid rgba(31,45,61,0.12);background:#ffffff;">
+            <div style="font-family:var(--font-mono);font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:9px;">At major centers</div>
+            <p style="margin:0;font-size:13.5px;line-height:1.5;color:var(--ink-quiet);">More open protocols per coordinator, more amendments to re-screen against. Throughput stalls on the same manual eligibility work, just more of it.</p>
+          </div>
+          <div style="padding:20px 22px;border-radius:14px;border:1px solid rgba(31,45,61,0.12);background:#ffffff;">
+            <div style="font-family:var(--font-mono);font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:9px;">At community sites</div>
+            <p style="margin:0;font-size:13.5px;line-height:1.5;color:var(--ink-quiet);">The patients are already there, but without an execution layer the matches are never seen in time. The gap between care and trial only widens.</p>
+          </div>
+          <div style="padding:16px 22px;border-radius:14px;background:linear-gradient(180deg,#eef3f8,#e7eef5);border:1px solid rgba(47,97,147,0.18);">
+            <p style="margin:0;font-size:13.5px;line-height:1.5;color:var(--ink-cold);">More intelligence in the pipeline makes a deterministic, replayable execution layer <span style="color:var(--ink-steel);font-weight:600;">more necessary, not less.</span></p>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</main>
+  </section>
 
-<footer>
-  <span class="geo pending" id="geo">Locating</span>
-  <span class="cp">© 2026 Damaros™</span>
-  <a href="privacy.html">Privacy</a>
-</footer>
+  <!-- ============ FOUNDER ============ -->
+  <section data-screen-label="Founder" style="position:relative;padding:clamp(60px,8vw,104px) clamp(20px,5vw,40px);background:#ffffff;border-top:1px solid rgba(31,45,61,0.08);">
+    <div style="max-width:720px;margin:0 auto;">
+      <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:24px;">From the founder</div>
+      <p style="margin:0;font-family:var(--font-display);font-size:clamp(1.3rem,2.4vw,1.8rem);font-weight:700;line-height:1.32;letter-spacing:-0.02em;color:var(--ink-cold);text-wrap:balance;">My goal is to bring trials to the community clinics where most patients are already treated, on an execution platform that scales with <span style="color:var(--ink-steel);">any site size.</span></p>
+      <div style="display:flex;align-items:center;gap:16px;margin-top:32px;padding-top:26px;border-top:1px solid rgba(31,45,61,0.12);">
+        
+        <div>
+          <div style="font-family:var(--font-display);font-size:16px;font-weight:700;letter-spacing:-0.01em;color:var(--ink-cold);">Anirudh C. Nimmagadda</div>
+          <div style="font-family:var(--font-mono);font-size:11.5px;color:var(--ink-dim);margin-top:3px;">Founder · MD, MSAI candidate</div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<script src="shared/geo-footer.js"></script>
-<script type="module" src="shared/doc-world.js?v=2"></script>
-<script src="shared/doc-ui.js?v=2"></script>
-<script src="shared/nav-transition.js?v=3"></script>
+  <!-- ============ CLOSE ============ -->
+  
+
+  <!-- ============ FOOTER ============ -->
+  <footer style="background:#eef1f4;border-top:1px solid rgba(31,45,61,0.08);padding:clamp(40px,6vw,64px) clamp(20px,5vw,40px);">
+    <div style="max-width:1080px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:20px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-family:var(--font-display);font-weight:700;font-size:15px;letter-spacing:-0.02em;line-height:1;color:var(--ink-quiet);">Damaros<sup style="font-size:0.46em;font-weight:500;letter-spacing:0;color:var(--ink-dim);margin-left:1.5px;">™</sup></span>
+      </div>
+      <nav style="display:flex;gap:8px;flex-wrap:wrap;">
+        <a href="index.html" style="font-size:12.5px;color:var(--ink-dim);padding:4px 8px;">Home</a>
+        <a href="about.html" style="font-size:12.5px;color:var(--ink-dim);padding:4px 8px;">About</a>
+        <a href="privacy.html" style="font-size:12.5px;color:var(--ink-dim);padding:4px 8px;">Privacy</a>
+      </nav>
+      <div style="margin-left:auto;font-family:var(--font-mono);font-size:11px;color:var(--ink-dim);letter-spacing:0.03em;">© 2026 Damaros™</div>
+    </div>
+  </footer>
+
+</div>
+
+<template id="__bundler_thumbnail"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="#0c1118"></rect><g transform="translate(50 50) scale(0.075) translate(-238 -260)" fill="none" stroke="#A9C0D6" stroke-width="33" stroke-linejoin="round" stroke-linecap="round"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></g></svg></template></x-dc>
 </body>
 </html>

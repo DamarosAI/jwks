@@ -1,0 +1,16 @@
+/* ============================================================
+ * FIELD · Fonts
+ * The public Damaros canon: Archivo for display / wordmark,
+ * Hanken Grotesk for body & labels, IBM Plex Mono for the data
+ * register (run IDs, hashes, timestamps, criteria, lab values).
+ * All three are loaded from Google Fonts. The product console
+ * historically pairs Chakra Petch + Plus Jakarta Sans as a
+ * denser operator alternate — see typography.css notes.
+ * ============================================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Hanken+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap");
+
+/* Operator-console alternate faces (denser product chrome) — Chakra Petch
+ * display + Plus Jakarta Sans UI. Loaded so the *-operator type tokens
+ * resolve to the real product faces, not a fallback. */
+@import url("https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap");

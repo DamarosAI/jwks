@@ -1,0 +1,25 @@
+/* ============================================================
+ * FIELD · Spacing & layout
+ * 4-based scale, matching the operator console exactly. Dense by
+ * default — Damaros is an instrument, not a marketing page.
+ * ============================================================ */
+
+:root {
+  --space-0: 4px;
+  --space-1: 8px;
+  --space-2: 12px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+  --space-6: 48px;
+  --space-7: 64px;
+  --space-8: 96px;
+
+  /* Page gutter — fluid, used by full-bleed brand layouts */
+  --page-gutter: clamp(1.2rem, 4vw, 2.4rem);      /* @kind spacing */
+  --page-gutter-wide: clamp(2rem, 5.2vw, 3.6rem);  /* @kind spacing */
+
+  /* Content measures */
+  --measure-prose: 60ch;   /* @kind other */
+  --measure-narrow: 46ch;  /* @kind other */
+}

@@ -1,0 +1,96 @@
+/* ============================================================
+ * FIELD · Color tokens
+ * Damaros is mineral, dark, and spatial — "calm, precise,
+ * expensive." Light is never decoration. One stone-blue signal
+ * (steel) carries structure; semantic colors are restrained and
+ * reserved for trial state (PASS / REVIEW / FAIL) and governance.
+ *
+ * Two real surfaces share this palette:
+ *   · damaros.ai (the public field)  — jet backgrounds, Archivo
+ *   · Node / Console (operator)      — near-black, denser, mono
+ * Both are expressed here. Base values first, semantic aliases
+ * second. The webapp-compatible aliases (--bg-base, --accent,
+ * --status-*) let UI-kit recreations consume the real product
+ * class system unchanged.
+ * ============================================================ */
+
+:root {
+  /* ---- Mineral surfaces (darkest → lifted) ---- */
+  --field-black: #000000;       /* operator base — absolute */
+  --field-void: #06080b;        /* jet — canonical page ground */
+  --field-deep: #0c1118;        /* lifted black, depth wash */
+  --field-surface: #121820;     /* raised surface / card body */
+  --field-elevated: #1a222c;    /* popover, modal, menu */
+
+  /* ---- Ink ---- */
+  --ink-cold: #e8ecf0;          /* cold white — primary text */
+  --ink-steel: #a9c0d6;         /* stone-blue — structure / accent ink */
+  --ink-dim: #7c8a99;           /* residue — tertiary / unresolved */
+  --ink-faint: rgba(232, 236, 240, 0.55);
+  --ink-quiet: rgba(232, 236, 240, 0.72);
+
+  /* ---- Signal (the one accent) ---- */
+  --steel: #a9c0d6;             /* primary signal / structure */
+  --steel-bright: #c2d5e6;      /* hover / lift */
+  --steel-muted: #7b96b2;       /* operator-console accent */
+  --deep-blue: #2f5f8c;         /* boundary / deep structure */
+
+  /* ---- Trial state — deterministic verdict taxonomy ---- */
+  --state-pass: #5bb98c;        /* resolution / readiness — green */
+  --state-review: #d9a23e;      /* restrained amber — REVIEW */
+  --state-fail: #f2566e;        /* rare red — breach / FAIL only */
+  --state-governed: #8c7cf0;    /* ultraviolet — Luna / AI provenance / ceremony */
+  /* Operator-console brighter variants (denser instrument surfaces) */
+  --state-pass-bright: #4ade80;
+  --state-review-bright: #facc15;
+  --state-fail-bright: #fb7185;
+  --state-blinded: #6b7280;     /* DSMB blinded */
+  --state-unblinded: #f97316;   /* DSMB unblinded */
+
+  /* ---- REVIEW driver families (discriminating hues) ---- */
+  --driver-missing: #f59e0b;        /* required evidence absent */
+  --driver-conflict: #f2566e;       /* structured vs narrative conflict */
+  --driver-stale: #8c93a3;          /* evidence past freshness window */
+  --driver-narrative-only: #8c7cf0; /* signal only in unstructured note */
+  --driver-unsupported: #94a3b8;    /* criterion outside ontology */
+
+  /* ---- Lines ---- */
+  --border-hairline: rgba(169, 192, 214, 0.1);
+  --border: rgba(169, 192, 214, 0.18);
+  --border-strong: rgba(169, 192, 214, 0.32);
+  --focus: #89a8c8;
+  --surface-highlight: rgba(169, 192, 214, 0.1);
+  --glass-ring: inset 0 0 0 1px rgba(169, 192, 214, 0.2);
+
+  /* ============================================================
+   * Semantic / webapp-compatible aliases
+   * These names are the real product token contract. UI kits and
+   * recreated components reference THESE, so the visual language
+   * stays one system across foundations, components, and kits.
+   * ============================================================ */
+  --bg-base: var(--field-void);
+  --bg-surface: var(--field-deep);
+  --bg-card: var(--field-surface);
+  --bg-panel: var(--field-deep);
+  --bg-elevated: var(--field-elevated);
+
+  --fg-primary: var(--ink-cold);
+  --fg-secondary: var(--ink-quiet);
+  --fg-tertiary: var(--ink-faint);
+  --fg-muted: var(--ink-dim);
+
+  --accent: var(--steel);
+  --accent-bright: var(--steel-bright);
+
+  --status-pass: var(--state-pass);
+  --status-review: var(--state-review);
+  --status-fail: var(--state-fail);
+  --status-governed: var(--state-governed);
+  --status-success: var(--state-pass);
+  --status-warn: var(--state-review);
+  --status-danger: var(--state-fail);
+  --status-info: var(--steel);
+  --fg-danger: var(--state-fail);
+  --bg-danger-subtle: color-mix(in srgb, var(--state-fail) 12%, transparent);
+  --border-subtle: var(--border-hairline);
+}

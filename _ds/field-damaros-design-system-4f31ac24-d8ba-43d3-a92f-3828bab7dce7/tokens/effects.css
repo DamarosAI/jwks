@@ -1,0 +1,49 @@
+/* ============================================================
+ * FIELD · Effects — radius, shadow, motion, glass
+ * Corners are TIGHT (2–3px on instrument chrome; up to 14–16px
+ * on brand glass panels). Shadows are deep and quiet, never
+ * bright. Motion is fast and restrained: max 300ms, calm easing,
+ * no bounce. Glass = faint stone-blue inset ring + 4px blur over
+ * a near-black gradient.
+ * ============================================================ */
+
+:root {
+  /* ---- Radius ---- */
+  --radius-sm: 2px;      /* chips, inputs, instrument controls */
+  --radius-md: 3px;      /* buttons, tabs, small cards */
+  --radius-lg: 8px;      /* panels, dialogs */
+  --radius-panel: 8px;
+  --radius-glass: 14px;  /* brand glass surfaces */
+  --radius-card: 16px;   /* brand spine / feature cards */
+  --radius-pill: 999px;  /* status badges, operator buttons */
+  --glass-ring: inset 0 0 0 1px rgba(169, 192, 214, 0.2); /* @kind shadow */
+
+  /* ---- Motion (≤300ms, calm) ---- */
+  --motion-micro: 100ms;  /* @kind other */
+  --motion-open: 220ms;   /* @kind other */
+  --motion-exit: 180ms;   /* @kind other */
+  --motion-max: 300ms;    /* @kind other */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1); /* @kind other */
+  --ease-open-close: cubic-bezier(0.4, 0, 0.2, 1); /* @kind other */
+  --ease-feedback: cubic-bezier(0, 0, 0.2, 1);     /* @kind other */
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);         /* @kind other */
+
+  /* ---- Shadow (deep, quiet) ---- */
+  --shadow-panel: 0 0 0 1px rgba(4, 8, 14, 0.52), 0 8px 26px rgba(0, 0, 0, 0.2);
+  --shadow-lift: 0 14px 40px rgba(5, 7, 11, 0.5);
+  --shadow-modal: 0 12px 40px rgba(0, 0, 0, 0.45);
+  --shadow-toast: 0 6px 20px rgba(0, 0, 0, 0.35);
+  --glow-steel: 0 0 18px color-mix(in srgb, var(--steel) 30%, transparent);
+
+  /* ---- Glass surface (brand panels) ---- */
+  --glass-blur: blur(4px);                /* @kind other */
+  --glass-bg: linear-gradient(180deg, rgba(169, 192, 214, 0.07), rgba(169, 192, 214, 0.02)), rgba(8, 11, 17, 0.55);     /* @kind color */
+  --glass-bg-hover: linear-gradient(180deg, rgba(169, 192, 214, 0.12), rgba(169, 192, 214, 0.04)), rgba(12, 16, 23, 0.7); /* @kind color */
+
+  /* ---- Z layers ---- */
+  --z-sticky: 10;   /* @kind other */
+  --z-popover: 50;  /* @kind other */
+  --z-dock: 1200;   /* @kind other */
+  --z-toast: 1400;  /* @kind other */
+  --z-modal: 20050; /* @kind other */
+}

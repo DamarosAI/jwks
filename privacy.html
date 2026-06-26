@@ -1,103 +1,177 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="color-scheme" content="dark">
-<title>Privacy · Damaros™</title>
-<meta name="description" content="Privacy notice for the Damaros public website.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy Policy — Damaros™</title>
+<meta name="description" content="What the Damaros website collects, how it is used, and the choices you have. It covers this website and our communications with you, nothing more.">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#ffffff">
 <link rel="canonical" href="https://www.damaros.ai/privacy">
-<link rel="stylesheet" href="/shared/damaros.css?v=6">
-<link rel="icon" href="/assets/damaros-favicon.png" type="image/png" sizes="32x32">
-<script src="/shared/theme-system.js"></script>
-<style>
-  body { background: var(--bg); color: var(--fg-2); line-height: var(--fb-lh); font-family: var(--fb); font-size: var(--fs-base); font-weight: var(--fb-w); min-height: 100vh; }
-  .wrap { max-width: 720px; margin: 0 auto; padding: calc(60px + 2.4rem) 1.6rem 5rem; }
-  .topnav { display: flex; flex-wrap: wrap; gap: .95rem; font-family: var(--fm); font-size: var(--fs-caption); font-weight: 600; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 1.6rem; color: var(--fg-3); }
-  .topnav a { color: inherit; text-decoration: none; }
-  .topnav a:hover { color: var(--accent); }
-  .eyebrow { font-family: var(--fm); font-size: var(--fs-micro); font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin-bottom: .5rem; }
-  h1 { font-family: var(--fh); font-size: var(--fs-lg); font-weight: var(--fh-w); color: var(--fg); letter-spacing: var(--fh-ls); margin-bottom: .35rem; }
-  .meta { font-family: var(--fm); font-size: var(--fs-caption); color: var(--fg-3); letter-spacing: .06em; margin-bottom: 2.5rem; }
-  h2 { font-family: var(--fh); font-size: var(--fs-base); font-weight: var(--fh-w); color: var(--fg); letter-spacing: var(--fh-ls); margin: 2rem 0 .65rem; }
-  p { font-family: var(--fb); font-size: var(--fs-base); font-weight: var(--fb-w); line-height: var(--fb-lh); }
-  p + p { margin-top: .75rem; }
-  p strong, li strong { color: var(--fg); font-weight: var(--fb-w-strong); }
-  ul { list-style: none; margin: .5rem 0 0; padding: 0; }
-  ul li { margin-top: .45rem; padding-left: 1rem; position: relative; font-family: var(--fb); font-size: var(--fs-base); line-height: var(--fb-lh); }
-  ul li::before { content: '•'; position: absolute; left: 0; color: var(--accent); opacity: .7; }
-  code { font-family: var(--fm); font-size: .9em; color: var(--accent-2); }
-  a { color: var(--accent); text-decoration: none; }
-  a:hover { text-decoration: underline; }
-  .back { display: inline-block; margin-top: 2.5rem; font-family: var(--fm); font-size: var(--fs-caption); font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--fg-3); text-decoration: none; }
-  .back:hover { color: var(--accent); text-decoration: none; }
-  .foot { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--bd-soft); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; font-family: var(--fm); font-size: var(--fs-caption); letter-spacing: .08em; text-transform: uppercase; color: var(--fg-3); }
-  .foot .geo { justify-self: start; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .foot .geo.pending { opacity: .45; }
-  .foot .cp { justify-self: center; }
-  .foot a { justify-self: end; color: var(--fg-3); text-decoration: none; }
-  .foot a:hover { color: var(--fg); }
-</style>
+<link rel="icon" href="assets/damaros-favicon.png" type="image/png">
+<script src="./support.js"></script>
 </head>
 <body>
-<nav class="dmx-nav">
-  <a class="dmx-brand" href="/" aria-label="Damaros">Damaros<sup>™</sup></a>
-  <div class="dmx-nav-links">
-    <a class="dmx-nav-link" href="/">HOME</a>
-    <a class="dmx-nav-link" href="/runtime.html">RUNTIME</a>
-    <a class="dmx-nav-link" href="/docs/fhir">FHIR</a>
-    <a class="dmx-nav-link" href="/about">ABOUT</a>
-  </div>
-</nav>
-<div class="wrap">
-  <p class="eyebrow">Legal</p>
-  <h1>Website privacy notice</h1>
-  <p class="meta">Effective May 27, 2026 · Damaros, LLC</p>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/field-damaros-design-system-4f31ac24-d8ba-43d3-a92f-3828bab7dce7/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/field-damaros-design-system-4f31ac24-d8ba-43d3-a92f-3828bab7dce7/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/field-damaros-design-system-4f31ac24-d8ba-43d3-a92f-3828bab7dce7/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/field-damaros-design-system-4f31ac24-d8ba-43d3-a92f-3828bab7dce7/tokens/spacing.css">
+  <link rel="stylesheet" href="_ds/field-damaros-design-system-4f31ac24-d8ba-43d3-a92f-3828bab7dce7/tokens/effects.css">
+  <link rel="stylesheet" href="_ds/field-damaros-design-system-4f31ac24-d8ba-43d3-a92f-3828bab7dce7/styles.css">
+  <script src="_ds/field-damaros-design-system-4f31ac24-d8ba-43d3-a92f-3828bab7dce7/_ds_bundle.js"></script>
+  <style>
+    *{box-sizing:border-box;}
+    :root{
+      --ink-cold:#10161d;
+      --ink-steel:#2f6193;
+      --ink-quiet:#3c4955;
+      --ink-faint:#586674;
+      --ink-dim:#7b8794;
+      --steel:#2f6193;
+      --accent:#2f6193;
+      --state-pass:#2e9e6b;
+      --state-review:#bf831f;
+      --state-fail:#dc3a52;
+    }
+    html{scroll-behavior:smooth;}
+    body{margin:0;background:#ffffff;color:var(--ink-cold);font-family:var(--font-body);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+    a{color:inherit;text-decoration:none;}
+    .pp a.lnk{color:var(--ink-steel);border-bottom:1px solid color-mix(in srgb,var(--ink-steel) 35%,transparent);}
+    @keyframes dmDrift{0%,100%{transform:translate(-50%,-50%) rotate(0deg);}50%{transform:translate(-49%,-51%) rotate(2.5deg);}}
+    @media (prefers-reduced-motion:reduce){[data-anim]{animation:none !important;}}
+  </style>
+</helmet>
 
-  <p>This notice describes how <strong>Damaros, LLC</strong> (“Damaros,” “we”) handles information when you visit the public marketing site at <a href="https://www.damaros.ai/">www.damaros.ai</a> and related static pages (including JWKS documents under <code>/.well-known/</code>). It does <strong>not</strong> govern customer deployments of the Damaros platform, clinical data processing under a business associate agreement, or hospital-hosted integrations. Those environments are covered by separate contracts and security documentation.</p>
+<div style="min-height:100vh;background:#ffffff;overflow-x:hidden;">
 
-  <h2>What we collect</h2>
-  <p>We do not operate user accounts, lead forms, newsletters, or advertising analytics on this website. We still receive limited technical data needed to deliver pages:</p>
-  <ul>
-    <li><strong>Hosting logs.</strong> Our host (Vercel) records standard request metadata such as IP address, browser type, requested URL, referrer, and timestamps for security and operations.</li>
-    <li><strong>Approximate location display.</strong> The home page may call <a href="https://www.geojs.io/" rel="noopener noreferrer" target="_blank">geojs.io</a> to show a city/region label from your IP address. We do not store that label in a database; it appears only in your browser session.</li>
-    <li><strong>Fonts and assets.</strong> Pages load self-hosted typography and images from our CDN. Those providers may receive your IP address and technical identifiers as part of normal delivery.</li>
-    <li><strong>Email.</strong> “Get in touch” links open your mail client (<a href="mailto:anirudh@damaros.ai">anirudh@damaros.ai</a>). We do not collect message content through the website itself.</li>
-  </ul>
-  <p>We do not use cookies for cross-site tracking or personalized advertising on this site. Your browser may store local preferences (for example theme) without our server reading them.</p>
+  <!-- ============ NAV ============ -->
+  <header style="position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:18px;height:62px;padding:0 clamp(18px,5vw,40px);background:rgba(255,255,255,0.72);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);border-bottom:1px solid rgba(31,45,61,0.10);">
+    <a href="index.html" style="display:inline-flex;align-items:center;gap:8px;">
+      <span style="font-family:var(--font-display);font-weight:700;font-size:18px;letter-spacing:-0.022em;line-height:1;color:var(--ink-cold);">Damaros<sup style="font-size:0.46em;font-weight:500;letter-spacing:0;color:var(--ink-dim);margin-left:1.5px;">™</sup></span>
+    </a>
+    <nav style="margin-left:auto;display:flex;align-items:center;gap:4px;">
+      <a href="index.html" style="padding:8px 13px;font-size:13px;font-weight:500;color:var(--ink-quiet);border-radius:6px;">Home</a>
+      <a href="about.html" style="padding:8px 13px;font-size:13px;font-weight:500;color:var(--ink-quiet);border-radius:6px;">About</a>
+      <div style="width:1px;height:20px;background:rgba(31,45,61,0.14);margin:0 8px;"></div>
+      <a href="mailto:anirudh@damaros.ai" style="display:inline-flex;align-items:center;justify-content:center;height:36px;padding:0 16px;border-radius:999px;font-family:var(--font-mono);font-size:12px;font-weight:500;letter-spacing:0.03em;text-transform:uppercase;color:#ffffff;background:linear-gradient(180deg,#3d72a8,#2f6193);border:1px solid color-mix(in srgb,#2f6193 50%,rgba(255,255,255,0.22));box-shadow:inset 0 1px 0 rgba(255,255,255,0.2), 0 8px 20px rgba(20,46,82,0.16);white-space:nowrap;">Start a pilot</a>
+    </nav>
+  </header>
 
-  <h2>Why we use it</h2>
-  <ul>
-    <li>Deliver and secure the public site</li>
-    <li>Diagnose abuse or outages</li>
-    <li>Respond when you contact us</li>
-  </ul>
+  <!-- ============ HERO ============ -->
+  <section data-screen-label="Privacy hero" style="position:relative;padding:clamp(72px,9vw,124px) clamp(20px,5vw,40px) clamp(40px,5vw,60px);background:radial-gradient(120% 80% at 50% -8%, #f6fafc 0%, #eef3f8 44%, #ffffff 80%);overflow:hidden;">
+    <div aria-hidden="true" data-anim style="position:absolute;top:46%;left:50%;width:min(560px,92%);height:min(560px,92%);transform:translate(-50%,-50%);color:rgba(31,45,61,0.07);pointer-events:none;animation:dmDrift 30s ease-in-out infinite;"><svg viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="30" stroke-linejoin="round" stroke-linecap="round" style="width:100%;height:100%;"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg></div>
+    <div style="position:relative;max-width:880px;margin:0 auto;">
+      <div style="font-family:var(--font-body);font-size:11.5px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:22px;">Privacy</div>
+      <h1 style="margin:0;font-family:var(--font-display);font-weight:700;font-size:clamp(2.3rem,5vw,3.6rem);line-height:1.02;letter-spacing:-0.03em;text-wrap:balance;">Privacy <span style="color:var(--ink-steel);">Policy</span></h1>
+      <p style="margin:22px 0 0;max-width:62ch;font-size:clamp(1.05rem,1.5vw,1.25rem);line-height:1.55;color:var(--ink-quiet);">This policy explains what information this website collects, how it is used, and the choices you have. It covers <span style="color:var(--ink-cold);font-weight:600;">this website and our communications with you</span>, nothing more.</p>
+      <div style="margin-top:20px;font-family:var(--font-mono);font-size:11px;letter-spacing:0.04em;color:var(--ink-dim);">Last updated 26 June 2026</div>
+    </div>
+  </section>
 
-  <h2>Sharing</h2>
-  <p>We use infrastructure and service providers that process data on our behalf (hosting, DNS/TLS, font delivery, optional geo lookup). We do not sell personal information. We may disclose information if required by law or to protect rights, safety, and integrity of our services.</p>
+  <!-- ============ BODY ============ -->
+  <section style="position:relative;padding:clamp(24px,3vw,40px) clamp(20px,5vw,40px) clamp(64px,8vw,104px);background:#ffffff;">
+    <div class="pp" style="max-width:780px;margin:0 auto;display:flex;flex-direction:column;gap:clamp(30px,4vw,44px);">
 
-  <h2>Retention</h2>
-  <p>Server logs are retained for a limited period consistent with our hosting provider’s defaults and operational needs, then rotated or deleted. Email you send us is kept as long as needed to correspond and meet legal obligations.</p>
+      <!-- 1 -->
+      <div>
+        <h2 style="margin:0 0 12px;font-family:var(--font-display);font-size:clamp(1.3rem,2.2vw,1.7rem);font-weight:700;letter-spacing:-0.02em;color:var(--ink-cold);">1. Information we collect</h2>
+        <p style="margin:0 0 14px;font-size:15.5px;line-height:1.65;color:var(--ink-quiet);">We collect only what we need to operate this website and respond to you:</p>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="padding:16px 18px;border-radius:12px;border:1px solid rgba(31,45,61,0.12);background:#fbfcfd;"><span style="font-weight:600;color:var(--ink-cold);">Information you give us.</span><span style="color:var(--ink-quiet);"> Your name, work email, organization, role, and anything you write when you request a pilot, contact us, or apply for a role.</span></div>
+          <div style="padding:16px 18px;border-radius:12px;border:1px solid rgba(31,45,61,0.12);background:#fbfcfd;"><span style="font-weight:600;color:var(--ink-cold);">Information collected automatically.</span><span style="color:var(--ink-quiet);"> Standard technical data such as IP address, browser and device type, pages visited, and approximate (city-level) location, gathered to keep the site secure and understand usage.</span></div>
+          <div style="padding:16px 18px;border-radius:12px;border:1px solid rgba(31,45,61,0.12);background:#fbfcfd;"><span style="font-weight:600;color:var(--ink-cold);">Information from others.</span><span style="color:var(--ink-quiet);"> Limited business-contact details from partners or public professional sources when we evaluate a potential pilot or collaboration.</span></div>
+        </div>
+        <p style="margin:16px 0 0;font-size:14px;line-height:1.6;color:var(--ink-faint);">Please don't send sensitive or health information through this website. It isn't the place for it.</p>
+      </div>
 
-  <h2>Your choices and rights</h2>
-  <p>You may disable non-essential scripts in your browser, use a VPN, or block third-party requests. Depending on where you live, you may have rights to access, correct, delete, or restrict certain processing. To exercise rights or ask questions, email <a href="mailto:anirudh@damaros.ai?subject=Privacy%20request">anirudh@damaros.ai</a> with “Privacy request” in the subject line.</p>
+      <!-- 2 -->
+      <div>
+        <h2 style="margin:0 0 12px;font-family:var(--font-display);font-size:clamp(1.3rem,2.2vw,1.7rem);font-weight:700;letter-spacing:-0.02em;color:var(--ink-cold);">2. How we use information</h2>
+        <ul style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:9px;font-size:15.5px;line-height:1.6;color:var(--ink-quiet);">
+          <li>To respond to pilot requests, questions, and other messages you send us.</li>
+          <li>To operate, secure, maintain, and improve this website.</li>
+          <li>To evaluate and arrange potential pilots, partnerships, and hiring.</li>
+          <li>To send operational or relationship messages you have asked for. We do not sell your information or run third-party advertising.</li>
+          <li>To meet legal, security, and contractual obligations.</li>
+        </ul>
+      </div>
 
-  <h2>International visitors</h2>
-  <p>We are based in the United States. If you access the site from other regions, your information may be processed in the U.S. where laws may differ from your home jurisdiction.</p>
+      <!-- 3 -->
+      <div>
+        <h2 style="margin:0 0 12px;font-family:var(--font-display);font-size:clamp(1.3rem,2.2vw,1.7rem);font-weight:700;letter-spacing:-0.02em;color:var(--ink-cold);">3. Legal bases</h2>
+        <p style="margin:0;font-size:15.5px;line-height:1.65;color:var(--ink-quiet);">Where the GDPR or similar laws apply, we rely on your consent (for example, when you contact us), our legitimate interests in operating and securing the site and our business, and compliance with legal obligations. You may withdraw consent at any time.</p>
+      </div>
 
-  <h2>Children</h2>
-  <p>This site is not directed to children under 16, and we do not knowingly collect their personal information through the website.</p>
+      <!-- 4 -->
+      <div>
+        <h2 style="margin:0 0 12px;font-family:var(--font-display);font-size:clamp(1.3rem,2.2vw,1.7rem);font-weight:700;letter-spacing:-0.02em;color:var(--ink-cold);">4. Cookies and analytics</h2>
+        <p style="margin:0;font-size:15.5px;line-height:1.65;color:var(--ink-quiet);">We use a small number of essential and analytics cookies to keep the site working and to understand aggregate usage. You can control cookies through your browser settings; blocking some may affect how the site functions. We honor browser "Do Not Track" and global privacy control signals where required.</p>
+      </div>
 
-  <h2>Changes</h2>
-  <p>We may update this notice. The effective date above will change when we do. Continued use of the site after an update means you accept the revised notice.</p>
+      <!-- 5 -->
+      <div>
+        <h2 style="margin:0 0 12px;font-family:var(--font-display);font-size:clamp(1.3rem,2.2vw,1.7rem);font-weight:700;letter-spacing:-0.02em;color:var(--ink-cold);">5. How we share information</h2>
+        <p style="margin:0 0 14px;font-size:15.5px;line-height:1.65;color:var(--ink-quiet);">We share information only as needed:</p>
+        <ul style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:9px;font-size:15.5px;line-height:1.6;color:var(--ink-quiet);">
+          <li><span style="font-weight:600;color:var(--ink-cold);">Service providers</span> who host, secure, and support the site, bound by contract to protect it.</li>
+          <li><span style="font-weight:600;color:var(--ink-cold);">Legal and safety</span> reasons, when required by law or to protect rights and security.</li>
+          <li><span style="font-weight:600;color:var(--ink-cold);">Business transfers</span>, if Damaros is involved in a merger, acquisition, or financing, under the same protections.</li>
+        </ul>
+        <p style="margin:16px 0 0;font-size:15.5px;line-height:1.65;color:var(--ink-quiet);">We do not sell personal information, and we never share PHI through this website because we do not collect it here.</p>
+      </div>
 
-  <a class="back" href="/">← Back to Damaros</a>
-  <footer class="foot">
-    <span class="geo pending" id="geo">Locating</span>
-    <span class="cp">© 2026 Damaros™</span>
-    <a href="/privacy">Privacy</a>
+      <!-- 6 -->
+      <div>
+        <h2 style="margin:0 0 12px;font-family:var(--font-display);font-size:clamp(1.3rem,2.2vw,1.7rem);font-weight:700;letter-spacing:-0.02em;color:var(--ink-cold);">6. Security and retention</h2>
+        <p style="margin:0;font-size:15.5px;line-height:1.65;color:var(--ink-quiet);">We protect information with encryption in transit and at rest, access controls, and least-privilege practices. We keep information only as long as needed for the purposes above or as required by law, then delete or de-identify it. No system is perfectly secure, but we work to hold a high bar.</p>
+      </div>
+
+      <!-- 7 -->
+      <div>
+        <h2 style="margin:0 0 12px;font-family:var(--font-display);font-size:clamp(1.3rem,2.2vw,1.7rem);font-weight:700;letter-spacing:-0.02em;color:var(--ink-cold);">7. Your rights and choices</h2>
+        <p style="margin:0;font-size:15.5px;line-height:1.65;color:var(--ink-quiet);">Depending on where you live, you may have the right to access, correct, delete, or port your information, to object to or restrict certain uses, and to opt out of non-essential messages. To exercise any of these, contact us using the details below. We will respond within the timeframe the law requires and will not discriminate against you for exercising your rights.</p>
+      </div>
+
+      <!-- 8 -->
+      <div>
+        <h2 style="margin:0 0 12px;font-family:var(--font-display);font-size:clamp(1.3rem,2.2vw,1.7rem);font-weight:700;letter-spacing:-0.02em;color:var(--ink-cold);">8. International transfers and children</h2>
+        <p style="margin:0;font-size:15.5px;line-height:1.65;color:var(--ink-quiet);">We are based in the United States and may process information there or in other countries with appropriate safeguards. This website is intended for professional audiences and is not directed to children under 16, and we do not knowingly collect their information.</p>
+      </div>
+
+      <!-- 9 -->
+      <div>
+        <h2 style="margin:0 0 12px;font-family:var(--font-display);font-size:clamp(1.3rem,2.2vw,1.7rem);font-weight:700;letter-spacing:-0.02em;color:var(--ink-cold);">9. Changes to this policy</h2>
+        <p style="margin:0;font-size:15.5px;line-height:1.65;color:var(--ink-quiet);">We may update this policy as our practices or the law change. We will revise the date above and, for material changes, provide a clearer notice. Continued use of the site after an update means you accept the revised policy.</p>
+      </div>
+
+      <!-- contact -->
+      <div style="padding:clamp(22px,3vw,30px);border-radius:16px;border:1px solid rgba(31,45,61,0.12);background:#fbfcfd;">
+        <h2 style="margin:0 0 10px;font-family:var(--font-display);font-size:clamp(1.2rem,2vw,1.5rem);font-weight:700;letter-spacing:-0.02em;color:var(--ink-cold);">Contact us</h2>
+        <p style="margin:0;font-size:15.5px;line-height:1.65;color:var(--ink-quiet);">Questions about this policy or your information? Reach us at <a class="lnk" href="mailto:anirudh@damaros.ai">anirudh@damaros.ai</a>. We will get back to you.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer style="background:#eef1f4;border-top:1px solid rgba(31,45,61,0.08);padding:clamp(40px,6vw,64px) clamp(20px,5vw,40px);">
+    <div style="max-width:1080px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:20px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-family:var(--font-display);font-weight:700;font-size:15px;letter-spacing:-0.02em;line-height:1;color:var(--ink-quiet);">Damaros<sup style="font-size:0.46em;font-weight:500;letter-spacing:0;color:var(--ink-dim);margin-left:1.5px;">™</sup></span>
+      </div>
+      <nav style="display:flex;gap:8px;flex-wrap:wrap;">
+        <a href="index.html" style="font-size:12.5px;color:var(--ink-dim);padding:4px 8px;">Home</a>
+        <a href="about.html" style="font-size:12.5px;color:var(--ink-dim);padding:4px 8px;">About</a>
+        <a href="privacy.html" style="font-size:12.5px;color:var(--ink-dim);padding:4px 8px;">Privacy</a>
+      </nav>
+      <div style="margin-left:auto;font-family:var(--font-mono);font-size:11px;color:var(--ink-dim);letter-spacing:0.03em;">© 2026 Damaros™</div>
+    </div>
   </footer>
+
 </div>
-<script src="/shared/geo-footer.js"></script>
+
+<template id="__bundler_thumbnail"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="#0c1118"></rect><g transform="translate(50 50) scale(0.075) translate(-238 -260)" fill="none" stroke="#A9C0D6" stroke-width="33" stroke-linejoin="round" stroke-linecap="round"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></g></svg></template></x-dc>
 </body>
 </html>
