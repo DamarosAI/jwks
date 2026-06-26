@@ -557,11 +557,9 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
         </div>
       </div>
     </div>
-    <button onClick="{{ onMore }}" aria-label="Scroll to learn more about Damaros" class="dm-scroll-more" style="margin:18px auto 0;display:flex;flex-direction:column;align-items:center;gap:7px;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 8px;position:relative;z-index:3;">
+    <button onClick="{{ onMore }}" aria-label="Scroll to learn more about Damaros" class="dm-scroll-more" style="margin:18px auto 0;display:flex;flex-direction:column;align-items:center;gap:6px;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 8px;position:relative;z-index:3;">
       <span style="font-family:var(--font-display);font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-steel);">Keep scrolling</span>
-      <span style="display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:color-mix(in srgb,#2f6193 11%,transparent);border:1.5px solid color-mix(in srgb,#2f6193 48%,transparent);box-shadow:0 8px 22px rgba(20,46,82,0.18);">
-        <svg data-anim="" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.5s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg>
-      </span>
+      <svg data-anim="" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.5s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg>
     </button>
   </section>
 
@@ -851,6 +849,38 @@ class Component extends DCLogic {
   }
   state = this.initialState();
   resetDemo = () => this.setState(this.initialState());
+
+  autoSeq = [
+    { ms: 1300, run: () => this.setState({ step: 1 }) },
+    { ms: 1500, run: () => this.setState({ evSel: 1 }) },
+    { ms: 1600, run: () => this.setState((st) => { const m = Object.assign({}, st.evActed); m["E-4.2"] = true; return { evActed: m }; }) },
+    { ms: 1700, run: () => this.setState({ step: 2 }) },
+    { ms: 1500, run: () => this.setState({ scSel: "S-1047" }) },
+    { ms: 1700, run: () => this.setState({ step: 3, ci: 0, pick: null }) },
+    { ms: 1500, run: () => this.setState({ pick: "b" }) },
+    { ms: 1500, run: () => this.commit() },
+    { ms: 1800, run: () => this.setState({ step: 4 }) },
+    { ms: 1600, run: () => this.setState({ rpExported: true }) },
+    { ms: 2800, run: () => this.resetDemo() }
+  ];
+
+  isSmallViewport() {
+    if (!window.matchMedia) return false;
+    return window.matchMedia("(max-width:760px)").matches || window.matchMedia("(pointer:coarse)").matches;
+  }
+  playAuto = () => {
+    if (this.__autoRunning || !this.isSmallViewport()) return;
+    this.__autoRunning = true;
+    let i = 0;
+    const next = () => {
+      if (!this.__autoRunning) return;
+      const stp = this.autoSeq[i % this.autoSeq.length];
+      this.__autoT = setTimeout(() => { if (!this.__autoRunning) return; stp.run(); i++; next(); }, stp.ms);
+    };
+    next();
+  };
+  stopAuto = () => { this.__autoRunning = false; if (this.__autoT) { clearTimeout(this.__autoT); this.__autoT = null; } };
+
   componentDidMount() {
     window.scrollTo(0, 0);
     this.__onPageShow = (e) => {
@@ -858,9 +888,23 @@ class Component extends DCLogic {
       if (e.persisted) this.resetDemo();
     };
     window.addEventListener("pageshow", this.__onPageShow);
+
+    if (this.isSmallViewport()) {
+      const el = document.getElementById("instrument");
+      if (el && "IntersectionObserver" in window) {
+        this.__io = new IntersectionObserver((entries) => {
+          entries.forEach((en) => { if (en.isIntersecting) this.playAuto(); else this.stopAuto(); });
+        }, { threshold: 0.2 });
+        this.__io.observe(el);
+      } else {
+        this.playAuto();
+      }
+    }
   }
   componentWillUnmount() {
     if (this.__onPageShow) window.removeEventListener("pageshow", this.__onPageShow);
+    this.stopAuto();
+    if (this.__io) { this.__io.disconnect(); this.__io = null; }
   }
 
   steps = ["Protocol", "Evidence", "Screening", "Resolve", "Replay"];
