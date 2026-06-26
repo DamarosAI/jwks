@@ -14,6 +14,11 @@
 <meta property="og:description" content="Protocol to proof: deterministic screening, human-signed decisions, and replayable audit. PHI never reaches a model.">
 <meta property="og:url" content="https://www.damaros.ai/">
 <script src="./support.js"></script>
+<script>
+if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+window.scrollTo(0, 0);
+window.addEventListener("load", () => window.scrollTo(0, 0));
+</script>
 </head>
 <body>
 <x-dc>
@@ -794,7 +799,22 @@
 <template id="__bundler_thumbnail"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="#0c1118"></rect><g transform="translate(50 50) scale(0.075) translate(-238 -260)" fill="none" stroke="#A9C0D6" stroke-width="33" stroke-linejoin="round" stroke-linecap="round"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></g></svg></template></x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;showMarquee&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
 class Component extends DCLogic {
-  state = { step: 0, ci: 0, pick: null, committed: {}, hov: null, evSel: 0, scSel: "S-1066", scView: "board", evActed: {}, rpSel: 4, scFilter: null, rpFilter: null, rpExported: false };
+  initialState() {
+    return { step: 0, ci: 0, pick: null, committed: {}, hov: null, evSel: 0, scSel: "S-1066", scView: "board", evActed: {}, rpSel: 4, scFilter: null, rpFilter: null, rpExported: false };
+  }
+  state = this.initialState();
+  resetDemo = () => this.setState(this.initialState());
+  componentDidMount() {
+    window.scrollTo(0, 0);
+    this.__onPageShow = (e) => {
+      window.scrollTo(0, 0);
+      if (e.persisted) this.resetDemo();
+    };
+    window.addEventListener("pageshow", this.__onPageShow);
+  }
+  componentWillUnmount() {
+    if (this.__onPageShow) window.removeEventListener("pageshow", this.__onPageShow);
+  }
 
   steps = ["Protocol", "Evidence", "Screening", "Resolve", "Replay"];
 
