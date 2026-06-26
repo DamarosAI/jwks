@@ -61,6 +61,8 @@
     @keyframes dmDrift{0%,100%{transform:translate(-50%,-50%) rotate(-4.5deg);}50%{transform:translate(-50%,-50%) rotate(4.5deg);}}
     @keyframes scrPulse{0%{opacity:0.3;transform:translate(-50%,-50%) scale(1);}70%{opacity:0;transform:translate(-50%,-50%) scale(2.5);}100%{opacity:0;}}
     @keyframes rpPulse{0%,100%{opacity:0.28;}45%{opacity:1;}}
+    @keyframes dmPulse{0%,100%{opacity:0.55;transform:scale(1);}50%{opacity:1;transform:scale(1.03);}}
+    .dmPulse{animation:dmPulse 1.6s ease-in-out infinite;transform-origin:center;}
     @keyframes rpSweep{0%{left:-32%;}100%{left:100%;}}
     @keyframes chevBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(5px);}}
     #instrument{position:relative;}
@@ -165,11 +167,11 @@
   <section id="instrument" data-screen-label="Live instrument" style="position:relative;padding:0 clamp(12px,2.5vw,28px) clamp(40px,6vw,72px);background:#ffffff;">
     <p style="max-width:920px;margin:0 auto 10px;text-align:center;font-size:13px;line-height:1.55;color:var(--ink-dim);">A demonstration of the Damaros<sup style="font-size:0.55em;letter-spacing:0;">™</sup> runtime on synthetic FHIR data.</p>
     <div style="max-width:920px;margin:0 auto 16px;text-align:center;">
-      <div style="font-family:var(--font-display);font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:10px;">Try the demo</div>
+      <div style="font-family:var(--font-display);font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:10px;">Steps &middot; follow in order</div>
       <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px 8px;align-items:center;">
         <sc-for list="{{ guide.steps }}" as="g" hint-placeholder-count="5"><span style="{{ g.style }}">{{ g.label }}</span></sc-for>
       </div>
-      <p style="margin:10px 0 0;font-size:12.5px;line-height:1.45;color:var(--ink-quiet);">{{ guide.hint }}</p>
+      <p class="dmPulse" style="margin:12px 0 0;font-size:13px;font-weight:600;line-height:1.45;color:var(--ink-cold);">{{ guide.hint }}</p>
     </div>
 
     <div id="nodeStage" class="dmScrollX" style="overflow-x:auto;overflow-y:hidden;padding-bottom:8px;">
