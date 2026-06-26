@@ -315,6 +315,15 @@
                       </div>
                     </sc-if>
                     <button onClick="{{ ev.detail.onAction }}" style="{{ ev.detail.actionStyle }}">{{ ev.detail.actionLabel }}</button>
+                    <sc-if value="{{ ev.detail.acted }}">
+                      <div style="margin-top:12px;padding:13px 15px;border-radius:11px;background:color-mix(in srgb,#2e9e6b 7%,transparent);border:1px solid color-mix(in srgb,#2e9e6b 26%,transparent);">
+                        <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px;"><span style="width:7px;height:7px;border-radius:50%;background:#2e9e6b;flex-shrink:0;"></span><span style="font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:#2e9e6b;">Routed · {{ ev.detail.actedTicket }}</span></div>
+                        <div style="font-size:12.5px;color:var(--ink-cold);line-height:1.5;">{{ ev.detail.actedInfo }}</div>
+                        <div style="display:flex;flex-direction:column;gap:4px;margin-top:10px;padding-top:10px;border-top:1px solid rgba(31,45,61,0.08);">
+                          <sc-for list="{{ ev.detail.actedSteps }}" as="s" hint-placeholder-count="3"><span style="font-family:var(--font-display);font-size:10.5px;color:var(--ink-quiet);">{{ s }}</span></sc-for>
+                        </div>
+                      </div>
+                    </sc-if>
                   </div>
                 </div>
               </div>
@@ -790,7 +799,7 @@
 <template id="__bundler_thumbnail"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="#0c1118"></rect><g transform="translate(50 50) scale(0.075) translate(-238 -260)" fill="none" stroke="#A9C0D6" stroke-width="33" stroke-linejoin="round" stroke-linecap="round"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></g></svg></template></x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;showMarquee&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
 class Component extends DCLogic {
-  state = { step: 0, ci: 0, pick: null, committed: {}, hov: null, evSel: 0, scSel: "S-1047", scView: "board", evActed: {}, rpSel: 4, scFilter: null, rpFilter: null, rpExported: false };
+  state = { step: 0, ci: 0, pick: null, committed: {}, hov: null, evSel: 0, scSel: "S-1066", scView: "board", evActed: {}, rpSel: 4, scFilter: null, rpFilter: null, rpExported: false };
 
   steps = ["Protocol", "Evidence", "Screening", "Resolve", "Replay"];
 
@@ -863,9 +872,9 @@ class Component extends DCLogic {
   ];
 
   scQueue = [
-    { id: "S-1047", name: "Marcus Bell", st: "REVIEW", crit: "E-4.2 · ECOG conflict", trig: "CONFLICTING_SOURCE", owner: "Maya R.", ci: 0, blocker: "E-4.2 · ECOG performance status", rule: "ECOG must be 0–1, assessed within 14 days of C1D1.", facts: ["Structured Observation: ECOG 1 (06-18)", "Oncology note: ECOG 2 (06-20)"], sources: ["Observation/ecog-8841", "DocumentReference/note-2207"], result: "REVIEW, not FAIL", reason: "Conflicting source facts", rec: "Route to PI; coordinator verifies the latest ECOG." },
     { id: "S-1066", name: "Andre Coleman", st: "REVIEW", crit: "I-2.1 · biomarker missing", trig: "MISSING_SOURCE", owner: "Maya R.", ci: 1, blocker: "I-2.1 · EGFR / ALK molecular status", rule: "EGFR / ALK status required before randomization.", facts: ["No molecular DiagnosticReport found", "Order placed 06-19 · no result"], sources: ["(awaiting) DiagnosticReport", "DocumentReference · none"], result: "REVIEW, not FAIL", reason: "Required source not yet received", rec: "Request molecular report from pathology / external lab." },
     { id: "S-1051", name: "Patricia Voss", st: "REVIEW", crit: "I-3.4 · CMP stale", trig: "STALE_SOURCE", owner: "Devon K.", ci: 2, blocker: "I-3.4 · serum chemistry within window", rule: "CMP must be drawn within 7 days of C1D1.", facts: ["K⁺ 5.0 mmol/L drawn 06-09", "11 days old at evaluation"], sources: ["Observation/chem-5521"], result: "REVIEW, not FAIL", reason: "Evidence outside freshness window", rec: "Request a repeat CMP; PI / sub-I signs the order. Likely fixable." },
+    { id: "S-1047", name: "Marcus Bell", st: "REVIEW", crit: "E-4.2 · ECOG conflict", trig: "CONFLICTING_SOURCE", owner: "Maya R.", ci: 0, blocker: "E-4.2 · ECOG performance status", rule: "ECOG must be 0–1, assessed within 14 days of C1D1.", facts: ["Structured Observation: ECOG 1 (06-18)", "Oncology note: ECOG 2 (06-20)"], sources: ["Observation/ecog-8841", "DocumentReference/note-2207"], result: "REVIEW, not FAIL", reason: "Conflicting source facts", rec: "Route to PI; coordinator verifies the latest ECOG." },
     { id: "S-1078", name: "Raymond Tan", st: "REVIEW", crit: "E-5.3 · washout edge", trig: "TEMPORAL_EDGE", owner: "Devon K.", ci: 3, blocker: "E-5.3 · ≥ 21-day prior-therapy washout", rule: "≥ 21 days between last systemic therapy and C1D1.", facts: ["Infusion record: 05-30", "Discharge summary: 06-02"], sources: ["MedicationAdministration/inf-771", "DocumentReference/dc-3390"], result: "REVIEW, not FAIL", reason: "Last-dose date ambiguous across sources", rec: "Coordinator confirms last-dose date from infusion records." },
     { id: "S-1088", name: "Cole Adams", st: "FAIL", crit: "I-1.1 · histology mismatch", trig: "", owner: "Unassigned", ci: null, blocker: "I-1.1 · histologically confirmed NSCLC", rule: "Histologically confirmed NSCLC required.", facts: ["Pathology: small-cell carcinoma (SCLC)", "No NSCLC component"], sources: ["Pathology DiagnosticReport/path-3310"], result: "FAIL, hard", reason: "Confirmed SCLC; protocol requires NSCLC", rec: "Hard fail. Not NSCLC; no path to enrollment." },
     { id: "S-1093", name: "Dale Hooper", st: "FAIL", crit: "I-4.2 · ECOG 3", trig: "", owner: "Unassigned", ci: null, blocker: "I-4.2 · ECOG 0–1", rule: "ECOG performance status 0–1 required.", facts: ["ECOG 3 documented 06-18", "Declining performance status"], sources: ["Observation/ecog-7782"], result: "FAIL, hard", reason: "ECOG 3 exceeds the protocol limit", rec: "Hard fail. Performance status ineligible." },
@@ -930,7 +939,7 @@ class Component extends DCLogic {
     else if (s.step === 3 && !s.pick) hint = "Choose Accept note · ECOG 2";
     else if (s.step === 3 && !s.committed["S-1047"]) hint = "Click Sign decision";
     else if (s.step === 3) hint = "Open Replay in the left rail";
-    else if (s.step === 4 && !s.rpExported) hint = "Click Export audit packet";
+    else if (s.step === 4 && !s.rpExported) hint = "Click Export Replay";
     return { steps, hint };
   }
 
@@ -1027,7 +1036,7 @@ class Component extends DCLogic {
     const detC = (f) => f === "ok" ? "#2e9e6b" : f === "warn" ? "#bf831f" : f === "ref" ? "var(--ink-dim)" : "var(--ink-cold)";
     const sel = { event:se.ev, time:se.t, eid:se.eid, exc: se.exc === "none" ? "" : se.exc.toUpperCase(), excStyle: se.exc==="none" ? {display:"none"} : this.chip("#bf831f"), rows: se.rows.map((r)=>({k:r[0], v:r[1], c: detC(r[2])})), related: se.rel };
     const rpExported = !!this.state.rpExported;
-    const rp = { runId: "RPL-2026-0622-018-1047", ledger, filters, sel, exportLabel: rpExported ? "✓ Audit packet exported" : "Export audit packet", exportStyle: this.primaryBtn(rpExported, !rpExported, { sm: true, mt: 0, align: "auto" }), onExport: () => { if (!rpExported) this.setState({ rpExported: true }); } };
+    const rp = { runId: "RPL-2026-0622-018-1047", ledger, filters, sel, exportLabel: rpExported ? "✓ Export Ready" : "Export Replay", exportStyle: this.primaryBtn(rpExported, !rpExported, { sm: true, mt: 0, align: "auto" }), onExport: () => { if (!rpExported) this.setState({ rpExported: true }); } };
     
 
     const SCm = { conflict: "#dc3a52", missing: "#c06a1e", stale: "#bf831f", judgment: "#a9c0d6" };
@@ -1064,7 +1073,7 @@ class Component extends DCLogic {
     const EVCLS = (s) => ({ missing: "Source-dependent", conflict: "Subjective", stale: "Temporal", ambiguous: "Temporal", ready: "Computable", review: "Subjective" })[s] || "Source-dependent";
     const reqRows = this.evReqs.map((r, i) => { const on = i === evSel, col = this.EVC(r.state); return { code: r.code, fact: r.fact, color: col, stLabel: this.EVL(r.state), cls: EVCLS(r.state), blocks: r.blocks, action: r.action, onClick: () => this.setState({ evSel: i }), style: { display: "flex", flexDirection: "column", width: "100%", textAlign: "left", cursor: "pointer", padding: "11px 13px", borderRadius: 11, border: "1px solid " + (on ? "color-mix(in srgb,#2f6193 42%,transparent)" : "rgba(31,45,61,0.1)"), background: on ? "color-mix(in srgb,#2f6193 7%,transparent)" : "#ffffff", transition: "all 140ms ease" }, chipStyle: this.chip(col) }; });
     const dq = this.evReqs[evSel], dcol = this.EVC(dq.state), acted = !!this.state.evActed[dq.code];
-    const detail = { code: dq.code, color: dcol, stLabel: this.EVL(dq.state), trigger: dq.trigger.replace(/_/g, " "), fact: dq.fact, requiredBy: dq.requiredBy, cls: EVCLS(dq.state), coord: (dq.state === "conflict" || dq.state === "ambiguous") ? (dq.state === "conflict" ? "Subjective criterion. A clinician confirms which source governs." : "Ambiguous timing. The coordinator resolves it by chart review.") : "", computable: !(dq.state === "conflict" || dq.state === "ambiguous"), arm: (dq.code.charAt(0) === "E" ? "Exclusion · blocks both arms" : "Inclusion · gates Arm A"), current: dq.current, sourcesText: dq.sources, checked: dq.checked, actionLabel: acted ? "✓ " + dq.action : dq.action, actionStyle: this.primaryBtn(acted, !acted), chipStyle: this.chip(dcol), onAction: () => { if (!acted) this.setState((st) => { const m = Object.assign({}, st.evActed); m[dq.code] = true; return { evActed: m }; }); }, patients: dq.patients.slice(0, 2).map((p) => ({ n: p.n, src: p.src, date: p.date, dotStyle: { width: 7, height: 7, borderRadius: "50%", flexShrink: 0, background: this.EVC(p.st) } })) };
+    const detail = { code: dq.code, color: dcol, stLabel: this.EVL(dq.state), trigger: dq.trigger.replace(/_/g, " "), fact: dq.fact, requiredBy: dq.requiredBy, cls: EVCLS(dq.state), coord: (dq.state === "conflict" || dq.state === "ambiguous") ? (dq.state === "conflict" ? "Subjective criterion. A clinician confirms which source governs." : "Ambiguous timing. The coordinator resolves it by chart review.") : "", computable: !(dq.state === "conflict" || dq.state === "ambiguous"), arm: (dq.code.charAt(0) === "E" ? "Exclusion · blocks both arms" : "Inclusion · gates Arm A"), current: dq.current, sourcesText: dq.sources, checked: dq.checked, actionLabel: acted ? "✓ " + dq.action : dq.action, actionStyle: this.primaryBtn(acted, !acted), acted: acted, actedTicket: "TASK-" + dq.code.replace(/[^0-9]/g, "") + "-1047", actedInfo: "Sent to " + (dq.code.charAt(0) === "E" ? "PI / Sub-I" : "the coordinator") + " for " + dq.fact + ". No model casts a verdict — a human resolves the conflict and the decision is written to the immutable ledger.", actedSteps: ["→ Owner notified · Maya R. (Coordinator)", "→ SLA: review within 24h · protocol v2.1", "→ Resolution links back to this evidence node"], chipStyle: this.chip(dcol), onAction: () => { if (!acted) this.setState((st) => { const m = Object.assign({}, st.evActed); m[dq.code] = true; return { evActed: m }; }); }, patients: dq.patients.slice(0, 2).map((p) => ({ n: p.n, src: p.src, date: p.date, dotStyle: { width: 7, height: 7, borderRadius: "50%", flexShrink: 0, background: this.EVC(p.st) } })) };
     const covSegs = [ { n: 25, c: "#2e9e6b", label: "Mapped" }, { n: 4, c: "#c06a1e", label: "Missing" }, { n: 3, c: "#dc3a52", label: "Conflict" }, { n: 4, c: "#bf831f", label: "Stale" } ];
     const coverage = covSegs.map((s) => ({ n: s.n, label: s.label, style: { width: (s.n / 36 * 100) + "%", background: s.c }, dot: { width: 7, height: 7, borderRadius: "50%", background: s.c, display: "inline-block", flexShrink: 0 } }));
     const ev = { connectors, coverage, reqRows, detail };
