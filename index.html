@@ -163,6 +163,7 @@
 
   <!-- ============ INSTRUMENT · clean Node UI ============ -->
   <section id="instrument" data-screen-label="Live instrument" style="position:relative;padding:0 clamp(12px,2.5vw,28px) clamp(40px,6vw,72px);background:#ffffff;">
+    <p style="max-width:920px;margin:0 auto 18px;text-align:center;font-size:13px;line-height:1.55;color:var(--ink-dim);">A demonstration of the Damaros<sup style="font-size:0.55em;letter-spacing:0;">™</sup> runtime on synthetic FHIR data. Walk the spine, then pick a case and sign the decision in Resolve.</p>
 
     <div id="nodeStage" class="dmScrollX" style="overflow-x:auto;overflow-y:hidden;padding-bottom:8px;">
       <div style="width:min(1160px,100%);min-width:0;margin:0 auto;border-radius:12px;border:1px solid rgba(31,45,61,0.14);background:linear-gradient(180deg,#ffffff,#f3f6f9);box-shadow:0 1px 0 rgba(255,255,255,0.06) inset, 0 40px 100px rgba(20,40,70,0.13);overflow:hidden;">
@@ -491,8 +492,7 @@
         </div>
       </div>
     </div>
-    <p style="max-width:920px;margin:18px auto 0;text-align:center;font-size:13px;line-height:1.55;color:var(--ink-dim);">A demonstration of the Damaros<sup style="font-size:0.55em;letter-spacing:0;">™</sup> runtime on synthetic FHIR data. Walk the spine, then pick a case and sign the decision in Resolve.</p>
-    <button onClick="{{ onMore }}" aria-label="Scroll to learn more about Damaros" class="dm-scroll-more" style="margin:32px auto 0;display:flex;justify-content:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 8px;position:relative;z-index:1;">
+    <button onClick="{{ onMore }}" aria-label="Scroll to learn more about Damaros" class="dm-scroll-more" style="margin:12px auto 0;display:flex;justify-content:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:2px 8px;position:relative;z-index:1;">
       <svg data-anim="" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 2s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg>
     </button>
   </section>
@@ -521,7 +521,7 @@
       <div>
         <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The execution gap</div>
         <h2 style="margin:0;max-width:15ch;font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,4.2vw,3.3rem);line-height:1.0;letter-spacing:-0.03em;text-wrap:balance;">Care happens everywhere. <span style="color:var(--ink-steel);">The trials that save lives don't.</span></h2>
-        <p style="margin:20px 0 0;max-width:40ch;font-size:clamp(1.05rem,1.4vw,1.18rem);line-height:1.5;color:var(--ink-quiet);">CTMS tracks it. EDC captures it. eTMF files it. <span style="color:var(--ink-cold);font-weight:600;">None runs the trial.</span> So eligibility gets rebuilt by hand, and the patient who fits is missed.</p>
+        <p style="margin:20px 0 0;max-width:40ch;font-size:clamp(1.05rem,1.4vw,1.18rem);line-height:1.5;color:var(--ink-quiet);">CTMS tracks it. EDC captures it. eTMF files it. <span style="color:var(--ink-cold);font-weight:600;">None of them run the trial.</span> So eligibility gets rebuilt by hand, and the patient who fits is missed.</p>
       </div>
       <div style="display:flex;flex-direction:column;gap:12px;">
         <div style="display:flex;align-items:center;padding:20px 24px;border-radius:14px;border:1px solid rgba(31,45,61,0.14);background:linear-gradient(180deg, rgba(31,45,61,0.05), rgba(31,45,61,0.015)), rgba(255,255,255,0.5);">
