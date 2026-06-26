@@ -163,7 +163,14 @@
 
   <!-- ============ INSTRUMENT · clean Node UI ============ -->
   <section id="instrument" data-screen-label="Live instrument" style="position:relative;padding:0 clamp(12px,2.5vw,28px) clamp(40px,6vw,72px);background:#ffffff;">
-    <p style="max-width:920px;margin:0 auto 18px;text-align:center;font-size:13px;line-height:1.55;color:var(--ink-dim);">A demonstration of the Damaros<sup style="font-size:0.55em;letter-spacing:0;">™</sup> runtime on synthetic FHIR data. Walk the spine, then pick a case and sign the decision in Resolve.</p>
+    <p style="max-width:920px;margin:0 auto 10px;text-align:center;font-size:13px;line-height:1.55;color:var(--ink-dim);">A demonstration of the Damaros<sup style="font-size:0.55em;letter-spacing:0;">™</sup> runtime on synthetic FHIR data.</p>
+    <div style="max-width:920px;margin:0 auto 16px;text-align:center;">
+      <div style="font-family:var(--font-display);font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:10px;">Try the demo</div>
+      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px 8px;align-items:center;">
+        <sc-for list="{{ guide.steps }}" as="g" hint-placeholder-count="5"><span style="{{ g.style }}">{{ g.label }}</span></sc-for>
+      </div>
+      <p style="margin:10px 0 0;font-size:12.5px;line-height:1.45;color:var(--ink-quiet);">{{ guide.hint }}</p>
+    </div>
 
     <div id="nodeStage" class="dmScrollX" style="overflow-x:auto;overflow-y:hidden;padding-bottom:8px;">
       <div style="width:min(1160px,100%);min-width:0;margin:0 auto;border-radius:12px;border:1px solid rgba(31,45,61,0.14);background:linear-gradient(180deg,#ffffff,#f3f6f9);box-shadow:0 1px 0 rgba(255,255,255,0.06) inset, 0 40px 100px rgba(20,40,70,0.13);overflow:hidden;">
@@ -306,7 +313,7 @@
                         <div style="font-size:12.5px;color:var(--ink-cold);line-height:1.45;">Computable from source. Maps deterministically once the evidence lands.</div>
                       </div>
                     </sc-if>
-                    <button onClick="{{ ev.detail.onAction }}" style="margin-top:14px;align-self:flex-start;padding:9px 17px;border-radius:9px;border:none;background:linear-gradient(180deg,#3d72a8,#2f6193);color:#ffffff;font-family:var(--font-display);font-size:12.5px;font-weight:600;cursor:pointer;">{{ ev.detail.action }}</button>
+                    <button onClick="{{ ev.detail.onAction }}" style="{{ ev.detail.actionStyle }}">{{ ev.detail.actionLabel }}</button>
                   </div>
                 </div>
               </div>
@@ -344,7 +351,7 @@
                       <div style="margin-top:13px;"><div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:6px;">Evidence sources</div><div style="display:flex;flex-direction:column;gap:4px;"><sc-for list="{{ sc.why.sources }}" as="s" hint-placeholder-count="2"><span style="font-family:var(--font-display);font-size:10.5px;color:var(--ink-dim);">{{ s }}</span></sc-for></div></div>
                       <div style="display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:14px;padding-top:13px;border-top:1px solid rgba(31,45,61,0.08);"><div><div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-dim);">Deterministic result</div><div style="font-size:13px;font-weight:600;color:{{ sc.why.resultColor }};margin-top:3px;">{{ sc.why.result }}</div></div><div><div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-dim);">Review trigger</div><div style="font-size:13px;color:var(--ink-cold);margin-top:3px;">{{ sc.why.trigger }}</div></div></div>
                       <div style="margin-top:13px;padding:12px 14px;border-radius:11px;background:color-mix(in srgb,#2f6193 6%,transparent);border:1px solid color-mix(in srgb,#2f6193 18%,transparent);"><div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:5px;">Recommended next action</div><div style="font-size:12.5px;color:var(--ink-cold);line-height:1.45;">{{ sc.why.rec }}</div></div>
-                      <sc-if value="{{ sc.why.hasResolve }}"><button onClick="{{ sc.why.onResolve }}" style="margin-top:13px;padding:10px 18px;border-radius:10px;border:none;cursor:pointer;font-family:var(--font-display);font-size:13px;font-weight:600;color:#ffffff;background:linear-gradient(180deg,#3d72a8,#2f6193);">Open in Resolve →</button></sc-if>
+                      <sc-if value="{{ sc.why.hasResolve }}"><button onClick="{{ sc.why.onResolve }}" style="{{ sc.why.resolveStyle }}">{{ sc.why.resolveLabel }}</button></sc-if>
                     </div>
                   </div>
                 </sc-if>
@@ -445,8 +452,7 @@
                     <div style="font-family:var(--font-display);font-size:11px;color:var(--ink-dim);">Subject S-1047 · DMR-204 · Site 018 · Protocol v2.1 · Run {{ rp.runId }} · 06-22</div>
                   </div>
                   <div style="margin-left:auto;display:flex;align-items:center;gap:7px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;">
-                    <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:999px;background:color-mix(in srgb,#2e9e6b 9%,transparent);border:1px solid color-mix(in srgb,#2e9e6b 30%,transparent);font-family:var(--font-display);font-size:11px;font-weight:600;color:#2e9e6b;"><span style="width:6px;height:6px;border-radius:50%;background:#2e9e6b;"></span>Chain verified</span>
-                    <button style="padding:7px 14px;border-radius:9px;border:none;cursor:pointer;font-family:var(--font-display);font-size:12px;font-weight:600;color:#ffffff;background:linear-gradient(180deg,#3d72a8,#2f6193);">Export audit packet</button>
+                    <button onClick="{{ rp.onExport }}" style="{{ rp.exportStyle }}">{{ rp.exportLabel }}</button>
                   </div>
                 </div>
                 <div style="display:flex;gap:6px;flex-wrap:wrap;margin:14px 0 12px;">
@@ -680,7 +686,6 @@
         <div style="display:flex;align-items:center;gap:12px;padding:13px 22px;border-bottom:1px solid rgba(31,45,61,0.08);background:#fbfcfd;">
           <span style="font-family:var(--font-display);font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-steel);">Replay manifest</span>
           <span style="font-family:var(--font-display);font-size:10.5px;color:var(--ink-dim);">RPL-2026-0622-018-1047</span>
-          <span style="margin-left:auto;display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:999px;background:color-mix(in srgb,var(--state-pass) 9%,transparent);border:1px solid color-mix(in srgb,var(--state-pass) 30%,transparent);font-family:var(--font-display);font-size:9.5px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:var(--state-pass);"><svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5 6.5 12 13 4.5"></path></svg>Chain verified</span>
         </div>
         <div style="position:relative;display:flex;align-items:flex-start;justify-content:center;gap:0;padding:34px 36px 70px;">
           <div style="position:relative;width:36px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;"><span style="width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:#ffffff;border:1.5px solid color-mix(in srgb,var(--ink-steel) 55%,transparent);font-family:var(--font-display);font-size:12px;font-weight:600;color:var(--ink-steel);">01</span><span style="position:absolute;top:46px;left:50%;transform:translateX(-50%);white-space:nowrap;font-family:var(--font-display);font-size:13px;font-weight:600;letter-spacing:-0.01em;color:var(--ink-cold);">Protocol</span><span style="position:absolute;top:66px;left:50%;transform:translateX(-50%);white-space:nowrap;font-family:var(--font-display);font-size:9px;letter-spacing:0.04em;color:var(--ink-dim);">locked v2.1</span></div>
@@ -784,7 +789,7 @@
 <template id="__bundler_thumbnail"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="#0c1118"></rect><g transform="translate(50 50) scale(0.075) translate(-238 -260)" fill="none" stroke="#A9C0D6" stroke-width="33" stroke-linejoin="round" stroke-linecap="round"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></g></svg></template></x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;showMarquee&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
 class Component extends DCLogic {
-  state = { step: 0, ci: 0, pick: null, committed: {}, hov: null, evSel: 0, scSel: "S-1047", scView: "board", evActed: {}, rpSel: 4, scFilter: null, rpFilter: null };
+  state = { step: 0, ci: 0, pick: null, committed: {}, hov: null, evSel: 0, scSel: "S-1047", scView: "board", evActed: {}, rpSel: 4, scFilter: null, rpFilter: null, rpExported: false };
 
   steps = ["Protocol", "Evidence", "Screening", "Resolve", "Replay"];
 
@@ -880,6 +885,53 @@ class Component extends DCLogic {
   tone(t) { return { pass: "#2e9e6b", missing: "#c06a1e", fail: "#dc3a52", stale: "#bf831f", steel: "#2f6193", muted: "#7c8a99" }[t] || "#7c8a99"; }
   segTab(on) { return { padding: "5px 13px", borderRadius: 6, border: "none", cursor: "pointer", fontFamily: "var(--font-display)", fontSize: 12, fontWeight: 600, color: on ? "var(--ink-cold)" : "var(--ink-dim)", background: on ? "#ffffff" : "transparent", boxShadow: on ? "0 1px 2px rgba(20,40,70,0.1)" : "none", transition: "all 140ms ease" }; }
   pill(c) { return { fontFamily: "var(--font-display)", fontSize: 10, letterSpacing: "0.04em", textTransform: "uppercase", color: c, border: "1px solid " + ("color-mix(in srgb," + c + " 32%, transparent)"), borderRadius: 999, padding: "3px 10px", whiteSpace: "nowrap", flexShrink: 0 }; }
+  primaryBtn(done, enabled, x) {
+    x = x || {};
+    const base = { padding: x.sm ? "10px 18px" : "11px 20px", borderRadius: 10, fontFamily: "var(--font-display)", fontSize: x.sm ? 13 : 14, fontWeight: 600, flexShrink: 0, transition: "all 150ms ease", marginTop: x.mt == null ? 14 : x.mt, alignSelf: x.align || "flex-start", border: "1px solid transparent" };
+    if (done) return Object.assign({}, base, { cursor: "default", color: "#2e9e6b", background: "color-mix(in srgb,#2e9e6b 12%, transparent)", border: "1px solid color-mix(in srgb,#2e9e6b 32%, transparent)" });
+    if (enabled) return Object.assign({}, base, { cursor: "pointer", color: "#ffffff", background: "linear-gradient(180deg,#3d72a8,#2f6193)", border: "none" });
+    return Object.assign({}, base, { cursor: "not-allowed", color: "var(--ink-dim)", background: "rgba(20,33,48,0.05)" });
+  }
+  guideState() {
+    const s = this.state;
+    const done = [
+      s.step > 0,
+      !!s.evActed["E-4.2"],
+      s.step >= 3,
+      !!s.committed["S-1047"],
+      !!s.rpExported
+    ];
+    let active = done.findIndex((d) => !d);
+    if (active < 0) active = 4;
+    const labels = ["① Evidence", "② ECOG", "③ Marcus Bell", "④ Accept & sign", "⑤ Export replay"];
+    const steps = labels.map((label, i) => ({
+      label,
+      style: {
+        display: "inline-block",
+        padding: "4px 10px",
+        borderRadius: 999,
+        fontFamily: "var(--font-display)",
+        fontSize: 11,
+        fontWeight: done[i] || i === active ? 600 : 500,
+        letterSpacing: "0.01em",
+        color: done[i] ? "#2e9e6b" : (i === active ? "var(--ink-cold)" : "var(--ink-dim)"),
+        background: done[i] ? "color-mix(in srgb,#2e9e6b 10%, transparent)" : (i === active ? "color-mix(in srgb,#2f6193 10%, transparent)" : "transparent"),
+        border: "1px solid " + (done[i] ? "color-mix(in srgb,#2e9e6b 30%, transparent)" : (i === active ? "color-mix(in srgb,#2f6193 35%, transparent)" : "rgba(31,45,61,0.12)"))
+      }
+    }));
+    let hint = "Explore the rest of the page below";
+    if (s.step === 0) hint = "Click Evidence in the left rail";
+    else if (s.step === 1 && s.evSel !== 1) hint = "Select ECOG performance status (E-4.2)";
+    else if (s.step === 1 && !s.evActed["E-4.2"]) hint = "Click Route to PI review";
+    else if (s.step === 1) hint = "Open Screening in the left rail";
+    else if (s.step === 2 && s.scSel !== "S-1047") hint = "Select Marcus Bell in the patient queue";
+    else if (s.step === 2) hint = "Click Open in Resolve →";
+    else if (s.step === 3 && !s.pick) hint = "Choose Accept note · ECOG 2";
+    else if (s.step === 3 && !s.committed["S-1047"]) hint = "Click Sign decision";
+    else if (s.step === 3) hint = "Open Replay in the left rail";
+    else if (s.step === 4 && !s.rpExported) hint = "Click Export audit packet";
+    return { steps, hint };
+  }
 
   setStep = (n) => this.setState({ step: n });
   setCi = (i) => this.setState({ ci: i, pick: null });
@@ -973,7 +1025,8 @@ class Component extends DCLogic {
     const se = LG[rpi2];
     const detC = (f) => f === "ok" ? "#2e9e6b" : f === "warn" ? "#bf831f" : f === "ref" ? "var(--ink-dim)" : "var(--ink-cold)";
     const sel = { event:se.ev, time:se.t, eid:se.eid, exc: se.exc === "none" ? "" : se.exc.toUpperCase(), excStyle: se.exc==="none" ? {display:"none"} : this.chip("#bf831f"), rows: se.rows.map((r)=>({k:r[0], v:r[1], c: detC(r[2])})), related: se.rel };
-    const rp = { runId: "RPL-2026-0622-018-1047", ledger, filters, sel };
+    const rpExported = !!this.state.rpExported;
+    const rp = { runId: "RPL-2026-0622-018-1047", ledger, filters, sel, exportLabel: rpExported ? "✓ Audit packet exported" : "Export audit packet", exportStyle: this.primaryBtn(rpExported, !rpExported, { sm: true, mt: 0, align: "auto" }), onExport: () => { if (!rpExported) this.setState({ rpExported: true }); };
     
 
     const SCm = { conflict: "#dc3a52", missing: "#c06a1e", stale: "#bf831f", judgment: "#a9c0d6" };
@@ -1010,7 +1063,7 @@ class Component extends DCLogic {
     const EVCLS = (s) => ({ missing: "Source-dependent", conflict: "Subjective", stale: "Temporal", ambiguous: "Temporal", ready: "Computable", review: "Subjective" })[s] || "Source-dependent";
     const reqRows = this.evReqs.map((r, i) => { const on = i === evSel, col = this.EVC(r.state); return { code: r.code, fact: r.fact, color: col, stLabel: this.EVL(r.state), cls: EVCLS(r.state), blocks: r.blocks, action: r.action, onClick: () => this.setState({ evSel: i }), style: { display: "flex", flexDirection: "column", width: "100%", textAlign: "left", cursor: "pointer", padding: "11px 13px", borderRadius: 11, border: "1px solid " + (on ? "color-mix(in srgb,#2f6193 42%,transparent)" : "rgba(31,45,61,0.1)"), background: on ? "color-mix(in srgb,#2f6193 7%,transparent)" : "#ffffff", transition: "all 140ms ease" }, chipStyle: this.chip(col) }; });
     const dq = this.evReqs[evSel], dcol = this.EVC(dq.state), acted = !!this.state.evActed[dq.code];
-    const detail = { code: dq.code, color: dcol, stLabel: this.EVL(dq.state), trigger: dq.trigger.replace(/_/g, " "), fact: dq.fact, requiredBy: dq.requiredBy, cls: EVCLS(dq.state), coord: (dq.state === "conflict" || dq.state === "ambiguous") ? (dq.state === "conflict" ? "Subjective criterion. A clinician confirms which source governs." : "Ambiguous timing. The coordinator resolves it by chart review.") : "", computable: !(dq.state === "conflict" || dq.state === "ambiguous"), arm: (dq.code.charAt(0) === "E" ? "Exclusion · blocks both arms" : "Inclusion · gates Arm A"), current: dq.current, sourcesText: dq.sources, checked: dq.checked, action: acted ? "Requested · pending source" : dq.action, chipStyle: this.chip(dcol), onAction: () => this.setState((st) => { const m = Object.assign({}, st.evActed); m[dq.code] = true; return { evActed: m }; }), patients: dq.patients.slice(0, 2).map((p) => ({ n: p.n, src: p.src, date: p.date, dotStyle: { width: 7, height: 7, borderRadius: "50%", flexShrink: 0, background: this.EVC(p.st) } })) };
+    const detail = { code: dq.code, color: dcol, stLabel: this.EVL(dq.state), trigger: dq.trigger.replace(/_/g, " "), fact: dq.fact, requiredBy: dq.requiredBy, cls: EVCLS(dq.state), coord: (dq.state === "conflict" || dq.state === "ambiguous") ? (dq.state === "conflict" ? "Subjective criterion. A clinician confirms which source governs." : "Ambiguous timing. The coordinator resolves it by chart review.") : "", computable: !(dq.state === "conflict" || dq.state === "ambiguous"), arm: (dq.code.charAt(0) === "E" ? "Exclusion · blocks both arms" : "Inclusion · gates Arm A"), current: dq.current, sourcesText: dq.sources, checked: dq.checked, actionLabel: acted ? "✓ " + dq.action : dq.action, actionStyle: this.primaryBtn(acted, !acted), chipStyle: this.chip(dcol), onAction: () => { if (!acted) this.setState((st) => { const m = Object.assign({}, st.evActed); m[dq.code] = true; return { evActed: m }; }); }, patients: dq.patients.slice(0, 2).map((p) => ({ n: p.n, src: p.src, date: p.date, dotStyle: { width: 7, height: 7, borderRadius: "50%", flexShrink: 0, background: this.EVC(p.st) } })) };
     const covSegs = [ { n: 25, c: "#2e9e6b", label: "Mapped" }, { n: 4, c: "#c06a1e", label: "Missing" }, { n: 3, c: "#dc3a52", label: "Conflict" }, { n: 4, c: "#bf831f", label: "Stale" } ];
     const coverage = covSegs.map((s) => ({ n: s.n, label: s.label, style: { width: (s.n / 36 * 100) + "%", background: s.c }, dot: { width: 7, height: 7, borderRadius: "50%", background: s.c, display: "inline-block", flexShrink: 0 } }));
     const ev = { connectors, coverage, reqRows, detail };
@@ -1026,12 +1079,15 @@ class Component extends DCLogic {
     const queue = fq.map((p) => { const on = p.id === scSelId, scol = this.SCS(p.st), tg = this.TRIG(p.trig); return { onClick: () => this.setState({ scSel: p.id }), style: { display: "flex", alignItems: "center", gap: 11, width: "100%", textAlign: "left", cursor: "pointer", padding: "9px 12px", borderRadius: 11, border: "1px solid " + (on ? "color-mix(in srgb,#2f6193 42%,transparent)" : "rgba(31,45,61,0.08)"), background: on ? "color-mix(in srgb,#2f6193 7%,transparent)" : "#ffffff", transition: "all 140ms ease" }, barStyle: { width: 3, alignSelf: "stretch", borderRadius: 2, background: scol, flexShrink: 0 }, name: p.name, idText: p.id, crit: p.crit, stLabel: p.st === "ELIGIBLE" ? "CONFIRM" : p.st, stStyle: this.chip(scol), trigLabel: tg[0], trigStyle: tg[0] ? this.chip(tg[1]) : { display: "none" }, owner: p.owner }; });
     const sp = fq.find((p) => p.id === scSelId) || fq[0] || this.scQueue[0];
     const spTg = this.TRIG(sp.trig);
-    const why = { name: sp.name, id: sp.id, st: sp.st === "ELIGIBLE" ? "CONFIRM" : sp.st, stStyle: this.chip(this.SCS(sp.st)), blocker: sp.blocker, rule: sp.rule, facts: sp.facts, sources: sp.sources, result: sp.result, resultColor: this.SCS(sp.st), reason: sp.reason, trigger: spTg[0] || "·", rec: sp.rec, hasResolve: sp.ci != null, onResolve: sp.ci != null ? (() => this.setState({ ci: sp.ci, pick: null, step: 3 })) : (() => {}) };
+    const resolveOpened = this.state.step >= 3;
+    const why = { name: sp.name, id: sp.id, st: sp.st === "ELIGIBLE" ? "CONFIRM" : sp.st, stStyle: this.chip(this.SCS(sp.st)), blocker: sp.blocker, rule: sp.rule, facts: sp.facts, sources: sp.sources, result: sp.result, resultColor: this.SCS(sp.st), reason: sp.reason, trigger: spTg[0] || "·", rec: sp.rec, hasResolve: sp.ci != null, resolveLabel: resolveOpened ? "✓ Opened in Resolve" : "Open in Resolve →", resolveStyle: this.primaryBtn(resolveOpened, sp.ci != null && !resolveOpened, { sm: true, mt: 13 }), onResolve: sp.ci != null ? (() => this.setState({ ci: sp.ci, pick: null, step: 3 })) : (() => {}) };
     const sc = { isBoard: this.state.scView === "board", isMap: this.state.scView === "map", onBoard: () => this.setState({ scView: "board" }), onMap: () => this.setState({ scView: "map" }), boardTabStyle: this.segTab(this.state.scView === "board"), mapTabStyle: this.segTab(this.state.scView === "map"), summary: scSummary, queue, why };
+
+    const guide = this.guideState();
 
     return {
       rail, rP: rail[0], rE: rail[1], rS: rail[2], rR: rail[3], rRp: rail[4],
-      screen: fld, hovTip, ev, sc,
+      screen: fld, hovTip, ev, sc, guide,
       isProtocol: step === 0, isEvidence: step === 1, isScreening: step === 2, isResolve: step === 3, isReplay: step === 4,
       criteria, domains,
       candChips, opts, cur,
