@@ -172,10 +172,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
   <section id="instrument" data-screen-label="Live instrument" style="position:relative;padding:0 clamp(12px,2.5vw,28px) clamp(40px,6vw,72px);background:#ffffff;">
     <p style="max-width:920px;margin:0 auto 10px;text-align:center;font-size:13px;line-height:1.55;color:var(--ink-dim);">A demonstration of the Damaros<sup style="font-size:0.55em;letter-spacing:0;">™</sup> runtime on synthetic FHIR data.</p>
     <div style="max-width:920px;margin:0 auto 16px;text-align:center;">
-      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px 8px;align-items:center;">
-        <sc-for list="{{ guide.steps }}" as="g" hint-placeholder-count="5"><span style="{{ g.style }}">{{ g.label }}</span></sc-for>
-      </div>
-      <p class="dmPulse" style="margin:12px 0 0;font-size:13px;font-weight:600;line-height:1.45;color:var(--ink-cold);">{{ guide.hint }}</p>
+      <p class="dmPulse" style="margin:0;font-size:13px;font-weight:600;line-height:1.45;color:var(--ink-cold);">{{ guide.hint }}</p>
     </div>
 
     <div id="nodeStage" class="dmScrollX" style="overflow-x:auto;overflow-y:hidden;padding-bottom:8px;">
@@ -919,31 +916,6 @@ class Component extends DCLogic {
   }
   guideState() {
     const s = this.state;
-    const done = [
-      s.step > 0,
-      !!s.evActed["E-4.2"],
-      s.step >= 3,
-      !!s.committed["S-1047"],
-      !!s.rpExported
-    ];
-    let active = done.findIndex((d) => !d);
-    if (active < 0) active = 4;
-    const labels = ["① Evidence", "② ECOG", "③ Marcus Bell", "④ Accept & sign", "⑤ Export replay"];
-    const steps = labels.map((label, i) => ({
-      label,
-      style: {
-        display: "inline-block",
-        padding: "4px 10px",
-        borderRadius: 999,
-        fontFamily: "var(--font-display)",
-        fontSize: 11,
-        fontWeight: done[i] || i === active ? 600 : 500,
-        letterSpacing: "0.01em",
-        color: done[i] ? "#2e9e6b" : (i === active ? "var(--ink-cold)" : "var(--ink-dim)"),
-        background: done[i] ? "color-mix(in srgb,#2e9e6b 10%, transparent)" : (i === active ? "color-mix(in srgb,#2f6193 10%, transparent)" : "transparent"),
-        border: "1px solid " + (done[i] ? "color-mix(in srgb,#2e9e6b 30%, transparent)" : (i === active ? "color-mix(in srgb,#2f6193 35%, transparent)" : "rgba(31,45,61,0.12)"))
-      }
-    }));
     let hint = "Explore the rest of the page below";
     if (s.step === 0) hint = "Click Evidence in the left rail";
     else if (s.step === 1 && s.evSel !== 1) hint = "Select ECOG performance status (E-4.2)";
@@ -955,7 +927,7 @@ class Component extends DCLogic {
     else if (s.step === 3 && !s.committed["S-1047"]) hint = "Click Sign decision";
     else if (s.step === 3) hint = "Open Replay in the left rail";
     else if (s.step === 4 && !s.rpExported) hint = "Click Export Replay";
-    return { steps, hint };
+    return { hint };
   }
 
   setStep = (n) => this.setState({ step: n });
