@@ -64,7 +64,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
     @keyframes dmDrift{0%,100%{transform:translate(-50%,-50%) rotate(0deg);}50%{transform:translate(-49%,-51%) rotate(2.5deg);}}
     @keyframes chevBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(5px);}}
     @media (max-width:768px){
-      .dm-site section[data-screen-label="About hero"] p.dm-mission{white-space:nowrap;font-size:clamp(8px,2.9vw,1.1rem) !important;max-width:none !important;}
+      .dm-site section[data-screen-label="About hero"] h1.dm-mission{white-space:nowrap;font-size:clamp(1.15rem,7vw,2.1rem) !important;}
       .dm-site section[data-screen-label="About hero"] p.dm-mission-sub{font-size:clamp(0.92rem,3.4vw,1.1rem) !important;max-width:none !important;}
     }
     @media (max-width:560px){
@@ -101,8 +101,8 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
   <section data-screen-label="About hero" style="position:relative;padding:clamp(72px,9vw,124px) clamp(20px,5vw,40px) clamp(44px,5vw,68px);background:radial-gradient(120% 80% at 50% -8%, #f6fafc 0%, #eef3f8 44%, #ffffff 80%);overflow:hidden;">
     <div aria-hidden="true" data-anim="" style="position:absolute;top:46%;left:50%;width:min(560px,92%);height:min(560px,92%);transform:translate(-50%,-50%);color:rgba(31,45,61,0.11);pointer-events:none;animation:dmDrift 30s ease-in-out infinite;"><svg viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="30" stroke-linejoin="round" stroke-linecap="round" style="width:100%;height:100%;"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg></div>
     <div style="position:relative;max-width:880px;margin:0 auto;text-align:center;">
-      <div style="font-family:var(--font-body);font-size:11.5px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:24px;">About Damaros<sup style="font-size:0.5em;letter-spacing:0;">™</sup></div>
-      <h1 class="dm-mission" style="margin:0;max-width:18ch;margin-left:auto;margin-right:auto;font-family:var(--font-display);font-weight:700;font-size:clamp(2.1rem,4.6vw,3.4rem);line-height:1.04;letter-spacing:-0.03em;text-wrap:balance;color:var(--ink-cold);">One mission:<br><span style="color:var(--ink-steel);">Make trials executable, no matter the site.</span></h1>
+      <div style="font-family:var(--font-body);font-size:11.5px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:24px;">Our Mission</div>
+      <h1 class="dm-mission" style="margin:0;margin-left:auto;margin-right:auto;font-family:var(--font-display);font-weight:700;font-size:clamp(2.1rem,4.6vw,3.4rem);line-height:1.04;letter-spacing:-0.03em;white-space:nowrap;color:var(--ink-cold);">Make trials executable<br><span style="color:var(--ink-steel);">no matter the site.</span></h1>
       <p class="dm-mission-sub" style="margin:16px auto 0;max-width:54ch;font-size:clamp(1rem,1.4vw,1.16rem);line-height:1.55;color:var(--ink-faint);">The patient may already be there. What&rsquo;s missing is the system to screen, resolve, and prove the path from protocol to action.</p>
     </div>
   </section>
