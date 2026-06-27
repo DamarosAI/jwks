@@ -12,14 +12,14 @@ This project is the brand + product design system for **Damaros**. It exists so 
 
 **Damaros makes trial execution visible.** Today, clinical trials run through PDFs, spreadsheets, inboxes, EHR fragments, and delayed status reports. Damaros turns that chaos into a live execution field: protocols become operable, evidence becomes traceable, screening becomes deterministic, human judgment becomes accountable, and every decision can be replayed.
 
-Positioning line (canonical): *AI-native infrastructure for decentralized trial access* — **AI-native where operations scale, deterministic where trust requires.** No model ever casts an eligibility verdict; PHI never enters an LLM path.
+Positioning line (canonical, per damaros.ai): *the agentic execution platform for clinical trials.* **AI-native where operations scale, deterministic where trust requires.** No model ever casts an eligibility verdict; PHI never enters an LLM path.
 
 ### Two surfaces — the product grammar
 
 | Surface | What it is |
 |---|---|
 | **Node** | The **site runtime**. Where execution happens — a care site runs the trial under local control with replayable proof. Executes the one workflow: **Protocol → Evidence → Screening → Resolve → Replay**. (Helper label: *Clinic Node*.) |
-| **Console** | The **sponsor command center**. Where the network becomes intelligible — network readiness, friction, amendment impact, REVIEW burden, site performance, execution drift. Permissioned, **PHI-free**, read-only with respect to the patient path. (Helper label: *Sponsor Console*.) |
+| **Console** | **Buyer-neutral field command** for the site network. Where the network becomes intelligible: readiness, friction, amendment impact, REVIEW burden, site performance, execution drift. Permissioned, **PHI-free**, read-only with respect to the patient path. (Helper label: *Network Console*.) |
 
 > **Node produces trusted execution. Console commands the field built from it.**
 
@@ -34,8 +34,8 @@ Positioning line (canonical): *AI-native infrastructure for decentralized trial 
 - **Luna** — the governed AI control plane; PHI provably never enters it.
 - **Operations Mesh** — governed worker substrate (Forge = evidence assembly, Router = review triage). Workers add priority/proof, never authority.
 
-### The demo gate
-The sign-in / demo CTA is **"Enter Demo"** (or simply *Sign in*). **Do not** use "Field" anywhere in public or product copy — "Field" is the internal name of this design system only, never a product noun, label, or CTA. Never "View demo" or "Explore platform."
+### CTAs (canon, per damaros.ai)
+The primary CTA is **"Start a pilot"** (mailto). The demo link is **"See the live demo"** (it scrolls to the live runtime demo on synthetic FHIR). **Do not** use "Field" anywhere in public or product copy: "Field" is the internal name of this design system only, never a product noun, label, or CTA. Never "Explore platform."
 
 ---
 
@@ -66,14 +66,17 @@ The voice is **declarative, mineral, and disciplined.** It sounds like an instru
 **Casing & mechanics**
 - **Sentence case** for headlines and body. **UPPERCASE** reserved for: tracked eyebrows/labels, status chips, and the verdict words **PASS / REVIEW / FAIL** (always all-caps when naming the deterministic state).
 - Product nouns are **Capitalized**: Node, Console, Protocol, Evidence, Screening, Resolve, Replay, Eye, Trident, Luna, Sentinel.
-- The accent device: in a headline, the **emphasized clause is set in steel (stone-blue)**, not bold or italic — e.g. "Care happens everywhere. *The trials that save lives do not.*"
+- The accent device: in a headline, the **emphasized clause is set in steel (stone-blue)**, not bold or italic. Example: "Care happens everywhere. *The trials that save lives do not.*"
 - **No emoji. Ever.** No exclamation marks. Numbers are tabular; stats cite a source in a tiny uppercase tag (e.g. "Community Oncology Alliance").
+- **No em dashes in body copy.** Use periods and commas, and let short sentences carry the rhythm. House convention: the live site copy is em-dash-free.
 
 **Person**
 - Speaks about the system in third person ("Node admits site-approved evidence…") and to the operator in second person for actions ("Commit Resolution", "Open Signal"). Avoids "we/our" marketing-speak.
 
-**Words to USE:** deterministic patient-path screening · permissioned execution truth · replayable proof · evidence-bound · requires review · human committed · governed · PHI-free · as-of the latest evidence ingest.
-**Words to AVOID:** "AI found this patient" · "the model decides" · autonomous / agentic (unqualified) · real-time/live screening · "regulatory-grade / FDA-ready / HIPAA compliant" (full stop) · CTMS replacement · trial matching · dashboard. (Full quarantine list lives in the repo's `PRODUCT_LANGUAGE.md`.)
+**Words to USE:** the agentic execution platform · Luna-governed agents (stage · assemble · accelerate · draft, never decide) · deterministic patient-path screening · permissioned execution truth · replayable proof · evidence-bound · requires review · human committed · governed · PHI-free · as-of the latest evidence ingest.
+**Words to AVOID:** "AI found this patient" · "the model decides" · "the model determines eligibility" · real-time/live screening · "regulatory-grade / FDA-ready / HIPAA compliant" (full stop) · CTMS replacement · trial matching · dashboard. (Full quarantine list lives in the repo's `PRODUCT_LANGUAGE.md`.)
+
+**On "agentic":** the canonical hero is *the agentic execution platform for clinical trials* (damaros.ai). "Agentic" names the operations layer: Luna-governed agents stage, assemble, accelerate, and draft. It never names the verdict. The hard line holds regardless of the word: no model casts an eligibility verdict, PHI never enters a model, screening is deterministic. Use "agentic" for the platform; never say a model found a patient or decided eligibility.
 
 ---
 
