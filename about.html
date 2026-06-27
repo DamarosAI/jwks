@@ -64,7 +64,8 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
     @keyframes dmDrift{0%,100%{transform:translate(-50%,-50%) rotate(0deg);}50%{transform:translate(-49%,-51%) rotate(2.5deg);}}
     @keyframes chevBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(5px);}}
     @media (max-width:768px){
-      .dm-site section[data-screen-label="About hero"] p{white-space:nowrap;font-size:clamp(8px,2.9vw,1.1rem) !important;max-width:none !important;}
+      .dm-site section[data-screen-label="About hero"] p.dm-mission{white-space:nowrap;font-size:clamp(8px,2.9vw,1.1rem) !important;max-width:none !important;}
+      .dm-site section[data-screen-label="About hero"] p.dm-mission-sub{font-size:clamp(0.92rem,3.4vw,1.1rem) !important;max-width:none !important;}
     }
     @media (max-width:560px){
       .dm-site header{gap:8px !important;padding-left:14px !important;padding-right:14px !important;}
@@ -102,7 +103,8 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
     <div style="position:relative;max-width:880px;margin:0 auto;text-align:center;">
       <div style="font-family:var(--font-body);font-size:11.5px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:24px;">About Damaros<sup style="font-size:0.5em;letter-spacing:0;">™</sup></div>
       <h1 style="margin:0;font-family:var(--font-display);font-weight:700;font-size:clamp(2.3rem,5vw,3.8rem);line-height:1.02;letter-spacing:-0.03em;text-wrap:balance;">Care happens everywhere. <span style="color:var(--ink-steel);">The trials that save lives don't.</span></h1>
-      <p style="margin:24px auto 0;max-width:50ch;font-size:clamp(1.08rem,1.6vw,1.3rem);line-height:1.5;color:var(--ink-quiet);">One mission: get more patients to therapeutic options faster</p>
+      <p class="dm-mission" style="margin:24px auto 0;max-width:50ch;font-size:clamp(1.08rem,1.6vw,1.3rem);line-height:1.5;color:var(--ink-quiet);">One mission: <span style="color:var(--ink-steel);font-weight:600;">Make trials executable, no matter the site.</span></p>
+      <p class="dm-mission-sub" style="margin:16px auto 0;max-width:54ch;font-size:clamp(1rem,1.4vw,1.16rem);line-height:1.55;color:var(--ink-faint);">The patient may already be there. What&rsquo;s missing is the system to screen, resolve, and prove the path from protocol to action.</p>
     </div>
   </section>
 
@@ -141,12 +143,12 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
     <div style="max-width:720px;margin:0 auto;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:24px;">From the founder</div>
       <p style="margin:0;font-family:var(--font-display);font-size:clamp(1.3rem,2.4vw,1.8rem);font-weight:700;line-height:1.32;letter-spacing:-0.02em;color:var(--ink-cold);text-wrap:balance;">My goal is to bring trials to the community clinics where most patients are already treated, on an execution platform that scales with <span style="color:var(--ink-steel);">any site size.</span></p>
-      <div style="display:flex;align-items:center;gap:16px;margin-top:32px;padding-top:26px;border-top:1px solid rgba(31,45,61,0.12);">
-        
+      <div style="display:flex;align-items:center;flex-wrap:wrap;gap:16px;margin-top:32px;padding-top:26px;border-top:1px solid rgba(31,45,61,0.12);">
         <div>
           <div style="font-family:var(--font-display);font-size:16px;font-weight:700;letter-spacing:-0.01em;color:var(--ink-cold);">Anirudh C. Nimmagadda</div>
           <div style="font-family:var(--font-mono);font-size:11.5px;color:var(--ink-dim);margin-top:3px;">Founder · MD, MSAI candidate</div>
         </div>
+        <a href="mailto:anirudh@damaros.ai" style="margin-left:auto;display:inline-flex;align-items:center;justify-content:center;height:42px;padding:0 20px;border-radius:999px;font-family:var(--font-mono);font-size:11.5px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;white-space:nowrap;color:var(--ink-steel);background:rgba(47,97,147,0.06);border:1px solid color-mix(in srgb,#2f6193 38%,transparent);">Get in touch</a>
       </div>
     </div>
   </section>
