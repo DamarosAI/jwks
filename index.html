@@ -163,7 +163,52 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
         grid-template-columns:1fr !important;
       }
     }
-    @media (prefers-reduced-motion:reduce){[data-anim]{animation:none !important;}}
+
+    /* ---- integration logo carousel + input-card baseline ---- */
+    .dm-logo-track{display:contents;}
+    .dm-logo-dupe{display:none;}
+    .dm-input-cards{display:flex;flex-direction:column;gap:12px;}
+    .dm-spine-indicator{display:none;}
+    .dm-connect-copy{font-size:14px;line-height:1.55;}
+    .dm-connect-copy{font-size:14px;line-height:1.55;}
+    @keyframes dmLogoScroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+    /* ---- caption hint hidden where the demo autoplays ---- */
+    @media (max-width:760px),(pointer:coarse){
+      .dm-site .dm-caption-hint{display:none !important;}
+    }
+
+    /* ---- mobile layout ---- */
+    @media (max-width:760px){
+      .dm-site .dm-logowall{flex-wrap:nowrap;overflow:hidden;justify-content:flex-start;gap:0;-webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);}
+      .dm-site .dm-logo-track{display:flex !important;flex-wrap:nowrap;width:max-content;animation:dmLogoScroll 30s linear infinite;}
+      .dm-site .dm-logo-dupe{display:grid !important;}
+      .dm-site .dm-logo-tile{flex:0 0 auto;width:138px;height:62px;margin-right:14px;padding:0 18px;}
+
+      .dm-site .dm-connect-copy{font-size:clamp(9.5px,3vw,13px) !important;line-height:1.7;max-width:none;padding:0 2px;}
+      .dm-site .dm-connect-l1,.dm-site .dm-connect-l2{display:block;}
+
+      .dm-site #spine .dm-spine-grid{display:flex !important;grid-template-columns:none !important;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;margin-top:24px;scrollbar-width:none;-ms-overflow-style:none;padding-bottom:2px;-webkit-overflow-scrolling:touch;}
+      .dm-site #spine .dm-spine-grid::-webkit-scrollbar{display:none;}
+      .dm-site #spine .dm-spine-grid > div{flex:0 0 80%;scroll-snap-align:center;min-height:0 !important;}
+      .dm-site #spine .dm-spine-indicator{display:block;text-align:center;margin-top:14px;font-family:var(--font-display);font-size:12px;letter-spacing:0.08em;color:var(--ink-dim);font-variant-numeric:tabular-nums;}
+      .dm-site #spine h2{font-size:clamp(1.65rem,7vw,2.2rem) !important;}
+      .dm-site #spine p[style*="white-space:nowrap"]{white-space:normal !important;font-size:0.95rem !important;}
+
+      .dm-site #output .dm-output-grid{grid-template-columns:1fr !important;}
+      .dm-site #output .dm-input-cards{display:grid !important;grid-template-columns:repeat(3,1fr);gap:8px;}
+      .dm-site #output .dm-input-cards > div{padding:12px 10px;}
+      .dm-site #output .dm-input-cards > div > div:first-child{font-size:12px;line-height:1.25;}
+      .dm-site #output .dm-input-cards > div > div:last-child{font-size:10px;}
+      .dm-site #output .dm-input-arrow{display:none !important;}
+
+      .dm-site #pilot [style*="grid-template-columns:repeat(5"]{grid-template-columns:1fr !important;gap:18px !important;}
+      .dm-site #pilot [style*="grid-template-columns:repeat(5"] > div{align-items:center !important;}
+      .dm-site #pilot h2{font-size:clamp(1.9rem,8vw,2.6rem) !important;}
+      .dm-site #pilot [style*="border-top:1px solid rgba(31,45,61,0.12)"]{flex-direction:column !important;align-items:stretch !important;text-align:center;gap:16px !important;}
+      .dm-site #pilot [style*="border-top:1px solid rgba(31,45,61,0.12)"] > span[style*="margin-left:auto"]{margin-left:0 !important;display:flex;justify-content:center;}
+    }
+    @media (prefers-reduced-motion:reduce){[data-anim]{animation:none !important;} .dm-logo-track{animation:none !important;}}
   </style>
 </helmet>
 
@@ -203,7 +248,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
 
   <!-- ============ INSTRUMENT · clean Node UI ============ -->
   <section id="instrument" data-screen-label="Live instrument" style="position:relative;padding:0 clamp(12px,2.5vw,28px) clamp(40px,6vw,72px);background:#ffffff;">
-    <p style="max-width:920px;margin:0 auto 16px;text-align:center;font-size:15px;font-weight:600;line-height:1.55;color:var(--ink-cold);">A demonstration of the Damaros<sup style="font-size:0.55em;letter-spacing:0;">™</sup> runtime on synthetic FHIR data. Click on the pulsing box to walk through it.</p>
+    <p style="max-width:920px;margin:0 auto 16px;text-align:center;font-size:15px;font-weight:600;line-height:1.55;color:var(--ink-cold);">A demonstration of the Damaros<sup style="font-size:0.55em;letter-spacing:0;">™</sup> runtime on synthetic FHIR data.<span class="dm-caption-hint"> Click on the pulsing box to walk through it.</span></p>
 
     <div id="nodeStage" style="display:flex;justify-content:center;align-items:flex-start;overflow:hidden;">
       <div id="nodeScaleWrap" style="width:1160px;flex:0 0 1160px;transform-origin:top center;">
@@ -553,14 +598,21 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
     <div style="max-width:1000px;margin:0 auto;text-align:center;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:14px;">Works with your existing systems</div>
       <h2 style="margin:0 0 38px;font-family:var(--font-display);font-weight:700;font-size:clamp(1.5rem,2.8vw,2.1rem);line-height:1.08;letter-spacing:-0.02em;">Not a replacement. <span style="color:var(--ink-steel);">The platform unifies the stack you already run.</span></h2>
-      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:14px;">
-        <div style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/pasted-1782494614917-0.png" alt="Veeva" style="max-width:100%;max-height:30px;object-fit:contain;display:block;"></div>
-        <div style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/pasted-1782492887940-0.png" alt="Medidata" style="max-width:100%;max-height:22px;object-fit:contain;display:block;"></div>
-        <div style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/epic-systems-corporation-seeklogo.png" alt="Epic" style="max-width:100%;max-height:38px;object-fit:contain;display:block;"></div>
-        <div style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/330px-2011.Cerner.logo.png" alt="Cerner" style="max-width:100%;max-height:30px;object-fit:contain;display:block;"></div>
-        <div style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/pasted-1782493762954-0.png" alt="REDCap" style="max-width:100%;max-height:48px;object-fit:contain;display:block;"></div>
+      <div class="dm-logowall" style="display:flex;flex-wrap:wrap;justify-content:center;gap:14px;">
+        <div class="dm-logo-track">
+        <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/pasted-1782494614917-0.png" alt="Veeva" style="max-width:100%;max-height:30px;object-fit:contain;display:block;"></div>
+        <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/pasted-1782492887940-0.png" alt="Medidata" style="max-width:100%;max-height:22px;object-fit:contain;display:block;"></div>
+        <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/epic-systems-corporation-seeklogo.png" alt="Epic" style="max-width:100%;max-height:38px;object-fit:contain;display:block;"></div>
+        <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/330px-2011.Cerner.logo.png" alt="Cerner" style="max-width:100%;max-height:30px;object-fit:contain;display:block;"></div>
+        <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/pasted-1782493762954-0.png" alt="REDCap" style="max-width:100%;max-height:48px;object-fit:contain;display:block;"></div>
+        <div class="dm-logo-tile dm-logo-dupe" aria-hidden="true" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/pasted-1782494614917-0.png" alt="" style="max-width:100%;max-height:30px;object-fit:contain;display:block;"></div>
+        <div class="dm-logo-tile dm-logo-dupe" aria-hidden="true" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/pasted-1782492887940-0.png" alt="" style="max-width:100%;max-height:22px;object-fit:contain;display:block;"></div>
+        <div class="dm-logo-tile dm-logo-dupe" aria-hidden="true" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/epic-systems-corporation-seeklogo.png" alt="" style="max-width:100%;max-height:38px;object-fit:contain;display:block;"></div>
+        <div class="dm-logo-tile dm-logo-dupe" aria-hidden="true" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/330px-2011.Cerner.logo.png" alt="" style="max-width:100%;max-height:30px;object-fit:contain;display:block;"></div>
+        <div class="dm-logo-tile dm-logo-dupe" aria-hidden="true" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/pasted-1782493762954-0.png" alt="" style="max-width:100%;max-height:48px;object-fit:contain;display:block;"></div>
+        </div>
       </div>
-      <p style="max-width:640px;margin:34px auto 0;font-size:14px;line-height:1.55;color:var(--ink-faint);">We provide the execution platform that connects&nbsp;<span style="color: var(--ink-quiet);">them.&nbsp;</span>Read-only by default. PHI stays at the site.</p>
+      <p class="dm-connect-copy" style="max-width:640px;margin:34px auto 0;color:var(--ink-faint);"><span class="dm-connect-l1">We provide the execution platform that connects&nbsp;<span style="color: var(--ink-quiet);">them.</span></span> <span class="dm-connect-l2">Read-only by default. PHI stays at the site.</span></p>
     </div>
   </section>
   </sc-if>
@@ -575,7 +627,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
       </div>
       <div style="display:flex;flex-direction:column;gap:12px;">
         <div style="display:flex;align-items:center;padding:20px 24px;border-radius:14px;border:1px solid rgba(31,45,61,0.14);background:linear-gradient(180deg, rgba(31,45,61,0.05), rgba(31,45,61,0.015)), rgba(255,255,255,0.5);">
-          <div style="flex-shrink:0;width:100px;text-align:center;font-family:var(--font-display);font-size:clamp(2rem,2.9vw,2.5rem);font-weight:700;letter-spacing:-0.03em;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink-cold);">~80<span style="font-size:0.44em;color:var(--ink-steel);vertical-align:0.6em;font-weight:600;margin-left:1px;">%</span></div>
+          <div style="flex-shrink:0;width:120px;text-align:center;font-family:var(--font-display);font-size:clamp(2.6rem,3.7vw,3.3rem);font-weight:700;letter-spacing:-0.03em;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink-cold);">~80<span style="font-size:0.44em;color:var(--ink-steel);vertical-align:0.6em;font-weight:600;margin-left:1px;">%</span></div>
           <div style="width:1px;align-self:stretch;background:rgba(31,45,61,0.12);margin:1px 22px;"></div>
           <div style="min-width:0;">
             <p style="margin:0;font-size:13px;line-height:1.45;color:var(--ink-quiet);">of cancer patients are treated in community clinics, not academic centers.</p>
@@ -583,7 +635,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
           </div>
         </div>
         <div style="display:flex;align-items:center;padding:20px 24px;border-radius:14px;border:1px solid rgba(31,45,61,0.14);background:linear-gradient(180deg, rgba(31,45,61,0.05), rgba(31,45,61,0.015)), rgba(255,255,255,0.5);">
-          <div style="flex-shrink:0;width:100px;text-align:center;font-family:var(--font-display);font-size:clamp(2rem,2.9vw,2.5rem);font-weight:700;letter-spacing:-0.03em;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink-cold);">4<span style="font-size:0.44em;color:var(--ink-steel);vertical-align:0.6em;font-weight:600;margin-left:1px;">%</span></div>
+          <div style="flex-shrink:0;width:120px;text-align:center;font-family:var(--font-display);font-size:clamp(2.6rem,3.7vw,3.3rem);font-weight:700;letter-spacing:-0.03em;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink-cold);">4<span style="font-size:0.44em;color:var(--ink-steel);vertical-align:0.6em;font-weight:600;margin-left:1px;">%</span></div>
           <div style="width:1px;align-self:stretch;background:rgba(31,45,61,0.12);margin:1px 22px;"></div>
           <div style="min-width:0;">
             <p style="margin:0;font-size:13px;line-height:1.45;color:var(--ink-quiet);">enroll in a trial at community programs, versus ~22% at NCI-designated cancer centers.</p>
@@ -591,7 +643,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
           </div>
         </div>
         <div style="display:flex;align-items:center;padding:20px 24px;border-radius:14px;border:1px solid rgba(31,45,61,0.14);background:linear-gradient(180deg, rgba(31,45,61,0.05), rgba(31,45,61,0.015)), rgba(255,255,255,0.5);">
-          <div style="flex-shrink:0;width:100px;text-align:center;font-family:var(--font-display);font-size:clamp(2rem,2.9vw,2.5rem);font-weight:700;letter-spacing:-0.03em;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink-cold);">20<span style="font-size:0.44em;color:var(--ink-steel);vertical-align:0.6em;font-weight:600;margin-left:1px;">+</span></div>
+          <div style="flex-shrink:0;width:120px;text-align:center;font-family:var(--font-display);font-size:clamp(2.6rem,3.7vw,3.3rem);font-weight:700;letter-spacing:-0.03em;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink-cold);">20<span style="font-size:0.44em;color:var(--ink-steel);vertical-align:0.6em;font-weight:600;margin-left:1px;">+</span></div>
           <div style="width:1px;align-self:stretch;background:rgba(31,45,61,0.12);margin:1px 22px;"></div>
           <div style="min-width:0;">
             <p style="margin:0;font-size:13px;line-height:1.45;color:var(--ink-quiet);">disconnected systems the average site runs daily, with nothing unifying them.</p>
@@ -610,7 +662,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
         <h2 style="margin:0;font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,4vw,3.1rem);line-height:1.0;letter-spacing:-0.03em;">One run. Protocol to proof.</h2>
         <p style="margin:0;font-family:var(--font-display);font-size:clamp(1.05rem,1.7vw,1.4rem);font-weight:600;letter-spacing:-0.01em;color:var(--ink-quiet);white-space:nowrap;">Engine accelerates. <span style="color:var(--ink-steel);">Humans decide.</span> Replay proves.</p>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:40px;">
+      <div id="spineCarousel" class="dm-spine-grid" style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:40px;">
         <div style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;border:1px solid rgba(31,45,61,0.14);background:linear-gradient(180deg, rgba(31,45,61,0.06), rgba(31,45,61,0.02)), rgba(255,255,255,0.55);min-height:218px;">
           <div style="display:flex;align-items:center;gap:9px;margin-bottom:16px;"><span style="font-family:var(--font-display);font-size:11px;color:var(--ink-steel);">01</span><span style="font-family:var(--font-body);font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-dim);">Protocol</span></div>
           <div style="font-family:var(--font-display);font-size:1.35rem;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin-bottom:12px;">Intent becomes <span style="color:var(--ink-steel);">logic.</span></div>
@@ -642,6 +694,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
           <p style="margin:0;font-size:13px;line-height:1.5;color:var(--ink-faint);">Reconstruct any run end to end. Hash-verified, signed, PHI-free.</p>
         </div>
       </div>
+      <div class="dm-spine-indicator" aria-hidden="true"><span id="spineIndex">1</span> / 5</div>
     </div>
   </section>
 
@@ -651,15 +704,17 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">What a run produces</div>
       <h2 style="margin:0 0 10px;font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,4vw,3.1rem);line-height:1.0;letter-spacing:-0.03em;">Not a dashboard. <span style="color:var(--ink-steel);">A decision you can defend.</span></h2>
       <p style="margin:0;max-width:52ch;font-size:15px;line-height:1.6;color:var(--ink-faint);">Every run carries a manifest: states, cited evidence, the human call, a Replay bundle.</p>
-      <div style="display:grid;grid-template-columns:minmax(0,0.6fr) minmax(0,1fr);gap:clamp(16px,3vw,32px);margin-top:38px;align-items:stretch;">
-        <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="dm-output-grid" style="display:grid;grid-template-columns:minmax(0,0.6fr) minmax(0,1fr);gap:clamp(16px,3vw,32px);margin-top:38px;align-items:stretch;">
+        <div class="dm-input-col" style="display:flex;flex-direction:column;gap:12px;">
           <div style="font-family:var(--font-display);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:2px;">Input</div>
+          <div class="dm-input-cards">
           <div style="padding:16px 18px;border-radius:12px;border:1px solid rgba(31,45,61,0.12);background:rgba(255,255,255,0.5);"><div style="font-size:13.5px;font-weight:600;color:var(--ink-cold);">Protocol v2.1 · locked</div><div style="font-family:var(--font-display);font-size:11px;color:var(--ink-dim);margin-top:4px;">NCT03032484 · hash aead45cf</div></div>
           <div style="padding:16px 18px;border-radius:12px;border:1px solid rgba(31,45,61,0.12);background:rgba(255,255,255,0.5);"><div style="font-size:13.5px;font-weight:600;color:var(--ink-cold);">Site-approved cohort · 72 patients</div><div style="font-family:var(--font-display);font-size:11px;color:var(--ink-dim);margin-top:4px;">Synthetic · site-governed</div></div>
           <div style="padding:16px 18px;border-radius:12px;border:1px solid rgba(31,45,61,0.12);background:rgba(255,255,255,0.5);"><div style="font-size:13.5px;font-weight:600;color:var(--ink-cold);">Evidence snapshot · 1,284 resources</div><div style="font-family:var(--font-display);font-size:11px;color:var(--ink-dim);margin-top:4px;">FHIR R4 · pop-2026-06-22</div></div>
-          <div style="display:flex;align-items:center;gap:10px;padding:6px 2px;margin-top:2px;color:var(--ink-dim);"><span style="font-family:var(--font-display);font-size:11px;letter-spacing:0.04em;">deterministic engine</span><span style="flex:1;height:1px;background:rgba(31,45,61,0.16);"></span><span style="font-size:14px;color:var(--ink-steel);">→</span></div>
+          </div>
+          <div class="dm-input-arrow" style="display:flex;align-items:center;gap:10px;padding:6px 2px;margin-top:2px;color:var(--ink-dim);"><span style="font-family:var(--font-display);font-size:11px;letter-spacing:0.04em;">deterministic engine</span><span style="flex:1;height:1px;background:rgba(31,45,61,0.16);"></span><span style="font-size:14px;color:var(--ink-steel);">→</span></div>
         </div>
-        <div style="display:flex;flex-direction:column;">
+        <div class="dm-output-col" style="display:flex;flex-direction:column;">
           <div style="font-family:var(--font-display);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:14px;">Output · execution record</div>
           <div style="flex:1;border-radius:14px;border:1px solid rgba(31,45,61,0.16);border-left:2px solid var(--state-review);background:linear-gradient(180deg, rgba(217,162,62,0.05), rgba(255,255,255,0.4)), rgba(255,255,255,0.6);overflow:hidden;">
             <div style="display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid rgba(31,45,61,0.1);">
@@ -874,9 +929,24 @@ class Component extends DCLogic {
     const availH = window.innerHeight - 200;
     let s = Math.min(availW / REFW, availH / REFH, 1);
     if (!isFinite(s) || s <= 0) s = 1;
-    s = Math.max(s, 0.34);
+    s = Math.max(s, 0.2);
     wrap.style.transform = "scale(" + s + ")";
     stage.style.height = Math.ceil(REFH * s) + "px";
+  };
+
+  initSpineCarousel = () => {
+    const car = document.getElementById("spineCarousel");
+    const ind = document.getElementById("spineIndex");
+    if (!car || !ind) return;
+    const update = () => {
+      const cards = car.children;
+      if (!cards.length) return;
+      const cardW = cards[0].offsetWidth + 12;
+      const idx = Math.round(car.scrollLeft / cardW);
+      ind.textContent = Math.min(cards.length, Math.max(1, idx + 1));
+    };
+    car.addEventListener("scroll", () => { window.requestAnimationFrame(update); }, { passive: true });
+    update();
   };
 
   componentDidMount() {
@@ -889,6 +959,7 @@ class Component extends DCLogic {
 
     this.layoutNode();
     [60, 200, 600].forEach((d) => setTimeout(this.layoutNode, d));
+    this.initSpineCarousel();
     this.__onResize = () => this.layoutNode();
     window.addEventListener("resize", this.__onResize);
     window.addEventListener("orientationchange", this.__onResize);
