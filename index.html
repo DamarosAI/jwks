@@ -521,7 +521,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
                       </div>
                     </div>
                     <div style="display:flex;flex-wrap:wrap;gap:8px 28px;margin-top:16px;padding-top:14px;border-top:1px solid color-mix(in srgb,#2e9e6b 18%,transparent);">
-                      <div style="display:flex;flex-direction:column;gap:2px;"><span style="font-family:var(--font-display);font-size:8.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-dim);">Reviewer</span><span style="font-size:12px;color:var(--ink-cold);">Dr. Reyes</span></div>
+                      <div style="display:flex;flex-direction:column;gap:2px;"><span style="font-family:var(--font-display);font-size:8.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-dim);">Reviewer</span><span style="font-size:12px;color:var(--ink-cold);">You</span></div>
                       <div style="display:flex;flex-direction:column;gap:2px;"><span style="font-family:var(--font-display);font-size:8.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-dim);">Role</span><span style="font-size:12px;color:var(--ink-cold);">{{ cur.role }}</span></div>
                       <div style="display:flex;flex-direction:column;gap:2px;"><span style="font-family:var(--font-display);font-size:8.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-dim);">Protocol</span><span style="font-size:12px;color:var(--ink-cold);">v2.1 · aead45cf</span></div>
                       <div style="display:flex;flex-direction:column;gap:2px;"><span style="font-family:var(--font-display);font-size:8.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-dim);">PHI</span><span style="font-size:12px;color:var(--ink-cold);">excluded</span></div>
@@ -1141,6 +1141,7 @@ class Component extends DCLogic {
     else if (s.step === 3 && !s.pick) { hint = "Choose Accept note · ECOG 2"; target = "resolve-b"; }
     else if (s.step === 3 && !s.committed["S-1047"]) { hint = "Click Sign decision"; target = "resolve-sign"; }
     else if (s.step === 3) { hint = "Open Replay in the left rail"; target = "rail-4"; }
+    else if (s.step === 4 && s.rpSel !== 7) { hint = "Open the Resolve committed event"; target = "rp-resolve"; }
     else if (s.step === 4 && !s.rpExported) { hint = "Click Export Replay"; target = "rp-export"; }
     return { hint, target };
   }
@@ -1223,8 +1224,8 @@ class Component extends DCLogic {
         rows:[["Engine","deterministic · no model"],["Result","1 eligible · 4 review · 3 fail"],["Ruleset","v2.1"],["Model","disabled"],["Integrity","Verified · record intact","ok"]], rel:"Criterion evaluated · Review opened" },
       { t:"10:04", ev:"Review opened", obj:"Review R-884 · Screening", ac:"system", integ:"Verified", exc:"conflicting source", cls:["screening","exception"], eid:"EVT-1109",
         rows:[["Trigger","CONFLICTING_SOURCE","warn"],["Subject","S-1047"],["Routed to","PI / Sub-I"],["Criterion","I-4.2 ECOG"],["Integrity","Verified · record intact","ok"]], rel:"Criterion evaluated · Resolve committed" },
-      { t:"14:07", ev:"Resolve committed", obj:"Review R-884 · PI signature", ac:"Dr. Reyes", integ:"Verified", exc:"none", cls:["resolve","signature"], eid:"EVT-1207",
-        rows:[["Actor","Dr. Reyes · PI"],["Prior → new","REVIEW → COMMITTED"],["Review trigger","CONFLICTING_SOURCE"],["Rationale","Latest oncology note confirms ECOG 1; stale ECOG 2 superseded."],["Evidence cited","Oncology note 06-21 · ECOG Obs 06-18 · Protocol v2.1"],["Signature","Verified · Ed25519 signature","ok"],["Hash","aead45cf"]], rel:"Criterion evaluated · Review opened · Replay sealed" },
+      { t:"14:07", ev:"Resolve committed", obj:"Review R-884 · PI signature", ac:"You", integ:"Verified", exc:"none", cls:["resolve","signature"], eid:"EVT-1207",
+        rows:[["Actor","You · PI"],["Prior → new","REVIEW → COMMITTED"],["Review trigger","CONFLICTING_SOURCE"],["Rationale","Latest oncology note confirms ECOG 1; stale ECOG 2 superseded."],["Evidence cited","Oncology note 06-21 · ECOG Obs 06-18 · Protocol v2.1"],["Signature","Verified · Ed25519 signature","ok"],["Hash","aead45cf"]], rel:"Criterion evaluated · Review opened · Replay sealed" },
       { t:"14:08", ev:"Replay sealed", obj:"RPL-1047 · export bundle", ac:"system", integ:"Verified", exc:"none", cls:["signature"], eid:"EVT-1208",
         rows:[["Object","RPL-2026-0622-018-1047"],["Chain","intact · 6 / 6 events"],["PHI","sponsor-safe · PHI-free","ok"],["Signature","Verified · Ed25519 signature","ok"],["Export","packet ready"]], rel:"Resolve committed" }
     ];
@@ -1235,7 +1236,7 @@ class Component extends DCLogic {
     const intColor = (e) => "#2e9e6b";
     const lgVis = LG.map((e,i)=>({e,i})).filter((o) => !rfil || o.e.cls.indexOf(rfil) >= 0);
     const filters = RFILT.map((f) => { const on = rfil === f.k; return { label:f.l, onClick: () => this.setState({ rpFilter: f.k }), style:{ padding:"5px 12px", borderRadius:8, cursor:"pointer", fontFamily:"var(--font-display)", fontSize:11, fontWeight:600, border:"1px solid "+(on?("color-mix(in srgb,"+A2+" 45%,transparent)"):"rgba(31,45,61,0.12)"), background:on?("color-mix(in srgb,"+A2+" 10%,transparent)"):"#ffffff", color:on?"var(--ink-cold)":"var(--ink-quiet)" } }; });
-    const ledger = lgVis.map((o) => { const e=o.e, i=o.i, on = i === rpi2; return { time:e.t, event:e.ev, object:e.obj, actor:e.ac, integrity:e.integ, onClick:()=>this.setState({rpSel:i}), style:{ display:"grid", gridTemplateColumns:"42px 1fr 78px 70px", gap:8, alignItems:"center", width:"100%", textAlign:"left", cursor:"pointer", padding:"8px 10px", borderRadius:9, border:"1px solid "+(on?("color-mix(in srgb,"+A2+" 40%,transparent)"):"transparent"), background:on?("color-mix(in srgb,"+A2+" 7%,transparent)"):"transparent", transition:"all 130ms ease" }, intStyle:{ fontFamily:"var(--font-display)", fontSize:9, fontWeight:600, color:intColor(e), textAlign:"right", whiteSpace:"nowrap" } }; });
+    const ledger = lgVis.map((o) => { const e=o.e, i=o.i, on = i === rpi2; return { time:e.t, event:e.ev, object:e.obj, actor:e.ac, integrity:e.integ, onClick:()=>this.setState({rpSel:i}), style: this.mergePulse({ display:"grid", gridTemplateColumns:"42px 1fr 78px 70px", gap:8, alignItems:"center", width:"100%", textAlign:"left", cursor:"pointer", padding:"8px 10px", borderRadius:9, border:"1px solid "+(on?("color-mix(in srgb,"+A2+" 40%,transparent)"):"transparent"), background:on?("color-mix(in srgb,"+A2+" 7%,transparent)"):"transparent", transition:"all 130ms ease" }, tgt === "rp-resolve" && e.ev === "Resolve committed"), intStyle:{ fontFamily:"var(--font-display)", fontSize:9, fontWeight:600, color:intColor(e), textAlign:"right", whiteSpace:"nowrap" } }; });
     const se = LG[rpi2];
     const detC = (f) => f === "ok" ? "#2e9e6b" : f === "warn" ? "#bf831f" : f === "ref" ? "var(--ink-dim)" : "var(--ink-cold)";
     const sel = { event:se.ev, time:se.t, eid:se.eid, exc: se.exc === "none" ? "" : se.exc.toUpperCase(), excStyle: se.exc==="none" ? {display:"none"} : this.chip("#bf831f"), rows: se.rows.map((r)=>({k:r[0], v:r[1], c: detC(r[2])})), related: se.rel };
