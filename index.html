@@ -387,7 +387,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
                       </sc-for>
                     </div>
                   </div>
-                  <div style="flex:1;min-width:0;background:rgba(31,45,61,0.025);border:1px solid rgba(31,45,61,0.08);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;">
+                  <div class="eyeScroll" style="flex:1;min-width:0;background:rgba(31,45,61,0.025);border:1px solid rgba(31,45,61,0.08);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;overflow-y:auto;min-height:0;">
                     <div style="display:flex;align-items:baseline;gap:9px;margin-bottom:4px;"><span style="font-family:var(--font-display);font-size:11px;color:{{ ev.detail.color }};">{{ ev.detail.code }}</span><span style="{{ ev.detail.chipStyle }}">{{ ev.detail.stLabel }}</span><span style="font-family:var(--font-display);font-size:9px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-dim);margin-left:auto;">{{ ev.detail.cls }}</span></div>
                     <div style="font-family:var(--font-display);font-size:17px;font-weight:700;letter-spacing:-0.01em;color:var(--ink-cold);">{{ ev.detail.fact }}</div>
                     <div style="font-family:var(--font-display);font-size:10.5px;color:var(--ink-dim);margin-top:3px;">Maps to {{ ev.detail.requiredBy }} · {{ ev.detail.arm }}</div>
