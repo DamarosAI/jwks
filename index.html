@@ -57,7 +57,10 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
     .dm-site section[data-screen-label]{scroll-snap-align:start;scroll-snap-stop:always;}
     /* integrations + problem read as one continuous stop: anchor on integrations, let problem flow */
     .dm-site section#problem{scroll-snap-align:none;scroll-snap-stop:normal;}
-    @media (max-width:760px),(pointer:coarse){html{scroll-snap-type:none;}}
+    @media (max-width:760px),(pointer:coarse){
+      html{scroll-snap-type:none;}
+      .dm-site section[data-screen-label]{scroll-snap-align:none;scroll-snap-stop:normal;}
+    }
     body{margin:0;background:#ffffff;color:var(--ink-cold);font-family:var(--font-body);font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
     .eyeScroll{scrollbar-width:thin;scrollbar-color:rgba(31,45,61,0.28) transparent;}
     .eyeScroll::-webkit-scrollbar{width:8px;height:8px;}

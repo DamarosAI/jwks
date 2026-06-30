@@ -16,11 +16,11 @@
   var DURATION = 760; // luxury weight: slow, eased glide between stops
   var STEP_RATIO = 0.88; // viewport fraction per in-section step
   var REMAIN_MIN = 130; // ignore leftover smaller than this -> jump to neighbor
-  var EPS = 6;
 
   var sections = [];
   var animating = false;
   var lockUntil = 0;
+  var pendingDir = 0;
 
   // JS owns scrolling now; drop CSS snap so it can't fight intra-section steps.
   document.documentElement.style.scrollSnapType = "none";
@@ -29,6 +29,10 @@
     sections = Array.prototype.slice.call(
       document.querySelectorAll(".dm-site section[data-screen-label]")
     );
+    sections.forEach(function (s) {
+      s.style.scrollSnapAlign = "none";
+      s.style.scrollSnapStop = "normal";
+    });
   }
 
   function absTop(el) {
@@ -46,10 +50,7 @@
     return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
   }
 
-  // Resting scroll position for a section. Mirrors scrollCenter() in the page:
-  // a section shorter than the viewport is centered vertically; a section taller
-  // than the viewport is pinned just below the sticky header so it can be stepped
-  // through. Keeps wheel stops identical to the chevron buttons.
+  // Resting scroll position when entering a section from above. Mirrors scrollCenter().
   function centerTarget(el) {
     var r = el.getBoundingClientRect();
     var elTop = r.top + window.scrollY;
@@ -57,16 +58,44 @@
     return Math.max(0, Math.min(top, maxScroll()));
   }
 
+  // Resting scroll position when re-entering a section from below (scroll up).
+  // Tall sections land at their bottom stop; short sections stay centered.
+  function enterFromBelow(el) {
+    var r = el.getBoundingClientRect();
+    var top = absTop(el);
+    var bottom = top + r.height;
+    var vh = window.innerHeight;
+    if (r.height + HEADER <= vh) return centerTarget(el);
+    return Math.max(top - HEADER, Math.min(bottom - vh, maxScroll()));
+  }
+
+  function drainPending() {
+    if (!pendingDir) return;
+    var dir = pendingDir;
+    pendingDir = 0;
+    requestAnimationFrame(function () {
+      advance(dir, null);
+    });
+  }
+
+  function finishGlide(now, html, prevBehavior) {
+    animating = false;
+    lockUntil = now + 220;
+    html.style.scrollBehavior = prevBehavior;
+    drainPending();
+  }
+
   function glideTo(target) {
     target = Math.max(0, Math.min(target, maxScroll()));
     var html = document.documentElement;
     var prevBehavior = html.style.scrollBehavior;
-    html.style.scrollBehavior = "auto"; // override CSS smooth for frame-precise control
+    html.style.scrollBehavior = "auto";
 
     if (reduced.matches || DURATION === 0) {
       window.scrollTo(0, target);
       html.style.scrollBehavior = prevBehavior;
       lockUntil = performance.now() + 160;
+      drainPending();
       return;
     }
 
@@ -81,17 +110,12 @@
       if (p < 1) {
         requestAnimationFrame(frame);
       } else {
-        animating = false;
-        lockUntil = now + 220;
-        html.style.scrollBehavior = prevBehavior;
+        finishGlide(now, html, prevBehavior);
       }
     }
     requestAnimationFrame(frame);
   }
 
-  // Section currently owning the viewport = the one whose mid-line sits closest
-  // to the viewport mid-line. Robust whether the section is centered (short) or
-  // pinned to the top and being stepped through (tall).
   function currentIndex() {
     var mid = window.scrollY + window.innerHeight / 2;
     var idx = 0;
@@ -108,7 +132,6 @@
     return idx;
   }
 
-  // Let inner scrollable regions (demo panels, lists) keep their own gesture.
   function innerHandles(node, dir) {
     while (node && node.nodeType === 1 && node !== document.body) {
       var oy = getComputedStyle(node).overflowY;
@@ -125,22 +148,9 @@
     return false;
   }
 
-  function onWheel(e) {
-    if (e.ctrlKey) return; // pinch-zoom
-    var dir = e.deltaY > 0 ? 1 : e.deltaY < 0 ? -1 : 0;
-    if (!dir) return;
-
-    var now = performance.now();
-    if (animating || now < lockUntil) {
-      // Keep the lock alive while a fling's inertia keeps firing events,
-      // so one continuous motion only ever advances a single stop.
-      e.preventDefault();
-      lockUntil = Math.max(lockUntil, now + 120);
-      return;
-    }
-
-    if (innerHandles(e.target, dir)) return;
-    if (sections.length < 2) return;
+  function advance(dir, e) {
+    if (e && innerHandles(e.target, dir)) return false;
+    if (sections.length < 2) return false;
 
     var idx = currentIndex();
     var sec = sections[idx];
@@ -149,26 +159,48 @@
     var viewTop = window.scrollY;
     var viewBottom = viewTop + window.innerHeight;
     var stepPx = (window.innerHeight - HEADER) * STEP_RATIO;
+    var rest = centerTarget(sec);
 
     if (dir > 0) {
-      // Step through a section taller than the viewport before leaving it,
-      // otherwise glide to the next section's centered resting position.
       if (bottom - viewBottom > REMAIN_MIN) {
-        e.preventDefault();
+        if (e) e.preventDefault();
         glideTo(Math.min(viewTop + stepPx, bottom - window.innerHeight));
-      } else if (idx < sections.length - 1) {
-        e.preventDefault();
+        return true;
+      }
+      if (idx < sections.length - 1) {
+        if (e) e.preventDefault();
         glideTo(centerTarget(sections[idx + 1]));
+        return true;
       }
     } else {
-      if (viewTop - (top - HEADER) > REMAIN_MIN) {
-        e.preventDefault();
-        glideTo(Math.max(viewTop - stepPx, top - HEADER));
-      } else if (idx > 0) {
-        e.preventDefault();
-        glideTo(centerTarget(sections[idx - 1]));
+      if (viewTop - rest > REMAIN_MIN) {
+        if (e) e.preventDefault();
+        glideTo(Math.max(viewTop - stepPx, rest));
+        return true;
+      }
+      if (idx > 0) {
+        if (e) e.preventDefault();
+        glideTo(enterFromBelow(sections[idx - 1]));
+        return true;
       }
     }
+    return false;
+  }
+
+  function onWheel(e) {
+    if (e.ctrlKey) return;
+    var dir = e.deltaY > 0 ? 1 : e.deltaY < 0 ? -1 : 0;
+    if (!dir) return;
+
+    var now = performance.now();
+    if (animating || now < lockUntil) {
+      e.preventDefault();
+      pendingDir = dir;
+      lockUntil = Math.max(lockUntil, now + 120);
+      return;
+    }
+
+    advance(dir, e);
   }
 
   collect();
