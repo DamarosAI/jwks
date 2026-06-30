@@ -46,6 +46,17 @@
     return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
   }
 
+  // Resting scroll position for a section. Mirrors scrollCenter() in the page:
+  // a section shorter than the viewport is centered vertically; a section taller
+  // than the viewport is pinned just below the sticky header so it can be stepped
+  // through. Keeps wheel stops identical to the chevron buttons.
+  function centerTarget(el) {
+    var r = el.getBoundingClientRect();
+    var elTop = r.top + window.scrollY;
+    var top = elTop - Math.max(HEADER, (window.innerHeight - r.height) / 2);
+    return Math.max(0, Math.min(top, maxScroll()));
+  }
+
   function glideTo(target) {
     target = Math.max(0, Math.min(target, maxScroll()));
     var html = document.documentElement;
@@ -78,12 +89,21 @@
     requestAnimationFrame(frame);
   }
 
+  // Section currently owning the viewport = the one whose mid-line sits closest
+  // to the viewport mid-line. Robust whether the section is centered (short) or
+  // pinned to the top and being stepped through (tall).
   function currentIndex() {
-    var y = window.scrollY + HEADER + 4;
+    var mid = window.scrollY + window.innerHeight / 2;
     var idx = 0;
+    var best = Infinity;
     for (var i = 0; i < sections.length; i++) {
-      if (absTop(sections[i]) <= y) idx = i;
-      else break;
+      var r = sections[i].getBoundingClientRect();
+      var center = r.top + window.scrollY + r.height / 2;
+      var dist = Math.abs(center - mid);
+      if (dist < best) {
+        best = dist;
+        idx = i;
+      }
     }
     return idx;
   }
@@ -131,12 +151,14 @@
     var stepPx = (window.innerHeight - HEADER) * STEP_RATIO;
 
     if (dir > 0) {
+      // Step through a section taller than the viewport before leaving it,
+      // otherwise glide to the next section's centered resting position.
       if (bottom - viewBottom > REMAIN_MIN) {
         e.preventDefault();
         glideTo(Math.min(viewTop + stepPx, bottom - window.innerHeight));
       } else if (idx < sections.length - 1) {
         e.preventDefault();
-        glideTo(absTop(sections[idx + 1]) - HEADER);
+        glideTo(centerTarget(sections[idx + 1]));
       }
     } else {
       if (viewTop - (top - HEADER) > REMAIN_MIN) {
@@ -144,7 +166,7 @@
         glideTo(Math.max(viewTop - stepPx, top - HEADER));
       } else if (idx > 0) {
         e.preventDefault();
-        glideTo(absTop(sections[idx - 1]) - HEADER);
+        glideTo(centerTarget(sections[idx - 1]));
       }
     }
   }
