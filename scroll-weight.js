@@ -1,8 +1,8 @@
 /*
  * Section-by-section wheel scrolling on desktop.
  * One wheel gesture (including a long trackpad fling) advances exactly one
- * labeled section up or down. Touch / coarse-pointer / narrow viewports keep
- * native scrolling. Inner scrollable panels keep their own gesture.
+ * labeled section up or down. Touch / coarse-pointer / narrow viewports use
+ * CSS scroll-snap instead. Inner scrollable panels keep their own gesture.
  */
 (function () {
   var coarse = window.matchMedia("(max-width:760px),(pointer:coarse)");
@@ -11,13 +11,15 @@
   var reduced = window.matchMedia("(prefers-reduced-motion:reduce)");
   var HEADER = 62;
   var DURATION = 420;
-  var LOCK_MS = 60;
+  var COOLDOWN = 880;
 
   var sections = [];
   var animating = false;
   var lockUntil = 0;
 
-  document.documentElement.style.scrollSnapType = "none";
+  var html = document.documentElement;
+  html.style.scrollSnapType = "none";
+  html.style.scrollBehavior = "auto";
 
   function collect() {
     sections = Array.prototype.slice.call(
@@ -30,33 +32,27 @@
   }
 
   function maxScroll() {
-    return Math.max(
-      0,
-      document.documentElement.scrollHeight - window.innerHeight
-    );
+    return Math.max(0, html.scrollHeight - window.innerHeight);
   }
 
   function easeInOutCubic(t) {
     return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
   }
 
-  function centerTarget(el) {
+  function sectionTop(el) {
     var r = el.getBoundingClientRect();
-    var elTop = r.top + window.scrollY;
-    var top = elTop - Math.max(HEADER, (window.innerHeight - r.height) / 2);
+    var top = r.top + window.scrollY - HEADER;
     return Math.max(0, Math.min(top, maxScroll()));
   }
 
   function glideTo(target) {
     target = Math.max(0, Math.min(target, maxScroll()));
-    var html = document.documentElement;
     var prevBehavior = html.style.scrollBehavior;
     html.style.scrollBehavior = "auto";
 
     if (reduced.matches || DURATION === 0) {
       window.scrollTo(0, target);
       html.style.scrollBehavior = prevBehavior;
-      lockUntil = performance.now() + LOCK_MS;
       return;
     }
 
@@ -72,7 +68,6 @@
         requestAnimationFrame(frame);
       } else {
         animating = false;
-        lockUntil = now + LOCK_MS;
         html.style.scrollBehavior = prevBehavior;
       }
     }
@@ -80,17 +75,11 @@
   }
 
   function currentIndex() {
-    var mid = window.scrollY + window.innerHeight / 2;
+    var anchor = window.scrollY + HEADER + 2;
     var idx = 0;
-    var best = Infinity;
     for (var i = 0; i < sections.length; i++) {
-      var r = sections[i].getBoundingClientRect();
-      var center = r.top + window.scrollY + r.height / 2;
-      var dist = Math.abs(center - mid);
-      if (dist < best) {
-        best = dist;
-        idx = i;
-      }
+      var top = sections[i].getBoundingClientRect().top + window.scrollY;
+      if (top <= anchor) idx = i;
     }
     return idx;
   }
@@ -120,7 +109,8 @@
     if (next < 0 || next >= sections.length) return false;
 
     if (e) e.preventDefault();
-    glideTo(centerTarget(sections[next]));
+    lockUntil = performance.now() + COOLDOWN;
+    glideTo(sectionTop(sections[next]));
     return true;
   }
 

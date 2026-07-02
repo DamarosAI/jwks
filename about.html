@@ -45,11 +45,10 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
       --state-review:#bf831f;
       --state-fail:#dc3a52;
     }
-    html{scroll-behavior:smooth;scroll-snap-type:y proximity;scroll-padding-top:62px;}
-    .dm-site section[data-screen-label]{scroll-snap-align:start;scroll-snap-stop:always;}
+    html{scroll-behavior:auto;scroll-padding-top:62px;}
     @media (max-width:760px),(pointer:coarse){
-      html{scroll-snap-type:none;}
-      .dm-site section[data-screen-label]{scroll-snap-align:none;scroll-snap-stop:normal;}
+      html{scroll-snap-type:y mandatory;}
+      .dm-site section[data-screen-label]{scroll-snap-align:start;scroll-snap-stop:always;}
     }
     body{margin:0;background:#ffffff;color:var(--ink-cold);font-family:var(--font-body);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:clip;}
     a{color:inherit;text-decoration:none;}

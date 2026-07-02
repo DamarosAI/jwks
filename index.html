@@ -53,7 +53,11 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
       --surface-highlight:rgba(20,33,48,0.06);
       --glass-ring:inset 0 0 0 1px rgba(20,33,48,0.12);
     }
-    html{scroll-behavior:smooth;scroll-padding-top:62px;}
+    html{scroll-behavior:auto;scroll-padding-top:62px;}
+    @media (max-width:760px),(pointer:coarse){
+      html{scroll-snap-type:y mandatory;}
+      .dm-site section[data-screen-label]{scroll-snap-align:start;scroll-snap-stop:always;}
+    }
     body{margin:0;background:#ffffff;color:var(--ink-cold);font-family:var(--font-body);font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
     .eyeScroll{scrollbar-width:thin;scrollbar-color:rgba(31,45,61,0.28) transparent;}
     .eyeScroll::-webkit-scrollbar{width:8px;height:8px;}
@@ -71,7 +75,8 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
     .dmPulse{animation:dmPulse 1.6s ease-in-out infinite;transform-origin:center;}
     @keyframes dmTargetPulse{0%,100%{box-shadow:inset 0 0 0 2px color-mix(in srgb,#2f6193 65%,transparent),inset 0 0 0 200px color-mix(in srgb,#2f6193 5%,transparent);}50%{box-shadow:inset 0 0 0 4px #2f6193,inset 0 0 0 200px color-mix(in srgb,#2f6193 16%,transparent);}}
     @keyframes dmTargetPulseLight{0%,100%{box-shadow:inset 0 0 0 2px rgba(255,255,255,0.55),inset 0 0 0 200px rgba(255,255,255,0);}50%{box-shadow:inset 0 0 0 3px rgba(255,255,255,1),inset 0 0 0 200px rgba(255,255,255,0.2);}}
-    @keyframes dmBtnPulse{0%{transform:scale(1);box-shadow:0 0 0 0 rgba(47,97,147,0.55),0 0 0 1px rgba(47,97,147,0.9),0 2px 8px rgba(47,97,147,0.35);}50%{transform:scale(1.045);box-shadow:0 0 0 10px rgba(47,97,147,0),0 0 0 2px rgba(255,255,255,0.95),0 0 22px 4px rgba(47,97,147,0.65);}100%{transform:scale(1);box-shadow:0 0 0 0 rgba(47,97,147,0),0 0 0 1px rgba(47,97,147,0.9),0 2px 8px rgba(47,97,147,0.35);}}
+    @keyframes dmBtnPulse{0%,100%{box-shadow:inset 0 0 0 1px rgba(47,97,147,0.85),0 2px 8px rgba(47,97,147,0.32),0 0 0 0 rgba(47,97,147,0.5);}50%{box-shadow:inset 0 0 0 1px rgba(255,255,255,0.92),0 2px 10px rgba(47,97,147,0.45),0 0 0 4px rgba(47,97,147,0.28);}}
+    .dm-btn-pulse{box-sizing:border-box;max-width:100%;transform:none !important;}
     @keyframes rpSweep{0%{left:-32%;}100%{left:100%;}}
     @keyframes chevBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(5px);}}
     @keyframes dmRadarSweep{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
@@ -683,7 +688,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
                           </div>
                         </div>
                       </div>
-                      <div style="width:322px;flex-shrink:0;display:flex;flex-direction:column;border-left:1px solid rgba(31,45,61,0.08);padding-left:26px;">
+                      <div style="width:322px;flex-shrink:0;display:flex;flex-direction:column;border-left:1px solid rgba(31,45,61,0.08);padding-left:26px;overflow:hidden;min-width:0;">
                         <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:12px;">Sponsor &amp; contact</div>
                         <div style="display:flex;flex-direction:column;gap:10px;font-size:12.5px;">
                           <div style="display:flex;justify-content:space-between;gap:14px;"><span style="color:var(--ink-dim);">Sponsor</span><span style="font-weight:600;color:var(--ink-cold);text-align:right;">{{ sn.open.sponsor }}</span></div>
@@ -719,7 +724,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
                 </div>
                 <p style="margin:9px 0 0;font-size:13.5px;line-height:1.5;color:var(--ink-cold);max-width:66ch;">Drafts the amendment that unblocks a stuck criterion. A human signs it.</p>
                 <div style="display:flex;gap:24px;flex:1;min-height:0;margin-top:16px;">
-                  <div style="width:40%;display:flex;flex-direction:column;min-width:0;">
+                  <div style="width:40%;display:flex;flex-direction:column;min-width:0;overflow:hidden;">
                     <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:9px;">High-friction criteria</div>
                     <div style="display:flex;flex-direction:column;gap:6px;">
                       <sc-for list="{{ tr.critRows }}" as="c" hint-placeholder-count="3">
@@ -1532,7 +1537,7 @@ class Component extends DCLogic {
   }
   mergePulse(base, on, onBlue) {
     if (!on) return base;
-    if (onBlue) return Object.assign({}, base, { animation: "dmBtnPulse 1.15s ease-in-out infinite", position: "relative", zIndex: 2 });
+    if (onBlue) return Object.assign({}, base, { animation: "dmBtnPulse 1.15s ease-in-out infinite", position: "relative", zIndex: 2, boxSizing: "border-box", maxWidth: "100%", transform: "none" });
     return Object.assign({}, base, { animation: "dmTargetPulse 1s ease-in-out infinite" });
   }
   guideState() {
