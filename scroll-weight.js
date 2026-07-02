@@ -1,8 +1,16 @@
 /*
- * Section-by-section wheel scrolling on desktop.
- * One wheel gesture (including a long trackpad fling) advances exactly one
- * labeled section up or down. Touch / coarse-pointer / narrow viewports use
- * CSS scroll-snap instead. Inner scrollable panels keep their own gesture.
+ * Section-by-section wheel scrolling on desktop / trackpad.
+ *
+ * Root problem this solves: a macOS trackpad emits ONE physical swipe as a
+ * long stream of momentum `wheel` events that can keep firing for 1-2 seconds.
+ * A fixed cooldown measured from the moment we scroll is not enough - once the
+ * cooldown expires while momentum is still streaming, the next event triggers a
+ * second jump and the page "skips" sections.
+ *
+ * Fix: treat a gesture as finished only after the wheel has been QUIET for
+ * IDLE_GAP ms. Every wheel event (even the ones we swallow) pushes the idle
+ * timer forward, so a single fling - however long its momentum tail - advances
+ * exactly one section. Each target section is centered vertically.
  */
 (function () {
   var coarse = window.matchMedia("(max-width:760px),(pointer:coarse)");
@@ -10,16 +18,19 @@
 
   var reduced = window.matchMedia("(prefers-reduced-motion:reduce)");
   var HEADER = 62;
-  var DURATION = 420;
-  var COOLDOWN = 880;
+  var DURATION = 500;
+  // A gesture is only "over" after the wheel is silent this long. Must exceed
+  // the spacing between decaying trackpad momentum events (~50-120ms).
+  var IDLE_GAP = 260;
+  var MIN_DELTA = 2;
 
   var sections = [];
   var animating = false;
-  var lockUntil = 0;
+  var lastWheel = 0;
 
   var html = document.documentElement;
-  html.style.scrollSnapType = "none";
   html.style.scrollBehavior = "auto";
+  html.style.scrollSnapType = "none";
 
   function collect() {
     sections = Array.prototype.slice.call(
@@ -39,26 +50,36 @@
     return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
   }
 
-  function sectionTop(el) {
+  // Center the section vertically. If it is taller than the usable viewport,
+  // pin its top just below the header instead.
+  function targetFor(el) {
     var r = el.getBoundingClientRect();
-    var top = r.top + window.scrollY - HEADER;
+    var elTop = r.top + window.scrollY;
+    var usable = window.innerHeight - HEADER;
+    var top;
+    if (r.height >= usable) {
+      top = elTop - HEADER;
+    } else {
+      top = elTop - HEADER - (usable - r.height) / 2;
+    }
     return Math.max(0, Math.min(top, maxScroll()));
   }
 
   function glideTo(target) {
     target = Math.max(0, Math.min(target, maxScroll()));
-    var prevBehavior = html.style.scrollBehavior;
-    html.style.scrollBehavior = "auto";
 
     if (reduced.matches || DURATION === 0) {
       window.scrollTo(0, target);
-      html.style.scrollBehavior = prevBehavior;
       return;
     }
 
     animating = true;
     var startY = window.scrollY;
     var dist = target - startY;
+    if (Math.abs(dist) < 1) {
+      animating = false;
+      return;
+    }
     var startT = performance.now();
 
     function frame(now) {
@@ -68,18 +89,27 @@
         requestAnimationFrame(frame);
       } else {
         animating = false;
-        html.style.scrollBehavior = prevBehavior;
+        // Momentum may still be arriving; keep the gesture locked until quiet.
+        lastWheel = performance.now();
       }
     }
     requestAnimationFrame(frame);
   }
 
+  // Index of the section whose center is nearest the viewport center. Keeps
+  // forward and backward stepping symmetric.
   function currentIndex() {
-    var anchor = window.scrollY + HEADER + 2;
+    var mid = window.scrollY + window.innerHeight / 2;
     var idx = 0;
+    var best = Infinity;
     for (var i = 0; i < sections.length; i++) {
-      var top = sections[i].getBoundingClientRect().top + window.scrollY;
-      if (top <= anchor) idx = i;
+      var r = sections[i].getBoundingClientRect();
+      var center = r.top + window.scrollY + r.height / 2;
+      var d = Math.abs(center - mid);
+      if (d < best) {
+        best = d;
+        idx = i;
+      }
     }
     return idx;
   }
@@ -100,36 +130,49 @@
     return false;
   }
 
-  function advance(dir, e) {
-    if (e && innerHandles(e.target, dir)) return false;
-    if (sections.length < 2) return false;
-
-    var idx = currentIndex();
-    var next = dir > 0 ? idx + 1 : idx - 1;
-    if (next < 0 || next >= sections.length) return false;
-
-    if (e) e.preventDefault();
-    lockUntil = performance.now() + COOLDOWN;
-    glideTo(sectionTop(sections[next]));
-    return true;
-  }
-
   function onWheel(e) {
-    if (e.ctrlKey) return;
-    var dir = e.deltaY > 0 ? 1 : e.deltaY < 0 ? -1 : 0;
+    if (e.ctrlKey) return; // pinch-zoom
+    var dy = e.deltaY;
+    var dir = dy > MIN_DELTA ? 1 : dy < -MIN_DELTA ? -1 : 0;
     if (!dir) return;
 
-    var now = performance.now();
-    if (animating || now < lockUntil) {
-      e.preventDefault();
-      return;
-    }
+    // Let a genuinely scrollable inner panel take the gesture natively.
+    if (innerHandles(e.target, dir)) return;
 
-    advance(dir, e);
+    // We own vertical page scrolling from here on.
+    e.preventDefault();
+
+    var now = performance.now();
+    var quiet = now - lastWheel >= IDLE_GAP;
+    // Every event refreshes the idle timer so momentum keeps the lock alive.
+    lastWheel = now;
+
+    if (animating || !quiet) return;
+
+    if (sections.length < 2) return;
+    var next = dir > 0 ? currentIndex() + 1 : currentIndex() - 1;
+    if (next < 0 || next >= sections.length) return;
+
+    glideTo(targetFor(sections[next]));
+  }
+
+  function onKey(e) {
+    var down = e.key === "PageDown" || e.key === "ArrowDown" || (e.key === " " && !e.shiftKey);
+    var up = e.key === "PageUp" || e.key === "ArrowUp" || (e.key === " " && e.shiftKey);
+    if (!down && !up) return;
+    var t = e.target;
+    if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+    if (animating) { e.preventDefault(); return; }
+    if (sections.length < 2) return;
+    var next = down ? currentIndex() + 1 : currentIndex() - 1;
+    if (next < 0 || next >= sections.length) return;
+    e.preventDefault();
+    glideTo(targetFor(sections[next]));
   }
 
   collect();
   window.addEventListener("wheel", onWheel, { passive: false });
+  window.addEventListener("keydown", onKey);
   window.addEventListener("resize", collect, { passive: true });
   window.addEventListener("load", function () {
     setTimeout(collect, 300);
