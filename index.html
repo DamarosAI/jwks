@@ -122,9 +122,6 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
       .dm-site #spine [style*="font-size:1.35rem"]{
         font-size:clamp(1.15rem,calc(1.35rem * 100vw / var(--dm-ref)),1.35rem) !important;
       }
-      .dm-site #pilot [style*="grid-template-columns:repeat(5"]{
-        gap:clamp(10px,calc(14px * 100vw / var(--dm-ref)),14px) !important;
-      }
       .dm-site #spine > div > div:first-child p[style*="white-space:nowrap"]{
         white-space:normal !important;
       }
@@ -148,8 +145,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
       }
     }
     @media (max-width:900px){
-      .dm-site #spine [style*="grid-template-columns:repeat(5"],
-      .dm-site #pilot [style*="grid-template-columns:repeat(5"]{
+      .dm-site #spine [style*="grid-template-columns:repeat(5"]{
         grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr)) !important;
       }
       .dm-site #spine > div > div:first-child{
@@ -184,7 +180,6 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
     .dm-logo-dupe{display:none !important;}
     .dm-input-cards{display:flex;flex-direction:column;gap:12px;}
     .dm-spine-indicator{display:none;}
-    .dm-pilot-indicator{display:none;}
     .dm-cta-tap{display:none;}
     @keyframes dmLogoScroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
 
@@ -217,14 +212,8 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
       .dm-site #output .dm-input-cards > div > div:last-child{font-size:10px;}
       .dm-site #output .dm-input-arrow{display:none !important;}
 
-      .dm-site #pilot .dm-pilot-grid{display:flex !important;grid-template-columns:none !important;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch;padding-bottom:2px;}
-      .dm-site #pilot .dm-pilot-grid::-webkit-scrollbar{display:none;}
-      .dm-site #pilot .dm-pilot-grid > div{flex:0 0 74% !important;scroll-snap-align:center;align-items:flex-start !important;padding:20px 18px;border-radius:14px;border:1px solid rgba(31,45,61,0.14);background:rgba(255,255,255,0.6);}
-      .dm-site #pilot .dm-pilot-indicator{display:block;text-align:center;margin-top:14px;font-family:var(--font-display);font-size:12px;letter-spacing:0.08em;color:var(--ink-dim);font-variant-numeric:tabular-nums;}
-      .dm-site #pilot h2{font-size:clamp(1.9rem,8vw,2.6rem) !important;}
-      .dm-site #pilot [style*="border-top:1px solid rgba(31,45,61,0.12)"]{flex-direction:column !important;align-items:stretch !important;text-align:center;gap:16px !important;}
-      .dm-site #pilot [style*="border-top:1px solid rgba(31,45,61,0.12)"] > span[style*="margin-left:auto"]{margin-left:0 !important;display:flex;justify-content:center;}
-      .dm-site #pilot .dm-pilot-note{white-space:nowrap;font-size:clamp(8px,2.7vw,12.5px) !important;}
+      .dm-site #agents h2{font-size:clamp(1.65rem,7vw,2.2rem) !important;}
+      .dm-site #agents [style*="justify-content:space-between"]{flex-direction:column !important;align-items:flex-start !important;gap:12px !important;}
       .dm-site .dm-demo-caption{white-space:nowrap !important;font-size:clamp(8px,2.7vw,15px) !important;max-width:none !important;}
       .dm-site #security .dm-security-note{white-space:nowrap !important;font-size:clamp(7px,2.6vw,13.5px) !important;}
       .dm-site #problem .dm-stat-grid{gap:8px !important;}
@@ -1026,7 +1015,55 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
       </div>
       <div class="dm-spine-indicator" aria-hidden="true"><span id="spineIndex">1</span> / 5</div>
     </div>
-    <div style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToOutput }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
+    <div style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToAgents }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
+  </section>
+
+  <!-- ============ AGENTS ============ -->
+  <section id="agents" data-screen-label="The agents" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);background:linear-gradient(180deg,#16222f 0%,#101a24 100%);overflow:hidden;">
+    <div aria-hidden="true" style="position:absolute;top:-34%;left:50%;width:min(920px,120%);height:540px;transform:translateX(-50%);background:radial-gradient(closest-side, rgba(61,114,168,0.18), transparent 70%);pointer-events:none;"></div>
+    <div style="position:relative;max-width:1080px;margin:0 auto;">
+      <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#7ea6cd;margin-bottom:18px;">The agents</div>
+      <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;">
+        <h2 style="margin:0;font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,4vw,3.1rem);line-height:1.0;letter-spacing:-0.03em;color:#f4f8fb;">Four agents. <span style="color:#6fa3d4;">Zero verdicts.</span></h2>
+        <p style="margin:0;max-width:46ch;font-size:14px;line-height:1.55;color:rgba(226,236,244,0.6);">Each works a different seam of the trial. All of them propose; a human signs. None of them touch PHI.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:14px;margin-top:40px;">
+        <div style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;border:1px solid rgba(255,255,255,0.1);background:linear-gradient(180deg,rgba(255,255,255,0.055),rgba(255,255,255,0.02));">
+          <span style="width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:rgba(61,114,168,0.16);border:1px solid rgba(111,163,212,0.32);margin-bottom:16px;"><svg width="20" height="20" viewBox="0 0 18 18" fill="none" stroke="#8fb8de" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="6.5"></circle><circle cx="9" cy="9" r="3"></circle><circle cx="9" cy="9" r="0.6" fill="#8fb8de" stroke="none"></circle><path d="M9 9 13.6 4.4"></path></svg></span>
+          <div style="font-family:var(--font-display);font-size:1.2rem;font-weight:700;letter-spacing:-0.015em;color:#f4f8fb;">Sentinel</div>
+          <div style="font-family:var(--font-display);font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7ea6cd;margin-top:5px;">Opportunity radar</div>
+          <p style="margin:12px 0 0;font-size:13px;line-height:1.55;color:rgba(226,236,244,0.62);">Scans open registries and matches protocols to the site's real capabilities — before a patient is ever involved.</p>
+          <div style="margin-top:auto;padding-top:16px;"><div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:11px;font-family:var(--font-display);font-size:9.5px;letter-spacing:0.06em;color:rgba(226,236,244,0.42);">No patient data &middot; aggregate only</div></div>
+        </div>
+        <div style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;border:1px solid rgba(255,255,255,0.1);background:linear-gradient(180deg,rgba(255,255,255,0.055),rgba(255,255,255,0.02));">
+          <span style="width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:rgba(61,114,168,0.16);border:1px solid rgba(111,163,212,0.32);margin-bottom:16px;"><svg width="20" height="20" viewBox="0 0 18 18" fill="none" stroke="#8fb8de" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 16V8"></path><path d="M4.8 8.2V4M9 8V3.4M13.2 8.2V4"></path><path d="M4.8 8.2c0 2.2 8.4 2.2 8.4 0"></path></svg></span>
+          <div style="font-family:var(--font-display);font-size:1.2rem;font-weight:700;letter-spacing:-0.015em;color:#f4f8fb;">Trident</div>
+          <div style="font-family:var(--font-display);font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7ea6cd;margin-top:5px;">At protocol</div>
+          <p style="margin:12px 0 0;font-size:13px;line-height:1.55;color:rgba(226,236,244,0.62);">Compiles criteria into locked, versioned logic and drafts the amendment that unblocks a stuck criterion.</p>
+          <div style="margin-top:auto;padding-top:16px;"><div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:11px;font-family:var(--font-display);font-size:9.5px;letter-spacing:0.06em;color:rgba(226,236,244,0.42);">Drafts only &middot; the sponsor signs</div></div>
+        </div>
+        <div style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;border:1px solid rgba(255,255,255,0.1);background:linear-gradient(180deg,rgba(255,255,255,0.055),rgba(255,255,255,0.02));">
+          <span style="width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:rgba(61,114,168,0.16);border:1px solid rgba(111,163,212,0.32);margin-bottom:16px;"><svg width="20" height="20" viewBox="0 0 18 18" fill="none" stroke="#8fb8de" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 9S4 3.8 9 3.8 16.5 9 16.5 9 14 14.2 9 14.2 1.5 9 1.5 9Z"></path><circle cx="9" cy="9" r="2.1"></circle></svg></span>
+          <div style="font-family:var(--font-display);font-size:1.2rem;font-weight:700;letter-spacing:-0.015em;color:#f4f8fb;">Eye</div>
+          <div style="font-family:var(--font-display);font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7ea6cd;margin-top:5px;">Quality signals</div>
+          <p style="margin:12px 0 0;font-size:13px;line-height:1.55;color:rgba(226,236,244,0.62);">Watches execution quality — drift, spikes, deviations — and routes signals to the site team before they harden into findings.</p>
+          <div style="margin-top:auto;padding-top:16px;"><div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:11px;font-family:var(--font-display);font-size:9.5px;letter-spacing:0.06em;color:rgba(226,236,244,0.42);">Aggregate &middot; never a verdict</div></div>
+        </div>
+        <div style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;border:1px solid rgba(255,255,255,0.1);background:linear-gradient(180deg,rgba(255,255,255,0.055),rgba(255,255,255,0.02));">
+          <span style="width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:rgba(61,114,168,0.16);border:1px solid rgba(111,163,212,0.32);margin-bottom:16px;"><svg width="20" height="20" viewBox="0 0 18 18" fill="none" stroke="#8fb8de" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.8 3.4a6.6 6.6 0 1 0 0 11.2 5.2 5.2 0 0 1 0-11.2Z"></path></svg></span>
+          <div style="font-family:var(--font-display);font-size:1.2rem;font-weight:700;letter-spacing:-0.015em;color:#f4f8fb;">Luna</div>
+          <div style="font-family:var(--font-display);font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7ea6cd;margin-top:5px;">Audit chain</div>
+          <p style="margin:12px 0 0;font-size:13px;line-height:1.55;color:rgba(226,236,244,0.62);">Reconstructs any finding from the signed audit chain in seconds and cites every row it used.</p>
+          <div style="margin-top:auto;padding-top:16px;"><div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:11px;font-family:var(--font-display);font-size:9.5px;letter-spacing:0.06em;color:rgba(226,236,244,0.42);">Reads the record &middot; never writes</div></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px 28px;margin-top:30px;padding-top:22px;border-top:1px solid rgba(255,255,255,0.08);">
+        <span style="display:inline-flex;align-items:center;gap:8px;font-family:var(--font-display);font-size:10.5px;letter-spacing:0.05em;color:rgba(226,236,244,0.55);"><span style="width:5px;height:5px;border-radius:50%;background:#2e9e6b;flex-shrink:0;"></span>Agents propose &middot; humans sign</span>
+        <span style="display:inline-flex;align-items:center;gap:8px;font-family:var(--font-display);font-size:10.5px;letter-spacing:0.05em;color:rgba(226,236,244,0.55);"><span style="width:5px;height:5px;border-radius:50%;background:#6fa3d4;flex-shrink:0;"></span>Every agent action lands in Replay</span>
+        <span style="display:inline-flex;align-items:center;gap:8px;font-family:var(--font-display);font-size:10.5px;letter-spacing:0.05em;color:rgba(226,236,244,0.55);"><span style="width:5px;height:5px;border-radius:50%;background:#2e9e6b;flex-shrink:0;"></span>PHI never reaches a model</span>
+      </div>
+    </div>
+    <div style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToOutput }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:#7ea6cd;padding:4px 12px;position:relative;z-index:1;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
   </section>
 
   <!-- ============ WHAT IT PRODUCES ============ -->
@@ -1080,8 +1117,8 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:clamp(28px,5vw,64px);align-items:start;">
         <div>
           <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The runtime</div>
-          <h2 style="margin:0;font-family:var(--font-display);font-weight:700;font-size:clamp(2.1rem,4.4vw,3.4rem);line-height:1.04;letter-spacing:-0.03em;max-width:13ch;text-wrap:balance;">Damaros<sup style="font-size:0.5em;letter-spacing:0;">™</sup> runs <span style="color:var(--ink-steel);">the site.</span></h2>
-          <p style="margin:22px 0 0;font-size:clamp(1rem,1.4vw,1.18rem);line-height:1.55;color:var(--ink-quiet);">It admits site-approved evidence, screens against locked logic, routes uncertainty to the right human, and seals every decision into Replay.</p>
+          <h2 style="margin:0;font-family:var(--font-display);font-weight:700;font-size:clamp(2.1rem,4.4vw,3.4rem);line-height:1.04;letter-spacing:-0.03em;max-width:13ch;text-wrap:balance;">Damaros<sup style="font-size:0.5em;letter-spacing:0;">™</sup> helps<br><span style="color:var(--ink-steel);">the site execute.</span></h2>
+          <p style="margin:22px 0 0;font-size:clamp(1rem,1.4vw,1.18rem);line-height:1.55;color:var(--ink-quiet);">One runtime, installed inside the site's boundary — institution-hosted or air-gapped. The site governs what it can see and what leaves; the network only ever receives de-identified signals.</p>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
           <div style="padding:22px;border-radius:14px;border:1px solid rgba(31,45,61,0.12);background:#ffffff;box-shadow:0 1px 3px rgba(20,40,70,0.04);">
@@ -1116,7 +1153,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
       <p style="margin:22px auto 0;max-width:52ch;font-size:15px;line-height:1.6;color:var(--ink-faint);">Reconstruct any run end to end: every state, the evidence behind it, and the human who signed it.</p>
       <div style="margin:44px auto 0;max-width:860px;border-radius:16px;border:1px solid rgba(31,45,61,0.12);background:#ffffff;box-shadow:0 1px 3px rgba(20,40,70,0.05), 0 22px 56px rgba(20,40,70,0.07);overflow:hidden;text-align:left;">
         <div style="display:flex;align-items:center;gap:12px;padding:13px 22px;border-bottom:1px solid rgba(31,45,61,0.08);background:#fbfcfd;">
-          <span style="font-family:var(--font-display);font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-steel);">Replay manifest</span>
+          <span style="font-family:var(--font-display);font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-steel);">Replay ledger</span>
           <span style="font-family:var(--font-display);font-size:10.5px;color:var(--ink-dim);">RPL-2026-0622-018-1047</span>
         </div>
         <div style="position:relative;display:flex;align-items:flex-start;justify-content:center;gap:0;padding:34px 36px 70px;">
@@ -1134,33 +1171,6 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
           <div style="background:#fbfcfd;padding:13px 20px;"><div style="font-family:var(--font-display);font-size:8.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:5px;">Protocol basis</div><div style="font-family:var(--font-display);font-size:11px;color:var(--ink-quiet);">v2.1 · aead45cf</div></div>
           <div style="background:#fbfcfd;padding:13px 20px;"><div style="font-family:var(--font-display);font-size:8.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:5px;">Evidence snapshot</div><div style="font-family:var(--font-display);font-size:11px;color:var(--ink-quiet);">pop-2026-06-22</div></div>
           <div style="background:#fbfcfd;padding:13px 20px;"><div style="font-family:var(--font-display);font-size:8.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:5px;">Signature</div><div style="font-family:var(--font-display);font-size:11px;color:var(--ink-quiet);">Ed25519 · verified</div></div>
-        </div>
-      </div>
-    </div>
-    <div style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToPilotSec }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
-  </section>
-
-  <!-- ============ PILOT ============ -->
-  <section id="pilot" data-screen-label="Run a pilot" style="position:relative;padding:clamp(76px,10vw,132px) clamp(20px,5vw,40px);background:radial-gradient(120% 90% at 50% 0%, #eaf2f8 0%, #f1f6fa 44%, #ffffff 80%);border-top:1px solid rgba(31,45,61,0.1);overflow:hidden;">
-    <div aria-hidden="true" data-anim="" style="position:absolute;top:0;left:50%;width:min(760px,110%);height:min(760px,110%);transform:translate(-50%,-50%);background:radial-gradient(circle, rgba(31,45,61,0.06), transparent 64%);pointer-events:none;animation:dmDrift 18s ease-in-out infinite;"></div>
-    <div style="position:relative;max-width:1080px;margin:0 auto;">
-      <div style="text-align:center;">
-        <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">GET STARTED</div>
-        <h2 style="margin:0 auto;max-width:16ch;font-family:var(--font-display);font-weight:700;font-size:clamp(2.2rem,4.8vw,3.6rem);line-height:1.0;letter-spacing:-0.03em;text-wrap:balance;">Run <span style="color:var(--ink-steel);">one protocol</span> through Damaros<sup style="font-size:0.5em;letter-spacing:0;">™</sup></h2>
-      </div>
-      <div style="margin-top:44px;border-radius:18px;border:1px solid rgba(31,45,61,0.18);background:linear-gradient(180deg, rgba(31,45,61,0.06), rgba(31,45,61,0.015)), rgba(255,255,255,0.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:clamp(24px,3vw,36px);">
-        <div style="font-family:var(--font-display);font-size:10px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:20px;">What you get</div>
-        <div id="pilotCarousel" class="dm-pilot-grid" style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;">
-          <div class="dm-pilot-card" style="display:flex;flex-direction:column;gap:12px;padding:18px 18px 20px;border-radius:14px;border:1px solid rgba(31,45,61,0.12);background:linear-gradient(180deg,rgba(255,255,255,0.85),rgba(255,255,255,0.45));box-shadow:0 1px 3px rgba(20,40,70,0.04);"><span style="font-family:var(--font-display);font-size:11px;font-weight:600;letter-spacing:0.04em;color:var(--ink-steel);">01</span><div style="height:1px;background:linear-gradient(90deg,color-mix(in srgb,var(--ink-steel) 38%,transparent),transparent);"></div><div><div style="font-size:14px;font-weight:600;color:var(--ink-cold);margin-bottom:5px;letter-spacing:-0.01em;">Protocol execution map</div><p style="margin:0;font-size:12.5px;line-height:1.5;color:var(--ink-faint);">Every criterion compiled into locked, versioned logic a system can run.</p></div></div>
-          <div class="dm-pilot-card" style="display:flex;flex-direction:column;gap:12px;padding:18px 18px 20px;border-radius:14px;border:1px solid rgba(31,45,61,0.12);background:linear-gradient(180deg,rgba(255,255,255,0.85),rgba(255,255,255,0.45));box-shadow:0 1px 3px rgba(20,40,70,0.04);"><span style="font-family:var(--font-display);font-size:11px;font-weight:600;letter-spacing:0.04em;color:var(--ink-steel);">02</span><div style="height:1px;background:linear-gradient(90deg,color-mix(in srgb,var(--ink-steel) 38%,transparent),transparent);"></div><div><div style="font-size:14px;font-weight:600;color:var(--ink-cold);margin-bottom:5px;letter-spacing:-0.01em;">Evidence coverage report</div><p style="margin:0;font-size:12.5px;line-height:1.5;color:var(--ink-faint);">Exactly what's ready, stale, missing, or unmapped — criterion by criterion.</p></div></div>
-          <div class="dm-pilot-card" style="display:flex;flex-direction:column;gap:12px;padding:18px 18px 20px;border-radius:14px;border:1px solid rgba(31,45,61,0.12);background:linear-gradient(180deg,rgba(255,255,255,0.85),rgba(255,255,255,0.45));box-shadow:0 1px 3px rgba(20,40,70,0.04);"><span style="font-family:var(--font-display);font-size:11px;font-weight:600;letter-spacing:0.04em;color:var(--ink-steel);">03</span><div style="height:1px;background:linear-gradient(90deg,color-mix(in srgb,var(--ink-steel) 38%,transparent),transparent);"></div><div><div style="font-size:14px;font-weight:600;color:var(--ink-cold);margin-bottom:5px;letter-spacing:-0.01em;">Review burden &amp; drivers</div><p style="margin:0;font-size:12.5px;line-height:1.5;color:var(--ink-faint);">Precisely where human judgment is required, and what drives it.</p></div></div>
-          <div class="dm-pilot-card" style="display:flex;flex-direction:column;gap:12px;padding:18px 18px 20px;border-radius:14px;border:1px solid rgba(31,45,61,0.12);background:linear-gradient(180deg,rgba(255,255,255,0.85),rgba(255,255,255,0.45));box-shadow:0 1px 3px rgba(20,40,70,0.04);"><span style="font-family:var(--font-display);font-size:11px;font-weight:600;letter-spacing:0.04em;color:var(--ink-steel);">04</span><div style="height:1px;background:linear-gradient(90deg,color-mix(in srgb,var(--ink-steel) 38%,transparent),transparent);"></div><div><div style="font-size:14px;font-weight:600;color:var(--ink-cold);margin-bottom:5px;letter-spacing:-0.01em;">Replay completeness package</div><p style="margin:0;font-size:12.5px;line-height:1.5;color:var(--ink-faint);">A signed, PHI-free record that reconstructs every decision.</p></div></div>
-          <div class="dm-pilot-card" style="display:flex;flex-direction:column;gap:12px;padding:18px 18px 20px;border-radius:14px;border:1px solid rgba(31,45,61,0.12);background:linear-gradient(180deg,rgba(255,255,255,0.85),rgba(255,255,255,0.45));box-shadow:0 1px 3px rgba(20,40,70,0.04);"><span style="font-family:var(--font-display);font-size:11px;font-weight:600;letter-spacing:0.04em;color:var(--ink-steel);">05</span><div style="height:1px;background:linear-gradient(90deg,color-mix(in srgb,var(--ink-steel) 38%,transparent),transparent);"></div><div><div style="font-size:14px;font-weight:600;color:var(--ink-cold);margin-bottom:5px;letter-spacing:-0.01em;">Site-readiness signal</div><p style="margin:0;font-size:12.5px;line-height:1.5;color:var(--ink-faint);">A network-safe, de-identified view of who is ready to run.</p></div></div>
-        </div>
-        <div class="dm-pilot-indicator" aria-hidden="true"><span id="pilotIndex">1</span> / 5</div>
-        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-top:28px;padding-top:24px;border-top:1px solid rgba(31,45,61,0.12);">
-          <span class="dm-pilot-note" style="font-size:12.5px;color:var(--ink-dim);">Output comparable to a full execution-readiness assessment.</span>
-          <span style="margin-left:auto;"><a href="/cdn-cgi/l/email-protection#8df9e8ece0cde9ece0ecffe2fea3ece4" style="display:inline-flex;align-items:center;justify-content:center;border-radius:999px;font-family:var(--font-display);font-weight:500;letter-spacing:0.03em;text-transform:uppercase;color:#ffffff;background:linear-gradient(180deg,#3d72a8,#2f6193);border:1px solid color-mix(in srgb,#2f6193 50%,rgba(255,255,255,0.22));box-shadow:inset 0 1px 0 rgba(255,255,255,0.2), 0 8px 20px rgba(20,46,82,0.16);white-space:nowrap;height:48px;padding:0 22px;font-size:13px;">Start a pilot</a></span>
         </div>
       </div>
     </div>
@@ -1287,7 +1297,6 @@ class Component extends DCLogic {
   };
   initSpineCarousel = () => {
     this.initCarousel("spineCarousel", "spineIndex");
-    this.initCarousel("pilotCarousel", "pilotIndex");
   };
 
   componentDidMount() {
@@ -1826,10 +1835,10 @@ class Component extends DCLogic {
       onPilot: () => this.scrollTo("pilot"),
       onRunModel: () => this.scrollTo("spine"),
       onToSpine: () => this.scrollCenter("spine"),
+      onToAgents: () => this.scrollCenter("agents"),
       onToOutput: () => this.scrollCenter("output"),
       onToNode: () => this.scrollCenter("node"),
       onToReplay: () => this.scrollCenter("replay"),
-      onToPilotSec: () => this.scrollCenter("pilot"),
       onToSecurity: () => this.scrollCenter("security"),
       onToClose: () => this.scrollCenter("close"),
       showMarquee: this.props.showMarquee !== false
