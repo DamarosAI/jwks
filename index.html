@@ -125,9 +125,6 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
       .dm-site #spine [style*="font-size:1.35rem"]{
         font-size:clamp(1.15rem,calc(1.35rem * 100vw / var(--dm-ref)),1.35rem) !important;
       }
-      .dm-site #spine > div > div:first-child p[style*="white-space:nowrap"]{
-        white-space:normal !important;
-      }
       .dm-site section[id]:not(#instrument){
         padding-left:clamp(20px,calc(40px * 100vw / var(--dm-ref)),40px) !important;
         padding-right:clamp(20px,calc(40px * 100vw / var(--dm-ref)),40px) !important;
@@ -150,14 +147,6 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
     @media (max-width:900px){
       .dm-site #spine [style*="grid-template-columns:repeat(5"]{
         grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr)) !important;
-      }
-      .dm-site #spine > div > div:first-child{
-        flex-direction:column !important;
-        align-items:flex-start !important;
-        gap:10px !important;
-      }
-      .dm-site #spine p[style*="white-space:nowrap"]{
-        white-space:normal !important;
       }
       .dm-site #output [style*="grid-template-columns:minmax(0,0.6fr)"]{
         grid-template-columns:1fr !important;
@@ -205,8 +194,6 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
       .dm-site #spine .dm-spine-grid > div{flex:0 0 80%;scroll-snap-align:center;min-height:0 !important;}
       .dm-site #spine .dm-spine-indicator{display:block;text-align:center;margin-top:14px;font-family:var(--font-display);font-size:12px;letter-spacing:0.08em;color:var(--ink-dim);font-variant-numeric:tabular-nums;}
       .dm-site #spine h2{font-size:clamp(1.65rem,7vw,2.2rem) !important;}
-      .dm-site #spine [style*="justify-content:space-between"]{flex-direction:column !important;align-items:flex-start !important;gap:10px !important;}
-      .dm-site #spine p[style*="white-space:nowrap"]{white-space:nowrap !important;font-size:clamp(8px,3.4vw,1.1rem) !important;line-height:1.3 !important;max-width:100% !important;}
 
       .dm-site #output .dm-output-grid{grid-template-columns:1fr !important;}
       .dm-site #output .dm-input-cards{display:grid !important;grid-template-columns:repeat(3,1fr);gap:8px;}
@@ -216,7 +203,6 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
       .dm-site #output .dm-input-arrow{display:none !important;}
 
       .dm-site #agents h2{font-size:clamp(1.65rem,7vw,2.2rem) !important;}
-      .dm-site #agents [style*="justify-content:space-between"]{flex-direction:column !important;align-items:flex-start !important;gap:12px !important;}
       .dm-site .dm-demo-caption{white-space:nowrap !important;font-size:clamp(8px,2.7vw,15px) !important;max-width:none !important;}
       .dm-site #security .dm-security-note{white-space:nowrap !important;font-size:clamp(7px,2.6vw,13.5px) !important;}
       .dm-site #problem .dm-stat-grid{gap:8px !important;}
@@ -714,7 +700,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
                   <span style="font-family:var(--font-display);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-steel);">Trident</span>
                   <span style="font-family:var(--font-display);font-size:10px;color:var(--ink-dim);margin-left:auto;">At Protocol</span>
                 </div>
-                <p style="margin:9px 0 0;font-size:13.5px;line-height:1.5;color:var(--ink-cold);max-width:66ch;">Drafts the amendment that unblocks a stuck criterion. A human signs it.</p>
+                <p style="margin:9px 0 0;font-size:13.5px;line-height:1.5;color:var(--ink-cold);max-width:66ch;">Drafts the amendment that unblocks a stuck criterion, routed for signature.</p>
                 <div style="display:flex;gap:24px;flex:1;min-height:0;margin-top:16px;">
                   <div style="width:40%;display:flex;flex-direction:column;min-width:0;overflow:hidden;">
                     <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:9px;">High-friction criteria</div>
@@ -778,7 +764,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
                         <button onClick="{{ tr.onRequest }}" data-dc-style="{{ tr.requestStyle }}">{{ tr.requestLabel }}</button>
                         <sc-if value="{{ tr.requested }}">
                           <div data-anim="" style="border-radius:12px;border:1px solid color-mix(in srgb,#2e9e6b 32%,transparent);background:color-mix(in srgb,#2e9e6b 6%,transparent);padding:14px 16px;animation:sealIn 380ms ease;">
-                            <div style="display:flex;align-items:center;gap:11px;"><span style="width:24px;height:24px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;background:color-mix(in srgb,#2e9e6b 20%,transparent);border:1.5px solid #2e9e6b;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2e9e6b" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span><div style="min-width:0;"><div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:#2e9e6b;">Request sent to sponsor &middot; bound to Replay</div><div style="font-size:12.5px;color:var(--ink-cold);margin-top:3px;line-height:1.4;">{{ tr.sponsor }} &middot; SLA 5 business days &middot; PHI-free. The sponsor authors the amendment; Trident only proposed it.</div></div></div>
+                            <div style="display:flex;align-items:center;gap:11px;"><span style="width:24px;height:24px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;background:color-mix(in srgb,#2e9e6b 20%,transparent);border:1.5px solid #2e9e6b;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2e9e6b" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span><div style="min-width:0;"><div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:#2e9e6b;">Request sent to sponsor &middot; bound to Replay</div><div style="font-size:12.5px;color:var(--ink-cold);margin-top:3px;line-height:1.4;">{{ tr.sponsor }} &middot; SLA 5 business days &middot; PHI-free. The sponsor authors the amendment from Trident's draft.</div></div></div>
                           </div>
                         </sc-if>
                       </div>
@@ -980,10 +966,8 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
   <section id="spine" data-screen-label="Execution spine" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);background:#f3f6f9;border-top:1px solid rgba(31,45,61,0.08);">
     <div style="max-width:1080px;margin:0 auto;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The workflow</div>
-      <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;">
-        <h2 style="margin:0;font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,4vw,3.1rem);line-height:1.0;letter-spacing:-0.03em;">One run. Protocol to proof.</h2>
-        <p style="margin:0;font-family:var(--font-display);font-size:clamp(1.05rem,1.7vw,1.4rem);font-weight:600;letter-spacing:-0.01em;color:var(--ink-quiet);white-space:nowrap;">Engine accelerates. <span style="color:var(--ink-steel);">Humans decide.</span> Replay proves.</p>
-      </div>
+      <h2 style="margin:0;font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,4vw,3.1rem);line-height:1.0;letter-spacing:-0.03em;">One run. Protocol to proof.</h2>
+      <p style="margin:14px 0 0;font-family:var(--font-display);font-size:clamp(1.05rem,1.7vw,1.4rem);font-weight:600;letter-spacing:-0.01em;color:var(--ink-quiet);">Engine accelerates. <span style="color:var(--ink-steel);">Humans decide.</span> Replay proves.</p>
       <div id="spineCarousel" class="dm-spine-grid" style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:40px;">
         <div style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;border:1px solid rgba(31,45,61,0.14);background:linear-gradient(180deg, rgba(31,45,61,0.06), rgba(31,45,61,0.02)), rgba(255,255,255,0.55);min-height:218px;">
           <div style="display:flex;align-items:center;gap:9px;margin-bottom:16px;"><span style="font-family:var(--font-display);font-size:11px;color:var(--ink-steel);">01</span><span style="font-family:var(--font-body);font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-dim);">Protocol</span></div>
@@ -998,7 +982,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
         <div style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;border:1px solid rgba(31,45,61,0.14);background:linear-gradient(180deg, rgba(31,45,61,0.06), rgba(31,45,61,0.02)), rgba(255,255,255,0.55);min-height:218px;">
           <div style="display:flex;align-items:center;gap:9px;margin-bottom:16px;"><span style="font-family:var(--font-display);font-size:11px;color:var(--ink-steel);">03</span><span style="font-family:var(--font-body);font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-dim);">Screening</span></div>
           <div style="font-family:var(--font-display);font-size:1.35rem;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin-bottom:12px;">A verdict, <span style="color:var(--ink-steel);">not a guess.</span></div>
-          <p style="margin:0 0 14px;font-size:13px;line-height:1.5;color:var(--ink-faint);">A deterministic engine runs every criterion. Anything unclear routes to a human.</p>
+          <p style="margin:0 0 14px;font-size:13px;line-height:1.5;color:var(--ink-faint);">A deterministic engine runs every criterion; anything unclear is routed for review.</p>
           <div style="margin-top:auto;display:flex;gap:6px;flex-wrap:wrap;">
             <span style="font-family:var(--font-display);font-size:9.5px;font-weight:600;letter-spacing:0.06em;color:var(--state-pass);border:1px solid color-mix(in srgb,var(--state-pass) 36%,transparent);border-radius:4px;padding:2px 7px;">PASS</span>
             <span style="font-family:var(--font-display);font-size:9.5px;font-weight:600;letter-spacing:0.06em;color:var(--state-review);border:1px solid color-mix(in srgb,var(--state-review) 36%,transparent);border-radius:4px;padding:2px 7px;">REVIEW</span>
@@ -1008,7 +992,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
         <div style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;border:1px solid rgba(31,45,61,0.14);background:linear-gradient(180deg, rgba(31,45,61,0.06), rgba(31,45,61,0.02)), rgba(255,255,255,0.55);min-height:218px;">
           <div style="display:flex;align-items:center;gap:9px;margin-bottom:16px;"><span style="font-family:var(--font-display);font-size:11px;color:var(--ink-steel);">04</span><span style="font-family:var(--font-body);font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-dim);">Resolve</span></div>
           <div style="font-family:var(--font-display);font-size:1.35rem;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin-bottom:12px;">Judgment, then <span style="color:var(--ink-steel);">signature.</span></div>
-          <p style="margin:0;font-size:13px;line-height:1.5;color:var(--ink-faint);">Luna-governed agents stage the decision. A person commits it, bound to Replay.</p>
+          <p style="margin:0;font-size:13px;line-height:1.5;color:var(--ink-faint);">Staged options, cited evidence, one signature. Sealed into Replay.</p>
         </div>
         <div style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;border:1px solid rgba(31,45,61,0.14);background:linear-gradient(180deg, rgba(31,45,61,0.06), rgba(31,45,61,0.02)), rgba(255,255,255,0.55);min-height:218px;">
           <div style="display:flex;align-items:center;gap:9px;margin-bottom:16px;"><span style="font-family:var(--font-display);font-size:11px;color:var(--ink-steel);">05</span><span style="font-family:var(--font-body);font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-dim);">Replay</span></div>
@@ -1025,10 +1009,8 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
   <section id="agents" data-screen-label="The agents" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);background:radial-gradient(120% 90% at 50% 0%, #eaf2f8 0%, #f1f6fa 44%, #ffffff 80%);border-top:1px solid rgba(31,45,61,0.08);">
     <div style="position:relative;max-width:1080px;margin:0 auto;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The agents</div>
-      <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;">
-        <h2 style="margin:0;font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,4vw,3.1rem);line-height:1.0;letter-spacing:-0.03em;">Four agents. <span style="color:var(--ink-steel);">Zero verdicts.</span></h2>
-        <p style="margin:0;font-family:var(--font-display);font-size:clamp(1.05rem,1.7vw,1.4rem);font-weight:600;letter-spacing:-0.01em;color:var(--ink-quiet);">They propose. <span style="color:var(--ink-steel);">A human signs.</span></p>
-      </div>
+      <h2 style="margin:0;font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,4vw,3.1rem);line-height:1.0;letter-spacing:-0.03em;">Four agents. <span style="color:var(--ink-steel);">Zero verdicts.</span></h2>
+      <p style="margin:14px 0 0;font-family:var(--font-display);font-size:clamp(1.05rem,1.7vw,1.4rem);font-weight:600;letter-spacing:-0.01em;color:var(--ink-quiet);">Sentinel finds trials. Trident tunes protocols. <span style="color:var(--ink-steel);">Eye guards quality. Luna answers audits.</span></p>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:14px;margin-top:40px;">
         <div style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;border:1px solid rgba(31,45,61,0.12);background:#ffffff;box-shadow:0 1px 3px rgba(20,40,70,0.04);transition:transform 170ms cubic-bezier(0.16,1,0.3,1),box-shadow 170ms ease,border-color 170ms ease;" style-hover="transform:translateY(-3px);border-color:color-mix(in srgb,#2f6193 32%,transparent);box-shadow:0 12px 30px rgba(20,40,70,0.1)">
           <span style="width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--ink-steel) 9%,transparent);border:1px solid color-mix(in srgb,var(--ink-steel) 24%,transparent);margin-bottom:16px;"><svg width="20" height="20" viewBox="0 0 18 18" fill="none" stroke="var(--ink-steel)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="6.5"></circle><circle cx="9" cy="9" r="3"></circle><circle cx="9" cy="9" r="0.6" fill="var(--ink-steel)" stroke="none"></circle><path d="M9 9 13.6 4.4"></path></svg></span>
@@ -1042,7 +1024,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
           <div style="font-family:var(--font-display);font-size:1.2rem;font-weight:700;letter-spacing:-0.015em;color:var(--ink-cold);">Trident</div>
           <div style="font-family:var(--font-display);font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-steel);margin-top:5px;">At protocol</div>
           <p style="margin:12px 0 0;font-size:13px;line-height:1.55;color:var(--ink-faint);">Compiles criteria into locked logic and drafts amendments.</p>
-          <div style="margin-top:auto;padding-top:16px;"><div style="border-top:1px solid rgba(31,45,61,0.08);padding-top:11px;font-family:var(--font-display);font-size:9.5px;letter-spacing:0.06em;color:var(--ink-dim);">Drafts only &middot; the sponsor signs</div></div>
+          <div style="margin-top:auto;padding-top:16px;"><div style="border-top:1px solid rgba(31,45,61,0.08);padding-top:11px;font-family:var(--font-display);font-size:9.5px;letter-spacing:0.06em;color:var(--ink-dim);">Never commits an amendment</div></div>
         </div>
         <div style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;border:1px solid rgba(31,45,61,0.12);background:#ffffff;box-shadow:0 1px 3px rgba(20,40,70,0.04);transition:transform 170ms cubic-bezier(0.16,1,0.3,1),box-shadow 170ms ease,border-color 170ms ease;" style-hover="transform:translateY(-3px);border-color:color-mix(in srgb,#2f6193 32%,transparent);box-shadow:0 12px 30px rgba(20,40,70,0.1)">
           <span style="width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--ink-steel) 9%,transparent);border:1px solid color-mix(in srgb,var(--ink-steel) 24%,transparent);margin-bottom:16px;"><svg width="20" height="20" viewBox="0 0 18 18" fill="none" stroke="var(--ink-steel)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 9S4 3.8 9 3.8 16.5 9 16.5 9 14 14.2 9 14.2 1.5 9 1.5 9Z"></path><circle cx="9" cy="9" r="2.1"></circle></svg></span>
@@ -1068,7 +1050,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
     <div style="max-width:1080px;margin:0 auto;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The outputs</div>
       <h2 style="margin:0 0 10px;font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,4vw,3.1rem);line-height:1.0;letter-spacing:-0.03em;">Not a dashboard. <span style="color:var(--ink-steel);">A decision you can defend.</span></h2>
-      <p style="margin:0;max-width:52ch;font-size:15px;line-height:1.6;color:var(--ink-faint);">Every run carries a complete manifest: every state, the cited evidence behind it, the human who made the call, and a signed replay bundle that reconstructs the whole decision.</p>
+      <p style="margin:0;max-width:52ch;font-size:15px;line-height:1.6;color:var(--ink-faint);">Every run carries a complete manifest: each state, its cited evidence, and a signed replay bundle that reconstructs the whole decision.</p>
       <div class="dm-output-grid" style="display:grid;grid-template-columns:minmax(0,0.6fr) minmax(0,1fr);gap:clamp(16px,3vw,32px);margin-top:38px;align-items:stretch;">
         <div class="dm-input-col" style="display:flex;flex-direction:column;gap:12px;">
           <div style="font-family:var(--font-display);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:2px;">Input</div>
