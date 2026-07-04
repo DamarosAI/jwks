@@ -45,8 +45,13 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
       --state-fail:#dc3a52;
     }
     html{scroll-behavior:auto;scroll-padding-top:62px;}
-    body{margin:0;background:#ffffff;color:var(--ink-cold);font-family:var(--font-body);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:clip;}
+    body{margin:0;background:#f8fafb;color:var(--ink-cold);font-family:var(--font-body);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:clip;}
     a{color:inherit;text-decoration:none;}
+    .dm-card-lift{background:linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(250,252,254,0.88) 100%);border:1px solid rgba(31,45,61,0.09);box-shadow:0 1px 2px rgba(20,40,70,0.03);}
+    .dm-card-lift.dm-card-accent{background:linear-gradient(180deg, rgba(234,242,248,0.72) 0%, rgba(255,255,255,0.92) 100%);border:1px solid rgba(47,97,147,0.14);}
+    .dm-site{background:linear-gradient(180deg,#f6fafc 0%,#eef3f8 12%,#f9fbfc 25%,#f4f7fa 38%,#edf2f7 50%,#f7fafc 62%,#e9f0f7 75%,#f5f8fa 88%,#eef3f8 100%);background-color:#f8fafb;}
+    .dm-site section{background:transparent !important;}
+    .dm-site footer{background:transparent !important;}
     .dm-site{--dm-ref:1920px;}
     @media (min-width:1024px) and (max-width:1919px){
       .dm-site section[data-screen-label="About hero"] h1,
@@ -82,7 +87,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
   </style>
 </helmet>
 
-<div class="dm-site" style="min-height:100vh;background:#ffffff;overflow-x:hidden;display:flex;flex-direction:column;">
+<div class="dm-site" style="min-height:100vh;overflow-x:hidden;display:flex;flex-direction:column;">
 
   <!-- ============ NAV ============ -->
   <header style="position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:18px;height:62px;padding:0 clamp(18px,5vw,40px);background:rgba(255,255,255,0.72);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);border-bottom:1px solid rgba(31,45,61,0.10);">
@@ -98,7 +103,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
   </header>
 
   <!-- ============ HERO ============ -->
-  <section data-screen-label="About hero" style="position:relative;padding:clamp(72px,9vw,124px) clamp(20px,5vw,40px) clamp(56px,7vw,88px);background:radial-gradient(120% 80% at 50% -8%, #f6fafc 0%, #eef3f8 44%, #ffffff 80%);overflow:hidden;">
+  <section data-screen-label="About hero" style="position:relative;padding:clamp(72px,9vw,124px) clamp(20px,5vw,40px) clamp(56px,7vw,88px);overflow:hidden;">
     <div style="position:relative;max-width:680px;margin:0 auto;text-align:left;">
       <div style="font-family:var(--font-body);font-size:11.5px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:24px;">From the founder</div>
       <p style="margin:0;font-family:var(--font-display);font-size:clamp(1.5rem,3vw,2.2rem);font-weight:700;line-height:1.28;letter-spacing:-0.025em;color:var(--ink-cold);text-wrap:balance;">I started Damaros<sup style="font-size:0.46em;font-weight:500;letter-spacing:0;color:var(--ink-dim);margin-left:1.5px;vertical-align:super;">&trade;</sup> to make the distance between patient and trial smaller. Whether a site runs two protocols or two hundred, <span style="color:var(--ink-steel);">the right therapeutic option should be within reach.</span></p>
@@ -113,7 +118,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
   </section>
 
   <!-- ============ WHY NOW ============ -->
-  <section data-screen-label="Why now" style="position:relative;padding:clamp(56px,7vw,92px) clamp(20px,5vw,40px);background:#f3f6f9;border-top:1px solid rgba(31,45,61,0.08);">
+  <section data-screen-label="Why now" style="position:relative;padding:clamp(56px,7vw,92px) clamp(20px,5vw,40px);">
     <div style="max-width:1080px;margin:0 auto;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Why now</div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:clamp(28px,5vw,56px);align-items:start;">
@@ -122,15 +127,15 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
           <p style="margin:20px 0 0;max-width:46ch;font-size:clamp(1.02rem,1.4vw,1.16rem);line-height:1.55;color:var(--ink-quiet);">AI is accelerating discovery, more candidates, more protocols, more amendments, tighter eligibility. None of it reaches a patient until a site executes. The constraint was never discovery. It is execution, and every model upstream multiplies the work downstream.</p>
         </div>
         <div style="display:flex;flex-direction:column;gap:10px;">
-          <div style="padding:20px 22px;border-radius:14px;border:1px solid rgba(31,45,61,0.12);background:#ffffff;">
+          <div class="dm-card-lift" style="padding:20px 22px;border-radius:14px;">
             <div style="font-family:var(--font-mono);font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:9px;">At major centers</div>
             <p style="margin:0;font-size:13.5px;line-height:1.5;color:var(--ink-quiet);">More open protocols per coordinator, more amendments to re-screen against. Throughput stalls on the same manual eligibility work, just more of it.</p>
           </div>
-          <div style="padding:20px 22px;border-radius:14px;border:1px solid rgba(31,45,61,0.12);background:#ffffff;">
+          <div class="dm-card-lift" style="padding:20px 22px;border-radius:14px;">
             <div style="font-family:var(--font-mono);font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:9px;">At community sites</div>
             <p style="margin:0;font-size:13.5px;line-height:1.5;color:var(--ink-quiet);">The patients are already there, but without an execution platform the matches are never seen in time. The gap between care and trial only widens.</p>
           </div>
-          <div style="padding:16px 22px;border-radius:14px;background:linear-gradient(180deg,#eef3f8,#e7eef5);border:1px solid rgba(47,97,147,0.18);">
+          <div class="dm-card-lift dm-card-accent" style="padding:16px 22px;border-radius:14px;">
             <p style="margin:0;font-size:13.5px;line-height:1.5;color:var(--ink-cold);">More intelligence in the pipeline makes a deterministic, replayable execution platform <span style="color:var(--ink-steel);font-weight:600;">more necessary, not less.</span></p>
           </div>
         </div>
@@ -139,7 +144,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
   </section>
 
   <!-- ============ FOOTER ============ -->
-  <footer style="background:#eef1f4;border-top:1px solid rgba(31,45,61,0.08);padding:clamp(40px,6vw,64px) clamp(20px,5vw,40px);">
+  <footer style="border-top:1px solid rgba(31,45,61,0.08);padding:clamp(40px,6vw,64px) clamp(20px,5vw,40px);">
     <div style="max-width:1080px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:20px;">
       <div style="display:flex;align-items:center;gap:8px;">
         <span style="font-family:var(--font-display);font-weight:700;font-size:15px;letter-spacing:-0.02em;line-height:1;color:var(--ink-quiet);">Damaros<sup style="font-size:0.46em;font-weight:500;letter-spacing:0;color:var(--ink-dim);margin-left:1.5px;">™</sup></span>

@@ -53,7 +53,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
       --glass-ring:inset 0 0 0 1px rgba(20,33,48,0.12);
     }
     html{scroll-behavior:auto;scroll-padding-top:62px;}
-    body{margin:0;background:#ffffff;color:var(--ink-cold);font-family:var(--font-body);font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+    body{margin:0;background:#f8fafb;color:var(--ink-cold);font-family:var(--font-body);font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
     .eyeScroll{scrollbar-width:thin;scrollbar-color:rgba(31,45,61,0.28) transparent;}
     .eyeScroll::-webkit-scrollbar{width:8px;height:8px;}
     .eyeScroll::-webkit-scrollbar-track{background:transparent;}
@@ -75,11 +75,12 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
     .dm-reveal{opacity:0;transform:translateY(16px);transition:opacity 0.8s cubic-bezier(0.16,1,0.3,1),transform 0.8s cubic-bezier(0.16,1,0.3,1);}
     .dm-reveal.dm-in{opacity:1;transform:none;}
     @media (prefers-reduced-motion:reduce){.dm-reveal{opacity:1 !important;transform:none !important;transition:none !important;}}
-    .dm-card-lift{background:linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(241,246,250,0.92) 100%);border:1px solid rgba(31,45,61,0.12);box-shadow:0 1px 3px rgba(20,40,70,0.04);transition:transform 220ms cubic-bezier(0.16,1,0.3,1),box-shadow 220ms ease,border-color 220ms ease;}
-    .dm-card-lift.dm-card-record{background:linear-gradient(180deg, rgba(47,97,147,0.06) 0%, rgba(255,255,255,0.98) 38%, rgba(241,246,250,0.92) 100%);border:1px solid rgba(31,45,61,0.16);box-shadow:0 1px 3px rgba(20,40,70,0.04), 0 22px 56px rgba(20,40,70,0.07);}
-    .dm-logo-tile{background:linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(241,246,250,0.92) 100%) !important;}
-    .dm-section-mist{background:radial-gradient(120% 90% at 50% 0%, #eaf2f8 0%, #f1f6fa 44%, #ffffff 80%) !important;}
-    .dm-section-bloom{background:radial-gradient(120% 90% at 50% 100%, #eef3f8 0%, #f8fafb 42%, #ffffff 78%) !important;}
+    .dm-card-lift{background:linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(250,252,254,0.88) 100%);border:1px solid rgba(31,45,61,0.09);box-shadow:0 1px 2px rgba(20,40,70,0.03);transition:transform 220ms cubic-bezier(0.16,1,0.3,1),box-shadow 220ms ease,border-color 220ms ease;}
+    .dm-card-lift.dm-card-record{background:linear-gradient(180deg, rgba(234,242,248,0.82) 0%, rgba(255,255,255,0.96) 42%, rgba(250,252,254,0.88) 100%);border:1px solid rgba(31,45,61,0.12);box-shadow:0 1px 2px rgba(20,40,70,0.03), 0 18px 48px rgba(20,40,70,0.06);}
+    .dm-logo-tile{background:linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(250,252,254,0.88) 100%) !important;}
+    .dm-site{background:linear-gradient(180deg,#f6fafc 0%,#eef3f8 12%,#f9fbfc 25%,#f4f7fa 38%,#edf2f7 50%,#f7fafc 62%,#e9f0f7 75%,#f5f8fa 88%,#eef3f8 100%);background-color:#f8fafb;}
+    .dm-site section{background:transparent !important;}
+    .dm-site footer{background:transparent !important;}
     @media (hover:hover) and (pointer:fine){
       .dm-card-lift:hover{transform:translateY(-3px);border-color:color-mix(in srgb,#2f6193 32%,transparent) !important;box-shadow:0 12px 30px rgba(20,40,70,0.1) !important;}
     }
@@ -95,7 +96,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
     @keyframes dmShimmer{0%{background-position:200% 0;}100%{background-position:-60% 0;}}
     @keyframes snEnter{from{opacity:0;}to{opacity:1;}}
     #instrument{position:relative;}
-    #instrument::after{content:"";position:absolute;left:0;right:0;bottom:0;height:72px;background:linear-gradient(180deg,rgba(255,255,255,0),#ffffff 88%);pointer-events:none;}
+    #instrument::after{content:"";position:absolute;left:0;right:0;bottom:0;height:72px;background:linear-gradient(180deg,rgba(255,255,255,0),rgba(248,250,251,0) 88%);pointer-events:none;}
     .dm-scroll-more{position:relative;z-index:1;}
     body{overflow-x:clip;}
     .dm-site{--dm-ref:1920px;}
@@ -222,7 +223,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
   </style>
 </helmet>
 
-<div class="dm-site" style="min-height:100vh;background:#ffffff;overflow-x:hidden;display:flex;flex-direction:column;">
+<div class="dm-site" style="min-height:100vh;overflow-x:hidden;display:flex;flex-direction:column;">
 
   <!-- ============ NAV ============ -->
   <header style="position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:18px;height:62px;padding:0 clamp(18px,5vw,40px);background:rgba(255,255,255,0.72);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);border-bottom:1px solid rgba(31,45,61,0.10);">
@@ -239,7 +240,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
   <span id="top"></span>
 
   <!-- ============ HERO ============ -->
-  <section data-screen-label="Hero" style="position:relative;min-height:calc(100vh - 62px);display:flex;flex-direction:column;justify-content:center;padding:clamp(64px,7vw,96px) clamp(20px,5vw,40px) clamp(72px,8vw,104px);background:radial-gradient(120% 78% at 50% -8%, #f6fafc 0%, #eef3f8 46%, #ffffff 78%);overflow:hidden;">
+  <section data-screen-label="Hero" style="position:relative;min-height:calc(100vh - 62px);display:flex;flex-direction:column;justify-content:center;padding:clamp(64px,7vw,96px) clamp(20px,5vw,40px) clamp(72px,8vw,104px);overflow:hidden;">
     <div aria-hidden="true" data-anim="" style="position:absolute;top:47%;left:50%;width:min(720px,104%);height:min(720px,104%);transform:translate(-50%,-50%);color:rgba(31,45,61,0.13);pointer-events:none;animation:dmDrift 18s ease-in-out infinite;"><svg viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="30" stroke-linejoin="round" stroke-linecap="round" style="width:100%;height:100%;"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg></div>
     <div style="position:relative;max-width:980px;margin:0 auto;text-align:center;">
       
@@ -257,7 +258,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
   </section>
 
   <!-- ============ INSTRUMENT · clean Node UI ============ -->
-  <section id="instrument" data-screen-label="Live instrument" style="position:relative;padding:0 clamp(12px,2.5vw,28px) clamp(40px,6vw,72px);background:#ffffff;">
+  <section id="instrument" data-screen-label="Live instrument" style="position:relative;padding:0 clamp(12px,2.5vw,28px) clamp(40px,6vw,72px);">
     <div class="dm-scroll-target">
     <p class="dm-demo-caption" style="max-width:920px;margin:0 auto 16px;text-align:center;font-size:15px;font-weight:600;line-height:1.55;color:var(--ink-cold);">A demonstration of the Damaros<sup style="font-size:0.55em;letter-spacing:0;">™</sup> runtime on synthetic FHIR data.<span class="dm-caption-hint"> Click on the pulsing box to walk through it.</span></p>
 
@@ -896,7 +897,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
 
   <!-- ============ INTEGRATIONS · logo wall ============ -->
   <sc-if value="{{ showMarquee }}" hint-placeholder-val="{{ true }}">
-  <section id="integrations" class="dm-section-mist" data-screen-label="Integrations" style="position:relative;padding:clamp(40px,5vw,56px) clamp(20px,5vw,40px);border-top:1px solid rgba(31,45,61,0.08);border-bottom:1px solid rgba(31,45,61,0.08);">
+  <section id="integrations" data-screen-label="Integrations" style="position:relative;padding:clamp(40px,5vw,56px) clamp(20px,5vw,40px);">
     <div class="dm-scroll-target" style="max-width:1000px;margin:0 auto;text-align:center;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:14px;">Works with your existing systems</div>
       <h2 style="margin:0 0 38px;font-family:var(--font-display);font-weight:700;font-size:clamp(1.5rem,2.8vw,2.1rem);line-height:1.08;letter-spacing:-0.02em;">Not a replacement. <span style="color:var(--ink-steel);">The platform unifies the stack you already run.</span></h2>
@@ -924,7 +925,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
   </sc-if>
 
   <!-- ============ PROBLEM ============ -->
-  <section id="problem" class="dm-section-bloom" data-screen-label="The execution gap" style="position:relative;padding:clamp(52px,6vw,84px) clamp(20px,5vw,40px);">
+  <section id="problem" data-screen-label="The execution gap" style="position:relative;padding:clamp(52px,6vw,84px) clamp(20px,5vw,40px);">
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:clamp(32px,5vw,68px);align-items:center;">
       <div>
         <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The problem</div>
@@ -971,7 +972,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
   </section>
 
   <!-- ============ SPINE ============ -->
-  <section id="spine" class="dm-section-mist" data-screen-label="Execution spine" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);border-top:1px solid rgba(31,45,61,0.08);">
+  <section id="spine" data-screen-label="Execution spine" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The workflow</div>
       <h2 style="margin:0;font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,4vw,3.1rem);line-height:1.0;letter-spacing:-0.03em;">One run. Protocol to proof.</h2>
@@ -1018,7 +1019,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
   </section>
 
   <!-- ============ AGENTS ============ -->
-  <section id="agents" class="dm-section-mist" data-screen-label="The agents" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);border-top:1px solid rgba(31,45,61,0.08);">
+  <section id="agents" data-screen-label="The agents" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
     <div class="dm-scroll-target" style="position:relative;max-width:1080px;margin:0 auto;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The agents</div>
       <h2 style="margin:0;font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,4vw,3.1rem);line-height:1.0;letter-spacing:-0.03em;">Four agents. <span style="color:var(--ink-steel);">Zero verdicts.</span></h2>
@@ -1059,7 +1060,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
   </section>
 
   <!-- ============ WHAT IT PRODUCES ============ -->
-  <section id="output" class="dm-section-bloom" data-screen-label="What a run produces" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
+  <section id="output" data-screen-label="What a run produces" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The outputs</div>
       <h2 style="margin:0 0 10px;font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,4vw,3.1rem);line-height:1.0;letter-spacing:-0.03em;">Not a dashboard. <span style="color:var(--ink-steel);">A decision you can defend.</span></h2>
@@ -1104,7 +1105,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
   </section>
 
   <!-- ============ NODE ============ -->
-  <section id="node" class="dm-section-mist" data-screen-label="Runtime" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);border-top:1px solid rgba(31,45,61,0.08);">
+  <section id="node" data-screen-label="Runtime" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:clamp(28px,5vw,64px);align-items:start;">
         <div>
@@ -1138,7 +1139,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
   </section>
 
   <!-- ============ REPLAY ============ -->
-  <section id="replay" class="dm-section-bloom" data-screen-label="Replay" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
+  <section id="replay" data-screen-label="Replay" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;text-align:center;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Replay · proof</div>
       <h2 style="margin:0 auto;max-width:20ch;font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,4.2vw,3.3rem);line-height:1.0;letter-spacing:-0.03em;text-wrap:balance;">Not a log you trust. <span style="color:var(--ink-steel);">Proof you can replay.</span></h2>
@@ -1170,7 +1171,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
   </section>
 
   <!-- ============ SECURITY ============ -->
-  <section id="security" class="dm-section-mist" data-screen-label="Security posture" style="position:relative;padding:clamp(72px,10vw,120px) clamp(20px,5vw,40px);border-top:1px solid rgba(31,45,61,0.08);">
+  <section id="security" data-screen-label="Security posture" style="position:relative;padding:clamp(72px,10vw,120px) clamp(20px,5vw,40px);">
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Security posture</div>
       <h2 style="margin:0;max-width:22ch;font-family:var(--font-display);font-weight:700;font-size:clamp(1.8rem,3.6vw,2.8rem);line-height:1.04;letter-spacing:-0.03em;">Every run is attributable. <span style="color:var(--ink-steel);"><br>PHI never reaches a model.</span></h2>
@@ -1190,7 +1191,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
   </section>
 
   <!-- ============ CLOSE ============ -->
-  <section id="close" data-screen-label="Close" style="position:relative;padding:clamp(80px,11vw,150px) clamp(20px,5vw,40px);background:radial-gradient(120% 80% at 50% 120%, #f6fafc 0%, #eef3f8 40%, #ffffff 78%);overflow:hidden;">
+  <section id="close" data-screen-label="Close" style="position:relative;padding:clamp(80px,11vw,150px) clamp(20px,5vw,40px);overflow:hidden;">
     <div aria-hidden="true" data-anim="" style="position:absolute;top:50%;left:50%;width:min(560px,90%);height:min(560px,90%);transform:translate(-50%,-50%);color:rgba(31,45,61,0.1);pointer-events:none;animation:dmDrift 18s ease-in-out infinite;">
       <svg viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="30" stroke-linejoin="round" stroke-linecap="round" style="width:100%;height:100%;"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg>
     </div>
@@ -1203,7 +1204,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
   </section>
 
   <!-- ============ FOOTER ============ -->
-  <footer style="margin-top:auto;background:#eef1f4;border-top:1px solid rgba(31,45,61,0.08);padding:clamp(40px,6vw,64px) clamp(20px,5vw,40px);">
+  <footer style="margin-top:auto;border-top:1px solid rgba(31,45,61,0.08);padding:clamp(40px,6vw,64px) clamp(20px,5vw,40px);">
     <div style="max-width:1080px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:20px;">
       <div style="display:flex;align-items:center;gap:8px;">
         

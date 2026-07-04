@@ -41,9 +41,13 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
       --state-fail:#dc3a52;
     }
     html{scroll-behavior:smooth;}
-    body{margin:0;background:#ffffff;color:var(--ink-cold);font-family:var(--font-body);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:clip;}
+    body{margin:0;background:#f8fafb;color:var(--ink-cold);font-family:var(--font-body);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:clip;}
     a{color:inherit;text-decoration:none;}
     .pp a.lnk{color:var(--ink-steel);border-bottom:1px solid color-mix(in srgb,var(--ink-steel) 35%,transparent);}
+    .dm-card-lift{background:linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(250,252,254,0.88) 100%);border:1px solid rgba(31,45,61,0.09);box-shadow:0 1px 2px rgba(20,40,70,0.03);}
+    .dm-site{background:linear-gradient(180deg,#f6fafc 0%,#eef3f8 12%,#f9fbfc 25%,#f4f7fa 38%,#edf2f7 50%,#f7fafc 62%,#e9f0f7 75%,#f5f8fa 88%,#eef3f8 100%);background-color:#f8fafb;}
+    .dm-site section{background:transparent !important;}
+    .dm-site footer{background:transparent !important;}
     .dm-site{--dm-ref:1920px;}
     @media (min-width:1024px) and (max-width:1919px){
       .dm-site section[data-screen-label="Privacy hero"] h1{
@@ -73,7 +77,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
   </style>
 </helmet>
 
-<div class="dm-site" style="min-height:100vh;background:#ffffff;overflow-x:hidden;display:flex;flex-direction:column;">
+<div class="dm-site" style="min-height:100vh;overflow-x:hidden;display:flex;flex-direction:column;">
 
   <!-- ============ NAV ============ -->
   <header style="position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:18px;height:62px;padding:0 clamp(18px,5vw,40px);background:rgba(255,255,255,0.72);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);border-bottom:1px solid rgba(31,45,61,0.10);">
@@ -89,7 +93,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
   </header>
 
   <!-- ============ HERO ============ -->
-  <section data-screen-label="Privacy hero" style="position:relative;padding:clamp(72px,9vw,124px) clamp(20px,5vw,40px) clamp(40px,5vw,60px);background:radial-gradient(120% 80% at 50% -8%, #f6fafc 0%, #eef3f8 44%, #ffffff 80%);overflow:hidden;">
+  <section data-screen-label="Privacy hero" style="position:relative;padding:clamp(72px,9vw,124px) clamp(20px,5vw,40px) clamp(40px,5vw,60px);overflow:hidden;">
     <div aria-hidden="true" data-anim style="position:absolute;top:46%;left:50%;width:min(560px,92%);height:min(560px,92%);transform:translate(-50%,-50%);color:rgba(31,45,61,0.07);pointer-events:none;animation:dmDrift 30s ease-in-out infinite;"><svg viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="30" stroke-linejoin="round" stroke-linecap="round" style="width:100%;height:100%;"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg></div>
     <div style="position:relative;max-width:880px;margin:0 auto;">
       <div style="font-family:var(--font-body);font-size:11.5px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:22px;">Privacy</div>
@@ -100,7 +104,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
   </section>
 
   <!-- ============ BODY ============ -->
-  <section style="position:relative;padding:clamp(24px,3vw,40px) clamp(20px,5vw,40px) clamp(64px,8vw,104px);background:#ffffff;">
+  <section style="position:relative;padding:clamp(24px,3vw,40px) clamp(20px,5vw,40px) clamp(64px,8vw,104px);">
     <div class="pp" style="max-width:780px;margin:0 auto;display:flex;flex-direction:column;gap:clamp(30px,4vw,44px);">
 
       <!-- 1 -->
@@ -108,9 +112,9 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
         <h2 style="margin:0 0 12px;font-family:var(--font-display);font-size:clamp(1.3rem,2.2vw,1.7rem);font-weight:700;letter-spacing:-0.02em;color:var(--ink-cold);">1. Information we collect</h2>
         <p style="margin:0 0 14px;font-size:15.5px;line-height:1.65;color:var(--ink-quiet);">We collect only what we need to operate this website and respond to you:</p>
         <div style="display:flex;flex-direction:column;gap:10px;">
-          <div style="padding:16px 18px;border-radius:12px;border:1px solid rgba(31,45,61,0.12);background:#fbfcfd;"><span style="font-weight:600;color:var(--ink-cold);">Information you give us.</span><span style="color:var(--ink-quiet);"> Your name, work email, organization, role, and anything you write when you request a pilot, contact us, or apply for a role.</span></div>
-          <div style="padding:16px 18px;border-radius:12px;border:1px solid rgba(31,45,61,0.12);background:#fbfcfd;"><span style="font-weight:600;color:var(--ink-cold);">Information collected automatically.</span><span style="color:var(--ink-quiet);"> Standard technical data such as IP address, browser and device type, pages visited, and approximate (city-level) location, gathered to keep the site secure and understand usage.</span></div>
-          <div style="padding:16px 18px;border-radius:12px;border:1px solid rgba(31,45,61,0.12);background:#fbfcfd;"><span style="font-weight:600;color:var(--ink-cold);">Information from others.</span><span style="color:var(--ink-quiet);"> Limited business-contact details from partners or public professional sources when we evaluate a potential pilot or collaboration.</span></div>
+          <div class="dm-card-lift" style="padding:16px 18px;border-radius:12px;"><span style="font-weight:600;color:var(--ink-cold);">Information you give us.</span><span style="color:var(--ink-quiet);"> Your name, work email, organization, role, and anything you write when you request a pilot, contact us, or apply for a role.</span></div>
+          <div class="dm-card-lift" style="padding:16px 18px;border-radius:12px;"><span style="font-weight:600;color:var(--ink-cold);">Information collected automatically.</span><span style="color:var(--ink-quiet);"> Standard technical data such as IP address, browser and device type, pages visited, and approximate (city-level) location, gathered to keep the site secure and understand usage.</span></div>
+          <div class="dm-card-lift" style="padding:16px 18px;border-radius:12px;"><span style="font-weight:600;color:var(--ink-cold);">Information from others.</span><span style="color:var(--ink-quiet);"> Limited business-contact details from partners or public professional sources when we evaluate a potential pilot or collaboration.</span></div>
         </div>
         <p style="margin:16px 0 0;font-size:14px;line-height:1.6;color:var(--ink-faint);">Please don't send sensitive or health information through this website. It isn't the place for it.</p>
       </div>
@@ -176,7 +180,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
       </div>
 
       <!-- contact -->
-      <div style="padding:clamp(22px,3vw,30px);border-radius:16px;border:1px solid rgba(31,45,61,0.12);background:#fbfcfd;">
+      <div class="dm-card-lift" style="padding:clamp(22px,3vw,30px);border-radius:16px;">
         <h2 style="margin:0 0 10px;font-family:var(--font-display);font-size:clamp(1.2rem,2vw,1.5rem);font-weight:700;letter-spacing:-0.02em;color:var(--ink-cold);">Contact us</h2>
         <p style="margin:0;font-size:15.5px;line-height:1.65;color:var(--ink-quiet);">Questions about this policy or your information? Reach us at <a class="lnk" href="mailto:team@damaros.ai">team@damaros.ai</a>. We will get back to you.</p>
       </div>
@@ -185,7 +189,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
   </section>
 
   <!-- ============ FOOTER ============ -->
-  <footer style="margin-top:auto;background:#eef1f4;border-top:1px solid rgba(31,45,61,0.08);padding:clamp(40px,6vw,64px) clamp(20px,5vw,40px);">
+  <footer style="margin-top:auto;border-top:1px solid rgba(31,45,61,0.08);padding:clamp(40px,6vw,64px) clamp(20px,5vw,40px);">
     <div style="max-width:1080px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:20px;">
       <div style="display:flex;align-items:center;gap:8px;">
         <span style="font-family:var(--font-display);font-weight:700;font-size:15px;letter-spacing:-0.02em;line-height:1;color:var(--ink-quiet);">Damaros<sup style="font-size:0.46em;font-weight:500;letter-spacing:0;color:var(--ink-dim);margin-left:1.5px;">™</sup></span>
