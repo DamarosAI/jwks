@@ -14,24 +14,31 @@ This project is the brand + product design system for **Damaros**. It exists so 
 
 Positioning line (canonical, per damaros.ai): *the agentic execution platform for clinical trials.* **AI-native where operations scale, deterministic where trust requires.** No model ever casts an eligibility verdict; PHI never enters an LLM path.
 
-### Two surfaces — the product grammar
+### One surface — the product grammar
 
 | Surface | What it is |
 |---|---|
 | **Node** | The **site runtime**. Where execution happens — a care site runs the trial under local control with replayable proof. Executes the one workflow: **Protocol → Evidence → Screening → Resolve → Replay**. (Helper label: *Clinic Node*.) |
-| **Console** | **Buyer-neutral field command** for the site network. Where the network becomes intelligible: readiness, friction, amendment impact, REVIEW burden, site performance, execution drift. Permissioned, **PHI-free**, read-only with respect to the patient path. (Helper label: *Network Console*.) |
 
-> **Node produces trusted execution. Console commands the field built from it.**
+Node is the one operator surface (Console was retired as a surface; the site never names it). The live demo on damaros.ai is a single-site Node runtime.
 
 ### The one workflow (five steps)
 
 **Protocol** (import & lock versioned logic) → **Evidence** (site-controlled ingest, PHI trust boundary) → **Screening** (deterministic PASS / REVIEW / FAIL) → **Resolve** (the human trust boundary — commit / defer / escalate / supersede / reject) → **Replay** (reconstruct & prove what happened).
 
-### Substrate (powers the product — never operator-facing modules)
+### The four agents (operator-facing, per damaros.ai)
 
-- **Damaros Eye** — the live intelligence layer. Makes execution visible as it moves: bottlenecks, evidence gaps, REVIEW burden, protocol friction, cross-site signals.
-- **Trident** — the verified-ontology substrate that makes protocols computable.
-- **Luna** — the governed AI control plane; PHI provably never enters it.
+**Four agents. Zero verdicts.** *Sentinel finds trials. Trident tunes protocols. Eye guards quality. Luna answers audits.* Each is a visible agent panel the operator works with inside Node — never a verdict-caster.
+
+- **Sentinel** — *Opportunity radar.* Matches open protocols to the site's real capabilities. No patient data.
+- **Trident** — *At protocol.* Compiles criteria into locked logic and drafts amendments. Never commits an amendment.
+- **Eye** — *Quality signals.* Flags drift and deviations early, site-scoped, so the team can act before they harden into findings. Watches process, not people.
+- **Luna** — *Audit chain.* Rebuilds any finding from the chain, every row cited. Read-only on the record; PHI provably never enters it.
+
+The hard guardrails are unchanged and orthogonal to the framing: no model casts an eligibility verdict, PHI never enters a model, screening is deterministic.
+
+### Substrate (powers the product behind the surfaces)
+
 - **Operations Mesh** — governed worker substrate (Forge = evidence assembly, Router = review triage). Workers add priority/proof, never authority.
 
 ### CTAs (canon, per damaros.ai)
@@ -65,7 +72,7 @@ The voice is **declarative, mineral, and disciplined.** It sounds like an instru
 
 **Casing & mechanics**
 - **Sentence case** for headlines and body. **UPPERCASE** reserved for: tracked eyebrows/labels, status chips, and the verdict words **PASS / REVIEW / FAIL** (always all-caps when naming the deterministic state).
-- Product nouns are **Capitalized**: Node, Console, Protocol, Evidence, Screening, Resolve, Replay, Eye, Trident, Luna, Sentinel.
+- Product nouns are **Capitalized**: Node, Protocol, Evidence, Screening, Resolve, Replay, Sentinel, Trident, Eye, Luna. (Console is retired; do not introduce it in new copy.)
 - The accent device: in a headline, the **emphasized clause is set in steel (stone-blue)**, not bold or italic. Example: "Care happens everywhere. *The trials that save lives do not.*"
 - **No emoji. Ever.** No exclamation marks. Numbers are tabular; stats cite a source in a tiny uppercase tag (e.g. "Community Oncology Alliance").
 - **No em dashes in body copy.** Use periods and commas, and let short sentences carry the rhythm. House convention: the live site copy is em-dash-free.
@@ -132,7 +139,7 @@ Damaros uses **thin-stroke geometric line icons drawn as inline SVG** — there 
 
 **Components:** Button · StatusBadge (PASS/REVIEW/FAIL/governed disposition chip) · Card (glass) · Input / Textarea / Select · Eyebrow · Stepper (the five-step spine) · TrustPill · ReviewChip · Kbd. See `components/<group>/` and each `.prompt.md`.
 
-**UI kits:** Console (network readiness map + Eye signals) · Node (Resolve workspace + Replay). Each `index.html` is an interactive click-through.
+**UI kits:** Node (Resolve workspace + Replay) — an interactive click-through where present. (The upstream Field system also carried a Console kit; Console is retired and its kit is reference-only, not a pattern for new work. Kits are not bundled in this snapshot.)
 
 ---
 
