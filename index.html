@@ -254,6 +254,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
 
   <!-- ============ INSTRUMENT · clean Node UI ============ -->
   <section id="instrument" data-screen-label="Live instrument" style="position:relative;padding:0 clamp(12px,2.5vw,28px) clamp(40px,6vw,72px);background:#ffffff;">
+    <div class="dm-scroll-target">
     <p class="dm-demo-caption" style="max-width:920px;margin:0 auto 16px;text-align:center;font-size:15px;font-weight:600;line-height:1.55;color:var(--ink-cold);">A demonstration of the Damaros<sup style="font-size:0.55em;letter-spacing:0;">™</sup> runtime on synthetic FHIR data.<span class="dm-caption-hint"> Click on the pulsing box to walk through it.</span></p>
 
     <div id="nodeStage" style="display:flex;justify-content:center;align-items:flex-start;overflow:hidden;">
@@ -883,7 +884,8 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
       </div>
       </div>
     </div>
-    <button onClick="{{ onMore }}" aria-label="Scroll to learn more about Damaros" class="dm-scroll-more" style="margin:4px auto 0;display:flex;justify-content:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:2px 8px;position:relative;z-index:3;">
+    </div>
+    <button onClick="{{ onMore }}" aria-label="Scroll to learn more about Damaros" class="dm-scroll-more dm-scroll-chev" style="margin:4px auto 0;display:flex;justify-content:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:2px 8px;position:relative;z-index:3;">
       <svg data-anim="" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.4s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg>
     </button>
   </section>
@@ -891,7 +893,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
   <!-- ============ INTEGRATIONS · logo wall ============ -->
   <sc-if value="{{ showMarquee }}" hint-placeholder-val="{{ true }}">
   <section id="integrations" data-screen-label="Integrations" style="position:relative;padding:clamp(40px,5vw,56px) clamp(20px,5vw,40px);border-top:1px solid rgba(31,45,61,0.08);border-bottom:1px solid rgba(31,45,61,0.08);background:#f3f6f9;">
-    <div style="max-width:1000px;margin:0 auto;text-align:center;">
+    <div class="dm-scroll-target" style="max-width:1000px;margin:0 auto;text-align:center;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:14px;">Works with your existing systems</div>
       <h2 style="margin:0 0 38px;font-family:var(--font-display);font-weight:700;font-size:clamp(1.5rem,2.8vw,2.1rem);line-height:1.08;letter-spacing:-0.02em;">Not a replacement. <span style="color:var(--ink-steel);">The platform unifies the stack you already run.</span></h2>
       <div class="dm-logowall" style="display:flex;flex-wrap:wrap;justify-content:center;gap:14px;">
@@ -918,7 +920,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
 
   <!-- ============ PROBLEM ============ -->
   <section id="problem" data-screen-label="The execution gap" style="position:relative;padding:clamp(52px,6vw,84px) clamp(20px,5vw,40px);background:#ffffff;">
-    <div style="max-width:1080px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:clamp(32px,5vw,68px);align-items:center;">
+    <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:clamp(32px,5vw,68px);align-items:center;">
       <div>
         <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The problem</div>
         <h2 style="margin:0;max-width:15ch;font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,4.2vw,3.3rem);line-height:1.0;letter-spacing:-0.03em;text-wrap:balance;">Care is everywhere.<br><span style="color:var(--ink-steel);">Clinical trials aren't.</span></h2>
@@ -960,12 +962,12 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
         </div>
       </div>
     </div>
-    <div style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToSpine }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
+    <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToSpine }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
   </section>
 
   <!-- ============ SPINE ============ -->
   <section id="spine" data-screen-label="Execution spine" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);background:#f3f6f9;border-top:1px solid rgba(31,45,61,0.08);">
-    <div style="max-width:1080px;margin:0 auto;">
+    <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The workflow</div>
       <h2 style="margin:0;font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,4vw,3.1rem);line-height:1.0;letter-spacing:-0.03em;">One run. Protocol to proof.</h2>
       <p style="margin:14px 0 0;font-family:var(--font-display);font-size:clamp(1.05rem,1.7vw,1.4rem);font-weight:600;letter-spacing:-0.01em;color:var(--ink-quiet);">Engine accelerates. <span style="color:var(--ink-steel);">Humans decide.</span> Replay proves.</p>
@@ -1007,12 +1009,12 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
       </div>
       <div class="dm-spine-indicator" aria-hidden="true"><span id="spineIndex">1</span> / 5</div>
     </div>
-    <div style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToAgents }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
+    <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToAgents }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
   </section>
 
   <!-- ============ AGENTS ============ -->
   <section id="agents" data-screen-label="The agents" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);background:radial-gradient(120% 90% at 50% 0%, #eaf2f8 0%, #f1f6fa 44%, #ffffff 80%);border-top:1px solid rgba(31,45,61,0.08);">
-    <div style="position:relative;max-width:1080px;margin:0 auto;">
+    <div class="dm-scroll-target" style="position:relative;max-width:1080px;margin:0 auto;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The agents</div>
       <h2 style="margin:0;font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,4vw,3.1rem);line-height:1.0;letter-spacing:-0.03em;">Four agents. <span style="color:var(--ink-steel);">Zero verdicts.</span></h2>
       <p style="margin:14px 0 0;font-family:var(--font-display);font-size:clamp(1.05rem,1.7vw,1.4rem);font-weight:600;letter-spacing:-0.01em;color:var(--ink-quiet);">Sentinel finds trials. Trident tunes protocols. <span style="color:var(--ink-steel);">Eye guards quality. Luna answers audits.</span></p>
@@ -1048,12 +1050,12 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
       </div>
       <div class="dm-spine-indicator" aria-hidden="true"><span id="agentsIndex">1</span> / 4</div>
     </div>
-    <div style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToOutput }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
+    <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToOutput }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
   </section>
 
   <!-- ============ WHAT IT PRODUCES ============ -->
   <section id="output" data-screen-label="What a run produces" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);background:#ffffff;">
-    <div style="max-width:1080px;margin:0 auto;">
+    <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The outputs</div>
       <h2 style="margin:0 0 10px;font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,4vw,3.1rem);line-height:1.0;letter-spacing:-0.03em;">Not a dashboard. <span style="color:var(--ink-steel);">A decision you can defend.</span></h2>
       <p style="margin:0;max-width:52ch;font-size:15px;line-height:1.6;color:var(--ink-faint);">Every run carries a complete manifest: each state, its cited evidence, and a signed replay bundle that reconstructs the whole decision.</p>
@@ -1093,12 +1095,12 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
         </div>
       </div>
     </div>
-    <div style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToNode }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
+    <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToNode }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
   </section>
 
   <!-- ============ NODE ============ -->
   <section id="node" data-screen-label="Runtime" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);background:#f3f6f9;border-top:1px solid rgba(31,45,61,0.08);">
-    <div style="max-width:1080px;margin:0 auto;">
+    <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:clamp(28px,5vw,64px);align-items:start;">
         <div>
           <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The runtime</div>
@@ -1127,12 +1129,12 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
         </div>
       </div>
     </div>
-    <div style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToReplay }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
+    <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToReplay }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
   </section>
 
   <!-- ============ REPLAY ============ -->
   <section id="replay" data-screen-label="Replay" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);background:#ffffff;">
-    <div style="max-width:1080px;margin:0 auto;text-align:center;">
+    <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;text-align:center;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Replay · proof</div>
       <h2 style="margin:0 auto;max-width:20ch;font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,4.2vw,3.3rem);line-height:1.0;letter-spacing:-0.03em;text-wrap:balance;">Not a log you trust. <span style="color:var(--ink-steel);">Proof you can replay.</span></h2>
       <p style="margin:22px auto 0;max-width:52ch;font-size:15px;line-height:1.6;color:var(--ink-faint);">Reconstruct any run end to end: every state, the evidence behind it, and the human who signed it.</p>
@@ -1159,12 +1161,12 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
         </div>
       </div>
     </div>
-    <div style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToSecurity }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
+    <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToSecurity }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
   </section>
 
   <!-- ============ SECURITY ============ -->
   <section id="security" data-screen-label="Security posture" style="position:relative;padding:clamp(72px,10vw,120px) clamp(20px,5vw,40px);background:#f3f6f9;border-top:1px solid rgba(31,45,61,0.08);">
-    <div style="max-width:1080px;margin:0 auto;">
+    <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Security posture</div>
       <h2 style="margin:0;max-width:22ch;font-family:var(--font-display);font-weight:700;font-size:clamp(1.8rem,3.6vw,2.8rem);line-height:1.04;letter-spacing:-0.03em;">Every run is attributable. <span style="color:var(--ink-steel);"><br>PHI never reaches a model.</span></h2>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:12px;margin-top:34px;">
@@ -1179,7 +1181,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
       </div>
       <p class="dm-security-note" style="margin:26px 0 0;font-size:13.5px;line-height:1.55;color:var(--ink-dim);">We validate the execution chain. We do not claim clinical efficacy.</p>
     </div>
-    <div style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToClose }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
+    <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToClose }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
   </section>
 
   <!-- ============ CLOSE ============ -->
@@ -1187,7 +1189,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
     <div aria-hidden="true" data-anim="" style="position:absolute;top:50%;left:50%;width:min(560px,90%);height:min(560px,90%);transform:translate(-50%,-50%);color:rgba(31,45,61,0.1);pointer-events:none;animation:dmDrift 18s ease-in-out infinite;">
       <svg viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="30" stroke-linejoin="round" stroke-linecap="round" style="width:100%;height:100%;"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg>
     </div>
-    <div style="position:relative;max-width:880px;margin:0 auto;text-align:center;">
+    <div class="dm-scroll-target" style="position:relative;max-width:880px;margin:0 auto;text-align:center;">
       <h2 style="margin:0;font-family:var(--font-display);font-weight:700;font-size:clamp(2.3rem,5.4vw,4rem);line-height:0.98;letter-spacing:-0.03em;text-wrap:balance;">Trial delays are <span style="color:var(--ink-steel);">treatment delays.</span></h2>
       <div style="display:flex;justify-content:center;margin-top:32px;">
         <a href="/cdn-cgi/l/email-protection#acd8c9cdc1ecc8cdc1cddec3df82cdc5" style="display:inline-flex;align-items:center;justify-content:center;border-radius:999px;font-family:var(--font-display);font-weight:500;letter-spacing:0.03em;text-transform:uppercase;color:#ffffff;background:linear-gradient(180deg,#3d72a8,#2f6193);border:1px solid color-mix(in srgb,#2f6193 50%,rgba(255,255,255,0.22));box-shadow:inset 0 1px 0 rgba(255,255,255,0.2), 0 8px 20px rgba(20,46,82,0.16);white-space:nowrap;height:48px;padding:0 22px;font-size:13px;">Start a pilot</a>
@@ -1594,7 +1596,30 @@ class Component extends DCLogic {
   setPick = (id) => this.setState({ pick: id });
   commit = () => this.setState((st) => { if (!st.pick) return null; const c = this.cands[st.ci]; const cm = Object.assign({}, st.committed); cm[c.id] = st.pick; return { committed: cm }; });
   scrollTo = (id, off = 70) => { const el = document.getElementById(id); if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.pageYOffset - off, behavior: "smooth" }); };
-  scrollCenter = (id) => { const el = document.getElementById(id); if (!el) return; const r = el.getBoundingClientRect(); const elTop = r.top + window.pageYOffset; const vh = window.innerHeight; const head = 62; let top = elTop - Math.max(head, (vh - r.height) / 2); const max = document.documentElement.scrollHeight - vh; top = Math.max(0, Math.min(top, max)); window.scrollTo({ top, behavior: "smooth" }); };
+  scrollCenter = (id) => {
+    const sec = document.getElementById(id);
+    if (!sec) return;
+    const el = sec.querySelector(".dm-scroll-target") || sec;
+    const reduced = window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+    const measure = () => {
+      const r = el.getBoundingClientRect();
+      const elTop = r.top + window.scrollY;
+      const vh = window.innerHeight;
+      const head = 62;
+      const usable = Math.max(0, vh - head);
+      let top;
+      if (r.height >= usable) {
+        top = elTop - head;
+      } else {
+        top = elTop - head - (usable - r.height) / 2;
+      }
+      const max = Math.max(0, document.documentElement.scrollHeight - vh);
+      top = Math.max(0, Math.min(top, max));
+      window.scrollTo({ top, behavior: reduced ? "auto" : "smooth" });
+    };
+    measure();
+    requestAnimationFrame(() => requestAnimationFrame(measure));
+  };
 
   renderVals() {
     const step = this.state.step, A = "#2f6193";
@@ -1841,8 +1866,8 @@ class Component extends DCLogic {
       segFailStyle: { width: Math.round(scSeg.fail / scSeg.evaluated * 100) + "%", height: "100%", background: "rgba(124,138,153,0.5)" },
       rp: rp,
       goResolve: () => this.setStep(3),
-      onDemo: () => this.scrollTo("instrument"),
-      onMore: () => this.scrollTo("integrations", -10),
+      onDemo: () => this.scrollCenter("instrument"),
+      onMore: () => this.scrollCenter(this.props.showMarquee !== false ? "integrations" : "problem"),
       onPilot: () => this.scrollTo("pilot"),
       onRunModel: () => this.scrollTo("spine"),
       onToSpine: () => this.scrollCenter("spine"),
