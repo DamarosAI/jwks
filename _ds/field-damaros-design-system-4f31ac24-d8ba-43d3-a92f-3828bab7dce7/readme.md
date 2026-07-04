@@ -2,7 +2,7 @@
 
 > **Field is the Damaros design language for live trial operations.** It treats every protocol, site, candidate, evidence gap, and human decision as part of one operational field — calm, dark, spatial, replayable, and built for trust.
 
-**One field. Two surfaces. Five steps. Every decision replayable.**
+**One field. One surface. Five steps. Every decision replayable.**
 
 This project is the brand + product design system for **Damaros**. It exists so design agents can produce on-brand Damaros interfaces, decks, and assets — for production or for throwaway mocks — without re-deriving the look from scratch.
 
@@ -89,10 +89,12 @@ The voice is **declarative, mineral, and disciplined.** It sounds like an instru
 
 ## VISUAL FOUNDATIONS — the look of the field
 
+> **Theme scope (2026-07-04, site-is-canon).** The shipped marketing site (damaros.ai) runs a **light cold-paper theme**: paper ground `#f8fafb`, cold ink `#10161d`, one steel signal `#2f6193`, with the demo instrument floating on it as light chrome. Per ADR-0001, the site wins where they disagree, so the dark-mineral foundations below are scoped to **operator/product surfaces** (and dark brand artifacts such as decks). Read "never a light theme" in that scope, not as a claim about damaros.ai.
+
 **Overall feeling:** a dark, mineral instrument. Geological black grounds, cold-white text, a single stone-blue signal carrying all structure. "Light is never decoration here." Spatial and quiet; nothing glows unless it means something.
 
 **Color**
-- **Backgrounds** are near-black mineral: jet `#06080b` (page ground), lifted `#0c1118`, surface `#121820`. The operator console goes fully to `#000`. Never a light theme.
+- **Backgrounds** are near-black mineral: jet `#06080b` (page ground), lifted `#0c1118`, surface `#121820`. The operator console goes fully to `#000`. Never a light theme on operator surfaces (the marketing site ships light; see the theme-scope note above).
 - **One accent:** stone-blue **steel `#A9C0D6`** (with `#7b96b2` muted operator variant). It is the signal — borders, active states, links, structure all derive from it. Deep blue `#2F5F8C` marks boundaries.
 - **Semantic color is rationed** and reserved for trial state: PASS green `#5BB98C`, REVIEW amber `#D9A23E`, FAIL red `#F2566E` ("rare red — breach only"), and governance ultraviolet `#8C7CF0` (Luna / AI provenance / ceremony). Operator surfaces use brighter variants (`#4ade80 / #facc15 / #fb7185`).
 - **Imagery vibe:** cool, dark, blue-grey. WebGL terrain and topology in the marketing site; no warm tones, no stock photography. When real imagery is needed it should read cold and structural.
@@ -103,7 +105,7 @@ The voice is **declarative, mineral, and disciplined.** It sounds like an instru
 
 **Cards & panels:** the signature is **glass** — a faint stone-blue inset ring (`inset 0 0 0 1px rgba(169,192,214,0.2)`), 4px backdrop-blur, over a near-black gradient `linear-gradient(180deg, rgba(169,192,214,0.07), rgba(169,192,214,0.02)), rgba(8,11,17,0.55)`. Brand panels round at **14–16px**; operator instrument chrome is much tighter (**2–3px**, 8px for panels). Hover lifts the card 2px and adds a deep, quiet shadow + a brighter ring — never a glow-burst.
 
-**Borders & shadows:** borders are stone-blue at low alpha (hairline `.1`, default `.18`, strong `.32`) — never pure grey or white. Shadows are deep and dark (`0 14px 40px rgba(5,7,11,0.5)`), used for elevation, not decoration. There are no soft drop-shadows on a light background — there is no light background.
+**Borders & shadows:** borders are stone-blue at low alpha (hairline `.1`, default `.18`, strong `.32`) — never pure grey or white. Shadows are deep and dark (`0 14px 40px rgba(5,7,11,0.5)`), used for elevation, not decoration. There are no soft drop-shadows on a light background — on operator surfaces there is no light background.
 
 **Motion:** fast and restrained. **Max 300ms.** Signature ease is `cubic-bezier(0.16, 1, 0.3, 1)` (a settle, no overshoot/bounce). Entrances fade + translateY(14px)→0. Hover transitions 120–140ms. The one decorative motion is a slow monogram drift (22s) and a scramble-resolve headline effect on the marketing hero. Everything respects `prefers-reduced-motion`.
 
@@ -134,12 +136,12 @@ Damaros uses **thin-stroke geometric line icons drawn as inline SVG** — there 
 - **`assets/`** — Damaros logos + monogram (white PNGs, brand SVG, recolorable `currentColor` SVG), favicon.
 - **`guidelines/`** — foundation specimen cards (Colors, Type, Spacing, Brand) shown in the Design System tab.
 - **`components/`** — reusable React primitives (see below).
-- **`ui_kits/`** — full-screen product recreations: `node/` (site runtime) and `console/` (sponsor command center).
+- **`ui_kits/`** — full-screen product recreations: `node/` (site runtime). (The retired Console kit exists upstream as reference-only; see the UI kits note below.)
 - **`SKILL.md`** — Agent-Skills wrapper so this system works in Claude Code.
 
 **Components:** Button · StatusBadge (PASS/REVIEW/FAIL/governed disposition chip) · Card (glass) · Input / Textarea / Select · Eyebrow · Stepper (the five-step spine) · TrustPill · ReviewChip · Kbd. See `components/<group>/` and each `.prompt.md`.
 
-**UI kits:** Node (Resolve workspace + Replay) — an interactive click-through where present. (The upstream Field system also carried a Console kit; Console is retired and its kit is reference-only, not a pattern for new work. Kits are not bundled in this snapshot.)
+**UI kits:** Node (Resolve workspace + Replay) — an interactive click-through where present. (The upstream Field system also carried a Console kit; Console is retired and its kit is reference-only, not a pattern for new work. Kit sources are not in this snapshot; the compiled `_ds_bundle.js` carries the Node kit only, the retired Console kit having been removed from it on 2026-07-04.)
 
 ---
 
