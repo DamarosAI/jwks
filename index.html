@@ -915,6 +915,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
         </div>
       </div>
     </div>
+    <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToProblem }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
   </section>
   </sc-if>
 
@@ -1870,6 +1871,7 @@ class Component extends DCLogic {
       onMore: () => this.scrollCenter(this.props.showMarquee !== false ? "integrations" : "problem"),
       onPilot: () => this.scrollTo("pilot"),
       onRunModel: () => this.scrollTo("spine"),
+      onToProblem: () => this.scrollCenter("problem"),
       onToSpine: () => this.scrollCenter("spine"),
       onToAgents: () => this.scrollCenter("agents"),
       onToOutput: () => this.scrollCenter("output"),
