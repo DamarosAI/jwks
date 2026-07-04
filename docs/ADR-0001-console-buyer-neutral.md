@@ -55,8 +55,11 @@ against an internal spec, we invert it: the site is the spec.
    shipped site. When they disagree, the site wins. There is no upstream marketing spec to
    reconcile to: the site is upstream.
 
-3. **Console is buyer-neutral field command.** Public copy says "Console" (and "Network
-   Console" when specificity helps). "Sponsor Console" is retired as visible copy. For the
+3. **Console is buyer-neutral field command.** ~~Public copy says "Console" (and "Network
+   Console" when specificity helps).~~ *(Revised 2026-07-04, per the revision note above:
+   the shipped site names no Console surface at all, and Console left the product-noun
+   list. The four engine questions below survive as PHI-free projections behind the one
+   surface. Retained for history.)* "Sponsor Console" is retired as visible copy. For the
    site-network operator the four engines answer:
    - Trust Profile: "Which clinics in my network are execution-ready and provable?"
    - Activation Readiness: "Which clinics can we stand up for this protocol, and what blocks them?"
@@ -74,15 +77,21 @@ against an internal spec, we invert it: the site is the spec.
 5. **The four engines do not change.** PHI-free projection and Replay proof remain the basis
    of Console.
 
-6. **Damaros Eye is Console-only (not Node).** Initial user: the site-network operator.
-   Future user: sponsor / CRO.
+6. ~~**Damaros Eye is Console-only (not Node).** Initial user: the site-network operator.
+   Future user: sponsor / CRO.~~ *(Revised 2026-07-04: superseded by the agent framing in
+   the revision note above. Eye is one of the four operator-facing agents the shipped site
+   presents, inside the one surface. Retained for history.)*
 
 ## Canon
 
-> Node runs the clinic. Console runs the network. Replay proves the work.
+> Node runs the clinic. ~~Console runs the network.~~ Replay proves the work.
 
-> The site is the buyer. Node makes it trial-capable, Console makes the network legible,
+> The site is the buyer. Node makes it trial-capable, ~~Console makes the network legible,~~
 > Replay makes the work provable.
+
+> *(Revised 2026-07-04: Console was retired as a surface, per the revision note above. The
+> network-legibility capability survives as PHI-free projections, not as a named surface.
+> The struck clauses are preserved as the historical record.)*
 
 Hero (canonical, damaros.ai): **The agentic execution platform for clinical trials.**
 Site-first in substance throughout: the live demo runs the spine at a site, "Damaros runs
