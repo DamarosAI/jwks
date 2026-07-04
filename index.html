@@ -75,7 +75,11 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
     .dm-reveal{opacity:0;transform:translateY(16px);transition:opacity 0.8s cubic-bezier(0.16,1,0.3,1),transform 0.8s cubic-bezier(0.16,1,0.3,1);}
     .dm-reveal.dm-in{opacity:1;transform:none;}
     @media (prefers-reduced-motion:reduce){.dm-reveal{opacity:1 !important;transform:none !important;transition:none !important;}}
-    .dm-card-lift{transition:transform 220ms cubic-bezier(0.16,1,0.3,1),box-shadow 220ms ease,border-color 220ms ease;}
+    .dm-card-lift{background:linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(241,246,250,0.92) 100%);border:1px solid rgba(31,45,61,0.12);box-shadow:0 1px 3px rgba(20,40,70,0.04);transition:transform 220ms cubic-bezier(0.16,1,0.3,1),box-shadow 220ms ease,border-color 220ms ease;}
+    .dm-card-lift.dm-card-record{background:linear-gradient(180deg, rgba(47,97,147,0.06) 0%, rgba(255,255,255,0.98) 38%, rgba(241,246,250,0.92) 100%);border:1px solid rgba(31,45,61,0.16);box-shadow:0 1px 3px rgba(20,40,70,0.04), 0 22px 56px rgba(20,40,70,0.07);}
+    .dm-logo-tile{background:linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(241,246,250,0.92) 100%) !important;}
+    .dm-section-mist{background:radial-gradient(120% 90% at 50% 0%, #eaf2f8 0%, #f1f6fa 44%, #ffffff 80%) !important;}
+    .dm-section-bloom{background:radial-gradient(120% 90% at 50% 100%, #eef3f8 0%, #f8fafb 42%, #ffffff 78%) !important;}
     @media (hover:hover) and (pointer:fine){
       .dm-card-lift:hover{transform:translateY(-3px);border-color:color-mix(in srgb,#2f6193 32%,transparent) !important;box-shadow:0 12px 30px rgba(20,40,70,0.1) !important;}
     }
@@ -892,7 +896,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
 
   <!-- ============ INTEGRATIONS · logo wall ============ -->
   <sc-if value="{{ showMarquee }}" hint-placeholder-val="{{ true }}">
-  <section id="integrations" data-screen-label="Integrations" style="position:relative;padding:clamp(40px,5vw,56px) clamp(20px,5vw,40px);border-top:1px solid rgba(31,45,61,0.08);border-bottom:1px solid rgba(31,45,61,0.08);background:#f3f6f9;">
+  <section id="integrations" class="dm-section-mist" data-screen-label="Integrations" style="position:relative;padding:clamp(40px,5vw,56px) clamp(20px,5vw,40px);border-top:1px solid rgba(31,45,61,0.08);border-bottom:1px solid rgba(31,45,61,0.08);">
     <div class="dm-scroll-target" style="max-width:1000px;margin:0 auto;text-align:center;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:14px;">Works with your existing systems</div>
       <h2 style="margin:0 0 38px;font-family:var(--font-display);font-weight:700;font-size:clamp(1.5rem,2.8vw,2.1rem);line-height:1.08;letter-spacing:-0.02em;">Not a replacement. <span style="color:var(--ink-steel);">The platform unifies the stack you already run.</span></h2>
@@ -920,7 +924,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
   </sc-if>
 
   <!-- ============ PROBLEM ============ -->
-  <section id="problem" data-screen-label="The execution gap" style="position:relative;padding:clamp(52px,6vw,84px) clamp(20px,5vw,40px);background:#ffffff;">
+  <section id="problem" class="dm-section-bloom" data-screen-label="The execution gap" style="position:relative;padding:clamp(52px,6vw,84px) clamp(20px,5vw,40px);">
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:clamp(32px,5vw,68px);align-items:center;">
       <div>
         <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The problem</div>
@@ -929,7 +933,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
         <p style="margin:14px 0 0;max-width:46ch;font-size:clamp(1.05rem,1.4vw,1.18rem);line-height:1.5;color:var(--ink-quiet);">The work still lives in the gap: charts, labs, notes, criteria, coordinator judgment, PI review, and proof rebuilt later. Every protocol and disconnected system adds weight. Large centers absorb more. Community clinics often cannot.</p>
       </div>
       <div class="dm-stat-grid" style="display:flex;flex-direction:column;gap:12px;">
-        <div class="dm-card-lift" style="display:flex;align-items:center;padding:20px 24px;border-radius:14px;border:1px solid rgba(31,45,61,0.14);background:linear-gradient(180deg, rgba(31,45,61,0.05), rgba(31,45,61,0.015)), rgba(255,255,255,0.5);box-shadow:0 1px 3px rgba(20,40,70,0.04);">
+        <div class="dm-card-lift" style="display:flex;align-items:center;padding:20px 24px;border-radius:14px;">
           <div style="flex-shrink:0;width:118px;text-align:center;font-family:var(--font-display);font-size:clamp(2.4rem,3.2vw,3.1rem);font-weight:700;letter-spacing:-0.03em;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink-cold);">~80<span style="font-size:0.44em;color:var(--ink-steel);vertical-align:0.6em;font-weight:600;margin-left:1px;">%</span></div>
           <div style="width:1px;align-self:stretch;background:rgba(31,45,61,0.12);margin:1px 22px;"></div>
           <div style="min-width:0;">
@@ -937,7 +941,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
             <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-top:7px;">Community Oncology Alliance</div>
           </div>
         </div>
-        <div class="dm-card-lift" style="display:flex;align-items:center;padding:20px 24px;border-radius:14px;border:1px solid rgba(31,45,61,0.14);background:linear-gradient(180deg, rgba(31,45,61,0.05), rgba(31,45,61,0.015)), rgba(255,255,255,0.5);box-shadow:0 1px 3px rgba(20,40,70,0.04);">
+        <div class="dm-card-lift" style="display:flex;align-items:center;padding:20px 24px;border-radius:14px;">
           <div style="flex-shrink:0;width:118px;text-align:center;font-family:var(--font-display);font-size:clamp(2.4rem,3.2vw,3.1rem);font-weight:700;letter-spacing:-0.03em;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink-cold);">4<span style="font-size:0.44em;color:var(--ink-steel);vertical-align:0.6em;font-weight:600;margin-left:1px;">%</span></div>
           <div style="width:1px;align-self:stretch;background:rgba(31,45,61,0.12);margin:1px 22px;"></div>
           <div style="min-width:0;">
@@ -945,7 +949,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
             <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-top:7px;">JNCI Cancer Spectrum</div>
           </div>
         </div>
-        <div class="dm-card-lift" style="display:flex;align-items:center;padding:20px 24px;border-radius:14px;border:1px solid rgba(31,45,61,0.14);background:linear-gradient(180deg, rgba(31,45,61,0.05), rgba(31,45,61,0.015)), rgba(255,255,255,0.5);box-shadow:0 1px 3px rgba(20,40,70,0.04);">
+        <div class="dm-card-lift" style="display:flex;align-items:center;padding:20px 24px;border-radius:14px;">
           <div style="flex-shrink:0;width:118px;text-align:center;font-family:var(--font-display);font-size:clamp(2.4rem,3.2vw,3.1rem);font-weight:700;letter-spacing:-0.03em;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink-cold);">20<span style="font-size:0.44em;color:var(--ink-steel);vertical-align:0.6em;font-weight:600;margin-left:1px;">+</span></div>
           <div style="width:1px;align-self:stretch;background:rgba(31,45,61,0.12);margin:1px 22px;"></div>
           <div style="min-width:0;">
@@ -953,7 +957,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
             <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-top:7px;">SCRS · WCG</div>
           </div>
         </div>
-        <div class="dm-card-lift" style="display:flex;align-items:center;padding:20px 24px;border-radius:14px;border:1px solid rgba(31,45,61,0.14);background:linear-gradient(180deg, rgba(31,45,61,0.05), rgba(31,45,61,0.015)), rgba(255,255,255,0.5);box-shadow:0 1px 3px rgba(20,40,70,0.04);">
+        <div class="dm-card-lift" style="display:flex;align-items:center;padding:20px 24px;border-radius:14px;">
           <div style="flex-shrink:0;width:118px;text-align:center;font-family:var(--font-display);font-size:clamp(2.4rem,3.2vw,3.1rem);font-weight:700;letter-spacing:-0.03em;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink-cold);">~30<span style="font-size:0.44em;color:var(--ink-steel);vertical-align:0.6em;font-weight:600;margin-left:1px;">%</span></div>
           <div style="width:1px;align-self:stretch;background:rgba(31,45,61,0.12);margin:1px 22px;"></div>
           <div style="min-width:0;">
@@ -967,25 +971,25 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
   </section>
 
   <!-- ============ SPINE ============ -->
-  <section id="spine" data-screen-label="Execution spine" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);background:#f3f6f9;border-top:1px solid rgba(31,45,61,0.08);">
+  <section id="spine" class="dm-section-mist" data-screen-label="Execution spine" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);border-top:1px solid rgba(31,45,61,0.08);">
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The workflow</div>
       <h2 style="margin:0;font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,4vw,3.1rem);line-height:1.0;letter-spacing:-0.03em;">One run. Protocol to proof.</h2>
       <p style="margin:14px 0 0;font-family:var(--font-display);font-size:clamp(1.05rem,1.7vw,1.4rem);font-weight:600;letter-spacing:-0.01em;color:var(--ink-quiet);">Engine accelerates. <span style="color:var(--ink-steel);">Humans decide.</span> Replay proves.</p>
       <div id="spineCarousel" class="dm-spine-grid" style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:40px;">
-        <div class="dm-card-lift dm-spine-card" style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;border:1px solid rgba(31,45,61,0.14);background:linear-gradient(180deg, rgba(31,45,61,0.06), rgba(31,45,61,0.02)), rgba(255,255,255,0.55);box-shadow:0 1px 3px rgba(20,40,70,0.04);">
+        <div class="dm-card-lift dm-spine-card" style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;">
           <div style="display:flex;align-items:center;gap:9px;margin-bottom:16px;"><span style="font-family:var(--font-display);font-size:11px;color:var(--ink-steel);">01</span><span style="font-family:var(--font-body);font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-dim);">Protocol</span></div>
           <div style="font-family:var(--font-display);font-size:1.35rem;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin-bottom:12px;">Intent becomes <span style="color:var(--ink-steel);">logic.</span></div>
           <p style="margin:0;flex:1;font-size:13px;line-height:1.55;color:var(--ink-faint);">Trident compiles sponsor criteria into locked logic, byte-identical at every site.</p>
           <div style="margin-top:16px;padding-top:11px;border-top:1px solid rgba(31,45,61,0.08);font-family:var(--font-display);font-size:9.5px;letter-spacing:0.06em;color:var(--ink-dim);">LLM extraction &middot; deterministic compile</div>
         </div>
-        <div class="dm-card-lift dm-spine-card" style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;border:1px solid rgba(31,45,61,0.14);background:linear-gradient(180deg, rgba(31,45,61,0.06), rgba(31,45,61,0.02)), rgba(255,255,255,0.55);box-shadow:0 1px 3px rgba(20,40,70,0.04);">
+        <div class="dm-card-lift dm-spine-card" style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;">
           <div style="display:flex;align-items:center;gap:9px;margin-bottom:16px;"><span style="font-family:var(--font-display);font-size:11px;color:var(--ink-steel);">02</span><span style="font-family:var(--font-body);font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-dim);">Evidence</span></div>
           <div style="font-family:var(--font-display);font-size:1.35rem;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin-bottom:12px;">Records become <span style="color:var(--ink-steel);">evidence.</span></div>
           <p style="margin:0;flex:1;font-size:13px;line-height:1.55;color:var(--ink-faint);">Site-approved data arrives screening-ready with lineage, freshness, and mapping intact.</p>
           <div style="margin-top:16px;padding-top:11px;border-top:1px solid rgba(31,45,61,0.08);font-family:var(--font-display);font-size:9.5px;letter-spacing:0.06em;color:var(--ink-dim);">PHI never meets a model</div>
         </div>
-        <div class="dm-card-lift dm-spine-card" style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;border:1px solid rgba(31,45,61,0.14);background:linear-gradient(180deg, rgba(31,45,61,0.06), rgba(31,45,61,0.02)), rgba(255,255,255,0.55);box-shadow:0 1px 3px rgba(20,40,70,0.04);">
+        <div class="dm-card-lift dm-spine-card" style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;">
           <div style="display:flex;align-items:center;gap:9px;margin-bottom:16px;"><span style="font-family:var(--font-display);font-size:11px;color:var(--ink-steel);">03</span><span style="font-family:var(--font-body);font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-dim);">Screening</span></div>
           <div style="font-family:var(--font-display);font-size:1.35rem;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin-bottom:12px;">A verdict, <span style="color:var(--ink-steel);">not a guess.</span></div>
           <p style="margin:0;flex:1;font-size:13px;line-height:1.55;color:var(--ink-faint);">Deterministic engine evaluates every criterion; unclear cases route for review.</p>
@@ -995,13 +999,13 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
             <span style="font-family:var(--font-display);font-size:9.5px;font-weight:600;letter-spacing:0.06em;color:var(--state-fail);border:1px solid color-mix(in srgb,var(--state-fail) 36%,transparent);border-radius:4px;padding:2px 7px;">FAIL</span>
           </div>
         </div>
-        <div class="dm-card-lift dm-spine-card" style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;border:1px solid rgba(31,45,61,0.14);background:linear-gradient(180deg, rgba(31,45,61,0.06), rgba(31,45,61,0.02)), rgba(255,255,255,0.55);box-shadow:0 1px 3px rgba(20,40,70,0.04);">
+        <div class="dm-card-lift dm-spine-card" style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;">
           <div style="display:flex;align-items:center;gap:9px;margin-bottom:16px;"><span style="font-family:var(--font-display);font-size:11px;color:var(--ink-steel);">04</span><span style="font-family:var(--font-body);font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-dim);">Resolve</span></div>
           <div style="font-family:var(--font-display);font-size:1.35rem;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin-bottom:12px;">Judgment, then <span style="color:var(--ink-steel);">signature.</span></div>
           <p style="margin:0;flex:1;font-size:13px;line-height:1.55;color:var(--ink-faint);">Staged options with cited evidence wait for one sign-off before the run closes.</p>
           <div style="margin-top:16px;padding-top:11px;border-top:1px solid rgba(31,45,61,0.08);font-family:var(--font-display);font-size:9.5px;letter-spacing:0.06em;color:var(--ink-dim);">Citation-bound &middot; one signature</div>
         </div>
-        <div class="dm-card-lift dm-spine-card" style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;border:1px solid rgba(31,45,61,0.14);background:linear-gradient(180deg, rgba(31,45,61,0.06), rgba(31,45,61,0.02)), rgba(255,255,255,0.55);box-shadow:0 1px 3px rgba(20,40,70,0.04);">
+        <div class="dm-card-lift dm-spine-card" style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;">
           <div style="display:flex;align-items:center;gap:9px;margin-bottom:16px;"><span style="font-family:var(--font-display);font-size:11px;color:var(--ink-steel);">05</span><span style="font-family:var(--font-body);font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-dim);">Replay</span></div>
           <div style="font-family:var(--font-display);font-size:1.35rem;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin-bottom:12px;">Execution becomes <span style="color:var(--ink-steel);">proof.</span></div>
           <p style="margin:0;flex:1;font-size:13px;line-height:1.55;color:var(--ink-faint);">Any run reconstructs end to end from protocol basis through final signature.</p>
@@ -1014,34 +1018,34 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
   </section>
 
   <!-- ============ AGENTS ============ -->
-  <section id="agents" data-screen-label="The agents" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);background:radial-gradient(120% 90% at 50% 0%, #eaf2f8 0%, #f1f6fa 44%, #ffffff 80%);border-top:1px solid rgba(31,45,61,0.08);">
+  <section id="agents" class="dm-section-mist" data-screen-label="The agents" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);border-top:1px solid rgba(31,45,61,0.08);">
     <div class="dm-scroll-target" style="position:relative;max-width:1080px;margin:0 auto;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The agents</div>
       <h2 style="margin:0;font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,4vw,3.1rem);line-height:1.0;letter-spacing:-0.03em;">Four agents. <span style="color:var(--ink-steel);">Zero verdicts.</span></h2>
       <p style="margin:14px 0 0;font-family:var(--font-display);font-size:clamp(1.05rem,1.7vw,1.4rem);font-weight:600;letter-spacing:-0.01em;color:var(--ink-quiet);">Sentinel finds trials. Trident tunes protocols. <span style="color:var(--ink-steel);">Eye guards quality. Luna answers audits.</span></p>
       <div id="agentsCarousel" class="dm-agents-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:14px;margin-top:40px;">
-        <div class="dm-card-lift" style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;border:1px solid rgba(31,45,61,0.12);background:#ffffff;box-shadow:0 1px 3px rgba(20,40,70,0.04);">
+        <div class="dm-card-lift" style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;">
           <span style="width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--ink-steel) 9%,transparent);border:1px solid color-mix(in srgb,var(--ink-steel) 24%,transparent);margin-bottom:16px;"><svg width="20" height="20" viewBox="0 0 18 18" fill="none" stroke="var(--ink-steel)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="6.5"></circle><circle cx="9" cy="9" r="3"></circle><circle cx="9" cy="9" r="0.6" fill="var(--ink-steel)" stroke="none"></circle><path d="M9 9 13.6 4.4"></path></svg></span>
           <div style="font-family:var(--font-display);font-size:1.2rem;font-weight:700;letter-spacing:-0.015em;color:var(--ink-cold);">Sentinel</div>
           <div style="font-family:var(--font-display);font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-steel);margin-top:5px;">Opportunity radar</div>
           <p style="margin:12px 0 0;font-size:13px;line-height:1.55;color:var(--ink-faint);">Matches open protocols to the site's real capabilities.</p>
           <div style="margin-top:auto;padding-top:16px;"><div style="border-top:1px solid rgba(31,45,61,0.08);padding-top:11px;font-family:var(--font-display);font-size:9.5px;letter-spacing:0.06em;color:var(--ink-dim);">Site capacity only &middot; no patient data</div></div>
         </div>
-        <div class="dm-card-lift" style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;border:1px solid rgba(31,45,61,0.12);background:#ffffff;box-shadow:0 1px 3px rgba(20,40,70,0.04);">
+        <div class="dm-card-lift" style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;">
           <span style="width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--ink-steel) 9%,transparent);border:1px solid color-mix(in srgb,var(--ink-steel) 24%,transparent);margin-bottom:16px;"><svg width="20" height="20" viewBox="0 0 18 18" fill="none" stroke="var(--ink-steel)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 16V8"></path><path d="M4.8 8.2V4M9 8V3.4M13.2 8.2V4"></path><path d="M4.8 8.2c0 2.2 8.4 2.2 8.4 0"></path></svg></span>
           <div style="font-family:var(--font-display);font-size:1.2rem;font-weight:700;letter-spacing:-0.015em;color:var(--ink-cold);">Trident</div>
           <div style="font-family:var(--font-display);font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-steel);margin-top:5px;">At protocol</div>
           <p style="margin:12px 0 0;font-size:13px;line-height:1.55;color:var(--ink-faint);">Compiles criteria into locked logic and drafts amendments.</p>
           <div style="margin-top:auto;padding-top:16px;"><div style="border-top:1px solid rgba(31,45,61,0.08);padding-top:11px;font-family:var(--font-display);font-size:9.5px;letter-spacing:0.06em;color:var(--ink-dim);">Never commits an amendment</div></div>
         </div>
-        <div class="dm-card-lift" style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;border:1px solid rgba(31,45,61,0.12);background:#ffffff;box-shadow:0 1px 3px rgba(20,40,70,0.04);">
+        <div class="dm-card-lift" style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;">
           <span style="width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--ink-steel) 9%,transparent);border:1px solid color-mix(in srgb,var(--ink-steel) 24%,transparent);margin-bottom:16px;"><svg width="20" height="20" viewBox="0 0 18 18" fill="none" stroke="var(--ink-steel)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 9S4 3.8 9 3.8 16.5 9 16.5 9 14 14.2 9 14.2 1.5 9 1.5 9Z"></path><circle cx="9" cy="9" r="2.1"></circle></svg></span>
           <div style="font-family:var(--font-display);font-size:1.2rem;font-weight:700;letter-spacing:-0.015em;color:var(--ink-cold);">Eye</div>
           <div style="font-family:var(--font-display);font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-steel);margin-top:5px;">Quality signals</div>
           <p style="margin:12px 0 0;font-size:13px;line-height:1.55;color:var(--ink-faint);">Flags drift and deviations before they harden into findings.</p>
           <div style="margin-top:auto;padding-top:16px;"><div style="border-top:1px solid rgba(31,45,61,0.08);padding-top:11px;font-family:var(--font-display);font-size:9.5px;letter-spacing:0.06em;color:var(--ink-dim);">Watches process, not people</div></div>
         </div>
-        <div class="dm-card-lift" style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;border:1px solid rgba(31,45,61,0.12);background:#ffffff;box-shadow:0 1px 3px rgba(20,40,70,0.04);">
+        <div class="dm-card-lift" style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;">
           <span style="width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--ink-steel) 9%,transparent);border:1px solid color-mix(in srgb,var(--ink-steel) 24%,transparent);margin-bottom:16px;"><svg width="20" height="20" viewBox="0 0 18 18" fill="none" stroke="var(--ink-steel)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.8 3.4a6.6 6.6 0 1 0 0 11.2 5.2 5.2 0 0 1 0-11.2Z"></path></svg></span>
           <div style="font-family:var(--font-display);font-size:1.2rem;font-weight:700;letter-spacing:-0.015em;color:var(--ink-cold);">Luna</div>
           <div style="font-family:var(--font-display);font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-steel);margin-top:5px;">Audit chain</div>
@@ -1055,7 +1059,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
   </section>
 
   <!-- ============ WHAT IT PRODUCES ============ -->
-  <section id="output" data-screen-label="What a run produces" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);background:#ffffff;">
+  <section id="output" class="dm-section-bloom" data-screen-label="What a run produces" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The outputs</div>
       <h2 style="margin:0 0 10px;font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,4vw,3.1rem);line-height:1.0;letter-spacing:-0.03em;">Not a dashboard. <span style="color:var(--ink-steel);">A decision you can defend.</span></h2>
@@ -1064,15 +1068,15 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
         <div class="dm-input-col" style="display:flex;flex-direction:column;gap:12px;">
           <div style="font-family:var(--font-display);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:2px;">Input</div>
           <div class="dm-input-cards">
-          <div class="dm-card-lift" style="padding:16px 18px;border-radius:12px;border:1px solid rgba(31,45,61,0.12);background:rgba(255,255,255,0.5);box-shadow:0 1px 3px rgba(20,40,70,0.04);"><div style="font-size:13.5px;font-weight:600;color:var(--ink-cold);">Protocol v2.1 · locked</div><div style="font-family:var(--font-display);font-size:11px;color:var(--ink-dim);margin-top:4px;">NCT00000204 · hash aead45cf</div></div>
-          <div class="dm-card-lift" style="padding:16px 18px;border-radius:12px;border:1px solid rgba(31,45,61,0.12);background:rgba(255,255,255,0.5);box-shadow:0 1px 3px rgba(20,40,70,0.04);"><div style="font-size:13.5px;font-weight:600;color:var(--ink-cold);">Site-approved cohort · 72 patients</div><div style="font-family:var(--font-display);font-size:11px;color:var(--ink-dim);margin-top:4px;">Synthetic · site-governed</div></div>
-          <div class="dm-card-lift" style="padding:16px 18px;border-radius:12px;border:1px solid rgba(31,45,61,0.12);background:rgba(255,255,255,0.5);box-shadow:0 1px 3px rgba(20,40,70,0.04);"><div style="font-size:13.5px;font-weight:600;color:var(--ink-cold);">Evidence snapshot · 1,284 resources</div><div style="font-family:var(--font-display);font-size:11px;color:var(--ink-dim);margin-top:4px;">FHIR R4 · pop-2026-06-22</div></div>
+          <div class="dm-card-lift" style="padding:16px 18px;border-radius:12px;"><div style="font-size:13.5px;font-weight:600;color:var(--ink-cold);">Protocol v2.1 · locked</div><div style="font-family:var(--font-display);font-size:11px;color:var(--ink-dim);margin-top:4px;">NCT00000204 · hash aead45cf</div></div>
+          <div class="dm-card-lift" style="padding:16px 18px;border-radius:12px;"><div style="font-size:13.5px;font-weight:600;color:var(--ink-cold);">Site-approved cohort · 72 patients</div><div style="font-family:var(--font-display);font-size:11px;color:var(--ink-dim);margin-top:4px;">Synthetic · site-governed</div></div>
+          <div class="dm-card-lift" style="padding:16px 18px;border-radius:12px;"><div style="font-size:13.5px;font-weight:600;color:var(--ink-cold);">Evidence snapshot · 1,284 resources</div><div style="font-family:var(--font-display);font-size:11px;color:var(--ink-dim);margin-top:4px;">FHIR R4 · pop-2026-06-22</div></div>
           </div>
           <div class="dm-input-arrow" style="display:flex;align-items:center;gap:10px;padding:6px 2px;margin-top:2px;color:var(--ink-dim);"><span style="font-family:var(--font-display);font-size:11px;letter-spacing:0.04em;">deterministic engine</span><span style="flex:1;height:1px;background:rgba(31,45,61,0.16);"></span><span style="font-size:14px;color:var(--ink-steel);">→</span></div>
         </div>
         <div class="dm-output-col" style="display:flex;flex-direction:column;">
           <div style="font-family:var(--font-display);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:14px;">Output · execution record</div>
-          <div class="dm-card-lift" style="flex:1;border-radius:14px;border:1px solid rgba(31,45,61,0.16);background:linear-gradient(180deg, rgba(47,97,147,0.05), rgba(255,255,255,0.4)), rgba(255,255,255,0.6);overflow:hidden;box-shadow:0 1px 3px rgba(20,40,70,0.04);">
+          <div class="dm-card-lift dm-card-record" style="flex:1;border-radius:14px;overflow:hidden;">
             <div style="display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid rgba(31,45,61,0.1);">
               <div style="min-width:0;">
                 <div style="font-size:15px;font-weight:600;color:var(--ink-cold);">Subject 018-017</div>
@@ -1100,7 +1104,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
   </section>
 
   <!-- ============ NODE ============ -->
-  <section id="node" data-screen-label="Runtime" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);background:#f3f6f9;border-top:1px solid rgba(31,45,61,0.08);">
+  <section id="node" class="dm-section-mist" data-screen-label="Runtime" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);border-top:1px solid rgba(31,45,61,0.08);">
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:clamp(28px,5vw,64px);align-items:start;">
         <div>
@@ -1109,7 +1113,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
           <p style="margin:22px 0 0;font-size:clamp(1rem,1.4vw,1.18rem);line-height:1.55;color:var(--ink-quiet);">One runtime, installed inside the site's boundary, institution-hosted or air-gapped. The site governs what it can see and what leaves; the network only ever receives de-identified signals.</p>
         </div>
         <div class="dm-node-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-          <div class="dm-card-lift" style="padding:22px;border-radius:14px;border:1px solid rgba(31,45,61,0.12);background:#ffffff;box-shadow:0 1px 3px rgba(20,40,70,0.04);">
+          <div class="dm-card-lift" style="padding:22px;border-radius:14px;">
             <div style="font-family:var(--font-display);font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--state-pass);margin-bottom:16px;">What it controls</div>
             <div style="display:flex;flex-direction:column;gap:13px;">
               <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:color-mix(in srgb,var(--state-pass) 13%,transparent);"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="var(--state-pass)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5 6.5 12 13 4.5"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-quiet);">Site-approved evidence sources</span></div>
@@ -1118,7 +1122,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
               <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:color-mix(in srgb,var(--state-pass) 13%,transparent);"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="var(--state-pass)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5 6.5 12 13 4.5"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-quiet);">Network-safe signal emission</span></div>
             </div>
           </div>
-          <div class="dm-card-lift" style="padding:22px;border-radius:14px;border:1px solid rgba(31,45,61,0.12);background:#ffffff;box-shadow:0 1px 3px rgba(20,40,70,0.04);">
+          <div class="dm-card-lift" style="padding:22px;border-radius:14px;">
             <div style="font-family:var(--font-display);font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:16px;">What it does not</div>
             <div style="display:flex;flex-direction:column;gap:13px;">
               <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:rgba(31,45,61,0.06);"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="var(--ink-dim)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5 11 11M11 5 5 11"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-faint);">Become a network-controlled endpoint</span></div>
@@ -1134,12 +1138,12 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
   </section>
 
   <!-- ============ REPLAY ============ -->
-  <section id="replay" data-screen-label="Replay" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);background:#ffffff;">
+  <section id="replay" class="dm-section-bloom" data-screen-label="Replay" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;text-align:center;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Replay · proof</div>
       <h2 style="margin:0 auto;max-width:20ch;font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,4.2vw,3.3rem);line-height:1.0;letter-spacing:-0.03em;text-wrap:balance;">Not a log you trust. <span style="color:var(--ink-steel);">Proof you can replay.</span></h2>
       <p style="margin:22px auto 0;max-width:52ch;font-size:15px;line-height:1.6;color:var(--ink-faint);">Reconstruct any run end to end: every state, the evidence behind it, and the human who signed it.</p>
-      <div class="dm-card-lift" style="margin:44px auto 0;max-width:860px;border-radius:16px;border:1px solid rgba(31,45,61,0.12);background:#ffffff;box-shadow:0 1px 3px rgba(20,40,70,0.05), 0 22px 56px rgba(20,40,70,0.07);overflow:hidden;text-align:left;">
+      <div class="dm-card-lift dm-card-record" style="margin:44px auto 0;max-width:860px;border-radius:16px;overflow:hidden;text-align:left;">
         <div style="display:flex;align-items:center;gap:12px;padding:13px 22px;border-bottom:1px solid rgba(31,45,61,0.08);background:#fbfcfd;">
           <span style="font-family:var(--font-display);font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-steel);">Replay ledger</span>
           <span style="font-family:var(--font-display);font-size:10.5px;color:var(--ink-dim);">RPL-2026-0622-018-1047</span>
@@ -1166,19 +1170,19 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
   </section>
 
   <!-- ============ SECURITY ============ -->
-  <section id="security" data-screen-label="Security posture" style="position:relative;padding:clamp(72px,10vw,120px) clamp(20px,5vw,40px);background:#f3f6f9;border-top:1px solid rgba(31,45,61,0.08);">
+  <section id="security" class="dm-section-mist" data-screen-label="Security posture" style="position:relative;padding:clamp(72px,10vw,120px) clamp(20px,5vw,40px);border-top:1px solid rgba(31,45,61,0.08);">
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Security posture</div>
       <h2 style="margin:0;max-width:22ch;font-family:var(--font-display);font-weight:700;font-size:clamp(1.8rem,3.6vw,2.8rem);line-height:1.04;letter-spacing:-0.03em;">Every run is attributable. <span style="color:var(--ink-steel);"><br>PHI never reaches a model.</span></h2>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:12px;margin-top:34px;">
-        <div class="dm-card-lift" style="display:flex;align-items:center;gap:11px;padding:15px 18px;border-radius:11px;border:1px solid rgba(31,45,61,0.12);background:rgba(255,255,255,0.5);box-shadow:0 1px 3px rgba(20,40,70,0.04);"><span style="width:6px;height:6px;border-radius:50%;background:var(--state-pass);flex-shrink:0;"></span><span style="font-size:13px;color:var(--ink-quiet);"><strong style="color:var(--ink-cold);font-weight:600;">No LLM touches patient data</strong> · bounded at the site</span></div>
-        <div class="dm-card-lift" style="display:flex;align-items:center;gap:11px;padding:15px 18px;border-radius:11px;border:1px solid rgba(31,45,61,0.12);background:rgba(255,255,255,0.5);box-shadow:0 1px 3px rgba(20,40,70,0.04);"><span style="width:6px;height:6px;border-radius:50%;background:var(--ink-steel);flex-shrink:0;"></span><span style="font-size:13px;color:var(--ink-quiet);"><strong style="color:var(--ink-cold);font-weight:600;">SOC 2-aligned</strong> controls &amp; audit logging</span></div>
-        <div class="dm-card-lift" style="display:flex;align-items:center;gap:11px;padding:15px 18px;border-radius:11px;border:1px solid rgba(31,45,61,0.12);background:rgba(255,255,255,0.5);box-shadow:0 1px 3px rgba(20,40,70,0.04);"><span style="width:6px;height:6px;border-radius:50%;background:var(--ink-steel);flex-shrink:0;"></span><span style="font-size:13px;color:var(--ink-quiet);"><strong style="color:var(--ink-cold);font-weight:600;">FedRAMP-oriented</strong> architecture</span></div>
-        <div class="dm-card-lift" style="display:flex;align-items:center;gap:11px;padding:15px 18px;border-radius:11px;border:1px solid rgba(31,45,61,0.12);background:rgba(255,255,255,0.5);box-shadow:0 1px 3px rgba(20,40,70,0.04);"><span style="width:6px;height:6px;border-radius:50%;background:var(--ink-steel);flex-shrink:0;"></span><span style="font-size:13px;color:var(--ink-quiet);"><strong style="color:var(--ink-cold);font-weight:600;">Replayable proof</strong> · signed &amp; hash-verified</span></div>
-        <div class="dm-card-lift" style="display:flex;align-items:center;gap:11px;padding:15px 18px;border-radius:11px;border:1px solid rgba(31,45,61,0.12);background:rgba(255,255,255,0.5);box-shadow:0 1px 3px rgba(20,40,70,0.04);"><span style="width:6px;height:6px;border-radius:50%;background:var(--ink-steel);flex-shrink:0;"></span><span style="font-size:13px;color:var(--ink-quiet);"><strong style="color:var(--ink-cold);font-weight:600;">HIPAA-ready</strong> · BAA / DPA available</span></div>
-        <div class="dm-card-lift" style="display:flex;align-items:center;gap:11px;padding:15px 18px;border-radius:11px;border:1px solid rgba(31,45,61,0.12);background:rgba(255,255,255,0.5);box-shadow:0 1px 3px rgba(20,40,70,0.04);"><span style="width:6px;height:6px;border-radius:50%;background:var(--ink-steel);flex-shrink:0;"></span><span style="font-size:13px;color:var(--ink-quiet);"><strong style="color:var(--ink-cold);font-weight:600;">Air-gapped</strong> or institution-hosted</span></div>
-        <div class="dm-card-lift" style="display:flex;align-items:center;gap:11px;padding:15px 18px;border-radius:11px;border:1px solid rgba(31,45,61,0.12);background:rgba(255,255,255,0.5);box-shadow:0 1px 3px rgba(20,40,70,0.04);"><span style="width:6px;height:6px;border-radius:50%;background:var(--ink-steel);flex-shrink:0;"></span><span style="font-size:13px;color:var(--ink-quiet);"><strong style="color:var(--ink-cold);font-weight:600;">Encryption</strong> in transit &amp; at rest · key rotation</span></div>
-        <div class="dm-card-lift" style="display:flex;align-items:center;gap:11px;padding:15px 18px;border-radius:11px;border:1px solid rgba(31,45,61,0.12);background:rgba(255,255,255,0.5);box-shadow:0 1px 3px rgba(20,40,70,0.04);"><span style="width:6px;height:6px;border-radius:50%;background:var(--ink-steel);flex-shrink:0;"></span><span style="font-size:13px;color:var(--ink-quiet);"><strong style="color:var(--ink-cold);font-weight:600;">RBAC</strong> · tenant isolation · OIDC / SAML</span></div>
+        <div class="dm-card-lift" style="display:flex;align-items:center;gap:11px;padding:15px 18px;border-radius:11px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--state-pass);flex-shrink:0;"></span><span style="font-size:13px;color:var(--ink-quiet);"><strong style="color:var(--ink-cold);font-weight:600;">No LLM touches patient data</strong> · bounded at the site</span></div>
+        <div class="dm-card-lift" style="display:flex;align-items:center;gap:11px;padding:15px 18px;border-radius:11px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--ink-steel);flex-shrink:0;"></span><span style="font-size:13px;color:var(--ink-quiet);"><strong style="color:var(--ink-cold);font-weight:600;">SOC 2-aligned</strong> controls &amp; audit logging</span></div>
+        <div class="dm-card-lift" style="display:flex;align-items:center;gap:11px;padding:15px 18px;border-radius:11px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--ink-steel);flex-shrink:0;"></span><span style="font-size:13px;color:var(--ink-quiet);"><strong style="color:var(--ink-cold);font-weight:600;">FedRAMP-oriented</strong> architecture</span></div>
+        <div class="dm-card-lift" style="display:flex;align-items:center;gap:11px;padding:15px 18px;border-radius:11px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--ink-steel);flex-shrink:0;"></span><span style="font-size:13px;color:var(--ink-quiet);"><strong style="color:var(--ink-cold);font-weight:600;">Replayable proof</strong> · signed &amp; hash-verified</span></div>
+        <div class="dm-card-lift" style="display:flex;align-items:center;gap:11px;padding:15px 18px;border-radius:11px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--ink-steel);flex-shrink:0;"></span><span style="font-size:13px;color:var(--ink-quiet);"><strong style="color:var(--ink-cold);font-weight:600;">HIPAA-ready</strong> · BAA / DPA available</span></div>
+        <div class="dm-card-lift" style="display:flex;align-items:center;gap:11px;padding:15px 18px;border-radius:11px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--ink-steel);flex-shrink:0;"></span><span style="font-size:13px;color:var(--ink-quiet);"><strong style="color:var(--ink-cold);font-weight:600;">Air-gapped</strong> or institution-hosted</span></div>
+        <div class="dm-card-lift" style="display:flex;align-items:center;gap:11px;padding:15px 18px;border-radius:11px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--ink-steel);flex-shrink:0;"></span><span style="font-size:13px;color:var(--ink-quiet);"><strong style="color:var(--ink-cold);font-weight:600;">Encryption</strong> in transit &amp; at rest · key rotation</span></div>
+        <div class="dm-card-lift" style="display:flex;align-items:center;gap:11px;padding:15px 18px;border-radius:11px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--ink-steel);flex-shrink:0;"></span><span style="font-size:13px;color:var(--ink-quiet);"><strong style="color:var(--ink-cold);font-weight:600;">RBAC</strong> · tenant isolation · OIDC / SAML</span></div>
       </div>
       <p class="dm-security-note" style="margin:26px 0 0;font-size:13.5px;line-height:1.55;color:var(--ink-dim);">We validate the execution chain. We do not claim clinical efficacy.</p>
     </div>
