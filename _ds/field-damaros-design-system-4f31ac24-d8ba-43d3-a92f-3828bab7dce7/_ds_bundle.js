@@ -4359,7 +4359,7 @@ try { (() => {
         gap: "9px 18px",
         padding: "14px 18px"
       }
-    }, [["Reviewer", "Dr. A. Reyes"], ["Role", adj.role], ["Candidate", patient.id], ["Protocol", "v2.1 · aead45cf"], ["Evidence-hash", "c1f9…7e"], ["Committed", record.time]].map(([k, v]) => /*#__PURE__*/React.createElement("div", {
+    }, [["Reviewer", "Dr. Sana"], ["Role", adj.role], ["Candidate", patient.id], ["Protocol", "v2.1 · aead45cf"], ["Evidence-hash", "c1f9…7e"], ["Committed", record.time]].map(([k, v]) => /*#__PURE__*/React.createElement("div", {
       key: k,
       style: {
         display: "flex",
