@@ -9,6 +9,8 @@ Allow: /
 
 # Favicon + brand assets must stay crawlable for Search result icons.
 Allow: /favicon.ico
+Allow: /favicon.svg
+Allow: /icon.png
 Allow: /assets/
 
 Sitemap: https://www.damaros.ai/sitemap.xml

@@ -13,7 +13,7 @@
   ],
   "headers": [
     {
-      "source": "/((?!assets/|_ds/|uploads/|favicon\\.ico|site\\.webmanifest|robots\\.txt|sitemap\\.xml).*)",
+      "source": "/((?!assets/|_ds/|uploads/|favicon\\.ico|favicon\\.svg|icon\\.png|site\\.webmanifest|robots\\.txt|sitemap\\.xml).*)",
       "headers": [
         { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
       ]
@@ -22,14 +22,28 @@
       "source": "/favicon.ico",
       "headers": [
         { "key": "Content-Type", "value": "image/x-icon" },
-        { "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800" }
+        { "key": "Cache-Control", "value": "public, max-age=3600, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/favicon.svg",
+      "headers": [
+        { "key": "Content-Type", "value": "image/svg+xml" },
+        { "key": "Cache-Control", "value": "public, max-age=3600, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/icon.png",
+      "headers": [
+        { "key": "Content-Type", "value": "image/png" },
+        { "key": "Cache-Control", "value": "public, max-age=3600, must-revalidate" }
       ]
     },
     {
       "source": "/site.webmanifest",
       "headers": [
         { "key": "Content-Type", "value": "application/manifest+json" },
-        { "key": "Cache-Control", "value": "public, max-age=86400" }
+        { "key": "Cache-Control", "value": "public, max-age=3600" }
       ]
     },
     {

@@ -4,6 +4,7 @@
 
 # local QA screenshot artifacts (auto-shot.mjs and ad-hoc captures write PNGs to the repo root)
 /*.png
+!/icon.png
 
 # OS cruft
 .DS_Store
