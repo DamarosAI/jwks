@@ -2,14 +2,21 @@
 <html>
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Damaros™</title>
 <meta name="description" content="What the Damaros website collects, how it is used, and the choices you have. It covers this website and our communications with you, nothing more.">
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#ffffff">
 <link rel="canonical" href="https://www.damaros.ai/privacy">
-<link rel="icon" href="assets/damaros-favicon.png" type="image/png">
-<script src="./support.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/assets/favicon-48x48.png" type="image/png" sizes="48x48">
+<link rel="icon" href="/assets/favicon-32x32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" sizes="180x180">
+<link rel="manifest" href="/site.webmanifest">
+<script src="./support.js" defer></script>
 <script>
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 window.scrollTo(0, 0);
@@ -41,33 +48,41 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
       --state-fail:#dc3a52;
     }
     html{scroll-behavior:smooth;}
-    body{margin:0;background:#f8fafb;color:var(--ink-cold);font-family:var(--font-body);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:clip;}
+    body{margin:0;background:#f8fafb;color:var(--ink-cold);font-family:var(--font-body);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:clip;max-width:100%;}
+    html{max-width:100%;}
     a{color:inherit;text-decoration:none;}
     .pp a.lnk{color:var(--ink-steel);border-bottom:1px solid color-mix(in srgb,var(--ink-steel) 35%,transparent);}
     .dm-card-lift{background:linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(250,252,254,0.88) 100%);border:1px solid rgba(31,45,61,0.09);box-shadow:0 1px 2px rgba(20,40,70,0.03);}
-    .dm-site{background:linear-gradient(180deg,#f3f8fb 0%,#e7eef6 10%,#fafcfd 22%,#eff4f8 34%,#e5edf5 46%,#f6f9fb 58%,#e3ecf5 70%,#eff4f8 82%,#e8eff6 92%,#f0f5f9 100%);background-color:#f0f5f9;}
+    .dm-site{background:linear-gradient(180deg,#f3f8fb 0%,#e7eef6 10%,#fafcfd 22%,#eff4f8 34%,#e5edf5 46%,#f6f9fb 58%,#e3ecf5 70%,#eff4f8 82%,#e8eff6 92%,#f0f5f9 100%);background-color:#f0f5f9;--dm-ref:1920px;width:100%;}
     .dm-site section{background:transparent !important;}
     .dm-site footer{background:transparent !important;}
-    .dm-site{--dm-ref:1920px;}
-    @media (min-width:1024px) and (max-width:1919px){
+    .dm-site .pp{content-visibility:auto;contain-intrinsic-size:1px 1200px;}
+    @media (min-width:901px) and (max-width:1919px){
       .dm-site section[data-screen-label="Privacy hero"] h1{
         font-size:clamp(2.1rem,calc(3.6rem * 100vw / var(--dm-ref)),3.6rem) !important;
       }
       .dm-site section{
-        padding-left:clamp(20px,calc(40px * 100vw / var(--dm-ref)),40px) !important;
-        padding-right:clamp(20px,calc(40px * 100vw / var(--dm-ref)),40px) !important;
+        padding-left:clamp(16px,calc(40px * 100vw / var(--dm-ref)),40px) !important;
+        padding-right:clamp(16px,calc(40px * 100vw / var(--dm-ref)),40px) !important;
       }
       .dm-site .pp{
         gap:clamp(26px,calc(44px * 100vw / var(--dm-ref)),44px) !important;
       }
     }
     @keyframes dmDrift{0%,100%{transform:translate(-50%,-50%) rotate(0deg);}50%{transform:translate(-49%,-51%) rotate(2.5deg);}}
+    @media (max-width:760px){
+      .dm-site section[data-screen-label="Privacy hero"]{padding-top:clamp(48px,10vw,88px) !important;}
+      .dm-site section[data-screen-label="Privacy hero"] h1{font-size:clamp(1.85rem,7vw,2.6rem) !important;}
+      .dm-site .pp{gap:28px !important;}
+    }
     @media (max-width:560px){
       .dm-site header{gap:8px !important;padding-left:14px !important;padding-right:14px !important;}
       .dm-site header nav{gap:2px !important;}
       .dm-site header nav a:not([href^="mailto"]){padding:6px 7px !important;font-size:12px !important;}
       .dm-site header nav > div{margin:0 5px !important;}
       .dm-site header nav a[href^="mailto"]{height:34px !important;padding:0 13px !important;font-size:11px !important;}
+      .dm-site .dm-goback{display:none !important;}
+      .dm-site footer{padding-left:16px !important;padding-right:16px !important;}
     }
     @media (max-width:400px){
       .dm-site header nav a:not([href^="mailto"]),

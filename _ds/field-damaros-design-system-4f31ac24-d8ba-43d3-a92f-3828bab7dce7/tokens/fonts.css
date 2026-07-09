@@ -8,9 +8,7 @@
  * denser operator alternate — see typography.css notes.
  * ============================================================ */
 
-@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Hanken+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap");
-
-/* Operator-console alternate faces (denser product chrome) — Chakra Petch
- * display + Plus Jakarta Sans UI. Loaded so the *-operator type tokens
- * resolve to the real product faces, not a fallback. */
-@import url("https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap");
+/* Marketing site faces only. Operator-console alternates (Chakra Petch /
+ * Plus Jakarta) stay out of the critical path — they are unused on the
+ * public pages and were doubling font download cost. */
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap");

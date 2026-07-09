@@ -9,17 +9,33 @@
     {
       "source": "/.well-known/jwks-nonprod.json",
       "destination": "/jwks/jwks-nonprod.json"
-    },
-    {
-      "source": "/favicon.ico",
-      "destination": "/assets/damaros-favicon.png"
     }
   ],
   "headers": [
     {
-      "source": "/((?!assets/|_ds/|uploads/).*)",
+      "source": "/((?!assets/|_ds/|uploads/|favicon\\.ico|site\\.webmanifest).*)",
       "headers": [
         { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/favicon.ico",
+      "headers": [
+        { "key": "Content-Type", "value": "image/x-icon" },
+        { "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800" }
+      ]
+    },
+    {
+      "source": "/site.webmanifest",
+      "headers": [
+        { "key": "Content-Type", "value": "application/manifest+json" },
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]
     },
     {
