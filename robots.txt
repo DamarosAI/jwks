@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+# Favicon + brand assets must stay crawlable for Search result icons.
+Allow: /favicon.ico
+Allow: /assets/
+
+Sitemap: https://www.damaros.ai/sitemap.xml

@@ -13,7 +13,7 @@
   ],
   "headers": [
     {
-      "source": "/((?!assets/|_ds/|uploads/|favicon\\.ico|site\\.webmanifest).*)",
+      "source": "/((?!assets/|_ds/|uploads/|favicon\\.ico|site\\.webmanifest|robots\\.txt|sitemap\\.xml).*)",
       "headers": [
         { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
       ]
@@ -30,6 +30,20 @@
       "headers": [
         { "key": "Content-Type", "value": "application/manifest+json" },
         { "key": "Cache-Control", "value": "public, max-age=86400" }
+      ]
+    },
+    {
+      "source": "/robots.txt",
+      "headers": [
+        { "key": "Content-Type", "value": "text/plain; charset=utf-8" },
+        { "key": "Cache-Control", "value": "public, max-age=3600" }
+      ]
+    },
+    {
+      "source": "/sitemap.xml",
+      "headers": [
+        { "key": "Content-Type", "value": "application/xml; charset=utf-8" },
+        { "key": "Cache-Control", "value": "public, max-age=3600" }
       ]
     },
     {

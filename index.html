@@ -10,12 +10,13 @@
 <link rel="canonical" href="https://www.damaros.ai/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="icon" href="/favicon.ico" sizes="any">
-<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-<link rel="icon" href="/assets/favicon-48x48.png" type="image/png" sizes="48x48">
-<link rel="icon" href="/assets/favicon-32x32.png" type="image/png" sizes="32x32">
-<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" sizes="180x180">
-<link rel="manifest" href="/site.webmanifest">
+<link rel="icon" href="https://www.damaros.ai/assets/favicon-96x96.png" type="image/png" sizes="96x96">
+<link rel="icon" href="https://www.damaros.ai/assets/favicon-48x48.png" type="image/png" sizes="48x48">
+<link rel="shortcut icon" href="https://www.damaros.ai/favicon.ico">
+<link rel="icon" href="https://www.damaros.ai/favicon.ico" sizes="any">
+<link rel="icon" href="https://www.damaros.ai/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="https://www.damaros.ai/assets/apple-touch-icon.png" sizes="180x180">
+<link rel="manifest" href="https://www.damaros.ai/site.webmanifest">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Damaros™ · The agentic execution platform for clinical trials">
 <meta property="og:description" content="Protocol to proof: deterministic screening, human-signed decisions, and replayable audit. PHI never reaches a model.">
@@ -1507,7 +1508,7 @@ class Component extends DCLogic {
   eyRoute = () => this.setState({ eyRouted: true });
   cbAsk = (id) => { this.__agClear(); this.setState({ cbQ: id, cbStage: 1, cbCite: null, cbExported: false }); this.__agT(() => this.setState({ cbStage: 2 }), 720); this.__agT(() => this.setState({ cbStage: 3 }), 1480); };
   cbSelCite = (ref) => this.setState({ cbCite: ref });
-  cbExport = () => { this.setState({ cbExported: true }); this.__agT(() => this.scrollTo("integrations", -10), 1100); };
+  cbExport = () => { this.setState({ cbExported: true }); this.__agT(() => this.scrollPostDemo(), 1100); };
 
   criteria = [
     { code: "I-2.1", t: "EGFR / ALK molecular status", k: "Source-dependent", tone: "review" },
@@ -1670,6 +1671,41 @@ class Component extends DCLogic {
     };
     measure();
     requestAnimationFrame(() => requestAnimationFrame(measure));
+  };
+  /* After the live demo: vertically center Integrations + Problem when both
+   * fit in the viewport; otherwise center Integrations alone. */
+  scrollPostDemo = () => {
+    const integ = document.getElementById("integrations");
+    const problem = document.getElementById("problem");
+    if (!integ && !problem) return;
+    if (!integ) { this.scrollCenter("problem"); return; }
+    if (!problem) { this.scrollCenter("integrations"); return; }
+    const reduced = window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+    const measure = () => {
+      const a = integ.getBoundingClientRect();
+      const b = problem.getBoundingClientRect();
+      const topDoc = a.top + window.scrollY;
+      const bottomDoc = b.bottom + window.scrollY;
+      const blockH = Math.max(0, bottomDoc - topDoc);
+      const vh = window.innerHeight;
+      const head = 62;
+      const usable = Math.max(0, vh - head);
+      let top;
+      if (blockH <= usable - 12) {
+        top = topDoc - head - (usable - blockH) / 2;
+      } else {
+        const t = integ.querySelector(".dm-scroll-target") || integ;
+        const r = t.getBoundingClientRect();
+        const elTop = r.top + window.scrollY;
+        top = r.height >= usable ? elTop - head : elTop - head - (usable - r.height) / 2;
+      }
+      const max = Math.max(0, document.documentElement.scrollHeight - vh);
+      top = Math.max(0, Math.min(top, max));
+      window.scrollTo({ top, behavior: reduced ? "auto" : "smooth" });
+    };
+    measure();
+    requestAnimationFrame(() => requestAnimationFrame(measure));
+    setTimeout(measure, 120);
   };
 
   renderVals() {
@@ -1918,7 +1954,7 @@ class Component extends DCLogic {
       rp: rp,
       goResolve: () => this.setStep(3),
       onDemo: () => this.scrollCenter("instrument"),
-      onMore: () => this.scrollCenter(this.props.showMarquee !== false ? "integrations" : "problem"),
+      onMore: () => this.scrollPostDemo(),
       onPilot: () => this.scrollTo("pilot"),
       onRunModel: () => this.scrollTo("spine"),
       onToProblem: () => this.scrollCenter("problem"),
