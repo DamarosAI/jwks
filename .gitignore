@@ -5,6 +5,9 @@
 # local QA screenshot artifacts (auto-shot.mjs and ad-hoc captures write PNGs to the repo root)
 /*.png
 !/icon.png
+!/favicon-48x48.png
+!/favicon-192x192.png
+!/apple-touch-icon.png
 
 # OS cruft
 .DS_Store
