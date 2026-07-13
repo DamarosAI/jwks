@@ -1,17 +1,13 @@
 /**
- * Damaros contact CTAs → branded in-site form → /api/contact
- * Protected by Cloudflare Turnstile (minimal managed widget).
+ * Damaros contact CTAs → branded in-site form → /api/contact.
+ * Quiet anti-spam: honeypot, minimum completion time, and server cooldown.
  */
 (function () {
   var PILOT_TO = "team@damaros.ai";
   var FOUNDER_TO = "anirudh@damaros.ai";
   var STYLE_ID = "dm-mail-form-style";
   var ROOT_ID = "dm-mail-form";
-  var TURNSTILE_SRC = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
-
-  var cachedSiteKey = null;
-  var turnstileReady = null;
-  var widgetId = null;
+  var MAX_MESSAGE_WORDS = 100;
 
   function parseMailto(href) {
     var raw = String(href || "").replace(/^mailto:/i, "");
@@ -56,67 +52,38 @@
     var style = document.createElement("style");
     style.id = STYLE_ID;
     style.textContent = [
-      "#" + ROOT_ID + "{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(16,22,29,0.48);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}",
-      "#" + ROOT_ID + " .dm-form-card{position:relative;width:min(460px,100%);max-height:min(92vh,720px);overflow:auto;border-radius:18px;background:linear-gradient(165deg,#fbfdff 0%,#f3f7fb 48%,#eaf1f7 100%);border:1px solid rgba(31,45,61,0.12);box-shadow:0 28px 70px rgba(20,40,70,0.28),inset 0 1px 0 rgba(255,255,255,0.85);padding:26px 26px 22px;font-family:var(--font-body,\"Hanken Grotesk\",system-ui,sans-serif);color:#10161d;}",
+      "#" + ROOT_ID + "{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));background:rgba(16,22,29,0.48);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}",
+      "#" + ROOT_ID + " .dm-form-card{position:relative;width:min(540px,100%);border-radius:18px;background:linear-gradient(165deg,#fbfdff 0%,#f3f7fb 48%,#eaf1f7 100%);border:1px solid rgba(31,45,61,0.12);box-shadow:0 28px 70px rgba(20,40,70,0.28),inset 0 1px 0 rgba(255,255,255,0.85);padding:clamp(18px,3vw,26px);font-family:var(--font-body,\"Hanken Grotesk\",system-ui,sans-serif);color:#10161d;}",
       "#" + ROOT_ID + " .dm-form-mark{position:absolute;top:-18%;right:-12%;width:220px;height:220px;color:rgba(47,97,147,0.09);pointer-events:none;}",
       "#" + ROOT_ID + " .dm-form-eyebrow{margin:0 0 10px;font-family:var(--font-mono,\"IBM Plex Mono\",ui-monospace,monospace);font-size:10.5px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#2f6193;}",
       "#" + ROOT_ID + " .dm-form-title{margin:0;font-family:var(--font-display,\"Archivo\",system-ui,sans-serif);font-size:clamp(1.45rem,3.4vw,1.75rem);font-weight:700;letter-spacing:-0.03em;line-height:1.05;color:#10161d;}",
       "#" + ROOT_ID + " .dm-form-sub{margin:10px 0 0;max-width:36ch;font-size:13.5px;line-height:1.5;color:#586674;}",
-      "#" + ROOT_ID + " .dm-form-fields{display:flex;flex-direction:column;gap:12px;margin-top:22px;}",
+      "#" + ROOT_ID + " .dm-form-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:20px;}",
       "#" + ROOT_ID + " .dm-form-field{display:flex;flex-direction:column;gap:6px;}",
+      "#" + ROOT_ID + " .dm-form-field.dm-form-wide{grid-column:1 / -1;}",
       "#" + ROOT_ID + " .dm-form-label{font-family:var(--font-mono,\"IBM Plex Mono\",ui-monospace,monospace);font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7b8794;}",
       "#" + ROOT_ID + " .dm-form-input,#" + ROOT_ID + " .dm-form-textarea{width:100%;box-sizing:border-box;border-radius:11px;border:1px solid rgba(31,45,61,0.14);background:rgba(255,255,255,0.92);color:#10161d;font:inherit;font-size:14px;padding:11px 13px;outline:none;transition:border-color 140ms ease,box-shadow 140ms ease;}",
-      "#" + ROOT_ID + " .dm-form-textarea{min-height:88px;resize:vertical;line-height:1.45;}",
+      "#" + ROOT_ID + " .dm-form-textarea{min-height:72px;max-height:132px;resize:vertical;line-height:1.45;}",
       "#" + ROOT_ID + " .dm-form-input:focus,#" + ROOT_ID + " .dm-form-textarea:focus{border-color:color-mix(in srgb,#2f6193 55%,rgba(31,45,61,0.2));box-shadow:0 0 0 3px rgba(47,97,147,0.14);}",
       "#" + ROOT_ID + " .dm-form-input.dm-invalid,#" + ROOT_ID + " .dm-form-textarea.dm-invalid{border-color:rgba(220,58,82,0.55);}",
       "#" + ROOT_ID + " .dm-form-hp{position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;}",
-      "#" + ROOT_ID + " .dm-form-captcha{margin-top:4px;min-height:65px;display:flex;align-items:center;}",
-      "#" + ROOT_ID + " .dm-form-error{margin:10px 0 0;font-size:12.5px;line-height:1.4;color:#dc3a52;display:none;}",
+      "#" + ROOT_ID + " .dm-form-word-count{grid-column:1 / -1;margin:0;font-family:var(--font-mono,\"IBM Plex Mono\",ui-monospace,monospace);font-size:10px;letter-spacing:0.06em;text-align:right;color:#7b8794;}",
+      "#" + ROOT_ID + " .dm-form-error{grid-column:1 / -1;margin:10px 0 0;font-size:12.5px;line-height:1.4;color:#dc3a52;display:none;}",
       "#" + ROOT_ID + " .dm-form-error.dm-show{display:block;}",
-      "#" + ROOT_ID + " .dm-form-submit{margin-top:14px;display:inline-flex;align-items:center;justify-content:center;width:100%;height:46px;border-radius:999px;border:1px solid color-mix(in srgb,#2f6193 50%,rgba(255,255,255,0.22));font-family:var(--font-display,\"Archivo\",system-ui,sans-serif);font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;color:#fff;background:linear-gradient(180deg,#3d72a8,#2f6193);box-shadow:inset 0 1px 0 rgba(255,255,255,0.2),0 8px 20px rgba(20,46,82,0.16);}",
+      "#" + ROOT_ID + " .dm-form-submit{grid-column:1 / -1;margin-top:14px;display:inline-flex;align-items:center;justify-content:center;width:100%;height:46px;border-radius:999px;border:1px solid color-mix(in srgb,#2f6193 50%,rgba(255,255,255,0.22));font-family:var(--font-display,\"Archivo\",system-ui,sans-serif);font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;color:#fff;background:linear-gradient(180deg,#3d72a8,#2f6193);box-shadow:inset 0 1px 0 rgba(255,255,255,0.2),0 8px 20px rgba(20,46,82,0.16);}",
       "#" + ROOT_ID + " .dm-form-submit:disabled{opacity:0.55;cursor:wait;}",
       "#" + ROOT_ID + " .dm-form-submit:not(:disabled):hover{filter:brightness(1.04);}",
       "#" + ROOT_ID + " .dm-form-cancel{margin-top:10px;display:block;width:100%;background:none;border:none;cursor:pointer;font-family:var(--font-mono,\"IBM Plex Mono\",ui-monospace,monospace);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#7b8794;padding:8px;}",
       "#" + ROOT_ID + " .dm-form-success{text-align:left;padding:8px 0 4px;}",
       "#" + ROOT_ID + " .dm-form-success h2{margin:0;font-family:var(--font-display,\"Archivo\",system-ui,sans-serif);font-size:1.6rem;letter-spacing:-0.03em;}",
-      "#" + ROOT_ID + " .dm-form-success p{margin:12px 0 0;font-size:14px;line-height:1.55;color:#586674;max-width:34ch;}"
+      "#" + ROOT_ID + " .dm-form-success p{margin:12px 0 0;font-size:14px;line-height:1.55;color:#586674;max-width:34ch;}",
+      "@media (max-width:520px){#" + ROOT_ID + "{align-items:flex-start;overflow:auto;}#" + ROOT_ID + " .dm-form-card{margin:auto 0;border-radius:16px;}#" + ROOT_ID + " .dm-form-fields{grid-template-columns:1fr;gap:10px;}#" + ROOT_ID + " .dm-form-field.dm-form-wide{grid-column:auto;}}",
+      "@media (max-height:650px){#" + ROOT_ID + " .dm-form-card{padding:16px 18px;}#" + ROOT_ID + " .dm-form-eyebrow{margin-bottom:6px;}#" + ROOT_ID + " .dm-form-sub{margin-top:6px;font-size:12.5px;}#" + ROOT_ID + " .dm-form-fields{margin-top:12px;gap:8px;}#" + ROOT_ID + " .dm-form-input,#" + ROOT_ID + " .dm-form-textarea{padding:8px 10px;font-size:13px;}#" + ROOT_ID + " .dm-form-textarea{min-height:56px;max-height:80px;}#" + ROOT_ID + " .dm-form-submit{height:40px;margin-top:8px;}#" + ROOT_ID + " .dm-form-cancel{margin-top:4px;padding:4px;}}"
     ].join("");
     document.head.appendChild(style);
   }
 
-  function loadTurnstile() {
-    if (window.turnstile) return Promise.resolve();
-    if (turnstileReady) return turnstileReady;
-    turnstileReady = new Promise(function (resolve, reject) {
-      var s = document.createElement("script");
-      s.src = TURNSTILE_SRC;
-      s.async = true;
-      s.onload = function () { resolve(); };
-      s.onerror = function () { reject(new Error("Turnstile failed to load")); };
-      document.head.appendChild(s);
-    });
-    return turnstileReady;
-  }
-
-  function getSiteKey() {
-    if (cachedSiteKey) return Promise.resolve(cachedSiteKey);
-    return fetch("/api/public-config", { credentials: "same-origin" })
-      .then(function (r) { return r.ok ? r.json() : {}; })
-      .then(function (cfg) {
-        cachedSiteKey = cfg.turnstileSiteKey || "1x00000000000000000000AA";
-        return cachedSiteKey;
-      })
-      .catch(function () {
-        cachedSiteKey = "1x00000000000000000000AA";
-        return cachedSiteKey;
-      });
-  }
-
   function closeForm() {
-    if (widgetId != null && window.turnstile) {
-      try { window.turnstile.remove(widgetId); } catch (_) {}
-      widgetId = null;
-    }
     var root = document.getElementById(ROOT_ID);
     if (root) root.remove();
     document.removeEventListener("keydown", onKeyDown, true);
@@ -167,6 +134,11 @@
     return out;
   }
 
+  function countWords(value) {
+    var text = String(value || "").trim();
+    return text ? text.split(/\s+/).length : 0;
+  }
+
   function validate(root, kind) {
     var ok = true;
     fieldsFor(kind).forEach(function (f) {
@@ -211,7 +183,8 @@
         : '<input type="' + inputType + '" ' + common
           + (f.value ? ' value="' + escapeHtml(f.value) + '"' : "")
           + ' autocomplete="' + (f.id === "email" ? "email" : f.id === "name" ? "name" : "on") + '">';
-      return '<div class="dm-form-field">'
+      var fieldClass = f.type === "textarea" ? "dm-form-field dm-form-wide" : "dm-form-field";
+      return '<div class="' + fieldClass + '">'
         + '<label class="dm-form-label" for="dm-f-' + f.id + '">' + escapeHtml(f.label)
         + (f.required ? "" : " · optional") + "</label>"
         + control
@@ -233,7 +206,7 @@
       '  <form class="dm-form-fields" novalidate>',
       fieldHtml,
       '    <div class="dm-form-hp" aria-hidden="true"><label>Company URL<input type="text" name="company_url" data-field="company_url" tabindex="-1" autocomplete="off"></label></div>',
-      '    <div class="dm-form-field"><span class="dm-form-label">Security</span><div class="dm-form-captcha" id="dm-turnstile"></div></div>',
+      '    <p class="dm-form-word-count" data-word-count></p>',
       '    <p class="dm-form-error" id="dm-form-error" role="alert"></p>',
       '    <button type="submit" class="dm-form-submit">' + escapeHtml(meta.cta) + "</button>",
       "  </form>",
@@ -241,14 +214,35 @@
       "</div>"
     ].join("");
 
+    var openedAt = Date.now();
     var errEl = null;
     var submitBtn = null;
+    var noteEl = root.querySelector('[data-field="note"]');
+    var countEl = root.querySelector("[data-word-count]");
 
     function setError(msg) {
       errEl = errEl || root.querySelector("#dm-form-error");
       if (!errEl) return;
       errEl.textContent = msg || "";
       errEl.classList.toggle("dm-show", !!msg);
+    }
+
+    function updateWordCount() {
+      if (!countEl) return;
+      var words = countWords(noteEl && noteEl.value);
+      countEl.textContent = words + " / " + MAX_MESSAGE_WORDS + " words";
+      countEl.style.color = words > MAX_MESSAGE_WORDS ? "#dc3a52" : "";
+    }
+
+    if (noteEl) {
+      noteEl.addEventListener("input", function () {
+        var words = countWords(noteEl.value);
+        if (words > MAX_MESSAGE_WORDS) {
+          noteEl.value = noteEl.value.trim().split(/\s+/).slice(0, MAX_MESSAGE_WORDS).join(" ");
+        }
+        updateWordCount();
+      });
+      updateWordCount();
     }
 
     root.addEventListener("click", function (e) {
@@ -268,12 +262,12 @@
         return;
       }
 
-      var token = "";
-      if (window.turnstile && widgetId != null) {
-        try { token = window.turnstile.getResponse(widgetId) || ""; } catch (_) {}
+      if (Date.now() - openedAt < 3000) {
+        setError("Take a moment to review your message before sending.");
+        return;
       }
-      if (!token) {
-        setError("Complete the security check, then try again.");
+      if (countWords(noteEl && noteEl.value) > MAX_MESSAGE_WORDS) {
+        setError("Messages are limited to 100 words.");
         return;
       }
 
@@ -296,7 +290,7 @@
           org: values.org,
           note: values.note,
           company_url: values.company_url,
-          turnstileToken: token
+          openedAt: openedAt
         })
       })
         .then(function (r) {
@@ -316,9 +310,6 @@
             submitBtn.disabled = false;
             submitBtn.textContent = meta.cta;
           }
-          if (window.turnstile && widgetId != null) {
-            try { window.turnstile.reset(widgetId); } catch (_) {}
-          }
         });
     });
 
@@ -327,21 +318,6 @@
     var first = root.querySelector("[data-field]");
     if (first) first.focus();
 
-    Promise.all([getSiteKey(), loadTurnstile()])
-      .then(function (pair) {
-        var sitekey = pair[0];
-        var mount = root.querySelector("#dm-turnstile");
-        if (!mount || !window.turnstile) return;
-        widgetId = window.turnstile.render(mount, {
-          sitekey: sitekey,
-          theme: "light",
-          size: "flexible",
-          appearance: "always"
-        });
-      })
-      .catch(function () {
-        setError("Security check unavailable. Refresh and try again.");
-      });
   }
 
   function openMail(href) {
