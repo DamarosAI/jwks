@@ -1,14 +1,6 @@
 /* ============================================================
  * FIELD · Fonts
- * The public Damaros canon: Archivo for display / wordmark,
- * Hanken Grotesk for body & labels, IBM Plex Mono for the data
- * register (run IDs, hashes, timestamps, criteria, lab values).
- * All three are loaded from Google Fonts. The product console
- * historically pairs Chakra Petch + Plus Jakarta Sans as a
- * denser operator alternate — see typography.css notes.
+ * Loaded via <link> in page <head> (not @import) so font CSS is
+ * not render-blocked behind token CSS.
+ * Archivo (display) · Hanken Grotesk (body) · IBM Plex Mono (data)
  * ============================================================ */
-
-/* Marketing site faces only. Operator-console alternates (Chakra Petch /
- * Plus Jakarta) stay out of the critical path — they are unused on the
- * public pages and were doubling font download cost. */
-@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap");

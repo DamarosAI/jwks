@@ -9,6 +9,8 @@
 <link rel="canonical" href="https://www.damaros.ai/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://unpkg.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <link rel="icon" href="/favicon-48x48.png" type="image/png" sizes="48x48">
 <link rel="icon" href="/favicon-192x192.png" type="image/png" sizes="192x192">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
@@ -28,20 +30,16 @@
 <script>
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 window.scrollTo(0, 0);
-window.addEventListener("load", () => window.scrollTo(0, 0));
 </script>
 </head>
 <body>
 <x-dc>
 <helmet>
-  <link rel="stylesheet" href="_ds/field-damaros-design-system-4f31ac24-d8ba-43d3-a92f-3828bab7dce7/tokens/fonts.css">
   <link rel="stylesheet" href="_ds/field-damaros-design-system-4f31ac24-d8ba-43d3-a92f-3828bab7dce7/tokens/colors.css">
   <link rel="stylesheet" href="_ds/field-damaros-design-system-4f31ac24-d8ba-43d3-a92f-3828bab7dce7/tokens/typography.css">
   <link rel="stylesheet" href="_ds/field-damaros-design-system-4f31ac24-d8ba-43d3-a92f-3828bab7dce7/tokens/spacing.css">
   <link rel="stylesheet" href="_ds/field-damaros-design-system-4f31ac24-d8ba-43d3-a92f-3828bab7dce7/tokens/effects.css">
   <link rel="stylesheet" href="_ds/field-damaros-design-system-4f31ac24-d8ba-43d3-a92f-3828bab7dce7/styles.css">
-  <script src="_ds/field-damaros-design-system-4f31ac24-d8ba-43d3-a92f-3828bab7dce7/_ds_bundle.js"></script>
-  <script src="image-slot.js"></script>
   <style>
     *{box-sizing:border-box;}
     :root{
@@ -231,7 +229,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
       .dm-site header nav a[href^="mailto"]{height:34px !important;padding:0 14px !important;font-size:11px !important;}
 
       .dm-site .dm-logowall{flex-wrap:nowrap;overflow:hidden;justify-content:flex-start;gap:0;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);}
-      .dm-site .dm-logo-track{display:flex !important;flex-wrap:nowrap;width:max-content;animation:dmLogoScroll 26s linear infinite;will-change:transform;}
+      .dm-site .dm-logo-track{display:flex !important;flex-wrap:nowrap;width:max-content;animation:dmLogoScroll 26s linear infinite;}
       .dm-site .dm-logo-set{display:flex !important;flex-wrap:nowrap;align-items:center;gap:14px;padding-right:14px;flex:0 0 auto;}
       .dm-site .dm-logo-tile{flex:0 0 auto;width:138px !important;height:62px !important;padding:0 18px !important;}
 
@@ -270,7 +268,10 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
       .dm-site #spine .dm-spine-grid > div,.dm-site #agents .dm-agents-grid > div{flex-basis:88% !important;}
     }
 
-    @media (prefers-reduced-motion:reduce){[data-anim]{animation:none !important;} .dm-logo-track{animation:none !important;}}
+    @media (prefers-reduced-motion:reduce){
+      [data-anim],.dm-logo-track,.dmPulse{animation:none !important;}
+      html{scroll-behavior:auto !important;}
+    }
   </style>
 </helmet>
 
@@ -1130,7 +1131,7 @@ window.addEventListener("load", () => window.scrollTo(0, 0));
                 <div style="font-size:15px;font-weight:600;color:var(--ink-cold);">Subject 018-017</div>
                 <div style="font-family:var(--font-display);font-size:10.5px;color:var(--ink-dim);margin-top:3px;">DMR-204 · v2.1 · I-3.4</div>
               </div>
-              <span style="margin-left:auto;flex-shrink:0;"><x-import component-from-global-scope="FieldDamarosDesignSystem_4f31ac.StatusBadge" status="REVIEW" hint-size="auto,22px"></x-import></span>
+              <span role="status" style="margin-left:auto;flex-shrink:0;display:inline-flex;align-items:center;gap:6px;padding:2px 9px;border-radius:3px;font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;white-space:nowrap;color:var(--state-review);border:1px solid color-mix(in srgb,var(--state-review) 45%,transparent);background:color-mix(in srgb,var(--state-review) 10%,transparent);"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.25"/><path d="M8 4.5V9" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/><circle cx="8" cy="11.25" r="0.75" fill="currentColor"/></svg><span>Review</span></span>
             </div>
             <div style="padding:14px 20px 6px;font-size:14px;font-weight:600;color:var(--ink-cold);">Serum chemistry within 7-day window</div>
             <div style="display:flex;flex-direction:column;">
@@ -1373,12 +1374,19 @@ class Component extends DCLogic {
     window.addEventListener("pageshow", this.__onPageShow);
 
     this.layoutNode();
-    [60, 200, 600].forEach((d) => setTimeout(this.layoutNode, d));
+    [60, 200].forEach((d) => setTimeout(this.layoutNode, d));
     this.initSpineCarousel();
     this.initReveal();
     // Sentinel map is a stable scan result (no perpetual drift)
-    this.__onResize = () => this.layoutNode();
-    window.addEventListener("resize", this.__onResize);
+    let resizePending = 0;
+    this.__onResize = () => {
+      if (resizePending) return;
+      resizePending = requestAnimationFrame(() => {
+        resizePending = 0;
+        this.layoutNode();
+      });
+    };
+    window.addEventListener("resize", this.__onResize, { passive: true });
     window.addEventListener("orientationchange", this.__onResize);
 
     if (this.isSmallViewport()) {

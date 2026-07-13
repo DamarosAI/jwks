@@ -13,16 +13,29 @@
   ],
   "headers": [
     {
-      "source": "/((?!assets/|_ds/|uploads/|favicon\\.ico|favicon\\.svg|favicon-48x48\\.png|favicon-192x192\\.png|apple-touch-icon\\.png|icon\\.png|site\\.webmanifest|robots\\.txt|sitemap\\.xml).*)",
+      "source": "/(support|mail-cta|image-slot)\\.js",
       "headers": [
-        { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
+        { "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800" },
+        { "key": "Content-Type", "value": "application/javascript; charset=utf-8" }
+      ]
+    },
+    {
+      "source": "/(index|about|privacy)(\\.html)?",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/((?!assets/|_ds/|uploads/|support\\.js|mail-cta\\.js|image-slot\\.js|favicon\\.ico|favicon\\.svg|favicon-48x48\\.png|favicon-192x192\\.png|apple-touch-icon\\.png|icon\\.png|site\\.webmanifest|robots\\.txt|sitemap\\.xml).*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
       ]
     },
     {
       "source": "/favicon.ico",
       "headers": [
         { "key": "Content-Type", "value": "image/x-icon" },
-        { "key": "Cache-Control", "value": "public, max-age=3600, must-revalidate" },
+        { "key": "Cache-Control", "value": "public, max-age=86400, must-revalidate" },
         { "key": "Access-Control-Allow-Origin", "value": "*" }
       ]
     },
@@ -30,7 +43,7 @@
       "source": "/favicon.svg",
       "headers": [
         { "key": "Content-Type", "value": "image/svg+xml" },
-        { "key": "Cache-Control", "value": "public, max-age=3600, must-revalidate" },
+        { "key": "Cache-Control", "value": "public, max-age=86400, must-revalidate" },
         { "key": "Access-Control-Allow-Origin", "value": "*" }
       ]
     },
@@ -38,7 +51,7 @@
       "source": "/favicon-48x48.png",
       "headers": [
         { "key": "Content-Type", "value": "image/png" },
-        { "key": "Cache-Control", "value": "public, max-age=3600, must-revalidate" },
+        { "key": "Cache-Control", "value": "public, max-age=86400, must-revalidate" },
         { "key": "Access-Control-Allow-Origin", "value": "*" }
       ]
     },
@@ -46,7 +59,7 @@
       "source": "/favicon-192x192.png",
       "headers": [
         { "key": "Content-Type", "value": "image/png" },
-        { "key": "Cache-Control", "value": "public, max-age=3600, must-revalidate" },
+        { "key": "Cache-Control", "value": "public, max-age=86400, must-revalidate" },
         { "key": "Access-Control-Allow-Origin", "value": "*" }
       ]
     },
@@ -54,7 +67,7 @@
       "source": "/apple-touch-icon.png",
       "headers": [
         { "key": "Content-Type", "value": "image/png" },
-        { "key": "Cache-Control", "value": "public, max-age=3600, must-revalidate" },
+        { "key": "Cache-Control", "value": "public, max-age=86400, must-revalidate" },
         { "key": "Access-Control-Allow-Origin", "value": "*" }
       ]
     },
@@ -62,7 +75,7 @@
       "source": "/icon.png",
       "headers": [
         { "key": "Content-Type", "value": "image/png" },
-        { "key": "Cache-Control", "value": "public, max-age=3600, must-revalidate" },
+        { "key": "Cache-Control", "value": "public, max-age=86400, must-revalidate" },
         { "key": "Access-Control-Allow-Origin", "value": "*" }
       ]
     },
@@ -70,21 +83,21 @@
       "source": "/site.webmanifest",
       "headers": [
         { "key": "Content-Type", "value": "application/manifest+json" },
-        { "key": "Cache-Control", "value": "public, max-age=3600" }
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
       ]
     },
     {
       "source": "/robots.txt",
       "headers": [
         { "key": "Content-Type", "value": "text/plain; charset=utf-8" },
-        { "key": "Cache-Control", "value": "public, max-age=3600" }
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
       ]
     },
     {
       "source": "/sitemap.xml",
       "headers": [
         { "key": "Content-Type", "value": "application/xml; charset=utf-8" },
-        { "key": "Cache-Control", "value": "public, max-age=3600" }
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
       ]
     },
     {
