@@ -129,11 +129,11 @@ module.exports = async function handler(req, res) {
   if (kind === "pilot" && !role) {
     return json(res, 400, { ok: false, error: "Role / title is required" });
   }
-  if (kind === "pilot" && !org) {
+  if ((kind === "pilot" || kind === "founder") && !org) {
     return json(res, 400, { ok: false, error: "Organization is required" });
   }
-  if ((kind === "founder" || kind === "privacy") && !note) {
-    return json(res, 400, { ok: false, error: "Message is required" });
+  if (!note) {
+    return json(res, 400, { ok: false, error: "Context is required" });
   }
   if (wordCount(note) > 100) {
     return json(res, 400, { ok: false, error: "Messages are limited to 100 words" });

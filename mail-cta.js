@@ -40,9 +40,9 @@
       };
     }
     return {
-      eyebrow: "Pilot",
-      title: "Start a pilot",
-      sub: "Tell us where you’re calling from. It goes straight to the Damaros team.",
+      eyebrow: "Inquiry",
+      title: "",
+      sub: "",
       cta: "Send inquiry"
     };
   }
@@ -106,15 +106,15 @@
       return [
         { id: "name", label: "Your name", required: true },
         { id: "email", label: "Work email", type: "email", required: true },
-        { id: "org", label: "Organization", required: false },
-        { id: "note", label: "Message", type: "textarea", required: true, value: "I wanted to get connected regarding Damaros." }
+        { id: "org", label: "Organization", required: true },
+        { id: "note", label: "Context", type: "textarea", required: true, value: "I wanted to get connected regarding Damaros." }
       ];
     }
     if (kind === "privacy") {
       return [
         { id: "name", label: "Your name", required: true },
         { id: "email", label: "Email", type: "email", required: true },
-        { id: "note", label: "Your question", type: "textarea", required: true }
+        { id: "note", label: "Context", type: "textarea", required: true }
       ];
     }
     return [
@@ -122,7 +122,7 @@
       { id: "email", label: "Work email", type: "email", required: true },
       { id: "role", label: "Role / title", required: true },
       { id: "org", label: "Organization", required: true },
-      { id: "note", label: "Anything we should know?", type: "textarea", required: false, placeholder: "Timeline, site type, open protocols…" }
+      { id: "note", label: "Context", type: "textarea", required: true, placeholder: "Timeline, site type, open protocols…" }
     ];
   }
 
@@ -185,8 +185,7 @@
           + ' autocomplete="' + (f.id === "email" ? "email" : f.id === "name" ? "name" : "on") + '">';
       var fieldClass = f.type === "textarea" ? "dm-form-field dm-form-wide" : "dm-form-field";
       return '<div class="' + fieldClass + '">'
-        + '<label class="dm-form-label" for="dm-f-' + f.id + '">' + escapeHtml(f.label)
-        + (f.required ? "" : " · optional") + "</label>"
+        + '<label class="dm-form-label" for="dm-f-' + f.id + '">' + escapeHtml(f.label) + "</label>"
         + control
         + "</div>";
     }).join("");
@@ -195,14 +194,14 @@
     root.id = ROOT_ID;
     root.setAttribute("role", "dialog");
     root.setAttribute("aria-modal", "true");
-    root.setAttribute("aria-label", meta.title);
+    root.setAttribute("aria-label", meta.title || meta.eyebrow);
 
     root.innerHTML = [
       '<div class="dm-form-card">',
       '  <svg class="dm-form-mark" viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="30" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg>',
       '  <p class="dm-form-eyebrow">' + escapeHtml(meta.eyebrow) + "</p>",
-      '  <h2 class="dm-form-title">' + escapeHtml(meta.title) + "</h2>",
-      '  <p class="dm-form-sub">' + escapeHtml(meta.sub) + "</p>",
+      meta.title ? '  <h2 class="dm-form-title">' + escapeHtml(meta.title) + "</h2>" : "",
+      meta.sub ? '  <p class="dm-form-sub">' + escapeHtml(meta.sub) + "</p>" : "",
       '  <form class="dm-form-fields" novalidate>',
       fieldHtml,
       '    <div class="dm-form-hp" aria-hidden="true"><label>Company URL<input type="text" name="company_url" data-field="company_url" tabindex="-1" autocomplete="off"></label></div>',
