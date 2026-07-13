@@ -358,5 +358,52 @@
     openMail(a.getAttribute("href"));
   }, true);
 
+  function copyEmail(btn) {
+    var email = btn.getAttribute("data-copy-email") || "";
+    if (!email) return;
+    var label = btn.querySelector(".dm-copy-email-label") || btn;
+    var original = label.textContent;
+    var done = function () {
+      btn.classList.add("dm-copied");
+      label.textContent = "Copied";
+      btn.setAttribute("aria-label", "Copied " + email);
+      clearTimeout(btn.__dmCopyT);
+      btn.__dmCopyT = setTimeout(function () {
+        btn.classList.remove("dm-copied");
+        label.textContent = original;
+        btn.setAttribute("aria-label", "Copy " + email);
+      }, 1600);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(email).then(done).catch(function () {
+        fallbackCopy(email);
+        done();
+      });
+    } else {
+      fallbackCopy(email);
+      done();
+    }
+  }
+
+  function fallbackCopy(text) {
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.cssText = "position:fixed;left:-9999px;top:0";
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); } catch (_) {}
+    ta.remove();
+  }
+
+  document.addEventListener("click", function (e) {
+    if (e.defaultPrevented) return;
+    if (e.button !== 0) return;
+    var btn = e.target && e.target.closest && e.target.closest("[data-copy-email]");
+    if (!btn) return;
+    e.preventDefault();
+    copyEmail(btn);
+  }, true);
+
   window.dmOpenMail = openMail;
 })();
