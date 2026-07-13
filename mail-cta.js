@@ -7,11 +7,11 @@
 (function () {
   var DEFAULTS = {
     "team@damaros.ai": {
-      subject: "Pilot inquiry — Damaros",
+      subject: "Damaros Pilot Inquiry",
       body: "Hi Damaros team,\n\nI'd like to start a pilot at our site.\n\nName:\nOrganization:\nRole:\n\nThanks,"
     },
     "anirudh@damaros.ai": {
-      subject: "Hello from the Damaros site",
+      subject: "Damaros Pilot Inquiry",
       body: "Hi Anirudh,\n\n"
     }
   };
