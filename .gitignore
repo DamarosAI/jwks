@@ -13,5 +13,10 @@
 .DS_Store
 Thumbs.db
 
+# secrets
+.env
+.env.local
+.env.*.local
+
 # gstack tool output
 .gstack/
