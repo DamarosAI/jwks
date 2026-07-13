@@ -11,7 +11,7 @@
       body: "Hi Damaros team,\n\nI'd like to start a pilot at our site.\n\nName:\nOrganization:\nRole:\n\nThanks,"
     },
     "anirudh@damaros.ai": {
-      subject: "Damaros Pilot Inquiry",
+      subject: "Damaros Founder Inquiry",
       body: "Hi Anirudh,\n\n"
     }
   };
