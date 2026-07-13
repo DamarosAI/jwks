@@ -1,6 +1,5 @@
 /**
- * Damaros contact CTAs → branded form → Gmail / Outlook compose.
- * Pilot inquiries collect name / role / org; founder inquiries collect a short note.
+ * Damaros contact CTAs → branded form → native mailto compose.
  */
 (function () {
   var PILOT_TO = "team@damaros.ai";
@@ -29,7 +28,8 @@
         title: "Get in touch",
         sub: "A short note for Anirudh — we’ll reply from Damaros.",
         subject: parsed.subject || "Damaros Founder Inquiry",
-        to: parsed.to || FOUNDER_TO
+        to: parsed.to || FOUNDER_TO,
+        cta: "Open mail"
       };
     }
     if (kind === "privacy") {
@@ -38,7 +38,8 @@
         title: "Privacy question",
         sub: "Ask about this policy or your information.",
         subject: parsed.subject || "Privacy policy question",
-        to: parsed.to || PILOT_TO
+        to: parsed.to || PILOT_TO,
+        cta: "Open mail"
       };
     }
     return {
@@ -46,21 +47,14 @@
       title: "Start a pilot",
       sub: "Tell us where you’re calling from. We’ll open a draft to the Damaros team.",
       subject: parsed.subject || "Damaros Pilot Inquiry",
-      to: parsed.to || PILOT_TO
+      to: parsed.to || PILOT_TO,
+      cta: "Open mail"
     };
   }
 
-  function gmailUrl(to, subject, body) {
-    return "https://mail.google.com/mail/?view=cm&fs=1&tf=1"
-      + "&to=" + encodeURIComponent(to)
-      + "&su=" + encodeURIComponent(subject)
-      + "&body=" + encodeURIComponent(body);
-  }
-
-  function outlookUrl(to, subject, body) {
-    return "https://outlook.live.com/mail/0/deeplink/compose"
-      + "?to=" + encodeURIComponent(to)
-      + "&subject=" + encodeURIComponent(subject)
+  function mailtoUrl(to, subject, body) {
+    return "mailto:" + to
+      + "?subject=" + encodeURIComponent(subject)
       + "&body=" + encodeURIComponent(body);
   }
 
@@ -83,14 +77,10 @@
       "#" + ROOT_ID + " .dm-form-input:focus,#" + ROOT_ID + " .dm-form-textarea:focus{border-color:color-mix(in srgb,#2f6193 55%,rgba(31,45,61,0.2));box-shadow:0 0 0 3px rgba(47,97,147,0.14);}",
       "#" + ROOT_ID + " .dm-form-input.dm-invalid,#" + ROOT_ID + " .dm-form-textarea.dm-invalid{border-color:rgba(220,58,82,0.55);}",
       "#" + ROOT_ID + " .dm-form-hint{margin:14px 0 0;font-size:12px;line-height:1.4;color:#7b8794;}",
-      "#" + ROOT_ID + " .dm-form-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px;}",
-      "#" + ROOT_ID + " .dm-form-btn{display:inline-flex;align-items:center;justify-content:center;height:44px;border-radius:999px;border:1px solid transparent;font-family:var(--font-display,\"Archivo\",system-ui,sans-serif);font-size:12px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;cursor:pointer;text-decoration:none;}",
-      "#" + ROOT_ID + " .dm-form-btn-gmail{color:#fff;background:linear-gradient(180deg,#3d72a8,#2f6193);border-color:color-mix(in srgb,#2f6193 50%,rgba(255,255,255,0.22));box-shadow:inset 0 1px 0 rgba(255,255,255,0.2),0 8px 20px rgba(20,46,82,0.16);}",
-      "#" + ROOT_ID + " .dm-form-btn-outlook{color:#10161d;background:#fff;border-color:rgba(31,45,61,0.16);}",
-      "#" + ROOT_ID + " .dm-form-btn:hover{filter:brightness(1.03);}",
+      "#" + ROOT_ID + " .dm-form-submit{margin-top:16px;display:inline-flex;align-items:center;justify-content:center;width:100%;height:46px;border-radius:999px;border:1px solid color-mix(in srgb,#2f6193 50%,rgba(255,255,255,0.22));font-family:var(--font-display,\"Archivo\",system-ui,sans-serif);font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;color:#fff;background:linear-gradient(180deg,#3d72a8,#2f6193);box-shadow:inset 0 1px 0 rgba(255,255,255,0.2),0 8px 20px rgba(20,46,82,0.16);}",
+      "#" + ROOT_ID + " .dm-form-submit:hover{filter:brightness(1.04);}",
       "#" + ROOT_ID + " .dm-form-cancel{margin-top:10px;display:block;width:100%;background:none;border:none;cursor:pointer;font-family:var(--font-mono,\"IBM Plex Mono\",ui-monospace,monospace);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#7b8794;padding:8px;}",
-      "#" + ROOT_ID + " .dm-form-to{margin-top:8px;font-family:var(--font-mono,\"IBM Plex Mono\",ui-monospace,monospace);font-size:10.5px;letter-spacing:0.04em;color:#7b8794;}",
-      "@media (max-width:420px){#" + ROOT_ID + " .dm-form-actions{grid-template-columns:1fr;}}"
+      "#" + ROOT_ID + " .dm-form-to{margin-top:10px;font-family:var(--font-mono,\"IBM Plex Mono\",ui-monospace,monospace);font-size:10.5px;letter-spacing:0.04em;color:#7b8794;text-align:center;}"
     ].join("");
     document.head.appendChild(style);
   }
@@ -181,13 +171,6 @@
     return ok;
   }
 
-  function openProviders(meta, kind, values) {
-    var body = buildBody(kind, values);
-    var g = gmailUrl(meta.to, meta.subject, body);
-    var o = outlookUrl(meta.to, meta.subject, body);
-    return { g: g, o: o };
-  }
-
   function openForm(parsed) {
     closeForm();
     ensureStyles();
@@ -221,46 +204,38 @@
       '  <p class="dm-form-eyebrow">' + escapeHtml(meta.eyebrow) + "</p>",
       '  <h2 class="dm-form-title">' + escapeHtml(meta.title) + "</h2>",
       '  <p class="dm-form-sub">' + escapeHtml(meta.sub) + "</p>",
-      '  <form class="dm-form-fields" novalidate>' + fieldHtml + "</form>",
-      '  <p class="dm-form-hint">Continues in Gmail or Outlook with subject <strong style="color:#3c4955;font-weight:600;">'
+      '  <form class="dm-form-fields" novalidate>' + fieldHtml,
+      '    <p class="dm-form-hint">Opens your mail app with subject <strong style="color:#3c4955;font-weight:600;">'
         + escapeHtml(meta.subject) + "</strong>.</p>",
-      '  <div class="dm-form-actions">',
-      '    <button type="button" class="dm-form-btn dm-form-btn-gmail" data-provider="gmail">Gmail</button>',
-      '    <button type="button" class="dm-form-btn dm-form-btn-outlook" data-provider="outlook">Outlook</button>',
-      "  </div>",
+      '    <button type="submit" class="dm-form-submit">' + escapeHtml(meta.cta) + "</button>",
+      "  </form>",
       '  <p class="dm-form-to">to ' + escapeHtml(meta.to) + "</p>",
       '  <button type="button" class="dm-form-cancel">Cancel</button>',
       "</div>"
     ].join("");
 
-    function go(provider) {
+    function submit() {
       if (!validate(root, parsed.kind)) {
         var bad = root.querySelector(".dm-invalid");
         if (bad) bad.focus();
         return;
       }
-      var urls = openProviders(meta, parsed.kind, collectValues(root));
-      var href = provider === "outlook" ? urls.o : urls.g;
-      window.open(href, "_blank", "noopener,noreferrer");
+      var body = buildBody(parsed.kind, collectValues(root));
+      var href = mailtoUrl(meta.to, meta.subject, body);
       closeForm();
+      window.location.href = href;
     }
 
     root.addEventListener("click", function (e) {
       if (e.target === root || e.target.classList.contains("dm-form-cancel")) {
         e.preventDefault();
         closeForm();
-        return;
-      }
-      var btn = e.target.closest && e.target.closest("[data-provider]");
-      if (btn) {
-        e.preventDefault();
-        go(btn.getAttribute("data-provider"));
       }
     });
 
     root.querySelector("form").addEventListener("submit", function (e) {
       e.preventDefault();
-      go("gmail");
+      submit();
     });
 
     document.body.appendChild(root);
