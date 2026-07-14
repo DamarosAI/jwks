@@ -11,6 +11,20 @@
   var STYLE_ID = "dm-mail-form-style";
   var ROOT_ID = "dm-mail-form";
   var MAX_MESSAGE_WORDS = 100;
+  // FormSubmit has been observed hanging for 60s+; never let a request block longer than this.
+  var FETCH_TIMEOUT_MS = 12000;
+
+  function fetchWithTimeout(url, opts) {
+    if (typeof AbortController === "undefined") return fetch(url, opts);
+    var ctrl = new AbortController();
+    var timer = setTimeout(function () { ctrl.abort(); }, FETCH_TIMEOUT_MS);
+    opts = opts || {};
+    opts.signal = ctrl.signal;
+    return fetch(url, opts).then(
+      function (r) { clearTimeout(timer); return r; },
+      function (err) { clearTimeout(timer); throw err; }
+    );
+  }
 
   function parseMailto(href) {
     var raw = String(href || "").replace(/^mailto:/i, "");
@@ -172,10 +186,28 @@
     return "Damaros Pilot Inquiry";
   }
 
+  function inboxFor(kind) {
+    return kind === "founder" ? FOUNDER_TO : PILOT_TO;
+  }
+
+  function mailtoFallbackHref(kind, values) {
+    var body = [
+      "Name: " + (values.name || ""),
+      "Email: " + (values.email || ""),
+      values.role ? "Role/Title: " + values.role : "",
+      values.org ? "Organization: " + values.org : "",
+      "",
+      values.note || ""
+    ].filter(function (line) { return line !== ""; }).join("\n");
+    return "mailto:" + inboxFor(kind)
+      + "?subject=" + encodeURIComponent(subjectFor(kind))
+      + "&body=" + encodeURIComponent(body);
+  }
+
   function deliverViaFormSubmit(kind, values) {
     var endpointId = formSubmitIdFor(kind);
-    var inbox = kind === "founder" ? FOUNDER_TO : PILOT_TO;
-    return fetch("https://formsubmit.co/ajax/" + encodeURIComponent(endpointId), {
+    var inbox = inboxFor(kind);
+    return fetchWithTimeout("https://formsubmit.co/ajax/" + encodeURIComponent(endpointId), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -194,8 +226,12 @@
         _replyto: values.email || ""
       })
     }).then(function (r) {
-      return r.json().then(function (data) {
-        return { status: r.status, data: data };
+      // FormSubmit has been seen returning malformed / concatenated JSON when
+      // degraded; parse defensively instead of surfacing a parse error.
+      return r.text().then(function (raw) {
+        var data = null;
+        try { data = JSON.parse(raw); } catch (_) {}
+        return { status: r.status, data: data, raw: raw };
       });
     }).then(function (res) {
       var data = res.data || {};
@@ -208,7 +244,13 @@
       if (/activat/i.test(msg)) {
         throw new Error("Check " + inbox + " for a one-time FormSubmit activation link, then send again.");
       }
-      throw new Error(msg || "Could not send");
+      var err = new Error(msg || "Could not send");
+      err.dmFromFormSubmit = true;
+      throw err;
+    }).catch(function (err) {
+      // Tag so the caller never re-enters FormSubmit delivery on failure.
+      if (err && !err.dmFromFormSubmit) err.dmFromFormSubmit = true;
+      throw err;
     });
   }
 
@@ -312,6 +354,23 @@
       errEl.classList.toggle("dm-show", !!msg);
     }
 
+    function setErrorWithMailto(prefix, href, linkText, suffix) {
+      errEl = errEl || root.querySelector("#dm-form-error");
+      if (!errEl) return;
+      errEl.textContent = "";
+      errEl.appendChild(document.createTextNode(prefix));
+      var a = document.createElement("a");
+      a.href = href;
+      a.textContent = linkText;
+      // Marks the link so the global mailto interceptor lets the mail client open.
+      a.setAttribute("data-dm-native", "");
+      a.style.color = "inherit";
+      a.style.fontWeight = "600";
+      errEl.appendChild(a);
+      errEl.appendChild(document.createTextNode(suffix));
+      errEl.classList.add("dm-show");
+    }
+
     function updateWordCount() {
       if (!countEl) return;
       var words = countWords(noteEl && noteEl.value);
@@ -364,7 +423,7 @@
         submitBtn.textContent = "Sending";
       }
 
-      fetch("/api/contact", {
+      fetchWithTimeout("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "same-origin",
@@ -405,8 +464,10 @@
           throw new Error(apiError || "Could not send");
         })
         .catch(function (err) {
-          // Network / local static hosts: still try FormSubmit from the browser.
-          if (err && /failed to fetch|networkerror|load failed/i.test(String(err.message || err))) {
+          // Network / timeout / local static hosts: try FormSubmit from the
+          // browser — but never re-enter it if it already failed once.
+          var networkish = /failed to fetch|networkerror|load failed|abort/i.test(String((err && err.name) || "") + " " + String((err && err.message) || err));
+          if (networkish && !(err && err.dmFromFormSubmit)) {
             return deliverViaFormSubmit(parsed.kind, values);
           }
           throw err;
@@ -415,7 +476,20 @@
           showSuccess(root, meta);
         })
         .catch(function (err) {
-          setError(err.message || "Could not send. Try again.");
+          var raw = String((err && err.message) || err || "");
+          var isNetworkish = /failed to fetch|networkerror|load failed|abort|timed? ?out/i.test(String((err && err.name) || "") + " " + raw);
+          var isActivation = /activat/i.test(raw);
+          if (isActivation || (raw && !isNetworkish && !(err && err.dmFromFormSubmit))) {
+            setError(raw);
+          } else {
+            // Delivery is unreachable — hand off to the mail client, pre-filled.
+            setErrorWithMailto(
+              "We could not reach our mail service. ",
+              mailtoFallbackHref(parsed.kind, values),
+              "Email us directly at " + inboxFor(parsed.kind),
+              " — your message is pre-filled."
+            );
+          }
           if (submitBtn) {
             submitBtn.disabled = false;
             submitBtn.classList.remove("dm-sending");
@@ -441,6 +515,7 @@
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     var a = e.target && e.target.closest && e.target.closest('a[href^="mailto:"]');
     if (!a) return;
+    if (a.hasAttribute("data-dm-native")) return;
     e.preventDefault();
     openMail(a.getAttribute("href"));
   }, true);
