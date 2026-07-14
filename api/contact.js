@@ -1,12 +1,17 @@
 /**
  * POST /api/contact
- * Applies quiet anti-spam controls, then emails the team via Resend.
+ * Quiet anti-spam, then delivers inquiry email.
  *
- * Env (Vercel project settings):
+ * Delivery (first match wins):
+ *   1. Resend — when RESEND_API_KEY is set (branded From, best for production)
+ *   2. FormSubmit — zero-config email to CONTACT_TO_* / defaults
+ *
+ * Env (optional on Vercel):
  *   RESEND_API_KEY        — Resend API key
  *   CONTACT_FROM          — verified sender, e.g. "Damaros <forms@damaros.ai>"
- *   CONTACT_TO_PILOT      — optional override (default team@damaros.ai)
- *   CONTACT_TO_FOUNDER    — optional override (default anirudh@damaros.ai)
+ *   CONTACT_TO_PILOT      — default team@damaros.ai
+ *   CONTACT_TO_FOUNDER    — default anirudh@damaros.ai
+ *   CONTACT_TO_PRIVACY    — default team@damaros.ai
  */
 const RESEND_URL = "https://api.resend.com/emails";
 const MIN_FORM_FILL_MS = 3000;
@@ -74,7 +79,17 @@ function isRateLimited(ip) {
   return Boolean(lastSubmission && now - lastSubmission < COOLDOWN_MS);
 }
 
-function formatEmail({ kind, name, email, role, org, note }) {
+function resolveTo(kind) {
+  const toEnv =
+    kind === "founder"
+      ? process.env.CONTACT_TO_FOUNDER
+      : kind === "privacy"
+        ? process.env.CONTACT_TO_PRIVACY || process.env.CONTACT_TO_PILOT
+        : process.env.CONTACT_TO_PILOT;
+  return clean(toEnv || DEFAULT_TO[kind], 200).toLowerCase();
+}
+
+function formatText({ kind, name, email, role, org, note }) {
   const lines = [
     `Kind: ${kind}`,
     `Name: ${name}`,
@@ -84,6 +99,95 @@ function formatEmail({ kind, name, email, role, org, note }) {
   if (org) lines.push(`Organization: ${org}`);
   lines.push("", note || "(no message)");
   return lines.join("\n");
+}
+
+async function deliverViaResend({ to, from, subject, text, replyTo }) {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) return { ok: false, skipped: true };
+
+  const r = await fetch(RESEND_URL, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${key}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from,
+      to: [to],
+      reply_to: replyTo,
+      subject,
+      text,
+    }),
+  });
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) {
+    console.error("resend error", r.status, data);
+    return { ok: false, error: "Could not deliver message via Resend" };
+  }
+  return { ok: true, provider: "resend" };
+}
+
+async function deliverViaFormSubmit({
+  to,
+  subject,
+  name,
+  email,
+  role,
+  org,
+  note,
+  kind,
+  origin,
+}) {
+  const endpoint = `https://formsubmit.co/ajax/${encodeURIComponent(to)}`;
+  const site = origin || "https://www.damaros.ai";
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 12000);
+  let r;
+  try {
+    r = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Origin: site,
+        Referer: site.endsWith("/") ? site : site + "/",
+      },
+      body: JSON.stringify({
+        name,
+        email,
+        role: role || "",
+        organization: org || "",
+        kind,
+        message: note,
+        _subject: subject,
+        _template: "table",
+        _captcha: "false",
+        _replyto: email,
+      }),
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timer);
+  }
+  const data = await r.json().catch(() => ({}));
+  const success =
+    r.ok &&
+    (data.success === true ||
+      data.success === "true" ||
+      /thank|success|submitted/i.test(String(data.message || "")));
+
+  if (!success) {
+    const needsActivation = /activat/i.test(String(data.message || ""));
+    console.error("formsubmit error", r.status, data);
+    return {
+      ok: false,
+      needsActivation,
+      error: needsActivation
+        ? `Check ${to} for a FormSubmit activation link, then submit again`
+        : "Could not deliver message",
+    };
+  }
+  return { ok: true, provider: "formsubmit" };
 }
 
 module.exports = async function handler(req, res) {
@@ -142,54 +246,68 @@ module.exports = async function handler(req, res) {
     return json(res, 429, { ok: false, error: "Please take a moment before sending" });
   }
   if (isRateLimited(ip)) {
-    return json(res, 429, { ok: false, error: "Please wait a minute before sending another message" });
-  }
-
-  const resendKey = process.env.RESEND_API_KEY;
-  if (!resendKey) {
-    return json(res, 503, {
+    return json(res, 429, {
       ok: false,
-      error: "Form delivery is not configured yet",
+      error: "Please wait a minute before sending another message",
     });
   }
 
-  const toEnv =
-    kind === "founder"
-      ? process.env.CONTACT_TO_FOUNDER
-      : kind === "privacy"
-        ? process.env.CONTACT_TO_PRIVACY || process.env.CONTACT_TO_PILOT
-        : process.env.CONTACT_TO_PILOT;
-  const to = toEnv || DEFAULT_TO[kind];
+  const to = resolveTo(kind);
+  if (!isEmail(to)) {
+    return json(res, 503, { ok: false, error: "Inbox address is not configured" });
+  }
+
+  const subject = SUBJECT[kind];
+  const text = formatText({ kind, name, email, role, org, note });
   const from =
     process.env.CONTACT_FROM || "Damaros <onboarding@resend.dev>";
-  const subject = SUBJECT[kind];
-  const text = formatEmail({ kind, name, email, role, org, note });
+  const proto = String(req.headers["x-forwarded-proto"] || "https").split(",")[0].trim();
+  const host = String(req.headers["x-forwarded-host"] || req.headers.host || "www.damaros.ai")
+    .split(",")[0]
+    .trim();
+  const origin = `${proto}://${host}`;
 
   try {
-    const r = await fetch(RESEND_URL, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${resendKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from,
-        to: [to],
-        reply_to: email,
-        subject,
-        text,
-      }),
+    const resend = await deliverViaResend({
+      to,
+      from,
+      subject,
+      text,
+      replyTo: email,
     });
-    const data = await r.json().catch(() => ({}));
-    if (!r.ok) {
-      console.error("resend error", r.status, data);
-      return json(res, 502, { ok: false, error: "Could not deliver message" });
+    if (resend.ok) {
+      recentSubmissions.set(ip, Date.now());
+      console.log("contact delivered", { provider: "resend", kind, to });
+      return json(res, 200, { ok: true });
     }
+    if (!resend.skipped) {
+      // Prefer FormSubmit as recovery path when Resend misconfigured.
+      console.error("resend failed; trying formsubmit", resend.error);
+    }
+
+    const formSubmit = await deliverViaFormSubmit({
+      to,
+      subject,
+      name,
+      email,
+      role,
+      org,
+      note,
+      kind,
+      origin,
+    });
+    if (!formSubmit.ok) {
+      return json(res, formSubmit.needsActivation ? 503 : 502, {
+        ok: false,
+        error: formSubmit.error || "Could not deliver message",
+      });
+    }
+
     recentSubmissions.set(ip, Date.now());
+    console.log("contact delivered", { provider: "formsubmit", kind, to });
+    return json(res, 200, { ok: true });
   } catch (err) {
-    console.error("resend fetch failed", err);
+    console.error("contact delivery failed", err);
     return json(res, 502, { ok: false, error: "Could not deliver message" });
   }
-
-  return json(res, 200, { ok: true });
 };

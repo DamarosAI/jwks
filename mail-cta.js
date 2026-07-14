@@ -146,6 +146,56 @@
     return text ? text.split(/\s+/).length : 0;
   }
 
+  function inboxFor(kind) {
+    if (kind === "founder") return FOUNDER_TO;
+    return PILOT_TO;
+  }
+
+  function subjectFor(kind) {
+    if (kind === "founder") return "Damaros Founder Inquiry";
+    if (kind === "privacy") return "Privacy policy question";
+    return "Damaros Pilot Inquiry";
+  }
+
+  function deliverViaFormSubmit(kind, values) {
+    var to = inboxFor(kind);
+    return fetch("https://formsubmit.co/ajax/" + encodeURIComponent(to), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json"
+      },
+      body: JSON.stringify({
+        name: values.name || "",
+        email: values.email || "",
+        role: values.role || "",
+        organization: values.org || "",
+        kind: kind,
+        message: values.note || "",
+        _subject: subjectFor(kind),
+        _template: "table",
+        _captcha: "false",
+        _replyto: values.email || ""
+      })
+    }).then(function (r) {
+      return r.json().then(function (data) {
+        return { status: r.status, data: data };
+      });
+    }).then(function (res) {
+      var data = res.data || {};
+      var msg = String(data.message || "");
+      var ok =
+        res.status >= 200 &&
+        res.status < 300 &&
+        (data.success === true || data.success === "true" || /thank|success|submitted/i.test(msg));
+      if (ok) return { ok: true };
+      if (/activat/i.test(msg)) {
+        throw new Error("Check " + to + " for a one-time FormSubmit activation link, then send again.");
+      }
+      throw new Error(msg || "Could not send");
+    });
+  }
+
   function validate(root, kind) {
     var ok = true;
     fieldsFor(kind).forEach(function (f) {
@@ -314,12 +364,30 @@
         .then(function (r) {
           return r.json().then(function (data) {
             return { status: r.status, data: data };
+          }).catch(function () {
+            return { status: r.status, data: null };
           });
         })
         .then(function (res) {
-          if (!res.data || !res.data.ok) {
-            throw new Error((res.data && res.data.error) || "Could not send");
+          if (res.data && res.data.ok) return { ok: true };
+          var apiError = (res.data && res.data.error) || "";
+          // Fall back to browser FormSubmit when the API can't deliver yet.
+          if (
+            res.status >= 500 ||
+            /not configured|could not deliver|activation/i.test(apiError)
+          ) {
+            return deliverViaFormSubmit(parsed.kind, values);
           }
+          throw new Error(apiError || "Could not send");
+        })
+        .catch(function (err) {
+          // Network / local static hosts: still try FormSubmit from the browser.
+          if (err && /failed to fetch|networkerror|load failed/i.test(String(err.message || err))) {
+            return deliverViaFormSubmit(parsed.kind, values);
+          }
+          throw err;
+        })
+        .then(function () {
           showSuccess(root, meta);
         })
         .catch(function (err) {
