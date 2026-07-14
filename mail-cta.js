@@ -5,6 +5,9 @@
 (function () {
   var PILOT_TO = "team@damaros.ai";
   var FOUNDER_TO = "anirudh@damaros.ai";
+  // FormSubmit activated endpoint IDs (replace naked email in FormSubmit URLs).
+  var FORMSUBMIT_ID_PILOT = "d197c20e3c24682759665e49b1bb7704";
+  var FORMSUBMIT_ID_FOUNDER = "97cb156f8e5b68117d9d615b5456d4f8";
   var STYLE_ID = "dm-mail-form-style";
   var ROOT_ID = "dm-mail-form";
   var MAX_MESSAGE_WORDS = 100;
@@ -146,9 +149,9 @@
     return text ? text.split(/\s+/).length : 0;
   }
 
-  function inboxFor(kind) {
-    if (kind === "founder") return FOUNDER_TO;
-    return PILOT_TO;
+  function formSubmitIdFor(kind) {
+    if (kind === "founder") return FORMSUBMIT_ID_FOUNDER;
+    return FORMSUBMIT_ID_PILOT;
   }
 
   function subjectFor(kind) {
@@ -158,8 +161,9 @@
   }
 
   function deliverViaFormSubmit(kind, values) {
-    var to = inboxFor(kind);
-    return fetch("https://formsubmit.co/ajax/" + encodeURIComponent(to), {
+    var endpointId = formSubmitIdFor(kind);
+    var inbox = kind === "founder" ? FOUNDER_TO : PILOT_TO;
+    return fetch("https://formsubmit.co/ajax/" + encodeURIComponent(endpointId), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -190,7 +194,7 @@
         (data.success === true || data.success === "true" || /thank|success|submitted/i.test(msg));
       if (ok) return { ok: true };
       if (/activat/i.test(msg)) {
-        throw new Error("Check " + to + " for a one-time FormSubmit activation link, then send again.");
+        throw new Error("Check " + inbox + " for a one-time FormSubmit activation link, then send again.");
       }
       throw new Error(msg || "Could not send");
     });

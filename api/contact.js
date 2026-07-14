@@ -12,6 +12,8 @@
  *   CONTACT_TO_PILOT      — default team@damaros.ai
  *   CONTACT_TO_FOUNDER    — default anirudh@damaros.ai
  *   CONTACT_TO_PRIVACY    — default team@damaros.ai
+ *   FORMSUBMIT_ID_PILOT   — FormSubmit endpoint hash for pilot inbox
+ *   FORMSUBMIT_ID_FOUNDER — FormSubmit endpoint hash for founder inbox
  */
 const RESEND_URL = "https://api.resend.com/emails";
 const MIN_FORM_FILL_MS = 3000;
@@ -22,6 +24,13 @@ const DEFAULT_TO = {
   pilot: "team@damaros.ai",
   founder: "anirudh@damaros.ai",
   privacy: "team@damaros.ai",
+};
+
+// Activated FormSubmit endpoint IDs (replace naked emails in FormSubmit URLs).
+const DEFAULT_FORMSUBMIT_ID = {
+  pilot: "d197c20e3c24682759665e49b1bb7704",
+  founder: "97cb156f8e5b68117d9d615b5456d4f8",
+  privacy: "d197c20e3c24682759665e49b1bb7704",
 };
 
 const SUBJECT = {
@@ -89,6 +98,16 @@ function resolveTo(kind) {
   return clean(toEnv || DEFAULT_TO[kind], 200).toLowerCase();
 }
 
+function resolveFormSubmitId(kind) {
+  const idEnv =
+    kind === "founder"
+      ? process.env.FORMSUBMIT_ID_FOUNDER
+      : kind === "privacy"
+        ? process.env.FORMSUBMIT_ID_PRIVACY || process.env.FORMSUBMIT_ID_PILOT
+        : process.env.FORMSUBMIT_ID_PILOT;
+  return clean(idEnv || DEFAULT_FORMSUBMIT_ID[kind], 64);
+}
+
 function formatText({ kind, name, email, role, org, note }) {
   const lines = [
     `Kind: ${kind}`,
@@ -128,7 +147,8 @@ async function deliverViaResend({ to, from, subject, text, replyTo }) {
 }
 
 async function deliverViaFormSubmit({
-  to,
+  endpointId,
+  toLabel,
   subject,
   name,
   email,
@@ -138,7 +158,7 @@ async function deliverViaFormSubmit({
   kind,
   origin,
 }) {
-  const endpoint = `https://formsubmit.co/ajax/${encodeURIComponent(to)}`;
+  const endpoint = `https://formsubmit.co/ajax/${encodeURIComponent(endpointId)}`;
   const site = origin || "https://www.damaros.ai";
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 12000);
@@ -183,7 +203,7 @@ async function deliverViaFormSubmit({
       ok: false,
       needsActivation,
       error: needsActivation
-        ? `Check ${to} for a FormSubmit activation link, then submit again`
+        ? `Check ${toLabel} for a FormSubmit activation link, then submit again`
         : "Could not deliver message",
     };
   }
@@ -253,8 +273,12 @@ module.exports = async function handler(req, res) {
   }
 
   const to = resolveTo(kind);
+  const formSubmitId = resolveFormSubmitId(kind);
   if (!isEmail(to)) {
     return json(res, 503, { ok: false, error: "Inbox address is not configured" });
+  }
+  if (!formSubmitId) {
+    return json(res, 503, { ok: false, error: "FormSubmit endpoint is not configured" });
   }
 
   const subject = SUBJECT[kind];
@@ -286,7 +310,8 @@ module.exports = async function handler(req, res) {
     }
 
     const formSubmit = await deliverViaFormSubmit({
-      to,
+      endpointId: formSubmitId,
+      toLabel: to,
       subject,
       name,
       email,
