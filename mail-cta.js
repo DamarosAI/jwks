@@ -80,14 +80,19 @@
       "#" + ROOT_ID + " .dm-form-word-count{grid-column:1 / -1;margin:0;font-family:var(--font-mono,\"IBM Plex Mono\",ui-monospace,monospace);font-size:10px;letter-spacing:0.06em;text-align:right;color:#7b8794;}",
       "#" + ROOT_ID + " .dm-form-error{grid-column:1 / -1;margin:10px 0 0;font-size:12.5px;line-height:1.4;color:#dc3a52;display:none;}",
       "#" + ROOT_ID + " .dm-form-error.dm-show{display:block;}",
-      "#" + ROOT_ID + " .dm-form-submit{grid-column:1 / -1;margin-top:14px;display:inline-flex;align-items:center;justify-content:center;width:100%;height:46px;border-radius:999px;border:1px solid color-mix(in srgb,#2f6193 50%,rgba(255,255,255,0.22));font-family:var(--font-display,\"Archivo\",system-ui,sans-serif);font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;color:#fff;background:linear-gradient(180deg,#3d72a8,#2f6193);box-shadow:inset 0 1px 0 rgba(255,255,255,0.2),0 8px 20px rgba(20,46,82,0.16);}",
-      "#" + ROOT_ID + " .dm-form-submit:disabled{opacity:0.55;cursor:wait;}",
-      "#" + ROOT_ID + " .dm-form-submit:not(:disabled):hover{filter:brightness(1.04);}",
+      "#" + ROOT_ID + " .dm-form-submit{grid-column:1 / -1;margin-top:14px;display:inline-flex;align-items:center;justify-content:center;width:100%;height:46px;border-radius:999px;border:1px solid color-mix(in srgb,#2f6193 50%,rgba(255,255,255,0.22));font-family:var(--font-display,\"Archivo\",system-ui,sans-serif);font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;color:#fff;background:linear-gradient(180deg,#3d72a8,#2f6193);box-shadow:inset 0 1px 0 rgba(255,255,255,0.2),0 8px 20px rgba(20,46,82,0.16);transition:transform 130ms cubic-bezier(0.34,1.56,0.64,1),box-shadow 130ms ease,filter 130ms ease,letter-spacing 200ms ease;}",
+      "#" + ROOT_ID + " .dm-form-submit:not(:disabled):hover{filter:brightness(1.05);transform:translateY(-1px);box-shadow:inset 0 1px 0 rgba(255,255,255,0.22),0 12px 26px rgba(20,46,82,0.22);}",
+      "#" + ROOT_ID + " .dm-form-submit:not(:disabled):active{transform:translateY(1px) scale(0.982);box-shadow:inset 0 2px 4px rgba(11,26,44,0.28),0 3px 8px rgba(20,46,82,0.14);filter:brightness(0.97);}",
+      "#" + ROOT_ID + " .dm-form-submit:disabled{cursor:wait;}",
+      "#" + ROOT_ID + " .dm-form-submit.dm-sending{background:linear-gradient(180deg,#345f8c,#274f78);letter-spacing:0.14em;transform:scale(0.99);box-shadow:inset 0 2px 5px rgba(11,26,44,0.3),0 4px 12px rgba(20,46,82,0.14);animation:dm-send-hold 1.5s ease-in-out infinite;}",
+      "#" + ROOT_ID + " .dm-form-submit.dm-sending::after{content:\"\";display:inline-block;width:1.4em;text-align:left;animation:dm-send-dots 1.2s steps(4,end) infinite;}",
+      "@keyframes dm-send-hold{0%,100%{filter:brightness(1);}50%{filter:brightness(1.08);}}",
+      "@keyframes dm-send-dots{0%{content:\"\";}25%{content:\".\";}50%{content:\"..\";}75%{content:\"...\";}100%{content:\"\";}}",
       "#" + ROOT_ID + " .dm-form-cancel{margin-top:10px;display:block;width:100%;background:none;border:none;cursor:pointer;font-family:var(--font-mono,\"IBM Plex Mono\",ui-monospace,monospace);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#7b8794;padding:8px;}",
       "#" + ROOT_ID + " .dm-form-success{text-align:left;padding:8px 0 4px;}",
       "#" + ROOT_ID + " .dm-form-success p{margin:14px 0 0;font-size:14px;line-height:1.55;color:#586674;max-width:38ch;}",
       "@media (max-width:520px){#" + ROOT_ID + "{align-items:flex-start;overflow:auto;}#" + ROOT_ID + " .dm-form-card{margin:auto 0;border-radius:16px;}#" + ROOT_ID + " .dm-form-fields{grid-template-columns:1fr;gap:12px;}#" + ROOT_ID + " .dm-form-field.dm-form-wide{grid-column:auto;}}",
-      "@media (prefers-reduced-motion:reduce){#" + ROOT_ID + " .dm-form-card,#" + ROOT_ID + " .dm-form-mark{animation:none;}}",
+      "@media (prefers-reduced-motion:reduce){#" + ROOT_ID + " .dm-form-card,#" + ROOT_ID + " .dm-form-mark,#" + ROOT_ID + " .dm-form-submit{animation:none;transition:none;}#" + ROOT_ID + " .dm-form-submit.dm-sending::after{animation:none;content:\"...\";}}",
       "@media (max-height:650px){#" + ROOT_ID + " .dm-form-card{padding:16px 18px;}#" + ROOT_ID + " .dm-form-head{min-height:48px;}#" + ROOT_ID + " .dm-form-mark{width:39px;height:44px;}#" + ROOT_ID + " .dm-form-sub{margin-top:6px;font-size:12.5px;}#" + ROOT_ID + " .dm-form-fields{margin-top:12px;gap:8px;}#" + ROOT_ID + " .dm-form-input,#" + ROOT_ID + " .dm-form-textarea{padding:8px 10px;font-size:13px;}#" + ROOT_ID + " .dm-form-textarea{min-height:56px;max-height:80px;}#" + ROOT_ID + " .dm-form-submit{height:40px;margin-top:8px;}#" + ROOT_ID + " .dm-form-cancel{margin-top:4px;padding:4px;}}"
     ].join("");
     document.head.appendChild(style);
@@ -347,7 +352,8 @@
       submitBtn = root.querySelector(".dm-form-submit");
       if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.textContent = "Sending…";
+        submitBtn.classList.add("dm-sending");
+        submitBtn.textContent = "Sending";
       }
 
       fetch("/api/contact", {
@@ -398,6 +404,7 @@
           setError(err.message || "Could not send. Try again.");
           if (submitBtn) {
             submitBtn.disabled = false;
+            submitBtn.classList.remove("dm-sending");
             submitBtn.textContent = meta.cta;
           }
         });
