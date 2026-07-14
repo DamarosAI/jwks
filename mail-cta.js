@@ -22,19 +22,26 @@
     var style = document.createElement("style");
     style.id = STYLE_ID;
     style.textContent = [
-      "#" + TOAST_ID + "{position:fixed;left:50%;bottom:max(26px,env(safe-area-inset-bottom,0px));z-index:9999;display:flex;align-items:center;gap:12px;max-width:min(92vw,440px);padding:11px 22px 11px 13px;border-radius:999px;box-sizing:border-box;cursor:pointer;color:#fff;background:linear-gradient(180deg,#3f8f6d,#2e9e6b);border:1px solid color-mix(in srgb,#2e9e6b 55%,rgba(255,255,255,0.25));box-shadow:inset 0 1px 0 rgba(255,255,255,0.22),0 14px 34px rgba(24,84,56,0.32);font-family:var(--font-body,\"Hanken Grotesk\",system-ui,sans-serif);transform:translateX(-50%);animation:dm-toast-in 420ms cubic-bezier(0.34,1.56,0.64,1);}",
+      // Full-viewport wrapper handles placement on every viewport; it never
+      // blocks the page (pointer-events:none), only the pill is clickable.
+      "#" + TOAST_ID + "-wrap{position:fixed;inset:0;z-index:9999;display:flex;align-items:flex-end;justify-content:center;padding:24px max(16px,env(safe-area-inset-right,0px)) max(28px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));box-sizing:border-box;pointer-events:none;}",
+      "#" + TOAST_ID + "{display:flex;align-items:center;gap:12px;max-width:min(92vw,440px);padding:11px 22px 11px 13px;border-radius:999px;box-sizing:border-box;cursor:pointer;pointer-events:auto;color:#fff;background:linear-gradient(180deg,#3f8f6d,#2e9e6b);border:1px solid color-mix(in srgb,#2e9e6b 55%,rgba(255,255,255,0.25));box-shadow:inset 0 1px 0 rgba(255,255,255,0.22),0 14px 34px rgba(24,84,56,0.32);font-family:var(--font-body,\"Hanken Grotesk\",system-ui,sans-serif);animation:dm-toast-in 380ms cubic-bezier(0.22,1,0.36,1);}",
       "#" + TOAST_ID + ".dm-toast-out{animation:dm-toast-out 240ms ease forwards;}",
-      "@keyframes dm-toast-in{from{opacity:0;transform:translateX(-50%) translateY(22px) scale(0.94);}60%{opacity:1;}to{opacity:1;transform:translateX(-50%) translateY(0) scale(1);}}",
-      "@keyframes dm-toast-out{from{opacity:1;transform:translateX(-50%) translateY(0) scale(1);}to{opacity:0;transform:translateX(-50%) translateY(14px) scale(0.96);}}",
+      "@keyframes dm-toast-in{from{opacity:0;transform:translateY(16px) scale(0.97);}to{opacity:1;transform:none;}}",
+      "@keyframes dm-toast-out{from{opacity:1;transform:none;}to{opacity:0;transform:translateY(10px) scale(0.98);}}",
       "#" + TOAST_ID + " .dm-toast-badge{flex:none;display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.16);box-shadow:inset 0 1px 0 rgba(255,255,255,0.25);}",
-      "#" + TOAST_ID + " .dm-toast-check{width:17px;height:17px;stroke:#fff;stroke-width:2.6;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:26;stroke-dashoffset:26;animation:dm-check-draw 340ms cubic-bezier(0.65,0,0.35,1) 200ms forwards;}",
+      "#" + TOAST_ID + " .dm-toast-check{width:17px;height:17px;stroke:#fff;stroke-width:2.6;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:26;stroke-dashoffset:26;animation:dm-check-draw 340ms cubic-bezier(0.65,0,0.35,1) 180ms forwards;}",
       "@keyframes dm-check-draw{to{stroke-dashoffset:0;}}",
       "#" + TOAST_ID + " .dm-toast-text{display:flex;flex-direction:column;gap:2px;min-width:0;}",
       "#" + TOAST_ID + " .dm-toast-eyebrow{font-family:var(--font-mono,\"IBM Plex Mono\",ui-monospace,monospace);font-size:9.5px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:rgba(255,255,255,0.82);}",
       "#" + TOAST_ID + " .dm-toast-email{font-family:var(--font-display,\"Archivo\",system-ui,sans-serif);font-size:14.5px;font-weight:700;letter-spacing:-0.015em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}",
-      "#" + TOAST_ID + " .dm-toast-mark{flex:none;width:22px;height:25px;color:rgba(255,255,255,0.92);margin-left:2px;transform-origin:50% 20%;animation:dm-mark-ring 900ms cubic-bezier(0.36,0.07,0.19,0.97) 260ms;}",
-      "@keyframes dm-mark-ring{0%,100%{transform:rotate(0);}18%{transform:rotate(-11deg);}38%{transform:rotate(9deg);}58%{transform:rotate(-6deg);}78%{transform:rotate(3.5deg);}}",
-      "@media (prefers-reduced-motion:reduce){#" + TOAST_ID + "{animation:none;}#" + TOAST_ID + ".dm-toast-out{animation:none;opacity:0;}#" + TOAST_ID + " .dm-toast-check{animation:none;stroke-dashoffset:0;}#" + TOAST_ID + " .dm-toast-mark{animation:none;}}"
+      // Mark eases in with a soft rise — no rotation.
+      "#" + TOAST_ID + " .dm-toast-mark{flex:none;width:22px;height:25px;color:rgba(255,255,255,0.92);margin-left:2px;opacity:0;animation:dm-mark-in 460ms cubic-bezier(0.22,1,0.36,1) 220ms forwards;}",
+      "@keyframes dm-mark-in{from{opacity:0;transform:translateY(5px) scale(0.9);}to{opacity:1;transform:none;}}",
+      // Small / touch viewports: center the toast mid-screen so it is
+      // unmissable and clear of thumbs, browser chrome, and keyboards.
+      "@media (max-width:640px){#" + TOAST_ID + "-wrap{align-items:center;padding-bottom:24px;}#" + TOAST_ID + "{max-width:min(94vw,400px);}}",
+      "@media (prefers-reduced-motion:reduce){#" + TOAST_ID + "{animation:none;}#" + TOAST_ID + ".dm-toast-out{animation:none;opacity:0;}#" + TOAST_ID + " .dm-toast-check{animation:none;stroke-dashoffset:0;}#" + TOAST_ID + " .dm-toast-mark{animation:none;opacity:1;}}"
     ].join("");
     document.head.appendChild(style);
   }
@@ -44,15 +51,16 @@
   var toastTimer = null;
 
   function removeToast(immediate) {
-    var toast = document.getElementById(TOAST_ID);
-    if (!toast) return;
+    var wrap = document.getElementById(TOAST_ID + "-wrap");
+    if (!wrap) return;
     clearTimeout(toastTimer);
     if (immediate) {
-      toast.remove();
+      wrap.remove();
       return;
     }
-    toast.classList.add("dm-toast-out");
-    setTimeout(function () { toast.remove(); }, 260);
+    var toast = document.getElementById(TOAST_ID);
+    if (toast) toast.classList.add("dm-toast-out");
+    setTimeout(function () { wrap.remove(); }, 260);
   }
 
   function escapeHtml(s) {
@@ -66,6 +74,8 @@
   function showToast(email, copied) {
     ensureStyles();
     removeToast(true);
+    var wrap = document.createElement("div");
+    wrap.id = TOAST_ID + "-wrap";
     var toast = document.createElement("div");
     toast.id = TOAST_ID;
     toast.setAttribute("role", "status");
@@ -79,7 +89,8 @@
       MARK_SVG
     ].join("");
     toast.addEventListener("click", function () { removeToast(false); });
-    document.body.appendChild(toast);
+    wrap.appendChild(toast);
+    document.body.appendChild(wrap);
     toastTimer = setTimeout(function () { removeToast(false); }, TOAST_MS);
   }
 
