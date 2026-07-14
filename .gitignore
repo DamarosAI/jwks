@@ -20,3 +20,6 @@ Thumbs.db
 
 # gstack tool output
 .gstack/
+
+# local design exploration
+.superpowers/

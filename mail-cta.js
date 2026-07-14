@@ -41,7 +41,7 @@
     }
     return {
       eyebrow: "Inquiry",
-      title: "Tell us what you’re working on.",
+      title: "Clinical trials, rewired.",
       sub: "",
       cta: "Send inquiry"
     };
@@ -55,12 +55,16 @@
       "#" + ROOT_ID + "{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));background:rgba(16,22,29,0.48);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}",
       "#" + ROOT_ID + " .dm-form-card{position:relative;overflow:hidden;width:min(560px,100%);border-radius:20px;background:linear-gradient(170deg,#ffffff 0%,#f6f9fc 60%,#eef4f9 100%);border:1px solid rgba(31,45,61,0.12);box-shadow:0 28px 70px rgba(20,40,70,0.28),inset 0 1px 0 rgba(255,255,255,0.9);padding:clamp(20px,3.2vw,30px);font-family:var(--font-body,\"Hanken Grotesk\",system-ui,sans-serif);color:#10161d;animation:dm-form-in 260ms cubic-bezier(0.22,1,0.36,1);}",
       "@keyframes dm-form-in{from{opacity:0;transform:translateY(14px) scale(0.985);}to{opacity:1;transform:none;}}",
-      "#" + ROOT_ID + " .dm-form-card::before{content:\"\";position:absolute;inset:0 0 auto 0;height:4px;background:linear-gradient(90deg,#2f6193,#5b8fc0 55%,rgba(91,143,192,0));}",
-      "#" + ROOT_ID + " .dm-form-head{display:flex;align-items:center;gap:14px;}",
-      "#" + ROOT_ID + " .dm-form-badge{flex:none;display:flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:14px;background:linear-gradient(180deg,#3d72a8,#2f6193);box-shadow:inset 0 1px 0 rgba(255,255,255,0.25),0 6px 16px rgba(20,46,82,0.22);}",
-      "#" + ROOT_ID + " .dm-form-mark{width:26px;height:28px;color:rgba(255,255,255,0.95);}",
-      "#" + ROOT_ID + " .dm-form-eyebrow{margin:0 0 3px;font-family:var(--font-mono,\"IBM Plex Mono\",ui-monospace,monospace);font-size:10.5px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#2f6193;}",
-      "#" + ROOT_ID + " .dm-form-title{margin:0;font-family:var(--font-display,\"Archivo\",system-ui,sans-serif);font-size:clamp(1.2rem,3vw,1.45rem);font-weight:700;letter-spacing:-0.025em;line-height:1.1;color:#10161d;}",
+      "#" + ROOT_ID + " .dm-form-head{position:relative;min-height:58px;padding-right:78px;}",
+      "#" + ROOT_ID + " .dm-form-mark{position:absolute;right:3px;top:-4px;width:48px;height:54px;color:#2f6193;filter:drop-shadow(0 5px 8px rgba(47,97,147,0.12));transform-origin:center;animation:dm-drum-breathe 4.6s cubic-bezier(0.45,0,0.55,1) infinite;}",
+      "#" + ROOT_ID + " .dm-form-mark path:first-child{transform-origin:50% 36%;animation:dm-drum-top 4.6s cubic-bezier(0.45,0,0.55,1) infinite;}",
+      "#" + ROOT_ID + " .dm-form-mark path:last-child{transform-origin:50% 64%;animation:dm-drum-bottom 4.6s cubic-bezier(0.45,0,0.55,1) infinite;}",
+      "@keyframes dm-drum-breathe{0%,100%{opacity:0.76;transform:translateY(0);}50%{opacity:1;transform:translateY(-2px);}}",
+      "@keyframes dm-drum-top{0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);}}",
+      "@keyframes dm-drum-bottom{0%,100%{transform:translateY(0);}50%{transform:translateY(4px);}}",
+      "#" + ROOT_ID + " .dm-form-eyebrow{margin:0 0 6px;font-family:var(--font-mono,\"IBM Plex Mono\",ui-monospace,monospace);font-size:10.5px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#2f6193;}",
+      "#" + ROOT_ID + " .dm-form-title{margin:0;font-family:var(--font-display,\"Archivo\",system-ui,sans-serif);font-size:clamp(1.3rem,3vw,1.6rem);font-weight:700;letter-spacing:-0.035em;line-height:1.05;color:#10161d;}",
+      "#" + ROOT_ID + " .dm-form-title span{color:#5f7588;}",
       "#" + ROOT_ID + " .dm-form-sub{margin:10px 0 0;max-width:40ch;font-size:13.5px;line-height:1.5;color:#586674;}",
       "#" + ROOT_ID + " .dm-form-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:22px;}",
       "#" + ROOT_ID + " .dm-form-field{display:flex;flex-direction:column;gap:7px;}",
@@ -84,7 +88,8 @@
       "#" + ROOT_ID + " .dm-form-success{text-align:left;padding:8px 0 4px;}",
       "#" + ROOT_ID + " .dm-form-success p{margin:14px 0 0;font-size:14px;line-height:1.55;color:#586674;max-width:38ch;}",
       "@media (max-width:520px){#" + ROOT_ID + "{align-items:flex-start;overflow:auto;}#" + ROOT_ID + " .dm-form-card{margin:auto 0;border-radius:16px;}#" + ROOT_ID + " .dm-form-fields{grid-template-columns:1fr;gap:12px;}#" + ROOT_ID + " .dm-form-field.dm-form-wide{grid-column:auto;}}",
-      "@media (max-height:650px){#" + ROOT_ID + " .dm-form-card{padding:16px 18px;}#" + ROOT_ID + " .dm-form-badge{width:38px;height:38px;border-radius:11px;}#" + ROOT_ID + " .dm-form-mark{width:21px;height:23px;}#" + ROOT_ID + " .dm-form-sub{margin-top:6px;font-size:12.5px;}#" + ROOT_ID + " .dm-form-fields{margin-top:12px;gap:8px;}#" + ROOT_ID + " .dm-form-input,#" + ROOT_ID + " .dm-form-textarea{padding:8px 10px;font-size:13px;}#" + ROOT_ID + " .dm-form-textarea{min-height:56px;max-height:80px;}#" + ROOT_ID + " .dm-form-submit{height:40px;margin-top:8px;}#" + ROOT_ID + " .dm-form-cancel{margin-top:4px;padding:4px;}}"
+      "@media (prefers-reduced-motion:reduce){#" + ROOT_ID + " .dm-form-card,#" + ROOT_ID + " .dm-form-mark,#" + ROOT_ID + " .dm-form-mark path{animation:none;}}",
+      "@media (max-height:650px){#" + ROOT_ID + " .dm-form-card{padding:16px 18px;}#" + ROOT_ID + " .dm-form-head{min-height:48px;}#" + ROOT_ID + " .dm-form-mark{width:39px;height:44px;}#" + ROOT_ID + " .dm-form-sub{margin-top:6px;font-size:12.5px;}#" + ROOT_ID + " .dm-form-fields{margin-top:12px;gap:8px;}#" + ROOT_ID + " .dm-form-input,#" + ROOT_ID + " .dm-form-textarea{padding:8px 10px;font-size:13px;}#" + ROOT_ID + " .dm-form-textarea{min-height:56px;max-height:80px;}#" + ROOT_ID + " .dm-form-submit{height:40px;margin-top:8px;}#" + ROOT_ID + " .dm-form-cancel{margin-top:4px;padding:4px;}}"
     ].join("");
     document.head.appendChild(style);
   }
@@ -128,7 +133,7 @@
       { id: "email", label: "Work email", type: "email", required: true },
       { id: "role", label: "Role / title", required: true },
       { id: "org", label: "Organization", required: true },
-      { id: "note", label: "Context", type: "textarea", required: true, placeholder: "Timeline, site type, open protocols…" }
+      { id: "note", label: "Context", type: "textarea", required: true, placeholder: "What should we know about your site, protocols, or timeline?" }
     ];
   }
 
@@ -161,16 +166,14 @@
 
   function showSuccess(root, meta) {
     var card = root.querySelector(".dm-form-card");
-    var badge = card.querySelector(".dm-form-badge");
-    var badgeHtml = badge ? badge.outerHTML : "";
+    var mark = card.querySelector(".dm-form-mark");
+    var markHtml = mark ? mark.outerHTML : "";
     card.innerHTML = [
       '<div class="dm-form-success">',
       '  <div class="dm-form-head">',
-      "    " + badgeHtml,
-      '    <div>',
-      '      <p class="dm-form-eyebrow">' + escapeHtml(meta.eyebrow) + "</p>",
-      '      <h2 class="dm-form-title">Received.</h2>',
-      "    </div>",
+      '    <p class="dm-form-eyebrow">' + escapeHtml(meta.eyebrow) + "</p>",
+      '    <h2 class="dm-form-title">Received.</h2>',
+      "    " + markHtml,
       "  </div>",
       '  <p>Thanks — the Damaros team will follow up directly.</p>',
       '  <button type="button" class="dm-form-submit" data-close style="margin-top:22px;">Done</button>',
@@ -209,16 +212,17 @@
     root.setAttribute("aria-modal", "true");
     root.setAttribute("aria-label", meta.title || meta.eyebrow);
 
-    var markSvg = '<svg class="dm-form-mark" viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="34" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg>';
+    var markSvg = '<svg class="dm-form-mark" viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="28" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg>';
+    var titleHtml = parsed.kind === "pilot"
+      ? "Clinical trials, <span>rewired.</span>"
+      : escapeHtml(meta.title);
 
     root.innerHTML = [
       '<div class="dm-form-card">',
       '  <div class="dm-form-head">',
-      '    <span class="dm-form-badge">' + markSvg + "</span>",
-      '    <div>',
-      '      <p class="dm-form-eyebrow">' + escapeHtml(meta.eyebrow) + "</p>",
-      meta.title ? '      <h2 class="dm-form-title">' + escapeHtml(meta.title) + "</h2>" : "",
-      "    </div>",
+      '    <p class="dm-form-eyebrow">' + escapeHtml(meta.eyebrow) + "</p>",
+      meta.title ? '    <h2 class="dm-form-title">' + titleHtml + "</h2>" : "",
+      "    " + markSvg,
       "  </div>",
       meta.sub ? '  <p class="dm-form-sub">' + escapeHtml(meta.sub) + "</p>" : "",
       '  <form class="dm-form-fields" novalidate>',
