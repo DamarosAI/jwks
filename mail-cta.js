@@ -379,7 +379,13 @@
           });
         })
         .then(function (res) {
-          if (res.data && res.data.ok) return { ok: true };
+          if (res.data && res.data.ok) {
+            // API asks the browser to deliver via FormSubmit (no Resend key).
+            if (res.data.deliver === "formsubmit") {
+              return deliverViaFormSubmit(parsed.kind, values);
+            }
+            return { ok: true };
+          }
           var apiError = (res.data && res.data.error) || "";
           // Fall back to browser FormSubmit when the API can't deliver yet.
           if (

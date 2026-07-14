@@ -12,8 +12,6 @@
  *   CONTACT_TO_PILOT      — default team@damaros.ai
  *   CONTACT_TO_FOUNDER    — default anirudh@damaros.ai
  *   CONTACT_TO_PRIVACY    — default team@damaros.ai
- *   FORMSUBMIT_ID_PILOT   — FormSubmit endpoint hash for pilot inbox
- *   FORMSUBMIT_ID_FOUNDER — FormSubmit endpoint hash for founder inbox
  */
 const RESEND_URL = "https://api.resend.com/emails";
 const MIN_FORM_FILL_MS = 3000;
@@ -24,13 +22,6 @@ const DEFAULT_TO = {
   pilot: "team@damaros.ai",
   founder: "anirudh@damaros.ai",
   privacy: "team@damaros.ai",
-};
-
-// Activated FormSubmit endpoint IDs (replace naked emails in FormSubmit URLs).
-const DEFAULT_FORMSUBMIT_ID = {
-  pilot: "d197c20e3c24682759665e49b1bb7704",
-  founder: "97cb156f8e5b68117d9d615b5456d4f8",
-  privacy: "d197c20e3c24682759665e49b1bb7704",
 };
 
 const SUBJECT = {
@@ -98,16 +89,6 @@ function resolveTo(kind) {
   return clean(toEnv || DEFAULT_TO[kind], 200).toLowerCase();
 }
 
-function resolveFormSubmitId(kind) {
-  const idEnv =
-    kind === "founder"
-      ? process.env.FORMSUBMIT_ID_FOUNDER
-      : kind === "privacy"
-        ? process.env.FORMSUBMIT_ID_PRIVACY || process.env.FORMSUBMIT_ID_PILOT
-        : process.env.FORMSUBMIT_ID_PILOT;
-  return clean(idEnv || DEFAULT_FORMSUBMIT_ID[kind], 64);
-}
-
 function formatText({ kind, name, email, role, org, note }) {
   const lines = [
     `Kind: ${kind}`,
@@ -146,69 +127,10 @@ async function deliverViaResend({ to, from, subject, text, replyTo }) {
   return { ok: true, provider: "resend" };
 }
 
-async function deliverViaFormSubmit({
-  endpointId,
-  toLabel,
-  subject,
-  name,
-  email,
-  role,
-  org,
-  note,
-  kind,
-  origin,
-}) {
-  const endpoint = `https://formsubmit.co/ajax/${encodeURIComponent(endpointId)}`;
-  const site = origin || "https://www.damaros.ai";
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 12000);
-  let r;
-  try {
-    r = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Origin: site,
-        Referer: site.endsWith("/") ? site : site + "/",
-      },
-      body: JSON.stringify({
-        name,
-        email,
-        role: role || "",
-        organization: org || "",
-        kind,
-        message: note,
-        _subject: subject,
-        _template: "table",
-        _captcha: "false",
-        _replyto: email,
-      }),
-      signal: controller.signal,
-    });
-  } finally {
-    clearTimeout(timer);
-  }
-  const data = await r.json().catch(() => ({}));
-  const success =
-    r.ok &&
-    (data.success === true ||
-      data.success === "true" ||
-      /thank|success|submitted/i.test(String(data.message || "")));
-
-  if (!success) {
-    const needsActivation = /activat/i.test(String(data.message || ""));
-    console.error("formsubmit error", r.status, data);
-    return {
-      ok: false,
-      needsActivation,
-      error: needsActivation
-        ? `Check ${toLabel} for a FormSubmit activation link, then submit again`
-        : "Could not deliver message",
-    };
-  }
-  return { ok: true, provider: "formsubmit" };
-}
+// NOTE: FormSubmit rejects server-to-server requests ("open this page through
+// a web server"), so FormSubmit delivery happens in the browser (mail-cta.js).
+// The API delivers via Resend only; without a key it answers 503 and the
+// client falls back to FormSubmit directly.
 
 module.exports = async function handler(req, res) {
   if (req.method === "OPTIONS") {
@@ -273,23 +195,14 @@ module.exports = async function handler(req, res) {
   }
 
   const to = resolveTo(kind);
-  const formSubmitId = resolveFormSubmitId(kind);
   if (!isEmail(to)) {
     return json(res, 503, { ok: false, error: "Inbox address is not configured" });
-  }
-  if (!formSubmitId) {
-    return json(res, 503, { ok: false, error: "FormSubmit endpoint is not configured" });
   }
 
   const subject = SUBJECT[kind];
   const text = formatText({ kind, name, email, role, org, note });
   const from =
     process.env.CONTACT_FROM || "Damaros <onboarding@resend.dev>";
-  const proto = String(req.headers["x-forwarded-proto"] || "https").split(",")[0].trim();
-  const host = String(req.headers["x-forwarded-host"] || req.headers.host || "www.damaros.ai")
-    .split(",")[0]
-    .trim();
-  const origin = `${proto}://${host}`;
 
   try {
     const resend = await deliverViaResend({
@@ -305,34 +218,15 @@ module.exports = async function handler(req, res) {
       return json(res, 200, { ok: true });
     }
     if (!resend.skipped) {
-      // Prefer FormSubmit as recovery path when Resend misconfigured.
-      console.error("resend failed; trying formsubmit", resend.error);
+      console.error("resend failed", resend.error);
     }
-
-    const formSubmit = await deliverViaFormSubmit({
-      endpointId: formSubmitId,
-      toLabel: to,
-      subject,
-      name,
-      email,
-      role,
-      org,
-      note,
-      kind,
-      origin,
-    });
-    if (!formSubmit.ok) {
-      return json(res, formSubmit.needsActivation ? 503 : 502, {
-        ok: false,
-        error: formSubmit.error || "Could not deliver message",
-      });
-    }
-
+    // No Resend key (or Resend failed): tell the browser to deliver via
+    // FormSubmit itself. FormSubmit blocks server-side requests, so the
+    // fallback must run client-side.
     recentSubmissions.set(ip, Date.now());
-    console.log("contact delivered", { provider: "formsubmit", kind, to });
-    return json(res, 200, { ok: true });
+    return json(res, 200, { ok: true, deliver: "formsubmit" });
   } catch (err) {
     console.error("contact delivery failed", err);
-    return json(res, 502, { ok: false, error: "Could not deliver message" });
+    return json(res, 200, { ok: true, deliver: "formsubmit" });
   }
 };
