@@ -89,8 +89,12 @@
       "@keyframes dm-send-hold{0%,100%{filter:brightness(1);}50%{filter:brightness(1.08);}}",
       "@keyframes dm-send-dots{0%{content:\"\";}25%{content:\".\";}50%{content:\"..\";}75%{content:\"...\";}100%{content:\"\";}}",
       "#" + ROOT_ID + " .dm-form-cancel{margin-top:10px;display:block;width:100%;background:none;border:none;cursor:pointer;font-family:var(--font-mono,\"IBM Plex Mono\",ui-monospace,monospace);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#7b8794;padding:8px;}",
-      "#" + ROOT_ID + " .dm-form-success{text-align:left;padding:8px 0 4px;}",
-      "#" + ROOT_ID + " .dm-form-success p{margin:14px 0 0;font-size:14px;line-height:1.55;color:#586674;max-width:38ch;}",
+      "#" + ROOT_ID + " .dm-form-card.dm-form-compact{width:min(420px,100%);}",
+      "#" + ROOT_ID + " .dm-form-compact .dm-form-mark{width:40px;height:45px;top:-1px;}",
+      "#" + ROOT_ID + " .dm-form-compact .dm-form-head{min-height:0;padding-right:60px;}",
+      "#" + ROOT_ID + " .dm-form-success{text-align:left;padding:4px 0 2px;}",
+      "#" + ROOT_ID + " .dm-form-success p{margin:10px 0 0;font-size:13.5px;line-height:1.5;color:#586674;white-space:nowrap;}",
+      "#" + ROOT_ID + " .dm-form-done{width:auto;height:38px;margin-top:18px;padding:0 30px;}",
       "@media (max-width:520px){#" + ROOT_ID + "{align-items:flex-start;overflow:auto;}#" + ROOT_ID + " .dm-form-card{margin:auto 0;border-radius:16px;}#" + ROOT_ID + " .dm-form-fields{grid-template-columns:1fr;gap:12px;}#" + ROOT_ID + " .dm-form-field.dm-form-wide{grid-column:auto;}}",
       "@media (prefers-reduced-motion:reduce){#" + ROOT_ID + " .dm-form-card,#" + ROOT_ID + " .dm-form-mark,#" + ROOT_ID + " .dm-form-submit{animation:none;transition:none;}#" + ROOT_ID + " .dm-form-submit.dm-sending::after{animation:none;content:\"...\";}}",
       "@media (max-height:650px){#" + ROOT_ID + " .dm-form-card{padding:16px 18px;}#" + ROOT_ID + " .dm-form-head{min-height:48px;}#" + ROOT_ID + " .dm-form-mark{width:39px;height:44px;}#" + ROOT_ID + " .dm-form-sub{margin-top:6px;font-size:12.5px;}#" + ROOT_ID + " .dm-form-fields{margin-top:12px;gap:8px;}#" + ROOT_ID + " .dm-form-input,#" + ROOT_ID + " .dm-form-textarea{padding:8px 10px;font-size:13px;}#" + ROOT_ID + " .dm-form-textarea{min-height:56px;max-height:80px;}#" + ROOT_ID + " .dm-form-submit{height:40px;margin-top:8px;}#" + ROOT_ID + " .dm-form-cancel{margin-top:4px;padding:4px;}}"
@@ -223,6 +227,7 @@
     var card = root.querySelector(".dm-form-card");
     var mark = card.querySelector(".dm-form-mark");
     var markHtml = mark ? mark.outerHTML : "";
+    card.classList.add("dm-form-compact");
     card.innerHTML = [
       '<div class="dm-form-success">',
       '  <div class="dm-form-head">',
@@ -230,8 +235,8 @@
       '    <h2 class="dm-form-title">Received.</h2>',
       "    " + markHtml,
       "  </div>",
-      '  <p>Thanks — the Damaros team will follow up directly.</p>',
-      '  <button type="button" class="dm-form-submit" data-close style="margin-top:22px;">Done</button>',
+      '  <p>The Damaros team will follow up directly.</p>',
+      '  <button type="button" class="dm-form-submit dm-form-done" data-close>Done</button>',
       "</div>"
     ].join("");
     card.querySelector("[data-close]").addEventListener("click", closeForm);
