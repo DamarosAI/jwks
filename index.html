@@ -27,6 +27,7 @@
 </script>
 <script src="./support.js" defer></script>
 <script src="./mail-cta.js?v=4" defer></script>
+<script src="./logo-marquee.js?v=1" defer></script>
 <script>
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 window.scrollTo(0, 0);
@@ -300,7 +301,11 @@ window.scrollTo(0, 0);
     .dm-input-cards{display:flex;flex-direction:column;gap:12px;}
     .dm-spine-indicator{display:none;}
     .dm-cta-tap{display:none;}
-    @keyframes dmLogoScroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+    /* Shift by one logo-set width (set via --dm-logo-shift) for a seamless loop */
+    @keyframes dmLogoScroll{from{transform:translateX(0);}to{transform:translateX(calc(-1 * var(--dm-logo-shift,50%)));}}
+    .dm-logo-tile img{display:block;max-width:100%;height:auto;}
+    .dm-logo-tile:has(img:not([src])),
+    .dm-logo-tile:has(img.dm-logo-broken){display:none !important;}
 
     /* ---- caption hint hidden + tap label where the demo autoplays ---- */
     @media (max-width:760px),(pointer:coarse){
@@ -318,8 +323,9 @@ window.scrollTo(0, 0);
       .dm-site header nav a[href^="mailto"]{height:34px !important;padding:0 14px !important;font-size:11px !important;}
 
       .dm-site .dm-logowall{flex-wrap:nowrap;overflow:hidden;justify-content:flex-start;gap:0;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);}
-      .dm-site .dm-logo-track{display:flex !important;flex-wrap:nowrap;width:max-content;animation:dmLogoScroll 26s linear infinite;}
+      .dm-site .dm-logo-track{display:flex !important;flex-wrap:nowrap;width:max-content;will-change:transform;animation:dmLogoScroll 28s linear infinite;}
       .dm-site .dm-logo-set{display:flex !important;flex-wrap:nowrap;align-items:center;gap:14px;padding-right:14px;flex:0 0 auto;}
+      .dm-site .dm-logo-dupe{display:flex !important;}
       .dm-site .dm-logo-tile{flex:0 0 auto;width:138px !important;height:62px !important;padding:0 18px !important;}
 
       .dm-site #spine .dm-spine-grid,.dm-site #agents .dm-agents-grid{display:flex !important;grid-template-columns:none !important;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;margin-top:24px;scrollbar-width:none;-ms-overflow-style:none;padding-bottom:2px;-webkit-overflow-scrolling:touch;}
@@ -1075,6 +1081,13 @@ window.scrollTo(0, 0);
           <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/330px-2011.Cerner.logo.png" alt="" style="max-width:100%;max-height:30px;object-fit:contain;display:block;"></div>
           <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/pasted-1782493762954-0.png" alt="" style="max-width:100%;max-height:48px;object-fit:contain;display:block;"></div>
         </div>
+        <div class="dm-logo-set dm-logo-dupe" aria-hidden="true">
+          <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/pasted-1782494614917-0.png" alt="" style="max-width:100%;max-height:30px;object-fit:contain;display:block;"></div>
+          <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/pasted-1782492887940-0.png" alt="" style="max-width:100%;max-height:22px;object-fit:contain;display:block;"></div>
+          <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/epic-systems-corporation-seeklogo.png" alt="" style="max-width:100%;max-height:38px;object-fit:contain;display:block;"></div>
+          <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/330px-2011.Cerner.logo.png" alt="" style="max-width:100%;max-height:30px;object-fit:contain;display:block;"></div>
+          <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/pasted-1782493762954-0.png" alt="" style="max-width:100%;max-height:48px;object-fit:contain;display:block;"></div>
+        </div>
         </div>
       </div>
     </div>
@@ -1089,14 +1102,14 @@ window.scrollTo(0, 0);
         <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The problem</div>
         <h2 style="margin:0;max-width:15ch;font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,4.2vw,3.3rem);line-height:1.0;letter-spacing:-0.03em;text-wrap:balance;">Care is everywhere.<br><span style="color:var(--ink-steel);">Clinical trials aren't.</span></h2>
         <p style="margin:20px 0 0;max-width:46ch;font-size:clamp(1.05rem,1.4vw,1.18rem);line-height:1.5;color:var(--ink-quiet);">CTMS tracks it. EDC captures it. eTMF files it. <span style="color:var(--ink-cold);font-weight:600;">But execution is still missing:</span> turning a protocol into a patient who can actually be screened.</p>
-        <p style="margin:14px 0 0;max-width:46ch;font-size:clamp(1.05rem,1.4vw,1.18rem);line-height:1.5;color:var(--ink-quiet);">The work still lives in the gap: charts, labs, notes, criteria, coordinator judgment, PI review, and proof rebuilt later. NCI academic centers feel it first — more protocols per coordinator, enrollment on the scorecard. The same runtime then scales down to community sites, where most patients already are.</p>
+        <p style="margin:14px 0 0;max-width:46ch;font-size:clamp(1.05rem,1.4vw,1.18rem);line-height:1.5;color:var(--ink-quiet);">The work still lives in the gap: charts, labs, notes, criteria, coordinator judgment, PI review, and proof rebuilt later. NCI academic centers feel it first: more protocols per coordinator, enrollment on the scorecard. The same runtime then scales down to community sites, where most patients already are.</p>
       </div>
       <div class="dm-stat-grid" style="display:flex;flex-direction:column;gap:12px;">
         <div class="dm-card-lift" style="display:flex;align-items:center;padding:20px 24px;border-radius:14px;">
           <div style="flex-shrink:0;width:118px;text-align:center;font-family:var(--font-display);font-size:clamp(2.4rem,3.2vw,3.1rem);font-weight:700;letter-spacing:-0.03em;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink-cold);">~22<span style="font-size:0.44em;color:var(--ink-steel);vertical-align:0.6em;font-weight:600;margin-left:1px;">%</span></div>
           <div style="width:1px;align-self:stretch;background:rgba(31,45,61,0.12);margin:1px 22px;"></div>
           <div style="min-width:0;">
-            <p style="margin:0;font-size:13px;line-height:1.45;color:var(--ink-quiet);">enroll at NCI-designated cancer centers — still leaving most eligible patients unmatched; community programs see ~4%.</p>
+            <p style="margin:0;font-size:13px;line-height:1.45;color:var(--ink-quiet);">enroll at NCI-designated cancer centers, still leaving most eligible patients unmatched; community programs see ~4%.</p>
             <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-top:7px;">JNCI Cancer Spectrum</div>
           </div>
         </div>
@@ -1104,7 +1117,7 @@ window.scrollTo(0, 0);
           <div style="flex-shrink:0;width:118px;text-align:center;font-family:var(--font-display);font-size:clamp(2.4rem,3.2vw,3.1rem);font-weight:700;letter-spacing:-0.03em;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink-cold);">~80<span style="font-size:0.44em;color:var(--ink-steel);vertical-align:0.6em;font-weight:600;margin-left:1px;">%</span></div>
           <div style="width:1px;align-self:stretch;background:rgba(31,45,61,0.12);margin:1px 22px;"></div>
           <div style="min-width:0;">
-            <p style="margin:0;font-size:13px;line-height:1.45;color:var(--ink-quiet);">of cancer patients are treated in community clinics — where the same runtime expands after academic centers prove it.</p>
+            <p style="margin:0;font-size:13px;line-height:1.45;color:var(--ink-quiet);">of cancer patients are treated in community clinics, where the same runtime expands after academic centers prove it.</p>
             <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-top:7px;">Community Oncology Alliance</div>
           </div>
         </div>
@@ -1112,7 +1125,7 @@ window.scrollTo(0, 0);
           <div style="flex-shrink:0;width:118px;text-align:center;font-family:var(--font-display);font-size:clamp(2.4rem,3.2vw,3.1rem);font-weight:700;letter-spacing:-0.03em;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink-cold);">20<span style="font-size:0.44em;color:var(--ink-steel);vertical-align:0.6em;font-weight:600;margin-left:1px;">+</span></div>
           <div style="width:1px;align-self:stretch;background:rgba(31,45,61,0.12);margin:1px 22px;"></div>
           <div style="min-width:0;">
-            <p style="margin:0;font-size:13px;line-height:1.45;color:var(--ink-quiet);">disconnected systems the average site runs daily — acute at NCI centers carrying dozens of open protocols.</p>
+            <p style="margin:0;font-size:13px;line-height:1.45;color:var(--ink-quiet);">disconnected systems the average site runs daily: acute at NCI centers carrying dozens of open protocols.</p>
             <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-top:7px;">SCRS · WCG</div>
           </div>
         </div>
