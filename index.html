@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Damaros™</title>
 <meta name="color-scheme" content="light">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#f0f5f9">
 <link rel="canonical" href="https://www.damaros.ai/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -61,8 +61,8 @@ window.scrollTo(0, 0);
       --surface-highlight:rgba(20,33,48,0.06);
       --glass-ring:inset 0 0 0 1px rgba(20,33,48,0.12);
     }
-    html{scroll-behavior:auto;scroll-padding-top:62px;}
-    body{margin:0;background:#f8fafb;color:var(--ink-cold);font-family:var(--font-body);font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+    html{scroll-behavior:auto;scroll-padding-top:62px;background:#f0f5f9;min-height:100%;min-height:100dvh;}
+    body{margin:0;background:#f0f5f9;color:var(--ink-cold);font-family:var(--font-body);font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100%;min-height:100dvh;}
     .eyeScroll{scrollbar-width:thin;scrollbar-color:rgba(31,45,61,0.28) transparent;}
     .eyeScroll::-webkit-scrollbar{width:8px;height:8px;}
     .eyeScroll::-webkit-scrollbar-track{background:transparent;}
@@ -87,9 +87,9 @@ window.scrollTo(0, 0);
     .dm-card-lift{background:linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(250,252,254,0.88) 100%);border:1px solid rgba(31,45,61,0.09);box-shadow:0 1px 2px rgba(20,40,70,0.03);transition:transform 220ms cubic-bezier(0.16,1,0.3,1),box-shadow 220ms ease,border-color 220ms ease;}
     .dm-card-lift.dm-card-record{background:linear-gradient(180deg, rgba(234,242,248,0.82) 0%, rgba(255,255,255,0.96) 42%, rgba(250,252,254,0.88) 100%);border:1px solid rgba(31,45,61,0.12);box-shadow:0 1px 2px rgba(20,40,70,0.03), 0 18px 48px rgba(20,40,70,0.06);}
     .dm-logo-tile{background:linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(250,252,254,0.88) 100%) !important;}
-    .dm-site{background:linear-gradient(180deg,#f3f8fb 0%,#e7eef6 10%,#fafcfd 22%,#eff4f8 34%,#e5edf5 46%,#f6f9fb 58%,#e3ecf5 70%,#eff4f8 82%,#e8eff6 92%,#f0f5f9 100%);background-color:#f0f5f9;}
+    .dm-site{background:linear-gradient(180deg,#f3f8fb 0%,#e7eef6 10%,#fafcfd 22%,#eff4f8 34%,#e5edf5 46%,#f6f9fb 58%,#e3ecf5 70%,#eff4f8 82%,#e8eff6 92%,#f0f5f9 100%);background-color:#f0f5f9;min-height:100%;min-height:100dvh;}
     .dm-site section{background:transparent !important;}
-    .dm-site footer{background:transparent !important;}
+    .dm-site footer{background:#f0f5f9 !important;padding-bottom:max(clamp(40px,6vw,64px),calc(28px + env(safe-area-inset-bottom,0px))) !important;}
     @media (hover:hover) and (pointer:fine){
       .dm-card-lift:hover{transform:translateY(-3px);border-color:color-mix(in srgb,#2f6193 32%,transparent) !important;box-shadow:0 12px 30px rgba(20,40,70,0.1) !important;}
     }
@@ -187,48 +187,69 @@ window.scrollTo(0, 0);
       .dm-site #replay [style*="grid-template-columns"]{
         overflow-x:auto !important;
       }
-      /* Full-viewport hero + close on tablet/phone — shared centered composition */
+      /* Full-viewport hero + close on tablet/phone — drum reads through smaller type */
       .dm-site section[data-screen-label="Hero"],
       .dm-site section[data-screen-label="Close"]{
         min-height:calc(100svh - 62px) !important;
-        height:calc(100svh - 62px) !important;
         min-height:calc(100dvh - 62px) !important;
-        height:calc(100dvh - 62px) !important;
-        padding:clamp(28px,6vw,48px) clamp(20px,5vw,32px) !important;
+        height:auto !important;
+        padding:clamp(20px,4vw,36px) clamp(20px,5vw,32px) max(16px,env(safe-area-inset-bottom,0px)) !important;
         display:flex !important;
         flex-direction:column !important;
-        justify-content:center !important;
+        justify-content:flex-start !important;
         align-items:center !important;
         box-sizing:border-box !important;
       }
+      .dm-site section[data-screen-label="Hero"]{
+        height:calc(100svh - 62px) !important;
+        height:calc(100dvh - 62px) !important;
+      }
+      /* Close grows to absorb footer so iOS never shows a white strip below */
+      .dm-site section[data-screen-label="Close"]{
+        min-height:calc(100svh - 62px) !important;
+        min-height:calc(100dvh - 62px) !important;
+        flex:1 0 auto;
+      }
       .dm-site section[data-screen-label="Hero"] > .dm-hero-mark,
       .dm-site section[data-screen-label="Close"] > .dm-hero-mark{
-        top:50% !important;
+        top:52% !important;
         left:50% !important;
-        width:min(88vw,520px) !important;
-        height:min(88vw,520px) !important;
+        width:min(92vw,480px) !important;
+        height:min(92vw,480px) !important;
+        opacity:0.95;
       }
       .dm-site section[data-screen-label="Hero"] > .dm-hero-copy,
       .dm-site section[data-screen-label="Close"] > .dm-hero-copy{
         width:100%;
-        max-width:min(560px,100%) !important;
+        max-width:min(520px,100%) !important;
         margin:0 auto !important;
+        flex:1 1 auto;
+        min-height:0;
         display:flex;
         flex-direction:column;
         align-items:center;
-        justify-content:center;
+        justify-content:flex-start;
+        padding-top:clamp(36px,9vh,72px);
       }
       .dm-site section[data-screen-label="Hero"] h1,
       .dm-site section[data-screen-label="Close"] h2{
-        font-size:clamp(2.15rem,6.2vw,3.1rem) !important;
-        line-height:1.02 !important;
+        font-size:clamp(1.55rem,5.4vw,1.95rem) !important;
+        line-height:1.12 !important;
+        max-width:18ch;
+        margin-left:auto;
+        margin-right:auto;
       }
       .dm-site section[data-screen-label="Hero"] .dm-hero-cta,
       .dm-site section[data-screen-label="Close"] .dm-hero-cta{
-        margin-top:clamp(22px,4.5vw,30px) !important;
+        margin-top:clamp(40px,9vh,72px) !important;
       }
       .dm-site section[data-screen-label="Hero"] .dm-hero-demo{
-        margin-top:clamp(28px,5vw,46px) !important;
+        margin-top:auto !important;
+        margin-bottom:clamp(8px,2vh,18px) !important;
+        padding-bottom:4px;
+      }
+      .dm-site section[data-screen-label="Close"] .dm-hero-cta{
+        margin-top:clamp(48px,11vh,88px) !important;
       }
     }
 
@@ -236,21 +257,25 @@ window.scrollTo(0, 0);
     @media (max-width:900px) and (max-height:520px){
       .dm-site section[data-screen-label="Hero"],
       .dm-site section[data-screen-label="Close"]{
-        padding-top:16px !important;
-        padding-bottom:16px !important;
+        padding-top:12px !important;
+        padding-bottom:10px !important;
       }
       .dm-site section[data-screen-label="Hero"] > .dm-hero-mark,
       .dm-site section[data-screen-label="Close"] > .dm-hero-mark{
-        width:min(58vh,360px) !important;
-        height:min(58vh,360px) !important;
+        width:min(52vh,320px) !important;
+        height:min(52vh,320px) !important;
+      }
+      .dm-site section[data-screen-label="Hero"] > .dm-hero-copy,
+      .dm-site section[data-screen-label="Close"] > .dm-hero-copy{
+        padding-top:12px !important;
       }
       .dm-site section[data-screen-label="Hero"] h1,
       .dm-site section[data-screen-label="Close"] h2{
-        font-size:clamp(1.45rem,7.5vh,2.1rem) !important;
+        font-size:clamp(1.2rem,5.5vh,1.55rem) !important;
       }
       .dm-site section[data-screen-label="Hero"] .dm-hero-cta,
-      .dm-site section[data-screen-label="Close"] .dm-hero-cta{margin-top:14px !important;}
-      .dm-site section[data-screen-label="Hero"] .dm-hero-demo{margin-top:16px !important;}
+      .dm-site section[data-screen-label="Close"] .dm-hero-cta{margin-top:18px !important;}
+      .dm-site section[data-screen-label="Hero"] .dm-hero-demo{margin-top:auto !important;margin-bottom:4px !important;}
     }
     @media (max-width:680px){
       .dm-site #instrument{
@@ -317,28 +342,32 @@ window.scrollTo(0, 0);
       .dm-site #problem .dm-stat-grid p{font-size:11px !important;line-height:1.32 !important;}
       .dm-site #problem .dm-stat-grid [style*="text-transform:uppercase"]{font-size:8px !important;margin-top:4px !important;}
       .dm-site footer{padding-left:16px !important;padding-right:16px !important;}
+      .dm-site header nav a[href="about.html"]{display:inline-flex !important;padding:8px 10px !important;font-size:13px !important;}
     }
 
     @media (max-width:480px){
-      .dm-site header nav a:not([href^="mailto"]),
+      /* Keep About visible next to Start a pilot; only drop the divider */
       .dm-site header nav > div{display:none !important;}
+      .dm-site header nav a[href="about.html"]{display:inline-flex !important;padding:8px 10px !important;font-size:13px !important;color:var(--ink-quiet) !important;}
       .dm-site section[data-screen-label="Hero"],
       .dm-site section[data-screen-label="Close"]{
         padding-left:max(18px,env(safe-area-inset-left,0px)) !important;
         padding-right:max(18px,env(safe-area-inset-right,0px)) !important;
-        padding-bottom:max(24px,env(safe-area-inset-bottom,0px)) !important;
+        padding-bottom:max(14px,env(safe-area-inset-bottom,0px)) !important;
       }
       .dm-site section[data-screen-label="Hero"] > .dm-hero-mark,
       .dm-site section[data-screen-label="Close"] > .dm-hero-mark{
-        width:min(94vw,400px) !important;
-        height:min(94vw,400px) !important;
+        width:min(90vw,360px) !important;
+        height:min(90vw,360px) !important;
       }
       .dm-site section[data-screen-label="Hero"] h1,
       .dm-site section[data-screen-label="Close"] h2{
-        font-size:clamp(2.05rem,9.2vw,2.55rem) !important;
-        max-width:16ch;
-        margin-left:auto;
-        margin-right:auto;
+        font-size:clamp(1.45rem,6.8vw,1.75rem) !important;
+        max-width:17ch;
+      }
+      .dm-site section[data-screen-label="Hero"] .dm-hero-cta,
+      .dm-site section[data-screen-label="Close"] .dm-hero-cta{
+        margin-top:clamp(44px,10vh,76px) !important;
       }
       .dm-site #output .dm-input-cards{grid-template-columns:1fr !important;}
       .dm-site #spine .dm-spine-grid > div,.dm-site #agents .dm-agents-grid > div{flex-basis:88% !important;}
@@ -351,7 +380,7 @@ window.scrollTo(0, 0);
   </style>
 </helmet>
 
-<div class="dm-site" style="min-height:100vh;overflow-x:hidden;display:flex;flex-direction:column;">
+<div class="dm-site" style="min-height:100vh;min-height:100dvh;overflow-x:hidden;display:flex;flex-direction:column;">
 
   <!-- ============ NAV ============ -->
   <header style="position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:18px;height:62px;padding:0 clamp(18px,5vw,40px);background:rgba(255,255,255,0.72);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);border-bottom:1px solid rgba(31,45,61,0.10);">
