@@ -225,23 +225,22 @@ window.scrollTo(0, 0);
         flex:1 1 auto;
         min-height:0;
         height:100%;
-        display:flex;
-        flex-direction:column;
-        align-items:center;
-        justify-content:center;
         position:relative;
         padding:0;
       }
-      /* Reserve bottom band so centered core sits on the drum, not the demo */
-      .dm-site section[data-screen-label="Hero"] > .dm-hero-copy{
-        padding-bottom:56px;
-      }
+      /* Lock geometric center of headline+CTA to drum center (50%/50%) */
       .dm-site section[data-screen-label="Hero"] .dm-hero-core,
       .dm-site section[data-screen-label="Close"] .dm-hero-core{
+        position:absolute;
+        top:50%;
+        left:50%;
+        transform:translate(-50%,-50%);
         display:flex;
         flex-direction:column;
         align-items:center;
         width:100%;
+        max-width:min(520px,100%);
+        z-index:1;
       }
       .dm-site section[data-screen-label="Hero"] h1,
       .dm-site section[data-screen-label="Close"] h2{
@@ -260,6 +259,7 @@ window.scrollTo(0, 0);
         bottom:max(8px,env(safe-area-inset-bottom,0px)) !important;
         transform:translateX(-50%);
         margin:0 !important;
+        z-index:1;
       }
     }
 
@@ -274,10 +274,6 @@ window.scrollTo(0, 0);
       .dm-site section[data-screen-label="Close"] > .dm-hero-mark{
         width:min(52vh,320px) !important;
         height:min(52vh,320px) !important;
-      }
-      .dm-site section[data-screen-label="Hero"] > .dm-hero-copy,
-      .dm-site section[data-screen-label="Close"] > .dm-hero-copy{
-        padding-bottom:44px !important;
       }
       .dm-site section[data-screen-label="Hero"] h1,
       .dm-site section[data-screen-label="Close"] h2{
