@@ -110,7 +110,7 @@ window.scrollTo(0, 0);
     html,body{overflow-x:clip;max-width:100%;}
     img,svg,video{max-width:100%;height:auto;}
     .dm-site{--dm-ref:1920px;width:100%;}
-    .dm-site section[id]:not(#instrument),[data-screen-label]:not([data-screen-label="Hero"]){content-visibility:auto;contain-intrinsic-size:1px 720px;}
+    .dm-site section[id]:not(#instrument),[data-screen-label]:not([data-screen-label="Hero"]):not([data-screen-label="Close"]){content-visibility:auto;contain-intrinsic-size:1px 720px;}
 
     /* ---- laptop / desktop fluid scale (<1920) ---- */
     @media (max-width:1919px){
@@ -187,11 +187,70 @@ window.scrollTo(0, 0);
       .dm-site #replay [style*="grid-template-columns"]{
         overflow-x:auto !important;
       }
-      .dm-site section[data-screen-label="Hero"]{
-        min-height:auto !important;
-        padding-top:clamp(40px,8vw,72px) !important;
-        padding-bottom:clamp(48px,8vw,80px) !important;
+      /* Full-viewport hero + close on tablet/phone — shared centered composition */
+      .dm-site section[data-screen-label="Hero"],
+      .dm-site section[data-screen-label="Close"]{
+        min-height:calc(100svh - 62px) !important;
+        height:calc(100svh - 62px) !important;
+        min-height:calc(100dvh - 62px) !important;
+        height:calc(100dvh - 62px) !important;
+        padding:clamp(28px,6vw,48px) clamp(20px,5vw,32px) !important;
+        display:flex !important;
+        flex-direction:column !important;
+        justify-content:center !important;
+        align-items:center !important;
+        box-sizing:border-box !important;
       }
+      .dm-site section[data-screen-label="Hero"] > .dm-hero-mark,
+      .dm-site section[data-screen-label="Close"] > .dm-hero-mark{
+        top:50% !important;
+        left:50% !important;
+        width:min(88vw,520px) !important;
+        height:min(88vw,520px) !important;
+      }
+      .dm-site section[data-screen-label="Hero"] > .dm-hero-copy,
+      .dm-site section[data-screen-label="Close"] > .dm-hero-copy{
+        width:100%;
+        max-width:min(560px,100%) !important;
+        margin:0 auto !important;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+      }
+      .dm-site section[data-screen-label="Hero"] h1,
+      .dm-site section[data-screen-label="Close"] h2{
+        font-size:clamp(2.15rem,6.2vw,3.1rem) !important;
+        line-height:1.02 !important;
+      }
+      .dm-site section[data-screen-label="Hero"] .dm-hero-cta,
+      .dm-site section[data-screen-label="Close"] .dm-hero-cta{
+        margin-top:clamp(22px,4.5vw,30px) !important;
+      }
+      .dm-site section[data-screen-label="Hero"] .dm-hero-demo{
+        margin-top:clamp(28px,5vw,46px) !important;
+      }
+    }
+
+    /* Short landscape phones — keep the same composition, compress spacing */
+    @media (max-width:900px) and (max-height:520px){
+      .dm-site section[data-screen-label="Hero"],
+      .dm-site section[data-screen-label="Close"]{
+        padding-top:16px !important;
+        padding-bottom:16px !important;
+      }
+      .dm-site section[data-screen-label="Hero"] > .dm-hero-mark,
+      .dm-site section[data-screen-label="Close"] > .dm-hero-mark{
+        width:min(58vh,360px) !important;
+        height:min(58vh,360px) !important;
+      }
+      .dm-site section[data-screen-label="Hero"] h1,
+      .dm-site section[data-screen-label="Close"] h2{
+        font-size:clamp(1.45rem,7.5vh,2.1rem) !important;
+      }
+      .dm-site section[data-screen-label="Hero"] .dm-hero-cta,
+      .dm-site section[data-screen-label="Close"] .dm-hero-cta{margin-top:14px !important;}
+      .dm-site section[data-screen-label="Hero"] .dm-hero-demo{margin-top:16px !important;}
     }
     @media (max-width:680px){
       .dm-site #instrument{
@@ -263,7 +322,24 @@ window.scrollTo(0, 0);
     @media (max-width:480px){
       .dm-site header nav a:not([href^="mailto"]),
       .dm-site header nav > div{display:none !important;}
-      .dm-site section[data-screen-label="Hero"] h1{font-size:clamp(1.85rem,9vw,2.4rem) !important;}
+      .dm-site section[data-screen-label="Hero"],
+      .dm-site section[data-screen-label="Close"]{
+        padding-left:max(18px,env(safe-area-inset-left,0px)) !important;
+        padding-right:max(18px,env(safe-area-inset-right,0px)) !important;
+        padding-bottom:max(24px,env(safe-area-inset-bottom,0px)) !important;
+      }
+      .dm-site section[data-screen-label="Hero"] > .dm-hero-mark,
+      .dm-site section[data-screen-label="Close"] > .dm-hero-mark{
+        width:min(94vw,400px) !important;
+        height:min(94vw,400px) !important;
+      }
+      .dm-site section[data-screen-label="Hero"] h1,
+      .dm-site section[data-screen-label="Close"] h2{
+        font-size:clamp(2.05rem,9.2vw,2.55rem) !important;
+        max-width:16ch;
+        margin-left:auto;
+        margin-right:auto;
+      }
       .dm-site #output .dm-input-cards{grid-template-columns:1fr !important;}
       .dm-site #spine .dm-spine-grid > div,.dm-site #agents .dm-agents-grid > div{flex-basis:88% !important;}
     }
@@ -292,16 +368,16 @@ window.scrollTo(0, 0);
   <span id="top"></span>
 
   <!-- ============ HERO ============ -->
-  <section data-screen-label="Hero" style="position:relative;min-height:calc(100vh - 62px);display:flex;flex-direction:column;justify-content:center;padding:clamp(64px,7vw,96px) clamp(20px,5vw,40px) clamp(72px,8vw,104px);overflow:hidden;">
-    <div aria-hidden="true" data-anim="" style="position:absolute;top:47%;left:50%;width:min(720px,104%);height:min(720px,104%);transform:translate(-50%,-50%);color:rgba(31,45,61,0.13);pointer-events:none;animation:dmDrift 18s ease-in-out infinite;"><svg viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="30" stroke-linejoin="round" stroke-linecap="round" style="width:100%;height:100%;"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg></div>
-    <div style="position:relative;max-width:980px;margin:0 auto;text-align:center;">
+  <section data-screen-label="Hero" style="position:relative;min-height:calc(100vh - 62px);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:clamp(64px,7vw,96px) clamp(20px,5vw,40px) clamp(72px,8vw,104px);overflow:hidden;">
+    <div class="dm-hero-mark" aria-hidden="true" data-anim="" style="position:absolute;top:50%;left:50%;width:min(720px,104%);height:min(720px,104%);transform:translate(-50%,-50%);color:rgba(31,45,61,0.13);pointer-events:none;animation:dmDrift 18s ease-in-out infinite;"><svg viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="30" stroke-linejoin="round" stroke-linecap="round" style="width:100%;height:100%;"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg></div>
+    <div class="dm-hero-copy" style="position:relative;max-width:980px;margin:0 auto;text-align:center;">
       
       <h1 style="margin:0;font-family:var(--font-display);font-weight:700;font-size:clamp(2.5rem,5.8vw,4.6rem);line-height:0.97;letter-spacing:-0.03em;text-wrap:balance;">The agentic execution platform <span style="color: var(--ink-steel);">for clinical trials.</span></h1>
 
-      <div style="display:flex;justify-content:center;margin-top:30px;">
+      <div class="dm-hero-cta" style="display:flex;justify-content:center;margin-top:30px;">
         <a href="mailto:team@damaros.ai?subject=Damaros%20Pilot%20Inquiry" style="display:inline-flex;align-items:center;justify-content:center;border-radius:999px;font-family:var(--font-display);font-weight:500;letter-spacing:0.03em;text-transform:uppercase;color:#ffffff;background:linear-gradient(180deg,#3d72a8,#2f6193);border:1px solid color-mix(in srgb,#2f6193 50%,rgba(255,255,255,0.22));box-shadow:inset 0 1px 0 rgba(255,255,255,0.2), 0 8px 20px rgba(20,46,82,0.16);white-space:nowrap;height:48px;padding:0 22px;font-size:13px;">Start a pilot</a>
       </div>
-      <button onClick="{{ onDemo }}" aria-label="Scroll to the live demo" style="margin:46px auto 0;display:flex;flex-direction:column;align-items:center;gap:7px;background:transparent;border:none;cursor:pointer;color:var(--ink-dim);">
+      <button class="dm-hero-demo" onClick="{{ onDemo }}" aria-label="Scroll to the live demo" style="margin:46px auto 0;display:flex;flex-direction:column;align-items:center;gap:7px;background:transparent;border:none;cursor:pointer;color:var(--ink-dim);">
         <span style="font-family:var(--font-display);font-size:10px;font-weight:800;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-cold);"><span class="dm-cta-click">See the live demo</span><span class="dm-cta-tap">See the live demo</span></span>
         <svg data-anim="" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 2s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg>
       </button>
@@ -1239,13 +1315,13 @@ window.scrollTo(0, 0);
   </section>
 
   <!-- ============ CLOSE ============ -->
-  <section id="close" data-screen-label="Close" style="position:relative;padding:clamp(80px,11vw,150px) clamp(20px,5vw,40px);overflow:hidden;">
-    <div aria-hidden="true" data-anim="" style="position:absolute;top:50%;left:50%;width:min(560px,90%);height:min(560px,90%);transform:translate(-50%,-50%);color:rgba(31,45,61,0.1);pointer-events:none;animation:dmDrift 18s ease-in-out infinite;">
+  <section id="close" data-screen-label="Close" style="position:relative;min-height:calc(100vh - 62px);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:clamp(80px,11vw,150px) clamp(20px,5vw,40px);overflow:hidden;">
+    <div class="dm-hero-mark" aria-hidden="true" data-anim="" style="position:absolute;top:50%;left:50%;width:min(720px,104%);height:min(720px,104%);transform:translate(-50%,-50%);color:rgba(31,45,61,0.13);pointer-events:none;animation:dmDrift 18s ease-in-out infinite;">
       <svg viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="30" stroke-linejoin="round" stroke-linecap="round" style="width:100%;height:100%;"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg>
     </div>
-    <div class="dm-scroll-target" style="position:relative;max-width:880px;margin:0 auto;text-align:center;">
-      <h2 style="margin:0;font-family:var(--font-display);font-weight:700;font-size:clamp(2.3rem,5.4vw,4rem);line-height:0.98;letter-spacing:-0.03em;text-wrap:balance;">Trial delays are <span style="color:var(--ink-steel);">treatment delays.</span></h2>
-      <div style="display:flex;justify-content:center;margin-top:32px;">
+    <div class="dm-scroll-target dm-hero-copy" style="position:relative;max-width:980px;margin:0 auto;text-align:center;">
+      <h2 style="margin:0;font-family:var(--font-display);font-weight:700;font-size:clamp(2.5rem,5.8vw,4.6rem);line-height:0.97;letter-spacing:-0.03em;text-wrap:balance;">Trial delays are <span style="color:var(--ink-steel);">treatment delays.</span></h2>
+      <div class="dm-hero-cta" style="display:flex;justify-content:center;margin-top:30px;">
         <a href="mailto:team@damaros.ai?subject=Damaros%20Pilot%20Inquiry" style="display:inline-flex;align-items:center;justify-content:center;border-radius:999px;font-family:var(--font-display);font-weight:500;letter-spacing:0.03em;text-transform:uppercase;color:#ffffff;background:linear-gradient(180deg,#3d72a8,#2f6193);border:1px solid color-mix(in srgb,#2f6193 50%,rgba(255,255,255,0.22));box-shadow:inset 0 1px 0 rgba(255,255,255,0.2), 0 8px 20px rgba(20,46,82,0.16);white-space:nowrap;height:48px;padding:0 22px;font-size:13px;">Start a pilot</a>
       </div>
     </div>
