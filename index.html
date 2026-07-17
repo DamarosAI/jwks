@@ -165,7 +165,7 @@ window.scrollTo(0, 0);
       }
     }
 
-    /* ---- 13–15" laptop ---- */
+    /* ---- 13-15" laptop ---- */
     @media (min-width:901px) and (max-width:1280px){
       .dm-site section[data-screen-label="Hero"] h1{font-size:clamp(2.2rem,4.2vw,3.4rem) !important;}
       .dm-site #spine [style*="grid-template-columns:repeat(5"]{gap:10px !important;}
@@ -188,7 +188,7 @@ window.scrollTo(0, 0);
       .dm-site #replay [style*="grid-template-columns"]{
         overflow-x:auto !important;
       }
-      /* Full-viewport hero + close — headline/CTA centered on drum; demo at bottom */
+      /* Full-viewport hero + close - headline/CTA centered on drum; demo at bottom */
       .dm-site section[data-screen-label="Hero"],
       .dm-site section[data-screen-label="Close"]{
         min-height:calc(100svh - 62px) !important;
@@ -264,7 +264,7 @@ window.scrollTo(0, 0);
       }
     }
 
-    /* Short landscape phones — keep the same composition, compress spacing */
+    /* Short landscape phones - keep the same composition, compress spacing */
     @media (max-width:900px) and (max-height:520px){
       .dm-site section[data-screen-label="Hero"],
       .dm-site section[data-screen-label="Close"]{
@@ -1539,12 +1539,12 @@ class Component extends DCLogic {
 
   snCapDefs = [ { k: "molecular", label: "Molecular" }, { k: "infusion", label: "Infusion" }, { k: "imaging", label: "Imaging" }, { k: "phase1", label: "Phase I" } ];
   snTrials = [
-    { nct: "NCT00000211", name: "AXL-211 \u00b7 EGFR+ NSCLC (post-TKI)", phase: "Ph II", needs: ["molecular", "infusion", "imaging"], base: 46, concepts: ["EGFR T790M / C797S", "NSCLC IIIB–IV", "post-osimertinib", "MET-amp allowed", "ECOG 0–1"], overlap: "EGFR \u00b7 NSCLC \u00b7 post-TKI" },
+    { nct: "NCT00000211", name: "AXL-211 \u00b7 EGFR+ NSCLC (post-TKI)", phase: "Ph II", needs: ["molecular", "infusion", "imaging"], base: 46, concepts: ["EGFR T790M / C797S", "NSCLC IIIB-IV", "post-osimertinib", "MET-amp allowed", "ECOG 0-1"], overlap: "EGFR \u00b7 NSCLC \u00b7 post-TKI" },
     { nct: "NCT00000009", name: "AVT-9 \u00b7 KRAS G12C solid tumor", phase: "Ph I/II", needs: ["molecular", "phase1"], base: 40, concepts: ["KRAS G12C", "solid tumor", "dose-escalation", "prior IO allowed"], overlap: "KRAS \u00b7 biomarker" },
     { nct: "NCT00000031", name: "HEM-31 \u00b7 second-line DLBCL", phase: "Ph II", needs: ["infusion", "imaging"], base: 42, concepts: ["DLBCL", "second line", "PET-avid", "CAR-T naive"], overlap: "lymphoma \u00b7 imaging" },
     { nct: "NCT00000007", name: "IMM-7 \u00b7 adjuvant melanoma", phase: "Ph II", needs: ["infusion"], base: 36, concepts: ["melanoma", "resected stage III", "adjuvant", "BRAF any"], overlap: "immuno \u00b7 adjuvant" },
-    { nct: "NCT00000012", name: "NEU-12 \u00b7 early Alzheimer", phase: "Ph II", needs: ["imaging", "phase1"], base: 30, concepts: ["early Alzheimer", "amyloid PET+", "MMSE 20–26"], overlap: "CNS \u00b7 PET" },
-    { nct: "NCT00000002", name: "CARD-2 \u00b7 HFrEF device", phase: "Ph III", needs: ["imaging"], base: 33, concepts: ["HFrEF", "EF ≤ 35%", "NYHA II–III"], overlap: "cardiology" },
+    { nct: "NCT00000012", name: "NEU-12 \u00b7 early Alzheimer", phase: "Ph II", needs: ["imaging", "phase1"], base: 30, concepts: ["early Alzheimer", "amyloid PET+", "MMSE 20-26"], overlap: "CNS \u00b7 PET" },
+    { nct: "NCT00000002", name: "CARD-2 \u00b7 HFrEF device", phase: "Ph III", needs: ["imaging"], base: 33, concepts: ["HFrEF", "EF ≤ 35%", "NYHA II-III"], overlap: "cardiology" },
     { nct: "NCT00000058", name: "ONC-58 · HER2-low breast", phase: "Ph II", needs: ["molecular", "infusion"], base: 39, concepts: ["HER2-low", "IHC 1+ / 2+", "≥ 1 prior line", "HR any"], overlap: "HER2 · breast" },
     { nct: "NCT00000076", name: "GI-76 · MSI-high colorectal", phase: "Ph II", needs: ["molecular", "imaging"], base: 35, concepts: ["MSI-high / dMMR", "metastatic CRC", "IO-naive"], overlap: "GI · biomarker" },
     { nct: "NCT00000090", name: "RESP-90 · severe asthma", phase: "Ph III", needs: ["infusion"], base: 29, concepts: ["eosinophilic", "FEV1 < 80%", "biologic-naive"], overlap: "respiratory" }
@@ -1706,7 +1706,7 @@ class Component extends DCLogic {
 
   evReqs = [
     { code: "I-2.1", fact: "EGFR / ALK molecular status", state: "missing", trigger: "MISSING_SOURCE", blocks: "blocks 14 review · 6 fail", requiredBy: "Inclusion I-2.1 · Exclusion E-4.2", sources: "Pathology DiagnosticReport · molecular PDF (DocumentReference) · sponsor packet · external lab (manual)", current: "Ordered, no final report found", checked: "Epic FHIR 09:42 · Pathology 09:43", action: "Request molecular report", patients: [ { n: "Andre Coleman", id: "S-1066", st: "missing", src: "No source found", date: "·" }, { n: "Lena Marsh", id: "S-1071", st: "ambiguous", src: "Outside-lab PDF · unmapped", date: "06-12" }, { n: "Ivan Petrov", id: "S-1075", st: "missing", src: "Order placed · pending", date: "06-19" }, { n: "Nadia Frost", id: "S-1129", st: "missing", src: "No source found", date: "·" } ] },
-    { code: "E-4.2", fact: "ECOG performance status 0–1", state: "conflict", trigger: "CONFLICTING_SOURCE", blocks: "blocks 5 review", requiredBy: "Exclusion E-4.2", sources: "Structured Observation · oncology progress note", current: "Structured = 1, note = 2, conflict", checked: "Epic FHIR 09:42", action: "Route to PI review", patients: [ { n: "Marcus Bell", id: "S-1047", st: "conflict", src: "Obs 1 · note 2", date: "06-20" }, { n: "Owen Park", id: "S-1118", st: "conflict", src: "Note reads PS 2", date: "06-17" }, { n: "Tess Vaughn", id: "S-1124", st: "conflict", src: "Two visits disagree", date: "06-15" } ] },
+    { code: "E-4.2", fact: "ECOG performance status 0-1", state: "conflict", trigger: "CONFLICTING_SOURCE", blocks: "blocks 5 review", requiredBy: "Exclusion E-4.2", sources: "Structured Observation · oncology progress note", current: "Structured = 1, note = 2, conflict", checked: "Epic FHIR 09:42", action: "Route to PI review", patients: [ { n: "Marcus Bell", id: "S-1047", st: "conflict", src: "Obs 1 · note 2", date: "06-20" }, { n: "Owen Park", id: "S-1118", st: "conflict", src: "Note reads PS 2", date: "06-17" }, { n: "Tess Vaughn", id: "S-1124", st: "conflict", src: "Two visits disagree", date: "06-15" } ] },
     { code: "I-3.4", fact: "CMP within 7-day window", state: "stale", trigger: "STALE_SOURCE", blocks: "blocks 2 review", requiredBy: "Inclusion I-3.4", sources: "Chemistry panel Observation", current: "Last CMP 11 days old", checked: "Epic FHIR 09:42", action: "Request CMP order", patients: [ { n: "Patricia Voss", id: "S-1051", st: "stale", src: "K⁺ 5.0 · drawn 06-09", date: "06-09" }, { n: "Henry Cole", id: "S-1095", st: "stale", src: "CMP past freshness", date: "06-08" } ] },
     { code: "E-5.3", fact: "≥ 21-day prior-therapy washout", state: "ambiguous", trigger: "TEMPORAL_EDGE", blocks: "blocks 3 review", requiredBy: "Exclusion E-5.3", sources: "MedicationAdministration · discharge DocumentReference", current: "Last-dose date unclear, 05-30 vs 06-02", checked: "Epic FHIR 09:42", action: "Coordinator chart review", patients: [ { n: "Raymond Tan", id: "S-1078", st: "conflict", src: "Infusion 05-30 · DC 06-02", date: "06-02" }, { n: "Sofia Reyes", id: "S-1083", st: "conflict", src: "Infusion vs dispense", date: "05-31" }, { n: "Cole Adams", id: "S-1088", st: "missing", src: "Therapy inside window", date: "06-04" } ] },
     { code: "I-1.1", fact: "Histologically confirmed NSCLC", state: "ready", trigger: "READY", blocks: "all evidence ready", requiredBy: "Inclusion I-1.1", sources: "Pathology DiagnosticReport", current: "Confirmed, adenocarcinoma, stage IIIB", checked: "Pathology 09:43", action: "Confirm eligibility", patients: [] }
@@ -1715,10 +1715,10 @@ class Component extends DCLogic {
   scQueue = [
     { id: "S-1066", name: "Andre Coleman", st: "REVIEW", crit: "I-2.1 · biomarker missing", trig: "MISSING_SOURCE", owner: "Maya R.", ci: 1, blocker: "I-2.1 · EGFR / ALK molecular status", rule: "EGFR / ALK status required before randomization.", facts: ["No molecular DiagnosticReport found", "Order placed 06-19 · no result"], sources: ["(awaiting) DiagnosticReport", "DocumentReference · none"], result: "REVIEW, not FAIL", reason: "Required source not yet received", rec: "Request molecular report from pathology / external lab." },
     { id: "S-1051", name: "Patricia Voss", st: "REVIEW", crit: "I-3.4 · CMP stale", trig: "STALE_SOURCE", owner: "Devon K.", ci: 2, blocker: "I-3.4 · serum chemistry within window", rule: "CMP must be drawn within 7 days of C1D1.", facts: ["K⁺ 5.0 mmol/L drawn 06-09", "11 days old at evaluation"], sources: ["Observation/chem-5521"], result: "REVIEW, not FAIL", reason: "Evidence outside freshness window", rec: "Request a repeat CMP; PI / sub-I signs the order. Likely fixable." },
-    { id: "S-1047", name: "Marcus Bell", st: "REVIEW", crit: "E-4.2 · ECOG conflict", trig: "CONFLICTING_SOURCE", owner: "Maya R.", ci: 0, blocker: "E-4.2 · ECOG performance status", rule: "ECOG must be 0–1, assessed within 14 days of C1D1.", facts: ["Structured Observation: ECOG 1 (06-18)", "Oncology note: ECOG 2 (06-20)"], sources: ["Observation/ecog-8841", "DocumentReference/note-2207"], result: "REVIEW, not FAIL", reason: "Conflicting source facts", rec: "Route to PI; coordinator verifies the latest ECOG." },
+    { id: "S-1047", name: "Marcus Bell", st: "REVIEW", crit: "E-4.2 · ECOG conflict", trig: "CONFLICTING_SOURCE", owner: "Maya R.", ci: 0, blocker: "E-4.2 · ECOG performance status", rule: "ECOG must be 0-1, assessed within 14 days of C1D1.", facts: ["Structured Observation: ECOG 1 (06-18)", "Oncology note: ECOG 2 (06-20)"], sources: ["Observation/ecog-8841", "DocumentReference/note-2207"], result: "REVIEW, not FAIL", reason: "Conflicting source facts", rec: "Route to PI; coordinator verifies the latest ECOG." },
     { id: "S-1078", name: "Raymond Tan", st: "REVIEW", crit: "E-5.3 · washout edge", trig: "TEMPORAL_EDGE", owner: "Devon K.", ci: 3, blocker: "E-5.3 · ≥ 21-day prior-therapy washout", rule: "≥ 21 days between last systemic therapy and C1D1.", facts: ["Infusion record: 05-30", "Discharge summary: 06-02"], sources: ["MedicationAdministration/inf-771", "DocumentReference/dc-3390"], result: "REVIEW, not FAIL", reason: "Last-dose date ambiguous across sources", rec: "Coordinator confirms last-dose date from infusion records." },
     { id: "S-1088", name: "Cole Adams", st: "FAIL", crit: "I-1.1 · histology mismatch", trig: "", owner: "Unassigned", ci: null, blocker: "I-1.1 · histologically confirmed NSCLC", rule: "Histologically confirmed NSCLC required.", facts: ["Pathology: small-cell carcinoma (SCLC)", "No NSCLC component"], sources: ["Pathology DiagnosticReport/path-3310"], result: "FAIL, hard", reason: "Confirmed SCLC; protocol requires NSCLC", rec: "Hard fail. Not NSCLC; no path to enrollment." },
-    { id: "S-1093", name: "Dale Hooper", st: "FAIL", crit: "I-4.2 · ECOG 3", trig: "", owner: "Unassigned", ci: null, blocker: "I-4.2 · ECOG 0–1", rule: "ECOG performance status 0–1 required.", facts: ["ECOG 3 documented 06-18", "Declining performance status"], sources: ["Observation/ecog-7782"], result: "FAIL, hard", reason: "ECOG 3 exceeds the protocol limit", rec: "Hard fail. Performance status ineligible." },
+    { id: "S-1093", name: "Dale Hooper", st: "FAIL", crit: "I-4.2 · ECOG 3", trig: "", owner: "Unassigned", ci: null, blocker: "I-4.2 · ECOG 0-1", rule: "ECOG performance status 0-1 required.", facts: ["ECOG 3 documented 06-18", "Declining performance status"], sources: ["Observation/ecog-7782"], result: "FAIL, hard", reason: "ECOG 3 exceeds the protocol limit", rec: "Hard fail. Performance status ineligible." },
     { id: "S-1109", name: "Bea Quist", st: "FAIL", crit: "E-7 · active CNS metastases", trig: "", owner: "Unassigned", ci: null, blocker: "E-7 · no active CNS metastases", rule: "No active, untreated CNS metastases on steroids.", facts: ["MRI: active untreated CNS lesions", "On dexamethasone"], sources: ["DocumentReference/mri-5567"], result: "FAIL, hard", reason: "Active untreated CNS metastases on steroids", rec: "Hard fail per exclusion E-7." },
     { id: "S-1044", name: "Ruth Bauer", st: "ELIGIBLE", crit: "All criteria met · confirm", trig: "", owner: "Maya R.", ci: null, blocker: "None", rule: "All inclusion met, no exclusion triggered.", facts: ["EGFR+ confirmed", "ECOG 1 · 06-19", "CMP fresh · 06-20"], sources: ["DiagnosticReport/mol-441", "Observation/ecog-9920"], result: "Confirm eligibility", reason: "All required evidence present and fresh", rec: "Ready for coordinator / PI confirmation." }
   ];
@@ -1908,7 +1908,7 @@ class Component extends DCLogic {
       { t:"09:55", ev:"Evidence snapshot frozen", obj:"pop-2026-06-22 · 1,284 resources", ac:"system", integ:"Verified", exc:"none", cls:["evidence"], eid:"EVT-1055",
         rows:[["Snapshot","pop-2026-06-22"],["Resources","1,284 · 25/36 mapped"],["Defects","4 missing · 4 stale","warn"],["Cutoff","06-22 09:54"],["Integrity","Verified · record intact","ok"]], rel:"Evidence ingested · Criterion evaluated" },
       { t:"10:02", ev:"Criterion evaluated", obj:"I-4.2 ECOG · Protocol v2.1", ac:"evaluator", integ:"Verified", exc:"conflict", cls:["screening","exception"], eid:"EVT-1108",
-        rows:[["Engine","deterministic · no model"],["Criterion","I-4.2 ECOG 0–1"],["Facts used","structured ECOG 1 (06-18); note ECOG 2 (06-20)"],["Result","REVIEW","warn"],["Exception","CONFLICTING_SOURCE","warn"],["Integrity","Verified · record intact","ok"]], rel:"Review opened · Resolve committed" },
+        rows:[["Engine","deterministic · no model"],["Criterion","I-4.2 ECOG 0-1"],["Facts used","structured ECOG 1 (06-18); note ECOG 2 (06-20)"],["Result","REVIEW","warn"],["Exception","CONFLICTING_SOURCE","warn"],["Integrity","Verified · record intact","ok"]], rel:"Review opened · Resolve committed" },
       { t:"10:03", ev:"Screening evaluated", obj:"1 eligible · 4 review · 3 fail", ac:"evaluator", integ:"Verified", exc:"none", cls:["screening"], eid:"EVT-1110",
         rows:[["Engine","deterministic · no model"],["Result","1 eligible · 4 review · 3 fail"],["Ruleset","v2.1"],["Model","disabled"],["Integrity","Verified · record intact","ok"]], rel:"Criterion evaluated · Review opened" },
       { t:"10:04", ev:"Review opened", obj:"Review R-884 · Screening", ac:"system", integ:"Verified", exc:"conflicting source", cls:["screening","exception"], eid:"EVT-1109",
