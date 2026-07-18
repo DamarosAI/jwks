@@ -105,11 +105,25 @@ window.scrollTo(0, 0);
     @keyframes dmBob{0%,100%{transform:translateY(0);}50%{transform:translateY(-3.5px);}}
     @keyframes dmShimmer{0%{background-position:200% 0;}100%{background-position:-60% 0;}}
     @keyframes snEnter{from{opacity:0;}to{opacity:1;}}
-    #instrument{position:relative;}
-    #instrument::after{content:"";position:absolute;left:0;right:0;bottom:0;height:72px;background:linear-gradient(180deg,rgba(255,255,255,0),rgba(248,250,251,0) 88%);pointer-events:none;}
+    #instrument{position:relative;padding-bottom:clamp(28px,4vh,56px) !important;}
+    #instrument::after{display:none;}
     .dm-scroll-more{position:relative;z-index:1;}
     .dm-hero-demo{transition:opacity 220ms ease,visibility 220ms ease;}
     .dm-hero-demo.dm-hero-demo-gone{opacity:0 !important;visibility:hidden !important;pointer-events:none !important;}
+    /* Keep-scrolling chevron under the live demo must stay visible on every desktop/laptop height */
+    #instrument .dm-demo-chev{
+      display:flex !important;
+      justify-content:center;
+      align-items:center;
+      position:relative;
+      z-index:3;
+      margin:clamp(18px,2.5vh,32px) 0 0 !important;
+      min-height:44px;
+      padding-bottom:max(4px,env(safe-area-inset-bottom,0px));
+    }
+    @media (min-width:901px){
+      #instrument .dm-demo-chev{margin-top:clamp(20px,3vh,36px) !important;}
+    }
     html,body{overflow-x:clip;max-width:100%;}
     img,svg,video{max-width:100%;height:auto;}
     .dm-site{--dm-ref:1920px;width:100%;}
@@ -1093,8 +1107,8 @@ window.scrollTo(0, 0);
       </div>
       </div>
     </div>
+    <div class="dm-scroll-chev dm-demo-chev"><button onClick="{{ onMore }}" aria-label="Continue scrolling" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
     </div>
-    <div class="dm-scroll-chev" style="text-align:center;margin:clamp(24px,3.5vw,40px) 0 0;position:relative;z-index:1;"><button onClick="{{ onMore }}" aria-label="Continue scrolling" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
   </section>
 
   <!-- ============ INTEGRATIONS · logo wall ============ -->
@@ -1477,7 +1491,9 @@ class Component extends DCLogic {
     if (!stage || !wrap) return;
     const REFW = 1160, REFH = 740;
     const availW = stage.clientWidth;
-    const availH = window.innerHeight - 200;
+    // Reserve headroom for nav + caption + keep-scrolling chevron on every laptop/desktop height
+    const chrome = 62 + 72 + 64 + 40;
+    const availH = Math.max(260, window.innerHeight - chrome);
     let s = Math.min(availW / REFW, availH / REFH, 1);
     if (!isFinite(s) || s <= 0) s = 1;
     s = Math.max(s, 0.2);
@@ -2145,7 +2161,14 @@ class Component extends DCLogic {
       segFailStyle: { width: Math.round(scSeg.fail / scSeg.evaluated * 100) + "%", height: "100%", background: "rgba(124,138,153,0.5)" },
       rp: rp,
       goResolve: () => this.setStep(3),
-      onDemo: () => { this.hideHeroDemo(); this.scrollCenter("instrument"); },
+      onDemo: () => {
+        this.hideHeroDemo();
+        this.layoutNode();
+        requestAnimationFrame(() => {
+          this.layoutNode();
+          this.scrollCenter("instrument");
+        });
+      },
       onMore: () => this.scrollPostDemo(),
       onPilot: () => this.scrollTo("pilot"),
       onRunModel: () => this.scrollTo("spine"),
