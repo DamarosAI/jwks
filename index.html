@@ -108,6 +108,8 @@ window.scrollTo(0, 0);
     #instrument{position:relative;}
     #instrument::after{content:"";position:absolute;left:0;right:0;bottom:0;height:72px;background:linear-gradient(180deg,rgba(255,255,255,0),rgba(248,250,251,0) 88%);pointer-events:none;}
     .dm-scroll-more{position:relative;z-index:1;}
+    .dm-hero-demo{transition:opacity 220ms ease,visibility 220ms ease;}
+    .dm-hero-demo.dm-hero-demo-gone{opacity:0 !important;visibility:hidden !important;pointer-events:none !important;}
     html,body{overflow-x:clip;max-width:100%;}
     img,svg,video{max-width:100%;height:auto;}
     .dm-site{--dm-ref:1920px;width:100%;}
@@ -1092,6 +1094,7 @@ window.scrollTo(0, 0);
       </div>
     </div>
     </div>
+    <div class="dm-scroll-chev" style="text-align:center;margin:clamp(24px,3.5vw,40px) 0 0;position:relative;z-index:1;"><button onClick="{{ onMore }}" aria-label="Continue scrolling" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
   </section>
 
   <!-- ============ INTEGRATIONS · logo wall ============ -->
@@ -1537,6 +1540,7 @@ class Component extends DCLogic {
     [60, 200].forEach((d) => setTimeout(this.layoutNode, d));
     this.initSpineCarousel();
     this.initReveal();
+    this.initHeroDemoHide();
     // Sentinel map is a stable scan result (no perpetual drift)
     let resizePending = 0;
     this.__onResize = () => {
@@ -1567,6 +1571,7 @@ class Component extends DCLogic {
     this.stopAuto();
     this.snStopScan();
     if (this.__io) { this.__io.disconnect(); this.__io = null; }
+    if (this.__demoHideIo) { this.__demoHideIo.disconnect(); this.__demoHideIo = null; }
     this.__agClear();
   }
 
@@ -1817,6 +1822,24 @@ class Component extends DCLogic {
   setPick = (id) => this.setState({ pick: id });
   commit = () => this.setState((st) => { if (!st.pick) return null; const c = this.cands[st.ci]; const cm = Object.assign({}, st.committed); cm[c.id] = st.pick; return { committed: cm }; });
   scrollTo = (id, off = 70) => { const el = document.getElementById(id); if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.pageYOffset - off, behavior: "smooth" }); };
+  hideHeroDemo = () => {
+    document.querySelectorAll(".dm-hero-demo").forEach((el) => {
+      el.classList.add("dm-hero-demo-gone");
+      el.setAttribute("aria-hidden", "true");
+      el.tabIndex = -1;
+    });
+    if (this.__demoHideIo) { this.__demoHideIo.disconnect(); this.__demoHideIo = null; }
+  };
+  initHeroDemoHide = () => {
+    const el = document.getElementById("instrument");
+    if (!el || !("IntersectionObserver" in window)) return;
+    this.__demoHideIo = new IntersectionObserver((entries) => {
+      for (const en of entries) {
+        if (en.isIntersecting) { this.hideHeroDemo(); break; }
+      }
+    }, { threshold: 0.12, rootMargin: "-62px 0px 0px 0px" });
+    this.__demoHideIo.observe(el);
+  };
   scrollCenter = (id) => {
     const sec = document.getElementById(id);
     if (!sec) return;
@@ -2122,7 +2145,7 @@ class Component extends DCLogic {
       segFailStyle: { width: Math.round(scSeg.fail / scSeg.evaluated * 100) + "%", height: "100%", background: "rgba(124,138,153,0.5)" },
       rp: rp,
       goResolve: () => this.setStep(3),
-      onDemo: () => this.scrollCenter("instrument"),
+      onDemo: () => { this.hideHeroDemo(); this.scrollCenter("instrument"); },
       onMore: () => this.scrollPostDemo(),
       onPilot: () => this.scrollTo("pilot"),
       onRunModel: () => this.scrollTo("spine"),
