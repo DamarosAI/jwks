@@ -113,12 +113,47 @@ window.scrollTo(0, 0);
     .dm-site{--dm-ref:1920px;width:100%;}
     .dm-site section[id]:not(#instrument),[data-screen-label]:not([data-screen-label="Hero"]):not([data-screen-label="Close"]){content-visibility:auto;contain-intrinsic-size:1px 720px;}
 
+    /* Desktop/laptop: pin "See the live demo" near the bottom of the hero */
+    @media (min-width:901px){
+      .dm-site section[data-screen-label="Hero"]{
+        min-height:calc(100svh - 62px) !important;
+        min-height:calc(100dvh - 62px) !important;
+        height:calc(100svh - 62px) !important;
+        height:calc(100dvh - 62px) !important;
+        position:relative !important;
+        box-sizing:border-box !important;
+        padding-bottom:clamp(28px,4vh,48px) !important;
+      }
+      .dm-site section[data-screen-label="Hero"] > .dm-hero-copy{
+        width:100%;
+        max-width:980px;
+        height:100%;
+        position:relative;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+      }
+      .dm-site section[data-screen-label="Hero"] .dm-hero-core{
+        position:relative;
+        z-index:1;
+      }
+      .dm-site section[data-screen-label="Hero"] .dm-hero-demo{
+        position:absolute !important;
+        left:50% !important;
+        bottom:0 !important;
+        transform:translateX(-50%);
+        margin:0 !important;
+        z-index:1;
+      }
+    }
+
     /* ---- laptop / desktop fluid scale (<1920) ---- */
     @media (max-width:1919px){
       .dm-site section[data-screen-label="Hero"]{
         min-height:max(520px,calc(100svh - 62px)) !important;
         padding-top:clamp(52px,calc(5vw + 24px),96px) !important;
-        padding-bottom:clamp(60px,calc(5.4vw + 24px),104px) !important;
+        padding-bottom:clamp(28px,4vh,48px) !important;
       }
       .dm-site section[data-screen-label="Hero"] h1{
         font-size:clamp(2.1rem,calc(4.6rem * 100vw / var(--dm-ref)),4.6rem) !important;
