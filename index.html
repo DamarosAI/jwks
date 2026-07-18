@@ -109,40 +109,75 @@ window.scrollTo(0, 0);
     #instrument::after{display:none;}
     .dm-scroll-more{position:relative;z-index:1;}
     .dm-hero-demo.dm-hero-demo-gone{opacity:0 !important;visibility:hidden !important;pointer-events:none !important;transform:none !important;}
-    /* One active section chevron at a time - smooth fade */
-    .dm-scroll-chev,
+    /* One active section chevron at a time - smooth fade; always viewport-centered */
+    .dm-scroll-chev{
+      width:100%;
+      max-width:100%;
+      box-sizing:border-box;
+      display:flex !important;
+      justify-content:center !important;
+      align-items:center !important;
+      text-align:center !important;
+      margin-left:0 !important;
+      margin-right:0 !important;
+      transition:opacity 320ms cubic-bezier(0.16,1,0.3,1),visibility 320ms linear,transform 320ms cubic-bezier(0.16,1,0.3,1);
+    }
+    .dm-scroll-chev > button{
+      margin-left:auto !important;
+      margin-right:auto !important;
+    }
     .dm-hero-demo{
       transition:opacity 320ms cubic-bezier(0.16,1,0.3,1),visibility 320ms linear,transform 320ms cubic-bezier(0.16,1,0.3,1);
     }
-    .dm-site.dm-chev-ready .dm-scroll-chev:not(.dm-chev-active),
-    .dm-site.dm-chev-ready .dm-hero-demo:not(.dm-chev-active){
+    .dm-site.dm-chev-ready .dm-scroll-chev:not(.dm-chev-active){
       opacity:0;
       visibility:hidden;
       pointer-events:none;
       transform:translateY(6px);
     }
-    .dm-site.dm-chev-ready .dm-scroll-chev.dm-chev-active,
-    .dm-site.dm-chev-ready .dm-hero-demo.dm-chev-active:not(.dm-hero-demo-gone){
+    .dm-site.dm-chev-ready .dm-hero-demo:not(.dm-chev-active){
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+      transform:translate(-50%,6px);
+    }
+    .dm-site.dm-chev-ready .dm-scroll-chev.dm-chev-active{
       opacity:1;
       visibility:visible;
       pointer-events:auto;
       transform:translateY(0);
     }
-    #instrument .dm-demo-chev{
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      position:relative;
+    .dm-site.dm-chev-ready .dm-hero-demo.dm-chev-active:not(.dm-hero-demo-gone){
+      opacity:1;
+      visibility:visible;
+      pointer-events:auto;
+      transform:translate(-50%,0);
+    }
+    #instrument > .dm-scroll-target{
+      width:100%;
+      max-width:100%;
+      overflow-x:clip;
+    }
+    #instrument #nodeStage{
+      width:100% !important;
+      max-width:100%;
+    }
+    #instrument > .dm-demo-chev{
+      width:100%;
+      max-width:100%;
       z-index:3;
       margin:clamp(18px,2.5vh,32px) 0 0 !important;
       min-height:44px;
       padding-bottom:max(4px,env(safe-area-inset-bottom,0px));
     }
     @media (min-width:901px){
-      #instrument .dm-demo-chev{margin-top:clamp(20px,3vh,36px) !important;}
+      #instrument > .dm-demo-chev{margin-top:clamp(20px,3vh,36px) !important;}
     }
     @media (prefers-reduced-motion:reduce){
-      .dm-scroll-chev,.dm-hero-demo{transition:none !important;transform:none !important;}
+      .dm-scroll-chev{transition:none !important;transform:none !important;}
+      .dm-hero-demo{transition:none !important;}
+      .dm-site.dm-chev-ready .dm-hero-demo:not(.dm-chev-active){transform:translate(-50%,0) !important;}
+      .dm-site.dm-chev-ready .dm-hero-demo.dm-chev-active:not(.dm-hero-demo-gone){transform:translate(-50%,0) !important;}
     }
     html,body{overflow-x:clip;max-width:100%;}
     img,svg,video{max-width:100%;height:auto;}
@@ -178,7 +213,6 @@ window.scrollTo(0, 0);
         position:absolute !important;
         left:50% !important;
         bottom:0 !important;
-        transform:translateX(-50%);
         margin:0 !important;
         z-index:1;
       }
@@ -329,7 +363,6 @@ window.scrollTo(0, 0);
         position:absolute !important;
         left:50% !important;
         bottom:max(8px,env(safe-area-inset-bottom,0px)) !important;
-        transform:translateX(-50%);
         margin:0 !important;
         z-index:1;
       }
@@ -1127,8 +1160,8 @@ window.scrollTo(0, 0);
       </div>
       </div>
     </div>
-    <div class="dm-scroll-chev dm-demo-chev"><button onClick="{{ onMore }}" aria-label="Continue scrolling" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
     </div>
+    <div class="dm-scroll-chev dm-demo-chev"><button onClick="{{ onMore }}" aria-label="Continue scrolling" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
   </section>
 
   <!-- ============ INTEGRATIONS · logo wall ============ -->
