@@ -1,1 +1,13 @@
-{"scripts":{"build":"echo ok"}}
+{
+  "scripts": {
+    "build": "echo ok",
+    "test": "node --test api/lib/pilot-inquiry.test.js",
+    "smoke": "node --test api/lib/pilot-inquiry.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "resend": "^6.18.0"
+  }
+}
