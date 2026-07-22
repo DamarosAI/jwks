@@ -78,12 +78,24 @@
   function pick() { return MARKERS[(Math.random() * MARKERS.length) | 0]; }
   function now() { return (performance && performance.now) ? performance.now() : Date.now(); }
 
+  // Pick the column that is as far as possible from every active trail, so the
+  // (max 7) streams stay cleanly spread across the width.
   function freeCol(inst) {
-    var used = {};
-    for (var i = 0; i < inst.streams.length; i++) used[inst.streams[i].col] = 1;
-    var c, tries = 0;
-    do { c = (Math.random() * inst.nCols) | 0; tries++; } while (used[c] && tries < 24);
-    return c;
+    if (!inst.streams.length) return (Math.random() * inst.nCols) | 0;
+    var bestCol = 0, bestDist = -1;
+    for (var c = 0; c < inst.nCols; c++) {
+      var occupied = false, minD = inst.nCols;
+      for (var i = 0; i < inst.streams.length; i++) {
+        var d = Math.abs(inst.streams[i].col - c);
+        if (d === 0) { occupied = true; break; }
+        if (d < minD) minD = d;
+      }
+      if (occupied) continue;
+      // Tiny jitter breaks ties without collapsing the spacing.
+      var score = minD + Math.random() * 0.5;
+      if (score > bestDist) { bestDist = score; bestCol = c; }
+    }
+    return bestCol;
   }
 
   function spawn(inst) {
