@@ -1,10 +1,11 @@
 /**
  * Matrix-style biomarker waterfall for hero / close.
  *
- * Grid-aligned columns of oncogenes, tumor-suppressor genes, and clinical
- * biomarkers fall in CTA blue. When a stream reaches the Damaros drum mark it
- * reflects off the drum's actual edge normal (accurate to the drum's angle),
- * scatters into a small burst, and evaporates. Infinite and randomized.
+ * A small pool of streams (max 7 at once) of oncogenes, tumor-suppressor
+ * genes, and clinical biomarkers falls in CTA blue at a single constant speed.
+ * When a stream reaches the Damaros drum mark it reflects off the drum's actual
+ * edge normal (accurate to the drum's angle) and its trail smoothly bends along
+ * the deflection while fading out — no acceleration anywhere. Infinite, random.
  */
 (function () {
   // Oncogenes, tumor-suppressor genes, fusions, mutations, clinical biomarkers.
@@ -29,8 +30,11 @@
   ];
 
   var BLUE = "61,114,168"; // CTA blue #3d72a8
-  var VIS = 1.13; // ~13% more visible than the prior pass
-  var GRAVITY = 300; // px/s^2 for the evaporating burst
+  var VIS = 1.13;          // ~13% more visible than the earlier pass
+  var MAX_STREAMS = 7;     // never more than 7 trails at once
+  var TRAIL = 6;           // glyphs per trail
+  var SPEED_ROWS = 6.0;    // constant fall speed, in rows/sec (no acceleration)
+  var EVAP_TTL = 0.9;      // seconds a deflected trail takes to evaporate
 
   // Drum outline in SVG viewBox (0 0 476 520) coords. Arcs approximated by
   // their chords — the corners are small radii, so the edge angles are exact.
@@ -41,8 +45,8 @@
      [367.09, 446.5], [104.32, 446.5], [68.01, 388.07], [101.68, 319.88]]
   ];
 
-  // Precompute edges with outward unit normals in view coords (uniform scaling
-  // preserves normal direction, so we only transform vertices per frame).
+  // Edges with outward unit normals in view coords (uniform scaling preserves
+  // normal direction, so only vertices are transformed per frame).
   var DRUM_EDGES = buildEdges();
 
   function buildEdges() {
@@ -57,9 +61,9 @@
         var b = poly[(j + 1) % poly.length];
         var dx = b[0] - a[0], dy = b[1] - a[1];
         var len = Math.hypot(dx, dy) || 1;
-        var nx = dy / len, ny = -dx / len; // one perpendicular
+        var nx = dy / len, ny = -dx / len;
         var mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
-        if ((mx - cx) * nx + (my - cy) * ny < 0) { nx = -nx; ny = -ny; } // point outward
+        if ((mx - cx) * nx + (my - cy) * ny < 0) { nx = -nx; ny = -ny; }
         edges.push({ ax: a[0], ay: a[1], bx: b[0], by: b[1], nx: nx, ny: ny });
       }
     }
@@ -71,22 +75,30 @@
   var raf = 0;
 
   function pick() { return MARKERS[(Math.random() * MARKERS.length) | 0]; }
+  function now() { return (performance && performance.now) ? performance.now() : Date.now(); }
 
-  function newStream(inst, c, seedTop) {
-    var trail = 5 + ((Math.random() * 7) | 0);
+  function freeCol(inst) {
+    var used = {};
+    for (var i = 0; i < inst.streams.length; i++) used[inst.streams[i].col] = 1;
+    var c, tries = 0;
+    do { c = (Math.random() * inst.nCols) | 0; tries++; } while (used[c] && tries < 24);
+    return c;
+  }
+
+  function spawn(inst) {
+    var col = freeCol(inst);
     var tokens = [];
-    for (var i = 0; i < trail; i++) tokens.push(pick());
-    var s = inst.streams[c] || {};
-    s.x = Math.round((c + 0.5) * inst.colW);
-    s.trail = trail;
-    s.tokens = tokens;
-    s.speed = 95 + Math.random() * 95; // px/s
-    s.state = "fall";
-    // Stagger starts above the top edge.
-    s.y = seedTop
-      ? -(Math.random() * inst.h * 0.6) - trail * inst.rowH
-      : -trail * inst.rowH - Math.random() * inst.rowH * 4;
-    return s;
+    for (var i = 0; i < TRAIL; i++) tokens.push(pick());
+    var x = (col + 0.5) * inst.colW;
+    var y = -inst.rowH * (2 + Math.random() * 4); // ease in from above the top
+    inst.streams.push({
+      col: col, x: x,
+      vx: 0, vy: inst.speed,
+      points: [{ x: x, y: y }],
+      tokens: tokens,
+      state: "fall",
+      life: 1
+    });
   }
 
   function mount(el) {
@@ -102,9 +114,9 @@
     var inst = {
       el: el, canvas: canvas, ctx: ctx,
       mark: section ? section.querySelector(".dm-hero-mark") : null,
-      streams: [], evap: [],
-      colW: 0, rowH: 0, rows: 0, fontPx: 12,
-      w: 0, h: 0, dpr: 1, last: 0
+      streams: [],
+      nCols: 0, colW: 0, rowH: 0, rows: 0, speed: 0, fontPx: 12,
+      nextSpawn: 0, w: 0, h: 0, dpr: 1, last: 0
     };
     el.__dmMatrix = inst;
     resize(inst);
@@ -127,15 +139,14 @@
     inst.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
     var target = w < 640 ? 58 : 72;
-    var nCols = Math.max(4, Math.round(w / target));
-    var rowH = w < 640 ? 18 : 20;
-    inst.colW = w / nCols;
-    inst.rowH = rowH;
-    inst.rows = Math.max(8, Math.ceil(h / rowH) + 2);
-    inst.fontPx = Math.max(10, Math.floor(rowH * 0.6));
-    inst.streams = new Array(nCols);
-    for (var i = 0; i < nCols; i++) inst.streams[i] = newStream(inst, i, true);
-    inst.evap.length = 0;
+    inst.nCols = Math.max(6, Math.round(w / target));
+    inst.rowH = w < 640 ? 18 : 20;
+    inst.colW = w / inst.nCols;
+    inst.rows = Math.max(8, Math.ceil(h / inst.rowH) + 2);
+    inst.speed = inst.rowH * SPEED_ROWS;
+    inst.fontPx = Math.max(10, Math.floor(inst.rowH * 0.6));
+    inst.streams.length = 0;
+    inst.nextSpawn = 0;
   }
 
   // Current drum transform (view → canvas): { scale, ox, oy } or null.
@@ -154,67 +165,72 @@
     };
   }
 
-  // First downward contact of the vertical fall x=[x], y in [y0,y1].
-  function drumHit(drum, x, y0, y1) {
-    if (!drum || y1 <= y0) return null;
-    var best = null;
+  // First contact of a moving head, segment (x0,y0)->(x1,y1), with a top-facing
+  // drum edge. Returns { x, y, nx, ny } or null.
+  function drumHit(drum, x0, y0, x1, y1) {
+    if (!drum) return null;
+    var best = null, bestT = 2;
     for (var i = 0; i < DRUM_EDGES.length; i++) {
       var e = DRUM_EDGES[i];
-      if (e.ny >= 0) continue; // only top-facing surfaces catch a falling glyph
+      // Only surfaces facing against the motion can be struck.
+      var mvx = x1 - x0, mvy = y1 - y0;
+      if (mvx * e.nx + mvy * e.ny >= 0) continue;
       var ax = drum.ox + e.ax * drum.scale, ay = drum.oy + e.ay * drum.scale;
       var bx = drum.ox + e.bx * drum.scale, by = drum.oy + e.by * drum.scale;
-      var denom = bx - ax;
-      if (denom === 0) continue; // vertical edge, parallel to the fall
-      var u = (x - ax) / denom;
-      if (u < 0 || u > 1) continue;
-      var yInt = ay + u * (by - ay);
-      if (yInt < y0 || yInt > y1) continue;
-      if (!best || yInt < best.y) best = { x: x, y: yInt, nx: e.nx, ny: e.ny };
+      var ex = bx - ax, ey = by - ay;
+      var denom = mvx * ey - mvy * ex;
+      if (denom === 0) continue;
+      var t = ((ax - x0) * ey - (ay - y0) * ex) / denom; // along motion
+      var u = ((ax - x0) * mvy - (ay - y0) * mvx) / denom; // along edge
+      if (t < 0 || t > 1 || u < 0 || u > 1) continue;
+      if (t < bestT) {
+        bestT = t;
+        best = { x: x0 + mvx * t, y: y0 + mvy * t, nx: e.nx, ny: e.ny };
+      }
     }
     return best;
   }
 
-  function burst(inst, s, hit) {
-    var dot = s.speed * hit.ny; // v = (0, speed) downward
-    var rx = -2 * dot * hit.nx;
-    var ry = s.speed - 2 * dot * hit.ny;
-    var rl = Math.hypot(rx, ry) || 1;
-    rx /= rl; ry /= rl;
-    var base = s.speed * 0.65;
-    var n = 4 + ((Math.random() * 3) | 0);
-    for (var i = 0; i < n; i++) {
-      var ang = (Math.random() - 0.5) * 1.0; // spread around the reflected ray
-      var ca = Math.cos(ang), sa = Math.sin(ang);
-      var dx = rx * ca - ry * sa;
-      var dy = rx * sa + ry * ca;
-      var sp = base * (0.5 + Math.random() * 0.9);
-      inst.evap.push({
-        x: hit.x + (Math.random() - 0.5) * 6,
-        y: hit.y + (Math.random() - 0.5) * 6,
-        vx: dx * sp, vy: dy * sp,
-        token: Math.random() < 0.5 ? s.tokens[0] : pick(),
-        life: 1, ttl: 0.55 + Math.random() * 0.55
-      });
+  // Even glyph spacing along the head's path (newest point last).
+  function trailPoints(points, count, spacing) {
+    var last = points.length - 1;
+    var res = [{ x: points[last].x, y: points[last].y }];
+    var target = spacing, dist = 0;
+    for (var i = last; i > 0 && res.length < count; i--) {
+      var ax = points[i].x, ay = points[i].y;
+      var bx = points[i - 1].x, by = points[i - 1].y;
+      var dx = ax - bx, dy = ay - by;
+      var seg = Math.hypot(dx, dy);
+      if (seg === 0) continue;
+      while (dist + seg >= target && res.length < count) {
+        var t = (target - dist) / seg;
+        res.push({ x: ax - dx * t, y: ay - dy * t });
+        target += spacing;
+      }
+      dist += seg;
     }
+    return res;
   }
 
-  function alphaFor(i) {
-    var a;
-    if (i === 0) a = 0.5;
-    else if (i === 1) a = 0.37;
-    else a = Math.max(0.06, 0.32 - (i - 1) * 0.05);
+  // Smooth head-to-tail falloff (eased, not stepped).
+  function alphaFor(i, total) {
+    var f = i / (total - 1 || 1);        // 0 head → 1 tail
+    var a = (1 - f) * (1 - f);           // quadratic ease-out
+    a = 0.08 + a * 0.44;                 // tail floor .08, head .52
     return a * VIS;
   }
 
   function drawStream(ctx, inst, s) {
-    var x = s.x, rowH = inst.rowH;
-    for (var i = 0; i < s.trail; i++) {
-      var y = s.y - i * rowH;
-      if (y < -rowH || y > inst.h + rowH) continue;
-      ctx.fillStyle = "rgba(" + BLUE + "," + alphaFor(i).toFixed(3) + ")";
-      ctx.fillText(s.tokens[i], x, y);
+    var pts = trailPoints(s.points, TRAIL, inst.rowH);
+    var fade = s.state === "evap" ? Math.max(0, s.life) : 1;
+    for (var i = 0; i < pts.length; i++) {
+      var y = pts[i].y;
+      if (y < -inst.rowH || y > inst.h + inst.rowH) continue;
+      var a = alphaFor(i, TRAIL) * fade;
+      if (a < 0.01) continue;
+      ctx.fillStyle = "rgba(" + BLUE + "," + a.toFixed(3) + ")";
+      ctx.fillText(s.tokens[i], pts[i].x, y);
     }
-    if (Math.random() < 0.05) s.tokens[(Math.random() * s.trail) | 0] = pick();
   }
 
   function paintStatic(inst) {
@@ -222,11 +238,12 @@
     ctx.clearRect(0, 0, inst.w, inst.h);
     ctx.font = "600 " + inst.fontPx + "px \"IBM Plex Mono\", ui-monospace, monospace";
     ctx.textAlign = "center"; ctx.textBaseline = "middle";
-    for (var c = 0; c < inst.streams.length; c++) {
-      var x = Math.round((c + 0.5) * inst.colW);
+    var step = Math.max(1, Math.floor(inst.nCols / MAX_STREAMS));
+    for (var c = 0; c < inst.nCols; c += step) {
+      var x = (c + 0.5) * inst.colW;
       for (var r = 0; r < inst.rows; r++) {
         if ((r + c) % 2 !== 0) continue;
-        ctx.fillStyle = "rgba(" + BLUE + "," + (0.13 + ((r + c) % 4) * 0.03).toFixed(3) + ")";
+        ctx.fillStyle = "rgba(" + BLUE + "," + (0.12 + ((r + c) % 4) * 0.03).toFixed(3) + ")";
         ctx.fillText(pick(), x, r * inst.rowH + inst.rowH * 0.5);
       }
     }
@@ -239,49 +256,61 @@
     ctx.textAlign = "center"; ctx.textBaseline = "middle";
 
     var drum = drumFor(inst);
-    var now = performance.now ? performance.now() : Date.now();
+    var t = now();
 
-    for (var c = 0; c < inst.streams.length; c++) {
-      var s = inst.streams[c];
-      if (s.state === "wait") {
-        if (now >= s.respawnAt) inst.streams[c] = newStream(inst, c, false);
-        continue;
-      }
-      var oldY = s.y;
-      s.y += s.speed * secs;
-
-      var hit = drumHit(drum, s.x, oldY, s.y);
-      if (hit) {
-        burst(inst, s, hit);
-        s.state = "wait";
-        s.respawnAt = now + 250 + Math.random() * 900;
-        continue;
-      }
-      if (s.y - s.trail * inst.rowH > inst.h) {
-        inst.streams[c] = newStream(inst, c, false);
-        continue;
-      }
-      drawStream(ctx, inst, s);
+    // Keep up to MAX_STREAMS trails alive, staggered so it stays fluid.
+    if (inst.streams.length < MAX_STREAMS && t >= inst.nextSpawn) {
+      spawn(inst);
+      inst.nextSpawn = t + 380 + Math.random() * 340;
     }
 
-    // Evaporating burst particles.
-    for (var e = inst.evap.length - 1; e >= 0; e--) {
-      var p = inst.evap[e];
-      p.vy += GRAVITY * secs;
-      p.x += p.vx * secs;
-      p.y += p.vy * secs;
-      p.life -= secs / p.ttl;
-      if (p.life <= 0 || p.y > inst.h + 30 || p.x < -30 || p.x > inst.w + 30) {
-        inst.evap.splice(e, 1);
+    var maxPathLen = TRAIL * inst.rowH + inst.rowH * 2;
+
+    for (var i = inst.streams.length - 1; i >= 0; i--) {
+      var s = inst.streams[i];
+      var last = s.points[s.points.length - 1];
+      var nx = last.x + s.vx * secs;
+      var ny = last.y + s.vy * secs;
+
+      if (s.state === "fall") {
+        var hit = drumHit(drum, last.x, last.y, nx, ny);
+        if (hit) {
+          // Reflect at constant speed — direction changes, magnitude does not.
+          var dot = s.vx * hit.nx + s.vy * hit.ny;
+          var rx = s.vx - 2 * dot * hit.nx;
+          var ry = s.vy - 2 * dot * hit.ny;
+          var rl = Math.hypot(rx, ry) || 1;
+          s.vx = (rx / rl) * inst.speed;
+          s.vy = (ry / rl) * inst.speed;
+          s.points.push({ x: hit.x, y: hit.y });
+          s.state = "evap";
+          nx = hit.x; ny = hit.y;
+        }
+      }
+
+      s.points.push({ x: nx, y: ny });
+
+      // Trim the stored path to what the trail needs.
+      var lenAcc = 0, keepFrom = 0;
+      for (var k = s.points.length - 1; k > 0; k--) {
+        lenAcc += Math.hypot(s.points[k].x - s.points[k - 1].x, s.points[k].y - s.points[k - 1].y);
+        if (lenAcc > maxPathLen) { keepFrom = k - 1; break; }
+      }
+      if (keepFrom > 0) s.points.splice(0, keepFrom);
+
+      if (s.state === "evap") {
+        s.life -= secs / EVAP_TTL;
+        if (s.life <= 0) { inst.streams.splice(i, 1); continue; }
+      } else if (ny - TRAIL * inst.rowH > inst.h) {
+        inst.streams.splice(i, 1); // fell past the bottom
         continue;
       }
-      var a = Math.max(0, Math.pow(p.life, 0.85)) * 0.5 * VIS;
-      ctx.fillStyle = "rgba(" + BLUE + "," + a.toFixed(3) + ")";
-      ctx.fillText(p.token, p.x, p.y);
+
+      drawStream(ctx, inst, s);
     }
   }
 
-  function tick(now) {
+  function tick(ts) {
     raf = 0;
     var any = false;
     for (var i = 0; i < instances.length; i++) {
@@ -290,8 +319,8 @@
       var r = inst.el.getBoundingClientRect();
       if (r.bottom <= -20 || r.top >= window.innerHeight + 20) { inst.last = 0; continue; }
       any = true;
-      var dt = inst.last ? Math.min(48, now - inst.last) : 16;
-      inst.last = now;
+      var dt = inst.last ? Math.min(48, ts - inst.last) : 16;
+      inst.last = ts;
       paint(inst, dt);
     }
     if (any && !reduced) raf = requestAnimationFrame(tick);
