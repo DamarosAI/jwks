@@ -193,7 +193,7 @@
       "  </button>",
       '  <div class="dm-pilot-head">',
       '    <p class="dm-pilot-eyebrow">Start a pilot</p>',
-      '    <h2 class="dm-pilot-title" id="dm-pilot-title">Tell us about your program.</h2>',
+      '    <h2 class="dm-pilot-title" id="dm-pilot-title">Clinical investigation, rewired.</h2>',
       "  </div>",
       '  <form id="dm-pilot-form" novalidate>',
       '    <div class="dm-pilot-grid">',
