@@ -35,36 +35,6 @@
   var SPEED_ROWS = 3.0;
   var GLITCH = 0.14;
 
-  var DRUM_PATHS = [
-    [[104.82, 74.5], [366.46, 74.5], [402.59, 133.29], [368.99, 199.68],
-     [312.33, 234.5], [158.12, 234.5], [101.18, 199.11], [68.5, 132.93]],
-    [[158.62, 284.5], [312.06, 284.5], [368.75, 319.39], [403.25, 387.75],
-     [367.09, 446.5], [104.32, 446.5], [68.01, 388.07], [101.68, 319.88]]
-  ];
-
-  var DRUM_EDGES = buildEdges();
-
-  function buildEdges() {
-    var edges = [];
-    for (var p = 0; p < DRUM_PATHS.length; p++) {
-      var poly = DRUM_PATHS[p];
-      var cx = 0, cy = 0;
-      for (var i = 0; i < poly.length; i++) { cx += poly[i][0]; cy += poly[i][1]; }
-      cx /= poly.length; cy /= poly.length;
-      for (var j = 0; j < poly.length; j++) {
-        var a = poly[j];
-        var b = poly[(j + 1) % poly.length];
-        var dx = b[0] - a[0], dy = b[1] - a[1];
-        var len = Math.hypot(dx, dy) || 1;
-        var nx = dy / len, ny = -dx / len;
-        var mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
-        if ((mx - cx) * nx + (my - cy) * ny < 0) { nx = -nx; ny = -ny; }
-        edges.push({ ax: a[0], ay: a[1], bx: b[0], by: b[1], nx: nx, ny: ny });
-      }
-    }
-    return edges;
-  }
-
   var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var coarse = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
   var instances = [];
@@ -233,6 +203,7 @@
     var inst = {
       el: el, canvas: canvas, ctx: ctx,
       mark: section ? section.querySelector(".dm-hero-mark") : null,
+      drumSvg: null, drumPaths: null,
       streams: [], debris: [],
       nCols: 0, colW: 0, rowH: 0, rows: 0, speed: 0, fontPx: 12,
       nextSpawn: 0, w: 0, h: 0, dpr: 1, last: 0,
@@ -242,6 +213,7 @@
     };
     el.__dmMatrix = inst;
     resize(inst);
+    bindDrum(inst);
     watchView(inst);
     if (!waitView && !reduced) ensureField(inst);
     if (reduced) paintStatic(inst);
@@ -274,44 +246,78 @@
     inst.debris.length = 0;
     inst.nextSpawn = 0;
     if (inst.armed && !reduced) bootStreams(inst);
+    bindDrum(inst);
   }
 
-  function drumFor(inst) {
+  // Bind to the live SVG drum paths (arcs + stroke-width + CSS dmDrift).
+  function bindDrum(inst) {
     var mark = inst.mark;
-    if (!mark || !mark.isConnected) return null;
-    var cr = inst.canvas.getBoundingClientRect();
-    var mr = mark.getBoundingClientRect();
-    if (!mr.width || !mr.height) return null;
-    var scale = Math.min(mr.width / 476, mr.height / 520);
-    var dw = 476 * scale, dh = 520 * scale;
-    return {
-      scale: scale,
-      ox: (mr.left - cr.left) + (mr.width - dw) / 2,
-      oy: (mr.top - cr.top) + (mr.height - dh) / 2
-    };
+    if (!mark || !mark.isConnected) {
+      inst.drumSvg = null;
+      inst.drumPaths = null;
+      return;
+    }
+    var svg = mark.querySelector("svg");
+    if (!svg) {
+      inst.drumSvg = null;
+      inst.drumPaths = null;
+      return;
+    }
+    inst.drumSvg = svg;
+    inst.drumPaths = svg.querySelectorAll("path");
   }
 
-  function drumHit(drum, x0, y0, x1, y1) {
-    if (!drum) return null;
-    var best = null, bestT = 2;
-    for (var i = 0; i < DRUM_EDGES.length; i++) {
-      var e = DRUM_EDGES[i];
-      var mvx = x1 - x0, mvy = y1 - y0;
-      if (mvx * e.nx + mvy * e.ny >= 0) continue;
-      var ax = drum.ox + e.ax * drum.scale, ay = drum.oy + e.ay * drum.scale;
-      var bx = drum.ox + e.bx * drum.scale, by = drum.oy + e.by * drum.scale;
-      var ex = bx - ax, ey = by - ay;
-      var denom = mvx * ey - mvy * ex;
-      if (denom === 0) continue;
-      var t = ((ax - x0) * ey - (ay - y0) * ex) / denom;
-      var u = ((ax - x0) * mvy - (ay - y0) * mvx) / denom;
-      if (t < 0 || t > 1 || u < 0 || u > 1) continue;
-      if (t < bestT) {
-        bestT = t;
-        best = { x: x0 + mvx * t, y: y0 + mvy * t, nx: e.nx, ny: e.ny };
+  // True if client (screen) point sits on any painted drum stroke pixel.
+  function strokeAtClient(inst, clientX, clientY) {
+    var svg = inst.drumSvg, paths = inst.drumPaths;
+    if (!svg || !paths || !paths.length) return false;
+    if (typeof paths[0].isPointInStroke !== "function") return false;
+    var pt = svg.createSVGPoint();
+    pt.x = clientX;
+    pt.y = clientY;
+    for (var i = 0; i < paths.length; i++) {
+      var path = paths[i];
+      var ctm = path.getScreenCTM();
+      if (!ctm) continue;
+      var local = pt.matrixTransform(ctm.inverse());
+      if (path.isPointInStroke(local)) return true;
+    }
+    return false;
+  }
+
+  // Sample the head's motion + glyph footprint against the live stroked drum.
+  // Returns the first canvas-space contact point, or null.
+  function drumHit(inst, x0, y0, x1, y1) {
+    if (!inst.drumPaths || !inst.drumPaths.length) bindDrum(inst);
+    if (!inst.drumPaths || !inst.drumPaths.length) return null;
+    if (typeof inst.drumPaths[0].isPointInStroke !== "function") return null;
+
+    var cr = inst.canvas.getBoundingClientRect();
+    var dist = Math.hypot(x1 - x0, y1 - y0);
+    // Dense samples so fast frames can't skip over the ~stroke-width band.
+    var steps = Math.max(6, Math.ceil(dist / 1.5));
+    // Glyph footprint: text is centered on the head with middle baseline.
+    var hx = Math.max(3, inst.fontPx * 0.55);
+    var hy = Math.max(2, inst.fontPx * 0.4);
+    var offsets = [
+      [0, 0], [0, hy], [0, -hy],
+      [-hx, 0], [hx, 0],
+      [-hx * 0.7, hy * 0.7], [hx * 0.7, hy * 0.7]
+    ];
+
+    for (var s = 0; s <= steps; s++) {
+      var t = s / steps;
+      var cx = x0 + (x1 - x0) * t;
+      var cy = y0 + (y1 - y0) * t;
+      for (var o = 0; o < offsets.length; o++) {
+        var px = cx + offsets[o][0];
+        var py = cy + offsets[o][1];
+        if (strokeAtClient(inst, cr.left + px, cr.top + py)) {
+          return { x: cx, y: cy };
+        }
       }
     }
-    return best;
+    return null;
   }
 
   function trailPoints(points, count, spacing) {
@@ -403,7 +409,7 @@
     ctx.font = "600 " + inst.fontPx + "px \"IBM Plex Mono\", ui-monospace, monospace";
     ctx.textAlign = "center"; ctx.textBaseline = "middle";
 
-    var drum = drumFor(inst);
+    if (!inst.drumPaths || !inst.drumPaths.length) bindDrum(inst);
 
     var maxPathLen = TRAIL * inst.rowH + inst.rowH * 2;
 
@@ -413,7 +419,7 @@
       var nx = last.x + s.vx * secs;
       var ny = last.y + s.vy * secs;
 
-      var hit = drumHit(drum, last.x, last.y, nx, ny);
+      var hit = drumHit(inst, last.x, last.y, nx, ny);
       if (hit) {
         s.points.push({ x: hit.x, y: hit.y });
         destroy(inst, i);
