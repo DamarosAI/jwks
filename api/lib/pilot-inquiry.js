@@ -44,6 +44,9 @@ function parsePilotInquiry(raw) {
   if (!email || !EMAIL_RE.test(email)) {
     return { ok: false, status: 400, error: "A valid work email is required." };
   }
+  if (!message) {
+    return { ok: false, status: 400, error: "Tell us what you're working on." };
+  }
 
   return {
     ok: true,
@@ -68,15 +71,15 @@ function buildPilotEmail(data) {
     `Role: ${data.role}`,
     `Organization: ${data.organization}`,
     `Email: ${data.email}`,
+    "",
+    "What they're working on:",
+    data.message,
   ];
-  if (data.message) {
-    lines.push("", "Message:", data.message);
-  }
   const text = lines.join("\n");
 
-  const msgHtml = data.message
-    ? `<p style="margin:16px 0 0;white-space:pre-wrap;">${escapeHtml(data.message)}</p>`
-    : "";
+  const msgHtml =
+    `<p style="margin:16px 0 0;"><strong>What they're working on</strong></p>` +
+    `<p style="margin:6px 0 0;white-space:pre-wrap;">${escapeHtml(data.message)}</p>`;
 
   const html = [
     '<div style="font-family:system-ui,sans-serif;font-size:15px;line-height:1.5;color:#10161d;">',

@@ -18,11 +18,12 @@ describe("parsePilotInquiry", () => {
     assert.equal(r.data.message, "Ready for a pilot.");
   });
 
-  it("requires name, role, organization, email", () => {
-    assert.equal(parsePilotInquiry({ role: "a", organization: "b", email: "a@b.co" }).ok, false);
-    assert.equal(parsePilotInquiry({ name: "a", organization: "b", email: "a@b.co" }).ok, false);
-    assert.equal(parsePilotInquiry({ name: "a", role: "b", email: "a@b.co" }).ok, false);
-    assert.equal(parsePilotInquiry({ name: "a", role: "b", organization: "c", email: "nope" }).ok, false);
+  it("requires name, role, organization, email, message", () => {
+    assert.equal(parsePilotInquiry({ role: "a", organization: "b", email: "a@b.co", message: "x" }).ok, false);
+    assert.equal(parsePilotInquiry({ name: "a", organization: "b", email: "a@b.co", message: "x" }).ok, false);
+    assert.equal(parsePilotInquiry({ name: "a", role: "b", email: "a@b.co", message: "x" }).ok, false);
+    assert.equal(parsePilotInquiry({ name: "a", role: "b", organization: "c", email: "nope", message: "x" }).ok, false);
+    assert.equal(parsePilotInquiry({ name: "a", role: "b", organization: "c", email: "a@b.co" }).ok, false);
   });
 
   it("treats filled honeypot as silent success", () => {

@@ -194,17 +194,17 @@
       "    <div>",
       '      <p class="dm-pilot-eyebrow">Pilot inquiry</p>',
       '      <h2 class="dm-pilot-title" id="dm-pilot-title">Start a pilot</h2>',
-      '      <p class="dm-pilot-lead">Tell us who you are. We route every inquiry to <strong>team@damaros.ai</strong>.</p>',
+      '      <p class="dm-pilot-lead">Who you are, and the program you want on Damaros.</p>',
       "    </div>",
       "  </div>",
       '  <hr class="dm-pilot-rule" />',
       '  <form id="dm-pilot-form" novalidate>',
       '    <div class="dm-pilot-grid">',
-      '      <label>Name<input name="name" type="text" autocomplete="name" required maxlength="120" placeholder="Jane Smith"></label>',
-      '      <label>Role<input name="role" type="text" autocomplete="organization-title" required maxlength="120" placeholder="VP Clinical Ops"></label>',
-      '      <label class="dm-pilot-span">Organization<input name="organization" type="text" autocomplete="organization" required maxlength="160" placeholder="Meridian Oncology"></label>',
-      '      <label class="dm-pilot-span">Work email<input name="email" type="email" autocomplete="email" required maxlength="254" placeholder="jane@company.com"></label>',
-      '      <label class="dm-pilot-span">Message <span class="dm-pilot-opt">(optional)</span><textarea name="message" maxlength="4000" placeholder="What are you trying to run?"></textarea></label>',
+      '      <label>Name<input name="name" type="text" autocomplete="name" required maxlength="120"></label>',
+      '      <label>Role<input name="role" type="text" autocomplete="organization-title" required maxlength="120"></label>',
+      '      <label class="dm-pilot-span">Organization<input name="organization" type="text" autocomplete="organization" required maxlength="160"></label>',
+      '      <label class="dm-pilot-span">Work email<input name="email" type="email" autocomplete="email" required maxlength="254"></label>',
+      '      <label class="dm-pilot-span">What you&rsquo;re working on<textarea name="message" required maxlength="4000"></textarea></label>',
       '      <label class="dm-pilot-hp" aria-hidden="true">Website<input name="website" type="text" tabindex="-1" autocomplete="off"></label>',
       "    </div>",
       '    <div class="dm-pilot-actions">',
@@ -213,7 +213,7 @@
       "    </div>",
       '    <p class="dm-pilot-status" role="status" aria-live="polite"></p>',
       "  </form>",
-      '  <p class="dm-pilot-route">Routes to <b>team@damaros.ai</b></p>',
+      '  <p class="dm-pilot-route">Goes to <b>team@damaros.ai</b></p>',
       '  <div class="dm-pilot-success">',
       '    <div class="dm-pilot-success-badge" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>',
       "    <h3>Inquiry sent</h3>",
@@ -290,8 +290,8 @@
       website: String(fd.get("website") || "")
     };
 
-    if (!payload.name.trim() || !payload.role.trim() || !payload.organization.trim() || !payload.email.trim()) {
-      setStatus("Please fill in name, role, organization, and work email.", "error");
+    if (!payload.name.trim() || !payload.role.trim() || !payload.organization.trim() || !payload.email.trim() || !payload.message.trim()) {
+      setStatus("Please complete every field.", "error");
       return;
     }
 
