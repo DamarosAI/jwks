@@ -76,7 +76,11 @@
   function destroy(inst, index) {
     makeDebris(inst, inst.streams[index]);
     inst.streams.splice(index, 1);
-    if (inst.armed) spawn(inst);
+    // Whack-a-mole: one kill → up to two fresh trails (still capped at MAX_STREAMS).
+    if (inst.armed) {
+      spawn(inst);
+      spawn(inst);
+    }
   }
 
   function makeDebris(inst, s) {
@@ -398,6 +402,7 @@
 
       if (ny - TRAIL * inst.rowH > inst.h) {
         inst.streams.splice(i, 1);
+        spawn(inst);
         spawn(inst);
         continue;
       }
