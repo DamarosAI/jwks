@@ -94,14 +94,17 @@ window.scrollTo(0, 0);
     .dm-site footer{background:#f0f5f9 !important;padding-bottom:max(clamp(40px,6vw,64px),calc(28px + env(safe-area-inset-bottom,0px))) !important;}
     .dm-topo{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
     .dm-topo-stage{position:absolute;inset:-16%;will-change:transform;transform:translate3d(0,0,0) scale(1.14);}
-    .dm-topo-layer{position:absolute;inset:0;background:center / 118% auto no-repeat url("./topo-map.png?v=4");opacity:0.38;filter:none;}
-    /* Airy center for mark/copy; quiet military field held at edges */
-    .dm-topo--hero{-webkit-mask-image:radial-gradient(ellipse 68% 62% at 50% 46%,transparent 0%,transparent 48%,rgba(0,0,0,0.14) 64%,rgba(0,0,0,0.48) 80%,rgba(0,0,0,0.62) 100%),linear-gradient(180deg,transparent 0%,#000 18%,#000 72%,transparent 100%);mask-image:radial-gradient(ellipse 68% 62% at 50% 46%,transparent 0%,transparent 48%,rgba(0,0,0,0.14) 64%,rgba(0,0,0,0.48) 80%,rgba(0,0,0,0.62) 100%),linear-gradient(180deg,transparent 0%,#000 18%,#000 72%,transparent 100%);-webkit-mask-composite:source-in;mask-composite:intersect;}
-    .dm-topo--close{-webkit-mask-image:radial-gradient(ellipse 66% 60% at 50% 48%,transparent 0%,transparent 46%,rgba(0,0,0,0.12) 62%,rgba(0,0,0,0.46) 78%,rgba(0,0,0,0.6) 100%),linear-gradient(180deg,transparent 0%,#000 18%,#000 78%,transparent 100%);mask-image:radial-gradient(ellipse 66% 60% at 50% 48%,transparent 0%,transparent 46%,rgba(0,0,0,0.12) 62%,rgba(0,0,0,0.46) 78%,rgba(0,0,0,0.6) 100%),linear-gradient(180deg,transparent 0%,#000 18%,#000 78%,transparent 100%);-webkit-mask-composite:source-in;mask-composite:intersect;}
+    .dm-topo-layer{position:absolute;inset:0;background:center / 118% auto no-repeat url("./topo-map.png?v=5");opacity:0.2;filter:none;}
+    /* Even field — no center hole. Soft neighbor blend only. */
+    .dm-topo--hero,.dm-topo--close{-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 14%,#000 78%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0%,#000 14%,#000 78%,transparent 100%);}
+    /* Calm wash under mark + copy so lines don't compete with type */
+    section[data-screen-label="Hero"]::before,
+    section[data-screen-label="Close"]::before{content:"";position:absolute;left:50%;top:46%;width:min(920px,92%);height:min(520px,70%);transform:translate(-50%,-50%);z-index:1;pointer-events:none;background:radial-gradient(ellipse 70% 62% at 50% 48%,rgba(243,248,251,0.82) 0%,rgba(243,248,251,0.48) 42%,rgba(243,248,251,0) 74%);}
+    section[data-screen-label="Close"]::before{top:50%;}
     section[data-screen-label="Hero"] > .dm-hero-mark,
-    section[data-screen-label="Close"] > .dm-hero-mark{z-index:1;}
+    section[data-screen-label="Close"] > .dm-hero-mark{z-index:2;}
     section[data-screen-label="Hero"] > .dm-hero-copy,
-    section[data-screen-label="Close"] > .dm-hero-copy{z-index:2;}
+    section[data-screen-label="Close"] > .dm-hero-copy{z-index:3;}
     @media (prefers-reduced-motion:reduce){.dm-topo-stage{transform:none !important;}}
     @media (hover:hover) and (pointer:fine){
       .dm-card-lift:hover{transform:translateY(-3px);border-color:color-mix(in srgb,#2f6193 32%,transparent) !important;box-shadow:0 12px 30px rgba(20,40,70,0.1) !important;}
