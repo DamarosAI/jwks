@@ -31,7 +31,7 @@
   var BLUE = "61,114,168"; // CTA blue #3d72a8
   var VIS = 1.13;
   var MAX_STREAMS = 7;
-  var HEAD_BAND = 5;       // first ~5 glyphs stay stronger
+  var TRAIL = 6;
   var SPEED_ROWS = 3.0;
   var GLITCH = 0.14;
 
@@ -65,18 +65,13 @@
   }
 
   function makeDebris(inst, s) {
-    var head = s.points[s.points.length - 1];
-    var n = trailCount(inst, head ? head.y : 0);
-    ensureTokens(s, n);
-    // Shatter the brighter head band (+ a bit of the fade) — not the whole column.
-    var shatterN = Math.min(n, HEAD_BAND + 3);
-    var pts = trailPoints(s.points, shatterN, inst.rowH);
+    var pts = trailPoints(s.points, TRAIL, inst.rowH);
     for (var i = 0; i < pts.length; i++) {
       var y = pts[i].y;
       if (y < -inst.rowH || y > inst.h + inst.rowH) continue;
       var gw = Math.max(inst.fontPx, s.tokens[i].length * inst.fontPx * 0.58);
       var gh = inst.fontPx;
-      var count = 6 + ((alphaFor(i) * 18) | 0);
+      var count = 6 + ((alphaFor(i, TRAIL) * 18) | 0);
       for (var k = 0; k < count; k++) {
         var ox = (Math.random() - 0.5) * gw;
         var oy = (Math.random() - 0.5) * gh;
@@ -90,15 +85,6 @@
         });
       }
     }
-  }
-
-  // Glyph count from the head back up past the top of the canvas.
-  function trailCount(inst, headY) {
-    return Math.max(HEAD_BAND + 2, Math.ceil((headY + inst.rowH * 3) / inst.rowH) + 1);
-  }
-
-  function ensureTokens(s, n) {
-    while (s.tokens.length < n) s.tokens.push(pick());
   }
 
   function freeCol(inst) {
@@ -122,9 +108,7 @@
     if (inst.streams.length >= MAX_STREAMS) return;
     var col = freeCol(inst);
     var tokens = [];
-    // Preload a full-column of tokens so the trail can stretch from the top.
-    var preload = Math.ceil(inst.h / inst.rowH) + 8;
-    for (var i = 0; i < preload; i++) tokens.push(pick());
+    for (var i = 0; i < TRAIL; i++) tokens.push(pick());
     var x = (col + 0.5) * inst.colW;
     var lead = staggerIdx == null
       ? (2 + Math.random() * 4)
@@ -353,43 +337,30 @@
       }
       dist += seg;
     }
-    // Extend straight up so the column always reaches the top of the canvas.
-    while (res.length < count) {
-      var tip = res[res.length - 1];
-      res.push({ x: tip.x, y: tip.y - spacing });
-    }
     return res;
   }
 
-  // Head band stays solid; past ~5 glyphs the column keeps going with a soft fade.
-  function alphaFor(i) {
-    var a;
-    if (i === 0) a = 0.58;
-    else if (i < HEAD_BAND) a = 0.52 - i * 0.035; // ~0.52 → ~0.38
-    else {
-      // Long, subtle wash back toward the top of the page.
-      var t = (i - HEAD_BAND) / 18;
-      a = Math.max(0.035, 0.28 * Math.exp(-t * 1.15));
-    }
+  // Gentler head→tail falloff so more of the trail stays colored.
+  function alphaFor(i, total) {
+    var f = i / (total - 1 || 1);        // 0 head → 1 tail
+    var a = Math.pow(1 - f, 0.55);       // soft curve — not a steep drop
+    a = 0.22 + a * 0.36;                 // tail floor .22, head .58
     return a * VIS;
   }
 
   function drawStream(ctx, inst, s) {
-    var head = s.points[s.points.length - 1];
-    var n = trailCount(inst, head.y);
-    ensureTokens(s, n);
-    var pts = trailPoints(s.points, n, inst.rowH);
-    if (Math.random() < GLITCH) s.tokens[(Math.random() * s.tokens.length) | 0] = pick();
+    var pts = trailPoints(s.points, TRAIL, inst.rowH);
+    if (Math.random() < GLITCH) s.tokens[(Math.random() * TRAIL) | 0] = pick();
     for (var i = 0; i < pts.length; i++) {
       var y = pts[i].y;
       if (y < -inst.rowH || y > inst.h + inst.rowH) continue;
-      var a = alphaFor(i);
-      if (a < 0.02) continue;
+      var a = alphaFor(i, TRAIL);
+      if (a < 0.01) continue;
       var glitch = Math.random() < 0.03;
       ctx.fillStyle = glitch
         ? "rgba(150,190,232," + Math.min(0.9, a * 2.4).toFixed(3) + ")"
         : "rgba(" + BLUE + "," + a.toFixed(3) + ")";
-      ctx.fillText(s.tokens[i % s.tokens.length], pts[i].x, y);
+      ctx.fillText(s.tokens[i], pts[i].x, y);
     }
   }
 
@@ -440,8 +411,7 @@
 
     if (!inst.drumPaths || !inst.drumPaths.length) bindDrum(inst);
 
-    // Keep enough path history to draw a column stretching back past the top.
-    var maxPathLen = inst.h + inst.rowH * 6;
+    var maxPathLen = TRAIL * inst.rowH + inst.rowH * 2;
 
     for (var i = inst.streams.length - 1; i >= 0; i--) {
       var s = inst.streams[i];
@@ -465,8 +435,7 @@
       }
       if (keepFrom > 0) s.points.splice(0, keepFrom);
 
-      // Leave once the head (and its bright band) have cleared the bottom.
-      if (ny - HEAD_BAND * inst.rowH > inst.h) {
+      if (ny - TRAIL * inst.rowH > inst.h) {
         inst.streams.splice(i, 1);
         spawn(inst);
         spawn(inst);
@@ -530,9 +499,7 @@
       var thr2 = thr * thr;
       for (var s = inst.streams.length - 1; s >= 0; s--) {
         var st = inst.streams[s];
-        var head = st.points[st.points.length - 1];
-        var n = Math.min(trailCount(inst, head ? head.y : 0), HEAD_BAND + 4);
-        var pts = trailPoints(st.points, n, inst.rowH);
+        var pts = trailPoints(st.points, TRAIL, inst.rowH);
         for (var p = 0; p < pts.length; p++) {
           var dx = pts[p].x - x, dy = pts[p].y - y;
           if (dx * dx + dy * dy <= thr2) { destroy(inst, s); break; }
