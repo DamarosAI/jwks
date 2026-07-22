@@ -99,8 +99,13 @@ module.exports = async function handler(req, res) {
     return json(res, 500, { error: "Email service is not configured." });
   }
 
+  // Always deliver pilot inquiries to the team inbox.
   const from = process.env.PILOT_FROM_EMAIL || "Damaros <team@damaros.ai>";
   const to = process.env.PILOT_TO_EMAIL || "team@damaros.ai";
+  if (!String(to).toLowerCase().includes("damaros.ai")) {
+    console.error("pilot-inquiry: refusing unexpected PILOT_TO_EMAIL", to);
+    return json(res, 500, { error: "Email service is misconfigured." });
+  }
   const { subject, text, html } = buildPilotEmail(parsed.data);
 
   const resend = new Resend(apiKey);
