@@ -28,7 +28,7 @@
 <script src="./support.js" defer></script>
 <script src="./mail-cta.js?v=9" defer></script>
 <script src="./logo-marquee.js?v=1" defer></script>
-<script src="./topo.js?v=2" defer></script>
+<script src="./biomarker-matrix.js?v=1" defer></script>
 <script>
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 window.scrollTo(0, 0);
@@ -92,24 +92,17 @@ window.scrollTo(0, 0);
     .dm-site{background:#fafcfd;background-color:#fafcfd;min-height:100%;min-height:100dvh;}
     .dm-site section{background:transparent !important;}
     .dm-site footer{background:#fafcfd !important;padding-bottom:max(clamp(40px,6vw,64px),calc(28px + env(safe-area-inset-bottom,0px))) !important;}
-    .dm-topo{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
-    .dm-topo-stage{position:absolute;inset:-6%;will-change:transform;transform:translate3d(0,0,0) scale(1.04);}
-    /* Modular engineering grid — CTA blue, major + minor, cleared around drum */
-    .dm-topo-grid{position:absolute;inset:0;opacity:0.55;background-image:
-      linear-gradient(to right, rgba(61,114,168,0.16) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(61,114,168,0.16) 1px, transparent 1px),
-      linear-gradient(to right, rgba(61,114,168,0.28) 1.5px, transparent 1.5px),
-      linear-gradient(to bottom, rgba(61,114,168,0.28) 1.5px, transparent 1.5px);}
-    .dm-topo-grid--hero{background-size:24px 24px,24px 24px,96px 96px,96px 96px;background-position:0 0;}
-    .dm-topo-grid--close{background-size:28px 28px,28px 28px,112px 112px,112px 112px;background-position:14px 14px;}
-    .dm-topo--hero{-webkit-mask-image:radial-gradient(ellipse 46% 50% at 50% 48%,transparent 0%,transparent 58%,rgba(0,0,0,0.35) 78%,#000 100%),linear-gradient(180deg,#000 0%,#000 62%,rgba(0,0,0,0.4) 82%,transparent 100%);mask-image:radial-gradient(ellipse 46% 50% at 50% 48%,transparent 0%,transparent 58%,rgba(0,0,0,0.35) 78%,#000 100%),linear-gradient(180deg,#000 0%,#000 62%,rgba(0,0,0,0.4) 82%,transparent 100%);-webkit-mask-composite:source-in;mask-composite:intersect;}
-    .dm-topo--close{-webkit-mask-image:radial-gradient(ellipse 46% 50% at 50% 50%,transparent 0%,transparent 58%,rgba(0,0,0,0.35) 78%,#000 100%),linear-gradient(180deg,transparent 0%,rgba(0,0,0,0.4) 16%,#000 36%,#000 100%);mask-image:radial-gradient(ellipse 46% 50% at 50% 50%,transparent 0%,transparent 58%,rgba(0,0,0,0.35) 78%,#000 100%),linear-gradient(180deg,transparent 0%,rgba(0,0,0,0.4) 16%,#000 36%,#000 100%);-webkit-mask-composite:source-in;mask-composite:intersect;}
+    /* Subtle biomarker matrix rain — CTA blue, cleared around drum + copy */
+    .dm-matrix{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+    .dm-matrix-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0.9;}
+    .dm-matrix--hero{-webkit-mask-image:radial-gradient(ellipse 46% 50% at 50% 48%,transparent 0%,transparent 58%,rgba(0,0,0,0.35) 78%,#000 100%),linear-gradient(180deg,#000 0%,#000 62%,rgba(0,0,0,0.4) 82%,transparent 100%);mask-image:radial-gradient(ellipse 46% 50% at 50% 48%,transparent 0%,transparent 58%,rgba(0,0,0,0.35) 78%,#000 100%),linear-gradient(180deg,#000 0%,#000 62%,rgba(0,0,0,0.4) 82%,transparent 100%);-webkit-mask-composite:source-in;mask-composite:intersect;}
+    .dm-matrix--close{-webkit-mask-image:radial-gradient(ellipse 46% 50% at 50% 50%,transparent 0%,transparent 58%,rgba(0,0,0,0.35) 78%,#000 100%),linear-gradient(180deg,transparent 0%,rgba(0,0,0,0.4) 16%,#000 36%,#000 100%);mask-image:radial-gradient(ellipse 46% 50% at 50% 50%,transparent 0%,transparent 58%,rgba(0,0,0,0.35) 78%,#000 100%),linear-gradient(180deg,transparent 0%,rgba(0,0,0,0.4) 16%,#000 36%,#000 100%);-webkit-mask-composite:source-in;mask-composite:intersect;}
     .dm-site section > .dm-scroll-target,.dm-site section > .dm-scroll-chev{position:relative;z-index:1;}
     section[data-screen-label="Hero"] > .dm-hero-mark,
     section[data-screen-label="Close"] > .dm-hero-mark{z-index:1;}
     section[data-screen-label="Hero"] > .dm-hero-copy,
     section[data-screen-label="Close"] > .dm-hero-copy{z-index:2;}
-    @media (prefers-reduced-motion:reduce){.dm-topo-stage{transform:none !important;}}
+    @media (prefers-reduced-motion:reduce){.dm-matrix-canvas{opacity:0.55;}}
     @media (hover:hover) and (pointer:fine){
       .dm-card-lift:hover{transform:translateY(-3px);border-color:color-mix(in srgb,#2f6193 32%,transparent) !important;box-shadow:0 12px 30px rgba(20,40,70,0.1) !important;}
     }
@@ -532,7 +525,7 @@ window.scrollTo(0, 0);
 
   <!-- ============ HERO ============ -->
   <section data-screen-label="Hero" style="position:relative;min-height:calc(100vh - 62px);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:clamp(64px,7vw,96px) clamp(20px,5vw,40px) clamp(72px,8vw,104px);overflow:hidden;">
-    <div class="dm-topo dm-topo--hero" aria-hidden="true"><div class="dm-topo-stage"><div class="dm-topo-grid dm-topo-grid--hero"></div></div></div>
+    <div class="dm-matrix dm-matrix--hero" aria-hidden="true"></div>
     <div class="dm-hero-mark" aria-hidden="true" data-anim="" style="position:absolute;top:50%;left:50%;width:min(720px,104%);height:min(720px,104%);transform:translate(-50%,-50%);color:rgba(31,45,61,0.13);pointer-events:none;animation:dmDrift 18s ease-in-out infinite;"><svg viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="30" stroke-linejoin="round" stroke-linecap="round" style="width:100%;height:100%;"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg></div>
     <div class="dm-hero-copy" style="position:relative;max-width:980px;margin:0 auto;text-align:center;">
       <div class="dm-hero-core">
@@ -1488,7 +1481,7 @@ window.scrollTo(0, 0);
 
   <!-- ============ CLOSE ============ -->
   <section id="close" data-screen-label="Close" style="position:relative;min-height:calc(100vh - 62px);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:clamp(80px,11vw,150px) clamp(20px,5vw,40px);overflow:hidden;">
-    <div class="dm-topo dm-topo--close" aria-hidden="true"><div class="dm-topo-stage"><div class="dm-topo-grid dm-topo-grid--close"></div></div></div>
+    <div class="dm-matrix dm-matrix--close" aria-hidden="true"></div>
     <div class="dm-hero-mark" aria-hidden="true" data-anim="" style="position:absolute;top:50%;left:50%;width:min(720px,104%);height:min(720px,104%);transform:translate(-50%,-50%);color:rgba(31,45,61,0.13);pointer-events:none;animation:dmDrift 18s ease-in-out infinite;">
       <svg viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="30" stroke-linejoin="round" stroke-linecap="round" style="width:100%;height:100%;"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg>
     </div>
