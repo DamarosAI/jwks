@@ -1,11 +1,10 @@
 /**
  * Matrix-style biomarker waterfall for hero / close.
  *
- * A small pool of streams (max 7 at once) of oncogenes, tumor-suppressor
- * genes, and clinical biomarkers falls in CTA blue at a single constant speed.
- * When a stream reaches the Damaros drum mark it reflects off the drum's actual
- * edge normal (accurate to the drum's angle) and its trail smoothly bends along
- * the deflection while fading out — no acceleration anywhere. Infinite, random.
+ * Max 7 constant-speed trails of oncogenes / tumor-suppressor genes / biomarkers
+ * in CTA blue. Close section stays idle until it enters view, then boots all
+ * trails at once. Drum contact or pointer tap/hover shatters glyphs into pixels
+ * and instantly respawns elsewhere (whack-a-mole).
  */
 (function () {
   // Oncogenes, tumor-suppressor genes, fusions, mutations, clinical biomarkers.
@@ -30,14 +29,12 @@
   ];
 
   var BLUE = "61,114,168"; // CTA blue #3d72a8
-  var VIS = 1.13;          // ~13% more visible than the earlier pass
-  var MAX_STREAMS = 7;     // never more than 7 trails at once
-  var TRAIL = 6;           // glyphs per trail
-  var SPEED_ROWS = 3.0;    // constant fall speed, in rows/sec (no acceleration)
-  var GLITCH = 0.14;       // per-stream chance/frame to swap a glyph (retro flicker)
+  var VIS = 1.13;
+  var MAX_STREAMS = 7;
+  var TRAIL = 6;
+  var SPEED_ROWS = 3.0;
+  var GLITCH = 0.14;
 
-  // Drum outline in SVG viewBox (0 0 476 520) coords. Arcs approximated by
-  // their chords — the corners are small radii, so the edge angles are exact.
   var DRUM_PATHS = [
     [[104.82, 74.5], [366.46, 74.5], [402.59, 133.29], [368.99, 199.68],
      [312.33, 234.5], [158.12, 234.5], [101.18, 199.11], [68.5, 132.93]],
@@ -45,8 +42,6 @@
      [367.09, 446.5], [104.32, 446.5], [68.01, 388.07], [101.68, 319.88]]
   ];
 
-  // Edges with outward unit normals in view coords (uniform scaling preserves
-  // normal direction, so only vertices are transformed per frame).
   var DRUM_EDGES = buildEdges();
 
   function buildEdges() {
@@ -71,18 +66,17 @@
   }
 
   var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var coarse = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
   var instances = [];
   var raf = 0;
 
   function pick() { return MARKERS[(Math.random() * MARKERS.length) | 0]; }
   function now() { return (performance && performance.now) ? performance.now() : Date.now(); }
 
-  // Shatter a stream's glyphs into scattering pixels, drop it, and instantly
-  // pop a fresh trail elsewhere — whack-a-mole.
   function destroy(inst, index) {
     makeDebris(inst, inst.streams[index]);
     inst.streams.splice(index, 1);
-    spawn(inst);
+    if (inst.armed) spawn(inst);
   }
 
   function makeDebris(inst, s) {
@@ -92,12 +86,12 @@
       if (y < -inst.rowH || y > inst.h + inst.rowH) continue;
       var gw = Math.max(inst.fontPx, s.tokens[i].length * inst.fontPx * 0.58);
       var gh = inst.fontPx;
-      var count = 6 + ((alphaFor(i, TRAIL) * 18) | 0); // head shatters into more
+      var count = 6 + ((alphaFor(i, TRAIL) * 18) | 0);
       for (var k = 0; k < count; k++) {
         var ox = (Math.random() - 0.5) * gw;
         var oy = (Math.random() - 0.5) * gh;
         var ang = Math.atan2(oy, ox || 0.001) + (Math.random() - 0.5) * 0.9;
-        var sp = 55 + Math.random() * 140; // constant per-pixel, no acceleration
+        var sp = 55 + Math.random() * 140;
         inst.debris.push({
           x: pts[i].x + ox, y: y + oy,
           vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp,
@@ -108,8 +102,6 @@
     }
   }
 
-  // Pick the column that is as far as possible from every active trail, so the
-  // (max 7) streams stay cleanly spread across the width.
   function freeCol(inst) {
     if (!inst.streams.length) return (Math.random() * inst.nCols) | 0;
     var bestCol = 0, bestDist = -1;
@@ -121,19 +113,22 @@
         if (d < minD) minD = d;
       }
       if (occupied) continue;
-      // Tiny jitter breaks ties without collapsing the spacing.
       var score = minD + Math.random() * 0.5;
       if (score > bestDist) { bestDist = score; bestCol = c; }
     }
     return bestCol;
   }
 
-  function spawn(inst) {
+  function spawn(inst, staggerIdx) {
+    if (inst.streams.length >= MAX_STREAMS) return;
     var col = freeCol(inst);
     var tokens = [];
     for (var i = 0; i < TRAIL; i++) tokens.push(pick());
     var x = (col + 0.5) * inst.colW;
-    var y = -inst.rowH * (2 + Math.random() * 4); // ease in from above the top
+    var lead = staggerIdx == null
+      ? (2 + Math.random() * 4)
+      : (1.2 + staggerIdx * (inst.h / (inst.rowH * (MAX_STREAMS + 1))) + Math.random() * 1.2);
+    var y = -inst.rowH * lead;
     inst.streams.push({
       col: col, x: x,
       vx: 0, vy: inst.speed,
@@ -142,6 +137,46 @@
       state: "fall",
       life: 1
     });
+  }
+
+  // Instant full field — used when close section enters view.
+  function bootStreams(inst) {
+    inst.streams.length = 0;
+    for (var i = 0; i < MAX_STREAMS; i++) spawn(inst, i);
+    inst.nextSpawn = now() + 400;
+  }
+
+  function clearLive(inst) {
+    inst.streams.length = 0;
+    inst.debris.length = 0;
+    if (inst.ctx && inst.w) inst.ctx.clearRect(0, 0, inst.w, inst.h);
+  }
+
+  function watchView(inst) {
+    if (inst.io) return;
+    if (typeof IntersectionObserver === "undefined") {
+      inst.armed = true;
+      if (inst.waitView) bootStreams(inst);
+      return;
+    }
+    inst.io = new IntersectionObserver(function (entries) {
+      for (var i = 0; i < entries.length; i++) {
+        var en = entries[i];
+        if (en.isIntersecting) {
+          if (!inst.armed) {
+            inst.armed = true;
+            if (inst.waitView) bootStreams(inst);
+            kick();
+          }
+        } else if (inst.waitView) {
+          // Close: go idle off-screen so re-entry boots fresh & fast.
+          inst.armed = false;
+          clearLive(inst);
+          inst.last = 0;
+        }
+      }
+    }, { threshold: 0.12, rootMargin: "40px 0px" });
+    inst.io.observe(inst.el);
   }
 
   function mount(el) {
@@ -153,16 +188,21 @@
     var ctx = canvas.getContext("2d");
     if (!ctx) return null;
     var section = el.closest ? el.closest("section") : null;
+    var waitView = el.classList.contains("dm-matrix--close");
 
     var inst = {
       el: el, canvas: canvas, ctx: ctx,
       mark: section ? section.querySelector(".dm-hero-mark") : null,
       streams: [], debris: [],
       nCols: 0, colW: 0, rowH: 0, rows: 0, speed: 0, fontPx: 12,
-      nextSpawn: 0, w: 0, h: 0, dpr: 1, last: 0
+      nextSpawn: 0, w: 0, h: 0, dpr: 1, last: 0,
+      waitView: waitView,
+      armed: !waitView,
+      io: null
     };
     el.__dmMatrix = inst;
     resize(inst);
+    watchView(inst);
     if (reduced) paintStatic(inst);
     return inst;
   }
@@ -174,6 +214,7 @@
     var h = Math.max(1, Math.floor(r.height));
     if (w === inst.w && h === inst.h && dpr === inst.dpr) return;
 
+    var hadStreams = inst.streams.length > 0;
     inst.w = w; inst.h = h; inst.dpr = dpr;
     inst.canvas.width = Math.floor(w * dpr);
     inst.canvas.height = Math.floor(h * dpr);
@@ -181,26 +222,27 @@
     inst.canvas.style.height = h + "px";
     inst.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    var target = w < 640 ? 58 : 72;
+    // Tighter columns on phone so spacing still reads; roomier on desktop.
+    var target = w < 480 ? 48 : w < 900 ? 58 : 72;
     inst.nCols = Math.max(6, Math.round(w / target));
-    inst.rowH = w < 640 ? 18 : 20;
+    inst.rowH = w < 480 ? 16 : w < 900 ? 18 : 20;
     inst.colW = w / inst.nCols;
     inst.rows = Math.max(8, Math.ceil(h / inst.rowH) + 2);
     inst.speed = inst.rowH * SPEED_ROWS;
-    inst.fontPx = Math.max(10, Math.floor(inst.rowH * 0.6));
+    inst.fontPx = Math.max(9, Math.floor(inst.rowH * 0.6));
     inst.streams.length = 0;
     inst.debris.length = 0;
     inst.nextSpawn = 0;
+    if (inst.armed && hadStreams && !reduced) bootStreams(inst);
   }
 
-  // Current drum transform (view → canvas): { scale, ox, oy } or null.
   function drumFor(inst) {
     var mark = inst.mark;
     if (!mark || !mark.isConnected) return null;
     var cr = inst.canvas.getBoundingClientRect();
     var mr = mark.getBoundingClientRect();
     if (!mr.width || !mr.height) return null;
-    var scale = Math.min(mr.width / 476, mr.height / 520); // xMidYMid meet
+    var scale = Math.min(mr.width / 476, mr.height / 520);
     var dw = 476 * scale, dh = 520 * scale;
     return {
       scale: scale,
@@ -209,14 +251,11 @@
     };
   }
 
-  // First contact of a moving head, segment (x0,y0)->(x1,y1), with a top-facing
-  // drum edge. Returns { x, y, nx, ny } or null.
   function drumHit(drum, x0, y0, x1, y1) {
     if (!drum) return null;
     var best = null, bestT = 2;
     for (var i = 0; i < DRUM_EDGES.length; i++) {
       var e = DRUM_EDGES[i];
-      // Only surfaces facing against the motion can be struck.
       var mvx = x1 - x0, mvy = y1 - y0;
       if (mvx * e.nx + mvy * e.ny >= 0) continue;
       var ax = drum.ox + e.ax * drum.scale, ay = drum.oy + e.ay * drum.scale;
@@ -224,8 +263,8 @@
       var ex = bx - ax, ey = by - ay;
       var denom = mvx * ey - mvy * ex;
       if (denom === 0) continue;
-      var t = ((ax - x0) * ey - (ay - y0) * ex) / denom; // along motion
-      var u = ((ax - x0) * mvy - (ay - y0) * mvx) / denom; // along edge
+      var t = ((ax - x0) * ey - (ay - y0) * ex) / denom;
+      var u = ((ax - x0) * mvy - (ay - y0) * mvx) / denom;
       if (t < 0 || t > 1 || u < 0 || u > 1) continue;
       if (t < bestT) {
         bestT = t;
@@ -235,7 +274,6 @@
     return best;
   }
 
-  // Even glyph spacing along the head's path (newest point last).
   function trailPoints(points, count, spacing) {
     var last = points.length - 1;
     var res = [{ x: points[last].x, y: points[last].y }];
@@ -256,26 +294,21 @@
     return res;
   }
 
-  // Smooth head-to-tail falloff (eased, not stepped).
   function alphaFor(i, total) {
-    var f = i / (total - 1 || 1);        // 0 head → 1 tail
-    var a = (1 - f) * (1 - f);           // quadratic ease-out
-    a = 0.08 + a * 0.44;                 // tail floor .08, head .52
+    var f = i / (total - 1 || 1);
+    var a = (1 - f) * (1 - f);
+    a = 0.08 + a * 0.44;
     return a * VIS;
   }
 
   function drawStream(ctx, inst, s) {
     var pts = trailPoints(s.points, TRAIL, inst.rowH);
-
-    // Retro-glitch: swap a random glyph now and then so tokens churn.
     if (Math.random() < GLITCH) s.tokens[(Math.random() * TRAIL) | 0] = pick();
-
     for (var i = 0; i < pts.length; i++) {
       var y = pts[i].y;
       if (y < -inst.rowH || y > inst.h + inst.rowH) continue;
       var a = alphaFor(i, TRAIL);
       if (a < 0.01) continue;
-      // Occasional bright flash on a glyph — CRT-style flicker.
       var glitch = Math.random() < 0.03;
       ctx.fillStyle = glitch
         ? "rgba(150,190,232," + Math.min(0.9, a * 2.4).toFixed(3) + ")"
@@ -288,7 +321,7 @@
     var d = inst.debris;
     for (var e = d.length - 1; e >= 0; e--) {
       var p = d[e];
-      p.x += p.vx * secs; // constant velocity — no acceleration
+      p.x += p.vx * secs;
       p.y += p.vy * secs;
       p.life -= secs / p.ttl;
       if (p.life <= 0 || p.x < -20 || p.x > inst.w + 20 || p.y < -20 || p.y > inst.h + 20) {
@@ -296,11 +329,11 @@
         continue;
       }
       var a = p.life * 0.7 * VIS;
-      var flash = Math.random() < 0.18; // sparks pop as pixels die
+      var flash = Math.random() < 0.18;
       ctx.fillStyle = flash
         ? "rgba(170,205,240," + Math.min(0.95, a * 1.9).toFixed(3) + ")"
         : "rgba(" + BLUE + "," + a.toFixed(3) + ")";
-      var sz = p.size * (0.35 + p.life * 0.65); // shrink as it burns out
+      var sz = p.size * (0.35 + p.life * 0.65);
       ctx.fillRect(p.x - sz * 0.5, p.y - sz * 0.5, sz, sz);
     }
   }
@@ -322,6 +355,7 @@
   }
 
   function paint(inst, dt) {
+    if (!inst.armed) return;
     var ctx = inst.ctx, secs = dt / 1000;
     ctx.clearRect(0, 0, inst.w, inst.h);
     ctx.font = "600 " + inst.fontPx + "px \"IBM Plex Mono\", ui-monospace, monospace";
@@ -330,10 +364,12 @@
     var drum = drumFor(inst);
     var t = now();
 
-    // Keep up to MAX_STREAMS trails alive, staggered so it stays fluid.
-    if (inst.streams.length < MAX_STREAMS && t >= inst.nextSpawn) {
+    // Hero warms in staggered; close boots all at once on view entry.
+    if (!inst.waitView && inst.streams.length < MAX_STREAMS && t >= inst.nextSpawn) {
       spawn(inst);
       inst.nextSpawn = t + 380 + Math.random() * 340;
+    } else if (inst.waitView && inst.streams.length < MAX_STREAMS) {
+      spawn(inst); // keep close topped up instantly after whack-a-mole
     }
 
     var maxPathLen = TRAIL * inst.rowH + inst.rowH * 2;
@@ -346,7 +382,6 @@
 
       var hit = drumHit(drum, last.x, last.y, nx, ny);
       if (hit) {
-        // Touching the drum shatters the trail into pixels — never overlap.
         s.points.push({ x: hit.x, y: hit.y });
         destroy(inst, i);
         continue;
@@ -354,7 +389,6 @@
 
       s.points.push({ x: nx, y: ny });
 
-      // Trim the stored path to what the trail needs.
       var lenAcc = 0, keepFrom = 0;
       for (var k = s.points.length - 1; k > 0; k--) {
         lenAcc += Math.hypot(s.points[k].x - s.points[k - 1].x, s.points[k].y - s.points[k - 1].y);
@@ -363,8 +397,8 @@
       if (keepFrom > 0) s.points.splice(0, keepFrom);
 
       if (ny - TRAIL * inst.rowH > inst.h) {
-        inst.streams.splice(i, 1); // fell past the bottom
-        spawn(inst);               // keep the field full
+        inst.streams.splice(i, 1);
+        spawn(inst);
         continue;
       }
 
@@ -379,7 +413,7 @@
     var any = false;
     for (var i = 0; i < instances.length; i++) {
       var inst = instances[i];
-      if (!inst.el.isConnected) continue;
+      if (!inst.el.isConnected || !inst.armed) continue;
       var r = inst.el.getBoundingClientRect();
       if (r.bottom <= -20 || r.top >= window.innerHeight + 20) { inst.last = 0; continue; }
       any = true;
@@ -407,16 +441,18 @@
     return instances.length > 0;
   }
 
-  // Break any trail the pointer touches (hover or tap) — it evaporates.
-  function breakAt(clientX, clientY) {
+  // Hover (mouse) or tap (touch/pen) shatters a trail — larger hit on coarse pointers.
+  function breakAt(clientX, clientY, pointerType) {
     if (reduced) return;
+    var touchy = pointerType === "touch" || coarse;
     for (var i = 0; i < instances.length; i++) {
       var inst = instances[i];
-      if (!inst.el.isConnected) continue;
+      if (!inst.el.isConnected || !inst.armed) continue;
       var cr = inst.canvas.getBoundingClientRect();
       var x = clientX - cr.left, y = clientY - cr.top;
       if (x < 0 || y < 0 || x > inst.w || y > inst.h) continue;
-      var thr = inst.rowH * 1.3, thr2 = thr * thr;
+      var thr = inst.rowH * (touchy ? 2.0 : 1.3);
+      var thr2 = thr * thr;
       for (var s = inst.streams.length - 1; s >= 0; s--) {
         var st = inst.streams[s];
         var pts = trailPoints(st.points, TRAIL, inst.rowH);
@@ -429,7 +465,14 @@
     kick();
   }
 
-  function onPointer(e) { breakAt(e.clientX, e.clientY); }
+  // Mouse hover breaks trails; touch only breaks on tap (not scroll-drag).
+  function onPointerMove(e) {
+    if (e.pointerType === "touch") return;
+    breakAt(e.clientX, e.clientY, e.pointerType);
+  }
+  function onPointerDown(e) {
+    breakAt(e.clientX, e.clientY, e.pointerType);
+  }
 
   function boot() {
     if (!collect()) return;
@@ -441,8 +484,8 @@
   }
 
   window.addEventListener("scroll", kick, { passive: true });
-  document.addEventListener("pointermove", onPointer, { passive: true });
-  document.addEventListener("pointerdown", onPointer, { passive: true });
+  document.addEventListener("pointermove", onPointerMove, { passive: true });
+  document.addEventListener("pointerdown", onPointerDown, { passive: true });
   window.addEventListener("resize", function () {
     for (var i = 0; i < instances.length; i++) resize(instances[i]);
     if (reduced) {
@@ -459,7 +502,6 @@
   }
   window.addEventListener("load", boot);
 
-  // DC remounts template content — rebind when .dm-matrix appears.
   var tries = 0;
   var poll = setInterval(function () {
     tries += 1;
