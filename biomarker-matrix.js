@@ -80,7 +80,18 @@
     if (inst.armed) {
       spawn(inst);
       spawn(inst);
+      ensureField(inst); // never allow an empty field while armed
     }
+  }
+
+  // Hard invariant: while armed/in-view, trails are never zero — fill to MAX.
+  function ensureField(inst) {
+    if (!inst.armed || reduced) return;
+    if (inst.streams.length === 0) {
+      bootStreams(inst);
+      return;
+    }
+    while (inst.streams.length < MAX_STREAMS) spawn(inst);
   }
 
   function makeDebris(inst, s) {
@@ -156,11 +167,33 @@
     if (inst.ctx && inst.w) inst.ctx.clearRect(0, 0, inst.w, inst.h);
   }
 
+  // Sync close section to viewport immediately (don't wait on IO alone).
+  function syncVisibility(inst) {
+    if (!inst.waitView || reduced) return;
+    var r = inst.el.getBoundingClientRect();
+    var inView = r.bottom > 48 && r.top < window.innerHeight - 24;
+    if (inView) {
+      if (!inst.armed) {
+        inst.armed = true;
+        bootStreams(inst);
+      } else {
+        ensureField(inst);
+      }
+    } else if (inst.armed) {
+      inst.armed = false;
+      clearLive(inst);
+      inst.last = 0;
+    }
+  }
+
   function watchView(inst) {
     if (inst.io) return;
     if (typeof IntersectionObserver === "undefined") {
-      inst.armed = true;
-      if (inst.waitView) bootStreams(inst);
+      syncVisibility(inst);
+      if (!inst.waitView) {
+        inst.armed = true;
+        ensureField(inst);
+      }
       return;
     }
     inst.io = new IntersectionObserver(function (entries) {
@@ -169,18 +202,21 @@
         if (en.isIntersecting) {
           if (!inst.armed) {
             inst.armed = true;
-            if (inst.waitView) bootStreams(inst);
+            bootStreams(inst);
             kick();
+          } else {
+            ensureField(inst);
           }
         } else if (inst.waitView) {
-          // Close: go idle off-screen so re-entry boots fresh & fast.
           inst.armed = false;
           clearLive(inst);
           inst.last = 0;
         }
       }
-    }, { threshold: 0.12, rootMargin: "40px 0px" });
+    }, { threshold: 0.08, rootMargin: "80px 0px" });
     inst.io.observe(inst.el);
+    // Immediate check so a already-visible close never boots empty.
+    syncVisibility(inst);
   }
 
   function mount(el) {
@@ -207,6 +243,7 @@
     el.__dmMatrix = inst;
     resize(inst);
     watchView(inst);
+    if (!waitView && !reduced) ensureField(inst);
     if (reduced) paintStatic(inst);
     return inst;
   }
@@ -218,7 +255,6 @@
     var h = Math.max(1, Math.floor(r.height));
     if (w === inst.w && h === inst.h && dpr === inst.dpr) return;
 
-    var hadStreams = inst.streams.length > 0;
     inst.w = w; inst.h = h; inst.dpr = dpr;
     inst.canvas.width = Math.floor(w * dpr);
     inst.canvas.height = Math.floor(h * dpr);
@@ -237,7 +273,7 @@
     inst.streams.length = 0;
     inst.debris.length = 0;
     inst.nextSpawn = 0;
-    if (inst.armed && hadStreams && !reduced) bootStreams(inst);
+    if (inst.armed && !reduced) bootStreams(inst);
   }
 
   function drumFor(inst) {
@@ -360,21 +396,13 @@
 
   function paint(inst, dt) {
     if (!inst.armed) return;
+    ensureField(inst); // never paint an empty field
     var ctx = inst.ctx, secs = dt / 1000;
     ctx.clearRect(0, 0, inst.w, inst.h);
     ctx.font = "600 " + inst.fontPx + "px \"IBM Plex Mono\", ui-monospace, monospace";
     ctx.textAlign = "center"; ctx.textBaseline = "middle";
 
     var drum = drumFor(inst);
-    var t = now();
-
-    // Hero warms in staggered; close boots all at once on view entry.
-    if (!inst.waitView && inst.streams.length < MAX_STREAMS && t >= inst.nextSpawn) {
-      spawn(inst);
-      inst.nextSpawn = t + 380 + Math.random() * 340;
-    } else if (inst.waitView && inst.streams.length < MAX_STREAMS) {
-      spawn(inst); // keep close topped up instantly after whack-a-mole
-    }
 
     var maxPathLen = TRAIL * inst.rowH + inst.rowH * 2;
 
@@ -404,12 +432,14 @@
         inst.streams.splice(i, 1);
         spawn(inst);
         spawn(inst);
+        ensureField(inst);
         continue;
       }
 
       drawStream(ctx, inst, s);
     }
 
+    ensureField(inst); // refill after any removals this frame
     drawDebris(ctx, inst, secs);
   }
 
@@ -418,7 +448,9 @@
     var any = false;
     for (var i = 0; i < instances.length; i++) {
       var inst = instances[i];
-      if (!inst.el.isConnected || !inst.armed) continue;
+      if (!inst.el.isConnected) continue;
+      syncVisibility(inst);
+      if (!inst.armed) continue;
       var r = inst.el.getBoundingClientRect();
       if (r.bottom <= -20 || r.top >= window.innerHeight + 20) { inst.last = 0; continue; }
       any = true;
