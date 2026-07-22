@@ -92,13 +92,14 @@ window.scrollTo(0, 0);
     .dm-site section{background:transparent !important;}
     .dm-site footer{background:#f0f5f9 !important;padding-bottom:max(clamp(40px,6vw,64px),calc(28px + env(safe-area-inset-bottom,0px))) !important;}
     .dm-topo{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
-    .dm-topo svg{position:absolute;left:50%;top:50%;width:min(1180px,140%);height:auto;aspect-ratio:1200/900;transform:translate(-50%,-50%);color:#2f6193;opacity:0.9;}
+    .dm-topo svg{position:absolute;inset:0;width:100%;height:100%;color:#3d72a8;opacity:1;}
     .dm-topo path{fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;}
-    .dm-topo .dm-topo-idx{stroke-opacity:0.28;stroke-width:1.35;}
-    .dm-topo .dm-topo-mid{stroke-opacity:0.16;stroke-width:0.85;}
-    .dm-topo .dm-topo-far{stroke-opacity:0.1;stroke-width:0.7;}
-    .dm-topo--hero{-webkit-mask-image:radial-gradient(ellipse 74% 70% at 50% 48%,#000 0%,rgba(0,0,0,0.75) 40%,rgba(0,0,0,0.3) 66%,transparent 88%);mask-image:radial-gradient(ellipse 74% 70% at 50% 48%,#000 0%,rgba(0,0,0,0.75) 40%,rgba(0,0,0,0.3) 66%,transparent 88%);}
-    .dm-topo--close{-webkit-mask-image:radial-gradient(ellipse 72% 68% at 50% 50%,#000 0%,rgba(0,0,0,0.72) 42%,rgba(0,0,0,0.26) 68%,transparent 90%);mask-image:radial-gradient(ellipse 72% 68% at 50% 50%,#000 0%,rgba(0,0,0,0.72) 42%,rgba(0,0,0,0.26) 68%,transparent 90%);}
+    .dm-topo .dm-topo-idx{stroke-opacity:0.34;stroke-width:1.4;}
+    .dm-topo .dm-topo-mid{stroke-opacity:0.2;stroke-width:0.9;}
+    .dm-topo .dm-topo-far{stroke-opacity:0.13;stroke-width:0.75;}
+    /* Full-bleed edges; clear vignette hole for logo/copy; soft fade into neighbors */
+    .dm-topo--hero{-webkit-mask-image:radial-gradient(ellipse 62% 56% at 50% 46%,transparent 0%,transparent 36%,rgba(0,0,0,0.28) 54%,rgba(0,0,0,0.75) 72%,#000 88%,rgba(0,0,0,0.55) 100%),linear-gradient(180deg,transparent 0%,#000 14%,#000 80%,transparent 100%);mask-image:radial-gradient(ellipse 62% 56% at 50% 46%,transparent 0%,transparent 36%,rgba(0,0,0,0.28) 54%,rgba(0,0,0,0.75) 72%,#000 88%,rgba(0,0,0,0.55) 100%),linear-gradient(180deg,transparent 0%,#000 14%,#000 80%,transparent 100%);-webkit-mask-composite:source-in;mask-composite:intersect;}
+    .dm-topo--close{-webkit-mask-image:radial-gradient(ellipse 60% 54% at 50% 48%,transparent 0%,transparent 34%,rgba(0,0,0,0.26) 52%,rgba(0,0,0,0.75) 70%,#000 88%,rgba(0,0,0,0.55) 100%),linear-gradient(180deg,transparent 0%,#000 14%,#000 84%,transparent 100%);mask-image:radial-gradient(ellipse 60% 54% at 50% 48%,transparent 0%,transparent 34%,rgba(0,0,0,0.26) 52%,rgba(0,0,0,0.75) 70%,#000 88%,rgba(0,0,0,0.55) 100%),linear-gradient(180deg,transparent 0%,#000 14%,#000 84%,transparent 100%);-webkit-mask-composite:source-in;mask-composite:intersect;}
     section[data-screen-label="Hero"] > .dm-hero-mark,
     section[data-screen-label="Close"] > .dm-hero-mark{z-index:1;}
     section[data-screen-label="Hero"] > .dm-hero-copy,
@@ -526,30 +527,35 @@ window.scrollTo(0, 0);
   <!-- ============ HERO ============ -->
   <section data-screen-label="Hero" style="position:relative;min-height:calc(100vh - 62px);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:clamp(64px,7vw,96px) clamp(20px,5vw,40px) clamp(72px,8vw,104px);overflow:hidden;">
     <div class="dm-topo dm-topo--hero" aria-hidden="true">
-      <svg viewBox="0 0 1200 900" preserveAspectRatio="xMidYMid meet" focusable="false">
-        <!-- primary peak · nested military contours -->
-        <path class="dm-topo-far" d="M198 448 C248 268,392 168,598 158 C812 148,980 258,1038 428 C1092 588,980 748,772 802 C568 854,348 782,248 628 C168 508,158 568,198 448 Z"/>
-        <path class="dm-topo-mid" d="M238 448 C286 292,412 208,596 198 C788 188,938 288,988 438 C1034 578,938 718,754 764 C574 808,378 748,288 612 C218 508,202 548,238 448 Z"/>
-        <path class="dm-topo-mid" d="M278 448 C322 314,430 246,594 236 C766 226,898 316,942 446 C982 566,898 688,738 728 C582 766,408 716,328 598 C268 508,246 528,278 448 Z"/>
-        <path class="dm-topo-mid" d="M318 448 C356 334,448 282,592 272 C744 262,858 342,896 452 C930 554,858 658,722 692 C590 724,438 684,368 584 C316 508,290 510,318 448 Z"/>
-        <path class="dm-topo-idx" d="M358 448 C392 352,466 316,590 308 C722 300,820 366,852 456 C880 540,820 630,708 658 C580 684,468 652,408 570 C364 508,334 492,358 448 Z"/>
-        <path class="dm-topo-mid" d="M398 448 C426 368,484 348,588 342 C700 336,782 388,808 458 C832 524,782 602,694 624 C580 646,498 620,448 556 C412 508,378 478,398 448 Z"/>
-        <path class="dm-topo-mid" d="M438 448 C458 384,502 378,586 374 C678 370,744 408,764 458 C782 506,744 574,680 590 C580 608,528 588,488 542 C460 508,422 468,438 448 Z"/>
-        <path class="dm-topo-mid" d="M478 448 C492 398,520 406,584 404 C656 402,706 428,720 458 C732 486,706 546,666 556 C580 570,558 556,528 528 C506 508,466 458,478 448 Z"/>
-        <path class="dm-topo-idx" d="M518 448 C528 412,538 432,582 432 C632 432,668 446,676 458 C684 470,668 518,652 522 C580 532,588 522,568 502 C552 486,510 452,518 448 Z"/>
-        <path class="dm-topo-mid" d="M548 448 C554 424,556 442,580 442 C612 442,636 452,640 458 C644 464,636 494,628 496 C580 502,608 494,598 482 C590 472,544 450,548 448 Z"/>
-        <!-- secondary ridge NW -->
-        <path class="dm-topo-far" d="M86 292 C128 168,248 98,368 118 C478 136,548 228,528 328 C510 418,398 468,278 448 C178 430,54 388,86 292 Z"/>
-        <path class="dm-topo-mid" d="M126 292 C162 188,258 138,352 154 C442 170,496 246,480 326 C466 396,378 432,288 416 C208 402,98 368,126 292 Z"/>
-        <path class="dm-topo-mid" d="M166 292 C194 208,268 176,338 188 C402 200,444 262,432 322 C422 372,358 398,292 386 C236 376,142 348,166 292 Z"/>
-        <path class="dm-topo-idx" d="M206 292 C226 228,278 212,324 220 C366 228,394 276,386 318 C380 352,340 366,298 358 C262 352,186 328,206 292 Z"/>
-        <path class="dm-topo-mid" d="M246 292 C258 246,288 244,314 250 C338 256,354 286,350 312 C348 332,326 340,302 336 C280 332,234 312,246 292 Z"/>
-        <!-- tertiary ridge SE -->
-        <path class="dm-topo-far" d="M742 612 C802 528,942 498,1048 558 C1142 612,1168 728,1092 808 C1022 882,888 898,798 838 C718 784,692 682,742 612 Z"/>
-        <path class="dm-topo-mid" d="M782 622 C832 558,942 538,1022 584 C1092 626,1110 712,1054 770 C1004 822,908 832,842 790 C786 754,742 672,782 622 Z"/>
-        <path class="dm-topo-mid" d="M822 632 C858 586,942 574,998 608 C1046 638,1058 698,1018 738 C984 772,918 778,872 750 C834 726,794 668,822 632 Z"/>
-        <path class="dm-topo-idx" d="M862 642 C886 612,942 606,978 628 C1008 648,1014 686,988 710 C966 730,926 732,898 714 C874 698,844 664,862 642 Z"/>
-        <path class="dm-topo-mid" d="M902 652 C916 634,946 632,966 644 C982 654,986 676,970 690 C958 700,936 700,920 690 C906 680,890 666,902 652 Z"/>
+      <svg viewBox="0 0 1200 900" preserveAspectRatio="xMidYMid slice" focusable="false">
+        <!-- full-bleed field · nested military contours -->
+        <path class="dm-topo-far" d="M-40 420 C80 80,320 -40,600 -20 C900 0,1160 120,1240 400 C1320 680,1120 920,780 960 C440 1000,80 880,-20 620 C-80 480,-100 620,-40 420 Z"/>
+        <path class="dm-topo-mid" d="M20 420 C120 120,340 20,600 40 C880 60,1100 160,1160 400 C1220 640,1040 860,760 900 C480 940,140 820,40 600 C-20 480,-40 560,20 420 Z"/>
+        <path class="dm-topo-mid" d="M80 420 C170 160,360 80,600 100 C860 120,1040 200,1080 400 C1120 600,980 800,740 840 C500 880,200 760,120 580 C60 480,20 520,80 420 Z"/>
+        <path class="dm-topo-idx" d="M140 420 C220 200,380 140,600 160 C840 180,980 240,1000 400 C1020 560,920 740,720 780 C520 820,260 700,200 560 C140 480,80 500,140 420 Z"/>
+        <path class="dm-topo-mid" d="M200 420 C270 240,400 200,600 220 C820 240,920 280,920 400 C920 520,860 680,700 720 C540 760,320 640,280 540 C220 480,140 480,200 420 Z"/>
+        <path class="dm-topo-mid" d="M260 420 C320 280,420 260,600 280 C800 300,860 320,840 400 C820 480,800 620,680 660 C560 700,380 580,360 520 C300 480,200 460,260 420 Z"/>
+        <path class="dm-topo-idx" d="M320 420 C370 320,440 320,600 340 C780 360,800 360,760 400 C720 440,740 560,660 600 C580 640,440 520,440 500 C380 480,260 440,320 420 Z"/>
+        <path class="dm-topo-mid" d="M380 420 C420 360,460 380,600 400 C740 420,740 400,680 420 C620 440,680 500,640 540 C600 580,500 460,520 480 C460 460,320 420,380 420 Z"/>
+        <!-- NW ridge · edge hold -->
+        <path class="dm-topo-far" d="M-60 180 C40 -40,260 -80,420 -20 C560 30,640 160,600 300 C560 420,400 480,220 440 C60 400,-120 340,-60 180 Z"/>
+        <path class="dm-topo-mid" d="M-20 180 C70 0,260 -30,380 20 C500 60,560 170,530 290 C500 390,370 430,220 400 C80 370,-80 300,-20 180 Z"/>
+        <path class="dm-topo-mid" d="M20 180 C100 40,260 20,340 60 C430 100,480 180,460 280 C440 360,340 390,220 360 C120 340,-40 260,20 180 Z"/>
+        <path class="dm-topo-idx" d="M60 180 C120 80,260 70,320 100 C390 130,420 190,400 260 C380 320,310 340,220 320 C140 300,0 230,60 180 Z"/>
+        <path class="dm-topo-mid" d="M100 180 C150 110,260 110,300 140 C350 170,360 210,350 250 C340 290,290 300,220 280 C160 270,50 220,100 180 Z"/>
+        <!-- SE ridge · edge hold -->
+        <path class="dm-topo-far" d="M680 560 C780 420,1020 380,1180 480 C1320 560,1360 740,1240 860 C1140 960,920 980,780 880 C660 800,600 660,680 560 Z"/>
+        <path class="dm-topo-mid" d="M720 580 C810 460,1020 440,1140 520 C1240 580,1260 720,1160 820 C1080 900,920 910,800 830 C700 760,650 660,720 580 Z"/>
+        <path class="dm-topo-mid" d="M760 600 C830 500,1000 490,1100 550 C1180 600,1190 700,1110 780 C1040 840,920 840,820 780 C740 730,700 650,760 600 Z"/>
+        <path class="dm-topo-idx" d="M800 620 C850 540,980 540,1060 580 C1120 620,1120 690,1060 740 C1010 780,920 780,840 740 C780 710,750 650,800 620 Z"/>
+        <path class="dm-topo-mid" d="M840 640 C870 590,960 590,1010 620 C1040 640,1040 680,1010 710 C980 740,920 740,870 710 C840 690,810 660,840 640 Z"/>
+        <!-- SW / NE fill rings -->
+        <path class="dm-topo-far" d="M-40 720 C40 560,220 520,380 600 C520 670,560 820,440 920 C340 1000,120 980,20 860 C-40 780,-80 800,-40 720 Z"/>
+        <path class="dm-topo-mid" d="M0 720 C70 580,220 560,340 620 C450 670,480 800,380 880 C300 940,140 920,60 820 C0 760,-40 780,0 720 Z"/>
+        <path class="dm-topo-idx" d="M40 720 C90 600,220 600,300 640 C370 680,390 780,320 840 C260 880,150 860,90 800 C40 760,0 760,40 720 Z"/>
+        <path class="dm-topo-far" d="M820 80 C900 -40,1100 -60,1220 60 C1320 160,1280 340,1140 400 C1020 450,860 400,800 280 C760 200,760 160,820 80 Z"/>
+        <path class="dm-topo-mid" d="M860 100 C930 0,1080 -10,1160 80 C1230 150,1200 300,1090 340 C990 380,880 340,840 250 C820 190,810 150,860 100 Z"/>
+        <path class="dm-topo-idx" d="M900 120 C950 40,1060 40,1120 100 C1160 150,1140 260,1060 290 C990 320,900 290,880 220 C870 180,860 150,900 120 Z"/>
       </svg>
     </div>
     <div class="dm-hero-mark" aria-hidden="true" data-anim="" style="position:absolute;top:50%;left:50%;width:min(720px,104%);height:min(720px,104%);transform:translate(-50%,-50%);color:rgba(31,45,61,0.13);pointer-events:none;animation:dmDrift 18s ease-in-out infinite;"><svg viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="30" stroke-linejoin="round" stroke-linecap="round" style="width:100%;height:100%;"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg></div>
@@ -1508,27 +1514,31 @@ window.scrollTo(0, 0);
   <!-- ============ CLOSE ============ -->
   <section id="close" data-screen-label="Close" style="position:relative;min-height:calc(100vh - 62px);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:clamp(80px,11vw,150px) clamp(20px,5vw,40px);overflow:hidden;">
     <div class="dm-topo dm-topo--close" aria-hidden="true">
-      <svg viewBox="0 0 1200 900" preserveAspectRatio="xMidYMid meet" focusable="false">
-        <path class="dm-topo-far" d="M198 448 C248 268,392 168,598 158 C812 148,980 258,1038 428 C1092 588,980 748,772 802 C568 854,348 782,248 628 C168 508,158 568,198 448 Z"/>
-        <path class="dm-topo-mid" d="M238 448 C286 292,412 208,596 198 C788 188,938 288,988 438 C1034 578,938 718,754 764 C574 808,378 748,288 612 C218 508,202 548,238 448 Z"/>
-        <path class="dm-topo-mid" d="M278 448 C322 314,430 246,594 236 C766 226,898 316,942 446 C982 566,898 688,738 728 C582 766,408 716,328 598 C268 508,246 528,278 448 Z"/>
-        <path class="dm-topo-mid" d="M318 448 C356 334,448 282,592 272 C744 262,858 342,896 452 C930 554,858 658,722 692 C590 724,438 684,368 584 C316 508,290 510,318 448 Z"/>
-        <path class="dm-topo-idx" d="M358 448 C392 352,466 316,590 308 C722 300,820 366,852 456 C880 540,820 630,708 658 C580 684,468 652,408 570 C364 508,334 492,358 448 Z"/>
-        <path class="dm-topo-mid" d="M398 448 C426 368,484 348,588 342 C700 336,782 388,808 458 C832 524,782 602,694 624 C580 646,498 620,448 556 C412 508,378 478,398 448 Z"/>
-        <path class="dm-topo-mid" d="M438 448 C458 384,502 378,586 374 C678 370,744 408,764 458 C782 506,744 574,680 590 C580 608,528 588,488 542 C460 508,422 468,438 448 Z"/>
-        <path class="dm-topo-mid" d="M478 448 C492 398,520 406,584 404 C656 402,706 428,720 458 C732 486,706 546,666 556 C580 570,558 556,528 528 C506 508,466 458,478 448 Z"/>
-        <path class="dm-topo-idx" d="M518 448 C528 412,538 432,582 432 C632 432,668 446,676 458 C684 470,668 518,652 522 C580 532,588 522,568 502 C552 486,510 452,518 448 Z"/>
-        <path class="dm-topo-mid" d="M548 448 C554 424,556 442,580 442 C612 442,636 452,640 458 C644 464,636 494,628 496 C580 502,608 494,598 482 C590 472,544 450,548 448 Z"/>
-        <path class="dm-topo-far" d="M86 292 C128 168,248 98,368 118 C478 136,548 228,528 328 C510 418,398 468,278 448 C178 430,54 388,86 292 Z"/>
-        <path class="dm-topo-mid" d="M126 292 C162 188,258 138,352 154 C442 170,496 246,480 326 C466 396,378 432,288 416 C208 402,98 368,126 292 Z"/>
-        <path class="dm-topo-mid" d="M166 292 C194 208,268 176,338 188 C402 200,444 262,432 322 C422 372,358 398,292 386 C236 376,142 348,166 292 Z"/>
-        <path class="dm-topo-idx" d="M206 292 C226 228,278 212,324 220 C366 228,394 276,386 318 C380 352,340 366,298 358 C262 352,186 328,206 292 Z"/>
-        <path class="dm-topo-mid" d="M246 292 C258 246,288 244,314 250 C338 256,354 286,350 312 C348 332,326 340,302 336 C280 332,234 312,246 292 Z"/>
-        <path class="dm-topo-far" d="M742 612 C802 528,942 498,1048 558 C1142 612,1168 728,1092 808 C1022 882,888 898,798 838 C718 784,692 682,742 612 Z"/>
-        <path class="dm-topo-mid" d="M782 622 C832 558,942 538,1022 584 C1092 626,1110 712,1054 770 C1004 822,908 832,842 790 C786 754,742 672,782 622 Z"/>
-        <path class="dm-topo-mid" d="M822 632 C858 586,942 574,998 608 C1046 638,1058 698,1018 738 C984 772,918 778,872 750 C834 726,794 668,822 632 Z"/>
-        <path class="dm-topo-idx" d="M862 642 C886 612,942 606,978 628 C1008 648,1014 686,988 710 C966 730,926 732,898 714 C874 698,844 664,862 642 Z"/>
-        <path class="dm-topo-mid" d="M902 652 C916 634,946 632,966 644 C982 654,986 676,970 690 C958 700,936 700,920 690 C906 680,890 666,902 652 Z"/>
+      <svg viewBox="0 0 1200 900" preserveAspectRatio="xMidYMid slice" focusable="false">
+        <path class="dm-topo-far" d="M-40 420 C80 80,320 -40,600 -20 C900 0,1160 120,1240 400 C1320 680,1120 920,780 960 C440 1000,80 880,-20 620 C-80 480,-100 620,-40 420 Z"/>
+        <path class="dm-topo-mid" d="M20 420 C120 120,340 20,600 40 C880 60,1100 160,1160 400 C1220 640,1040 860,760 900 C480 940,140 820,40 600 C-20 480,-40 560,20 420 Z"/>
+        <path class="dm-topo-mid" d="M80 420 C170 160,360 80,600 100 C860 120,1040 200,1080 400 C1120 600,980 800,740 840 C500 880,200 760,120 580 C60 480,20 520,80 420 Z"/>
+        <path class="dm-topo-idx" d="M140 420 C220 200,380 140,600 160 C840 180,980 240,1000 400 C1020 560,920 740,720 780 C520 820,260 700,200 560 C140 480,80 500,140 420 Z"/>
+        <path class="dm-topo-mid" d="M200 420 C270 240,400 200,600 220 C820 240,920 280,920 400 C920 520,860 680,700 720 C540 760,320 640,280 540 C220 480,140 480,200 420 Z"/>
+        <path class="dm-topo-mid" d="M260 420 C320 280,420 260,600 280 C800 300,860 320,840 400 C820 480,800 620,680 660 C560 700,380 580,360 520 C300 480,200 460,260 420 Z"/>
+        <path class="dm-topo-idx" d="M320 420 C370 320,440 320,600 340 C780 360,800 360,760 400 C720 440,740 560,660 600 C580 640,440 520,440 500 C380 480,260 440,320 420 Z"/>
+        <path class="dm-topo-mid" d="M380 420 C420 360,460 380,600 400 C740 420,740 400,680 420 C620 440,680 500,640 540 C600 580,500 460,520 480 C460 460,320 420,380 420 Z"/>
+        <path class="dm-topo-far" d="M-60 180 C40 -40,260 -80,420 -20 C560 30,640 160,600 300 C560 420,400 480,220 440 C60 400,-120 340,-60 180 Z"/>
+        <path class="dm-topo-mid" d="M-20 180 C70 0,260 -30,380 20 C500 60,560 170,530 290 C500 390,370 430,220 400 C80 370,-80 300,-20 180 Z"/>
+        <path class="dm-topo-mid" d="M20 180 C100 40,260 20,340 60 C430 100,480 180,460 280 C440 360,340 390,220 360 C120 340,-40 260,20 180 Z"/>
+        <path class="dm-topo-idx" d="M60 180 C120 80,260 70,320 100 C390 130,420 190,400 260 C380 320,310 340,220 320 C140 300,0 230,60 180 Z"/>
+        <path class="dm-topo-mid" d="M100 180 C150 110,260 110,300 140 C350 170,360 210,350 250 C340 290,290 300,220 280 C160 270,50 220,100 180 Z"/>
+        <path class="dm-topo-far" d="M680 560 C780 420,1020 380,1180 480 C1320 560,1360 740,1240 860 C1140 960,920 980,780 880 C660 800,600 660,680 560 Z"/>
+        <path class="dm-topo-mid" d="M720 580 C810 460,1020 440,1140 520 C1240 580,1260 720,1160 820 C1080 900,920 910,800 830 C700 760,650 660,720 580 Z"/>
+        <path class="dm-topo-mid" d="M760 600 C830 500,1000 490,1100 550 C1180 600,1190 700,1110 780 C1040 840,920 840,820 780 C740 730,700 650,760 600 Z"/>
+        <path class="dm-topo-idx" d="M800 620 C850 540,980 540,1060 580 C1120 620,1120 690,1060 740 C1010 780,920 780,840 740 C780 710,750 650,800 620 Z"/>
+        <path class="dm-topo-mid" d="M840 640 C870 590,960 590,1010 620 C1040 640,1040 680,1010 710 C980 740,920 740,870 710 C840 690,810 660,840 640 Z"/>
+        <path class="dm-topo-far" d="M-40 720 C40 560,220 520,380 600 C520 670,560 820,440 920 C340 1000,120 980,20 860 C-40 780,-80 800,-40 720 Z"/>
+        <path class="dm-topo-mid" d="M0 720 C70 580,220 560,340 620 C450 670,480 800,380 880 C300 940,140 920,60 820 C0 760,-40 780,0 720 Z"/>
+        <path class="dm-topo-idx" d="M40 720 C90 600,220 600,300 640 C370 680,390 780,320 840 C260 880,150 860,90 800 C40 760,0 760,40 720 Z"/>
+        <path class="dm-topo-far" d="M820 80 C900 -40,1100 -60,1220 60 C1320 160,1280 340,1140 400 C1020 450,860 400,800 280 C760 200,760 160,820 80 Z"/>
+        <path class="dm-topo-mid" d="M860 100 C930 0,1080 -10,1160 80 C1230 150,1200 300,1090 340 C990 380,880 340,840 250 C820 190,810 150,860 100 Z"/>
+        <path class="dm-topo-idx" d="M900 120 C950 40,1060 40,1120 100 C1160 150,1140 260,1060 290 C990 320,900 290,880 220 C870 180,860 150,900 120 Z"/>
       </svg>
     </div>
     <div class="dm-hero-mark" aria-hidden="true" data-anim="" style="position:absolute;top:50%;left:50%;width:min(720px,104%);height:min(720px,104%);transform:translate(-50%,-50%);color:rgba(31,45,61,0.13);pointer-events:none;animation:dmDrift 18s ease-in-out infinite;">
