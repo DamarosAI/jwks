@@ -62,8 +62,8 @@
       "@keyframes dm-pilot-fade{from{opacity:0;}to{opacity:1;}}",
       "@keyframes dm-pilot-in{from{opacity:0;transform:translateY(12px) scale(0.985);}to{opacity:1;transform:none;}}",
       "#" + DIALOG_ID + " .dm-pilot-head{margin:0 36px 14px 0;}",
-      "#" + DIALOG_ID + " .dm-pilot-title{margin:0 0 6px;font-family:var(--font-display,\"Archivo\",system-ui,sans-serif);font-size:clamp(1.35rem,3.6vw,1.6rem);font-weight:700;letter-spacing:-0.025em;line-height:1.12;color:var(--ink-cold,#10161d);}",
-      "#" + DIALOG_ID + " .dm-pilot-lead{margin:0;font-family:var(--font-body,\"Hanken Grotesk\",system-ui,sans-serif);font-size:14px;line-height:1.45;color:var(--ink-quiet,#3c4955);}",
+      "#" + DIALOG_ID + " .dm-pilot-eyebrow{margin:0 0 8px;font-family:var(--font-body,\"Hanken Grotesk\",system-ui,sans-serif);font-size:11px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-steel,#2f6193);}",
+      "#" + DIALOG_ID + " .dm-pilot-title{margin:0;font-family:var(--font-display,\"Archivo\",system-ui,sans-serif);font-size:clamp(1.35rem,3.6vw,1.55rem);font-weight:700;letter-spacing:-0.025em;line-height:1.15;color:var(--ink-cold,#10161d);text-wrap:balance;}",
       "#" + DIALOG_ID + " .dm-pilot-close{position:absolute;top:12px;right:12px;width:32px;height:32px;border:1px solid rgba(31,45,61,0.1);border-radius:999px;background:#fff;color:var(--ink-quiet,#3c4955);cursor:pointer;display:grid;place-items:center;}",
       "#" + DIALOG_ID + " .dm-pilot-close:hover{border-color:rgba(31,45,61,0.18);color:var(--ink-cold,#10161d);}",
       "#" + DIALOG_ID + " .dm-pilot-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}",
@@ -82,7 +82,8 @@
       "#" + DIALOG_ID + " .dm-pilot-status:empty{display:none;}",
       "#" + DIALOG_ID + " .dm-pilot-status[data-tone=error]{color:#dc3a52;}",
       "#" + DIALOG_ID + " .dm-pilot-status[data-tone=ok]{color:#2e9e6b;}",
-      "#" + DIALOG_ID + " .dm-pilot-mark{flex:none;width:22px;height:25px;color:var(--ink-steel,#2f6193);opacity:0.88;align-self:flex-end;}",
+      "#" + DIALOG_ID + " .dm-pilot-mark{flex:none;width:24px;height:27px;color:var(--ink-steel,#2f6193);opacity:0.9;align-self:flex-end;transform-origin:50% 60%;animation:dm-pilot-drum 2.8s ease-in-out infinite;}",
+      "@keyframes dm-pilot-drum{0%,100%{transform:translateY(0) rotate(0deg);}35%{transform:translateY(-3px) rotate(-4deg);}70%{transform:translateY(1px) rotate(3deg);}}",
       "#" + DIALOG_ID + " .dm-pilot-success{display:none;text-align:left;padding:8px 0 2px;}",
       "#" + DIALOG_ID + "[data-state=success] .dm-pilot-head,#" + DIALOG_ID + "[data-state=success] form{display:none;}",
       "#" + DIALOG_ID + "[data-state=success] .dm-pilot-success{display:block;}",
@@ -98,7 +99,7 @@
       "  #" + DIALOG_ID + " .dm-pilot-submit{width:auto;}",
       "}",
       "@media (max-height:700px){#" + DIALOG_ID + "{padding-top:18px;padding-bottom:14px;}#" + DIALOG_ID + " .dm-pilot-head{margin-bottom:12px;}#" + DIALOG_ID + " textarea{min-height:72px;}}",
-      "@media (prefers-reduced-motion:reduce){#" + DIALOG_ID + "-backdrop,#" + DIALOG_ID + "{animation:none;}}"
+      "@media (prefers-reduced-motion:reduce){#" + DIALOG_ID + "-backdrop,#" + DIALOG_ID + ",#" + DIALOG_ID + " .dm-pilot-mark{animation:none;}}"
     ].join("");
     document.head.appendChild(style);
   }
@@ -191,8 +192,8 @@
       '    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
       "  </button>",
       '  <div class="dm-pilot-head">',
-      '    <h2 class="dm-pilot-title" id="dm-pilot-title">Start a pilot</h2>',
-      '    <p class="dm-pilot-lead">Who you are, and the program you want on Damaros.</p>',
+      '    <p class="dm-pilot-eyebrow">Start a pilot</p>',
+      '    <h2 class="dm-pilot-title" id="dm-pilot-title">Tell us about your program.</h2>',
       "  </div>",
       '  <form id="dm-pilot-form" novalidate>',
       '    <div class="dm-pilot-grid">',
