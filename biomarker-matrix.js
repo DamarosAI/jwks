@@ -1,13 +1,31 @@
 /**
- * Super-subtle Matrix-style biomarker waterfall for hero / close.
- * Canvas columns of clinical tokens falling slowly in CTA blue.
+ * Matrix-style biomarker waterfall for hero / close.
+ * Grid-aligned canvas columns of oncogenes, tumor-suppressor genes,
+ * and clinical biomarkers falling in CTA blue. Infinite, randomized.
  */
 (function () {
+  // Oncogenes, tumor-suppressor genes, fusions, and clinical biomarkers.
   var MARKERS = [
-    "EGFR", "ALK", "KRAS", "G12C", "HER2", "PD-L1", "MSI-H", "dMMR",
-    "BRAF", "TMB", "NTRK", "ROS1", "RET", "BRCA1", "MET", "T790M",
-    "C797S", "ECOG", "RECIST", "FHIR", "CLIA", "CAP", "IHC", "NGS"
+    "EGFR", "KRAS", "NRAS", "HRAS", "BRAF", "MET", "ALK", "ROS1", "RET",
+    "NTRK1", "NTRK2", "NTRK3", "ERBB2", "HER2", "PIK3CA", "AKT1", "MYC",
+    "MYCN", "CCND1", "CDK4", "CDK6", "MDM2", "FGFR1", "FGFR2", "FGFR3",
+    "KIT", "PDGFRA", "FLT3", "JAK2", "ABL1", "BCR-ABL", "IDH1", "IDH2",
+    "EZH2", "SMO", "GNAQ", "GNA11", "MPL", "CALR", "ESR1", "AR",
+    "TP53", "RB1", "PTEN", "APC", "VHL", "NF1", "NF2", "STK11", "LKB1",
+    "CDKN2A", "SMAD4", "BRCA1", "BRCA2", "PALB2", "ATM", "CHEK2", "MLH1",
+    "MSH2", "MSH6", "PMS2", "MEN1", "TSC1", "TSC2", "WT1", "DCC", "FBXW7",
+    "KEAP1", "STK11", "ARID1A", "SMARCB1", "MTAP",
+    "PD-L1", "PD-1", "MSI-H", "MSS", "dMMR", "pMMR", "TMB-H", "HRD",
+    "T790M", "C797S", "G12C", "G12D", "G12V", "L858R", "exon19del",
+    "V600E", "V600K", "G719X", "L861Q", "S768I", "exon20ins",
+    "ECOG-0", "ECOG-1", "RECIST", "Ki-67", "ER+", "PR+", "HR+",
+    "CA-125", "CEA", "AFP", "PSA", "LDH", "β2M", "CTC",
+    "HLA-A2", "IHC-3+", "FISH+", "NGS", "ctDNA", "GEP",
+    "CD19", "CD20", "CD22", "CD30", "CD33", "BCMA", "GD2",
+    "FRα", "TROP2", "Nectin-4", "DLL3", "CLDN18.2", "B7-H3"
   ];
+
+  var BLUE = "61,114,168"; // CTA blue #3d72a8
 
   var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var instances = [];
@@ -20,11 +38,12 @@
   function makeColumn(rows) {
     var cells = [];
     for (var i = 0; i < rows; i++) cells.push(pick());
+    var trail = 5 + ((Math.random() * 7) | 0);
     return {
       cells: cells,
-      y: Math.random() * rows,
-      speed: 0.012 + Math.random() * 0.028,
-      head: (Math.random() * rows) | 0
+      trail: trail,
+      head: -Math.random() * rows, // float row index of the leading glyph
+      speed: 3.2 + Math.random() * 4.8 // rows per second
     };
   }
 
@@ -52,10 +71,7 @@
     };
     el.__dmMatrix = inst;
     resize(inst);
-    if (reduced) {
-      paintStatic(inst);
-      return inst;
-    }
+    if (reduced) paintStatic(inst);
     return inst;
   }
 
@@ -75,31 +91,59 @@
     inst.canvas.style.height = h + "px";
     inst.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    var colW = w < 640 ? 52 : 64;
-    var rowH = w < 640 ? 16 : 18;
-    var nCols = Math.max(4, Math.ceil(w / colW));
-    var rows = Math.max(8, Math.ceil(h / rowH) + 4);
-    inst.colW = colW;
+    // Distribute columns evenly edge-to-edge so nothing is clipped.
+    var target = w < 640 ? 58 : 72;
+    var nCols = Math.max(4, Math.round(w / target));
+    var rowH = w < 640 ? 18 : 20;
+    var rows = Math.max(8, Math.ceil(h / rowH) + 2);
+    inst.colW = w / nCols;
     inst.rowH = rowH;
     inst.rows = rows;
     inst.cols = [];
     for (var i = 0; i < nCols; i++) inst.cols.push(makeColumn(rows));
+    inst.fontPx = Math.max(10, Math.floor(rowH * 0.6));
+  }
+
+  function drawColumn(inst, c, animate) {
+    var ctx = inst.ctx;
+    var col = inst.cols[c];
+    var rows = inst.rows;
+    var rowH = inst.rowH;
+    var x = Math.round((c + 0.5) * inst.colW);
+    var headInt = Math.floor(col.head);
+
+    for (var i = 0; i < col.trail; i++) {
+      var row = headInt - i;
+      if (row < 0 || row >= rows) continue;
+      var y = row * rowH + rowH * 0.5;
+
+      var a;
+      if (i === 0) a = 0.5;
+      else if (i === 1) a = 0.38;
+      else a = Math.max(0.05, 0.32 - (i - 1) * 0.045);
+
+      ctx.fillStyle = "rgba(" + BLUE + "," + a.toFixed(3) + ")";
+      ctx.fillText(col.cells[row % col.cells.length], x, y);
+    }
+
+    if (animate && Math.random() < 0.06) {
+      col.cells[((Math.random() * col.cells.length) | 0)] = pick();
+    }
   }
 
   function paintStatic(inst) {
     var ctx = inst.ctx;
-    var cols = inst.cols;
     ctx.clearRect(0, 0, inst.w, inst.h);
-    ctx.font = "500 " + Math.max(9, Math.floor(inst.rowH * 0.62)) + "px \"IBM Plex Mono\", ui-monospace, monospace";
+    ctx.font = "600 " + inst.fontPx + "px \"IBM Plex Mono\", ui-monospace, monospace";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    for (var c = 0; c < cols.length; c++) {
-      var col = cols[c];
-      var x = (c + 0.5) * inst.colW;
+    for (var c = 0; c < inst.cols.length; c++) {
+      var col = inst.cols[c];
+      var x = Math.round((c + 0.5) * inst.colW);
       for (var r = 0; r < col.cells.length; r++) {
-        if ((r + c) % 3 !== 0) continue;
-        var y = (r + 0.5) * inst.rowH;
-        ctx.fillStyle = "rgba(61,114,168," + (0.04 + ((r + c) % 5) * 0.012) + ")";
+        if ((r + c) % 2 !== 0) continue;
+        var y = r * inst.rowH + inst.rowH * 0.5;
+        ctx.fillStyle = "rgba(" + BLUE + "," + (0.12 + ((r + c) % 4) * 0.03).toFixed(3) + ")";
         ctx.fillText(col.cells[r], x, y);
       }
     }
@@ -107,51 +151,25 @@
 
   function paint(inst, dt) {
     var ctx = inst.ctx;
-    var cols = inst.cols;
     var rows = inst.rows;
-    var rowH = inst.rowH;
+    var secs = dt / 1000;
 
     ctx.clearRect(0, 0, inst.w, inst.h);
-
-    ctx.font = "500 " + Math.max(9, Math.floor(rowH * 0.62)) + "px \"IBM Plex Mono\", ui-monospace, monospace";
+    ctx.font = "600 " + inst.fontPx + "px \"IBM Plex Mono\", ui-monospace, monospace";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 
-    for (var c = 0; c < cols.length; c++) {
-      var col = cols[c];
-      col.y += col.speed * dt * 0.055;
-      if (col.y > rows) {
-        col.y -= rows;
-        col.head = (col.head + 1 + ((Math.random() * 3) | 0)) % rows;
-        col.speed = 0.012 + Math.random() * 0.028;
+    for (var c = 0; c < inst.cols.length; c++) {
+      var col = inst.cols[c];
+      col.head += col.speed * secs;
+      if (col.head - col.trail > rows) {
+        // Recycle above the top with fresh randomization — infinite stream.
+        col.head = -Math.random() * rows * 0.5;
+        col.trail = 5 + ((Math.random() * 7) | 0);
+        col.speed = 3.2 + Math.random() * 4.8;
+        for (var k = 0; k < col.cells.length; k++) col.cells[k] = pick();
       }
-
-      var x = (c + 0.5) * inst.colW;
-      var head = Math.floor(col.y) % rows;
-      for (var i = 0; i < Math.min(14, rows); i++) {
-        var idx = (head - i + rows * 4) % rows;
-        var y = ((col.y - i) % rows) * rowH;
-        if (y < -rowH || y > inst.h + rowH) continue;
-
-        var token = col.cells[idx];
-        // Head slightly brighter; body fades fast — overall very quiet
-        var a;
-        if (i === 0) a = 0.2;
-        else if (i < 3) a = 0.11 - i * 0.02;
-        else if (i < 8) a = 0.055 - (i - 3) * 0.006;
-        else a = 0.016;
-
-        if (a < 0.012) continue;
-        // Sparse: skip most mid-trail glyphs so it reads as rain, not noise
-        if (i > 2 && ((idx + c) % 2 === 0)) continue;
-
-        ctx.fillStyle = "rgba(61,114,168," + a.toFixed(3) + ")";
-        ctx.fillText(token, x, y);
-
-        if (i === 0 && Math.random() < 0.04) {
-          col.cells[idx] = pick();
-        }
-      }
+      drawColumn(inst, c, true);
     }
   }
 
@@ -163,7 +181,10 @@
       if (!inst.el.isConnected) continue;
       var r = inst.el.getBoundingClientRect();
       var visible = r.bottom > -20 && r.top < window.innerHeight + 20;
-      if (!visible) continue;
+      if (!visible) {
+        inst.last = 0;
+        continue;
+      }
       any = true;
       var dt = inst.last ? Math.min(48, now - inst.last) : 16;
       inst.last = now;
@@ -194,11 +215,9 @@
 
   function boot() {
     if (!collect()) return;
-    if (reduced) return;
-    // Seed with a faint base so first frame isn't empty
-    for (var i = 0; i < instances.length; i++) {
-      paintStatic(instances[i]);
-      instances[i].last = 0;
+    if (reduced) {
+      for (var i = 0; i < instances.length; i++) paintStatic(instances[i]);
+      return;
     }
     kick();
   }
@@ -220,7 +239,7 @@
   }
   window.addEventListener("load", boot);
 
-  // DC remounts template content — rebind when .dm-matrix appears
+  // DC remounts template content — rebind when .dm-matrix appears.
   var tries = 0;
   var poll = setInterval(function () {
     tries += 1;

@@ -28,7 +28,7 @@
 <script src="./support.js" defer></script>
 <script src="./mail-cta.js?v=9" defer></script>
 <script src="./logo-marquee.js?v=1" defer></script>
-<script src="./biomarker-matrix.js?v=1" defer></script>
+<script src="./biomarker-matrix.js?v=2" defer></script>
 <script>
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 window.scrollTo(0, 0);
@@ -94,7 +94,7 @@ window.scrollTo(0, 0);
     .dm-site footer{background:#fafcfd !important;padding-bottom:max(clamp(40px,6vw,64px),calc(28px + env(safe-area-inset-bottom,0px))) !important;}
     /* Subtle biomarker matrix rain — CTA blue, cleared around drum + copy */
     .dm-matrix{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
-    .dm-matrix-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0.9;}
+    .dm-matrix-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:1;}
     .dm-matrix--hero{-webkit-mask-image:radial-gradient(ellipse 46% 50% at 50% 48%,transparent 0%,transparent 58%,rgba(0,0,0,0.35) 78%,#000 100%),linear-gradient(180deg,#000 0%,#000 62%,rgba(0,0,0,0.4) 82%,transparent 100%);mask-image:radial-gradient(ellipse 46% 50% at 50% 48%,transparent 0%,transparent 58%,rgba(0,0,0,0.35) 78%,#000 100%),linear-gradient(180deg,#000 0%,#000 62%,rgba(0,0,0,0.4) 82%,transparent 100%);-webkit-mask-composite:source-in;mask-composite:intersect;}
     .dm-matrix--close{-webkit-mask-image:radial-gradient(ellipse 46% 50% at 50% 50%,transparent 0%,transparent 58%,rgba(0,0,0,0.35) 78%,#000 100%),linear-gradient(180deg,transparent 0%,rgba(0,0,0,0.4) 16%,#000 36%,#000 100%);mask-image:radial-gradient(ellipse 46% 50% at 50% 50%,transparent 0%,transparent 58%,rgba(0,0,0,0.35) 78%,#000 100%),linear-gradient(180deg,transparent 0%,rgba(0,0,0,0.4) 16%,#000 36%,#000 100%);-webkit-mask-composite:source-in;mask-composite:intersect;}
     .dm-site section > .dm-scroll-target,.dm-site section > .dm-scroll-chev{position:relative;z-index:1;}
