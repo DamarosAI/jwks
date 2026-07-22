@@ -33,7 +33,8 @@
   var VIS = 1.13;          // ~13% more visible than the earlier pass
   var MAX_STREAMS = 7;     // never more than 7 trails at once
   var TRAIL = 6;           // glyphs per trail
-  var SPEED_ROWS = 6.0;    // constant fall speed, in rows/sec (no acceleration)
+  var SPEED_ROWS = 3.0;    // constant fall speed, in rows/sec (no acceleration)
+  var GLITCH = 0.14;       // per-stream chance/frame to swap a glyph (retro flicker)
   var EVAP_TTL = 0.9;      // seconds a deflected trail takes to evaporate
 
   // Drum outline in SVG viewBox (0 0 476 520) coords. Arcs approximated by
@@ -223,12 +224,20 @@
   function drawStream(ctx, inst, s) {
     var pts = trailPoints(s.points, TRAIL, inst.rowH);
     var fade = s.state === "evap" ? Math.max(0, s.life) : 1;
+
+    // Retro-glitch: swap a random glyph now and then so tokens churn.
+    if (Math.random() < GLITCH) s.tokens[(Math.random() * TRAIL) | 0] = pick();
+
     for (var i = 0; i < pts.length; i++) {
       var y = pts[i].y;
       if (y < -inst.rowH || y > inst.h + inst.rowH) continue;
       var a = alphaFor(i, TRAIL) * fade;
       if (a < 0.01) continue;
-      ctx.fillStyle = "rgba(" + BLUE + "," + a.toFixed(3) + ")";
+      // Occasional bright flash on a glyph — CRT-style flicker.
+      var glitch = Math.random() < 0.03;
+      ctx.fillStyle = glitch
+        ? "rgba(150,190,232," + Math.min(0.9, a * 2.4).toFixed(3) + ")"
+        : "rgba(" + BLUE + "," + a.toFixed(3) + ")";
       ctx.fillText(s.tokens[i], pts[i].x, y);
     }
   }
