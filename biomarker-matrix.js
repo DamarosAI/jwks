@@ -35,7 +35,7 @@
   var TRAIL = 6;           // glyphs per trail
   var SPEED_ROWS = 3.0;    // constant fall speed, in rows/sec (no acceleration)
   var GLITCH = 0.14;       // per-stream chance/frame to swap a glyph (retro flicker)
-  var EVAP_TTL = 0.9;      // seconds a deflected trail takes to evaporate
+  var EVAP_TTL = 0.32;     // seconds a trail takes to evaporate once it dies
 
   // Drum outline in SVG viewBox (0 0 476 520) coords. Arcs approximated by
   // their chords — the corners are small radii, so the edge angles are exact.
@@ -77,6 +77,14 @@
 
   function pick() { return MARKERS[(Math.random() * MARKERS.length) | 0]; }
   function now() { return (performance && performance.now) ? performance.now() : Date.now(); }
+
+  // Freeze a stream in place and let it dissolve.
+  function evaporate(s) {
+    if (s.state === "evap") return;
+    s.state = "evap";
+    s.vx = 0; s.vy = 0;
+    s.life = 1;
+  }
 
   // Pick the column that is as far as possible from every active trail, so the
   // (max 7) streams stay cleanly spread across the width.
@@ -296,16 +304,9 @@
       if (s.state === "fall") {
         var hit = drumHit(drum, last.x, last.y, nx, ny);
         if (hit) {
-          // Reflect at constant speed — direction changes, magnitude does not.
-          var dot = s.vx * hit.nx + s.vy * hit.ny;
-          var rx = s.vx - 2 * dot * hit.nx;
-          var ry = s.vy - 2 * dot * hit.ny;
-          var rl = Math.hypot(rx, ry) || 1;
-          s.vx = (rx / rl) * inst.speed;
-          s.vy = (ry / rl) * inst.speed;
-          s.points.push({ x: hit.x, y: hit.y });
-          s.state = "evap";
+          // Touching the drum evaporates the trail immediately — never overlap.
           nx = hit.x; ny = hit.y;
+          evaporate(s);
         }
       }
 
@@ -364,6 +365,31 @@
     return instances.length > 0;
   }
 
+  // Break any trail the pointer touches (hover or tap) — it evaporates.
+  function breakAt(clientX, clientY) {
+    if (reduced) return;
+    for (var i = 0; i < instances.length; i++) {
+      var inst = instances[i];
+      if (!inst.el.isConnected) continue;
+      var cr = inst.canvas.getBoundingClientRect();
+      var x = clientX - cr.left, y = clientY - cr.top;
+      if (x < 0 || y < 0 || x > inst.w || y > inst.h) continue;
+      var thr = inst.rowH * 1.3, thr2 = thr * thr;
+      for (var s = 0; s < inst.streams.length; s++) {
+        var st = inst.streams[s];
+        if (st.state !== "fall") continue;
+        var pts = trailPoints(st.points, TRAIL, inst.rowH);
+        for (var p = 0; p < pts.length; p++) {
+          var dx = pts[p].x - x, dy = pts[p].y - y;
+          if (dx * dx + dy * dy <= thr2) { evaporate(st); break; }
+        }
+      }
+    }
+    kick();
+  }
+
+  function onPointer(e) { breakAt(e.clientX, e.clientY); }
+
   function boot() {
     if (!collect()) return;
     if (reduced) {
@@ -374,6 +400,8 @@
   }
 
   window.addEventListener("scroll", kick, { passive: true });
+  document.addEventListener("pointermove", onPointer, { passive: true });
+  document.addEventListener("pointerdown", onPointer, { passive: true });
   window.addEventListener("resize", function () {
     for (var i = 0; i < instances.length; i++) resize(instances[i]);
     if (reduced) {
