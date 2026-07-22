@@ -7,7 +7,7 @@
   if (reduced) return;
 
   var MAX = 20;
-  var SCALE = 1.12;
+  var SCALE = 1.05;
   var state = [];
   var raf = 0;
   var ptrX = 0;
