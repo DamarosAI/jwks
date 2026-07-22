@@ -334,10 +334,11 @@
     return res;
   }
 
+  // Gentler head→tail falloff so more of the trail stays colored.
   function alphaFor(i, total) {
-    var f = i / (total - 1 || 1);
-    var a = (1 - f) * (1 - f);
-    a = 0.08 + a * 0.44;
+    var f = i / (total - 1 || 1);        // 0 head → 1 tail
+    var a = Math.pow(1 - f, 0.55);       // soft curve — not a steep drop
+    a = 0.22 + a * 0.36;                 // tail floor .22, head .58
     return a * VIS;
   }
 
