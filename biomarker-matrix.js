@@ -35,7 +35,6 @@
   var TRAIL = 6;           // glyphs per trail
   var SPEED_ROWS = 3.0;    // constant fall speed, in rows/sec (no acceleration)
   var GLITCH = 0.14;       // per-stream chance/frame to swap a glyph (retro flicker)
-  var EVAP_TTL = 0.32;     // seconds a trail takes to evaporate once it dies
 
   // Drum outline in SVG viewBox (0 0 476 520) coords. Arcs approximated by
   // their chords — the corners are small radii, so the edge angles are exact.
@@ -78,12 +77,35 @@
   function pick() { return MARKERS[(Math.random() * MARKERS.length) | 0]; }
   function now() { return (performance && performance.now) ? performance.now() : Date.now(); }
 
-  // Freeze a stream in place and let it dissolve.
-  function evaporate(s) {
-    if (s.state === "evap") return;
-    s.state = "evap";
-    s.vx = 0; s.vy = 0;
-    s.life = 1;
+  // Shatter a stream's glyphs into scattering pixels, drop it, and instantly
+  // pop a fresh trail elsewhere — whack-a-mole.
+  function destroy(inst, index) {
+    makeDebris(inst, inst.streams[index]);
+    inst.streams.splice(index, 1);
+    spawn(inst);
+  }
+
+  function makeDebris(inst, s) {
+    var pts = trailPoints(s.points, TRAIL, inst.rowH);
+    for (var i = 0; i < pts.length; i++) {
+      var y = pts[i].y;
+      if (y < -inst.rowH || y > inst.h + inst.rowH) continue;
+      var gw = Math.max(inst.fontPx, s.tokens[i].length * inst.fontPx * 0.58);
+      var gh = inst.fontPx;
+      var count = 6 + ((alphaFor(i, TRAIL) * 18) | 0); // head shatters into more
+      for (var k = 0; k < count; k++) {
+        var ox = (Math.random() - 0.5) * gw;
+        var oy = (Math.random() - 0.5) * gh;
+        var ang = Math.atan2(oy, ox || 0.001) + (Math.random() - 0.5) * 0.9;
+        var sp = 55 + Math.random() * 140; // constant per-pixel, no acceleration
+        inst.debris.push({
+          x: pts[i].x + ox, y: y + oy,
+          vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp,
+          size: 1.5 + Math.random() * 2.0,
+          life: 1, ttl: 0.26 + Math.random() * 0.3
+        });
+      }
+    }
   }
 
   // Pick the column that is as far as possible from every active trail, so the
@@ -135,7 +157,7 @@
     var inst = {
       el: el, canvas: canvas, ctx: ctx,
       mark: section ? section.querySelector(".dm-hero-mark") : null,
-      streams: [],
+      streams: [], debris: [],
       nCols: 0, colW: 0, rowH: 0, rows: 0, speed: 0, fontPx: 12,
       nextSpawn: 0, w: 0, h: 0, dpr: 1, last: 0
     };
@@ -167,6 +189,7 @@
     inst.speed = inst.rowH * SPEED_ROWS;
     inst.fontPx = Math.max(10, Math.floor(inst.rowH * 0.6));
     inst.streams.length = 0;
+    inst.debris.length = 0;
     inst.nextSpawn = 0;
   }
 
@@ -243,7 +266,6 @@
 
   function drawStream(ctx, inst, s) {
     var pts = trailPoints(s.points, TRAIL, inst.rowH);
-    var fade = s.state === "evap" ? Math.max(0, s.life) : 1;
 
     // Retro-glitch: swap a random glyph now and then so tokens churn.
     if (Math.random() < GLITCH) s.tokens[(Math.random() * TRAIL) | 0] = pick();
@@ -251,7 +273,7 @@
     for (var i = 0; i < pts.length; i++) {
       var y = pts[i].y;
       if (y < -inst.rowH || y > inst.h + inst.rowH) continue;
-      var a = alphaFor(i, TRAIL) * fade;
+      var a = alphaFor(i, TRAIL);
       if (a < 0.01) continue;
       // Occasional bright flash on a glyph — CRT-style flicker.
       var glitch = Math.random() < 0.03;
@@ -259,6 +281,27 @@
         ? "rgba(150,190,232," + Math.min(0.9, a * 2.4).toFixed(3) + ")"
         : "rgba(" + BLUE + "," + a.toFixed(3) + ")";
       ctx.fillText(s.tokens[i], pts[i].x, y);
+    }
+  }
+
+  function drawDebris(ctx, inst, secs) {
+    var d = inst.debris;
+    for (var e = d.length - 1; e >= 0; e--) {
+      var p = d[e];
+      p.x += p.vx * secs; // constant velocity — no acceleration
+      p.y += p.vy * secs;
+      p.life -= secs / p.ttl;
+      if (p.life <= 0 || p.x < -20 || p.x > inst.w + 20 || p.y < -20 || p.y > inst.h + 20) {
+        d.splice(e, 1);
+        continue;
+      }
+      var a = p.life * 0.7 * VIS;
+      var flash = Math.random() < 0.18; // sparks pop as pixels die
+      ctx.fillStyle = flash
+        ? "rgba(170,205,240," + Math.min(0.95, a * 1.9).toFixed(3) + ")"
+        : "rgba(" + BLUE + "," + a.toFixed(3) + ")";
+      var sz = p.size * (0.35 + p.life * 0.65); // shrink as it burns out
+      ctx.fillRect(p.x - sz * 0.5, p.y - sz * 0.5, sz, sz);
     }
   }
 
@@ -301,13 +344,12 @@
       var nx = last.x + s.vx * secs;
       var ny = last.y + s.vy * secs;
 
-      if (s.state === "fall") {
-        var hit = drumHit(drum, last.x, last.y, nx, ny);
-        if (hit) {
-          // Touching the drum evaporates the trail immediately — never overlap.
-          nx = hit.x; ny = hit.y;
-          evaporate(s);
-        }
+      var hit = drumHit(drum, last.x, last.y, nx, ny);
+      if (hit) {
+        // Touching the drum shatters the trail into pixels — never overlap.
+        s.points.push({ x: hit.x, y: hit.y });
+        destroy(inst, i);
+        continue;
       }
 
       s.points.push({ x: nx, y: ny });
@@ -320,16 +362,16 @@
       }
       if (keepFrom > 0) s.points.splice(0, keepFrom);
 
-      if (s.state === "evap") {
-        s.life -= secs / EVAP_TTL;
-        if (s.life <= 0) { inst.streams.splice(i, 1); continue; }
-      } else if (ny - TRAIL * inst.rowH > inst.h) {
+      if (ny - TRAIL * inst.rowH > inst.h) {
         inst.streams.splice(i, 1); // fell past the bottom
+        spawn(inst);               // keep the field full
         continue;
       }
 
       drawStream(ctx, inst, s);
     }
+
+    drawDebris(ctx, inst, secs);
   }
 
   function tick(ts) {
@@ -375,13 +417,12 @@
       var x = clientX - cr.left, y = clientY - cr.top;
       if (x < 0 || y < 0 || x > inst.w || y > inst.h) continue;
       var thr = inst.rowH * 1.3, thr2 = thr * thr;
-      for (var s = 0; s < inst.streams.length; s++) {
+      for (var s = inst.streams.length - 1; s >= 0; s--) {
         var st = inst.streams[s];
-        if (st.state !== "fall") continue;
         var pts = trailPoints(st.points, TRAIL, inst.rowH);
         for (var p = 0; p < pts.length; p++) {
           var dx = pts[p].x - x, dy = pts[p].y - y;
-          if (dx * dx + dy * dy <= thr2) { evaporate(st); break; }
+          if (dx * dx + dy * dy <= thr2) { destroy(inst, s); break; }
         }
       }
     }
