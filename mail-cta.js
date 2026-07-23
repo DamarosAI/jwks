@@ -59,29 +59,30 @@
       "#" + DIALOG_ID + "-root[hidden]{display:none !important;}",
       "#" + DIALOG_ID + "-root[data-closing]{pointer-events:none;}",
       "#" + DIALOG_ID + "-backdrop{position:absolute;inset:0;background:rgba(16,22,29,0.42);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);animation:dm-pilot-fade 220ms ease;}",
-      "#" + DIALOG_ID + "{position:relative;width:min(100%,460px);max-height:min(92dvh,720px);overflow:auto;text-align:left;background:#fff;border:1px solid rgba(31,45,61,0.12);border-radius:14px;box-shadow:0 24px 64px rgba(16,22,29,0.2),inset 0 1px 0 rgba(255,255,255,0.9);padding:22px 22px 18px;box-sizing:border-box;animation:dm-pilot-in 280ms cubic-bezier(0.22,1,0.36,1);}",
+      "#" + DIALOG_ID + "{position:relative;display:flex;flex-direction:column;width:min(100%,460px);max-height:min(92dvh,720px);overflow:hidden;text-align:left;background:#fff;border:1px solid rgba(31,45,61,0.12);border-radius:14px;box-shadow:0 24px 64px rgba(16,22,29,0.2),inset 0 1px 0 rgba(255,255,255,0.9);padding:22px 22px 18px;box-sizing:border-box;animation:dm-pilot-in 280ms cubic-bezier(0.22,1,0.36,1);}",
       "#" + DIALOG_ID + "-root[data-closing] #" + DIALOG_ID + "-backdrop{animation:dm-pilot-fade-out 240ms ease forwards;}",
       "#" + DIALOG_ID + "-root[data-closing] #" + DIALOG_ID + "{animation:dm-pilot-out 240ms ease forwards;}",
       "@keyframes dm-pilot-fade{from{opacity:0;}to{opacity:1;}}",
       "@keyframes dm-pilot-fade-out{from{opacity:1;}to{opacity:0;}}",
       "@keyframes dm-pilot-in{from{opacity:0;transform:translateY(12px) scale(0.985);}to{opacity:1;transform:none;}}",
       "@keyframes dm-pilot-out{from{opacity:1;transform:none;}to{opacity:0;transform:translateY(10px) scale(0.985);}}",
-      "#" + DIALOG_ID + " .dm-pilot-head{margin:0 36px 14px 0;}",
+      "#" + DIALOG_ID + " .dm-pilot-head{flex:none;margin:0 36px 14px 0;}",
       "#" + DIALOG_ID + " .dm-pilot-eyebrow{margin:0 0 8px;font-family:var(--font-body,\"Hanken Grotesk\",system-ui,sans-serif);font-size:11px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-steel,#2f6193);}",
       "#" + DIALOG_ID + " .dm-pilot-title{margin:0;font-family:var(--font-display,\"Archivo\",system-ui,sans-serif);font-size:clamp(1.35rem,3.6vw,1.55rem);font-weight:700;letter-spacing:-0.025em;line-height:1.15;color:var(--ink-cold,#10161d);text-wrap:balance;}",
-      "#" + DIALOG_ID + " .dm-pilot-close{position:absolute;top:12px;right:12px;width:32px;height:32px;border:1px solid rgba(31,45,61,0.1);border-radius:999px;background:#fff;color:var(--ink-quiet,#3c4955);cursor:pointer;display:grid;place-items:center;}",
+      "#" + DIALOG_ID + " .dm-pilot-close{position:absolute;top:12px;right:12px;width:32px;height:32px;border:1px solid rgba(31,45,61,0.1);border-radius:999px;background:#fff;color:var(--ink-quiet,#3c4955);cursor:pointer;display:grid;place-items:center;z-index:2;}",
       "#" + DIALOG_ID + " .dm-pilot-close:hover{border-color:rgba(31,45,61,0.18);color:var(--ink-cold,#10161d);}",
-      "#" + DIALOG_ID + " .dm-pilot-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}",
+      "#" + DIALOG_ID + " #dm-pilot-form{display:flex;flex-direction:column;flex:1 1 auto;min-height:0;gap:0;}",
+      "#" + DIALOG_ID + " .dm-pilot-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1 1 auto;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-bottom:2px;}",
       "#" + DIALOG_ID + " .dm-pilot-span{grid-column:1 / -1;}",
       "#" + DIALOG_ID + " label{display:flex;flex-direction:column;gap:5px;align-items:stretch;text-align:left;font-family:var(--font-mono,\"IBM Plex Mono\",ui-monospace,monospace);font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim,#7b8794);}",
       "#" + DIALOG_ID + " label.dm-pilot-req > .dm-pilot-label{display:inline-flex;align-items:baseline;gap:3px;}",
       "#" + DIALOG_ID + " .dm-pilot-req-mark{color:#dc3a52;font-weight:700;line-height:1;}",
-      "#" + DIALOG_ID + " input,#" + DIALOG_ID + " textarea{width:100%;box-sizing:border-box;margin:0;padding:10px 11px;border-radius:9px;border:1px solid rgba(31,45,61,0.14);background:#fff;font-family:var(--font-body,\"Hanken Grotesk\",system-ui,sans-serif);font-size:15px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--ink-cold,#10161d);outline:none;}",
+      "#" + DIALOG_ID + " input,#" + DIALOG_ID + " textarea{width:100%;box-sizing:border-box;margin:0;padding:10px 11px;border-radius:9px;border:1px solid rgba(31,45,61,0.14);background:#fff;font-family:var(--font-body,\"Hanken Grotesk\",system-ui,sans-serif);font-size:16px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--ink-cold,#10161d);outline:none;}",
       "#" + DIALOG_ID + " input:focus,#" + DIALOG_ID + " textarea:focus{border-color:color-mix(in srgb,#2f6193 55%,transparent);box-shadow:0 0 0 3px rgba(47,97,147,0.14);}",
       "#" + DIALOG_ID + " input.dm-pilot-invalid,#" + DIALOG_ID + " textarea.dm-pilot-invalid{border-color:color-mix(in srgb,#dc3a52 55%,transparent);box-shadow:0 0 0 3px rgba(220,58,82,0.12);}",
       "#" + DIALOG_ID + " textarea{min-height:88px;resize:vertical;}",
       "#" + DIALOG_ID + " .dm-pilot-hp{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;}",
-      "#" + DIALOG_ID + " .dm-pilot-foot{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-top:14px;}",
+      "#" + DIALOG_ID + " .dm-pilot-foot{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-top:14px;flex:none;padding-top:4px;background:#fff;}",
       "#" + DIALOG_ID + " .dm-pilot-actions{display:flex;flex-direction:column;align-items:flex-start;gap:8px;min-width:0;}",
       "#" + DIALOG_ID + " .dm-pilot-submit{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:42px;padding:0 22px;border-radius:999px;border:1px solid color-mix(in srgb,#2f6193 50%,rgba(255,255,255,0.22));background:linear-gradient(180deg,#3d72a8,#2f6193);color:#fff;font-family:var(--font-display,\"Archivo\",system-ui,sans-serif);font-size:12px;font-weight:500;letter-spacing:0.03em;text-transform:uppercase;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,0.2),0 8px 20px rgba(20,46,82,0.16);transition:background 240ms ease,border-color 240ms ease,box-shadow 240ms ease,filter 180ms ease;}",
       "#" + DIALOG_ID + " .dm-pilot-submit:hover{filter:brightness(1.03);}",
@@ -100,14 +101,30 @@
       "#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit:disabled{opacity:1;cursor:default;}",
       "#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit .dm-pilot-submit-check{display:block;stroke-dasharray:26;stroke-dashoffset:26;animation:dm-pilot-check-draw 280ms cubic-bezier(0.65,0,0.35,1) 40ms forwards;}",
       "#" + DIALOG_ID + "[data-state=success] .dm-pilot-mark{animation:dm-pilot-drum-rev 360ms cubic-bezier(0.22,1,0.36,1) both;}",
+      /* Mobile sheet: compact + keyboard-aware via --dm-vv-* from visualViewport */
       "@media (max-width:520px){",
-      "  #" + DIALOG_ID + "-root{align-items:flex-end;padding:0;}",
-      "  #" + DIALOG_ID + "{width:100%;max-height:min(94dvh,100%);border-radius:16px 16px 0 0;padding:20px 18px calc(16px + env(safe-area-inset-bottom,0px));}",
-      "  #" + DIALOG_ID + " .dm-pilot-grid{grid-template-columns:1fr;gap:10px;}",
-      "  #" + DIALOG_ID + " textarea{min-height:110px;}",
-      "  #" + DIALOG_ID + " .dm-pilot-submit{width:auto;}",
+      "  #" + DIALOG_ID + "-root{align-items:flex-end;justify-content:stretch;padding:0;inset:auto;top:var(--dm-vv-offset-top,0px);left:var(--dm-vv-offset-left,0px);width:var(--dm-vv-width,100%);height:var(--dm-vv-height,100dvh);}",
+      "  #" + DIALOG_ID + "{width:100%;max-width:none;max-height:min(78%,calc(var(--dm-vv-height,100dvh) - 12px));border-radius:14px 14px 0 0;padding:14px 14px calc(10px + env(safe-area-inset-bottom,0px));box-shadow:0 -8px 40px rgba(16,22,29,0.18);}",
+      "  #" + DIALOG_ID + " .dm-pilot-head{margin:0 34px 10px 0;}",
+      "  #" + DIALOG_ID + " .dm-pilot-eyebrow{margin:0 0 4px;font-size:10px;letter-spacing:0.14em;}",
+      "  #" + DIALOG_ID + " .dm-pilot-title{font-size:1.15rem;line-height:1.2;}",
+      "  #" + DIALOG_ID + " .dm-pilot-close{top:8px;right:8px;width:28px;height:28px;}",
+      "  #" + DIALOG_ID + " .dm-pilot-grid{grid-template-columns:1fr;gap:8px;}",
+      "  #" + DIALOG_ID + " label{gap:3px;font-size:9px;}",
+      "  #" + DIALOG_ID + " input,#" + DIALOG_ID + " textarea{padding:8px 10px;border-radius:8px;font-size:16px;}",
+      "  #" + DIALOG_ID + " textarea{min-height:64px;resize:none;}",
+      "  #" + DIALOG_ID + " .dm-pilot-foot{margin-top:10px;gap:10px;}",
+      "  #" + DIALOG_ID + " .dm-pilot-submit{height:40px;padding:0 18px;}",
+      "  #" + DIALOG_ID + " .dm-pilot-mark{width:20px;height:22px;}",
+      "  #" + DIALOG_ID + "-root[data-kb=\"1\"] #" + DIALOG_ID + "{max-height:calc(var(--dm-vv-height,100dvh) - 6px);border-radius:12px 12px 0 0;padding:10px 12px 8px;}",
+      "  #" + DIALOG_ID + "-root[data-kb=\"1\"] #" + DIALOG_ID + " .dm-pilot-head{margin-bottom:6px;}",
+      "  #" + DIALOG_ID + "-root[data-kb=\"1\"] #" + DIALOG_ID + " .dm-pilot-eyebrow{display:none;}",
+      "  #" + DIALOG_ID + "-root[data-kb=\"1\"] #" + DIALOG_ID + " .dm-pilot-title{font-size:1.05rem;}",
+      "  #" + DIALOG_ID + "-root[data-kb=\"1\"] #" + DIALOG_ID + " textarea{min-height:48px;}",
+      "  #" + DIALOG_ID + "-root[data-kb=\"1\"] #" + DIALOG_ID + " .dm-pilot-foot{margin-top:8px;}",
+      "  #" + DIALOG_ID + "-root[data-kb=\"1\"] #" + DIALOG_ID + " .dm-pilot-mark{display:none;}",
       "}",
-      "@media (max-height:700px){#" + DIALOG_ID + "{padding-top:18px;padding-bottom:14px;}#" + DIALOG_ID + " .dm-pilot-head{margin-bottom:12px;}#" + DIALOG_ID + " textarea{min-height:72px;}}",
+      "@media (max-height:700px) and (min-width:521px){#" + DIALOG_ID + "{padding-top:18px;padding-bottom:14px;}#" + DIALOG_ID + " .dm-pilot-head{margin-bottom:12px;}#" + DIALOG_ID + " textarea{min-height:72px;}}",
       "@media (prefers-reduced-motion:reduce){#" + DIALOG_ID + "-backdrop,#" + DIALOG_ID + ",#" + DIALOG_ID + "-root[data-closing] #" + DIALOG_ID + "-backdrop,#" + DIALOG_ID + "-root[data-closing] #" + DIALOG_ID + ",#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit,#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit .dm-pilot-submit-check,#" + DIALOG_ID + "[data-state=success] .dm-pilot-mark{animation:none;}#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit .dm-pilot-submit-check{stroke-dashoffset:0;}}"
     ].join("");
     document.head.appendChild(style);
@@ -118,6 +135,75 @@
   var toastTimer = null;
   var successCloseTimer = null;
   var lastFocus = null;
+  var vvBound = false;
+
+  function isMobilePilotSheet() {
+    return window.matchMedia && window.matchMedia("(max-width:520px)").matches;
+  }
+
+  function syncPilotViewport() {
+    if (!dialogRoot || dialogRoot.hidden) return;
+    var vv = window.visualViewport;
+    var h = vv ? vv.height : window.innerHeight;
+    var w = vv ? vv.width : window.innerWidth;
+    var top = vv ? vv.offsetTop : 0;
+    var left = vv ? vv.offsetLeft : 0;
+    dialogRoot.style.setProperty("--dm-vv-height", h + "px");
+    dialogRoot.style.setProperty("--dm-vv-width", w + "px");
+    dialogRoot.style.setProperty("--dm-vv-offset-top", top + "px");
+    dialogRoot.style.setProperty("--dm-vv-offset-left", left + "px");
+    // Keyboard open when visual viewport is clearly shorter than layout viewport.
+    var layoutH = window.innerHeight || h;
+    var kb = isMobilePilotSheet() && h < layoutH * 0.82;
+    if (kb) dialogRoot.setAttribute("data-kb", "1");
+    else dialogRoot.removeAttribute("data-kb");
+  }
+
+  function bindPilotViewport() {
+    if (vvBound) return;
+    vvBound = true;
+    var vv = window.visualViewport;
+    if (vv) {
+      vv.addEventListener("resize", syncPilotViewport);
+      vv.addEventListener("scroll", syncPilotViewport);
+    }
+    window.addEventListener("resize", syncPilotViewport);
+  }
+
+  function unbindPilotViewport() {
+    if (!vvBound) return;
+    vvBound = false;
+    var vv = window.visualViewport;
+    if (vv) {
+      vv.removeEventListener("resize", syncPilotViewport);
+      vv.removeEventListener("scroll", syncPilotViewport);
+    }
+    window.removeEventListener("resize", syncPilotViewport);
+  }
+
+  function clearPilotViewport() {
+    if (!dialogRoot) return;
+    dialogRoot.removeAttribute("data-kb");
+    dialogRoot.style.removeProperty("--dm-vv-height");
+    dialogRoot.style.removeProperty("--dm-vv-width");
+    dialogRoot.style.removeProperty("--dm-vv-offset-top");
+    dialogRoot.style.removeProperty("--dm-vv-offset-left");
+  }
+
+  function scrollPilotFieldIntoView(el) {
+    if (!el || !dialogRoot || dialogRoot.hidden) return;
+    var grid = dialogRoot.querySelector(".dm-pilot-grid");
+    if (!grid) return;
+    // Wait a beat for the keyboard / visualViewport settle.
+    setTimeout(function () {
+      if (!el.isConnected) return;
+      try {
+        el.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "smooth" });
+      } catch (_) {
+        el.scrollIntoView(false);
+      }
+    }, 80);
+  }
   var dialogRoot = null;
   var formOpenedAt = 0;
   var REQ_FIELDS = ["name", "role", "organization", "email", "message"];
@@ -245,6 +331,12 @@
       var t = e.target;
       if (t && t.classList) t.classList.remove("dm-pilot-invalid");
     });
+    form.addEventListener("focusin", function (e) {
+      var t = e.target;
+      if (!t || (t.tagName !== "INPUT" && t.tagName !== "TEXTAREA")) return;
+      syncPilotViewport();
+      scrollPilotFieldIntoView(t);
+    });
 
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape" && dialogRoot && !dialogRoot.hidden) {
@@ -316,6 +408,8 @@
     formOpenedAt = Date.now();
     root.hidden = false;
     document.documentElement.style.overflow = "hidden";
+    bindPilotViewport();
+    syncPilotViewport();
     var first = form.querySelector('input[name="name"]');
     if (first) first.focus();
   }
@@ -324,6 +418,8 @@
     if (!dialogRoot) return;
     dialogRoot.hidden = true;
     dialogRoot.removeAttribute("data-closing");
+    unbindPilotViewport();
+    clearPilotViewport();
     document.documentElement.style.overflow = "";
     var dialog = dialogRoot.querySelector("#" + DIALOG_ID);
     var form = dialogRoot.querySelector("#dm-pilot-form");
