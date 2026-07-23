@@ -6,11 +6,11 @@
  * CSS), then scales with viewport area so larger monitors (e.g. 2160×1440)
  * never look sparse. Each trail holds a constant random speed within a 20%
  * slowest→fastest band; neighboring trails (nearest left/right) never match.
- * First
- * paint seeds a full mid-fall field so load feels like joining a living page.
- * Close stays idle until it enters view, then boots the same way. On close,
- * every trail dissolves in a bottom fade zone and is gone before the card
- * edge; drum contact also fades smoothly (hero drum still shatters).
+ * First paint seeds a full mid-fall field so load feels like joining a living
+ * page. Close stays idle until it enters view, then boots the same way.
+ * Hero and close share pass-through exit physics; drum or headline/CTA contact
+ * fades the trail smoothly. Hover (desktop) or tap (mobile) still shatters.
+ * A short "Hover me" / "Tap me" cue pulses beside one clear trail until used.
  */
 (function () {
   // Oncogenes, tumor-suppressor genes, fusions, mutations, clinical biomarkers.
@@ -48,9 +48,9 @@
   var SPEED_DELTA = 0.20;
   var SPEED_STEPS = 5;
   var GLITCH = 0.14;
-  // Close card: dissolve only in the last sliver before the card bottom.
-  var CLOSE_FADE_START = 1.08; // begin dissolve near the bottom edge
-  var CLOSE_FADE_END = 1.17;   // gone just past the card bottom
+  var HINT_TTL_MS = 7000;
+  var hintGone = false;
+  var hintBorn = 0;
 
   // Scale trail count with viewport area so density matches the Air 15 look.
   function streamCap(w, h) {
@@ -110,33 +110,9 @@
   function pick() { return MARKERS[(Math.random() * MARKERS.length) | 0]; }
   function now() { return (performance && performance.now) ? performance.now() : Date.now(); }
 
-  function closeSoftY(inst) { return inst.h * CLOSE_FADE_START; }
-  function closeHardY(inst) { return inst.h * CLOSE_FADE_END; }
-
-  // Close: every trail fades before the card bottom. Hero: pass through.
-  function exitPlan(inst) {
-    if (!inst.waitView) {
-      return { exitMode: "pass", fadeAt: Infinity, fadeTtl: 0.45 };
-    }
-    var soft = closeSoftY(inst);
-    var hard = closeHardY(inst);
-    // Stagger fade start inside the dissolve band so they don't sync-blink.
-    var fadeAt = soft + Math.random() * Math.max(8, (hard - soft) * 0.35);
-    return {
-      exitMode: "fade",
-      fadeAt: fadeAt,
-      fadeTtl: 0.55 + Math.random() * 0.35
-    };
-  }
-
-  // 1 → 0 across the close dissolve band (position-locked, not just a timer).
-  function closeFloorFade(inst, headY) {
-    var soft = closeSoftY(inst);
-    var hard = closeHardY(inst);
-    if (headY <= soft) return 1;
-    if (headY >= hard) return 0;
-    var t = (headY - soft) / (hard - soft);
-    return Math.pow(1 - t, 1.6);
+  // Hero + close: trails pass through the card floor.
+  function exitPlan() {
+    return { exitMode: "pass", fadeAt: Infinity, fadeTtl: 0.45 };
   }
 
   function beginFade(s, ttl) {
@@ -144,7 +120,15 @@
     s.state = "fade";
     s.life = 1;
     s.fadeTtl = ttl || (0.4 + Math.random() * 0.35);
-    s.vy *= 0.4; // slow hard so they finish dissolving before the floor
+    s.vy *= 0.45; // ease out while dissolving on drum/letter contact
+  }
+
+  function dismissHint() {
+    hintGone = true;
+  }
+
+  function hintLabel() {
+    return coarse ? "Tap me" : "Hover me";
   }
 
   // Remove a trail; shatter=true triggers the pixel debris motif.
@@ -222,7 +206,7 @@
     // Ongoing rain: enter from above. Initial boot uses spawnLive instead.
     var y = -inst.rowH * (2 + Math.random() * 4);
     var spd = pickSpeed(inst, col);
-    var exit = exitPlan(inst);
+    var exit = exitPlan();
     inst.streams.push({
       col: col, x: x,
       vx: 0, vy: spd.vy, speedStep: spd.speedStep,
@@ -252,16 +236,7 @@
       points.push({ x: x, y: headY - p * inst.rowH });
     }
     var spd = pickSpeed(inst, col);
-    var exit = exitPlan(inst);
-    // Never seed a close trail inside/below the dissolve band.
-    if (inst.waitView) {
-      var cap = closeSoftY(inst) - inst.rowH * 2;
-      if (headY > cap) {
-        var shift = headY - cap;
-        headY = cap;
-        for (var q = 0; q < points.length; q++) points[q].y -= shift;
-      }
-    }
+    var exit = exitPlan();
     inst.streams.push({
       col: col, x: x,
       vx: 0, vy: spd.vy, speedStep: spd.speedStep,
@@ -365,17 +340,21 @@
       el: el, canvas: canvas, ctx: ctx,
       mark: section ? section.querySelector(".dm-hero-mark") : null,
       drumSvg: null, drumPaths: null,
+      copyEls: [],
       streams: [], debris: [],
       nCols: 0, colW: 0, rowH: 0, rows: 0, speed: 0, fontPx: 12,
       maxStreams: REF_STREAMS,
       nextSpawn: 0, w: 0, h: 0, dpr: 1, last: 0,
       waitView: waitView,
       armed: !waitView,
-      io: null
+      io: null,
+      hintStream: null,
+      hintSide: 0
     };
     el.__dmMatrix = inst;
     resize(inst);
     bindDrum(inst);
+    bindCopy(inst);
     watchView(inst);
     if (!waitView && !reduced) {
       ensureField(inst);
@@ -417,6 +396,7 @@
       paintNow(inst);
     }
     bindDrum(inst);
+    bindCopy(inst);
   }
 
   // Bind to the live SVG drum paths (arcs + stroke-width + CSS dmDrift).
@@ -435,6 +415,21 @@
     }
     inst.drumSvg = svg;
     inst.drumPaths = svg.querySelectorAll("path");
+  }
+
+  // Headline + CTA boxes trails should dissolve against (not punch through).
+  function bindCopy(inst) {
+    var section = inst.el.closest ? inst.el.closest("section") : null;
+    if (!section) {
+      inst.copyEls = [];
+      return;
+    }
+    var els = [];
+    var title = section.querySelector("h1.dm-hero-title, .dm-hero-core h2");
+    var cta = section.querySelector(".dm-hero-cta");
+    if (title) els.push(title);
+    if (cta) els.push(cta);
+    inst.copyEls = els;
   }
 
   // True if client (screen) point sits on any painted drum stroke pixel.
@@ -490,6 +485,36 @@
     return null;
   }
 
+  // True if a canvas-space sample sits inside headline or CTA bounds.
+  function copyHit(inst, x0, y0, x1, y1) {
+    if (!inst.copyEls || !inst.copyEls.length) bindCopy(inst);
+    if (!inst.copyEls || !inst.copyEls.length) return null;
+    var cr = inst.canvas.getBoundingClientRect();
+    var dist = Math.hypot(x1 - x0, y1 - y0);
+    var steps = Math.max(4, Math.ceil(dist / 2));
+    var padX = Math.max(2, inst.fontPx * 0.35);
+    var padY = Math.max(2, inst.fontPx * 0.25);
+    for (var s = 0; s <= steps; s++) {
+      var t = s / steps;
+      var cx = x0 + (x1 - x0) * t;
+      var cy = y0 + (y1 - y0) * t;
+      var clientX = cr.left + cx;
+      var clientY = cr.top + cy;
+      for (var e = 0; e < inst.copyEls.length; e++) {
+        var el = inst.copyEls[e];
+        if (!el || !el.isConnected) continue;
+        var r = el.getBoundingClientRect();
+        if (
+          clientX >= r.left - padX && clientX <= r.right + padX &&
+          clientY >= r.top - padY && clientY <= r.bottom + padY
+        ) {
+          return { x: cx, y: cy };
+        }
+      }
+    }
+    return null;
+  }
+
   function trailPoints(points, count, spacing) {
     var last = points.length - 1;
     var res = [{ x: points[last].x, y: points[last].y }];
@@ -522,20 +547,15 @@
     var pts = trailPoints(s.points, TRAIL, inst.rowH);
     if (Math.random() < GLITCH) s.tokens[(Math.random() * TRAIL) | 0] = pick();
     var lifeMul = s.life == null ? 1 : Math.max(0, s.life);
-    // Soft ease so close fades read as dissolve, not a hard cut.
+    // Soft ease so obstacle fades read as dissolve, not a hard cut.
     if (s.state === "fade") lifeMul = lifeMul * lifeMul;
     if (floorMul == null) floorMul = 1;
     var mul = lifeMul * floorMul;
     if (mul < 0.01) return;
-    // On close, also kill any glyph that has entered the hard floor band.
-    var hard = inst.waitView ? closeHardY(inst) : Infinity;
     for (var i = 0; i < pts.length; i++) {
       var y = pts[i].y;
       if (y < -inst.rowH || y > inst.h + inst.rowH) continue;
-      if (y >= hard) continue;
-      // Per-glyph floor fade so trailing heads can't poke past the band.
-      var glyphFloor = inst.waitView ? closeFloorFade(inst, y) : 1;
-      var a = alphaFor(i, TRAIL) * mul * glyphFloor;
+      var a = alphaFor(i, TRAIL) * mul;
       if (a < 0.01) continue;
       var glitch = Math.random() < 0.03;
       ctx.fillStyle = glitch
@@ -586,16 +606,14 @@
     if (!inst.armed) return;
     ensureField(inst); // never paint an empty field
     var ctx = inst.ctx, secs = dt / 1000;
-    var isClose = !!inst.waitView;
     ctx.clearRect(0, 0, inst.w, inst.h);
     ctx.font = "600 " + inst.fontPx + "px \"IBM Plex Mono\", ui-monospace, monospace";
     ctx.textAlign = "center"; ctx.textBaseline = "middle";
 
     if (!inst.drumPaths || !inst.drumPaths.length) bindDrum(inst);
+    if (!inst.copyEls || !inst.copyEls.length) bindCopy(inst);
 
     var maxPathLen = TRAIL * inst.rowH + inst.rowH * 2;
-    var softY = isClose ? closeSoftY(inst) : Infinity;
-    var hardY = isClose ? closeHardY(inst) : Infinity;
 
     for (var i = inst.streams.length - 1; i >= 0; i--) {
       var s = inst.streams[i];
@@ -603,24 +621,13 @@
       var nx = last.x + s.vx * secs;
       var ny = last.y + s.vy * secs;
 
-      // Close: drum contact dissolves; hero: drum still shatters to pixels.
+      // Drum or letter/CTA contact dissolves smoothly (hero + close).
       var hit = s.state === "fade" ? null : drumHit(inst, last.x, last.y, nx, ny);
+      if (!hit && s.state !== "fade") hit = copyHit(inst, last.x, last.y, nx, ny);
       if (hit) {
         s.points.push({ x: hit.x, y: hit.y });
-        if (isClose) {
-          beginFade(s, 0.45 + Math.random() * 0.25);
-          nx = hit.x; ny = hit.y;
-        } else {
-          retire(inst, i, true);
-          continue;
-        }
-      }
-
-      // Hard clamp: close heads never advance past the dissolve end.
-      if (isClose && ny >= hardY) {
-        s.points.push({ x: nx, y: hardY });
-        retire(inst, i, false);
-        continue;
+        beginFade(s, 0.45 + Math.random() * 0.28);
+        nx = hit.x; ny = hit.y;
       }
 
       s.points.push({ x: nx, y: ny });
@@ -632,11 +639,6 @@
       }
       if (keepFrom > 0) s.points.splice(0, keepFrom);
 
-      // Close: start dissolving as soon as the head enters the fade band.
-      if (isClose && s.state === "fall" && ny >= Math.min(s.fadeAt, softY)) {
-        beginFade(s, s.fadeTtl);
-      }
-
       if (s.state === "fade") {
         s.life -= secs / (s.fadeTtl || 0.5);
         if (s.life <= 0) {
@@ -645,7 +647,8 @@
         }
       }
 
-      if (!isClose && ny - TRAIL * inst.rowH > inst.h) {
+      // Pass-through exit (same on land + close).
+      if (ny - TRAIL * inst.rowH > inst.h) {
         inst.streams.splice(i, 1);
         spawn(inst);
         spawn(inst);
@@ -653,16 +656,96 @@
         continue;
       }
 
-      var floorMul = isClose ? closeFloorFade(inst, ny) : 1;
-      if (floorMul < 0.02) {
-        retire(inst, i, false);
-        continue;
-      }
-      drawStream(ctx, inst, s, floorMul);
+      drawStream(ctx, inst, s, 1);
     }
 
     ensureField(inst); // refill after any removals this frame
     drawDebris(ctx, inst, secs);
+    drawHint(ctx, inst);
+  }
+
+  // Side offset that never lands on a neighboring trail column.
+  function hintSideFor(inst, col) {
+    var leftClear = col >= 2;
+    var rightClear = col <= inst.nCols - 3;
+    for (var i = 0; i < inst.streams.length; i++) {
+      var c = inst.streams[i].col;
+      if (c === col) continue;
+      if (c >= col - 2 && c < col) leftClear = false;
+      if (c <= col + 2 && c > col) rightClear = false;
+    }
+    if (rightClear) return 1;
+    if (leftClear) return -1;
+    return 0;
+  }
+
+  function pickHintStream(inst) {
+    if (inst.hintStream && inst.streams.indexOf(inst.hintStream) >= 0) {
+      var keepSide = hintSideFor(inst, inst.hintStream.col);
+      if (keepSide) {
+        inst.hintSide = keepSide;
+        return inst.hintStream;
+      }
+    }
+    var mid = inst.h * 0.42;
+    var best = null, bestScore = -Infinity;
+    for (var i = 0; i < inst.streams.length; i++) {
+      var s = inst.streams[i];
+      if (s.state !== "fall") continue;
+      var side = hintSideFor(inst, s.col);
+      if (!side) continue;
+      var last = s.points[s.points.length - 1];
+      if (last.y < inst.h * 0.18 || last.y > inst.h * 0.72) continue;
+      var score = -Math.abs(last.y - mid) + Math.random() * 4;
+      if (score > bestScore) {
+        bestScore = score;
+        best = s;
+        inst.hintSide = side;
+      }
+    }
+    inst.hintStream = best;
+    return best;
+  }
+
+  function drawHint(ctx, inst) {
+    if (hintGone || reduced || !inst.armed) return;
+    // Prefer the land card; close can show only if hero never armed this session.
+    if (inst.waitView) {
+      for (var i = 0; i < instances.length; i++) {
+        if (!instances[i].waitView && instances[i].armed) return;
+      }
+    }
+    var t = now();
+    if (!hintBorn) hintBorn = t;
+    if (t - hintBorn > HINT_TTL_MS) {
+      hintGone = true;
+      return;
+    }
+    var s = pickHintStream(inst);
+    if (!s || !inst.hintSide) return;
+    var pts = trailPoints(s.points, TRAIL, inst.rowH);
+    if (!pts.length) return;
+    var mid = pts[Math.min(2, pts.length - 1)];
+    var label = hintLabel();
+    var pulse = 0.28 + 0.32 * (0.5 + 0.5 * Math.sin(t / 520));
+    // Fade in, hold, fade out over HINT_TTL_MS.
+    var age = (t - hintBorn) / HINT_TTL_MS;
+    var envelope = age < 0.12 ? age / 0.12 : age > 0.78 ? Math.max(0, (1 - age) / 0.22) : 1;
+    var a = pulse * envelope * VIS;
+    if (a < 0.04) return;
+    var gap = Math.max(inst.colW * 0.62, inst.fontPx * 3.2);
+    var x = mid.x + inst.hintSide * gap;
+    var y = mid.y;
+    // Keep label inside the canvas.
+    if (x < 28) x = mid.x + gap;
+    if (x > inst.w - 28) x = mid.x - gap;
+    ctx.save();
+    ctx.font = "600 " + Math.max(9, Math.floor(inst.fontPx * 0.95)) + "px \"IBM Plex Mono\", ui-monospace, monospace";
+    ctx.textAlign = inst.hintSide > 0 ? "left" : "right";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = "rgba(" + BLUE + "," + a.toFixed(3) + ")";
+    ctx.fillText(label, x, y);
+    ctx.restore();
   }
 
   function tick(ts) {
@@ -704,6 +787,7 @@
   function breakAt(clientX, clientY, pointerType) {
     if (reduced) return;
     var touchy = pointerType === "touch" || coarse;
+    var hitAny = false;
     for (var i = 0; i < instances.length; i++) {
       var inst = instances[i];
       if (!inst.el.isConnected || !inst.armed) continue;
@@ -717,10 +801,15 @@
         var pts = trailPoints(st.points, TRAIL, inst.rowH);
         for (var p = 0; p < pts.length; p++) {
           var dx = pts[p].x - x, dy = pts[p].y - y;
-          if (dx * dx + dy * dy <= thr2) { destroy(inst, s); break; }
+          if (dx * dx + dy * dy <= thr2) {
+            destroy(inst, s);
+            hitAny = true;
+            break;
+          }
         }
       }
     }
+    if (hitAny) dismissHint();
     kick();
   }
 

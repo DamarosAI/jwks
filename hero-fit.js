@@ -10,10 +10,10 @@
 
   function maxForViewport() {
     var w = window.innerWidth || 1024;
-    // Generous ceiling — fitter will walk down until it fits.
-    if (w < 400) return 34;
-    if (w < 640) return 44;
-    if (w < 900) return 56;
+    // Keep mobile headlines compact so matrix trails clear the lettering.
+    if (w < 400) return 24;
+    if (w < 640) return 28;
+    if (w < 900) return 34;
     if (w < 1280) return 64;
     return 74; // ~4.6rem
   }

@@ -28,8 +28,8 @@
 <script src="./support.js" defer></script>
 <script src="./mail-cta.js?v=12" defer></script>
 <script src="./logo-marquee.js?v=1" defer></script>
-<script src="./biomarker-matrix.js?v=25" defer></script>
-<script src="./hero-fit.js?v=1" defer></script>
+<script src="./biomarker-matrix.js?v=26" defer></script>
+<script src="./hero-fit.js?v=2" defer></script>
 <script>
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 window.scrollTo(0, 0);
@@ -96,8 +96,7 @@ window.scrollTo(0, 0);
     /* Subtle biomarker matrix rain — CTA blue, cleared around drum + copy */
     .dm-matrix{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
     .dm-matrix-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:1;}
-    .dm-matrix--hero{-webkit-mask-image:radial-gradient(ellipse 46% 50% at 50% 48%,transparent 0%,transparent 58%,rgba(0,0,0,0.35) 78%,#000 100%),linear-gradient(180deg,#000 0%,#000 62%,rgba(0,0,0,0.4) 82%,transparent 100%);mask-image:radial-gradient(ellipse 46% 50% at 50% 48%,transparent 0%,transparent 58%,rgba(0,0,0,0.35) 78%,#000 100%),linear-gradient(180deg,#000 0%,#000 62%,rgba(0,0,0,0.4) 82%,transparent 100%);-webkit-mask-composite:source-in;mask-composite:intersect;}
-    .dm-matrix--close{-webkit-mask-image:radial-gradient(ellipse 46% 50% at 50% 50%,transparent 0%,transparent 58%,rgba(0,0,0,0.35) 78%,#000 100%),linear-gradient(180deg,transparent 0%,rgba(0,0,0,0.4) 16%,#000 36%,#000 90%,rgba(0,0,0,0.4) 95%,transparent 100%);mask-image:radial-gradient(ellipse 46% 50% at 50% 50%,transparent 0%,transparent 58%,rgba(0,0,0,0.35) 78%,#000 100%),linear-gradient(180deg,transparent 0%,rgba(0,0,0,0.4) 16%,#000 36%,#000 90%,rgba(0,0,0,0.4) 95%,transparent 100%);-webkit-mask-composite:source-in;mask-composite:intersect;}
+    .dm-matrix--hero,.dm-matrix--close{-webkit-mask-image:radial-gradient(ellipse 46% 50% at 50% 48%,transparent 0%,transparent 58%,rgba(0,0,0,0.35) 78%,#000 100%),linear-gradient(180deg,#000 0%,#000 62%,rgba(0,0,0,0.4) 82%,transparent 100%);mask-image:radial-gradient(ellipse 46% 50% at 50% 48%,transparent 0%,transparent 58%,rgba(0,0,0,0.35) 78%,#000 100%),linear-gradient(180deg,#000 0%,#000 62%,rgba(0,0,0,0.4) 82%,transparent 100%);-webkit-mask-composite:source-in;mask-composite:intersect;}
     .dm-site section > .dm-scroll-target,.dm-site section > .dm-scroll-chev{position:relative;z-index:1;}
     section[data-screen-label="Hero"] > .dm-hero-mark,
     section[data-screen-label="Close"] > .dm-hero-mark{z-index:1;}
@@ -198,16 +197,20 @@ window.scrollTo(0, 0);
 
     /* Desktop/laptop: pin "See the live demo" near the bottom of the hero */
     @media (min-width:901px){
-      .dm-site section[data-screen-label="Hero"]{
+      .dm-site section[data-screen-label="Hero"],
+      .dm-site section[data-screen-label="Close"]{
         min-height:calc(100svh - 62px) !important;
         min-height:calc(100dvh - 62px) !important;
         height:calc(100svh - 62px) !important;
         height:calc(100dvh - 62px) !important;
         position:relative !important;
         box-sizing:border-box !important;
+        padding-top:clamp(48px,6vh,96px) !important;
         padding-bottom:clamp(28px,4vh,48px) !important;
+        overflow:hidden !important;
       }
-      .dm-site section[data-screen-label="Hero"] > .dm-hero-copy{
+      .dm-site section[data-screen-label="Hero"] > .dm-hero-copy,
+      .dm-site section[data-screen-label="Close"] > .dm-hero-copy{
         width:100%;
         max-width:980px;
         height:100%;
@@ -217,7 +220,8 @@ window.scrollTo(0, 0);
         align-items:center;
         justify-content:center;
       }
-      .dm-site section[data-screen-label="Hero"] .dm-hero-core{
+      .dm-site section[data-screen-label="Hero"] .dm-hero-core,
+      .dm-site section[data-screen-label="Close"] .dm-hero-core{
         position:relative;
         z-index:1;
       }
@@ -325,9 +329,11 @@ window.scrollTo(0, 0);
         height:calc(100dvh - 62px) !important;
       }
       .dm-site section[data-screen-label="Close"]{
+        height:calc(100svh - 62px) !important;
+        height:calc(100dvh - 62px) !important;
+        flex:0 0 auto !important;
         min-height:calc(100svh - 62px) !important;
         min-height:calc(100dvh - 62px) !important;
-        flex:1 0 auto;
       }
       .dm-site section[data-screen-label="Hero"] > .dm-hero-mark,
       .dm-site section[data-screen-label="Close"] > .dm-hero-mark{
@@ -362,7 +368,7 @@ window.scrollTo(0, 0);
         z-index:1;
       }
       .dm-site section[data-screen-label="Hero"] h1.dm-hero-title{
-        font-size:clamp(1.15rem,5.2vw,4.6rem) !important;
+        font-size:clamp(0.95rem,4.2vw,1.35rem) !important;
         max-width:100% !important;
         width:100% !important;
         margin:0 auto !important;
@@ -400,7 +406,7 @@ window.scrollTo(0, 0);
         height:min(52vh,320px) !important;
       }
       .dm-site section[data-screen-label="Hero"] h1.dm-hero-title{
-        font-size:clamp(1.1rem,5vh,1.7rem) !important;
+        font-size:clamp(0.9rem,4.2vh,1.25rem) !important;
         max-width:100% !important;
       }
       .dm-site section[data-screen-label="Close"] h2{
@@ -498,7 +504,7 @@ window.scrollTo(0, 0);
         height:min(90vw,360px) !important;
       }
       .dm-site section[data-screen-label="Hero"] h1.dm-hero-title{
-        font-size:clamp(1.05rem,6.2vw,1.65rem) !important;
+        font-size:clamp(0.9rem,4.6vw,1.2rem) !important;
         max-width:100% !important;
       }
       .dm-site section[data-screen-label="Close"] h2{
@@ -1493,7 +1499,7 @@ window.scrollTo(0, 0);
   </section>
 
   <!-- ============ CLOSE ============ -->
-  <section id="close" data-screen-label="Close" style="position:relative;min-height:calc(100vh - 62px);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:clamp(80px,11vw,150px) clamp(20px,5vw,40px);overflow:hidden;">
+  <section id="close" data-screen-label="Close" style="position:relative;min-height:calc(100vh - 62px);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:clamp(48px,6vw,96px) clamp(20px,5vw,40px) clamp(28px,4vw,48px);overflow:hidden;">
     <div class="dm-matrix dm-matrix--close" aria-hidden="true"></div>
     <div class="dm-hero-mark" aria-hidden="true" data-anim="" style="position:absolute;top:50%;left:50%;width:min(720px,104%);height:min(720px,104%);transform:translate(-50%,-50%);color:rgba(31,45,61,0.13);pointer-events:none;animation:dmDrift 18s ease-in-out infinite;">
       <svg viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="30" stroke-linejoin="round" stroke-linecap="round" style="width:100%;height:100%;"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg>
@@ -1509,7 +1515,7 @@ window.scrollTo(0, 0);
   </section>
 
   <!-- ============ FOOTER ============ -->
-  <footer style="margin-top:auto;border-top:1px solid rgba(31,45,61,0.08);padding:clamp(40px,6vw,64px) clamp(20px,5vw,40px);background:#fafcfd;">
+  <footer style="margin-top:0;border-top:1px solid rgba(31,45,61,0.08);padding:clamp(28px,4vw,48px) clamp(20px,5vw,40px);background:#fafcfd;">
     <div style="max-width:1080px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:20px;">
       <div style="display:flex;align-items:center;gap:8px;">
         
