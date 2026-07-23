@@ -10,9 +10,6 @@
  * page. Close stays idle until it enters view, then boots the same way.
  * Hero and close share pass-through exit physics; drum or headline/CTA contact
  * fades the trail smoothly. Hover (desktop) or tap (mobile) still shatters.
- * Rare easter egg: about every 10–15 trails, one visible trail briefly carries
- * a bold "hover me" / "tap me" cue (+2px) — never edge-clipped, never more
- * than one cue at a time.
  */
 (function () {
   // Oncogenes, tumor-suppressor genes, fusions, mutations, clinical biomarkers.
@@ -50,8 +47,6 @@
   var SPEED_DELTA = 0.20;
   var SPEED_STEPS = 5;
   var GLITCH = 0.14;
-  var CUE_EVERY_LO = 10;
-  var CUE_EVERY_HI = 15;
 
   // Scale trail count with viewport area so density matches the Air 15 look.
   function streamCap(w, h) {
@@ -124,23 +119,9 @@
     s.vy *= 0.45; // ease out while dissolving on drum/letter contact
   }
 
-  function cueLabel() {
-    return coarse ? "tap me" : "hover me";
-  }
-
-  function cueGap() {
-    return CUE_EVERY_LO + ((Math.random() * (CUE_EVERY_HI - CUE_EVERY_LO + 1)) | 0);
-  }
-
-  function pickCueIdx() {
-    if (TRAIL <= 2) return 0;
-    return 1 + ((Math.random() * (TRAIL - 2)) | 0);
-  }
-
   // Remove a trail; shatter=true triggers the pixel debris motif.
   function retire(inst, index, shatter) {
     var s = inst.streams[index];
-    if (s && s === inst.cueStream) inst.cueStream = null;
     if (shatter) makeDebris(inst, s);
     inst.streams.splice(index, 1);
     if (inst.armed) {
@@ -204,24 +185,6 @@
     return bestCol;
   }
 
-  // Decide whether this spawn becomes the rare single-trail cue easter egg.
-  function maybeArmCue(inst, stream) {
-    if (reduced) return;
-    if (inst.cueCountdown == null) inst.cueCountdown = cueGap();
-    inst.cueCountdown -= 1;
-    // Only one cue visible at a time.
-    if (inst.cueStream && inst.streams.indexOf(inst.cueStream) >= 0) return;
-    if (inst.cueCountdown > 0) return;
-    // Prefer columns that can fit the label; otherwise try again soon.
-    if (!colCanHostCue(inst, stream.col)) {
-      inst.cueCountdown = 1 + ((Math.random() * 3) | 0);
-      return;
-    }
-    stream.cueIdx = pickCueIdx();
-    inst.cueStream = stream;
-    inst.cueCountdown = cueGap();
-  }
-
   function spawn(inst) {
     if (inst.streams.length >= inst.maxStreams) return;
     var col = freeCol(inst);
@@ -232,7 +195,7 @@
     var y = -inst.rowH * (2 + Math.random() * 4);
     var spd = pickSpeed(inst, col);
     var exit = exitPlan();
-    var stream = {
+    inst.streams.push({
       col: col, x: x,
       vx: 0, vy: spd.vy, speedStep: spd.speedStep,
       points: [{ x: x, y: y }],
@@ -241,11 +204,8 @@
       life: 1,
       exitMode: exit.exitMode,
       fadeAt: exit.fadeAt,
-      fadeTtl: exit.fadeTtl,
-      cueIdx: null
-    };
-    inst.streams.push(stream);
-    maybeArmCue(inst, stream);
+      fadeTtl: exit.fadeTtl
+    });
   }
 
   // Seed a trail already mid-fall with a full glyph history for first paint.
@@ -265,7 +225,7 @@
     }
     var spd = pickSpeed(inst, col);
     var exit = exitPlan();
-    var stream = {
+    inst.streams.push({
       col: col, x: x,
       vx: 0, vy: spd.vy, speedStep: spd.speedStep,
       points: points,
@@ -274,17 +234,13 @@
       life: 1,
       exitMode: exit.exitMode,
       fadeAt: exit.fadeAt,
-      fadeTtl: exit.fadeTtl,
-      cueIdx: null
-    };
-    inst.streams.push(stream);
-    maybeArmCue(inst, stream);
+      fadeTtl: exit.fadeTtl
+    });
   }
 
   // Instant living field — mid-fall trails visible on first frame (never empty).
   function bootStreams(inst) {
     inst.streams.length = 0;
-    inst.cueStream = null;
     var n = Math.max(MIN_STREAMS, inst.maxStreams);
     inst.maxStreams = n;
     for (var i = 0; i < n; i++) spawnLive(inst, i, n);
@@ -300,7 +256,6 @@
   function clearLive(inst) {
     inst.streams.length = 0;
     inst.debris.length = 0;
-    inst.cueStream = null;
     if (inst.ctx && inst.w) inst.ctx.clearRect(0, 0, inst.w, inst.h);
   }
 
@@ -380,9 +335,7 @@
       nextSpawn: 0, w: 0, h: 0, dpr: 1, last: 0,
       waitView: waitView,
       armed: !waitView,
-      io: null,
-      cueStream: null,
-      cueCountdown: null
+      io: null
     };
     el.__dmMatrix = inst;
     resize(inst);
@@ -423,7 +376,6 @@
     inst.maxStreams = streamCap(w, h);
     inst.streams.length = 0;
     inst.debris.length = 0;
-    inst.cueStream = null;
     inst.nextSpawn = 0;
     if (inst.armed && !reduced) {
       bootStreams(inst);
@@ -586,13 +538,9 @@
     if (floorMul == null) floorMul = 1;
     var mul = lifeMul * floorMul;
     if (mul < 0.01) return;
-    var cueIdx = (s === inst.cueStream && s.state === "fall" && s.cueIdx != null)
-      ? Math.min(s.cueIdx, pts.length - 1)
-      : -1;
     for (var i = 0; i < pts.length; i++) {
       var y = pts[i].y;
       if (y < -inst.rowH || y > inst.h + inst.rowH) continue;
-      if (i === cueIdx) continue; // leave the slot for hover me / tap me
       var a = alphaFor(i, TRAIL) * mul;
       if (a < 0.01) continue;
       var glitch = Math.random() < 0.03;
@@ -687,7 +635,6 @@
 
       // Pass-through exit (same on land + close).
       if (ny - TRAIL * inst.rowH > inst.h) {
-        if (s === inst.cueStream) inst.cueStream = null;
         inst.streams.splice(i, 1);
         spawn(inst);
         spawn(inst);
@@ -700,71 +647,6 @@
 
     ensureField(inst); // refill after any removals this frame
     drawDebris(ctx, inst, secs);
-    drawCue(ctx, inst);
-  }
-
-  function cuePad(inst) {
-    return Math.max(14, inst.fontPx + 4);
-  }
-
-  function cueHalfWidth(inst) {
-    var label = cueLabel();
-    var px = inst.fontPx + 2;
-    return (label.length * px * 0.62) * 0.5 + 2;
-  }
-
-  function colCanHostCue(inst, col) {
-    if (!inst.w) return false;
-    var x = (col + 0.5) * inst.colW;
-    return cueFits(inst, x, inst.h * 0.5, cueHalfWidth(inst), cuePad(inst));
-  }
-
-  function cuePoint(inst, s) {
-    if (!s || s.cueIdx == null || !s.points || !s.points.length) return null;
-    var pts = trailPoints(s.points, TRAIL, inst.rowH);
-    if (!pts.length) return null;
-    return pts[Math.min(s.cueIdx, pts.length - 1)];
-  }
-
-  // Full label AABB must sit inside the canvas with padding — never clip.
-  function cueFits(inst, x, y, halfW, pad) {
-    if (halfW == null) halfW = cueHalfWidth(inst);
-    if (pad == null) pad = cuePad(inst);
-    if (x - halfW < pad) return false;
-    if (x + halfW > inst.w - pad) return false;
-    if (y < pad * 2) return false;
-    if (y > inst.h - pad * 2) return false;
-    return true;
-  }
-
-  // Rare single-trail easter egg (~every 10–15 spawns). Never edge-clipped.
-  function drawCue(ctx, inst) {
-    if (reduced || !inst.armed) return;
-    var s = inst.cueStream;
-    if (!s || s.state !== "fall" || inst.streams.indexOf(s) < 0) {
-      if (s) inst.cueStream = null;
-      return;
-    }
-    var pt = cuePoint(inst, s);
-    if (!pt) return;
-    var label = cueLabel();
-    var px = inst.fontPx + 2;
-    ctx.save();
-    ctx.font = "700 " + px + "px \"IBM Plex Mono\", ui-monospace, monospace";
-    var halfW = ctx.measureText(label).width * 0.5;
-    var pad = cuePad(inst);
-    if (!cueFits(inst, pt.x, pt.y, halfW, pad)) {
-      // Drifted off-safe — drop and wait for the next egg.
-      inst.cueStream = null;
-      s.cueIdx = null;
-      ctx.restore();
-      return;
-    }
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillStyle = "rgba(" + BLUE + "," + Math.min(0.88, 0.72 * VIS).toFixed(3) + ")";
-    ctx.fillText(label, pt.x, pt.y);
-    ctx.restore();
   }
 
   function tick(ts) {

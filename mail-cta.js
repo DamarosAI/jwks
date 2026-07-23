@@ -94,8 +94,10 @@
       "#" + DIALOG_ID + " .dm-pilot-status[data-tone=error]{color:#dc3a52;}",
       "#" + DIALOG_ID + " .dm-pilot-mark{flex:none;width:24px;height:27px;color:var(--ink-steel,#2f6193);opacity:0.9;align-self:flex-end;transform-origin:50% 58%;}",
       "@keyframes dm-pilot-drum-rev{0%{transform:rotate(0deg) scale(1);}35%{transform:rotate(-22deg) scale(1.08);}70%{transform:rotate(18deg) scale(1.06);}100%{transform:rotate(0deg) scale(1);}}",
+      "@keyframes dm-pilot-drum-shake{0%,100%{transform:translateX(0) rotate(0deg);}12%{transform:translateX(-6px) rotate(-9deg);}24%{transform:translateX(6px) rotate(8deg);}36%{transform:translateX(-5px) rotate(-6deg);}48%{transform:translateX(5px) rotate(5deg);}60%{transform:translateX(-3px) rotate(-3deg);}72%{transform:translateX(3px) rotate(2deg);}84%{transform:translateX(-1px) rotate(-1deg);}}",
       "@keyframes dm-pilot-sent-pulse{0%{transform:scale(1);}35%{transform:scale(1.045);}100%{transform:scale(1);}}",
       "@keyframes dm-pilot-check-draw{to{stroke-dashoffset:0;}}",
+      "#" + DIALOG_ID + " .dm-pilot-mark.is-shaking{animation:dm-pilot-drum-shake 460ms cubic-bezier(0.36,0.07,0.19,0.97) both;color:#dc3a52;opacity:1;}",
       "#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit{background:linear-gradient(180deg,#3f8f6d,#2e9e6b);border-color:color-mix(in srgb,#2e9e6b 55%,rgba(255,255,255,0.22));box-shadow:inset 0 1px 0 rgba(255,255,255,0.22),0 8px 20px rgba(46,158,107,0.22);opacity:1;cursor:default;filter:none;animation:dm-pilot-sent-pulse 360ms cubic-bezier(0.16,1,0.3,1);}",
       "#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit:hover{filter:none;}",
       "#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit:disabled{opacity:1;cursor:default;}",
@@ -123,9 +125,10 @@
       "  #" + DIALOG_ID + "-root[data-kb=\"1\"] #" + DIALOG_ID + " textarea{min-height:48px;}",
       "  #" + DIALOG_ID + "-root[data-kb=\"1\"] #" + DIALOG_ID + " .dm-pilot-foot{margin-top:8px;}",
       "  #" + DIALOG_ID + "-root[data-kb=\"1\"] #" + DIALOG_ID + " .dm-pilot-mark{display:none;}",
+      "  #" + DIALOG_ID + "-root[data-kb=\"1\"] #" + DIALOG_ID + " .dm-pilot-mark.is-shaking{display:block;}",
       "}",
       "@media (max-height:700px) and (min-width:521px){#" + DIALOG_ID + "{padding-top:18px;padding-bottom:14px;}#" + DIALOG_ID + " .dm-pilot-head{margin-bottom:12px;}#" + DIALOG_ID + " textarea{min-height:72px;}}",
-      "@media (prefers-reduced-motion:reduce){#" + DIALOG_ID + "-backdrop,#" + DIALOG_ID + ",#" + DIALOG_ID + "-root[data-closing] #" + DIALOG_ID + "-backdrop,#" + DIALOG_ID + "-root[data-closing] #" + DIALOG_ID + ",#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit,#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit .dm-pilot-submit-check,#" + DIALOG_ID + "[data-state=success] .dm-pilot-mark{animation:none;}#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit .dm-pilot-submit-check{stroke-dashoffset:0;}}"
+      "@media (prefers-reduced-motion:reduce){#" + DIALOG_ID + "-backdrop,#" + DIALOG_ID + ",#" + DIALOG_ID + "-root[data-closing] #" + DIALOG_ID + "-backdrop,#" + DIALOG_ID + "-root[data-closing] #" + DIALOG_ID + ",#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit,#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit .dm-pilot-submit-check,#" + DIALOG_ID + "[data-state=success] .dm-pilot-mark,#" + DIALOG_ID + " .dm-pilot-mark.is-shaking{animation:none;}#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit .dm-pilot-submit-check{stroke-dashoffset:0;}}"
     ].join("");
     document.head.appendChild(style);
   }
@@ -300,7 +303,7 @@
       '      <label class="dm-pilot-req"><span class="dm-pilot-label">Name<span class="dm-pilot-req-mark" aria-hidden="true">*</span></span><input name="name" type="text" autocomplete="name" required maxlength="120"></label>',
       '      <label class="dm-pilot-req"><span class="dm-pilot-label">Role<span class="dm-pilot-req-mark" aria-hidden="true">*</span></span><input name="role" type="text" autocomplete="organization-title" required maxlength="120"></label>',
       '      <label class="dm-pilot-req dm-pilot-span"><span class="dm-pilot-label">Organization<span class="dm-pilot-req-mark" aria-hidden="true">*</span></span><input name="organization" type="text" autocomplete="organization" required maxlength="160"></label>',
-      '      <label class="dm-pilot-req dm-pilot-span"><span class="dm-pilot-label">Work email<span class="dm-pilot-req-mark" aria-hidden="true">*</span></span><input name="email" type="email" autocomplete="email" required maxlength="254"></label>',
+      '      <label class="dm-pilot-req dm-pilot-span"><span class="dm-pilot-label">Email<span class="dm-pilot-req-mark" aria-hidden="true">*</span></span><input name="email" type="email" autocomplete="email" required maxlength="254"></label>',
       '      <label class="dm-pilot-req dm-pilot-span"><span class="dm-pilot-label">What you&rsquo;re working on<span class="dm-pilot-req-mark" aria-hidden="true">*</span></span><textarea name="message" required maxlength="4000"></textarea></label>',
       '      <label class="dm-pilot-hp" aria-hidden="true">Website<input name="website" type="text" tabindex="-1" autocomplete="off"></label>',
       "    </div>",
@@ -471,13 +474,26 @@
     successCloseTimer = setTimeout(function () { closePilotDialog(true); }, SUCCESS_HOLD_MS);
   }
 
+  function shakePilotMark() {
+    var mark = dialogRoot && dialogRoot.querySelector(".dm-pilot-mark");
+    if (!mark) return;
+    mark.classList.remove("is-shaking");
+    void mark.offsetWidth;
+    mark.classList.add("is-shaking");
+    clearTimeout(mark.__dmShakeT);
+    mark.__dmShakeT = setTimeout(function () {
+      mark.classList.remove("is-shaking");
+    }, 500);
+  }
+
   function onPilotSubmit(e) {
     e.preventDefault();
     var form = e.target;
     var submit = form.querySelector(".dm-pilot-submit");
     var check = validateRequired(form);
     if (!check.ok) {
-      setStatus("Please complete every required field.", "error");
+      setStatus("", null);
+      shakePilotMark();
       if (check.firstBad) check.firstBad.focus();
       return;
     }
@@ -511,6 +527,7 @@
         var body = _ref.body;
         if (!res.ok) {
           setStatus((body && body.error) || "Could not send. Try again.", "error");
+          shakePilotMark();
           submit.disabled = false;
           return;
         }
@@ -518,6 +535,7 @@
       })
       .catch(function () {
         setStatus("Network error. Check your connection and try again.", "error");
+        shakePilotMark();
         submit.disabled = false;
       });
   }
