@@ -10,9 +10,9 @@
  * page. Close stays idle until it enters view, then boots the same way.
  * Hero and close share pass-through exit physics; drum or headline/CTA contact
  * fades the trail smoothly. Hover (desktop) or tap (mobile) still shatters.
- * Until first hover/tap, one trail carries a bold mid-glyph "HOVER HERE" /
- * "TAP HERE" cue (+2px). The cue only attaches to trails with enough margin
- * so the label is never clipped at the card edges; then it clears on interact.
+ * Until first hover/tap, every falling trail carries a bold "HOVER HERE" /
+ * "TAP HERE" cue (+2px) at a random glyph slot. Labels only paint when they
+ * fully fit inside the card (never clipped); then all cues clear on interact.
  */
 (function () {
   // Oncogenes, tumor-suppressor genes, fusions, mutations, clinical biomarkers.
@@ -177,9 +177,20 @@
   }
 
   function freeCol(inst) {
-    if (!inst.streams.length) return (Math.random() * inst.nCols) | 0;
+    if (!inst.streams.length) {
+      var first = (Math.random() * inst.nCols) | 0;
+      if (!cueGone) {
+        // First visible trail should always be able to host the cue motif.
+        for (var tries = 0; tries < inst.nCols; tries++) {
+          var c0 = (first + tries) % inst.nCols;
+          if (colCanHostCue(inst, c0)) return c0;
+        }
+      }
+      return first;
+    }
     var bestCol = 0, bestDist = -1;
     for (var c = 0; c < inst.nCols; c++) {
+      if (!cueGone && !colCanHostCue(inst, c)) continue;
       var occupied = false, minD = inst.nCols;
       for (var i = 0; i < inst.streams.length; i++) {
         var d = Math.abs(inst.streams[i].col - c);
@@ -190,7 +201,24 @@
       var score = minD + Math.random() * 0.5;
       if (score > bestDist) { bestDist = score; bestCol = c; }
     }
+    if (bestDist < 0) {
+      // Fallback: any free col (cue may skip paint if it still can't fit).
+      for (var c2 = 0; c2 < inst.nCols; c2++) {
+        var taken = false;
+        for (var j = 0; j < inst.streams.length; j++) {
+          if (inst.streams[j].col === c2) { taken = true; break; }
+        }
+        if (!taken) return c2;
+      }
+      return (Math.random() * inst.nCols) | 0;
+    }
     return bestCol;
+  }
+
+  function pickCueIdx() {
+    // Random slot along the trail body (avoid absolute head/tail extremes).
+    if (TRAIL <= 2) return 0;
+    return 1 + ((Math.random() * (TRAIL - 2)) | 0);
   }
 
   function spawn(inst) {
@@ -212,7 +240,8 @@
       life: 1,
       exitMode: exit.exitMode,
       fadeAt: exit.fadeAt,
-      fadeTtl: exit.fadeTtl
+      fadeTtl: exit.fadeTtl,
+      cueIdx: pickCueIdx()
     });
   }
 
@@ -242,7 +271,8 @@
       life: 1,
       exitMode: exit.exitMode,
       fadeAt: exit.fadeAt,
-      fadeTtl: exit.fadeTtl
+      fadeTtl: exit.fadeTtl,
+      cueIdx: pickCueIdx()
     });
   }
 
@@ -343,8 +373,7 @@
       nextSpawn: 0, w: 0, h: 0, dpr: 1, last: 0,
       waitView: waitView,
       armed: !waitView,
-      io: null,
-      cueStream: null
+      io: null
     };
     el.__dmMatrix = inst;
     resize(inst);
@@ -547,13 +576,14 @@
     if (floorMul == null) floorMul = 1;
     var mul = lifeMul * floorMul;
     if (mul < 0.01) return;
-    var cueIdx = (!cueGone && s === inst.cueStream && s.state === "fall")
-      ? Math.min(2, pts.length - 1)
+    if (s.cueIdx == null) s.cueIdx = pickCueIdx();
+    var cueIdx = (!cueGone && s.state === "fall")
+      ? Math.min(s.cueIdx, pts.length - 1)
       : -1;
     for (var i = 0; i < pts.length; i++) {
       var y = pts[i].y;
       if (y < -inst.rowH || y > inst.h + inst.rowH) continue;
-      if (i === cueIdx) continue; // leave the mid glyph for HOVER/TAP HERE
+      if (i === cueIdx) continue; // leave the random slot for HOVER/TAP HERE
       var a = alphaFor(i, TRAIL) * mul;
       if (a < 0.01) continue;
       var glitch = Math.random() < 0.03;
@@ -612,7 +642,6 @@
     if (!inst.drumPaths || !inst.drumPaths.length) bindDrum(inst);
     if (!inst.copyEls || !inst.copyEls.length) bindCopy(inst);
 
-    ensureCueStream(inst);
     var maxPathLen = TRAIL * inst.rowH + inst.rowH * 2;
 
     for (var i = inst.streams.length - 1; i >= 0; i--) {
@@ -661,52 +690,7 @@
 
     ensureField(inst); // refill after any removals this frame
     drawDebris(ctx, inst, secs);
-    drawCue(ctx, inst);
-  }
-
-  function ensureCueStream(inst) {
-    if (cueGone || reduced || !inst.armed) {
-      inst.cueStream = null;
-      return null;
-    }
-    // Prefer land card; close only if hero isn't armed.
-    if (inst.waitView) {
-      for (var i = 0; i < instances.length; i++) {
-        if (!instances[i].waitView && instances[i].armed) {
-          inst.cueStream = null;
-          return null;
-        }
-      }
-    }
-
-    var halfW = cueHalfWidth(inst);
-    var pad = cuePad(inst);
-
-    // Keep current host only while its mid-glyph still fully fits inside the card.
-    if (inst.cueStream && inst.streams.indexOf(inst.cueStream) >= 0 && inst.cueStream.state === "fall") {
-      var curMid = cueMidFromInst(inst, inst.cueStream);
-      if (curMid && cueFits(inst, curMid.x, curMid.y, halfW, pad)) {
-        return inst.cueStream;
-      }
-    }
-
-    var targetY = inst.h * 0.45;
-    var best = null, bestScore = -Infinity;
-    for (var j = 0; j < inst.streams.length; j++) {
-      var s = inst.streams[j];
-      if (s.state !== "fall") continue;
-      var mid = cueMidFromInst(inst, s);
-      if (!mid || !cueFits(inst, mid.x, mid.y, halfW, pad)) continue;
-      // Prefer interior columns (away from edges + not dead-center under drum).
-      var edgeRoom = Math.min(s.col, inst.nCols - 1 - s.col);
-      var score = -Math.abs(mid.y - targetY) + edgeRoom * 1.2 + Math.random() * 2;
-      if (score > bestScore) {
-        bestScore = score;
-        best = s;
-      }
-    }
-    inst.cueStream = best;
-    return best;
+    drawCues(ctx, inst);
   }
 
   function cuePad(inst) {
@@ -720,11 +704,17 @@
     return (label.length * px * 0.62) * 0.5 + 2;
   }
 
-  function cueMidFromInst(inst, s) {
+  function colCanHostCue(inst, col) {
+    var x = (col + 0.5) * inst.colW;
+    return cueFits(inst, x, inst.h * 0.5, cueHalfWidth(inst), cuePad(inst));
+  }
+
+  function cuePoint(inst, s) {
     if (!s || !s.points || !s.points.length) return null;
     var pts = trailPoints(s.points, TRAIL, inst.rowH);
     if (!pts.length) return null;
-    return pts[Math.min(2, pts.length - 1)];
+    if (s.cueIdx == null) s.cueIdx = pickCueIdx();
+    return pts[Math.min(s.cueIdx, pts.length - 1)];
   }
 
   // Full label AABB must sit inside the canvas with padding — never clip.
@@ -738,30 +728,26 @@
     return true;
   }
 
-  // Bold mid-trail cue: same mono family, +2px, weight 700 — until first interact.
-  // Hard rule: never paint if the measured label would touch/cross a card edge.
-  function drawCue(ctx, inst) {
+  // Every falling trail gets HOVER/TAP HERE at its random cue slot until first interact.
+  // Hard rule: never paint a label that would touch/cross a card edge.
+  function drawCues(ctx, inst) {
     if (cueGone || reduced || !inst.armed) return;
-    var s = inst.cueStream;
-    if (!s || s.state !== "fall") return;
-    var mid = cueMidFromInst(inst, s);
-    if (!mid) return;
-    var px = inst.fontPx + 2;
     var label = cueLabel();
+    var px = inst.fontPx + 2;
     ctx.save();
     ctx.font = "700 " + px + "px \"IBM Plex Mono\", ui-monospace, monospace";
     var halfW = ctx.measureText(label).width * 0.5;
     var pad = cuePad(inst);
-    if (!cueFits(inst, mid.x, mid.y, halfW, pad)) {
-      // Host drifted to an edge — drop and try another trail next frame.
-      inst.cueStream = null;
-      ctx.restore();
-      return;
-    }
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillStyle = "rgba(" + BLUE + "," + Math.min(0.92, 0.78 * VIS).toFixed(3) + ")";
-    ctx.fillText(label, mid.x, mid.y);
+    for (var i = 0; i < inst.streams.length; i++) {
+      var s = inst.streams[i];
+      if (s.state !== "fall") continue;
+      var pt = cuePoint(inst, s);
+      if (!pt || !cueFits(inst, pt.x, pt.y, halfW, pad)) continue;
+      ctx.fillText(label, pt.x, pt.y);
+    }
     ctx.restore();
   }
 
