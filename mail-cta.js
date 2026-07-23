@@ -75,31 +75,41 @@
       "#" + DIALOG_ID + " .dm-pilot-hp{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;}",
       "#" + DIALOG_ID + " .dm-pilot-foot{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-top:14px;}",
       "#" + DIALOG_ID + " .dm-pilot-actions{display:flex;flex-direction:column;align-items:flex-start;gap:8px;min-width:0;}",
-      "#" + DIALOG_ID + " .dm-pilot-submit{display:inline-flex;align-items:center;justify-content:center;height:42px;padding:0 22px;border-radius:999px;border:1px solid color-mix(in srgb,#2f6193 50%,rgba(255,255,255,0.22));background:linear-gradient(180deg,#3d72a8,#2f6193);color:#fff;font-family:var(--font-display,\"Archivo\",system-ui,sans-serif);font-size:12px;font-weight:500;letter-spacing:0.03em;text-transform:uppercase;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,0.2),0 8px 20px rgba(20,46,82,0.16);}",
+      "#" + DIALOG_ID + " .dm-pilot-submit{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:42px;padding:0 22px;border-radius:999px;border:1px solid color-mix(in srgb,#2f6193 50%,rgba(255,255,255,0.22));background:linear-gradient(180deg,#3d72a8,#2f6193);color:#fff;font-family:var(--font-display,\"Archivo\",system-ui,sans-serif);font-size:12px;font-weight:500;letter-spacing:0.03em;text-transform:uppercase;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,0.2),0 8px 20px rgba(20,46,82,0.16);transition:background 240ms ease,border-color 240ms ease,box-shadow 240ms ease,transform 220ms cubic-bezier(0.16,1,0.3,1),padding 240ms ease;}",
       "#" + DIALOG_ID + " .dm-pilot-submit:hover{filter:brightness(1.03);}",
       "#" + DIALOG_ID + " .dm-pilot-submit:disabled{opacity:0.65;cursor:wait;filter:none;}",
+      "#" + DIALOG_ID + " .dm-pilot-submit .dm-pilot-submit-check{display:none;width:15px;height:15px;stroke:currentColor;stroke-width:2.6;fill:none;stroke-linecap:round;stroke-linejoin:round;}",
+      "#" + DIALOG_ID + " .dm-pilot-submit .dm-pilot-submit-label{display:inline-block;}",
       "#" + DIALOG_ID + " .dm-pilot-status{margin:0;min-height:0;font-family:var(--font-body,\"Hanken Grotesk\",system-ui,sans-serif);font-size:13px;line-height:1.35;color:var(--ink-quiet,#3c4955);}",
       "#" + DIALOG_ID + " .dm-pilot-status:empty{display:none;}",
       "#" + DIALOG_ID + " .dm-pilot-status[data-tone=error]{color:#dc3a52;}",
       "#" + DIALOG_ID + " .dm-pilot-status[data-tone=ok]{color:#2e9e6b;}",
       "#" + DIALOG_ID + " .dm-pilot-mark{flex:none;width:24px;height:27px;color:var(--ink-steel,#2f6193);opacity:0.9;align-self:flex-end;transform-origin:50% 60%;animation:dm-pilot-drum 2.8s ease-in-out infinite;}",
       "@keyframes dm-pilot-drum{0%,100%{transform:translateY(0) rotate(0deg);}35%{transform:translateY(-3px) rotate(-4deg);}70%{transform:translateY(1px) rotate(3deg);}}",
-      "#" + DIALOG_ID + " .dm-pilot-success{display:none;text-align:left;padding:8px 0 2px;}",
-      "#" + DIALOG_ID + "[data-state=success] .dm-pilot-head,#" + DIALOG_ID + "[data-state=success] form{display:none;}",
-      "#" + DIALOG_ID + "[data-state=success] .dm-pilot-success{display:block;}",
-      "#" + DIALOG_ID + " .dm-pilot-success-badge{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(180deg,#3f8f6d,#2e9e6b);box-shadow:inset 0 1px 0 rgba(255,255,255,0.22),0 8px 18px rgba(46,158,107,0.24);}",
-      "#" + DIALOG_ID + " .dm-pilot-success h3{margin:14px 0 6px;font-family:var(--font-display,\"Archivo\",system-ui,sans-serif);font-size:20px;font-weight:700;letter-spacing:-0.02em;color:var(--ink-cold,#10161d);}",
-      "#" + DIALOG_ID + " .dm-pilot-success p{margin:0 0 16px;font-family:var(--font-body,\"Hanken Grotesk\",system-ui,sans-serif);font-size:14px;line-height:1.5;color:var(--ink-quiet,#3c4955);}",
-      "#" + DIALOG_ID + " .dm-pilot-success .dm-pilot-foot{margin-top:0;}",
+      "@keyframes dm-pilot-drum-celebrate{0%{transform:translateY(0) rotate(0deg) scale(1);}12%{transform:translateY(-10px) rotate(-18deg) scale(1.08);}28%{transform:translateY(2px) rotate(16deg) scale(1.04);}44%{transform:translateY(-7px) rotate(-12deg) scale(1.1);}60%{transform:translateY(1px) rotate(10deg) scale(1.05);}76%{transform:translateY(-3px) rotate(-6deg) scale(1.02);}100%{transform:translateY(0) rotate(0deg) scale(1);}}",
+      "@keyframes dm-pilot-sent-pulse{0%{transform:scale(1);}35%{transform:scale(1.05);}100%{transform:scale(1);}}",
+      "@keyframes dm-pilot-check-draw{to{stroke-dashoffset:0;}}",
+      "@keyframes dm-pilot-pill-in{from{opacity:0;transform:translateY(10px) scale(0.96);}to{opacity:1;transform:none;}}",
+      "#" + DIALOG_ID + "[data-state=success]{width:auto;max-width:min(92vw,420px);padding:14px 18px;border-radius:999px;border-color:color-mix(in srgb,#2e9e6b 55%,rgba(255,255,255,0.25));background:linear-gradient(180deg,#3f8f6d,#2e9e6b);box-shadow:inset 0 1px 0 rgba(255,255,255,0.22),0 14px 34px rgba(24,84,56,0.32);overflow:visible;animation:dm-pilot-pill-in 380ms cubic-bezier(0.22,1,0.36,1);}",
+      "#" + DIALOG_ID + "[data-state=success] .dm-pilot-close,#" + DIALOG_ID + "[data-state=success] .dm-pilot-head,#" + DIALOG_ID + "[data-state=success] .dm-pilot-grid,#" + DIALOG_ID + "[data-state=success] .dm-pilot-status{display:none !important;}",
+      "#" + DIALOG_ID + "[data-state=success] form{margin:0;}",
+      "#" + DIALOG_ID + "[data-state=success] .dm-pilot-foot{margin-top:0;align-items:center;justify-content:center;gap:14px;}",
+      "#" + DIALOG_ID + "[data-state=success] .dm-pilot-actions{align-items:center;}",
+      "#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit{background:transparent;border-color:transparent;box-shadow:none;opacity:1;cursor:pointer;filter:none;padding:0 6px;height:40px;font-weight:700;letter-spacing:0.04em;animation:dm-pilot-sent-pulse 480ms cubic-bezier(0.16,1,0.3,1);}",
+      "#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit:hover{filter:none;}",
+      "#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit .dm-pilot-submit-check{display:block;stroke-dasharray:26;stroke-dashoffset:26;animation:dm-pilot-check-draw 340ms cubic-bezier(0.65,0,0.35,1) 80ms forwards;}",
+      "#" + DIALOG_ID + "[data-state=success] .dm-pilot-mark{color:rgba(255,255,255,0.95);align-self:center;animation:dm-pilot-drum-celebrate 720ms cubic-bezier(0.22,1,0.36,1) 180ms both;}",
       "@media (max-width:520px){",
       "  #" + DIALOG_ID + "-root{align-items:flex-end;padding:0;}",
       "  #" + DIALOG_ID + "{width:100%;max-height:min(94dvh,100%);border-radius:16px 16px 0 0;padding:20px 18px calc(16px + env(safe-area-inset-bottom,0px));}",
+      "  #" + DIALOG_ID + "[data-state=success]{width:auto;max-width:min(94vw,400px);margin-bottom:max(24px,env(safe-area-inset-bottom,0px));border-radius:999px;padding:14px 18px;}",
+      "  #" + DIALOG_ID + "-root:has(#" + DIALOG_ID + "[data-state=success]){align-items:center;padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));}",
       "  #" + DIALOG_ID + " .dm-pilot-grid{grid-template-columns:1fr;gap:10px;}",
       "  #" + DIALOG_ID + " textarea{min-height:110px;}",
       "  #" + DIALOG_ID + " .dm-pilot-submit{width:auto;}",
       "}",
       "@media (max-height:700px){#" + DIALOG_ID + "{padding-top:18px;padding-bottom:14px;}#" + DIALOG_ID + " .dm-pilot-head{margin-bottom:12px;}#" + DIALOG_ID + " textarea{min-height:72px;}}",
-      "@media (prefers-reduced-motion:reduce){#" + DIALOG_ID + "-backdrop,#" + DIALOG_ID + ",#" + DIALOG_ID + " .dm-pilot-mark{animation:none;}}"
+      "@media (prefers-reduced-motion:reduce){#" + DIALOG_ID + "-backdrop,#" + DIALOG_ID + ",#" + DIALOG_ID + " .dm-pilot-mark,#" + DIALOG_ID + "[data-state=success],#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit,#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit .dm-pilot-submit-check,#" + DIALOG_ID + "[data-state=success] .dm-pilot-mark{animation:none;}#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit .dm-pilot-submit-check{stroke-dashoffset:0;}}"
     ].join("");
     document.head.appendChild(style);
   }
@@ -107,6 +117,7 @@
   var MARK_SVG = '<svg class="dm-toast-mark" viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="34" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg>';
 
   var toastTimer = null;
+  var successCloseTimer = null;
   var lastFocus = null;
   var dialogRoot = null;
 
@@ -206,27 +217,25 @@
       "    </div>",
       '    <div class="dm-pilot-foot">',
       '      <div class="dm-pilot-actions">',
-      '        <button type="submit" class="dm-pilot-submit">Send</button>',
+      '        <button type="submit" class="dm-pilot-submit">',
+      '          <svg class="dm-pilot-submit-check" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>',
+      '          <span class="dm-pilot-submit-label">Send</span>',
+      "        </button>",
       '        <p class="dm-pilot-status" role="status" aria-live="polite"></p>',
       "      </div>",
       mark,
       "    </div>",
       "  </form>",
-      '  <div class="dm-pilot-success">',
-      '    <div class="dm-pilot-success-badge" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>',
-      "    <h3>Sent</h3>",
-      "    <p>Thanks — we&rsquo;ll follow up soon.</p>",
-      '    <div class="dm-pilot-foot">',
-      '      <div class="dm-pilot-actions"><button type="button" class="dm-pilot-submit" data-pilot-dismiss>Done</button></div>',
-      mark,
-      "    </div>",
-      "  </div>",
       "</div>"
     ].join("");
     document.body.appendChild(dialogRoot);
 
     dialogRoot.addEventListener("click", function (e) {
       if (e.target && e.target.closest && e.target.closest("[data-pilot-dismiss]")) {
+        closePilotDialog();
+      }
+      var dialog = dialogRoot.querySelector("#" + DIALOG_ID);
+      if (dialog && dialog.getAttribute("data-state") === "success") {
         closePilotDialog();
       }
     });
@@ -252,13 +261,26 @@
     else el.removeAttribute("data-tone");
   }
 
+  function resetSubmitButton(submit) {
+    if (!submit) return;
+    submit.disabled = false;
+    submit.removeAttribute("data-pilot-dismiss");
+    submit.removeAttribute("aria-label");
+    submit.setAttribute("type", "submit");
+    var label = submit.querySelector(".dm-pilot-submit-label");
+    if (label) label.textContent = "Send";
+  }
+
   function openPilotDialog() {
     var root = ensureDialog();
+    clearTimeout(successCloseTimer);
     lastFocus = document.activeElement;
     var dialog = root.querySelector("#" + DIALOG_ID);
     var form = root.querySelector("#dm-pilot-form");
+    var submit = form.querySelector(".dm-pilot-submit");
     dialog.setAttribute("data-state", "form");
     form.reset();
+    resetSubmitButton(submit);
     setStatus("", null);
     root.hidden = false;
     document.documentElement.style.overflow = "hidden";
@@ -268,11 +290,39 @@
 
   function closePilotDialog() {
     if (!dialogRoot || dialogRoot.hidden) return;
+    clearTimeout(successCloseTimer);
     dialogRoot.hidden = true;
     document.documentElement.style.overflow = "";
+    var dialog = dialogRoot.querySelector("#" + DIALOG_ID);
+    var form = dialogRoot.querySelector("#dm-pilot-form");
+    if (dialog) dialog.setAttribute("data-state", "form");
+    if (form) resetSubmitButton(form.querySelector(".dm-pilot-submit"));
     if (lastFocus && typeof lastFocus.focus === "function") {
       try { lastFocus.focus(); } catch (_) {}
     }
+  }
+
+  function showPilotSuccess() {
+    var dialog = dialogRoot && dialogRoot.querySelector("#" + DIALOG_ID);
+    var form = dialogRoot && dialogRoot.querySelector("#dm-pilot-form");
+    var submit = form && form.querySelector(".dm-pilot-submit");
+    var mark = dialog && dialog.querySelector(".dm-pilot-mark");
+    if (!dialog || !submit) return;
+    dialog.setAttribute("data-state", "success");
+    setStatus("", null);
+    submit.disabled = false;
+    submit.setAttribute("type", "button");
+    submit.setAttribute("data-pilot-dismiss", "");
+    var label = submit.querySelector(".dm-pilot-submit-label");
+    if (label) label.textContent = "Sent";
+    submit.setAttribute("aria-label", "Sent");
+    if (mark) {
+      mark.style.animation = "none";
+      void mark.offsetWidth;
+      mark.style.animation = "";
+    }
+    clearTimeout(successCloseTimer);
+    successCloseTimer = setTimeout(function () { closePilotDialog(); }, 2400);
   }
 
   function onPilotSubmit(e) {
@@ -312,16 +362,13 @@
         var body = _ref.body;
         if (!res.ok) {
           setStatus((body && body.error) || "Could not send. Try again.", "error");
+          submit.disabled = false;
           return;
         }
-        var dialog = dialogRoot.querySelector("#" + DIALOG_ID);
-        dialog.setAttribute("data-state", "success");
-        setStatus("", null);
+        showPilotSuccess();
       })
       .catch(function () {
         setStatus("Network error. Check your connection and try again.", "error");
-      })
-      .then(function () {
         submit.disabled = false;
       });
   }
