@@ -139,7 +139,7 @@
   }
   window.addEventListener("load", schedule);
 
-  // DC remounts  -  re-fit when the hero h1 reappears.
+  // DC remounts - re-fit when the hero h1 reappears.
   var tries = 0;
   var poll = setInterval(function () {
     tries += 1;

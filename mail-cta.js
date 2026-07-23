@@ -110,7 +110,7 @@
       /* Mobile sheet: single-scroll bottom sheet, sticky head + foot, grab handle. */
       "@media (max-width:520px){",
       "  #" + DIALOG_ID + "-root{align-items:flex-end;justify-content:stretch;padding:0;inset:auto;top:var(--dm-vv-offset-top,0px);left:var(--dm-vv-offset-left,0px);width:var(--dm-vv-width,100%);height:var(--dm-vv-height,100dvh);}",
-      /* Dialog IS the scroller  -  one scroll, no nested hunt. */
+      /* Dialog IS the scroller - one scroll, no nested hunt. */
       "  #" + DIALOG_ID + "{display:block;width:100%;max-width:none;height:auto;max-height:min(88%,calc(var(--dm-vv-height,100dvh) - 10px));overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;scroll-padding-top:78px;scroll-padding-bottom:84px;border-radius:18px 18px 0 0;padding:0 15px calc(8px + env(safe-area-inset-bottom,0px));box-shadow:0 -10px 44px rgba(16,22,29,0.2);}",
       /* Grab handle sits atop the sticky header. */
       "  #" + DIALOG_ID + " .dm-pilot-head{position:sticky;top:0;z-index:3;margin:0 30px 8px 0;padding:16px 0 8px;background:linear-gradient(180deg,#fff 72%,rgba(255,255,255,0));}",
@@ -123,7 +123,7 @@
       "  #" + DIALOG_ID + " label{gap:4px;font-size:9.5px;}",
       "  #" + DIALOG_ID + " input,#" + DIALOG_ID + " textarea{padding:11px 12px;border-radius:10px;font-size:16px;}",
       "  #" + DIALOG_ID + " textarea{min-height:88px;resize:none;}",
-      /* Sticky footer keeps Send always reachable  -  no scroll hunt. */
+      /* Sticky footer keeps Send always reachable - no scroll hunt. */
       "  #" + DIALOG_ID + " .dm-pilot-foot{position:sticky;bottom:0;z-index:3;margin-top:12px;gap:10px;padding:10px 0 calc(4px + env(safe-area-inset-bottom,0px));background:linear-gradient(0deg,#fff 72%,rgba(255,255,255,0));}",
       "  #" + DIALOG_ID + " .dm-pilot-submit{height:44px;padding:0 22px;flex:1 1 auto;}",
       "  #" + DIALOG_ID + " .dm-pilot-actions{flex:1 1 auto;}",

@@ -12,7 +12,7 @@ const __ds_scope = {};
 try { (() => {
 function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
 /**
- * Button  -  the Damaros action primitive.
+ * Button - the Damaros action primitive.
  * Pill-shaped, mono, uppercase, tactile gradient fills. Reads as a
  * clinical instrument trigger, not an admin terminal button.
  * Tones: primary (steel) · secondary · danger · outline · default.
@@ -132,11 +132,11 @@ Object.assign(__ds_scope, { Button });
 try { (() => {
 function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
 /**
- * Card  -  the Damaros glass panel. Faint stone-blue inset ring over a
+ * Card - the Damaros glass panel. Faint stone-blue inset ring over a
  * near-black gradient, 4px blur. Variants:
- *  · glass     -  default brand panel (16px radius)
- *  · panel     -  tighter operator panel (8px radius)
- *  · flagship  -  the proof / Replay beat (cold-white ring, faint glow)
+ *  · glass    - default brand panel (16px radius)
+ *  · panel    - tighter operator panel (8px radius)
+ *  · flagship - the proof / Replay beat (cold-white ring, faint glow)
  */
 function Card({
   variant = "glass",
@@ -193,7 +193,7 @@ Object.assign(__ds_scope, { Card });
 try { (() => {
 function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
 /**
- * Eyebrow  -  a tracked, uppercase label. The R0 "Command" register.
+ * Eyebrow - a tracked, uppercase label. The R0 "Command" register.
  * Used above titles, on section heads, and as field labels.
  */
 function Eyebrow({
@@ -226,7 +226,7 @@ Object.assign(__ds_scope, { Eyebrow });
 // components/core/Kbd.jsx
 try { (() => {
 function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
-/** Kbd  -  a single keyboard key cap, mono, for shortcut hints. */
+/** Kbd - a single keyboard key cap, mono, for shortcut hints. */
 function Kbd({
   children,
   style,
@@ -283,7 +283,7 @@ function useFocusRing() {
   };
 }
 
-/** Input  -  dark instrument text field. Mono placeholder. Optional error / helper. */
+/** Input - dark instrument text field. Mono placeholder. Optional error / helper. */
 function Input({
   error,
   helperText,
@@ -331,7 +331,7 @@ function Input({
   }, error) : null);
 }
 
-/** Textarea  -  multi-line variant. */
+/** Textarea - multi-line variant. */
 function Textarea({
   style,
   ...props
@@ -354,7 +354,7 @@ function Textarea({
   }, props));
 }
 
-/** Select  -  native select styled as a Field instrument control. */
+/** Select - native select styled as a Field instrument control. */
 function Select({
   children,
   style,
@@ -384,7 +384,7 @@ Object.assign(__ds_scope, { Input, Textarea, Select });
 try { (() => {
 function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
 /**
- * ReviewChip  -  a REVIEW-cause chip with a trailing resolve CTA. Amber by
+ * ReviewChip - a REVIEW-cause chip with a trailing resolve CTA. Amber by
  * default; the driver families recolor it. Used in worklists and the
  * Resolve workspace to name *why* a case routed to a human.
  */
@@ -450,7 +450,7 @@ Object.assign(__ds_scope, { ReviewChip });
 try { (() => {
 function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
 /**
- * StatusBadge  -  the deterministic disposition chip. Icon + text + color
+ * StatusBadge - the deterministic disposition chip. Icon + text + color
  * (never color-only). The verdict taxonomy: PASS / REVIEW / FAIL / BLOCKED,
  * plus GOVERNED for AI-provenance / ceremony states.
  */
@@ -594,7 +594,7 @@ Object.assign(__ds_scope, { StatusBadge });
 try { (() => {
 function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
 /**
- * TrustPill  -  a small capsule for trust/guarantee state in trust strips
+ * TrustPill - a small capsule for trust/guarantee state in trust strips
  * and headers. tone: ok · warn · muted. Optional leading dot.
  */
 function TrustPill({
@@ -660,9 +660,9 @@ Object.assign(__ds_scope, { TrustPill });
 try { (() => {
 function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
 /**
- * Stepper  -  the execution spine as clean tabs.
+ * Stepper - the execution spine as clean tabs.
  * Protocol · Evidence · Screening · Resolve · Replay.
- * Equal-weight tabs (not a sequential checklist)  -  the spine isn't always
+ * Equal-weight tabs (not a sequential checklist) - the spine isn't always
  * walked in order. The active tab carries a steel underline; the rest stay
  * quiet. No connector lines, no numbered checkboxes, no overflow scrollbar.
  */
@@ -742,8 +742,8 @@ Object.assign(__ds_scope, { Stepper });
 
 // ui_kits/node/NodeApp.jsx
 try { (() => {
-/* Field UI Kit  -  Node · the site execution room
- * Left spine nav (Protocol · Evidence · Screening · Resolve · Replay)  -  the
+/* Field UI Kit - Node · the site execution room
+ * Left spine nav (Protocol · Evidence · Screening · Resolve · Replay) - the
  * only chrome. Each step is a full-bleed operating surface:
  *   Protocol   executable criterion board
  *   Evidence   FHIR readiness plane
@@ -796,12 +796,12 @@ const READY = {
   }
 };
 
-/* Protocol-level ingestion detail  -  how Trident maps each I/E rule. No patient data. */
+/* Protocol-level ingestion detail - how Trident maps each I/E rule. No patient data. */
 const PROTO = {
   "I-2.1": {
     rule: "EGFR / ALK molecular alteration present (targetable subtype).",
     determinacy: "source",
-    note: "Computable once the molecular DiagnosticReport is ingested  -  the anchor is defined but the source has not arrived from the lab.",
+    note: "Computable once the molecular DiagnosticReport is ingested - the anchor is defined but the source has not arrived from the lab.",
     anchors: [{
       t: "Observation",
       code: "LOINC 21667-1",
@@ -815,7 +815,7 @@ const PROTO = {
   "I-4.2": {
     rule: "ECOG performance status 0–1, assessed within 14 days of C1D1.",
     determinacy: "subjective",
-    note: "Trident maps the structured value deterministically; the narrative note is non-computable and can disagree  -  flagged for human judgment, never auto-resolved.",
+    note: "Trident maps the structured value deterministically; the narrative note is non-computable and can disagree - flagged for human judgment, never auto-resolved.",
     anchors: [{
       t: "Observation",
       code: "LOINC 89247-1",
@@ -829,7 +829,7 @@ const PROTO = {
   "I-4.4": {
     rule: "Measurable disease per RECIST 1.1 on baseline imaging.",
     determinacy: "computable",
-    note: "Fully deterministic from the imaging DiagnosticReport  -  no human judgment required.",
+    note: "Fully deterministic from the imaging DiagnosticReport - no human judgment required.",
     anchors: [{
       t: "DiagnosticReport",
       code: "imaging · RECIST",
@@ -839,7 +839,7 @@ const PROTO = {
   "E-5.3": {
     rule: "≥ 21-day washout from prior systemic therapy before C1D1.",
     determinacy: "source",
-    note: "Date arithmetic is deterministic, but the last-dose anchor resolves across multiple sources that may disagree  -  Trident surfaces the conflict for confirmation.",
+    note: "Date arithmetic is deterministic, but the last-dose anchor resolves across multiple sources that may disagree - Trident surfaces the conflict for confirmation.",
     anchors: [{
       t: "MedicationRequest",
       code: "last administration",
@@ -853,7 +853,7 @@ const PROTO = {
   "E-7": {
     rule: "Active CNS metastases requiring escalating corticosteroids.",
     determinacy: "subjective",
-    note: "‘Active’ and ‘escalating’ require clinical interpretation  -  Trident maps the anchors but routes the determination to a clinician.",
+    note: "‘Active’ and ‘escalating’ require clinical interpretation - Trident maps the anchors but routes the determination to a clinician.",
     anchors: [{
       t: "Condition",
       code: "SNOMED · CNS mets",
@@ -1201,7 +1201,7 @@ function ModuleHead({
   }), status) : null);
 }
 
-/* ============ PROTOCOL  -  clean criterion board ============ */
+/* ============ PROTOCOL - clean criterion board ============ */
 function ProtocolModule({
   sel,
   setSel,
@@ -1766,13 +1766,13 @@ function ProtocolRail({
   }))));
 }
 
-/* ============ EVIDENCE  -  reality terrain ============ */
+/* ============ EVIDENCE - reality terrain ============ */
 const EV_CRIT = [{
   code: "I-2.1",
   title: "EGFR / ALK molecular status",
   sev: "blocked",
   headline: "Molecular report not received",
-  why: "No structured EGFR / ALK result is mapped to this gate. Screening cannot evaluate it  -  3 candidates are hard-stalled until it arrives.",
+  why: "No structured EGFR / ALK result is mapped to this gate. Screening cannot evaluate it - 3 candidates are hard-stalled until it arrives.",
   fix: {
     verb: "Request molecular report",
     to: "pathology",
@@ -1793,8 +1793,8 @@ const EV_CRIT = [{
   code: "I-4.2",
   title: "ECOG 0–1 within 14 days",
   sev: "conflict",
-  headline: "Sources disagree  -  structured 1 ≠ note 2",
-  why: "Structured ECOG resolves to 1; the oncology note says 2. Deterministic logic cannot break the tie  -  it needs a human verdict.",
+  headline: "Sources disagree - structured 1 ≠ note 2",
+  why: "Structured ECOG resolves to 1; the oncology note says 2. Deterministic logic cannot break the tie - it needs a human verdict.",
   fix: {
     verb: "Adjudicate in Resolve",
     to: "PI / Sub-I",
@@ -1850,7 +1850,7 @@ const EV_CRIT = [{
   title: "Active CNS mets on steroids",
   sev: "ready",
   headline: "Evidence ready",
-  why: "Steroid course and CNS status are both present and current  -  deterministic.",
+  why: "Steroid course and CNS status are both present and current - deterministic.",
   trace: [{
     d: "Medications",
     res: "MedicationRequest · steroids",
@@ -2424,7 +2424,7 @@ function EvidenceModule({
 
 /* Screening lives in NodeScreening.jsx (window.NodeScreening) */
 
-/* ============ REPLAY  -  audit reconstruction ============ */
+/* ============ REPLAY - audit reconstruction ============ */
 function ReplayModule() {
   const [t, setT] = React.useState(1);
   const frames = [{
@@ -2729,7 +2729,7 @@ function ReplayModule() {
       lineHeight: 1.5,
       color: "var(--ink-dim)"
     }
-  }, t === 0 ? "Before judgment  -  the candidate is stalled at ECOG with the conflict unresolved." : t === 1 ? "After Resolve  -  deferred with a bound PI attestation; decision reconstructable." : "After amendment A3  -  the prior state is superseded with full lineage retained."), /*#__PURE__*/React.createElement("button", {
+  }, t === 0 ? "Before judgment - the candidate is stalled at ECOG with the conflict unresolved." : t === 1 ? "After Resolve - deferred with a bound PI attestation; decision reconstructable." : "After amendment A3 - the prior state is superseded with full lineage retained."), /*#__PURE__*/React.createElement("button", {
     style: {
       width: "100%",
       marginTop: 16,
@@ -2805,7 +2805,7 @@ window.NodeApp = NodeApp;
 
 // ui_kits/node/NodeKit.jsx
 try { (() => {
-/* Field UI Kit  -  Node · shared kit
+/* Field UI Kit - Node · shared kit
  * Constants, atoms, and the synthetic execution dataset shared by every
  * Node module. Exposed on window.NodeKit so each Babel script can read it.
  */
@@ -3032,15 +3032,15 @@ try { (() => {
     evidence: ["Structured ECOG observation · 06-18", "Oncology progress note · 06-20"],
     path: [{
       n: 2,
-      label: "Build PI packet  -  high-priority conflicts",
+      label: "Build PI packet - high-priority conflicts",
       act: "pi"
     }, {
       n: 2,
-      label: "Request repeat ECOG  -  stale assessments",
+      label: "Request repeat ECOG - stale assessments",
       act: "evidence"
     }, {
       n: 1,
-      label: "Defer  -  pending scheduled visit",
+      label: "Defer - pending scheduled visit",
       act: "defer"
     }],
     replay: "5 decisions will bind to I-4.2"
@@ -3055,7 +3055,7 @@ try { (() => {
     x: 62,
     y: 28,
     cause: "No structured molecular report mapped to the criterion",
-    evidence: ["Pathology molecular report  -  not found", "Outside lab result  -  unmapped"],
+    evidence: ["Pathology molecular report - not found", "Outside lab result - unmapped"],
     path: [{
       n: 3,
       label: "Request molecular report from pathology",
@@ -3080,11 +3080,11 @@ try { (() => {
     evidence: ["Infusion record · 05-30", "Discharge summary · 06-02 (conflicting)"],
     path: [{
       n: 2,
-      label: "Build PI packet  -  timing judgment",
+      label: "Build PI packet - timing judgment",
       act: "pi"
     }, {
       n: 1,
-      label: "Request infusion records  -  confirm last dose",
+      label: "Request infusion records - confirm last dose",
       act: "evidence"
     }],
     replay: "3 decisions will bind to E-5.3"
@@ -3108,7 +3108,7 @@ try { (() => {
     replay: "2 decisions will bind to E-7"
   }, {
     id: "amendment",
-    label: "Amendment A3  -  Auto-Applied",
+    label: "Amendment A3 - Auto-Applied",
     type: "amendment",
     cases: 7,
     urgency: "high",
@@ -3117,16 +3117,16 @@ try { (() => {
     x: 24,
     y: 70,
     auto: true,
-    cause: "Sponsor published Amendment A3. It propagated to this site and re-screened automatically  -  no manual run needed",
+    cause: "Sponsor published Amendment A3. It propagated to this site and re-screened automatically - no manual run needed",
     evidence: ["Amendment A3 · published by sponsor · 06-21 14:02Z", "Cascade completed · 06-21 14:02Z · 7 states re-evaluated"],
     cascade: [{
       v: "+2 evidence rules added per case",
       tone: "gov"
     }, {
-      v: "5 prior decisions held  -  still valid under A3",
+      v: "5 prior decisions held - still valid under A3",
       tone: "ok"
     }, {
-      v: "2 decisions reopened  -  new ECOG evidence rule applies",
+      v: "2 decisions reopened - new ECOG evidence rule applies",
       tone: "review"
     }, {
       v: "Re-consent not required · lineage preserved in Replay",
@@ -3184,7 +3184,7 @@ try { (() => {
     stale: REVIEW
   };
 
-  // protocol gates  -  positioned for the rule circuit
+  // protocol gates - positioned for the rule circuit
   const CRITERIA = [{
     code: "I-2.1",
     t: "EGFR / ALK molecular status",
@@ -3357,7 +3357,7 @@ try { (() => {
     stall: null
   }];
 
-  // evidence terrain  -  clinical reality domains
+  // evidence terrain - clinical reality domains
   const DOMAINS = [{
     id: "diagnosis",
     label: "Diagnosis",
@@ -3379,7 +3379,7 @@ try { (() => {
     label: "Biomarker",
     state: "missing",
     binds: "I-2.1",
-    detail: "EGFR / ALK  -  not received",
+    detail: "EGFR / ALK - not received",
     x: 43,
     y: 17
   }, {
@@ -3446,16 +3446,16 @@ try { (() => {
 
 // ui_kits/node/NodeResolve.jsx
 try { (() => {
-/* Field UI Kit  -  Node · Resolve (the patient adjudication workspace)
+/* Field UI Kit - Node · Resolve (the patient adjudication workspace)
  * Patient-first, mirroring how a coordinator/PI actually works a screening list:
  * one candidate at a time, walk to their blocking criterion, render a verdict, commit it.
- *   LEFT   · candidate queue  -  stalled patients awaiting judgment (by urgency)
- *   CENTER · the selected patient  -  their conflict (zone 1) → the call (zone 2) → commit (zone 3)
+ *   LEFT   · candidate queue - stalled patients awaiting judgment (by urgency)
+ *   CENTER · the selected patient - their conflict (zone 1) → the call (zone 2) → commit (zone 3)
  *   RIGHT  · this candidate's path · who else is blocked here · required role · replay impact
  * Verdicts bind to the patient, not the cluster. window.NodeResolve.
  */
 (function () {
-  // Per-candidate adjudication  -  what THIS patient is blocked on and what the human decides.
+  // Per-candidate adjudication - what THIS patient is blocked on and what the human decides.
   const VERDICTS = {
     "ecog-conflict": [{
       id: "accept-a",
@@ -3582,7 +3582,7 @@ try { (() => {
       kind: "stale",
       need: "ECOG within 14 days",
       res: "last assessment ECOG 1 · 06-01 · 19 days old",
-      q: "The qualifying ECOG falls outside the 14-day window  -  it can't be used as-is."
+      q: "The qualifying ECOG falls outside the 14-day window - it can't be used as-is."
     },
     "S-1066": {
       urgency: "high",
@@ -3594,7 +3594,7 @@ try { (() => {
       kind: "missing",
       need: "EGFR / ALK",
       res: "molecular DiagnosticReport · not received",
-      q: "Required evidence has not arrived  -  there is nothing to adjudicate until it does."
+      q: "Required evidence has not arrived - there is nothing to adjudicate until it does."
     },
     "S-1071": {
       urgency: "medium",
@@ -3606,7 +3606,7 @@ try { (() => {
       kind: "missing",
       need: "EGFR / ALK",
       res: "outside-lab result · unmapped to criterion",
-      q: "A molecular result exists but is not mapped to this criterion  -  it needs to be reconciled."
+      q: "A molecular result exists but is not mapped to this criterion - it needs to be reconciled."
     },
     "S-1078": {
       urgency: "high",
@@ -3617,7 +3617,7 @@ try { (() => {
       arche: "washout-conflict",
       kind: "conflict",
       unit: "last dose",
-      q: "Last-dose date is ambiguous across sources  -  it sets the washout clock.",
+      q: "Last-dose date is ambiguous across sources - it sets the washout clock.",
       a: {
         src: "Infusion record",
         res: "MedicationAdministration",
@@ -3638,7 +3638,7 @@ try { (() => {
       arche: "washout-conflict",
       kind: "conflict",
       unit: "last dose",
-      q: "Infusion timing is ambiguous between records  -  confirm the true last dose.",
+      q: "Infusion timing is ambiguous between records - confirm the true last dose.",
       a: {
         src: "Infusion record",
         res: "MedicationAdministration",
@@ -3680,7 +3680,7 @@ try { (() => {
       kind: "stale",
       need: "ECOG within 14 days",
       res: "no assessment recorded in the window",
-      q: "No ECOG has been recorded inside the 14-day window  -  a fresh assessment is required."
+      q: "No ECOG has been recorded inside the 14-day window - a fresh assessment is required."
     }
   };
   const URG_RANK = {
@@ -4248,7 +4248,7 @@ try { (() => {
         ...r,
         [sel]: e.target.value
       })),
-      placeholder: adj.kind === "missing" ? "Why this disposition  -  e.g. molecular result outstanding, requesting from pathology…" : "State the basis for the verdict  -  which source you trust and why…",
+      placeholder: adj.kind === "missing" ? "Why this disposition - e.g. molecular result outstanding, requesting from pathology…" : "State the basis for the verdict - which source you trust and why…",
       style: {
         width: "100%",
         minHeight: 60,
@@ -4672,10 +4672,10 @@ try { (() => {
 
 // ui_kits/node/NodeScreening.jsx
 try { (() => {
-/* Field UI Kit  -  Node · Screening (gate flowchart)
+/* Field UI Kit - Node · Screening (gate flowchart)
  * Simple and clean: the protocol gates as nodes on one line, each showing its
  * pass · review · fail in real patient counts. The candidates a gate holds for
- * review appear as interactive dots above it  -  hover for the conflict, click to
+ * review appear as interactive dots above it - hover for the conflict, click to
  * resolve. No flow fills, no decorative dots. Deterministic engine; never a verdict.
  * window.NodeScreening.
  */
@@ -4693,7 +4693,7 @@ try { (() => {
     pass: 32,
     review: 5,
     fail: 18,
-    reason: "ECOG ≥ 2 documented  -  exceeds the 0–1 performance limit"
+    reason: "ECOG ≥ 2 documented - exceeds the 0–1 performance limit"
   }, {
     id: "Washout",
     code: "E-5.3",
@@ -4707,7 +4707,7 @@ try { (() => {
     pass: 6,
     review: 2,
     fail: 9,
-    reason: "Active CNS metastases on escalating steroids  -  meets exclusion"
+    reason: "Active CNS metastases on escalating steroids - meets exclusion"
   }];
   function Screening({
     sel,

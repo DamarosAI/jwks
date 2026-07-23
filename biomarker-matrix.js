@@ -138,7 +138,7 @@
     retire(inst, index, true);
   }
 
-  // Hard invariant: while armed/in-view, trails are never zero  -  fill to cap.
+  // Hard invariant: while armed/in-view, trails are never zero - fill to cap.
   function ensureField(inst) {
     if (!inst.armed || reduced) return;
     if (inst.streams.length === 0) {
@@ -247,7 +247,7 @@
     });
   }
 
-  // Instant living field  -  mid-fall trails visible on first frame (never empty).
+  // Instant living field - mid-fall trails visible on first frame (never empty).
   function bootStreams(inst) {
     inst.streams.length = 0;
     var n = Math.max(MIN_STREAMS, inst.maxStreams);
@@ -366,7 +366,7 @@
     var hadField = inst.streams.length > 0;
 
     // Ignore 1–2px chrome jitter from mobile URL bars / sticky headers while
-    // scrolling  -  full reboot is what reads as flicker going down the page.
+    // scrolling - full reboot is what reads as flicker going down the page.
     if (prevW > 0 && prevH > 0 && dpr === inst.dpr) {
       var dw = Math.abs(w - prevW);
       var dh = Math.abs(h - prevH);
@@ -578,7 +578,7 @@
   // Gentler head→tail falloff so more of the trail stays colored.
   function alphaFor(i, total) {
     var f = i / (total - 1 || 1);        // 0 head → 1 tail
-    var a = Math.pow(1 - f, 0.55);       // soft curve  -  not a steep drop
+    var a = Math.pow(1 - f, 0.55);       // soft curve - not a steep drop
     a = 0.22 + a * 0.36;                 // tail floor .22, head .58
     return a * VIS;
   }
@@ -645,7 +645,7 @@
     if (!inst.armed) return;
     ensureField(inst); // never paint an empty field
     var ctx = inst.ctx, secs = dt / 1000;
-    // One layout read per frame  -  hit tests reuse it (smooth scroll compositing).
+    // One layout read per frame - hit tests reuse it (smooth scroll compositing).
     inst._cr = inst.canvas.getBoundingClientRect();
     ctx.clearRect(0, 0, inst.w, inst.h);
     ctx.font = "600 " + inst.fontPx + "px \"IBM Plex Mono\", ui-monospace, monospace";
@@ -740,7 +740,7 @@
     return instances.length > 0;
   }
 
-  // Hover (mouse) or tap (touch/pen) shatters a trail  -  larger hit on coarse pointers.
+  // Hover (mouse) or tap (touch/pen) shatters a trail - larger hit on coarse pointers.
   function breakAt(clientX, clientY, pointerType) {
     if (reduced) return;
     var touchy = pointerType === "touch" || coarse;
