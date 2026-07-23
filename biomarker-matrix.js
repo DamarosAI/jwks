@@ -1,13 +1,15 @@
 /**
  * Matrix-style biomarker waterfall for hero / close.
  *
- * Constant-speed trails of oncogenes / tumor-suppressor genes / biomarkers
- * in CTA blue. Trail count is calibrated so 7 looks right on a MacBook Air 15
- * (~1440×900 CSS), then scales with viewport area so larger monitors (e.g.
- * 2160×1440) never look sparse. First paint seeds a full mid-fall field (never
- * empty) so load feels like joining a living page. Close stays idle until it
- * enters view, then boots the same way. Drum/pointer contact shatters glyphs
- * into pixels and instantly respawns elsewhere (whack-a-mole).
+ * Trails of oncogenes / tumor-suppressor genes / biomarkers in CTA blue.
+ * Trail count is calibrated so 7 looks right on a MacBook Air 15 (~1440×900
+ * CSS), then scales with viewport area so larger monitors (e.g. 2160×1440)
+ * never look sparse. Each trail holds a constant random speed within a 20%
+ * slowest→fastest band; neighboring trails (nearest left/right) never match.
+ * First
+ * paint seeds a full mid-fall field so load feels like joining a living page.
+ * Close stays idle until it enters view, then boots the same way.
+ * Drum/pointer contact shatters glyphs into pixels and respawns elsewhere.
  */
 (function () {
   // Oncogenes, tumor-suppressor genes, fusions, mutations, clinical biomarkers.
@@ -41,6 +43,9 @@
   var MAX_STREAMS_HARD = 24;
   var TRAIL = 6;
   var SPEED_ROWS = 3.0;
+  // Max ratio fastest/slowest − 1. Discrete steps make "same speed" meaningful.
+  var SPEED_DELTA = 0.20;
+  var SPEED_STEPS = 5;
   var GLITCH = 0.14;
 
   // Scale trail count with viewport area so density matches the Air 15 look.
@@ -48,6 +53,49 @@
     var area = Math.max(1, w * h);
     var n = Math.round(REF_STREAMS * (area / (REF_W * REF_H)));
     return Math.max(MIN_STREAMS, Math.min(MAX_STREAMS_HARD, n));
+  }
+
+  // Speeds of the nearest live trails to the left and right of `col`.
+  function neighborSpeedSteps(inst, col) {
+    var leftStep = null, rightStep = null, leftDist = Infinity, rightDist = Infinity;
+    for (var i = 0; i < inst.streams.length; i++) {
+      var s = inst.streams[i];
+      if (s.speedStep == null) continue;
+      var d = s.col - col;
+      if (d < 0 && -d < leftDist) { leftDist = -d; leftStep = s.speedStep; }
+      if (d > 0 && d < rightDist) { rightDist = d; rightStep = s.speedStep; }
+    }
+    return { left: leftStep, right: rightStep };
+  }
+
+  // Random speed in [base/√1.2, base·√1.2]; never match a column-adjacent trail.
+  function pickSpeed(inst, col) {
+    var mid = inst.speed;
+    var spread = Math.sqrt(1 + SPEED_DELTA);
+    var lo = mid / spread;
+    var hi = mid * spread;
+    var nbr = neighborSpeedSteps(inst, col);
+    var blocked = Object.create(null);
+    if (nbr.left != null) blocked[nbr.left] = true;
+    if (nbr.right != null) blocked[nbr.right] = true;
+    var choices = [];
+    for (var k = 0; k < SPEED_STEPS; k++) {
+      if (!blocked[k]) choices.push(k);
+    }
+    if (!choices.length) {
+      // All steps blocked (rare); pick farthest from both neighbors.
+      var worst = -1, bestStep = 0;
+      for (var a = 0; a < SPEED_STEPS; a++) {
+        var minDiff = SPEED_STEPS;
+        if (nbr.left != null) minDiff = Math.min(minDiff, Math.abs(nbr.left - a));
+        if (nbr.right != null) minDiff = Math.min(minDiff, Math.abs(nbr.right - a));
+        if (minDiff > worst) { worst = minDiff; bestStep = a; }
+      }
+      choices = [bestStep];
+    }
+    var step = choices[(Math.random() * choices.length) | 0];
+    var t = SPEED_STEPS <= 1 ? 0.5 : step / (SPEED_STEPS - 1);
+    return { vy: lo + (hi - lo) * t, speedStep: step };
   }
 
   var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -127,9 +175,10 @@
     var x = (col + 0.5) * inst.colW;
     // Ongoing rain: enter from above. Initial boot uses spawnLive instead.
     var y = -inst.rowH * (2 + Math.random() * 4);
+    var spd = pickSpeed(inst, col);
     inst.streams.push({
       col: col, x: x,
-      vx: 0, vy: inst.speed,
+      vx: 0, vy: spd.vy, speedStep: spd.speedStep,
       points: [{ x: x, y: y }],
       tokens: tokens,
       state: "fall",
@@ -152,9 +201,10 @@
     for (var p = TRAIL + 1; p >= 0; p--) {
       points.push({ x: x, y: headY - p * inst.rowH });
     }
+    var spd = pickSpeed(inst, col);
     inst.streams.push({
       col: col, x: x,
-      vx: 0, vy: inst.speed,
+      vx: 0, vy: spd.vy, speedStep: spd.speedStep,
       points: points,
       tokens: tokens,
       state: "fall",
