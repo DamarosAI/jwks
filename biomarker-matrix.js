@@ -8,8 +8,9 @@
  * slowest→fastest band; neighboring trails (nearest left/right) never match.
  * First
  * paint seeds a full mid-fall field so load feels like joining a living page.
- * Close stays idle until it enters view, then boots the same way.
- * Drum/pointer contact shatters glyphs into pixels and respawns elsewhere.
+ * Close stays idle until it enters view, then boots the same way. On close,
+ * every trail dissolves in a bottom fade zone and is gone before the card
+ * edge; drum contact also fades smoothly (hero drum still shatters).
  */
 (function () {
   // Oncogenes, tumor-suppressor genes, fusions, mutations, clinical biomarkers.
@@ -47,6 +48,9 @@
   var SPEED_DELTA = 0.20;
   var SPEED_STEPS = 5;
   var GLITCH = 0.14;
+  // Close card: dissolve in this lower band; hard floor = fully gone (never reach edge).
+  var CLOSE_FADE_START = 0.68; // begin dissolve at 68% of card height
+  var CLOSE_FADE_END = 0.88;   // must be invisible by 88% — never touch the footer line
 
   // Scale trail count with viewport area so density matches the Air 15 look.
   function streamCap(w, h) {
@@ -106,15 +110,57 @@
   function pick() { return MARKERS[(Math.random() * MARKERS.length) | 0]; }
   function now() { return (performance && performance.now) ? performance.now() : Date.now(); }
 
-  function destroy(inst, index) {
-    makeDebris(inst, inst.streams[index]);
+  function closeSoftY(inst) { return inst.h * CLOSE_FADE_START; }
+  function closeHardY(inst) { return inst.h * CLOSE_FADE_END; }
+
+  // Close: every trail fades before the card bottom. Hero: pass through.
+  function exitPlan(inst) {
+    if (!inst.waitView) {
+      return { exitMode: "pass", fadeAt: Infinity, fadeTtl: 0.45 };
+    }
+    var soft = closeSoftY(inst);
+    var hard = closeHardY(inst);
+    // Stagger fade start inside the dissolve band so they don't sync-blink.
+    var fadeAt = soft + Math.random() * Math.max(8, (hard - soft) * 0.35);
+    return {
+      exitMode: "fade",
+      fadeAt: fadeAt,
+      fadeTtl: 0.55 + Math.random() * 0.35
+    };
+  }
+
+  // 1 → 0 across the close dissolve band (position-locked, not just a timer).
+  function closeFloorFade(inst, headY) {
+    var soft = closeSoftY(inst);
+    var hard = closeHardY(inst);
+    if (headY <= soft) return 1;
+    if (headY >= hard) return 0;
+    var t = (headY - soft) / (hard - soft);
+    return Math.pow(1 - t, 1.6);
+  }
+
+  function beginFade(s, ttl) {
+    if (!s || s.state === "fade") return;
+    s.state = "fade";
+    s.life = 1;
+    s.fadeTtl = ttl || (0.4 + Math.random() * 0.35);
+    s.vy *= 0.4; // slow hard so they finish dissolving before the floor
+  }
+
+  // Remove a trail; shatter=true triggers the pixel debris motif.
+  function retire(inst, index, shatter) {
+    var s = inst.streams[index];
+    if (shatter) makeDebris(inst, s);
     inst.streams.splice(index, 1);
-    // Whack-a-mole: one kill → up to two fresh trails (still capped at inst.maxStreams).
     if (inst.armed) {
       spawn(inst);
-      spawn(inst);
-      ensureField(inst); // never allow an empty field while armed
+      if (shatter) spawn(inst); // whack-a-mole only on shatter
+      ensureField(inst);
     }
+  }
+
+  function destroy(inst, index) {
+    retire(inst, index, true);
   }
 
   // Hard invariant: while armed/in-view, trails are never zero — fill to cap.
@@ -176,13 +222,17 @@
     // Ongoing rain: enter from above. Initial boot uses spawnLive instead.
     var y = -inst.rowH * (2 + Math.random() * 4);
     var spd = pickSpeed(inst, col);
+    var exit = exitPlan(inst);
     inst.streams.push({
       col: col, x: x,
       vx: 0, vy: spd.vy, speedStep: spd.speedStep,
       points: [{ x: x, y: y }],
       tokens: tokens,
       state: "fall",
-      life: 1
+      life: 1,
+      exitMode: exit.exitMode,
+      fadeAt: exit.fadeAt,
+      fadeTtl: exit.fadeTtl
     });
   }
 
@@ -202,13 +252,26 @@
       points.push({ x: x, y: headY - p * inst.rowH });
     }
     var spd = pickSpeed(inst, col);
+    var exit = exitPlan(inst);
+    // Never seed a close trail inside/below the dissolve band.
+    if (inst.waitView) {
+      var cap = closeSoftY(inst) - inst.rowH * 2;
+      if (headY > cap) {
+        var shift = headY - cap;
+        headY = cap;
+        for (var q = 0; q < points.length; q++) points[q].y -= shift;
+      }
+    }
     inst.streams.push({
       col: col, x: x,
       vx: 0, vy: spd.vy, speedStep: spd.speedStep,
       points: points,
       tokens: tokens,
       state: "fall",
-      life: 1
+      life: 1,
+      exitMode: exit.exitMode,
+      fadeAt: exit.fadeAt,
+      fadeTtl: exit.fadeTtl
     });
   }
 
@@ -455,13 +518,24 @@
     return a * VIS;
   }
 
-  function drawStream(ctx, inst, s) {
+  function drawStream(ctx, inst, s, floorMul) {
     var pts = trailPoints(s.points, TRAIL, inst.rowH);
     if (Math.random() < GLITCH) s.tokens[(Math.random() * TRAIL) | 0] = pick();
+    var lifeMul = s.life == null ? 1 : Math.max(0, s.life);
+    // Soft ease so close fades read as dissolve, not a hard cut.
+    if (s.state === "fade") lifeMul = lifeMul * lifeMul;
+    if (floorMul == null) floorMul = 1;
+    var mul = lifeMul * floorMul;
+    if (mul < 0.01) return;
+    // On close, also kill any glyph that has entered the hard floor band.
+    var hard = inst.waitView ? closeHardY(inst) : Infinity;
     for (var i = 0; i < pts.length; i++) {
       var y = pts[i].y;
       if (y < -inst.rowH || y > inst.h + inst.rowH) continue;
-      var a = alphaFor(i, TRAIL);
+      if (y >= hard) continue;
+      // Per-glyph floor fade so trailing heads can't poke past the band.
+      var glyphFloor = inst.waitView ? closeFloorFade(inst, y) : 1;
+      var a = alphaFor(i, TRAIL) * mul * glyphFloor;
       if (a < 0.01) continue;
       var glitch = Math.random() < 0.03;
       ctx.fillStyle = glitch
@@ -512,6 +586,7 @@
     if (!inst.armed) return;
     ensureField(inst); // never paint an empty field
     var ctx = inst.ctx, secs = dt / 1000;
+    var isClose = !!inst.waitView;
     ctx.clearRect(0, 0, inst.w, inst.h);
     ctx.font = "600 " + inst.fontPx + "px \"IBM Plex Mono\", ui-monospace, monospace";
     ctx.textAlign = "center"; ctx.textBaseline = "middle";
@@ -519,6 +594,8 @@
     if (!inst.drumPaths || !inst.drumPaths.length) bindDrum(inst);
 
     var maxPathLen = TRAIL * inst.rowH + inst.rowH * 2;
+    var softY = isClose ? closeSoftY(inst) : Infinity;
+    var hardY = isClose ? closeHardY(inst) : Infinity;
 
     for (var i = inst.streams.length - 1; i >= 0; i--) {
       var s = inst.streams[i];
@@ -526,10 +603,23 @@
       var nx = last.x + s.vx * secs;
       var ny = last.y + s.vy * secs;
 
-      var hit = drumHit(inst, last.x, last.y, nx, ny);
+      // Close: drum contact dissolves; hero: drum still shatters to pixels.
+      var hit = s.state === "fade" ? null : drumHit(inst, last.x, last.y, nx, ny);
       if (hit) {
         s.points.push({ x: hit.x, y: hit.y });
-        destroy(inst, i);
+        if (isClose) {
+          beginFade(s, 0.45 + Math.random() * 0.25);
+          nx = hit.x; ny = hit.y;
+        } else {
+          retire(inst, i, true);
+          continue;
+        }
+      }
+
+      // Hard clamp: close heads never advance past the dissolve end.
+      if (isClose && ny >= hardY) {
+        s.points.push({ x: nx, y: hardY });
+        retire(inst, i, false);
         continue;
       }
 
@@ -542,7 +632,20 @@
       }
       if (keepFrom > 0) s.points.splice(0, keepFrom);
 
-      if (ny - TRAIL * inst.rowH > inst.h) {
+      // Close: start dissolving as soon as the head enters the fade band.
+      if (isClose && s.state === "fall" && ny >= Math.min(s.fadeAt, softY)) {
+        beginFade(s, s.fadeTtl);
+      }
+
+      if (s.state === "fade") {
+        s.life -= secs / (s.fadeTtl || 0.5);
+        if (s.life <= 0) {
+          retire(inst, i, false);
+          continue;
+        }
+      }
+
+      if (!isClose && ny - TRAIL * inst.rowH > inst.h) {
         inst.streams.splice(i, 1);
         spawn(inst);
         spawn(inst);
@@ -550,7 +653,12 @@
         continue;
       }
 
-      drawStream(ctx, inst, s);
+      var floorMul = isClose ? closeFloorFade(inst, ny) : 1;
+      if (floorMul < 0.02) {
+        retire(inst, i, false);
+        continue;
+      }
+      drawStream(ctx, inst, s, floorMul);
     }
 
     ensureField(inst); // refill after any removals this frame
