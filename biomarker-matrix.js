@@ -11,7 +11,8 @@
  * Hero and close share pass-through exit physics; drum or headline/CTA contact
  * fades the trail smoothly. Hover (desktop) or tap (mobile) still shatters.
  * Until first hover/tap, one trail carries a bold mid-glyph "HOVER HERE" /
- * "TAP HERE" cue (+2px), then the cue is gone for the session.
+ * "TAP HERE" cue (+2px). The cue only attaches to trails with enough margin
+ * so the label is never clipped at the card edges; then it clears on interact.
  */
 (function () {
   // Oncogenes, tumor-suppressor genes, fusions, mutations, clinical biomarkers.
@@ -677,19 +678,28 @@
         }
       }
     }
+
+    var halfW = cueHalfWidth(inst);
+    var pad = cuePad(inst);
+
+    // Keep current host only while its mid-glyph still fully fits inside the card.
     if (inst.cueStream && inst.streams.indexOf(inst.cueStream) >= 0 && inst.cueStream.state === "fall") {
-      return inst.cueStream;
+      var curMid = cueMidFromInst(inst, inst.cueStream);
+      if (curMid && cueFits(inst, curMid.x, curMid.y, halfW, pad)) {
+        return inst.cueStream;
+      }
     }
-    var mid = inst.h * 0.45;
+
+    var targetY = inst.h * 0.45;
     var best = null, bestScore = -Infinity;
     for (var j = 0; j < inst.streams.length; j++) {
       var s = inst.streams[j];
       if (s.state !== "fall") continue;
-      var last = s.points[s.points.length - 1];
-      if (last.y < inst.h * 0.22 || last.y > inst.h * 0.72) continue;
-      // Prefer off-center columns so the cue isn't buried under the drum mask.
-      var edgeBias = Math.min(s.col, inst.nCols - 1 - s.col);
-      var score = -Math.abs(last.y - mid) + edgeBias * 1.4 + Math.random() * 2;
+      var mid = cueMidFromInst(inst, s);
+      if (!mid || !cueFits(inst, mid.x, mid.y, halfW, pad)) continue;
+      // Prefer interior columns (away from edges + not dead-center under drum).
+      var edgeRoom = Math.min(s.col, inst.nCols - 1 - s.col);
+      var score = -Math.abs(mid.y - targetY) + edgeRoom * 1.2 + Math.random() * 2;
       if (score > bestScore) {
         bestScore = score;
         best = s;
@@ -699,22 +709,59 @@
     return best;
   }
 
+  function cuePad(inst) {
+    return Math.max(14, inst.fontPx + 4);
+  }
+
+  function cueHalfWidth(inst) {
+    var label = cueLabel();
+    var px = inst.fontPx + 2;
+    // Mono advance ≈ 0.6em; small buffer so measureText / paint never diverge.
+    return (label.length * px * 0.62) * 0.5 + 2;
+  }
+
+  function cueMidFromInst(inst, s) {
+    if (!s || !s.points || !s.points.length) return null;
+    var pts = trailPoints(s.points, TRAIL, inst.rowH);
+    if (!pts.length) return null;
+    return pts[Math.min(2, pts.length - 1)];
+  }
+
+  // Full label AABB must sit inside the canvas with padding — never clip.
+  function cueFits(inst, x, y, halfW, pad) {
+    if (halfW == null) halfW = cueHalfWidth(inst);
+    if (pad == null) pad = cuePad(inst);
+    if (x - halfW < pad) return false;
+    if (x + halfW > inst.w - pad) return false;
+    if (y < pad * 2) return false;
+    if (y > inst.h - pad * 2) return false;
+    return true;
+  }
+
   // Bold mid-trail cue: same mono family, +2px, weight 700 — until first interact.
+  // Hard rule: never paint if the measured label would touch/cross a card edge.
   function drawCue(ctx, inst) {
     if (cueGone || reduced || !inst.armed) return;
     var s = inst.cueStream;
     if (!s || s.state !== "fall") return;
-    var pts = trailPoints(s.points, TRAIL, inst.rowH);
-    if (!pts.length) return;
-    var mid = pts[Math.min(2, pts.length - 1)];
-    if (mid.y < -inst.rowH || mid.y > inst.h + inst.rowH) return;
+    var mid = cueMidFromInst(inst, s);
+    if (!mid) return;
     var px = inst.fontPx + 2;
+    var label = cueLabel();
     ctx.save();
     ctx.font = "700 " + px + "px \"IBM Plex Mono\", ui-monospace, monospace";
+    var halfW = ctx.measureText(label).width * 0.5;
+    var pad = cuePad(inst);
+    if (!cueFits(inst, mid.x, mid.y, halfW, pad)) {
+      // Host drifted to an edge — drop and try another trail next frame.
+      inst.cueStream = null;
+      ctx.restore();
+      return;
+    }
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillStyle = "rgba(" + BLUE + "," + Math.min(0.92, 0.78 * VIS).toFixed(3) + ")";
-    ctx.fillText(cueLabel(), mid.x, mid.y);
+    ctx.fillText(label, mid.x, mid.y);
     ctx.restore();
   }
 
