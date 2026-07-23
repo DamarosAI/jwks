@@ -29,7 +29,7 @@
 <script src="./mail-cta.js?v=15" defer></script>
 <script src="./logo-marquee.js?v=1" defer></script>
 <script src="./biomarker-matrix.js?v=32" defer></script>
-<script src="./hero-fit.js?v=2" defer></script>
+<script src="./hero-fit.js?v=3" defer></script>
 <script>
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 window.scrollTo(0, 0);
@@ -438,6 +438,10 @@ window.scrollTo(0, 0);
     .dm-logo-tile img{display:block;max-width:100%;height:auto;}
     .dm-logo-tile:has(img:not([src])),
     .dm-logo-tile:has(img.dm-logo-broken){display:none !important;}
+    /* Continuously scale logo tiles with the viewport + ease each change so
+       they glide instead of snapping at a breakpoint. */
+    .dm-site .dm-logo-tile{width:clamp(120px,13vw,170px) !important;height:clamp(58px,5.7vw,74px) !important;padding:0 clamp(12px,1.8vw,24px) !important;transition:width 260ms cubic-bezier(0.22,1,0.36,1),height 260ms cubic-bezier(0.22,1,0.36,1),padding 260ms cubic-bezier(0.22,1,0.36,1);}
+    @media (prefers-reduced-motion:reduce){.dm-site .dm-logo-tile{transition:none !important;}}
 
     /* ---- caption hint hidden + tap label where the demo autoplays ---- */
     @media (max-width:760px),(pointer:coarse){
@@ -458,7 +462,7 @@ window.scrollTo(0, 0);
       .dm-site .dm-logo-track{display:flex !important;flex-wrap:nowrap;width:max-content;will-change:transform;animation:dmLogoScroll 28s linear infinite;}
       .dm-site .dm-logo-set{display:flex !important;flex-wrap:nowrap;align-items:center;gap:14px;padding-right:14px;flex:0 0 auto;}
       .dm-site .dm-logo-dupe{display:flex !important;}
-      .dm-site .dm-logo-tile{flex:0 0 auto;width:138px !important;height:62px !important;padding:0 18px !important;}
+      .dm-site .dm-logo-tile{flex:0 0 auto;}
 
       .dm-site #spine .dm-spine-grid,.dm-site #agents .dm-agents-grid{display:flex !important;grid-template-columns:none !important;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;margin-top:24px;scrollbar-width:none;-ms-overflow-style:none;padding-bottom:2px;-webkit-overflow-scrolling:touch;}
       .dm-site #spine .dm-spine-grid::-webkit-scrollbar,.dm-site #agents .dm-agents-grid::-webkit-scrollbar{display:none;}
