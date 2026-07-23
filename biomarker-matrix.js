@@ -10,6 +10,7 @@
  * page. Close stays idle until it enters view, then boots the same way.
  * Hero and close share pass-through exit physics; drum or headline/CTA contact
  * fades the trail smoothly. Hover (desktop) or tap (mobile) still shatters.
+ * Glyph swaps are infrequent/time-based so fall stays smooth while scrolling.
  */
 (function () {
   // Oncogenes, tumor-suppressor genes, fusions, mutations, clinical biomarkers.
@@ -46,7 +47,9 @@
   // Max ratio fastest/slowest − 1. Discrete steps make "same speed" meaningful.
   var SPEED_DELTA = 0.20;
   var SPEED_STEPS = 5;
-  var GLITCH = 0.14;
+  // Token swaps are time-based (not per-frame) so fall reads smooth, not noisy.
+  var GLITCH_GAP_LO = 720;
+  var GLITCH_GAP_HI = 1600;
 
   // Scale trail count with viewport area so density matches the Air 15 look.
   function streamCap(w, h) {
@@ -185,6 +188,10 @@
     return bestCol;
   }
 
+  function glitchGap() {
+    return GLITCH_GAP_LO + Math.random() * (GLITCH_GAP_HI - GLITCH_GAP_LO);
+  }
+
   function spawn(inst) {
     if (inst.streams.length >= inst.maxStreams) return;
     var col = freeCol(inst);
@@ -204,7 +211,8 @@
       life: 1,
       exitMode: exit.exitMode,
       fadeAt: exit.fadeAt,
-      fadeTtl: exit.fadeTtl
+      fadeTtl: exit.fadeTtl,
+      nextGlitch: now() + glitchGap()
     });
   }
 
@@ -234,7 +242,8 @@
       life: 1,
       exitMode: exit.exitMode,
       fadeAt: exit.fadeAt,
-      fadeTtl: exit.fadeTtl
+      fadeTtl: exit.fadeTtl,
+      nextGlitch: now() + glitchGap() * (0.35 + Math.random() * 0.65)
     });
   }
 
@@ -260,22 +269,27 @@
   }
 
   // Sync close section to viewport immediately (don't wait on IO alone).
+  // Hysteresis avoids arm/disarm thrash at the threshold while scrolling.
   function syncVisibility(inst) {
     if (!inst.waitView || reduced) return;
     var r = inst.el.getBoundingClientRect();
-    var inView = r.bottom > 48 && r.top < window.innerHeight - 24;
-    if (inView) {
-      if (!inst.armed) {
-        inst.armed = true;
-        bootStreams(inst);
-        paintNow(inst);
+    var vh = window.innerHeight || 0;
+    if (inst.armed) {
+      var clearlyOut = r.bottom < -64 || r.top > vh + 64;
+      if (clearlyOut) {
+        inst.armed = false;
+        clearLive(inst);
+        inst.last = 0;
       } else {
         ensureField(inst);
       }
-    } else if (inst.armed) {
-      inst.armed = false;
-      clearLive(inst);
-      inst.last = 0;
+    } else {
+      var clearlyIn = r.bottom > 72 && r.top < vh - 48;
+      if (clearlyIn) {
+        inst.armed = true;
+        bootStreams(inst);
+        paintNow(inst);
+      }
     }
   }
 
@@ -289,25 +303,13 @@
       }
       return;
     }
+    // Wide rootMargin + low threshold; syncVisibility owns enter/exit hysteresis.
     inst.io = new IntersectionObserver(function (entries) {
       for (var i = 0; i < entries.length; i++) {
-        var en = entries[i];
-        if (en.isIntersecting) {
-          if (!inst.armed) {
-            inst.armed = true;
-            bootStreams(inst);
-            paintNow(inst);
-            kick();
-          } else {
-            ensureField(inst);
-          }
-        } else if (inst.waitView) {
-          inst.armed = false;
-          clearLive(inst);
-          inst.last = 0;
-        }
+        if (entries[i].isIntersecting) kick();
+        syncVisibility(inst);
       }
-    }, { threshold: 0.08, rootMargin: "80px 0px" });
+    }, { threshold: 0, rootMargin: "120px 0px" });
     inst.io.observe(inst.el);
     // Immediate check so a already-visible close never boots empty.
     syncVisibility(inst);
@@ -357,6 +359,30 @@
     var h = Math.max(1, Math.floor(r.height));
     if (w === inst.w && h === inst.h && dpr === inst.dpr) return;
 
+    var prevW = inst.w;
+    var prevH = inst.h;
+    var prevCols = inst.nCols;
+    var prevRowH = inst.rowH;
+    var hadField = inst.streams.length > 0;
+
+    // Ignore 1–2px chrome jitter from mobile URL bars / sticky headers while
+    // scrolling — full reboot is what reads as flicker going down the page.
+    if (prevW > 0 && prevH > 0 && dpr === inst.dpr) {
+      var dw = Math.abs(w - prevW);
+      var dh = Math.abs(h - prevH);
+      if (dw <= 2 && dh <= 2) return;
+      if (dw / prevW < 0.02 && dh / prevH < 0.02 && dw < 12 && dh < 12) {
+        inst.w = w; inst.h = h;
+        inst.canvas.width = Math.floor(w * dpr);
+        inst.canvas.height = Math.floor(h * dpr);
+        inst.canvas.style.width = w + "px";
+        inst.canvas.style.height = h + "px";
+        inst.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        if (hadField && inst.armed && !reduced) paintNow(inst);
+        return;
+      }
+    }
+
     inst.w = w; inst.h = h; inst.dpr = dpr;
     inst.canvas.width = Math.floor(w * dpr);
     inst.canvas.height = Math.floor(h * dpr);
@@ -374,12 +400,40 @@
     inst.fontPx = Math.max(9, Math.floor(inst.rowH * 0.6));
     // Area-scale trail cap from the MacBook Air 15 baseline of 7.
     inst.maxStreams = streamCap(w, h);
-    inst.streams.length = 0;
-    inst.debris.length = 0;
-    inst.nextSpawn = 0;
-    if (inst.armed && !reduced) {
-      bootStreams(inst);
+
+    // Prefer remapping live trails over a blank reboot when layout only stretches.
+    if (hadField && prevW > 0 && prevCols > 0 && prevRowH > 0 && inst.armed && !reduced) {
+      var sy = h / prevH;
+      for (var i = 0; i < inst.streams.length; i++) {
+        var s = inst.streams[i];
+        s.col = Math.min(inst.nCols - 1, Math.max(0, Math.round(s.col * (inst.nCols / prevCols))));
+        s.x = (s.col + 0.5) * inst.colW;
+        for (var p = 0; p < s.points.length; p++) {
+          s.points[p].x = s.x;
+          s.points[p].y *= sy;
+        }
+        if (s.speedStep != null) {
+          var mid = inst.speed;
+          var spread = Math.sqrt(1 + SPEED_DELTA);
+          var lo = mid / spread;
+          var hi = mid * spread;
+          var t = SPEED_STEPS <= 1 ? 0.5 : s.speedStep / (SPEED_STEPS - 1);
+          s.vy = lo + (hi - lo) * t;
+        } else {
+          s.vy = s.vy * (inst.rowH / prevRowH);
+        }
+      }
+      while (inst.streams.length > inst.maxStreams) inst.streams.pop();
+      ensureField(inst);
       paintNow(inst);
+    } else {
+      inst.streams.length = 0;
+      inst.debris.length = 0;
+      inst.nextSpawn = 0;
+      if (inst.armed && !reduced) {
+        bootStreams(inst);
+        paintNow(inst);
+      }
     }
     bindDrum(inst);
     bindCopy(inst);
@@ -443,7 +497,7 @@
     if (!inst.drumPaths || !inst.drumPaths.length) return null;
     if (typeof inst.drumPaths[0].isPointInStroke !== "function") return null;
 
-    var cr = inst.canvas.getBoundingClientRect();
+    var cr = inst._cr || inst.canvas.getBoundingClientRect();
     var dist = Math.hypot(x1 - x0, y1 - y0);
     // Dense samples so fast frames can't skip over the ~stroke-width band.
     var steps = Math.max(6, Math.ceil(dist / 1.5));
@@ -475,7 +529,7 @@
   function copyHit(inst, x0, y0, x1, y1) {
     if (!inst.copyEls || !inst.copyEls.length) bindCopy(inst);
     if (!inst.copyEls || !inst.copyEls.length) return null;
-    var cr = inst.canvas.getBoundingClientRect();
+    var cr = inst._cr || inst.canvas.getBoundingClientRect();
     var dist = Math.hypot(x1 - x0, y1 - y0);
     var steps = Math.max(4, Math.ceil(dist / 2));
     var padX = Math.max(2, inst.fontPx * 0.35);
@@ -531,7 +585,12 @@
 
   function drawStream(ctx, inst, s, floorMul) {
     var pts = trailPoints(s.points, TRAIL, inst.rowH);
-    if (Math.random() < GLITCH) s.tokens[(Math.random() * TRAIL) | 0] = pick();
+    var tNow = now();
+    if (s.nextGlitch == null) s.nextGlitch = tNow + glitchGap();
+    if (tNow >= s.nextGlitch) {
+      s.tokens[(Math.random() * TRAIL) | 0] = pick();
+      s.nextGlitch = tNow + glitchGap();
+    }
     var lifeMul = s.life == null ? 1 : Math.max(0, s.life);
     // Soft ease so obstacle fades read as dissolve, not a hard cut.
     if (s.state === "fade") lifeMul = lifeMul * lifeMul;
@@ -543,10 +602,7 @@
       if (y < -inst.rowH || y > inst.h + inst.rowH) continue;
       var a = alphaFor(i, TRAIL) * mul;
       if (a < 0.01) continue;
-      var glitch = Math.random() < 0.03;
-      ctx.fillStyle = glitch
-        ? "rgba(150,190,232," + Math.min(0.9, a * 2.4).toFixed(3) + ")"
-        : "rgba(" + BLUE + "," + a.toFixed(3) + ")";
+      ctx.fillStyle = "rgba(" + BLUE + "," + a.toFixed(3) + ")";
       ctx.fillText(s.tokens[i], pts[i].x, y);
     }
   }
@@ -563,10 +619,7 @@
         continue;
       }
       var a = p.life * 0.7 * VIS;
-      var flash = Math.random() < 0.18;
-      ctx.fillStyle = flash
-        ? "rgba(170,205,240," + Math.min(0.95, a * 1.9).toFixed(3) + ")"
-        : "rgba(" + BLUE + "," + a.toFixed(3) + ")";
+      ctx.fillStyle = "rgba(" + BLUE + "," + a.toFixed(3) + ")";
       var sz = p.size * (0.35 + p.life * 0.65);
       ctx.fillRect(p.x - sz * 0.5, p.y - sz * 0.5, sz, sz);
     }
@@ -592,6 +645,8 @@
     if (!inst.armed) return;
     ensureField(inst); // never paint an empty field
     var ctx = inst.ctx, secs = dt / 1000;
+    // One layout read per frame — hit tests reuse it (smooth scroll compositing).
+    inst._cr = inst.canvas.getBoundingClientRect();
     ctx.clearRect(0, 0, inst.w, inst.h);
     ctx.font = "600 " + inst.fontPx + "px \"IBM Plex Mono\", ui-monospace, monospace";
     ctx.textAlign = "center"; ctx.textBaseline = "middle";
@@ -647,6 +702,7 @@
 
     ensureField(inst); // refill after any removals this frame
     drawDebris(ctx, inst, secs);
+    inst._cr = null;
   }
 
   function tick(ts) {
