@@ -1,10 +1,12 @@
 /**
  * Matrix-style biomarker waterfall for hero / close.
  *
- * Max 7 constant-speed trails of oncogenes / tumor-suppressor genes / biomarkers
- * in CTA blue. Close section stays idle until it enters view, then boots all
- * trails at once. Drum contact or pointer tap/hover shatters glyphs into pixels
- * and instantly respawns elsewhere (whack-a-mole).
+ * Constant-speed trails of oncogenes / tumor-suppressor genes / biomarkers
+ * in CTA blue. Trail count is calibrated so 7 looks right on a MacBook Air 15
+ * (~1440×900 CSS), then scales with viewport area so larger monitors (e.g.
+ * 2160×1440) never look sparse. Close section stays idle until it enters view,
+ * then boots all trails at once. Drum contact or pointer tap/hover shatters
+ * glyphs into pixels and instantly respawns elsewhere (whack-a-mole).
  */
 (function () {
   // Oncogenes, tumor-suppressor genes, fusions, mutations, clinical biomarkers.
@@ -30,10 +32,22 @@
 
   var BLUE = "61,114,168"; // CTA blue #3d72a8
   var VIS = 1.13;
-  var MAX_STREAMS = 7;
+  // Density lock: 7 trails on MacBook Air 15 logical CSS (~1440×900).
+  var REF_W = 1440;
+  var REF_H = 900;
+  var REF_STREAMS = 7;
+  var MIN_STREAMS = 4;
+  var MAX_STREAMS_HARD = 24;
   var TRAIL = 6;
   var SPEED_ROWS = 3.0;
   var GLITCH = 0.14;
+
+  // Scale trail count with viewport area so density matches the Air 15 look.
+  function streamCap(w, h) {
+    var area = Math.max(1, w * h);
+    var n = Math.round(REF_STREAMS * (area / (REF_W * REF_H)));
+    return Math.max(MIN_STREAMS, Math.min(MAX_STREAMS_HARD, n));
+  }
 
   var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var coarse = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
@@ -46,7 +60,7 @@
   function destroy(inst, index) {
     makeDebris(inst, inst.streams[index]);
     inst.streams.splice(index, 1);
-    // Whack-a-mole: one kill → up to two fresh trails (still capped at MAX_STREAMS).
+    // Whack-a-mole: one kill → up to two fresh trails (still capped at inst.maxStreams).
     if (inst.armed) {
       spawn(inst);
       spawn(inst);
@@ -54,14 +68,14 @@
     }
   }
 
-  // Hard invariant: while armed/in-view, trails are never zero — fill to MAX.
+  // Hard invariant: while armed/in-view, trails are never zero — fill to cap.
   function ensureField(inst) {
     if (!inst.armed || reduced) return;
     if (inst.streams.length === 0) {
       bootStreams(inst);
       return;
     }
-    while (inst.streams.length < MAX_STREAMS) spawn(inst);
+    while (inst.streams.length < inst.maxStreams) spawn(inst);
   }
 
   function makeDebris(inst, s) {
@@ -105,14 +119,14 @@
   }
 
   function spawn(inst, staggerIdx) {
-    if (inst.streams.length >= MAX_STREAMS) return;
+    if (inst.streams.length >= inst.maxStreams) return;
     var col = freeCol(inst);
     var tokens = [];
     for (var i = 0; i < TRAIL; i++) tokens.push(pick());
     var x = (col + 0.5) * inst.colW;
     var lead = staggerIdx == null
       ? (2 + Math.random() * 4)
-      : (1.2 + staggerIdx * (inst.h / (inst.rowH * (MAX_STREAMS + 1))) + Math.random() * 1.2);
+      : (1.2 + staggerIdx * (inst.h / (inst.rowH * (inst.maxStreams + 1))) + Math.random() * 1.2);
     var y = -inst.rowH * lead;
     inst.streams.push({
       col: col, x: x,
@@ -127,7 +141,7 @@
   // Instant full field — used when close section enters view.
   function bootStreams(inst) {
     inst.streams.length = 0;
-    for (var i = 0; i < MAX_STREAMS; i++) spawn(inst, i);
+    for (var i = 0; i < inst.maxStreams; i++) spawn(inst, i);
     inst.nextSpawn = now() + 400;
   }
 
@@ -206,6 +220,7 @@
       drumSvg: null, drumPaths: null,
       streams: [], debris: [],
       nCols: 0, colW: 0, rowH: 0, rows: 0, speed: 0, fontPx: 12,
+      maxStreams: REF_STREAMS,
       nextSpawn: 0, w: 0, h: 0, dpr: 1, last: 0,
       waitView: waitView,
       armed: !waitView,
@@ -242,6 +257,8 @@
     inst.rows = Math.max(8, Math.ceil(h / inst.rowH) + 2);
     inst.speed = inst.rowH * SPEED_ROWS;
     inst.fontPx = Math.max(9, Math.floor(inst.rowH * 0.6));
+    // Area-scale trail cap from the MacBook Air 15 baseline of 7.
+    inst.maxStreams = streamCap(w, h);
     inst.streams.length = 0;
     inst.debris.length = 0;
     inst.nextSpawn = 0;
@@ -390,7 +407,7 @@
     ctx.clearRect(0, 0, inst.w, inst.h);
     ctx.font = "600 " + inst.fontPx + "px \"IBM Plex Mono\", ui-monospace, monospace";
     ctx.textAlign = "center"; ctx.textBaseline = "middle";
-    var step = Math.max(1, Math.floor(inst.nCols / MAX_STREAMS));
+    var step = Math.max(1, Math.floor(inst.nCols / inst.maxStreams));
     for (var c = 0; c < inst.nCols; c += step) {
       var x = (c + 0.5) * inst.colW;
       for (var r = 0; r < inst.rows; r++) {
