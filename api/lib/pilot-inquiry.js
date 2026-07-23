@@ -1,6 +1,6 @@
 /**
  * Shared pilot-inquiry validation and email body builders.
- * Used by the Vercel function and unit tests — no Resend I/O here.
+ * Used by the Vercel function and unit tests  -  no Resend I/O here.
  */
 
 const MAX = {
@@ -23,7 +23,7 @@ function trimStr(v, max) {
 }
 
 /**
- * Timing trap — bots that POST immediately after open (or with a forged/missing
+ * Timing trap  -  bots that POST immediately after open (or with a forged/missing
  * stamp) are treated like the honeypot: silent 200, no email.
  * @param {unknown} openedAt
  * @returns {boolean} true when the submission looks automated
@@ -46,12 +46,12 @@ function parsePilotInquiry(raw) {
     return { ok: false, status: 400, error: "Invalid request body." };
   }
 
-  // Honeypot — bots fill hidden "website"; humans never see it.
+  // Honeypot  -  bots fill hidden "website"; humans never see it.
   if (trimStr(raw.website, 200)) {
     return { ok: true, data: { honeypot: true } };
   }
 
-  // Timing trap — too fast / missing / stale open stamp.
+  // Timing trap  -  too fast / missing / stale open stamp.
   if (isTimingSpam(raw.openedAt)) {
     return { ok: true, data: { honeypot: true } };
   }
@@ -87,7 +87,7 @@ function escapeHtml(s) {
 }
 
 function buildPilotEmail(data) {
-  const subject = `Pilot inquiry — ${data.organization} (${data.name})`;
+  const subject = `Pilot inquiry  -  ${data.organization} (${data.name})`;
   const lines = [
     "New pilot inquiry from damaros.ai",
     "",

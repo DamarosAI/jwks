@@ -1,13 +1,13 @@
 /* ============================================================
  * FIELD · Color tokens
- * Damaros is mineral, dark, and spatial — "calm, precise,
+ * Damaros is mineral, dark, and spatial  -  "calm, precise,
  * expensive." Light is never decoration. One stone-blue signal
  * (steel) carries structure; semantic colors are restrained and
  * reserved for trial state (PASS / REVIEW / FAIL) and governance.
  *
  * Two real surfaces share this palette:
- *   · damaros.ai (the public field)  — jet backgrounds, Archivo
- *   · Node / Console (operator)      — near-black, denser, mono
+ *   · damaros.ai (the public field)   -  jet backgrounds, Archivo
+ *   · Node / Console (operator)       -  near-black, denser, mono
  * Both are expressed here. Base values first, semantic aliases
  * second. The webapp-compatible aliases (--bg-base, --accent,
  * --status-*) let UI-kit recreations consume the real product
@@ -16,16 +16,16 @@
 
 :root {
   /* ---- Mineral surfaces (darkest → lifted) ---- */
-  --field-black: #000000;       /* operator base — absolute */
-  --field-void: #06080b;        /* jet — canonical page ground */
+  --field-black: #000000;       /* operator base  -  absolute */
+  --field-void: #06080b;        /* jet  -  canonical page ground */
   --field-deep: #0c1118;        /* lifted black, depth wash */
   --field-surface: #121820;     /* raised surface / card body */
   --field-elevated: #1a222c;    /* popover, modal, menu */
 
   /* ---- Ink ---- */
-  --ink-cold: #e8ecf0;          /* cold white — primary text */
-  --ink-steel: #a9c0d6;         /* stone-blue — structure / accent ink */
-  --ink-dim: #7c8a99;           /* residue — tertiary / unresolved */
+  --ink-cold: #e8ecf0;          /* cold white  -  primary text */
+  --ink-steel: #a9c0d6;         /* stone-blue  -  structure / accent ink */
+  --ink-dim: #7c8a99;           /* residue  -  tertiary / unresolved */
   --ink-faint: rgba(232, 236, 240, 0.55);
   --ink-quiet: rgba(232, 236, 240, 0.72);
 
@@ -35,11 +35,11 @@
   --steel-muted: #7b96b2;       /* operator-console accent */
   --deep-blue: #2f5f8c;         /* boundary / deep structure */
 
-  /* ---- Trial state — deterministic verdict taxonomy ---- */
-  --state-pass: #5bb98c;        /* resolution / readiness — green */
-  --state-review: #d9a23e;      /* restrained amber — REVIEW */
-  --state-fail: #f2566e;        /* rare red — breach / FAIL only */
-  --state-governed: #8c7cf0;    /* ultraviolet — Luna / AI provenance / ceremony */
+  /* ---- Trial state  -  deterministic verdict taxonomy ---- */
+  --state-pass: #5bb98c;        /* resolution / readiness  -  green */
+  --state-review: #d9a23e;      /* restrained amber  -  REVIEW */
+  --state-fail: #f2566e;        /* rare red  -  breach / FAIL only */
+  --state-governed: #8c7cf0;    /* ultraviolet  -  Luna / AI provenance / ceremony */
   /* Operator-console brighter variants (denser instrument surfaces) */
   --state-pass-bright: #4ade80;
   --state-review-bright: #facc15;

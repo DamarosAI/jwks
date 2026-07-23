@@ -2,15 +2,15 @@
  * FIELD · Typography tokens
  * Display = Archivo (grotesque, tight, structural). Body =
  * Hanken Grotesk (humanist, calm, legible at small sizes).
- * Mono = IBM Plex Mono (the "data register" — anything machine-
+ * Mono = IBM Plex Mono (the "data register"  -  anything machine-
  * generated, hashed, timestamped, or identity-bearing).
  *
  * The product uses four type REGISTERS, a real and load-bearing
  * idea worth keeping:
- *   R0 Command    — tab labels, section heads, status chips (mono-ish, uppercase, tracked)
- *   R1 Narrative  — rationale, amendment text, body prose
- *   R2 Data       — IDs, UUIDs, timestamps, criteria, lab values (mono)
- *   R3 Annotation — system hints, lint, audit metadata (mono italic)
+ *   R0 Command     -  tab labels, section heads, status chips (mono-ish, uppercase, tracked)
+ *   R1 Narrative   -  rationale, amendment text, body prose
+ *   R2 Data        -  IDs, UUIDs, timestamps, criteria, lab values (mono)
+ *   R3 Annotation  -  system hints, lint, audit metadata (mono italic)
  * ============================================================ */
 
 :root {
@@ -34,7 +34,7 @@
   --weight-bold: 700;
   --weight-display: 750;
 
-  /* ---- Display scale (Archivo) — tight tracking, balanced ---- */
+  /* ---- Display scale (Archivo)  -  tight tracking, balanced ---- */
   --type-hero: 700 clamp(2.6rem, 7vw, 6rem) / 0.9 var(--font-display);
   --type-display: 700 clamp(2.2rem, 5vw, 3.7rem) / 0.95 var(--font-display);
   --type-title: 700 clamp(1.5rem, 2.2vw, 2.1rem) / 1.05 var(--font-display);

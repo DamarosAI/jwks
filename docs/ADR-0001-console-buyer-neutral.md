@@ -1,18 +1,18 @@
-# ADR-0001 — Sites are the buyer; Console is buyer-neutral field command; the website is canon
+# ADR-0001  -  Sites are the buyer; Console is buyer-neutral field command; the website is canon
 
 Status: Accepted. Revised 2026-07-04 (previously 2026-06-27; originally 2026-06-24).
 
 > **Revision (2026-07-04).** Applied "the website is canon" to the agent framing.
-> The shipped site presents **four operator-facing agents** — Sentinel (Opportunity
+> The shipped site presents **four operator-facing agents**  -  Sentinel (Opportunity
 > radar), Trident (At protocol), Eye (Quality signals), Luna (Audit chain); "Four
-> agents. Zero verdicts." — and never names Console as a surface. The Field readme
-> was updated to match: the agents section replaces the old "substrate — never
+> agents. Zero verdicts."  -  and never names Console as a surface. The Field readme
+> was updated to match: the agents section replaces the old "substrate  -  never
 > operator-facing modules" framing (Operations Mesh remains true substrate), the
 > surfaces table is Node-only, and Console leaves the product-noun list (retired;
 > the product repo's ADR 0142 retired it independently). The deferred
 > "persona-neutral pass" item below also landed in part: the inverted internal
 > identifiers (`navLuna`/`navEye`, `isAgLuna`/`isAgEye`, and the `ln.*` state
-> machinery feeding the Eye panel) were renamed to match the rendered labels —
+> machinery feeding the Eye panel) were renamed to match the rendered labels  - 
 > zero visual change; code and copy now describe the same product. The hard
 > guardrails are unchanged: no model casts an eligibility verdict, PHI never
 > enters a model, screening is deterministic.
