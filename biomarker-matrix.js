@@ -10,7 +10,7 @@
  * page. Close stays idle until it enters view, then boots the same way.
  * Hero and close share pass-through exit physics; drum or headline/CTA contact
  * fades the trail smoothly. Hover (desktop) or tap (mobile) still shatters.
- * A short "Hover me" / "Tap me" cue pulses beside one clear trail until used.
+ * Occasionally one mid-field trail breathes brighter — a quiet easter-egg cue.
  */
 (function () {
   // Oncogenes, tumor-suppressor genes, fusions, mutations, clinical biomarkers.
@@ -48,9 +48,10 @@
   var SPEED_DELTA = 0.20;
   var SPEED_STEPS = 5;
   var GLITCH = 0.14;
-  var HINT_TTL_MS = 7000;
-  var hintGone = false;
-  var hintBorn = 0;
+  var PULSE_DUR_LO = 1500;
+  var PULSE_DUR_HI = 2200;
+  var PULSE_GAP_LO = 5200;
+  var PULSE_GAP_HI = 11000;
 
   // Scale trail count with viewport area so density matches the Air 15 look.
   function streamCap(w, h) {
@@ -121,14 +122,6 @@
     s.life = 1;
     s.fadeTtl = ttl || (0.4 + Math.random() * 0.35);
     s.vy *= 0.45; // ease out while dissolving on drum/letter contact
-  }
-
-  function dismissHint() {
-    hintGone = true;
-  }
-
-  function hintLabel() {
-    return coarse ? "Tap me" : "Hover me";
   }
 
   // Remove a trail; shatter=true triggers the pixel debris motif.
@@ -348,8 +341,10 @@
       waitView: waitView,
       armed: !waitView,
       io: null,
-      hintStream: null,
-      hintSide: 0
+      pulseStream: null,
+      pulseStart: 0,
+      pulseUntil: 0,
+      nextPulseAt: 0
     };
     el.__dmMatrix = inst;
     resize(inst);
@@ -550,16 +545,16 @@
     // Soft ease so obstacle fades read as dissolve, not a hard cut.
     if (s.state === "fade") lifeMul = lifeMul * lifeMul;
     if (floorMul == null) floorMul = 1;
-    var mul = lifeMul * floorMul;
+    var mul = lifeMul * floorMul * pulseBoost(inst, s);
     if (mul < 0.01) return;
     for (var i = 0; i < pts.length; i++) {
       var y = pts[i].y;
       if (y < -inst.rowH || y > inst.h + inst.rowH) continue;
-      var a = alphaFor(i, TRAIL) * mul;
+      var a = Math.min(0.95, alphaFor(i, TRAIL) * mul);
       if (a < 0.01) continue;
       var glitch = Math.random() < 0.03;
       ctx.fillStyle = glitch
-        ? "rgba(150,190,232," + Math.min(0.9, a * 2.4).toFixed(3) + ")"
+        ? "rgba(150,190,232," + Math.min(0.95, a * 2.2).toFixed(3) + ")"
         : "rgba(" + BLUE + "," + a.toFixed(3) + ")";
       ctx.fillText(s.tokens[i], pts[i].x, y);
     }
@@ -613,6 +608,7 @@
     if (!inst.drumPaths || !inst.drumPaths.length) bindDrum(inst);
     if (!inst.copyEls || !inst.copyEls.length) bindCopy(inst);
 
+    tickPulse(inst);
     var maxPathLen = TRAIL * inst.rowH + inst.rowH * 2;
 
     for (var i = inst.streams.length - 1; i >= 0; i--) {
@@ -661,91 +657,56 @@
 
     ensureField(inst); // refill after any removals this frame
     drawDebris(ctx, inst, secs);
-    drawHint(ctx, inst);
   }
 
-  // Side offset that never lands on a neighboring trail column.
-  function hintSideFor(inst, col) {
-    var leftClear = col >= 2;
-    var rightClear = col <= inst.nCols - 3;
-    for (var i = 0; i < inst.streams.length; i++) {
-      var c = inst.streams[i].col;
-      if (c === col) continue;
-      if (c >= col - 2 && c < col) leftClear = false;
-      if (c <= col + 2 && c > col) rightClear = false;
-    }
-    if (rightClear) return 1;
-    if (leftClear) return -1;
-    return 0;
+  function pulseGap() {
+    return PULSE_GAP_LO + Math.random() * (PULSE_GAP_HI - PULSE_GAP_LO);
   }
 
-  function pickHintStream(inst) {
-    if (inst.hintStream && inst.streams.indexOf(inst.hintStream) >= 0) {
-      var keepSide = hintSideFor(inst, inst.hintStream.col);
-      if (keepSide) {
-        inst.hintSide = keepSide;
-        return inst.hintStream;
+  function pulseDur() {
+    return PULSE_DUR_LO + Math.random() * (PULSE_DUR_HI - PULSE_DUR_LO);
+  }
+
+  // Soft 1→peak→1 breath on whichever trail is currently the easter egg.
+  function pulseBoost(inst, s) {
+    if (!inst.pulseStream || s !== inst.pulseStream) return 1;
+    var t = now();
+    var span = Math.max(1, inst.pulseUntil - inst.pulseStart);
+    var u = (t - inst.pulseStart) / span;
+    if (u <= 0 || u >= 1) return 1;
+    return 1 + Math.sin(Math.PI * u) * 0.58;
+  }
+
+  function tickPulse(inst) {
+    if (reduced || !inst.armed) return;
+    var t = now();
+    if (!inst.nextPulseAt) inst.nextPulseAt = t + 2800 + Math.random() * 2200;
+
+    if (inst.pulseStream) {
+      var alive = inst.streams.indexOf(inst.pulseStream) >= 0 && inst.pulseStream.state === "fall";
+      if (!alive || t >= inst.pulseUntil) {
+        inst.pulseStream = null;
+        inst.nextPulseAt = t + pulseGap();
       }
+      return;
     }
-    var mid = inst.h * 0.42;
-    var best = null, bestScore = -Infinity;
+
+    if (t < inst.nextPulseAt) return;
+    var cands = [];
     for (var i = 0; i < inst.streams.length; i++) {
       var s = inst.streams[i];
       if (s.state !== "fall") continue;
-      var side = hintSideFor(inst, s.col);
-      if (!side) continue;
       var last = s.points[s.points.length - 1];
-      if (last.y < inst.h * 0.18 || last.y > inst.h * 0.72) continue;
-      var score = -Math.abs(last.y - mid) + Math.random() * 4;
-      if (score > bestScore) {
-        bestScore = score;
-        best = s;
-        inst.hintSide = side;
-      }
+      if (last.y < inst.h * 0.2 || last.y > inst.h * 0.7) continue;
+      cands.push(s);
     }
-    inst.hintStream = best;
-    return best;
-  }
-
-  function drawHint(ctx, inst) {
-    if (hintGone || reduced || !inst.armed) return;
-    // Prefer the land card; close can show only if hero never armed this session.
-    if (inst.waitView) {
-      for (var i = 0; i < instances.length; i++) {
-        if (!instances[i].waitView && instances[i].armed) return;
-      }
-    }
-    var t = now();
-    if (!hintBorn) hintBorn = t;
-    if (t - hintBorn > HINT_TTL_MS) {
-      hintGone = true;
+    if (!cands.length) {
+      inst.nextPulseAt = t + 900;
       return;
     }
-    var s = pickHintStream(inst);
-    if (!s || !inst.hintSide) return;
-    var pts = trailPoints(s.points, TRAIL, inst.rowH);
-    if (!pts.length) return;
-    var mid = pts[Math.min(2, pts.length - 1)];
-    var label = hintLabel();
-    var pulse = 0.28 + 0.32 * (0.5 + 0.5 * Math.sin(t / 520));
-    // Fade in, hold, fade out over HINT_TTL_MS.
-    var age = (t - hintBorn) / HINT_TTL_MS;
-    var envelope = age < 0.12 ? age / 0.12 : age > 0.78 ? Math.max(0, (1 - age) / 0.22) : 1;
-    var a = pulse * envelope * VIS;
-    if (a < 0.04) return;
-    var gap = Math.max(inst.colW * 0.62, inst.fontPx * 3.2);
-    var x = mid.x + inst.hintSide * gap;
-    var y = mid.y;
-    // Keep label inside the canvas.
-    if (x < 28) x = mid.x + gap;
-    if (x > inst.w - 28) x = mid.x - gap;
-    ctx.save();
-    ctx.font = "600 " + Math.max(9, Math.floor(inst.fontPx * 0.95)) + "px \"IBM Plex Mono\", ui-monospace, monospace";
-    ctx.textAlign = inst.hintSide > 0 ? "left" : "right";
-    ctx.textBaseline = "middle";
-    ctx.fillStyle = "rgba(" + BLUE + "," + a.toFixed(3) + ")";
-    ctx.fillText(label, x, y);
-    ctx.restore();
+    inst.pulseStream = cands[(Math.random() * cands.length) | 0];
+    inst.pulseStart = t;
+    inst.pulseUntil = t + pulseDur();
   }
 
   function tick(ts) {
@@ -787,7 +748,6 @@
   function breakAt(clientX, clientY, pointerType) {
     if (reduced) return;
     var touchy = pointerType === "touch" || coarse;
-    var hitAny = false;
     for (var i = 0; i < instances.length; i++) {
       var inst = instances[i];
       if (!inst.el.isConnected || !inst.armed) continue;
@@ -801,15 +761,10 @@
         var pts = trailPoints(st.points, TRAIL, inst.rowH);
         for (var p = 0; p < pts.length; p++) {
           var dx = pts[p].x - x, dy = pts[p].y - y;
-          if (dx * dx + dy * dy <= thr2) {
-            destroy(inst, s);
-            hitAny = true;
-            break;
-          }
+          if (dx * dx + dy * dy <= thr2) { destroy(inst, s); break; }
         }
       }
     }
-    if (hitAny) dismissHint();
     kick();
   }
 
