@@ -92,40 +92,44 @@
       "#" + DIALOG_ID + " .dm-pilot-status{margin:0;min-height:0;font-family:var(--font-body,\"Hanken Grotesk\",system-ui,sans-serif);font-size:13px;line-height:1.35;color:var(--ink-quiet,#3c4955);}",
       "#" + DIALOG_ID + " .dm-pilot-status:empty{display:none;}",
       "#" + DIALOG_ID + " .dm-pilot-status[data-tone=error]{color:#dc3a52;}",
-      "#" + DIALOG_ID + " .dm-pilot-mark{flex:none;width:24px;height:27px;color:var(--ink-steel,#2f6193);opacity:0.9;align-self:flex-end;transform-origin:50% 58%;}",
+      "#" + DIALOG_ID + " .dm-pilot-mark{flex:none;width:24px;height:27px;color:var(--ink-steel,#2f6193);opacity:0.9;align-self:flex-end;transform-origin:50% 58%;transition:color 420ms ease,opacity 420ms ease;}",
       "@keyframes dm-pilot-drum-rev{0%{transform:rotate(0deg) scale(1);}35%{transform:rotate(-22deg) scale(1.08);}70%{transform:rotate(18deg) scale(1.06);}100%{transform:rotate(0deg) scale(1);}}",
       "@keyframes dm-pilot-drum-shake{0%,100%{transform:translateX(0) rotate(0deg);}12%{transform:translateX(-6px) rotate(-9deg);}24%{transform:translateX(6px) rotate(8deg);}36%{transform:translateX(-5px) rotate(-6deg);}48%{transform:translateX(5px) rotate(5deg);}60%{transform:translateX(-3px) rotate(-3deg);}72%{transform:translateX(3px) rotate(2deg);}84%{transform:translateX(-1px) rotate(-1deg);}}",
       "@keyframes dm-pilot-sent-pulse{0%{transform:scale(1);}35%{transform:scale(1.045);}100%{transform:scale(1);}}",
       "@keyframes dm-pilot-check-draw{to{stroke-dashoffset:0;}}",
-      "#" + DIALOG_ID + " .dm-pilot-mark.is-shaking{animation:dm-pilot-drum-shake 460ms cubic-bezier(0.36,0.07,0.19,0.97) both;color:#dc3a52;opacity:1;}",
+      "#" + DIALOG_ID + " .dm-pilot-mark.is-error{color:#dc3a52;opacity:1;}",
+      "#" + DIALOG_ID + " .dm-pilot-mark.is-shaking{animation:dm-pilot-drum-shake 460ms cubic-bezier(0.36,0.07,0.19,0.97) both;}",
       "#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit{background:linear-gradient(180deg,#3f8f6d,#2e9e6b);border-color:color-mix(in srgb,#2e9e6b 55%,rgba(255,255,255,0.22));box-shadow:inset 0 1px 0 rgba(255,255,255,0.22),0 8px 20px rgba(46,158,107,0.22);opacity:1;cursor:default;filter:none;animation:dm-pilot-sent-pulse 360ms cubic-bezier(0.16,1,0.3,1);}",
       "#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit:hover{filter:none;}",
       "#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit:disabled{opacity:1;cursor:default;}",
       "#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit .dm-pilot-submit-check{display:block;stroke-dasharray:26;stroke-dashoffset:26;animation:dm-pilot-check-draw 280ms cubic-bezier(0.65,0,0.35,1) 40ms forwards;}",
       "#" + DIALOG_ID + "[data-state=success] .dm-pilot-mark{animation:dm-pilot-drum-rev 360ms cubic-bezier(0.22,1,0.36,1) both;}",
-      /* Mobile sheet: compact + keyboard-aware via --dm-vv-* from visualViewport */
+      /* Mobile sheet: single-scroll bottom sheet, sticky head + foot, grab handle. */
       "@media (max-width:520px){",
       "  #" + DIALOG_ID + "-root{align-items:flex-end;justify-content:stretch;padding:0;inset:auto;top:var(--dm-vv-offset-top,0px);left:var(--dm-vv-offset-left,0px);width:var(--dm-vv-width,100%);height:var(--dm-vv-height,100dvh);}",
-      "  #" + DIALOG_ID + "{width:100%;max-width:none;max-height:min(78%,calc(var(--dm-vv-height,100dvh) - 12px));border-radius:14px 14px 0 0;padding:14px 14px calc(10px + env(safe-area-inset-bottom,0px));box-shadow:0 -8px 40px rgba(16,22,29,0.18);}",
-      "  #" + DIALOG_ID + " .dm-pilot-head{margin:0 34px 10px 0;}",
-      "  #" + DIALOG_ID + " .dm-pilot-eyebrow{margin:0 0 4px;font-size:10px;letter-spacing:0.14em;}",
-      "  #" + DIALOG_ID + " .dm-pilot-title{font-size:1.15rem;line-height:1.2;}",
-      "  #" + DIALOG_ID + " .dm-pilot-close{top:8px;right:8px;width:28px;height:28px;}",
-      "  #" + DIALOG_ID + " .dm-pilot-grid{grid-template-columns:1fr;gap:8px;}",
-      "  #" + DIALOG_ID + " label{gap:3px;font-size:9px;}",
-      "  #" + DIALOG_ID + " input,#" + DIALOG_ID + " textarea{padding:8px 10px;border-radius:8px;font-size:16px;}",
-      "  #" + DIALOG_ID + " textarea{min-height:64px;resize:none;}",
-      "  #" + DIALOG_ID + " .dm-pilot-foot{margin-top:10px;gap:10px;}",
-      "  #" + DIALOG_ID + " .dm-pilot-submit{height:40px;padding:0 18px;}",
-      "  #" + DIALOG_ID + " .dm-pilot-mark{width:20px;height:22px;}",
-      "  #" + DIALOG_ID + "-root[data-kb=\"1\"] #" + DIALOG_ID + "{max-height:calc(var(--dm-vv-height,100dvh) - 6px);border-radius:12px 12px 0 0;padding:10px 12px 8px;}",
-      "  #" + DIALOG_ID + "-root[data-kb=\"1\"] #" + DIALOG_ID + " .dm-pilot-head{margin-bottom:6px;}",
+      /* Dialog IS the scroller — one scroll, no nested hunt. */
+      "  #" + DIALOG_ID + "{display:block;width:100%;max-width:none;height:auto;max-height:min(88%,calc(var(--dm-vv-height,100dvh) - 10px));overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;scroll-padding-top:78px;scroll-padding-bottom:84px;border-radius:18px 18px 0 0;padding:0 15px calc(8px + env(safe-area-inset-bottom,0px));box-shadow:0 -10px 44px rgba(16,22,29,0.2);}",
+      /* Grab handle sits atop the sticky header. */
+      "  #" + DIALOG_ID + " .dm-pilot-head{position:sticky;top:0;z-index:3;margin:0 30px 8px 0;padding:16px 0 8px;background:linear-gradient(180deg,#fff 72%,rgba(255,255,255,0));}",
+      "  #" + DIALOG_ID + " .dm-pilot-head::before{content:\"\";position:absolute;top:6px;left:calc(50% - 18px + 15px);width:36px;height:4px;border-radius:999px;background:rgba(31,45,61,0.18);}",
+      "  #" + DIALOG_ID + " .dm-pilot-eyebrow{margin:6px 0 3px;font-size:10px;letter-spacing:0.14em;}",
+      "  #" + DIALOG_ID + " .dm-pilot-title{font-size:1.18rem;line-height:1.2;}",
+      "  #" + DIALOG_ID + " .dm-pilot-close{position:fixed;top:calc(var(--dm-vv-offset-top,0px) + 10px);right:14px;width:30px;height:30px;background:rgba(255,255,255,0.9);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}",
+      "  #" + DIALOG_ID + " #dm-pilot-form{display:block;}",
+      "  #" + DIALOG_ID + " .dm-pilot-grid{grid-template-columns:1fr;gap:11px;overflow:visible;min-height:0;padding-bottom:0;}",
+      "  #" + DIALOG_ID + " label{gap:4px;font-size:9.5px;}",
+      "  #" + DIALOG_ID + " input,#" + DIALOG_ID + " textarea{padding:11px 12px;border-radius:10px;font-size:16px;}",
+      "  #" + DIALOG_ID + " textarea{min-height:88px;resize:none;}",
+      /* Sticky footer keeps Send always reachable — no scroll hunt. */
+      "  #" + DIALOG_ID + " .dm-pilot-foot{position:sticky;bottom:0;z-index:3;margin-top:12px;gap:10px;padding:10px 0 calc(4px + env(safe-area-inset-bottom,0px));background:linear-gradient(0deg,#fff 72%,rgba(255,255,255,0));}",
+      "  #" + DIALOG_ID + " .dm-pilot-submit{height:44px;padding:0 22px;flex:1 1 auto;}",
+      "  #" + DIALOG_ID + " .dm-pilot-actions{flex:1 1 auto;}",
+      "  #" + DIALOG_ID + " .dm-pilot-mark{width:22px;height:25px;}",
+      /* Keyboard open: tighten header chrome, keep single scroll intact. */
+      "  #" + DIALOG_ID + "-root[data-kb=\"1\"] #" + DIALOG_ID + "{max-height:calc(var(--dm-vv-height,100dvh) - 4px);border-radius:14px 14px 0 0;}",
+      "  #" + DIALOG_ID + "-root[data-kb=\"1\"] #" + DIALOG_ID + " .dm-pilot-head{padding-top:12px;}",
       "  #" + DIALOG_ID + "-root[data-kb=\"1\"] #" + DIALOG_ID + " .dm-pilot-eyebrow{display:none;}",
       "  #" + DIALOG_ID + "-root[data-kb=\"1\"] #" + DIALOG_ID + " .dm-pilot-title{font-size:1.05rem;}",
-      "  #" + DIALOG_ID + "-root[data-kb=\"1\"] #" + DIALOG_ID + " textarea{min-height:48px;}",
-      "  #" + DIALOG_ID + "-root[data-kb=\"1\"] #" + DIALOG_ID + " .dm-pilot-foot{margin-top:8px;}",
-      "  #" + DIALOG_ID + "-root[data-kb=\"1\"] #" + DIALOG_ID + " .dm-pilot-mark{display:none;}",
-      "  #" + DIALOG_ID + "-root[data-kb=\"1\"] #" + DIALOG_ID + " .dm-pilot-mark.is-shaking{display:block;}",
       "}",
       "@media (max-height:700px) and (min-width:521px){#" + DIALOG_ID + "{padding-top:18px;padding-bottom:14px;}#" + DIALOG_ID + " .dm-pilot-head{margin-bottom:12px;}#" + DIALOG_ID + " textarea{min-height:72px;}}",
       "@media (prefers-reduced-motion:reduce){#" + DIALOG_ID + "-backdrop,#" + DIALOG_ID + ",#" + DIALOG_ID + "-root[data-closing] #" + DIALOG_ID + "-backdrop,#" + DIALOG_ID + "-root[data-closing] #" + DIALOG_ID + ",#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit,#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit .dm-pilot-submit-check,#" + DIALOG_ID + "[data-state=success] .dm-pilot-mark,#" + DIALOG_ID + " .dm-pilot-mark.is-shaking{animation:none;}#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit .dm-pilot-submit-check{stroke-dashoffset:0;}}"
@@ -479,11 +483,16 @@
     if (!mark) return;
     mark.classList.remove("is-shaking");
     void mark.offsetWidth;
-    mark.classList.add("is-shaking");
+    mark.classList.add("is-shaking", "is-error");
     clearTimeout(mark.__dmShakeT);
+    clearTimeout(mark.__dmErrT);
     mark.__dmShakeT = setTimeout(function () {
       mark.classList.remove("is-shaking");
     }, 500);
+    // Hold the red, then let the color transition ease it back to blue.
+    mark.__dmErrT = setTimeout(function () {
+      mark.classList.remove("is-error");
+    }, 1150);
   }
 
   function onPilotSubmit(e) {
