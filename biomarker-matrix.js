@@ -50,7 +50,7 @@
   var GLITCH = 0.14;
   // Close card: dissolve only in the last sliver before the card bottom.
   var CLOSE_FADE_START = 0.90; // begin dissolve near the bottom edge
-  var CLOSE_FADE_END = 0.97;   // gone just before the footer line
+  var CLOSE_FADE_END = 1.01;   // gone just past the card bottom
 
   // Scale trail count with viewport area so density matches the Air 15 look.
   function streamCap(w, h) {
