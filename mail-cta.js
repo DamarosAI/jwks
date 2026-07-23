@@ -93,17 +93,20 @@
       "#" + DIALOG_ID + " .dm-pilot-status:empty{display:none;}",
       "#" + DIALOG_ID + " .dm-pilot-status[data-tone=error]{color:#dc3a52;}",
       "#" + DIALOG_ID + " .dm-pilot-mark{flex:none;width:24px;height:27px;color:var(--ink-steel,#2f6193);opacity:0.9;align-self:flex-end;transform-origin:50% 58%;transition:color 420ms ease,opacity 420ms ease;}",
-      "@keyframes dm-pilot-drum-rev{0%{transform:rotate(0deg) scale(1);}35%{transform:rotate(-22deg) scale(1.08);}70%{transform:rotate(18deg) scale(1.06);}100%{transform:rotate(0deg) scale(1);}}",
+      /* 0.5 rev/s → 2s per full turn while the request is in flight. */
+      "@keyframes dm-pilot-drum-spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}",
+      "@keyframes dm-pilot-drum-bounce{0%,100%{transform:translateY(0);}28%{transform:translateY(-11px);}52%{transform:translateY(0);}72%{transform:translateY(-5px);}88%{transform:translateY(0);}}",
       "@keyframes dm-pilot-drum-shake{0%,100%{transform:translateX(0) rotate(0deg);}12%{transform:translateX(-6px) rotate(-9deg);}24%{transform:translateX(6px) rotate(8deg);}36%{transform:translateX(-5px) rotate(-6deg);}48%{transform:translateX(5px) rotate(5deg);}60%{transform:translateX(-3px) rotate(-3deg);}72%{transform:translateX(3px) rotate(2deg);}84%{transform:translateX(-1px) rotate(-1deg);}}",
       "@keyframes dm-pilot-sent-pulse{0%{transform:scale(1);}35%{transform:scale(1.045);}100%{transform:scale(1);}}",
       "@keyframes dm-pilot-check-draw{to{stroke-dashoffset:0;}}",
       "#" + DIALOG_ID + " .dm-pilot-mark.is-error{color:#dc3a52;opacity:1;}",
       "#" + DIALOG_ID + " .dm-pilot-mark.is-shaking{animation:dm-pilot-drum-shake 460ms cubic-bezier(0.36,0.07,0.19,0.97) both;}",
+      "#" + DIALOG_ID + "[data-state=sending] .dm-pilot-mark{animation:dm-pilot-drum-spin 2s linear infinite;}",
       "#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit{background:linear-gradient(180deg,#3f8f6d,#2e9e6b);border-color:color-mix(in srgb,#2e9e6b 55%,rgba(255,255,255,0.22));box-shadow:inset 0 1px 0 rgba(255,255,255,0.22),0 8px 20px rgba(46,158,107,0.22);opacity:1;cursor:default;filter:none;animation:dm-pilot-sent-pulse 360ms cubic-bezier(0.16,1,0.3,1);}",
       "#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit:hover{filter:none;}",
       "#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit:disabled{opacity:1;cursor:default;}",
       "#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit .dm-pilot-submit-check{display:block;stroke-dasharray:26;stroke-dashoffset:26;animation:dm-pilot-check-draw 280ms cubic-bezier(0.65,0,0.35,1) 40ms forwards;}",
-      "#" + DIALOG_ID + "[data-state=success] .dm-pilot-mark{animation:dm-pilot-drum-rev 360ms cubic-bezier(0.22,1,0.36,1) both;}",
+      "#" + DIALOG_ID + "[data-state=success] .dm-pilot-mark{animation:dm-pilot-drum-bounce 400ms cubic-bezier(0.22,1,0.36,1) both;}",
       /* Mobile sheet: single-scroll bottom sheet, sticky head + foot, grab handle. */
       "@media (max-width:520px){",
       "  #" + DIALOG_ID + "-root{align-items:flex-end;justify-content:stretch;padding:0;inset:auto;top:var(--dm-vv-offset-top,0px);left:var(--dm-vv-offset-left,0px);width:var(--dm-vv-width,100%);height:var(--dm-vv-height,100dvh);}",
@@ -132,7 +135,7 @@
       "  #" + DIALOG_ID + "-root[data-kb=\"1\"] #" + DIALOG_ID + " .dm-pilot-title{font-size:1.05rem;}",
       "}",
       "@media (max-height:700px) and (min-width:521px){#" + DIALOG_ID + "{padding-top:18px;padding-bottom:14px;}#" + DIALOG_ID + " .dm-pilot-head{margin-bottom:12px;}#" + DIALOG_ID + " textarea{min-height:72px;}}",
-      "@media (prefers-reduced-motion:reduce){#" + DIALOG_ID + "-backdrop,#" + DIALOG_ID + ",#" + DIALOG_ID + "-root[data-closing] #" + DIALOG_ID + "-backdrop,#" + DIALOG_ID + "-root[data-closing] #" + DIALOG_ID + ",#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit,#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit .dm-pilot-submit-check,#" + DIALOG_ID + "[data-state=success] .dm-pilot-mark,#" + DIALOG_ID + " .dm-pilot-mark.is-shaking{animation:none;}#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit .dm-pilot-submit-check{stroke-dashoffset:0;}}"
+      "@media (prefers-reduced-motion:reduce){#" + DIALOG_ID + "-backdrop,#" + DIALOG_ID + ",#" + DIALOG_ID + "-root[data-closing] #" + DIALOG_ID + "-backdrop,#" + DIALOG_ID + "-root[data-closing] #" + DIALOG_ID + ",#" + DIALOG_ID + "[data-state=sending] .dm-pilot-mark,#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit,#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit .dm-pilot-submit-check,#" + DIALOG_ID + "[data-state=success] .dm-pilot-mark,#" + DIALOG_ID + " .dm-pilot-mark.is-shaking{animation:none;}#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit .dm-pilot-submit-check{stroke-dashoffset:0;}}"
     ].join("");
     document.head.appendChild(style);
   }
@@ -214,7 +217,10 @@
   var dialogRoot = null;
   var formOpenedAt = 0;
   var REQ_FIELDS = ["name", "role", "organization", "email", "message"];
-  var SUCCESS_HOLD_MS = 380;
+  /* Bounce plays 400ms, then a short luxury beat before dismiss. */
+  var DRUM_BOUNCE_MS = 400;
+  var LUXURY_HOLD_MS = 750;
+  var SUCCESS_HOLD_MS = DRUM_BOUNCE_MS + LUXURY_HOLD_MS;
   var CLOSE_ANIM_MS = 260;
 
   function removeToast(immediate) {
@@ -520,6 +526,8 @@
 
     submit.disabled = true;
     setStatus("", null);
+    var dialog = dialogRoot && dialogRoot.querySelector("#" + DIALOG_ID);
+    if (dialog) dialog.setAttribute("data-state", "sending");
 
     fetch("/api/pilot-inquiry", {
       method: "POST",
@@ -535,6 +543,7 @@
         var res = _ref.res;
         var body = _ref.body;
         if (!res.ok) {
+          if (dialog) dialog.setAttribute("data-state", "form");
           setStatus((body && body.error) || "Could not send. Try again.", "error");
           shakePilotMark();
           submit.disabled = false;
@@ -543,6 +552,7 @@
         showPilotSuccess();
       })
       .catch(function () {
+        if (dialog) dialog.setAttribute("data-state", "form");
         setStatus("Network error. Check your connection and try again.", "error");
         shakePilotMark();
         submit.disabled = false;
