@@ -420,11 +420,33 @@ window.scrollTo(0, 0);
         padding-left:10px !important;
         padding-right:10px !important;
       }
-      .dm-site #problem [style*="minmax(330px"],
-      .dm-site #node [style*="minmax(300px"]{
+      .dm-site #problem [style*="minmax(330px"]{
         grid-template-columns:1fr !important;
       }
+      .dm-site #node .dm-node-split{
+        grid-template-columns:1fr !important;
+      }
+      .dm-site #node .dm-node-eyebrow,
+      .dm-site #node .dm-node-copy,
+      .dm-site #node .dm-node-grid{
+        grid-column:auto !important;
+        grid-row:auto !important;
+      }
+      .dm-site #node .dm-node-grid{margin-top:clamp(28px,5vw,64px);}
     }
+
+    /* Runtime: eyebrow alone on row 1; heading + control cards share row 2 so
+       card tops align with "Damaros helps" on laptop/desktop. */
+    .dm-site #node .dm-node-split{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+      column-gap:clamp(28px,5vw,64px);
+      row-gap:0;
+      align-items:start;
+    }
+    .dm-site #node .dm-node-eyebrow{grid-column:1;grid-row:1;}
+    .dm-site #node .dm-node-copy{grid-column:1;grid-row:2;}
+    .dm-site #node .dm-node-grid{grid-column:2;grid-row:2;}
 
     /* ---- integration logo carousel + input-card baseline ---- */
     .dm-logo-track{display:contents;}
@@ -1419,9 +1441,9 @@ window.scrollTo(0, 0);
   <!-- ============ NODE ============ -->
   <section id="node" data-screen-label="Runtime" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:clamp(28px,5vw,64px);align-items:start;">
-        <div>
-          <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The runtime</div>
+      <div class="dm-node-split">
+        <div class="dm-node-eyebrow" style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The runtime</div>
+        <div class="dm-node-copy">
           <h2 style="margin:0;font-family:var(--font-display);font-weight:700;font-size:clamp(2.1rem,4.4vw,3.4rem);line-height:1.04;letter-spacing:-0.03em;max-width:13ch;text-wrap:balance;">Damaros<sup style="font-size:0.5em;letter-spacing:0;">™</sup> helps<br><span style="color:var(--ink-steel);">the site execute.</span></h2>
           <p style="margin:22px 0 0;font-size:clamp(1rem,1.4vw,1.18rem);line-height:1.55;color:var(--ink-quiet);">One runtime, installed inside the site's boundary, institution-hosted or air-gapped. The site governs what it can see and what leaves; the network only ever receives de-identified signals.</p>
         </div>
