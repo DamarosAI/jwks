@@ -11,11 +11,30 @@ const MAX = {
   message: 4000,
 };
 
+/** Reject instant bot posts; allow slow humans up to this age. */
+const MIN_FORM_MS = 1200;
+const MAX_FORM_MS = 2 * 60 * 60 * 1000;
+
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function trimStr(v, max) {
   if (v == null) return "";
   return String(v).trim().slice(0, max);
+}
+
+/**
+ * Timing trap — bots that POST immediately after open (or with a forged/missing
+ * stamp) are treated like the honeypot: silent 200, no email.
+ * @param {unknown} openedAt
+ * @returns {boolean} true when the submission looks automated
+ */
+function isTimingSpam(openedAt) {
+  const t = typeof openedAt === "number" ? openedAt : Number(openedAt);
+  if (!Number.isFinite(t) || t <= 0) return true;
+  const elapsed = Date.now() - t;
+  if (elapsed < MIN_FORM_MS) return true;
+  if (elapsed > MAX_FORM_MS) return true;
+  return false;
 }
 
 /**
@@ -29,6 +48,11 @@ function parsePilotInquiry(raw) {
 
   // Honeypot — bots fill hidden "website"; humans never see it.
   if (trimStr(raw.website, 200)) {
+    return { ok: true, data: { honeypot: true } };
+  }
+
+  // Timing trap — too fast / missing / stale open stamp.
+  if (isTimingSpam(raw.openedAt)) {
     return { ok: true, data: { honeypot: true } };
   }
 
@@ -108,6 +132,9 @@ function row(label, value) {
 
 module.exports = {
   MAX,
+  MIN_FORM_MS,
+  MAX_FORM_MS,
+  isTimingSpam,
   parsePilotInquiry,
   buildPilotEmail,
   escapeHtml,

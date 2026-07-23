@@ -57,10 +57,15 @@
     style.textContent = [
       "#" + DIALOG_ID + "-root{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));box-sizing:border-box;}",
       "#" + DIALOG_ID + "-root[hidden]{display:none !important;}",
+      "#" + DIALOG_ID + "-root[data-closing]{pointer-events:none;}",
       "#" + DIALOG_ID + "-backdrop{position:absolute;inset:0;background:rgba(16,22,29,0.42);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);animation:dm-pilot-fade 220ms ease;}",
       "#" + DIALOG_ID + "{position:relative;width:min(100%,460px);max-height:min(92dvh,720px);overflow:auto;text-align:left;background:#fff;border:1px solid rgba(31,45,61,0.12);border-radius:14px;box-shadow:0 24px 64px rgba(16,22,29,0.2),inset 0 1px 0 rgba(255,255,255,0.9);padding:22px 22px 18px;box-sizing:border-box;animation:dm-pilot-in 280ms cubic-bezier(0.22,1,0.36,1);}",
+      "#" + DIALOG_ID + "-root[data-closing] #" + DIALOG_ID + "-backdrop{animation:dm-pilot-fade-out 240ms ease forwards;}",
+      "#" + DIALOG_ID + "-root[data-closing] #" + DIALOG_ID + "{animation:dm-pilot-out 240ms ease forwards;}",
       "@keyframes dm-pilot-fade{from{opacity:0;}to{opacity:1;}}",
+      "@keyframes dm-pilot-fade-out{from{opacity:1;}to{opacity:0;}}",
       "@keyframes dm-pilot-in{from{opacity:0;transform:translateY(12px) scale(0.985);}to{opacity:1;transform:none;}}",
+      "@keyframes dm-pilot-out{from{opacity:1;transform:none;}to{opacity:0;transform:translateY(10px) scale(0.985);}}",
       "#" + DIALOG_ID + " .dm-pilot-head{margin:0 36px 14px 0;}",
       "#" + DIALOG_ID + " .dm-pilot-eyebrow{margin:0 0 8px;font-family:var(--font-body,\"Hanken Grotesk\",system-ui,sans-serif);font-size:11px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-steel,#2f6193);}",
       "#" + DIALOG_ID + " .dm-pilot-title{margin:0;font-family:var(--font-display,\"Archivo\",system-ui,sans-serif);font-size:clamp(1.35rem,3.6vw,1.55rem);font-weight:700;letter-spacing:-0.025em;line-height:1.15;color:var(--ink-cold,#10161d);text-wrap:balance;}",
@@ -69,8 +74,11 @@
       "#" + DIALOG_ID + " .dm-pilot-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}",
       "#" + DIALOG_ID + " .dm-pilot-span{grid-column:1 / -1;}",
       "#" + DIALOG_ID + " label{display:flex;flex-direction:column;gap:5px;align-items:stretch;text-align:left;font-family:var(--font-mono,\"IBM Plex Mono\",ui-monospace,monospace);font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim,#7b8794);}",
+      "#" + DIALOG_ID + " label.dm-pilot-req > .dm-pilot-label{display:inline-flex;align-items:baseline;gap:3px;}",
+      "#" + DIALOG_ID + " .dm-pilot-req-mark{color:#dc3a52;font-weight:700;line-height:1;}",
       "#" + DIALOG_ID + " input,#" + DIALOG_ID + " textarea{width:100%;box-sizing:border-box;margin:0;padding:10px 11px;border-radius:9px;border:1px solid rgba(31,45,61,0.14);background:#fff;font-family:var(--font-body,\"Hanken Grotesk\",system-ui,sans-serif);font-size:15px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--ink-cold,#10161d);outline:none;}",
       "#" + DIALOG_ID + " input:focus,#" + DIALOG_ID + " textarea:focus{border-color:color-mix(in srgb,#2f6193 55%,transparent);box-shadow:0 0 0 3px rgba(47,97,147,0.14);}",
+      "#" + DIALOG_ID + " input.dm-pilot-invalid,#" + DIALOG_ID + " textarea.dm-pilot-invalid{border-color:color-mix(in srgb,#dc3a52 55%,transparent);box-shadow:0 0 0 3px rgba(220,58,82,0.12);}",
       "#" + DIALOG_ID + " textarea{min-height:88px;resize:vertical;}",
       "#" + DIALOG_ID + " .dm-pilot-hp{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;}",
       "#" + DIALOG_ID + " .dm-pilot-foot{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-top:14px;}",
@@ -83,16 +91,15 @@
       "#" + DIALOG_ID + " .dm-pilot-status{margin:0;min-height:0;font-family:var(--font-body,\"Hanken Grotesk\",system-ui,sans-serif);font-size:13px;line-height:1.35;color:var(--ink-quiet,#3c4955);}",
       "#" + DIALOG_ID + " .dm-pilot-status:empty{display:none;}",
       "#" + DIALOG_ID + " .dm-pilot-status[data-tone=error]{color:#dc3a52;}",
-      "#" + DIALOG_ID + " .dm-pilot-mark{flex:none;width:24px;height:27px;color:var(--ink-steel,#2f6193);opacity:0.9;align-self:flex-end;transform-origin:50% 60%;animation:dm-pilot-drum 2.8s ease-in-out infinite;}",
-      "@keyframes dm-pilot-drum{0%,100%{transform:translateY(0) rotate(0deg);}35%{transform:translateY(-3px) rotate(-4deg);}70%{transform:translateY(1px) rotate(3deg);}}",
-      "@keyframes dm-pilot-drum-celebrate{0%{transform:translateY(0) rotate(0deg) scale(1);}10%{transform:translateY(-8px) rotate(-14deg) scale(1.08);}22%{transform:translateY(2px) rotate(16deg) scale(1.06);}36%{transform:translateY(-10px) rotate(-20deg) scale(1.12);}52%{transform:translateY(1px) rotate(12deg) scale(1.05);}68%{transform:translateY(-5px) rotate(-8deg) scale(1.04);}82%{transform:translateY(1px) rotate(5deg) scale(1.02);}100%{transform:translateY(0) rotate(0deg) scale(1);}}",
+      "#" + DIALOG_ID + " .dm-pilot-mark{flex:none;width:24px;height:27px;color:var(--ink-steel,#2f6193);opacity:0.9;align-self:flex-end;transform-origin:50% 58%;}",
+      "@keyframes dm-pilot-drum-rev{0%{transform:rotate(0deg) scale(1);}35%{transform:rotate(-22deg) scale(1.08);}70%{transform:rotate(18deg) scale(1.06);}100%{transform:rotate(0deg) scale(1);}}",
       "@keyframes dm-pilot-sent-pulse{0%{transform:scale(1);}35%{transform:scale(1.045);}100%{transform:scale(1);}}",
       "@keyframes dm-pilot-check-draw{to{stroke-dashoffset:0;}}",
-      "#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit{background:linear-gradient(180deg,#3f8f6d,#2e9e6b);border-color:color-mix(in srgb,#2e9e6b 55%,rgba(255,255,255,0.22));box-shadow:inset 0 1px 0 rgba(255,255,255,0.22),0 8px 20px rgba(46,158,107,0.22);opacity:1;cursor:default;filter:none;animation:dm-pilot-sent-pulse 480ms cubic-bezier(0.16,1,0.3,1);}",
+      "#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit{background:linear-gradient(180deg,#3f8f6d,#2e9e6b);border-color:color-mix(in srgb,#2e9e6b 55%,rgba(255,255,255,0.22));box-shadow:inset 0 1px 0 rgba(255,255,255,0.22),0 8px 20px rgba(46,158,107,0.22);opacity:1;cursor:default;filter:none;animation:dm-pilot-sent-pulse 360ms cubic-bezier(0.16,1,0.3,1);}",
       "#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit:hover{filter:none;}",
       "#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit:disabled{opacity:1;cursor:default;}",
-      "#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit .dm-pilot-submit-check{display:block;stroke-dasharray:26;stroke-dashoffset:26;animation:dm-pilot-check-draw 340ms cubic-bezier(0.65,0,0.35,1) 60ms forwards;}",
-      "#" + DIALOG_ID + "[data-state=success] .dm-pilot-mark{animation:dm-pilot-drum-celebrate 820ms cubic-bezier(0.22,1,0.36,1) both;}",
+      "#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit .dm-pilot-submit-check{display:block;stroke-dasharray:26;stroke-dashoffset:26;animation:dm-pilot-check-draw 280ms cubic-bezier(0.65,0,0.35,1) 40ms forwards;}",
+      "#" + DIALOG_ID + "[data-state=success] .dm-pilot-mark{animation:dm-pilot-drum-rev 360ms cubic-bezier(0.22,1,0.36,1) both;}",
       "@media (max-width:520px){",
       "  #" + DIALOG_ID + "-root{align-items:flex-end;padding:0;}",
       "  #" + DIALOG_ID + "{width:100%;max-height:min(94dvh,100%);border-radius:16px 16px 0 0;padding:20px 18px calc(16px + env(safe-area-inset-bottom,0px));}",
@@ -101,7 +108,7 @@
       "  #" + DIALOG_ID + " .dm-pilot-submit{width:auto;}",
       "}",
       "@media (max-height:700px){#" + DIALOG_ID + "{padding-top:18px;padding-bottom:14px;}#" + DIALOG_ID + " .dm-pilot-head{margin-bottom:12px;}#" + DIALOG_ID + " textarea{min-height:72px;}}",
-      "@media (prefers-reduced-motion:reduce){#" + DIALOG_ID + "-backdrop,#" + DIALOG_ID + ",#" + DIALOG_ID + " .dm-pilot-mark,#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit,#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit .dm-pilot-submit-check,#" + DIALOG_ID + "[data-state=success] .dm-pilot-mark{animation:none;}#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit .dm-pilot-submit-check{stroke-dashoffset:0;}}"
+      "@media (prefers-reduced-motion:reduce){#" + DIALOG_ID + "-backdrop,#" + DIALOG_ID + ",#" + DIALOG_ID + "-root[data-closing] #" + DIALOG_ID + "-backdrop,#" + DIALOG_ID + "-root[data-closing] #" + DIALOG_ID + ",#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit,#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit .dm-pilot-submit-check,#" + DIALOG_ID + "[data-state=success] .dm-pilot-mark{animation:none;}#" + DIALOG_ID + "[data-state=success] .dm-pilot-submit .dm-pilot-submit-check{stroke-dashoffset:0;}}"
     ].join("");
     document.head.appendChild(style);
   }
@@ -109,8 +116,13 @@
   var MARK_SVG = '<svg class="dm-toast-mark" viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="34" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg>';
 
   var toastTimer = null;
+  var successCloseTimer = null;
   var lastFocus = null;
   var dialogRoot = null;
+  var formOpenedAt = 0;
+  var REQ_FIELDS = ["name", "role", "organization", "email", "message"];
+  var SUCCESS_HOLD_MS = 380;
+  var CLOSE_ANIM_MS = 260;
 
   function removeToast(immediate) {
     var wrap = document.getElementById(TOAST_ID + "-wrap");
@@ -199,11 +211,11 @@
       "  </div>",
       '  <form id="dm-pilot-form" novalidate>',
       '    <div class="dm-pilot-grid">',
-      '      <label>Name<input name="name" type="text" autocomplete="name" required maxlength="120"></label>',
-      '      <label>Role<input name="role" type="text" autocomplete="organization-title" required maxlength="120"></label>',
-      '      <label class="dm-pilot-span">Organization<input name="organization" type="text" autocomplete="organization" required maxlength="160"></label>',
-      '      <label class="dm-pilot-span">Work email<input name="email" type="email" autocomplete="email" required maxlength="254"></label>',
-      '      <label class="dm-pilot-span">What you&rsquo;re working on<textarea name="message" required maxlength="4000"></textarea></label>',
+      '      <label class="dm-pilot-req"><span class="dm-pilot-label">Name<span class="dm-pilot-req-mark" aria-hidden="true">*</span></span><input name="name" type="text" autocomplete="name" required maxlength="120"></label>',
+      '      <label class="dm-pilot-req"><span class="dm-pilot-label">Role<span class="dm-pilot-req-mark" aria-hidden="true">*</span></span><input name="role" type="text" autocomplete="organization-title" required maxlength="120"></label>',
+      '      <label class="dm-pilot-req dm-pilot-span"><span class="dm-pilot-label">Organization<span class="dm-pilot-req-mark" aria-hidden="true">*</span></span><input name="organization" type="text" autocomplete="organization" required maxlength="160"></label>',
+      '      <label class="dm-pilot-req dm-pilot-span"><span class="dm-pilot-label">Work email<span class="dm-pilot-req-mark" aria-hidden="true">*</span></span><input name="email" type="email" autocomplete="email" required maxlength="254"></label>',
+      '      <label class="dm-pilot-req dm-pilot-span"><span class="dm-pilot-label">What you&rsquo;re working on<span class="dm-pilot-req-mark" aria-hidden="true">*</span></span><textarea name="message" required maxlength="4000"></textarea></label>',
       '      <label class="dm-pilot-hp" aria-hidden="true">Website<input name="website" type="text" tabindex="-1" autocomplete="off"></label>',
       "    </div>",
       '    <div class="dm-pilot-foot">',
@@ -229,6 +241,10 @@
 
     var form = dialogRoot.querySelector("#dm-pilot-form");
     form.addEventListener("submit", onPilotSubmit);
+    form.addEventListener("input", function (e) {
+      var t = e.target;
+      if (t && t.classList) t.classList.remove("dm-pilot-invalid");
+    });
 
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape" && dialogRoot && !dialogRoot.hidden) {
@@ -248,6 +264,31 @@
     else el.removeAttribute("data-tone");
   }
 
+  function clearFieldErrors(form) {
+    if (!form) return;
+    var nodes = form.querySelectorAll(".dm-pilot-invalid");
+    for (var i = 0; i < nodes.length; i++) nodes[i].classList.remove("dm-pilot-invalid");
+  }
+
+  function validateRequired(form) {
+    var missing = [];
+    var firstBad = null;
+    for (var i = 0; i < REQ_FIELDS.length; i++) {
+      var el = form.querySelector('[name="' + REQ_FIELDS[i] + '"]');
+      if (!el) continue;
+      var empty = !String(el.value || "").trim();
+      var badEmail = REQ_FIELDS[i] === "email" && !empty && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(el.value).trim());
+      if (empty || badEmail) {
+        el.classList.add("dm-pilot-invalid");
+        missing.push(REQ_FIELDS[i]);
+        if (!firstBad) firstBad = el;
+      } else {
+        el.classList.remove("dm-pilot-invalid");
+      }
+    }
+    return { ok: missing.length === 0, firstBad: firstBad };
+  }
+
   function resetSubmitButton(submit) {
     if (!submit) return;
     submit.disabled = false;
@@ -259,6 +300,8 @@
 
   function openPilotDialog() {
     var root = ensureDialog();
+    clearTimeout(successCloseTimer);
+    root.removeAttribute("data-closing");
     lastFocus = document.activeElement;
     var dialog = root.querySelector("#" + DIALOG_ID);
     var form = root.querySelector("#dm-pilot-form");
@@ -266,26 +309,48 @@
     var mark = dialog.querySelector(".dm-pilot-mark");
     dialog.setAttribute("data-state", "form");
     form.reset();
+    clearFieldErrors(form);
     resetSubmitButton(submit);
     setStatus("", null);
     if (mark) mark.style.animation = "";
+    formOpenedAt = Date.now();
     root.hidden = false;
     document.documentElement.style.overflow = "hidden";
     var first = form.querySelector('input[name="name"]');
     if (first) first.focus();
   }
 
-  function closePilotDialog() {
-    if (!dialogRoot || dialogRoot.hidden) return;
+  function finishClosePilotDialog() {
+    if (!dialogRoot) return;
     dialogRoot.hidden = true;
+    dialogRoot.removeAttribute("data-closing");
     document.documentElement.style.overflow = "";
     var dialog = dialogRoot.querySelector("#" + DIALOG_ID);
     var form = dialogRoot.querySelector("#dm-pilot-form");
     if (dialog) dialog.setAttribute("data-state", "form");
-    if (form) resetSubmitButton(form.querySelector(".dm-pilot-submit"));
+    if (form) {
+      clearFieldErrors(form);
+      resetSubmitButton(form.querySelector(".dm-pilot-submit"));
+    }
     if (lastFocus && typeof lastFocus.focus === "function") {
       try { lastFocus.focus(); } catch (_) {}
     }
+  }
+
+  function closePilotDialog(animated) {
+    if (!dialogRoot || dialogRoot.hidden) return;
+    clearTimeout(successCloseTimer);
+    if (animated === false || dialogRoot.getAttribute("data-closing") != null) {
+      finishClosePilotDialog();
+      return;
+    }
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) {
+      finishClosePilotDialog();
+      return;
+    }
+    dialogRoot.setAttribute("data-closing", "");
+    successCloseTimer = setTimeout(finishClosePilotDialog, CLOSE_ANIM_MS);
   }
 
   function showPilotSuccess() {
@@ -306,12 +371,21 @@
       void mark.offsetWidth;
       mark.style.animation = "";
     }
+    clearTimeout(successCloseTimer);
+    successCloseTimer = setTimeout(function () { closePilotDialog(true); }, SUCCESS_HOLD_MS);
   }
 
   function onPilotSubmit(e) {
     e.preventDefault();
     var form = e.target;
     var submit = form.querySelector(".dm-pilot-submit");
+    var check = validateRequired(form);
+    if (!check.ok) {
+      setStatus("Please complete every required field.", "error");
+      if (check.firstBad) check.firstBad.focus();
+      return;
+    }
+
     var fd = new FormData(form);
     var payload = {
       name: String(fd.get("name") || ""),
@@ -319,13 +393,9 @@
       organization: String(fd.get("organization") || ""),
       email: String(fd.get("email") || ""),
       message: String(fd.get("message") || ""),
-      website: String(fd.get("website") || "")
+      website: String(fd.get("website") || ""),
+      openedAt: formOpenedAt || Date.now()
     };
-
-    if (!payload.name.trim() || !payload.role.trim() || !payload.organization.trim() || !payload.email.trim() || !payload.message.trim()) {
-      setStatus("Please complete every field.", "error");
-      return;
-    }
 
     submit.disabled = true;
     setStatus("", null);
