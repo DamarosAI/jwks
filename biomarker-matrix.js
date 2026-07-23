@@ -4,9 +4,10 @@
  * Constant-speed trails of oncogenes / tumor-suppressor genes / biomarkers
  * in CTA blue. Trail count is calibrated so 7 looks right on a MacBook Air 15
  * (~1440×900 CSS), then scales with viewport area so larger monitors (e.g.
- * 2160×1440) never look sparse. Close section stays idle until it enters view,
- * then boots all trails at once. Drum contact or pointer tap/hover shatters
- * glyphs into pixels and instantly respawns elsewhere (whack-a-mole).
+ * 2160×1440) never look sparse. First paint seeds a full mid-fall field (never
+ * empty) so load feels like joining a living page. Close stays idle until it
+ * enters view, then boots the same way. Drum/pointer contact shatters glyphs
+ * into pixels and instantly respawns elsewhere (whack-a-mole).
  */
 (function () {
   // Oncogenes, tumor-suppressor genes, fusions, mutations, clinical biomarkers.
@@ -118,16 +119,14 @@
     return bestCol;
   }
 
-  function spawn(inst, staggerIdx) {
+  function spawn(inst) {
     if (inst.streams.length >= inst.maxStreams) return;
     var col = freeCol(inst);
     var tokens = [];
     for (var i = 0; i < TRAIL; i++) tokens.push(pick());
     var x = (col + 0.5) * inst.colW;
-    var lead = staggerIdx == null
-      ? (2 + Math.random() * 4)
-      : (1.2 + staggerIdx * (inst.h / (inst.rowH * (inst.maxStreams + 1))) + Math.random() * 1.2);
-    var y = -inst.rowH * lead;
+    // Ongoing rain: enter from above. Initial boot uses spawnLive instead.
+    var y = -inst.rowH * (2 + Math.random() * 4);
     inst.streams.push({
       col: col, x: x,
       vx: 0, vy: inst.speed,
@@ -138,11 +137,44 @@
     });
   }
 
-  // Instant full field — used when close section enters view.
+  // Seed a trail already mid-fall with a full glyph history for first paint.
+  function spawnLive(inst, idx, total) {
+    if (inst.streams.length >= inst.maxStreams) return;
+    var col = freeCol(inst);
+    var tokens = [];
+    for (var i = 0; i < TRAIL; i++) tokens.push(pick());
+    var x = (col + 0.5) * inst.colW;
+    // Spread heads across the field so load never reads as empty sky.
+    var slot = (idx + 0.25 + Math.random() * 0.5) / Math.max(1, total);
+    var headY = slot * (inst.h * 0.88 + TRAIL * inst.rowH) + inst.rowH * 0.5;
+    headY = Math.max(inst.rowH * 1.2, Math.min(inst.h * 0.9, headY));
+    var points = [];
+    for (var p = TRAIL + 1; p >= 0; p--) {
+      points.push({ x: x, y: headY - p * inst.rowH });
+    }
+    inst.streams.push({
+      col: col, x: x,
+      vx: 0, vy: inst.speed,
+      points: points,
+      tokens: tokens,
+      state: "fall",
+      life: 1
+    });
+  }
+
+  // Instant living field — mid-fall trails visible on first frame (never empty).
   function bootStreams(inst) {
     inst.streams.length = 0;
-    for (var i = 0; i < inst.maxStreams; i++) spawn(inst, i);
+    var n = Math.max(MIN_STREAMS, inst.maxStreams);
+    inst.maxStreams = n;
+    for (var i = 0; i < n; i++) spawnLive(inst, i, n);
     inst.nextSpawn = now() + 400;
+  }
+
+  // Paint one frame immediately so the first visible paint isn't blank.
+  function paintNow(inst) {
+    if (!inst || !inst.armed || reduced || !inst.w) return;
+    paint(inst, 16);
   }
 
   function clearLive(inst) {
@@ -160,6 +192,7 @@
       if (!inst.armed) {
         inst.armed = true;
         bootStreams(inst);
+        paintNow(inst);
       } else {
         ensureField(inst);
       }
@@ -187,6 +220,7 @@
           if (!inst.armed) {
             inst.armed = true;
             bootStreams(inst);
+            paintNow(inst);
             kick();
           } else {
             ensureField(inst);
@@ -230,7 +264,10 @@
     resize(inst);
     bindDrum(inst);
     watchView(inst);
-    if (!waitView && !reduced) ensureField(inst);
+    if (!waitView && !reduced) {
+      ensureField(inst);
+      paintNow(inst);
+    }
     if (reduced) paintStatic(inst);
     return inst;
   }
@@ -262,7 +299,10 @@
     inst.streams.length = 0;
     inst.debris.length = 0;
     inst.nextSpawn = 0;
-    if (inst.armed && !reduced) bootStreams(inst);
+    if (inst.armed && !reduced) {
+      bootStreams(inst);
+      paintNow(inst);
+    }
     bindDrum(inst);
   }
 
@@ -541,6 +581,7 @@
       for (var i = 0; i < instances.length; i++) paintStatic(instances[i]);
       return;
     }
+    for (var j = 0; j < instances.length; j++) paintNow(instances[j]);
     kick();
   }
 
