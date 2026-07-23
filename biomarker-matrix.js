@@ -48,9 +48,9 @@
   var SPEED_DELTA = 0.20;
   var SPEED_STEPS = 5;
   var GLITCH = 0.14;
-  // Close card: dissolve in this lower band; hard floor = fully gone (never reach edge).
-  var CLOSE_FADE_START = 0.68; // begin dissolve at 68% of card height
-  var CLOSE_FADE_END = 0.88;   // must be invisible by 88% — never touch the footer line
+  // Close card: dissolve only in the last sliver before the card bottom.
+  var CLOSE_FADE_START = 0.90; // begin dissolve near the bottom edge
+  var CLOSE_FADE_END = 0.97;   // gone just before the footer line
 
   // Scale trail count with viewport area so density matches the Air 15 look.
   function streamCap(w, h) {
