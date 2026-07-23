@@ -96,6 +96,10 @@ window.scrollTo(0, 0);
     /* Subtle biomarker matrix rain — CTA blue, cleared around drum + copy */
     .dm-matrix{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
     .dm-matrix-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:1;transform:translateZ(0);backface-visibility:hidden;contain:strict;}
+    /* Section dek under h2 — same quiet 15px one-liner proportion everywhere */
+    .dm-section-dek{margin:22px 0 0;font-size:15px;line-height:1.6;color:var(--ink-faint);max-width:42ch;}
+    .dm-section-dek--center{margin-left:auto;margin-right:auto;text-align:center;white-space:nowrap;max-width:none;}
+    @media (max-width:420px){.dm-section-dek--center{white-space:normal;max-width:28ch;}}
     .dm-matrix--hero,.dm-matrix--close{-webkit-mask-image:radial-gradient(ellipse 46% 50% at 50% 48%,transparent 0%,transparent 58%,rgba(0,0,0,0.35) 78%,#000 100%),linear-gradient(180deg,#000 0%,#000 62%,rgba(0,0,0,0.4) 82%,transparent 100%);mask-image:radial-gradient(ellipse 46% 50% at 50% 48%,transparent 0%,transparent 58%,rgba(0,0,0,0.35) 78%,#000 100%),linear-gradient(180deg,#000 0%,#000 62%,rgba(0,0,0,0.4) 82%,transparent 100%);-webkit-mask-composite:source-in;mask-composite:intersect;}
     .dm-site section > .dm-scroll-target,.dm-site section > .dm-scroll-chev{position:relative;z-index:1;}
     section[data-screen-label="Hero"] > .dm-hero-mark,
@@ -1264,8 +1268,7 @@ window.scrollTo(0, 0);
       <div>
         <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The problem</div>
         <h2 style="margin:0;max-width:15ch;font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,4.2vw,3.3rem);line-height:1.0;letter-spacing:-0.03em;text-wrap:balance;">Care is everywhere.<br><span style="color:var(--ink-steel);">Clinical trials aren't.</span></h2>
-        <p style="margin:20px 0 0;max-width:46ch;font-size:clamp(1.05rem,1.4vw,1.18rem);line-height:1.5;color:var(--ink-quiet);">CTMS tracks it. EDC captures it. eTMF files it. <span style="color:var(--ink-cold);font-weight:600;">But execution is still missing:</span> turning a protocol into a patient who can actually be screened.</p>
-        <p style="margin:14px 0 0;max-width:46ch;font-size:clamp(1.05rem,1.4vw,1.18rem);line-height:1.5;color:var(--ink-quiet);">The work still lives in the gap: charts, labs, notes, criteria, coordinator judgment, PI review, and proof rebuilt later. NCI academic centers feel it first: more protocols per coordinator, enrollment on the scorecard. The same runtime then scales down to community sites, where most patients already are.</p>
+        <p class="dm-section-dek">Execution is still missing from the stack</p>
       </div>
       <div class="dm-stat-grid" style="display:flex;flex-direction:column;gap:12px;">
         <div class="dm-card-lift" style="display:flex;align-items:center;padding:20px 24px;border-radius:14px;">
@@ -1310,7 +1313,7 @@ window.scrollTo(0, 0);
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The workflow</div>
       <h2 style="margin:0;font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,4vw,3.1rem);line-height:1.0;letter-spacing:-0.03em;">One run. Protocol to proof.</h2>
-      <p style="margin:14px 0 0;font-family:var(--font-display);font-size:clamp(1.05rem,1.7vw,1.4rem);font-weight:600;letter-spacing:-0.01em;color:var(--ink-quiet);">Engine accelerates. <span style="color:var(--ink-steel);">Humans decide.</span> Replay proves.</p>
+      <p class="dm-section-dek">Engine accelerates. Humans decide. Replay proves</p>
       <div id="spineCarousel" class="dm-spine-grid" style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:40px;">
         <div class="dm-card-lift dm-spine-card" style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;">
           <div style="display:flex;align-items:center;gap:9px;margin-bottom:16px;"><span style="font-family:var(--font-display);font-size:11px;color:var(--ink-steel);">01</span><span style="font-family:var(--font-body);font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-dim);">Protocol</span></div>
@@ -1357,7 +1360,7 @@ window.scrollTo(0, 0);
     <div class="dm-scroll-target" style="position:relative;max-width:1080px;margin:0 auto;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The agents</div>
       <h2 style="margin:0;font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,4vw,3.1rem);line-height:1.0;letter-spacing:-0.03em;">Four agents. <span style="color:var(--ink-steel);">Zero verdicts.</span></h2>
-      <p style="margin:14px 0 0;font-family:var(--font-display);font-size:clamp(1.05rem,1.7vw,1.4rem);font-weight:600;letter-spacing:-0.01em;color:var(--ink-quiet);">Sentinel finds trials. Trident tunes protocols. <span style="color:var(--ink-steel);">Eye guards quality. Luna answers audits.</span></p>
+      <p class="dm-section-dek">Find, draft, flag, cite — never decide</p>
       <div id="agentsCarousel" class="dm-agents-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:14px;margin-top:40px;">
         <div class="dm-card-lift" style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;">
           <span style="width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--ink-steel) 9%,transparent);border:1px solid color-mix(in srgb,var(--ink-steel) 24%,transparent);margin-bottom:16px;"><svg width="20" height="20" viewBox="0 0 18 18" fill="none" stroke="var(--ink-steel)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="6.5"></circle><circle cx="9" cy="9" r="3"></circle><circle cx="9" cy="9" r="0.6" fill="var(--ink-steel)" stroke="none"></circle><path d="M9 9 13.6 4.4"></path></svg></span>
@@ -1397,8 +1400,8 @@ window.scrollTo(0, 0);
   <section id="output" data-screen-label="What a run produces" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The outputs</div>
-      <h2 style="margin:0 0 10px;font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,4vw,3.1rem);line-height:1.0;letter-spacing:-0.03em;">Not a dashboard. <span style="color:var(--ink-steel);">A decision you can defend.</span></h2>
-      <p style="margin:0;max-width:52ch;font-size:15px;line-height:1.6;color:var(--ink-faint);">Every run carries a complete manifest: each state, its cited evidence, and a signed replay bundle that reconstructs the whole decision.</p>
+      <h2 style="margin:0;font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,4vw,3.1rem);line-height:1.0;letter-spacing:-0.03em;">Not a dashboard. <span style="color:var(--ink-steel);">A decision you can defend.</span></h2>
+      <p class="dm-section-dek">State, evidence, and a signed replay bundle</p>
       <div class="dm-output-grid" style="display:grid;grid-template-columns:minmax(0,0.6fr) minmax(0,1fr);gap:clamp(16px,3vw,32px);margin-top:38px;align-items:stretch;">
         <div class="dm-input-col" style="display:flex;flex-direction:column;gap:12px;">
           <div style="font-family:var(--font-display);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:2px;">Input</div>
@@ -1445,7 +1448,7 @@ window.scrollTo(0, 0);
         <div class="dm-node-eyebrow" style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The runtime</div>
         <div class="dm-node-copy">
           <h2 style="margin:0;font-family:var(--font-display);font-weight:700;font-size:clamp(2.1rem,4.4vw,3.4rem);line-height:1.04;letter-spacing:-0.03em;max-width:13ch;text-wrap:balance;">Damaros<sup style="font-size:0.5em;letter-spacing:0;">™</sup> helps<br><span style="color:var(--ink-steel);">the site execute.</span></h2>
-          <p style="margin:22px 0 0;font-size:clamp(1rem,1.4vw,1.18rem);line-height:1.55;color:var(--ink-quiet);">One runtime, installed inside the site's boundary, institution-hosted or air-gapped. The site governs what it can see and what leaves; the network only ever receives de-identified signals.</p>
+          <p class="dm-section-dek">Site-hosted. Site-governed. PHI stays put</p>
         </div>
         <div class="dm-node-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
           <div class="dm-card-lift" style="padding:22px;border-radius:14px;">
@@ -1477,7 +1480,7 @@ window.scrollTo(0, 0);
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;text-align:center;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Replay · proof</div>
       <h2 style="margin:0 auto;max-width:20ch;font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,4.2vw,3.3rem);line-height:1.0;letter-spacing:-0.03em;text-wrap:balance;">Not a log you trust. <span style="color:var(--ink-steel);">Proof you can replay.</span></h2>
-      <p style="margin:22px auto 0;font-size:15px;line-height:1.6;color:var(--ink-faint);white-space:nowrap;">Reconstruct any run end to end</p>
+      <p class="dm-section-dek dm-section-dek--center">Reconstruct any run end to end</p>
       <div class="dm-card-lift dm-card-record" style="margin:44px auto 0;max-width:860px;border-radius:16px;overflow:hidden;text-align:left;">
         <div style="display:flex;align-items:center;gap:12px;padding:13px 22px;border-bottom:1px solid rgba(31,45,61,0.08);background:#fbfcfd;">
           <span style="font-family:var(--font-display);font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-steel);">Replay ledger</span>
@@ -1509,6 +1512,7 @@ window.scrollTo(0, 0);
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Security posture</div>
       <h2 style="margin:0;max-width:22ch;font-family:var(--font-display);font-weight:700;font-size:clamp(1.8rem,3.6vw,2.8rem);line-height:1.04;letter-spacing:-0.03em;">Every run is attributable. <span style="color:var(--ink-steel);"><br>PHI never reaches a model.</span></h2>
+      <p class="dm-section-dek">Site-bounded controls · ready for audit</p>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:12px;margin-top:34px;">
         <div class="dm-card-lift" style="display:flex;align-items:center;gap:11px;padding:15px 18px;border-radius:11px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--state-pass);flex-shrink:0;"></span><span style="font-size:13px;color:var(--ink-quiet);"><strong style="color:var(--ink-cold);font-weight:600;">No LLM touches patient data</strong> · bounded at the site</span></div>
         <div class="dm-card-lift" style="display:flex;align-items:center;gap:11px;padding:15px 18px;border-radius:11px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--ink-steel);flex-shrink:0;"></span><span style="font-size:13px;color:var(--ink-quiet);"><strong style="color:var(--ink-cold);font-weight:600;">SOC 2-aligned</strong> controls &amp; audit logging</span></div>
