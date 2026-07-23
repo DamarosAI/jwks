@@ -10,7 +10,8 @@
  * page. Close stays idle until it enters view, then boots the same way.
  * Hero and close share pass-through exit physics; drum or headline/CTA contact
  * fades the trail smoothly. Hover (desktop) or tap (mobile) still shatters.
- * Occasionally one mid-field trail breathes brighter — a quiet easter-egg cue.
+ * Until first hover/tap, one trail carries a bold mid-glyph "HOVER HERE" /
+ * "TAP HERE" cue (+2px), then the cue is gone for the session.
  */
 (function () {
   // Oncogenes, tumor-suppressor genes, fusions, mutations, clinical biomarkers.
@@ -48,10 +49,7 @@
   var SPEED_DELTA = 0.20;
   var SPEED_STEPS = 5;
   var GLITCH = 0.14;
-  var PULSE_DUR_LO = 1500;
-  var PULSE_DUR_HI = 2200;
-  var PULSE_GAP_LO = 5200;
-  var PULSE_GAP_HI = 11000;
+  var cueGone = false;
 
   // Scale trail count with viewport area so density matches the Air 15 look.
   function streamCap(w, h) {
@@ -122,6 +120,10 @@
     s.life = 1;
     s.fadeTtl = ttl || (0.4 + Math.random() * 0.35);
     s.vy *= 0.45; // ease out while dissolving on drum/letter contact
+  }
+
+  function cueLabel() {
+    return coarse ? "TAP HERE" : "HOVER HERE";
   }
 
   // Remove a trail; shatter=true triggers the pixel debris motif.
@@ -341,10 +343,7 @@
       waitView: waitView,
       armed: !waitView,
       io: null,
-      pulseStream: null,
-      pulseStart: 0,
-      pulseUntil: 0,
-      nextPulseAt: 0
+      cueStream: null
     };
     el.__dmMatrix = inst;
     resize(inst);
@@ -545,16 +544,20 @@
     // Soft ease so obstacle fades read as dissolve, not a hard cut.
     if (s.state === "fade") lifeMul = lifeMul * lifeMul;
     if (floorMul == null) floorMul = 1;
-    var mul = lifeMul * floorMul * pulseBoost(inst, s);
+    var mul = lifeMul * floorMul;
     if (mul < 0.01) return;
+    var cueIdx = (!cueGone && s === inst.cueStream && s.state === "fall")
+      ? Math.min(2, pts.length - 1)
+      : -1;
     for (var i = 0; i < pts.length; i++) {
       var y = pts[i].y;
       if (y < -inst.rowH || y > inst.h + inst.rowH) continue;
-      var a = Math.min(0.95, alphaFor(i, TRAIL) * mul);
+      if (i === cueIdx) continue; // leave the mid glyph for HOVER/TAP HERE
+      var a = alphaFor(i, TRAIL) * mul;
       if (a < 0.01) continue;
       var glitch = Math.random() < 0.03;
       ctx.fillStyle = glitch
-        ? "rgba(150,190,232," + Math.min(0.95, a * 2.2).toFixed(3) + ")"
+        ? "rgba(150,190,232," + Math.min(0.9, a * 2.4).toFixed(3) + ")"
         : "rgba(" + BLUE + "," + a.toFixed(3) + ")";
       ctx.fillText(s.tokens[i], pts[i].x, y);
     }
@@ -608,7 +611,7 @@
     if (!inst.drumPaths || !inst.drumPaths.length) bindDrum(inst);
     if (!inst.copyEls || !inst.copyEls.length) bindCopy(inst);
 
-    tickPulse(inst);
+    ensureCueStream(inst);
     var maxPathLen = TRAIL * inst.rowH + inst.rowH * 2;
 
     for (var i = inst.streams.length - 1; i >= 0; i--) {
@@ -657,56 +660,62 @@
 
     ensureField(inst); // refill after any removals this frame
     drawDebris(ctx, inst, secs);
+    drawCue(ctx, inst);
   }
 
-  function pulseGap() {
-    return PULSE_GAP_LO + Math.random() * (PULSE_GAP_HI - PULSE_GAP_LO);
-  }
-
-  function pulseDur() {
-    return PULSE_DUR_LO + Math.random() * (PULSE_DUR_HI - PULSE_DUR_LO);
-  }
-
-  // Soft 1→peak→1 breath on whichever trail is currently the easter egg.
-  function pulseBoost(inst, s) {
-    if (!inst.pulseStream || s !== inst.pulseStream) return 1;
-    var t = now();
-    var span = Math.max(1, inst.pulseUntil - inst.pulseStart);
-    var u = (t - inst.pulseStart) / span;
-    if (u <= 0 || u >= 1) return 1;
-    return 1 + Math.sin(Math.PI * u) * 0.58;
-  }
-
-  function tickPulse(inst) {
-    if (reduced || !inst.armed) return;
-    var t = now();
-    if (!inst.nextPulseAt) inst.nextPulseAt = t + 2800 + Math.random() * 2200;
-
-    if (inst.pulseStream) {
-      var alive = inst.streams.indexOf(inst.pulseStream) >= 0 && inst.pulseStream.state === "fall";
-      if (!alive || t >= inst.pulseUntil) {
-        inst.pulseStream = null;
-        inst.nextPulseAt = t + pulseGap();
-      }
-      return;
+  function ensureCueStream(inst) {
+    if (cueGone || reduced || !inst.armed) {
+      inst.cueStream = null;
+      return null;
     }
-
-    if (t < inst.nextPulseAt) return;
-    var cands = [];
-    for (var i = 0; i < inst.streams.length; i++) {
-      var s = inst.streams[i];
+    // Prefer land card; close only if hero isn't armed.
+    if (inst.waitView) {
+      for (var i = 0; i < instances.length; i++) {
+        if (!instances[i].waitView && instances[i].armed) {
+          inst.cueStream = null;
+          return null;
+        }
+      }
+    }
+    if (inst.cueStream && inst.streams.indexOf(inst.cueStream) >= 0 && inst.cueStream.state === "fall") {
+      return inst.cueStream;
+    }
+    var mid = inst.h * 0.45;
+    var best = null, bestScore = -Infinity;
+    for (var j = 0; j < inst.streams.length; j++) {
+      var s = inst.streams[j];
       if (s.state !== "fall") continue;
       var last = s.points[s.points.length - 1];
-      if (last.y < inst.h * 0.2 || last.y > inst.h * 0.7) continue;
-      cands.push(s);
+      if (last.y < inst.h * 0.22 || last.y > inst.h * 0.72) continue;
+      // Prefer off-center columns so the cue isn't buried under the drum mask.
+      var edgeBias = Math.min(s.col, inst.nCols - 1 - s.col);
+      var score = -Math.abs(last.y - mid) + edgeBias * 1.4 + Math.random() * 2;
+      if (score > bestScore) {
+        bestScore = score;
+        best = s;
+      }
     }
-    if (!cands.length) {
-      inst.nextPulseAt = t + 900;
-      return;
-    }
-    inst.pulseStream = cands[(Math.random() * cands.length) | 0];
-    inst.pulseStart = t;
-    inst.pulseUntil = t + pulseDur();
+    inst.cueStream = best;
+    return best;
+  }
+
+  // Bold mid-trail cue: same mono family, +2px, weight 700 — until first interact.
+  function drawCue(ctx, inst) {
+    if (cueGone || reduced || !inst.armed) return;
+    var s = inst.cueStream;
+    if (!s || s.state !== "fall") return;
+    var pts = trailPoints(s.points, TRAIL, inst.rowH);
+    if (!pts.length) return;
+    var mid = pts[Math.min(2, pts.length - 1)];
+    if (mid.y < -inst.rowH || mid.y > inst.h + inst.rowH) return;
+    var px = inst.fontPx + 2;
+    ctx.save();
+    ctx.font = "700 " + px + "px \"IBM Plex Mono\", ui-monospace, monospace";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = "rgba(" + BLUE + "," + Math.min(0.92, 0.78 * VIS).toFixed(3) + ")";
+    ctx.fillText(cueLabel(), mid.x, mid.y);
+    ctx.restore();
   }
 
   function tick(ts) {
@@ -748,6 +757,7 @@
   function breakAt(clientX, clientY, pointerType) {
     if (reduced) return;
     var touchy = pointerType === "touch" || coarse;
+    var hitAny = false;
     for (var i = 0; i < instances.length; i++) {
       var inst = instances[i];
       if (!inst.el.isConnected || !inst.armed) continue;
@@ -761,10 +771,15 @@
         var pts = trailPoints(st.points, TRAIL, inst.rowH);
         for (var p = 0; p < pts.length; p++) {
           var dx = pts[p].x - x, dy = pts[p].y - y;
-          if (dx * dx + dy * dy <= thr2) { destroy(inst, s); break; }
+          if (dx * dx + dy * dy <= thr2) {
+            destroy(inst, s);
+            hitAny = true;
+            break;
+          }
         }
       }
     }
+    if (hitAny) cueGone = true;
     kick();
   }
 
