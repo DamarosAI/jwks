@@ -114,9 +114,13 @@
   var breakTickT = 0;
   var celebrated = false;
   var CENTURION_AT = 100;
+  var hitsPausedUntil = 0;
+  var POWER_MS = 1650;
 
   function pick() { return MARKERS[(Math.random() * MARKERS.length) | 0]; }
   function now() { return (performance && performance.now) ? performance.now() : Date.now(); }
+  function hitsPaused() { return now() < hitsPausedUntil; }
+  function trailsFrozen() { return hitsPaused(); }
 
   function allDrumMarks() {
     return document.querySelectorAll(
@@ -133,28 +137,47 @@
     }
   }
 
+  // Soft CTA aura that follows the drum path (cloned strokes), not a type blob.
+  function ensureDrumGlow(mark) {
+    if (!mark || mark.querySelector(".dm-centurion-glow")) return;
+    var svg = mark.querySelector("svg:not(.dm-centurion-glow)");
+    if (!svg) return;
+    function makeGlow(mod, strokeW) {
+      var g = svg.cloneNode(true);
+      g.classList.add("dm-centurion-glow", mod);
+      g.setAttribute("aria-hidden", "true");
+      g.setAttribute("stroke-width", String(strokeW));
+      g.style.color = "#3d72a8";
+      return g;
+    }
+    mark.insertBefore(makeGlow("dm-centurion-glow--a", 40), svg);
+    mark.insertBefore(makeGlow("dm-centurion-glow--b", 48), svg);
+    for (var i = 0; i < instances.length; i++) {
+      if (instances[i].mark === mark) bindDrum(instances[i]);
+    }
+  }
+
   function celebrateCenturion() {
     if (celebrated) return;
     celebrated = true;
     hideBreakHuds();
+    // Freeze trail motion + spawns for the sway, then resume.
+    hitsPausedUntil = now() + POWER_MS + 80;
 
     var marks = allDrumMarks();
     for (var i = 0; i < marks.length; i++) {
       var mark = marks[i];
+      ensureDrumGlow(mark);
       mark.classList.add("is-centurion");
       if (reduced) continue;
-      // Power rotation on the same axis as dmDrift; hand off cleanly when done.
       (function (el) {
-        var drift = "dmDrift 18s ease-in-out infinite";
         el.classList.add("is-centurion-bounce");
         var done = false;
         function finish() {
           if (done) return;
           done = true;
           el.classList.remove("is-centurion-bounce");
-          el.style.removeProperty("animation");
-          // Restore inline drift (style attr still has it; clear override).
-          el.style.animation = drift;
+          el.style.willChange = "auto";
           el.removeEventListener("animationend", onEnd);
         }
         function onEnd(e) {
@@ -162,7 +185,7 @@
           finish();
         }
         el.addEventListener("animationend", onEnd);
-        setTimeout(finish, 3000);
+        setTimeout(finish, POWER_MS + 120);
       })(mark);
     }
   }
@@ -241,13 +264,14 @@
 
   // Remove a trail; shatter=true triggers the pixel debris motif.
   function retire(inst, index, shatter) {
+    if (trailsFrozen() && !shatter) return;
     var s = inst.streams[index];
     if (shatter) {
       makeDebris(inst, s);
       bumpBroken();
     }
     inst.streams.splice(index, 1);
-    if (inst.armed) {
+    if (inst.armed && !trailsFrozen()) {
       spawn(inst);
       if (shatter) spawn(inst); // whack-a-mole only on shatter
       ensureField(inst);
@@ -260,7 +284,7 @@
 
   // Hard invariant: while armed/in-view, trails are never zero - fill to cap.
   function ensureField(inst) {
-    if (!inst.armed || reduced) return;
+    if (!inst.armed || reduced || trailsFrozen()) return;
     if (inst.streams.length === 0) {
       bootStreams(inst);
       return;
@@ -338,6 +362,7 @@
   }
 
   function spawn(inst) {
+    if (trailsFrozen()) return;
     if (inst.streams.length >= inst.maxStreams) return;
     var col = freeCol(inst);
     var tokens = [];
@@ -593,7 +618,7 @@
       inst.drumPaths = null;
       return;
     }
-    var svg = mark.querySelector("svg");
+    var svg = mark.querySelector("svg:not(.dm-centurion-glow)");
     if (!svg) {
       inst.drumSvg = null;
       inst.drumPaths = null;
@@ -789,8 +814,9 @@
 
   function paint(inst, dt) {
     if (!inst.armed) return;
-    ensureField(inst); // never paint an empty field
-    var ctx = inst.ctx, secs = dt / 1000;
+    var frozen = trailsFrozen();
+    if (!frozen) ensureField(inst); // never paint an empty field (unless frozen mid-sway)
+    var ctx = inst.ctx, secs = frozen ? 0 : dt / 1000;
     // One layout read per frame - hit tests reuse it (smooth scroll compositing).
     inst._cr = inst.canvas.getBoundingClientRect();
     ctx.clearRect(0, 0, inst.w, inst.h);
@@ -804,13 +830,23 @@
 
     for (var i = inst.streams.length - 1; i >= 0; i--) {
       var s = inst.streams[i];
+
+      // Centurion sway: hold every trail where it is; no move, fade, or respawn.
+      if (frozen) {
+        drawStream(ctx, inst, s, 1);
+        continue;
+      }
+
       var last = s.points[s.points.length - 1];
       var nx = last.x + s.vx * secs;
       var ny = last.y + s.vy * secs;
 
       // Drum or letter/CTA contact dissolves smoothly (hero + close).
-      var hit = s.state === "fade" ? null : drumHit(inst, last.x, last.y, nx, ny);
-      if (!hit && s.state !== "fade") hit = copyHit(inst, last.x, last.y, nx, ny);
+      var hit = null;
+      if (s.state !== "fade") {
+        hit = drumHit(inst, last.x, last.y, nx, ny);
+        if (!hit) hit = copyHit(inst, last.x, last.y, nx, ny);
+      }
       if (hit) {
         s.points.push({ x: hit.x, y: hit.y });
         beginFade(s, 0.45 + Math.random() * 0.28);
@@ -846,7 +882,7 @@
       drawStream(ctx, inst, s, 1);
     }
 
-    ensureField(inst); // refill after any removals this frame
+    if (!frozen) ensureField(inst); // refill after any removals this frame
     drawDebris(ctx, inst, secs);
     inst._cr = null;
   }
@@ -888,7 +924,7 @@
 
   // Hover (mouse) or tap (touch/pen) shatters a trail - larger hit on coarse pointers.
   function breakAt(clientX, clientY, pointerType) {
-    if (reduced) return;
+    if (reduced || trailsFrozen()) return;
     var touchy = pointerType === "touch" || coarse;
     for (var i = 0; i < instances.length; i++) {
       var inst = instances[i];
