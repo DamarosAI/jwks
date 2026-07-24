@@ -115,7 +115,7 @@
   var celebrated = false;
   var CENTURION_AT = 100;
   var hitsPausedUntil = 0;
-  var POWER_MS = 1650;
+  var POWER_MS = 2200;
 
   function pick() { return MARKERS[(Math.random() * MARKERS.length) | 0]; }
   function now() { return (performance && performance.now) ? performance.now() : Date.now(); }

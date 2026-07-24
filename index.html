@@ -28,7 +28,7 @@
 <script src="./support.js" defer></script>
 <script src="./mail-cta.js?v=15" defer></script>
 <script src="./logo-marquee.js?v=1" defer></script>
-<script src="./biomarker-matrix.js?v=45" defer></script>
+<script src="./biomarker-matrix.js?v=46" defer></script>
 <script src="./hero-fit.js?v=3" defer></script>
 <script>
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
@@ -75,13 +75,18 @@ window.scrollTo(0, 0);
     .dmScrollX::-webkit-scrollbar-thumb{background:rgba(31,45,61,0.18);border-radius:99px;}
     a{color:inherit;text-decoration:none;}
     @keyframes sealIn{0%{opacity:0;transform:translateY(6px) scale(0.98);}100%{opacity:1;transform:none;}}
-    @keyframes dmDrift{0%,100%{transform:translate(-50%,-50%) rotate(-4.5deg);}50%{transform:translate(-50%,-50%) rotate(4.5deg);}}
-    /* Centurion: one fluid sway on the drift axis, then hand off to dmDrift */
+    /* Idle rock starts at 0° so first paint never snaps into motion */
+    @keyframes dmDrift{
+      0%,100%{transform:translate(-50%,-50%) rotate(0deg);}
+      25%{transform:translate(-50%,-50%) rotate(3.4deg);}
+      75%{transform:translate(-50%,-50%) rotate(-3.4deg);}
+    }
+    /* Power-up: relative sway on drum children; parent keeps dmDrift unbroken */
     @keyframes dmDrumPower{
-      0%{transform:translate(-50%,-50%) rotate(-4.5deg);}
-      42%{transform:translate(-50%,-50%) rotate(11deg);}
-      78%{transform:translate(-50%,-50%) rotate(-9deg);}
-      100%{transform:translate(-50%,-50%) rotate(-4.5deg);}
+      0%{transform:rotate(0deg);}
+      40%{transform:rotate(7deg);}
+      74%{transform:rotate(-5deg);}
+      100%{transform:rotate(0deg);}
     }
     /* Power-up aura: soft silhouette bloom that drifts behind the drum */
     @keyframes dmCenturionBreathe{
@@ -157,12 +162,16 @@ window.scrollTo(0, 0);
     }
     .dm-hero-mark .dm-centurion-glow--a{animation:dmCenturionBreathe 7s ease-in-out infinite;}
     .dm-hero-mark .dm-centurion-glow--b{animation:dmCenturionShift 10s ease-in-out infinite;filter:blur(14px);}
-    .dm-hero-mark.is-centurion-bounce{
-      animation:dmDrumPower 1.65s cubic-bezier(0.4,0,0.2,1) both !important;
+    /* Sway the silhouette only - never replace dmDrift on the mark */
+    .dm-hero-mark.is-centurion-bounce > svg:not(.dm-centurion-glow),
+    .dm-hero-mark.is-centurion-bounce > .dm-centurion-glow{
+      animation:dmDrumPower 2.2s cubic-bezier(0.33,0,0.2,1) both;
+      transform-origin:50% 50%;
       will-change:transform;
     }
     @media (prefers-reduced-motion:reduce){
-      .dm-hero-mark.is-centurion-bounce{animation:none !important;will-change:auto;}
+      .dm-hero-mark.is-centurion-bounce > svg:not(.dm-centurion-glow),
+      .dm-hero-mark.is-centurion-bounce > .dm-centurion-glow{animation:none !important;will-change:auto;}
       .dm-hero-mark .dm-centurion-glow{animation:none;opacity:0.22;transform:none;will-change:auto;}
     }
     /* Section dek under h2 - same quiet 15px one-liner proportion everywhere */
@@ -680,7 +689,7 @@ window.scrollTo(0, 0);
   <!-- ============ HERO ============ -->
   <section data-screen-label="Hero" style="position:relative;min-height:calc(100vh - 62px);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:clamp(64px,7vw,96px) clamp(20px,5vw,40px) clamp(72px,8vw,104px);overflow:hidden;">
     <div class="dm-matrix dm-matrix--hero" aria-hidden="true"></div>
-    <div class="dm-hero-mark" aria-hidden="true" data-anim="" style="position:absolute;top:50%;left:50%;width:min(720px,104%);height:min(720px,104%);transform:translate(-50%,-50%);color:rgba(31,45,61,0.13);pointer-events:none;animation:dmDrift 18s ease-in-out infinite;"><svg viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="30" stroke-linejoin="round" stroke-linecap="round" style="width:100%;height:100%;"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg></div>
+    <div class="dm-hero-mark" aria-hidden="true" data-anim="" style="position:absolute;top:50%;left:50%;width:min(720px,104%);height:min(720px,104%);transform:translate(-50%,-50%);color:rgba(31,45,61,0.13);pointer-events:none;animation:dmDrift 22s ease-in-out infinite;"><svg viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="30" stroke-linejoin="round" stroke-linecap="round" style="width:100%;height:100%;"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg></div>
     <div class="dm-hero-copy" style="position:relative;max-width:980px;margin:0 auto;text-align:center;">
       <div class="dm-hero-core">
         <h1 class="dm-hero-title" style="margin:0;width:100%;font-family:var(--font-display);font-weight:700;font-size:clamp(1.15rem,5.8vw,4.6rem);line-height:0.97;letter-spacing:-0.03em;white-space:nowrap;">The agentic execution platform<br><span style="color: var(--ink-steel);">for clinical trials.</span></h1>
@@ -1640,7 +1649,7 @@ window.scrollTo(0, 0);
   <!-- ============ CLOSE ============ -->
   <section id="close" data-screen-label="Close" style="position:relative;min-height:calc(100vh - 62px);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:clamp(48px,6vw,96px) clamp(20px,5vw,40px) clamp(28px,4vw,48px);overflow:hidden;">
     <div class="dm-matrix dm-matrix--close" aria-hidden="true"></div>
-    <div class="dm-hero-mark" aria-hidden="true" data-anim="" style="position:absolute;top:50%;left:50%;width:min(720px,104%);height:min(720px,104%);transform:translate(-50%,-50%);color:rgba(31,45,61,0.13);pointer-events:none;animation:dmDrift 18s ease-in-out infinite;">
+    <div class="dm-hero-mark" aria-hidden="true" data-anim="" style="position:absolute;top:50%;left:50%;width:min(720px,104%);height:min(720px,104%);transform:translate(-50%,-50%);color:rgba(31,45,61,0.13);pointer-events:none;animation:dmDrift 22s ease-in-out infinite;">
       <svg viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="30" stroke-linejoin="round" stroke-linecap="round" style="width:100%;height:100%;"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg>
     </div>
     <div class="dm-scroll-target dm-hero-copy" style="position:relative;max-width:980px;margin:0 auto;text-align:center;">
