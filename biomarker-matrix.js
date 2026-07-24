@@ -230,18 +230,43 @@
     }
   }
 
+  // Sides ~15% preferred over center so rain clears the drum/headline more often.
+  var SIDE_BIAS = 0.15;
+
+  function sideWeight(col, nCols) {
+    if (nCols <= 1) return 1;
+    var mid = (nCols - 1) / 2;
+    var edge = Math.abs(col - mid) / mid; // 0 at center → 1 at edges
+    return 1 + SIDE_BIAS * edge;
+  }
+
   function freeCol(inst) {
-    if (!inst.streams.length) return (Math.random() * inst.nCols) | 0;
+    var n = inst.nCols;
+    if (!inst.streams.length) {
+      // Weighted pick: edges carry SIDE_BIAS more mass than center.
+      var total = 0;
+      var weights = new Array(n);
+      for (var c = 0; c < n; c++) {
+        weights[c] = sideWeight(c, n);
+        total += weights[c];
+      }
+      var r = Math.random() * total;
+      for (var i = 0; i < n; i++) {
+        r -= weights[i];
+        if (r <= 0) return i;
+      }
+      return n - 1;
+    }
     var bestCol = 0, bestDist = -1;
-    for (var c = 0; c < inst.nCols; c++) {
-      var occupied = false, minD = inst.nCols;
+    for (var c = 0; c < n; c++) {
+      var occupied = false, minD = n;
       for (var i = 0; i < inst.streams.length; i++) {
         var d = Math.abs(inst.streams[i].col - c);
         if (d === 0) { occupied = true; break; }
         if (d < minD) minD = d;
       }
       if (occupied) continue;
-      var score = minD + Math.random() * 0.5;
+      var score = (minD + Math.random() * 0.5) * sideWeight(c, n);
       if (score > bestDist) { bestDist = score; bestCol = c; }
     }
     return bestCol;
