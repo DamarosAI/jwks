@@ -137,28 +137,21 @@
     }
   }
 
-  // Soft CTA colonies that crawl the drum edge (cloned dashed strokes).
+  // Soft CTA aura behind the drum silhouette (cloned strokes, no dash crawl).
   function ensureDrumGlow(mark) {
     if (!mark || mark.querySelector(".dm-centurion-glow")) return;
     var svg = mark.querySelector("svg:not(.dm-centurion-glow)");
     if (!svg) return;
-    function makeGlow(mod, strokeW, dash) {
+    function makeGlow(mod, strokeW) {
       var g = svg.cloneNode(true);
       g.classList.add("dm-centurion-glow", mod);
       g.setAttribute("aria-hidden", "true");
       g.setAttribute("stroke-width", String(strokeW));
       g.style.color = "#3d72a8";
-      var paths = g.querySelectorAll("path");
-      for (var p = 0; p < paths.length; p++) {
-        // Normalize length so dash crawl stays even on both lobes.
-        paths[p].setAttribute("pathLength", "1000");
-        paths[p].setAttribute("stroke-dasharray", dash);
-      }
       return g;
     }
-    // Short lit segments + long gaps = quiet colonies migrating the rim.
-    mark.insertBefore(makeGlow("dm-centurion-glow--a", 32, "140 860"), svg);
-    mark.insertBefore(makeGlow("dm-centurion-glow--b", 36, "90 910"), svg);
+    mark.insertBefore(makeGlow("dm-centurion-glow--a", 42), svg);
+    mark.insertBefore(makeGlow("dm-centurion-glow--b", 56), svg);
     for (var i = 0; i < instances.length; i++) {
       if (instances[i].mark === mark) bindDrum(instances[i]);
     }
