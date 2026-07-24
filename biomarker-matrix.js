@@ -13,7 +13,7 @@
  * Glyph swaps are infrequent/time-based so fall stays smooth while scrolling.
  * A quiet CTA-blue session counter (bottom-left on hero + close) tallies
  * trails shattered this page load and resets on refresh. At 100, both drums
- * bounce once on the drift axis, keep a CTA glow, and the count disappears.
+ * power-up once on the drift axis, keep a shifting CTA aura, and the count disappears.
  */
 (function () {
   // Oncogenes, tumor-suppressor genes, fusions, mutations, clinical biomarkers.
