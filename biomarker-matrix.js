@@ -11,6 +11,8 @@
  * Hero and close share pass-through exit physics; drum or headline/CTA contact
  * fades the trail smoothly. Hover (desktop) or tap (mobile) still shatters.
  * Glyph swaps are infrequent/time-based so fall stays smooth while scrolling.
+ * A quiet CTA-blue session counter (bottom-left on hero + close) tallies
+ * trails shattered this page load and resets on refresh.
  */
 (function () {
   // Oncogenes, tumor-suppressor genes, fusions, mutations, clinical biomarkers.
@@ -105,9 +107,61 @@
   var coarse = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
   var instances = [];
   var raf = 0;
+  // Session shatter tally - resets on refresh; mirrored on hero + close HUDs.
+  var sessionBroken = 0;
+  var breakHuds = [];
+  var breakTickT = 0;
 
   function pick() { return MARKERS[(Math.random() * MARKERS.length) | 0]; }
   function now() { return (performance && performance.now) ? performance.now() : Date.now(); }
+
+  function renderBreakHuds() {
+    var n = String(sessionBroken);
+    for (var i = 0; i < breakHuds.length; i++) {
+      var hud = breakHuds[i];
+      if (!hud || !hud.isConnected) continue;
+      hud.setAttribute("data-n", n);
+      var num = hud.querySelector(".dm-matrix-breaks-n");
+      if (num) num.textContent = n;
+    }
+  }
+
+  function bumpBroken() {
+    sessionBroken += 1;
+    renderBreakHuds();
+    if (reduced) return;
+    clearTimeout(breakTickT);
+    for (var i = 0; i < breakHuds.length; i++) {
+      var hud = breakHuds[i];
+      if (!hud || !hud.isConnected) continue;
+      hud.classList.remove("is-tick");
+      void hud.offsetWidth;
+      hud.classList.add("is-tick");
+    }
+    breakTickT = setTimeout(function () {
+      for (var j = 0; j < breakHuds.length; j++) {
+        if (breakHuds[j]) breakHuds[j].classList.remove("is-tick");
+      }
+    }, 220);
+  }
+
+  function ensureBreakHud(section) {
+    if (!section || section.__dmBreakHud) {
+      if (section && section.__dmBreakHud && breakHuds.indexOf(section.__dmBreakHud) < 0) {
+        breakHuds.push(section.__dmBreakHud);
+      }
+      return section && section.__dmBreakHud;
+    }
+    var hud = document.createElement("div");
+    hud.className = "dm-matrix-breaks";
+    hud.setAttribute("aria-hidden", "true");
+    hud.setAttribute("data-n", "0");
+    hud.innerHTML = '<span>broken</span><span class="dm-matrix-breaks-n">0</span>';
+    section.appendChild(hud);
+    section.__dmBreakHud = hud;
+    breakHuds.push(hud);
+    return hud;
+  }
 
   // Hero + close: trails pass through the card floor.
   function exitPlan() {
@@ -125,7 +179,10 @@
   // Remove a trail; shatter=true triggers the pixel debris motif.
   function retire(inst, index, shatter) {
     var s = inst.streams[index];
-    if (shatter) makeDebris(inst, s);
+    if (shatter) {
+      makeDebris(inst, s);
+      bumpBroken();
+    }
     inst.streams.splice(index, 1);
     if (inst.armed) {
       spawn(inst);
@@ -340,6 +397,7 @@
       io: null
     };
     el.__dmMatrix = inst;
+    if (section) ensureBreakHud(section);
     resize(inst);
     bindDrum(inst);
     bindCopy(inst);
