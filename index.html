@@ -28,7 +28,7 @@
 <script src="./support.js" defer></script>
 <script src="./mail-cta.js?v=15" defer></script>
 <script src="./logo-marquee.js?v=1" defer></script>
-<script src="./biomarker-matrix.js?v=43" defer></script>
+<script src="./biomarker-matrix.js?v=44" defer></script>
 <script src="./hero-fit.js?v=3" defer></script>
 <script>
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
@@ -83,18 +83,26 @@ window.scrollTo(0, 0);
       78%{transform:translate(-50%,-50%) rotate(-9deg);}
       100%{transform:translate(-50%,-50%) rotate(-4.5deg);}
     }
-    /* Soft path-following aura: drifts along the drum edge (cheap transforms) */
+    /* Living edge aura: irregular perimeter drift + path crawl (cancer-colony quiet) */
     @keyframes dmCenturionBreathe{
-      0%,100%{opacity:0.12;transform:translate(-0.9%,0.5%) scale(1.006);}
-      50%{opacity:0.22;transform:translate(0.7%,-0.8%) scale(1.014);}
+      0%{opacity:0.1;transform:translate(-1.1%,0.4%) scale(1.006);}
+      18%{opacity:0.18;transform:translate(-0.2%,-1.2%) scale(1.012);}
+      36%{opacity:0.13;transform:translate(1.2%,-0.5%) scale(1.008);}
+      55%{opacity:0.22;transform:translate(0.9%,1.1%) scale(1.015);}
+      72%{opacity:0.14;transform:translate(-0.7%,0.9%) scale(1.009);}
+      88%{opacity:0.2;transform:translate(-1.3%,-0.3%) scale(1.013);}
+      100%{opacity:0.1;transform:translate(-1.1%,0.4%) scale(1.006);}
     }
     @keyframes dmCenturionShift{
-      0%{opacity:0.08;transform:translate(-1.4%,0.3%) scale(1.008);}
-      25%{opacity:0.18;transform:translate(0.4%,-1.5%) scale(1.016);}
-      50%{opacity:0.1;transform:translate(1.5%,0.2%) scale(1.01);}
-      75%{opacity:0.2;transform:translate(-0.3%,1.4%) scale(1.015);}
-      100%{opacity:0.08;transform:translate(-1.4%,0.3%) scale(1.008);}
+      0%{opacity:0.07;transform:translate(1.3%,-0.6%) scale(1.01);}
+      22%{opacity:0.16;transform:translate(0.5%,1.4%) scale(1.014);}
+      41%{opacity:0.1;transform:translate(-1.2%,0.8%) scale(1.008);}
+      63%{opacity:0.19;transform:translate(-0.4%,-1.3%) scale(1.016);}
+      81%{opacity:0.12;transform:translate(1.1%,0.2%) scale(1.01);}
+      100%{opacity:0.07;transform:translate(1.3%,-0.6%) scale(1.01);}
     }
+    @keyframes dmCenturionCrawlA{to{stroke-dashoffset:-1000;}}
+    @keyframes dmCenturionCrawlB{to{stroke-dashoffset:1000;}}
     @keyframes scrPulse{0%{opacity:0.3;transform:translate(-50%,-50%) scale(1);}70%{opacity:0;transform:translate(-50%,-50%) scale(2.5);}100%{opacity:0;}}
     @keyframes rpPulse{0%,100%{opacity:0.28;}45%{opacity:1;}}
     @keyframes dmPulse{0%,100%{opacity:0.55;transform:scale(1);}50%{opacity:1;transform:scale(1.03);}}
@@ -139,12 +147,12 @@ window.scrollTo(0, 0);
     .dm-matrix-breaks.is-tick{opacity:1;transition:opacity 80ms ease,visibility 80ms linear;}
     .dm-matrix-breaks.is-gone{opacity:0 !important;visibility:hidden !important;}
     @media (prefers-reduced-motion:reduce){.dm-matrix-breaks{transition:none;}}
-    /* 100 breaks: quiet CTA edge glow that wanders the drum path */
+    /* 100 breaks: quiet CTA colonies that migrate along the drum edge */
     .dm-hero-mark.is-centurion{isolation:isolate;}
     .dm-hero-mark.is-centurion > svg:not(.dm-centurion-glow){
       position:relative;
       z-index:1;
-      filter:drop-shadow(0 0 1px rgba(61,114,168,0.4)) drop-shadow(0 0 5px rgba(61,114,168,0.22));
+      filter:drop-shadow(0 0 1px rgba(61,114,168,0.38)) drop-shadow(0 0 5px rgba(61,114,168,0.2));
     }
     .dm-hero-mark .dm-centurion-glow{
       position:absolute;
@@ -154,19 +162,26 @@ window.scrollTo(0, 0);
       z-index:0;
       pointer-events:none;
       color:#3d72a8;
-      filter:blur(4px);
+      filter:blur(3.5px);
       transform-origin:50% 50%;
       will-change:transform,opacity;
     }
-    .dm-hero-mark .dm-centurion-glow--a{animation:dmCenturionBreathe 8.5s ease-in-out infinite;}
-    .dm-hero-mark .dm-centurion-glow--b{animation:dmCenturionShift 11s ease-in-out infinite;filter:blur(6px);}
+    .dm-hero-mark .dm-centurion-glow path{stroke-linecap:round;stroke-linejoin:round;}
+    .dm-hero-mark .dm-centurion-glow--a{animation:dmCenturionBreathe 9.5s ease-in-out infinite;}
+    .dm-hero-mark .dm-centurion-glow--a path{animation:dmCenturionCrawlA 16s linear infinite;}
+    .dm-hero-mark .dm-centurion-glow--a path:nth-child(2){animation-duration:21s;animation-delay:-7s;}
+    .dm-hero-mark .dm-centurion-glow--b{animation:dmCenturionShift 12.5s ease-in-out infinite;filter:blur(5.5px);}
+    .dm-hero-mark .dm-centurion-glow--b path{animation:dmCenturionCrawlB 22s linear infinite;}
+    .dm-hero-mark .dm-centurion-glow--b path:nth-child(2){animation-duration:18s;animation-delay:-11s;}
     .dm-hero-mark.is-centurion-bounce{
       animation:dmDrumPower 1.65s cubic-bezier(0.4,0,0.2,1) both !important;
       will-change:transform;
     }
     @media (prefers-reduced-motion:reduce){
       .dm-hero-mark.is-centurion-bounce{animation:none !important;will-change:auto;}
-      .dm-hero-mark .dm-centurion-glow{animation:none;opacity:0.16;transform:none;will-change:auto;}
+      .dm-hero-mark .dm-centurion-glow,
+      .dm-hero-mark .dm-centurion-glow path{animation:none;will-change:auto;}
+      .dm-hero-mark .dm-centurion-glow{opacity:0.14;transform:none;}
     }
     /* Section dek under h2 - same quiet 15px one-liner proportion everywhere */
     .dm-section-dek{margin:22px 0 0;font-size:15px;line-height:1.6;color:var(--ink-faint);max-width:42ch;}
