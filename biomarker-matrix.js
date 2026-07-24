@@ -11,6 +11,7 @@
  * Hero and close share pass-through exit physics; drum or headline/CTA contact
  * fades the trail smoothly. Hover (desktop) or tap (mobile) still shatters.
  * Glyph swaps are infrequent/time-based so fall stays smooth while scrolling.
+ * Trails dissolve softly around mid-card height on hero and close (no hard cut).
  * A quiet CTA-blue session counter (bottom-left on hero + close) tallies
  * trails shattered this page load and resets on refresh. At 100, both drums
  * power-up once on the drift axis, keep a shifting CTA aura, and the count disappears.
@@ -754,6 +755,18 @@
     return a * VIS;
   }
 
+  // Soft vertical dissolve around mid-card (no hard floor line).
+  function depthFade(y, h) {
+    if (h <= 0) return 1;
+    var t = y / h;
+    if (t <= 0.34) return 1;
+    if (t >= 0.64) return 0;
+    var u = (t - 0.34) / 0.3;
+    // Smoothstep: still readable near mid, gone in the lower third.
+    var s = u * u * (3 - 2 * u);
+    return 1 - s;
+  }
+
   function drawStream(ctx, inst, s, floorMul) {
     var pts = trailPoints(s.points, TRAIL, inst.rowH);
     var tNow = now();
@@ -771,7 +784,7 @@
     for (var i = 0; i < pts.length; i++) {
       var y = pts[i].y;
       if (y < -inst.rowH || y > inst.h + inst.rowH) continue;
-      var a = alphaFor(i, TRAIL) * mul;
+      var a = alphaFor(i, TRAIL) * mul * depthFade(y, inst.h);
       if (a < 0.01) continue;
       ctx.fillStyle = "rgba(" + BLUE + "," + a.toFixed(3) + ")";
       ctx.fillText(s.tokens[i], pts[i].x, y);
@@ -789,7 +802,8 @@
         d.splice(e, 1);
         continue;
       }
-      var a = p.life * 0.7 * VIS;
+      var a = p.life * 0.7 * VIS * depthFade(p.y, inst.h);
+      if (a < 0.01) continue;
       ctx.fillStyle = "rgba(" + BLUE + "," + a.toFixed(3) + ")";
       var sz = p.size * (0.35 + p.life * 0.65);
       ctx.fillRect(p.x - sz * 0.5, p.y - sz * 0.5, sz, sz);
