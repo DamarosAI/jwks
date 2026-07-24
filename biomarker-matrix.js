@@ -2,9 +2,10 @@
  * Matrix-style biomarker waterfall for hero / close.
  *
  * Trails of oncogenes / tumor-suppressor genes / biomarkers in CTA blue.
- * Trail count is calibrated so 7 looks right on a MacBook Air 15 (~1440×900
- * CSS), then scales with viewport area so larger monitors (e.g. 2160×1440)
- * never look sparse. Each trail holds a constant random speed within a 20%
+ * Trail count is calibrated so 5 looks right on a MacBook Air 15 (~1440×900
+ * CSS; ~33% lighter than the prior 7), then scales with viewport area so larger
+ * monitors (e.g. 2160×1440) keep the same relative density. Each trail holds a
+ * constant random speed within a 20%
  * slowest→fastest band; neighboring trails (nearest left/right) never match.
  * First paint seeds a full mid-fall field so load feels like joining a living
  * page. Close stays idle until it enters view, then boots the same way.
@@ -40,12 +41,12 @@
 
   var BLUE = "61,114,168"; // CTA blue #3d72a8
   var VIS = 1.13;
-  // Density lock: 7 trails on MacBook Air 15 logical CSS (~1440×900).
+  // Density lock: 5 trails on MacBook Air 15 logical CSS (~1440×900), ~33% lighter.
   var REF_W = 1440;
   var REF_H = 900;
-  var REF_STREAMS = 7;
-  var MIN_STREAMS = 4;
-  var MAX_STREAMS_HARD = 24;
+  var REF_STREAMS = 5;
+  var MIN_STREAMS = 3;
+  var MAX_STREAMS_HARD = 16;
   var TRAIL = 6;
   var SPEED_ROWS = 3.0;
   // Max ratio fastest/slowest − 1. Discrete steps make "same speed" meaningful.
