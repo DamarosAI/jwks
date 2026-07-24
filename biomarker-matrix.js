@@ -143,23 +143,26 @@
       var mark = marks[i];
       mark.classList.add("is-centurion");
       if (reduced) continue;
-      // Bounce the SVG only - parent keeps dmDrift so there is no axis jump.
+      // Power rotation on the same axis as dmDrift; hand off cleanly when done.
       (function (el) {
-        var svg = el.querySelector("svg");
+        var drift = "dmDrift 18s ease-in-out infinite";
         el.classList.add("is-centurion-bounce");
         var done = false;
         function finish() {
           if (done) return;
           done = true;
           el.classList.remove("is-centurion-bounce");
-          if (svg) svg.removeEventListener("animationend", onEnd);
+          el.style.removeProperty("animation");
+          // Restore inline drift (style attr still has it; clear override).
+          el.style.animation = drift;
+          el.removeEventListener("animationend", onEnd);
         }
         function onEnd(e) {
-          if (e.animationName && e.animationName !== "dmDrumBounce") return;
+          if (e.animationName && e.animationName !== "dmDrumPower") return;
           finish();
         }
-        if (svg) svg.addEventListener("animationend", onEnd);
-        setTimeout(finish, 2300);
+        el.addEventListener("animationend", onEnd);
+        setTimeout(finish, 3000);
       })(mark);
     }
   }

@@ -28,7 +28,7 @@
 <script src="./support.js" defer></script>
 <script src="./mail-cta.js?v=15" defer></script>
 <script src="./logo-marquee.js?v=1" defer></script>
-<script src="./biomarker-matrix.js?v=39" defer></script>
+<script src="./biomarker-matrix.js?v=40" defer></script>
 <script src="./hero-fit.js?v=3" defer></script>
 <script>
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
@@ -76,71 +76,35 @@ window.scrollTo(0, 0);
     a{color:inherit;text-decoration:none;}
     @keyframes sealIn{0%{opacity:0;transform:translateY(6px) scale(0.98);}100%{opacity:1;transform:none;}}
     @keyframes dmDrift{0%,100%{transform:translate(-50%,-50%) rotate(-4.5deg);}50%{transform:translate(-50%,-50%) rotate(4.5deg);}}
-    /* Centurion power-up: longer settle bounce on the SVG (parent keeps dmDrift). */
-    @keyframes dmDrumBounce{
-      0%{transform:rotate(0deg) scale(1);}
-      12%{transform:rotate(-14deg) scale(1.02);}
-      28%{transform:rotate(26deg) scale(1.07);}
-      48%{transform:rotate(-16deg) scale(1.05);}
-      68%{transform:rotate(10deg) scale(1.03);}
-      84%{transform:rotate(-4deg) scale(1.012);}
-      100%{transform:rotate(0deg) scale(1);}
+    /* Centurion power-up: same center axis as dmDrift, fluid back-and-forth, lands on drift start */
+    @keyframes dmDrumPower{
+      0%{transform:translate(-50%,-50%) rotate(-4.5deg);}
+      16%{transform:translate(-50%,-50%) rotate(15deg);}
+      34%{transform:translate(-50%,-50%) rotate(-19deg);}
+      52%{transform:translate(-50%,-50%) rotate(13deg);}
+      70%{transform:translate(-50%,-50%) rotate(-10deg);}
+      86%{transform:translate(-50%,-50%) rotate(5deg);}
+      100%{transform:translate(-50%,-50%) rotate(-4.5deg);}
     }
-    /* Soft organic CTA underglow - morphing lobes around the drum edges */
-    @keyframes dmCenturionAura{
-      0%,100%{
-        border-radius:46% 54% 50% 50% / 48% 46% 54% 52%;
-        transform:translate(-50%,-50%) translate(-3%,2%) scale(1);
-        opacity:0.42;
-      }
-      25%{
-        border-radius:58% 42% 55% 45% / 42% 58% 48% 52%;
-        transform:translate(-50%,-50%) translate(4%,-3%) scale(1.08);
-        opacity:0.58;
-      }
-      50%{
-        border-radius:44% 56% 48% 52% / 55% 45% 52% 48%;
-        transform:translate(-50%,-50%) translate(2%,5%) scale(0.96);
-        opacity:0.48;
-      }
-      75%{
-        border-radius:52% 48% 42% 58% / 48% 52% 45% 55%;
-        transform:translate(-50%,-50%) translate(-5%,-2%) scale(1.05);
-        opacity:0.62;
-      }
-    }
-    @keyframes dmCenturionAura2{
-      0%,100%{
-        border-radius:52% 48% 55% 45% / 50% 55% 45% 50%;
-        transform:translate(-50%,-50%) translate(4%,-2%) scale(1.02);
-        opacity:0.28;
-      }
-      40%{
-        border-radius:45% 55% 48% 52% / 58% 42% 55% 45%;
-        transform:translate(-50%,-50%) translate(-4%,4%) scale(1.1);
-        opacity:0.4;
-      }
-      70%{
-        border-radius:55% 45% 52% 48% / 45% 50% 55% 50%;
-        transform:translate(-50%,-50%) translate(3%,3%) scale(0.94);
-        opacity:0.32;
-      }
-    }
+    /* CTA underglow follows the drum stroke pixels (not a blob behind the type) */
     @keyframes dmCenturionEdge{
       0%,100%{
-        filter:drop-shadow(0 0 6px rgba(61,114,168,0.4))
-               drop-shadow(-10px 6px 18px rgba(61,114,168,0.32))
-               drop-shadow(12px -4px 22px rgba(61,114,168,0.28));
+        filter:drop-shadow(0 0 2px rgba(61,114,168,0.75))
+               drop-shadow(0 0 8px rgba(61,114,168,0.5))
+               drop-shadow(-6px 4px 14px rgba(61,114,168,0.38))
+               drop-shadow(7px -3px 12px rgba(61,114,168,0.32));
       }
-      35%{
-        filter:drop-shadow(0 0 10px rgba(61,114,168,0.5))
-               drop-shadow(14px 4px 26px rgba(61,114,168,0.38))
-               drop-shadow(-8px -10px 20px rgba(61,114,168,0.3));
+      30%{
+        filter:drop-shadow(0 0 3px rgba(61,114,168,0.8))
+               drop-shadow(0 0 11px rgba(61,114,168,0.55))
+               drop-shadow(9px 3px 16px rgba(61,114,168,0.42))
+               drop-shadow(-5px -7px 13px rgba(61,114,168,0.34));
       }
-      70%{
-        filter:drop-shadow(0 0 8px rgba(61,114,168,0.45))
-               drop-shadow(-12px -6px 24px rgba(61,114,168,0.34))
-               drop-shadow(8px 12px 18px rgba(61,114,168,0.28));
+      60%{
+        filter:drop-shadow(0 0 2px rgba(61,114,168,0.72))
+               drop-shadow(0 0 10px rgba(61,114,168,0.48))
+               drop-shadow(-8px -4px 15px rgba(61,114,168,0.4))
+               drop-shadow(6px 8px 12px rgba(61,114,168,0.3));
       }
     }
     @keyframes scrPulse{0%{opacity:0.3;transform:translate(-50%,-50%) scale(1);}70%{opacity:0;transform:translate(-50%,-50%) scale(2.5);}100%{opacity:0;}}
@@ -187,45 +151,19 @@ window.scrollTo(0, 0);
     .dm-matrix-breaks.is-tick{opacity:1;transition:opacity 80ms ease,visibility 80ms linear;}
     .dm-matrix-breaks.is-gone{opacity:0 !important;visibility:hidden !important;}
     @media (prefers-reduced-motion:reduce){.dm-matrix-breaks{transition:none;}}
-    /* 100 breaks: organic CTA underglow on both drums + SVG edge shimmer */
-    .dm-hero-mark.is-centurion{overflow:visible;}
-    .dm-hero-mark.is-centurion::before,
-    .dm-hero-mark.is-centurion::after{
-      content:"";
-      position:absolute;
-      left:50%;
-      top:50%;
-      width:78%;
-      height:78%;
-      pointer-events:none;
-      z-index:0;
-      background:radial-gradient(ellipse at 50% 50%,rgba(61,114,168,0.55) 0%,rgba(61,114,168,0.22) 42%,rgba(61,114,168,0) 72%);
-      filter:blur(28px);
-    }
-    .dm-hero-mark.is-centurion::before{
-      animation:dmCenturionAura 9.5s ease-in-out infinite;
-    }
-    .dm-hero-mark.is-centurion::after{
-      width:92%;
-      height:88%;
-      background:radial-gradient(ellipse at 40% 55%,rgba(61,114,168,0.4) 0%,rgba(61,114,168,0.14) 48%,rgba(61,114,168,0) 70%);
-      filter:blur(36px);
-      animation:dmCenturionAura2 12s ease-in-out infinite;
-    }
+    /* 100 breaks: CTA glow hugs the drum path only (drop-shadow on SVG strokes) */
     .dm-hero-mark.is-centurion > svg{
-      position:relative;
-      z-index:1;
-      transform-origin:50% 50%;
-      animation:dmCenturionEdge 8s ease-in-out infinite;
+      animation:dmCenturionEdge 10s ease-in-out infinite;
     }
-    .dm-hero-mark.is-centurion-bounce > svg{
-      animation:dmDrumBounce 2.05s cubic-bezier(0.22,1,0.36,1) both, dmCenturionEdge 8s ease-in-out infinite;
+    .dm-hero-mark.is-centurion-bounce{
+      animation:dmDrumPower 2.8s cubic-bezier(0.45,0.05,0.55,0.95) both !important;
     }
     @media (prefers-reduced-motion:reduce){
-      .dm-hero-mark.is-centurion::before,
-      .dm-hero-mark.is-centurion::after{animation:none;opacity:0.5;transform:translate(-50%,-50%);}
-      .dm-hero-mark.is-centurion > svg,
-      .dm-hero-mark.is-centurion-bounce > svg{animation:none;filter:drop-shadow(0 0 10px rgba(61,114,168,0.45)) drop-shadow(0 0 24px rgba(61,114,168,0.3));}
+      .dm-hero-mark.is-centurion-bounce{animation:none !important;}
+      .dm-hero-mark.is-centurion > svg{
+        animation:none;
+        filter:drop-shadow(0 0 3px rgba(61,114,168,0.75)) drop-shadow(0 0 12px rgba(61,114,168,0.45));
+      }
     }
     /* Section dek under h2 - same quiet 15px one-liner proportion everywhere */
     .dm-section-dek{margin:22px 0 0;font-size:15px;line-height:1.6;color:var(--ink-faint);max-width:42ch;}
