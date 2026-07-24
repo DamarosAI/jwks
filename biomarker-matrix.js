@@ -150,8 +150,8 @@
       g.style.color = "#3d72a8";
       return g;
     }
-    mark.insertBefore(makeGlow("dm-centurion-glow--a", 40), svg);
-    mark.insertBefore(makeGlow("dm-centurion-glow--b", 48), svg);
+    mark.insertBefore(makeGlow("dm-centurion-glow--a", 34), svg);
+    mark.insertBefore(makeGlow("dm-centurion-glow--b", 38), svg);
     for (var i = 0; i < instances.length; i++) {
       if (instances[i].mark === mark) bindDrum(instances[i]);
     }
