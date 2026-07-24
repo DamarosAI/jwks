@@ -117,11 +117,14 @@
 
   function renderBreakHuds() {
     var n = String(sessionBroken);
+    var on = sessionBroken > 0;
     for (var i = 0; i < breakHuds.length; i++) {
       var hud = breakHuds[i];
       if (!hud || !hud.isConnected) continue;
       hud.setAttribute("data-n", n);
       hud.textContent = n;
+      if (on) hud.classList.add("is-on");
+      else hud.classList.remove("is-on");
     }
   }
 

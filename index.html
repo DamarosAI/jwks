@@ -96,7 +96,8 @@ window.scrollTo(0, 0);
     /* Subtle biomarker matrix rain - CTA blue, cleared around drum + copy */
     .dm-matrix{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
     .dm-matrix-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:1;transform:translateZ(0);backface-visibility:hidden;contain:strict;}
-    /* Session shatter tally - CTA blue number, bottom-left on hero + close */
+    /* Session shatter tally - CTA blue number, bottom-left on hero + close.
+       Hidden until the first shatter this page load. */
     .dm-matrix-breaks{
       position:absolute;
       left:max(12px,env(safe-area-inset-left,0px) + 12px);
@@ -108,13 +109,15 @@ window.scrollTo(0, 0);
       font-weight:600;
       letter-spacing:0.06em;
       color:#3d72a8;
-      opacity:0.88;
+      opacity:0;
+      visibility:hidden;
       font-variant-numeric:tabular-nums;
-      transition:opacity 320ms ease;
+      transition:opacity 320ms ease,visibility 320ms linear;
       user-select:none;
       min-width:1.25ch;
     }
-    .dm-matrix-breaks.is-tick{opacity:1;transition:opacity 80ms ease;}
+    .dm-matrix-breaks.is-on{opacity:0.88;visibility:visible;}
+    .dm-matrix-breaks.is-tick{opacity:1;transition:opacity 80ms ease,visibility 80ms linear;}
     @media (prefers-reduced-motion:reduce){.dm-matrix-breaks{transition:none;}}
     /* Section dek under h2 - same quiet 15px one-liner proportion everywhere */
     .dm-section-dek{margin:22px 0 0;font-size:15px;line-height:1.6;color:var(--ink-faint);max-width:42ch;}
