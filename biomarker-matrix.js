@@ -121,8 +121,7 @@
       var hud = breakHuds[i];
       if (!hud || !hud.isConnected) continue;
       hud.setAttribute("data-n", n);
-      var num = hud.querySelector(".dm-matrix-breaks-n");
-      if (num) num.textContent = n;
+      hud.textContent = n;
     }
   }
 
@@ -156,7 +155,7 @@
     hud.className = "dm-matrix-breaks";
     hud.setAttribute("aria-hidden", "true");
     hud.setAttribute("data-n", "0");
-    hud.innerHTML = '<span>broken</span><span class="dm-matrix-breaks-n">0</span>';
+    hud.textContent = "0";
     section.appendChild(hud);
     section.__dmBreakHud = hud;
     breakHuds.push(hud);
