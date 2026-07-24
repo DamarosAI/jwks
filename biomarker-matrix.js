@@ -143,28 +143,23 @@
       var mark = marks[i];
       mark.classList.add("is-centurion");
       if (reduced) continue;
+      // Bounce the SVG only - parent keeps dmDrift so there is no axis jump.
       (function (el) {
-        var prev = el.getAttribute("style") || "";
-        var drift = "dmDrift 18s ease-in-out infinite";
-        // Prefer restoring the known drift; parse from inline if present.
-        var m = /animation\s*:\s*([^;]+)/i.exec(prev);
-        if (m) drift = m[1].trim();
+        var svg = el.querySelector("svg");
         el.classList.add("is-centurion-bounce");
-        el.style.setProperty("animation", "dmDrumBounce 720ms cubic-bezier(0.22, 1, 0.36, 1) both", "important");
         var done = false;
         function finish() {
           if (done) return;
           done = true;
           el.classList.remove("is-centurion-bounce");
-          el.style.setProperty("animation", drift);
-          el.removeEventListener("animationend", onEnd);
+          if (svg) svg.removeEventListener("animationend", onEnd);
         }
         function onEnd(e) {
           if (e.animationName && e.animationName !== "dmDrumBounce") return;
           finish();
         }
-        el.addEventListener("animationend", onEnd);
-        setTimeout(finish, 820);
+        if (svg) svg.addEventListener("animationend", onEnd);
+        setTimeout(finish, 2300);
       })(mark);
     }
   }
