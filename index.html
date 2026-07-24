@@ -28,7 +28,7 @@
 <script src="./support.js" defer></script>
 <script src="./mail-cta.js?v=15" defer></script>
 <script src="./logo-marquee.js?v=1" defer></script>
-<script src="./biomarker-matrix.js?v=37" defer></script>
+<script src="./biomarker-matrix.js?v=38" defer></script>
 <script src="./hero-fit.js?v=3" defer></script>
 <script>
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
@@ -76,6 +76,14 @@ window.scrollTo(0, 0);
     a{color:inherit;text-decoration:none;}
     @keyframes sealIn{0%{opacity:0;transform:translateY(6px) scale(0.98);}100%{opacity:1;transform:none;}}
     @keyframes dmDrift{0%,100%{transform:translate(-50%,-50%) rotate(-4.5deg);}50%{transform:translate(-50%,-50%) rotate(4.5deg);}}
+    /* Centurion: quick rotation bounce on the same center axis as dmDrift */
+    @keyframes dmDrumBounce{
+      0%{transform:translate(-50%,-50%) rotate(0deg) scale(1);}
+      30%{transform:translate(-50%,-50%) rotate(24deg) scale(1.045);}
+      58%{transform:translate(-50%,-50%) rotate(-12deg) scale(1.02);}
+      78%{transform:translate(-50%,-50%) rotate(5deg) scale(1.008);}
+      100%{transform:translate(-50%,-50%) rotate(0deg) scale(1);}
+    }
     @keyframes scrPulse{0%{opacity:0.3;transform:translate(-50%,-50%) scale(1);}70%{opacity:0;transform:translate(-50%,-50%) scale(2.5);}100%{opacity:0;}}
     @keyframes rpPulse{0%,100%{opacity:0.28;}45%{opacity:1;}}
     @keyframes dmPulse{0%,100%{opacity:0.55;transform:scale(1);}50%{opacity:1;transform:scale(1.03);}}
@@ -118,7 +126,15 @@ window.scrollTo(0, 0);
     }
     .dm-matrix-breaks.is-on{opacity:0.88;visibility:visible;}
     .dm-matrix-breaks.is-tick{opacity:1;transition:opacity 80ms ease,visibility 80ms linear;}
+    .dm-matrix-breaks.is-gone{opacity:0 !important;visibility:hidden !important;}
     @media (prefers-reduced-motion:reduce){.dm-matrix-breaks{transition:none;}}
+    /* 100 breaks: lasting CTA-edge glow on both drums */
+    .dm-hero-mark.is-centurion{
+      filter:drop-shadow(0 0 8px rgba(61,114,168,0.55)) drop-shadow(0 0 22px rgba(61,114,168,0.38)) drop-shadow(0 0 42px rgba(61,114,168,0.22));
+    }
+    @media (prefers-reduced-motion:reduce){
+      .dm-hero-mark.is-centurion-bounce{animation:none !important;}
+    }
     /* Section dek under h2 - same quiet 15px one-liner proportion everywhere */
     .dm-section-dek{margin:22px 0 0;font-size:15px;line-height:1.6;color:var(--ink-faint);max-width:42ch;}
     .dm-section-dek--center{margin-left:auto;margin-right:auto;text-align:center;white-space:nowrap;max-width:none;}

@@ -12,7 +12,8 @@
  * fades the trail smoothly. Hover (desktop) or tap (mobile) still shatters.
  * Glyph swaps are infrequent/time-based so fall stays smooth while scrolling.
  * A quiet CTA-blue session counter (bottom-left on hero + close) tallies
- * trails shattered this page load and resets on refresh.
+ * trails shattered this page load and resets on refresh. At 100, both drums
+ * bounce once on the drift axis, keep a CTA glow, and the count disappears.
  */
 (function () {
   // Oncogenes, tumor-suppressor genes, fusions, mutations, clinical biomarkers.
@@ -111,11 +112,68 @@
   var sessionBroken = 0;
   var breakHuds = [];
   var breakTickT = 0;
+  var celebrated = false;
+  var CENTURION_AT = 100;
 
   function pick() { return MARKERS[(Math.random() * MARKERS.length) | 0]; }
   function now() { return (performance && performance.now) ? performance.now() : Date.now(); }
 
+  function allDrumMarks() {
+    return document.querySelectorAll(
+      'section[data-screen-label="Hero"] .dm-hero-mark, section[data-screen-label="Close"] .dm-hero-mark, #close .dm-hero-mark'
+    );
+  }
+
+  function hideBreakHuds() {
+    for (var i = 0; i < breakHuds.length; i++) {
+      var hud = breakHuds[i];
+      if (!hud || !hud.isConnected) continue;
+      hud.classList.remove("is-on", "is-tick");
+      hud.classList.add("is-gone");
+    }
+  }
+
+  function celebrateCenturion() {
+    if (celebrated) return;
+    celebrated = true;
+    hideBreakHuds();
+
+    var marks = allDrumMarks();
+    for (var i = 0; i < marks.length; i++) {
+      var mark = marks[i];
+      mark.classList.add("is-centurion");
+      if (reduced) continue;
+      (function (el) {
+        var prev = el.getAttribute("style") || "";
+        var drift = "dmDrift 18s ease-in-out infinite";
+        // Prefer restoring the known drift; parse from inline if present.
+        var m = /animation\s*:\s*([^;]+)/i.exec(prev);
+        if (m) drift = m[1].trim();
+        el.classList.add("is-centurion-bounce");
+        el.style.setProperty("animation", "dmDrumBounce 720ms cubic-bezier(0.22, 1, 0.36, 1) both", "important");
+        var done = false;
+        function finish() {
+          if (done) return;
+          done = true;
+          el.classList.remove("is-centurion-bounce");
+          el.style.setProperty("animation", drift);
+          el.removeEventListener("animationend", onEnd);
+        }
+        function onEnd(e) {
+          if (e.animationName && e.animationName !== "dmDrumBounce") return;
+          finish();
+        }
+        el.addEventListener("animationend", onEnd);
+        setTimeout(finish, 820);
+      })(mark);
+    }
+  }
+
   function renderBreakHuds() {
+    if (celebrated) {
+      hideBreakHuds();
+      return;
+    }
     var n = String(sessionBroken);
     var on = sessionBroken > 0;
     for (var i = 0; i < breakHuds.length; i++) {
@@ -129,8 +187,13 @@
   }
 
   function bumpBroken() {
+    if (celebrated) return;
     sessionBroken += 1;
     renderBreakHuds();
+    if (sessionBroken >= CENTURION_AT) {
+      celebrateCenturion();
+      return;
+    }
     if (reduced) return;
     clearTimeout(breakTickT);
     for (var i = 0; i < breakHuds.length; i++) {
