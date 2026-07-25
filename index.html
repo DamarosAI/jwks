@@ -28,7 +28,7 @@
 <script src="./support.js" defer></script>
 <script src="./mail-cta.js?v=15" defer></script>
 <script src="./logo-marquee.js?v=1" defer></script>
-<script src="./biomarker-matrix.js?v=48" defer></script>
+<script src="./biomarker-matrix.js?v=49" defer></script>
 <script src="./hero-fit.js?v=3" defer></script>
 <script>
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
@@ -88,14 +88,14 @@ window.scrollTo(0, 0);
       74%{transform:rotate(-5deg);}
       100%{transform:rotate(0deg);}
     }
-    /* Power-up aura: soft silhouette bloom that drifts behind the drum */
+    /* Power-up aura: quiet silhouette whisper behind the drum */
     @keyframes dmCenturionBreathe{
-      0%,100%{opacity:0.28;transform:translate(-0.6%,0.3%) scale(1.02);}
-      50%{opacity:0.4;transform:translate(0.5%,-0.4%) scale(1.035);}
+      0%,100%{opacity:0.08;transform:translate(-0.4%,0.2%) scale(1.008);}
+      50%{opacity:0.14;transform:translate(0.35%,-0.25%) scale(1.014);}
     }
     @keyframes dmCenturionShift{
-      0%,100%{opacity:0.18;transform:translate(0.7%,-0.5%) scale(1.04);}
-      50%{opacity:0.3;transform:translate(-0.6%,0.6%) scale(1.055);}
+      0%,100%{opacity:0.05;transform:translate(0.45%,-0.3%) scale(1.012);}
+      50%{opacity:0.1;transform:translate(-0.4%,0.35%) scale(1.02);}
     }
     @keyframes scrPulse{0%{opacity:0.3;transform:translate(-50%,-50%) scale(1);}70%{opacity:0;transform:translate(-50%,-50%) scale(2.5);}100%{opacity:0;}}
     @keyframes rpPulse{0%,100%{opacity:0.28;}45%{opacity:1;}}
@@ -141,12 +141,12 @@ window.scrollTo(0, 0);
     .dm-matrix-breaks.is-tick{opacity:1;transition:opacity 80ms ease,visibility 80ms linear;}
     .dm-matrix-breaks.is-gone{opacity:0 !important;visibility:hidden !important;}
     @media (prefers-reduced-motion:reduce){.dm-matrix-breaks{transition:none;}}
-    /* 100 breaks: power-up sway + soft CTA aura behind the drum shape */
+    /* 100 breaks: power-up sway + barely-there CTA aura behind the drum */
     .dm-hero-mark.is-centurion{isolation:isolate;}
     .dm-hero-mark.is-centurion > svg:not(.dm-centurion-glow){
       position:relative;
       z-index:1;
-      filter:drop-shadow(0 0 2px rgba(61,114,168,0.5)) drop-shadow(0 0 8px rgba(61,114,168,0.28));
+      filter:drop-shadow(0 0 1px rgba(61,114,168,0.28)) drop-shadow(0 0 4px rgba(61,114,168,0.12));
     }
     .dm-hero-mark .dm-centurion-glow{
       position:absolute;
@@ -156,12 +156,12 @@ window.scrollTo(0, 0);
       z-index:0;
       pointer-events:none;
       color:#3d72a8;
-      filter:blur(8px);
+      filter:blur(5px);
       transform-origin:50% 50%;
       will-change:transform,opacity;
     }
-    .dm-hero-mark .dm-centurion-glow--a{animation:dmCenturionBreathe 7s ease-in-out infinite;}
-    .dm-hero-mark .dm-centurion-glow--b{animation:dmCenturionShift 10s ease-in-out infinite;filter:blur(14px);}
+    .dm-hero-mark .dm-centurion-glow--a{animation:dmCenturionBreathe 9s ease-in-out infinite;}
+    .dm-hero-mark .dm-centurion-glow--b{animation:dmCenturionShift 13s ease-in-out infinite;filter:blur(8px);}
     /* Sway the silhouette only - never replace dmDrift on the mark */
     .dm-hero-mark.is-centurion-bounce > svg:not(.dm-centurion-glow),
     .dm-hero-mark.is-centurion-bounce > .dm-centurion-glow{
@@ -172,7 +172,7 @@ window.scrollTo(0, 0);
     @media (prefers-reduced-motion:reduce){
       .dm-hero-mark.is-centurion-bounce > svg:not(.dm-centurion-glow),
       .dm-hero-mark.is-centurion-bounce > .dm-centurion-glow{animation:none !important;will-change:auto;}
-      .dm-hero-mark .dm-centurion-glow{animation:none;opacity:0.22;transform:none;will-change:auto;}
+      .dm-hero-mark .dm-centurion-glow{animation:none;opacity:0.08;transform:none;will-change:auto;}
     }
     /* Section dek under h2 - same quiet 15px one-liner proportion everywhere */
     .dm-section-dek{margin:22px 0 0;font-size:15px;line-height:1.6;color:var(--ink-faint);max-width:42ch;}
