@@ -233,10 +233,13 @@ overstating and now does not.
   KMS doc mention, no SSP, no boundary diagram, no authorization package. Its slot now carries a
   claim that is real and enforced — **no sponsor path to raw PHI, aggregate egress**. SAML is
   marked **optional** because it is off by default and returns 501 without the `[saml]` extra.
-- **The integration logo wall carries its own caveat.** Epic/Cerner is SMART on FHIR
-  **sandbox-validated with no production tenant**; CTMS/EDC connectors are per-site configuration.
-  A caption under the wall says exactly that and states that **no vendor partnership is implied**,
-  per the standing prohibition on "Epic-native", "Agent Factory integrated", or "Epic partnership".
+- **The integration logo wall stays uncaptioned, and the limit is verbal.** Epic/Cerner is SMART
+  on FHIR **sandbox-validated with no production tenant**; CTMS/EDC connectors are per-site
+  configuration. A caption stating this was shipped and then pulled: the wall claims compatibility,
+  not partnership, and a disclaimer under five logos reads as an admission of something nobody
+  asked about. The constraint still binds everywhere words are used — never "Epic-native", "Agent
+  Factory integrated", or "Epic partnership", and integration maturity is stated plainly on a call
+  and in any security or diligence packet.
 - **"Reconstructable eleven months later" was cut.** There is no retention or replay SLA in the
   repo and no long-horizon test. It now reads **"reconstructable from the record, not from
   memory"**, which is a property of the design rather than an unmeasured duration.
