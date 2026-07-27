@@ -1409,7 +1409,7 @@ window.scrollTo(0, 0);
       </div>
       <div class="dm-stat-grid" style="display:flex;flex-direction:column;gap:12px;">
         <div class="dm-card-lift" style="display:flex;align-items:center;padding:20px 24px;border-radius:14px;">
-          <div style="flex-shrink:0;width:118px;text-align:center;font-family:var(--font-display);font-size:clamp(2.4rem,3.2vw,3.1rem);font-weight:700;letter-spacing:-0.03em;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink-cold);">~5<span style="font-size:0.44em;color:var(--ink-steel);vertical-align:0.6em;font-weight:600;margin-left:1px;">×</span></div>
+          <div style="flex-shrink:0;width:118px;text-align:center;font-family:var(--font-display);font-size:clamp(2.4rem,3.2vw,3.1rem);font-weight:700;letter-spacing:-0.03em;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink-cold);">~5<span style="font-size:0.28em;color:var(--ink-steel);vertical-align:0.85em;font-weight:600;margin-left:2px;">×</span></div>
           <div style="width:1px;align-self:stretch;background:rgba(31,45,61,0.12);margin:1px 22px;"></div>
           <div style="min-width:0;">
             <p style="margin:0;font-size:13px;line-height:1.45;color:var(--ink-quiet);">higher trial enrollment at NCI-designated centers (21.6%) than at community programs (4.1%).</p>
@@ -1447,49 +1447,39 @@ window.scrollTo(0, 0);
 
   <!-- ============ TRIAL CAPABILITY · the line we hold ============ -->
   <section id="capability" data-screen-label="Trial capability" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
-    <div class="dm-scroll-target" style="max-width:920px;margin:0 auto;">
+    <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Trial capability</div>
       <h2 class="dm-section-title">Patients aren't scarce.<br><span class="dm-section-title__steel">Proof is.</span></h2>
       <p class="dm-section-dek">Trial-capable, then provable to a sponsor.</p>
-
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:clamp(36px,6vw,72px);margin-top:clamp(48px,7vw,72px);padding-top:clamp(36px,5vw,52px);border-top:1px solid rgba(31,45,61,0.08);">
-        <div>
-          <div style="font-family:var(--font-display);font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--state-pass);margin-bottom:22px;">What we do</div>
-          <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:18px;">
-            <li style="font-size:15px;line-height:1.45;color:var(--ink-quiet);padding-left:18px;border-left:2px solid color-mix(in srgb,var(--state-pass) 45%,transparent);">Does this subject provably meet this protocol?</li>
-            <li style="font-size:15px;line-height:1.45;color:var(--ink-quiet);padding-left:18px;border-left:2px solid color-mix(in srgb,var(--state-pass) 45%,transparent);">Every compiled criterion against site evidence</li>
-            <li style="font-size:15px;line-height:1.45;color:var(--ink-quiet);padding-left:18px;border-left:2px solid color-mix(in srgb,var(--state-pass) 45%,transparent);">Ambiguous ones routed, cited, and signed</li>
-            <li style="font-size:15px;line-height:1.45;color:var(--ink-quiet);padding-left:18px;border-left:2px solid color-mix(in srgb,var(--state-pass) 45%,transparent);">The whole chain reconstructable from the record</li>
-          </ul>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;margin-top:40px;">
+        <div class="dm-card-lift" style="padding:22px;border-radius:14px;">
+          <div style="font-family:var(--font-display);font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--state-pass);margin-bottom:16px;">What we do</div>
+          <div style="display:flex;flex-direction:column;gap:13px;">
+            <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:color-mix(in srgb,var(--state-pass) 13%,transparent);"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="var(--state-pass)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5 6.5 12 13 4.5"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-quiet);">Does this subject provably meet this protocol?</span></div>
+            <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:color-mix(in srgb,var(--state-pass) 13%,transparent);"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="var(--state-pass)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5 6.5 12 13 4.5"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-quiet);">Every compiled criterion evaluated against site evidence</span></div>
+            <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:color-mix(in srgb,var(--state-pass) 13%,transparent);"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="var(--state-pass)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5 6.5 12 13 4.5"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-quiet);">Ambiguous ones routed, cited, and signed by a human</span></div>
+            <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:color-mix(in srgb,var(--state-pass) 13%,transparent);"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="var(--state-pass)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5 6.5 12 13 4.5"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-quiet);">The whole chain reconstructable from the record, not from memory</span></div>
+          </div>
         </div>
-        <div>
-          <div style="font-family:var(--font-display);font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:22px;">What we don't do</div>
-          <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:18px;">
-            <li style="font-size:15px;line-height:1.45;color:var(--ink-faint);padding-left:18px;border-left:2px solid rgba(31,45,61,0.12);">Which trials fit this patient</li>
-            <li style="font-size:15px;line-height:1.45;color:var(--ink-faint);padding-left:18px;border-left:2px solid rgba(31,45,61,0.12);">Candidacy claims or eligible-patient counts</li>
-            <li style="font-size:15px;line-height:1.45;color:var(--ink-faint);padding-left:18px;border-left:2px solid rgba(31,45,61,0.12);">Accuracy percentages we can't reproduce</li>
-            <li style="font-size:15px;line-height:1.45;color:var(--ink-faint);padding-left:18px;border-left:2px solid rgba(31,45,61,0.12);">Any model casting a verdict on a subject</li>
-          </ul>
+        <div class="dm-card-lift" style="padding:22px;border-radius:14px;">
+          <div style="font-family:var(--font-display);font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:16px;">What we don't do</div>
+          <div style="display:flex;flex-direction:column;gap:13px;">
+            <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:rgba(31,45,61,0.06);"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="var(--ink-dim)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5 11 11M11 5 5 11"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-faint);">Which trials fit this patient</span></div>
+            <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:rgba(31,45,61,0.06);"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="var(--ink-dim)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5 11 11M11 5 5 11"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-faint);">Candidacy claims or eligible-patient counts</span></div>
+            <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:rgba(31,45,61,0.06);"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="var(--ink-dim)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5 11 11M11 5 5 11"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-faint);">Accuracy percentages we can't reproduce at your site</span></div>
+            <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:rgba(31,45,61,0.06);"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="var(--ink-dim)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5 11 11M11 5 5 11"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-faint);">Any model casting a verdict on a subject</span></div>
+          </div>
         </div>
       </div>
-
-      <div style="margin-top:clamp(52px,8vw,80px);max-width:58ch;">
-        <p style="margin:0;font-size:clamp(16px,1.7vw,18px);line-height:1.55;letter-spacing:-0.01em;color:var(--ink-cold);">A signed record of a probabilistic decision is not proof.</p>
-        <p style="margin:16px 0 0;font-size:15px;line-height:1.6;color:var(--ink-quiet);">Given the same clinical triage prompt ten times, a leading commercial LLM repeated itself only <span style="color:var(--ink-steel);font-weight:600;">49.3%</span> of the time.</p>
-        <p style="margin:16px 0 0;font-size:15px;line-height:1.6;color:var(--ink-quiet);">Replay is reproducible by construction: <span style="color:var(--ink-steel);font-weight:600;">same protocol, same evidence, same as-of, same verdict, every run.</span></p>
-        <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-dim);margin-top:14px;">Franc et al. · JMIR 2024</div>
+      <div class="dm-card-lift dm-card-record" style="margin-top:14px;padding:20px 24px;border-radius:14px;">
+        <p style="margin:0;font-size:13.5px;line-height:1.55;color:var(--ink-cold);">A signed record of a probabilistic decision is not proof. Given the same clinical triage prompt ten times, a leading commercial LLM repeated itself only <span style="color:var(--ink-steel);font-weight:600;">49.3%</span> of the time. Replay is reproducible by construction: <span style="color:var(--ink-steel);font-weight:600;">same protocol, same evidence, same as-of, same verdict, every run.</span></p>
+        <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-top:10px;">Franc et al. · JMIR 2024</div>
       </div>
-
-      <p style="margin:clamp(36px,5vw,52px) 0 0;max-width:52ch;font-size:14px;line-height:1.6;color:var(--ink-dim);">Protocols absorb a median <span style="color:var(--ink-quiet);">3.3 amendments</span> each. Sponsors call <span style="color:var(--ink-quiet);">45%</span> of those avoidable. <span style="display:inline-block;font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;margin-top:6px;">Tufts CSDD · 2024</span></p>
-
-      <div style="margin-top:clamp(52px,8vw,80px);padding-top:clamp(32px,5vw,44px);border-top:1px solid rgba(31,45,61,0.08);">
-        <div style="font-family:var(--font-display);font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:28px;">Built to prove</div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:22px 40px;">
-          <div style="font-size:15px;line-height:1.4;color:var(--ink-quiet);">Protocols the site's evidence covers</div>
-          <div style="font-size:15px;line-height:1.4;color:var(--ink-quiet);">A record a sponsor can verify</div>
-          <div style="font-size:15px;line-height:1.4;color:var(--ink-quiet);">Runs reconstructable on demand</div>
-          <div style="font-size:15px;line-height:1.4;color:var(--ink-quiet);">Drift flagged while still fixable</div>
-        </div>
+      <p style="margin:18px 0 0;font-size:13.5px;line-height:1.55;color:var(--ink-dim);">Protocols now absorb a median <span style="color:var(--ink-quiet);font-weight:600;">3.3 amendments</span> each, up 60% since 2015; sponsors themselves call <span style="color:var(--ink-quiet);font-weight:600;">45%</span> of those avoidable. <span style="font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-left:6px;">Tufts CSDD · 2024</span></p>
+      <div style="font-family:var(--font-display);font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-dim);margin:26px 0 12px;">Built to prove</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:12px;">
+        <div class="dm-card-lift" style="display:flex;align-items:center;gap:11px;padding:15px 18px;border-radius:11px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--ink-steel);flex-shrink:0;"></span><span style="font-size:13px;color:var(--ink-quiet);">A record a sponsor can verify</span></div>
+        <div class="dm-card-lift" style="display:flex;align-items:center;gap:11px;padding:15px 18px;border-radius:11px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--ink-steel);flex-shrink:0;"></span><span style="font-size:13px;color:var(--ink-quiet);">Runs reconstructable on demand</span></div>
       </div>
     </div>
     <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToSpine }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
@@ -1696,46 +1686,18 @@ window.scrollTo(0, 0);
 
   <!-- ============ SECURITY ============ -->
   <section id="security" data-screen-label="Security posture" style="position:relative;padding:clamp(72px,10vw,120px) clamp(20px,5vw,40px);">
-    <div class="dm-scroll-target" style="max-width:920px;margin:0 auto;">
+    <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Security posture</div>
       <h2 class="dm-section-title">Every run is attributable.<br><span class="dm-section-title__steel">PHI stays off the model.</span></h2>
       <p class="dm-section-dek">Site-bounded controls, ready for audit.</p>
-
-      <div style="margin-top:clamp(48px,7vw,72px);padding:clamp(28px,4vw,40px) 0 clamp(28px,4vw,40px) clamp(18px,3vw,28px);border-left:3px solid var(--state-pass);max-width:58ch;">
-        <p style="margin:0;font-size:clamp(17px,1.8vw,20px);line-height:1.4;letter-spacing:-0.015em;color:var(--ink-cold);font-weight:600;">No LLM touches patient data.</p>
-        <p style="margin:14px 0 0;font-size:15px;line-height:1.6;color:var(--ink-quiet);">The architecture, not a setting. PHI stays at the site and never enters a model path.</p>
-        <p style="margin:18px 0 0;font-size:14px;line-height:1.55;color:var(--ink-dim);">Only a third of published LLM-vs-human clinical comparisons favor the model; most rest on non-real data.</p>
-        <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-dim);margin-top:12px;">Chen, Oermann et al. · Nature Medicine 2026</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:12px;margin-top:34px;">
+        <div class="dm-card-lift" style="grid-column:1 / -1;display:flex;align-items:flex-start;gap:13px;padding:19px 22px;border-radius:12px;border-color:color-mix(in srgb,var(--state-pass) 30%,transparent) !important;background:linear-gradient(180deg,color-mix(in srgb,var(--state-pass) 7%,#ffffff) 0%,rgba(250,252,254,0.9) 100%) !important;"><span style="width:8px;height:8px;border-radius:50%;background:var(--state-pass);flex-shrink:0;margin-top:6px;"></span><span style="font-size:14.5px;line-height:1.45;color:var(--ink-quiet);"><strong style="color:var(--ink-cold);font-weight:700;">No LLM touches patient data.</strong> The architecture, not a setting. PHI is bounded at the site and never enters a model path. Only a third of published LLM-vs-human clinical comparisons favor the model; most rest on non-real data. <span style="display:block;font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-top:8px;">Chen, Oermann et al. · Nature Medicine 2026</span></span></div>
+        <div class="dm-card-lift" style="display:flex;align-items:center;gap:11px;padding:15px 18px;border-radius:11px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--ink-steel);flex-shrink:0;"></span><span style="font-size:13px;color:var(--ink-quiet);"><strong style="color:var(--ink-cold);font-weight:600;">No sponsor path to raw PHI</strong> · aggregate egress</span></div>
+        <div class="dm-card-lift" style="display:flex;align-items:center;gap:11px;padding:15px 18px;border-radius:11px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--ink-steel);flex-shrink:0;"></span><span style="font-size:13px;color:var(--ink-quiet);"><strong style="color:var(--ink-cold);font-weight:600;">Replayable proof</strong> · signed &amp; hash-verified</span></div>
+        <div class="dm-card-lift" style="display:flex;align-items:center;gap:11px;padding:15px 18px;border-radius:11px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--ink-steel);flex-shrink:0;"></span><span style="font-size:13px;color:var(--ink-quiet);"><strong style="color:var(--ink-cold);font-weight:600;">HIPAA-aligned by design</strong> · BAA at the covered entity</span></div>
+        <div class="dm-card-lift" style="display:flex;align-items:center;gap:11px;padding:15px 18px;border-radius:11px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--ink-steel);flex-shrink:0;"></span><span style="font-size:13px;color:var(--ink-quiet);"><strong style="color:var(--ink-cold);font-weight:600;">Institution-hosted</strong> or air-gapped &middot; managed option on request</span></div>
       </div>
-
-      <div style="margin-top:clamp(48px,7vw,72px);padding-top:clamp(32px,5vw,44px);border-top:1px solid rgba(31,45,61,0.08);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:clamp(28px,5vw,48px) clamp(32px,5vw,64px);">
-        <div>
-          <div style="font-family:var(--font-display);font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:16px;">Boundary</div>
-          <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:14px;font-size:15px;line-height:1.4;color:var(--ink-quiet);">
-            <li>No sponsor path to raw PHI</li>
-            <li>HIPAA-aligned · BAA at the covered entity</li>
-            <li>Institution-hosted or air-gapped · managed on request</li>
-          </ul>
-        </div>
-        <div>
-          <div style="font-family:var(--font-display);font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:16px;">Controls</div>
-          <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:14px;font-size:15px;line-height:1.4;color:var(--ink-quiet);">
-            <li>Audit-oriented · not SOC 2 certified</li>
-            <li>Encryption in transit and at rest</li>
-            <li>RBAC · tenant isolation · OIDC · SAML optional</li>
-          </ul>
-        </div>
-        <div>
-          <div style="font-family:var(--font-display);font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:16px;">Proof</div>
-          <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:14px;font-size:15px;line-height:1.4;color:var(--ink-quiet);">
-            <li>Replayable · signed and hash-verified</li>
-            <li>Every run attributable to an actor</li>
-            <li>Chain reconstructable on demand</li>
-          </ul>
-        </div>
-      </div>
-
-      <p class="dm-security-note" style="margin:clamp(40px,6vw,56px) 0 0;font-size:14px;line-height:1.55;color:var(--ink-dim);">We validate the execution chain. We do not claim clinical efficacy.</p>
+      <p class="dm-security-note" style="margin:26px 0 0;font-size:13.5px;line-height:1.55;color:var(--ink-dim);">We validate the execution chain. We do not claim clinical efficacy.</p>
     </div>
     <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToClose }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
   </section>
