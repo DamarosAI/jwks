@@ -187,3 +187,60 @@ conversations are the test. Revise this ADR from what comes back rather than def
    removing it was zero anyway.
 4. **That a community motion is reachable at all.** See the economics note above. Nothing on
    the site depends on this being true; the GTM decision does.
+
+## Claims conformance to the backend (2026-07-27)
+
+The site was audited claim-by-claim against the implementation in `c:\repos\damaros`. **The
+backend's own honesty docs are the authority, and they are stricter than the site was:**
+`damaros/docs/product/CLAIMS_BOUNDARY.md` (allowed wording per claim),
+`damaros/docs/product/CURRENT_STATE.md` (what works on real data today), and
+`damaros/docs/operations/KNOWN_LIMITATIONS.md`. When the site and the backend disagree about what
+the product does, the backend wins — the reverse of ADR-0001's "site is canon", which governs
+*positioning*, not *capability*.
+
+The core spine claims survived the audit intact: deterministic screening with no model verdict,
+the PHI/LLM boundary, the hash-chained audit record, byte-identical replay, human commit with a
+Part 11 signature manifestation, and four advisory agents. What follows is what the site was
+overstating and now does not.
+
+- **The demo is a walkthrough, not a live runtime.** The instrument badge read "Live · synthetic
+  FHIR" over a client-side scripted panel that makes no API call. It now reads **"Walkthrough ·
+  synthetic FHIR"** with a steel dot instead of a pulsing green one. Screening cadence is
+  **as-of the latest ingest**, never live, real-time, or continuous (`CLAIMS_BOUNDARY.md`
+  cross-cutting qualifiers).
+- **Sentinel is aggregate concept coverage, not a protocol marketplace.** Copy said it "surfaces
+  open protocols this site can actually run"; the service
+  (`damaros/services/sentinel/sentinel_service.py`) computes PHI-free evidence-concept coverage
+  against active-trial demand, k-anonymized at k=5, with `eligible` / `match score` /
+  `enrollment lift` structurally unrepresentable — a payload containing them fails closed. Copy
+  now reads **"surfaces open protocols the site's evidence already covers"**, and the demo panel's
+  "Eligibility concepts covered" is now **"Evidence concepts covered"** (the old label would have
+  tripped the backend's own forbidden-substring guard).
+- **"Every criterion" became "every compiled criterion".** Criteria the compiler cannot re-derive
+  from the protocol's own words stay `review_only` and never compile (ADR 0157); unevidenced
+  criteria route to REVIEW with a canonical `ReviewCause`. The site claimed universal evaluation.
+- **Determinism carries its qualifier.** The determinism line now reads *"same protocol, same
+  evidence, same as-of, same verdict, every run."* Replay determinism requires a pinned
+  `evaluation_as_of`; without it a run does not replay.
+- **Ed25519 signs the export, not every row.** The audit chain is SHA-256 hash-linked; the
+  offline Ed25519 signature is over the export hash. Spine card 05 now reads **"hash-verified
+  chain · Ed25519 on export"**, Luna's panel says events are **immutable and hash-chained**
+  rather than "signed", and the Resolve commit shows a **Part 11 manifestation** because that is
+  what `human_commit_service.py` actually writes.
+- **Compliance chips stopped implying certification.** "SOC 2-aligned" is now **"audit-oriented
+  controls · not SOC 2 certified"**; "HIPAA-ready" is now **"HIPAA-aligned by design · BAA at the
+  covered entity"**. The **FedRAMP-oriented** chip was deleted outright: it was supported by one
+  KMS doc mention, no SSP, no boundary diagram, no authorization package. Its slot now carries a
+  claim that is real and enforced — **no sponsor path to raw PHI, aggregate egress**. SAML is
+  marked **optional** because it is off by default and returns 501 without the `[saml]` extra.
+- **The integration logo wall carries its own caveat.** Epic/Cerner is SMART on FHIR
+  **sandbox-validated with no production tenant**; CTMS/EDC connectors are per-site configuration.
+  A caption under the wall says exactly that and states that **no vendor partnership is implied**,
+  per the standing prohibition on "Epic-native", "Agent Factory integrated", or "Epic partnership".
+- **"Reconstructable eleven months later" was cut.** There is no retention or replay SLA in the
+  repo and no long-horizon test. It now reads **"reconstructable from the record, not from
+  memory"**, which is a property of the design rather than an unmeasured duration.
+
+**Standing rule:** before shipping copy that describes what the product does, read
+`CLAIMS_BOUNDARY.md` in the backend repo. Numbers, certifications, integration maturity, and
+"live" are the four places this site drifts, and none of them are caught by the banned-phrase lint.
