@@ -101,14 +101,13 @@ Two consequences drove this ADR:
 
 - **Hero:** *"The execution platform that makes sites trial-capable, and provable."* (Was: "The
   agentic execution platform for clinical trials.")
-- **Integrations:** "Not a replacement." + dek *"Downstream of whatever narrows your funnel."*
+- **Integrations:** "Not a replacement. One layer for the stack." + dek *"Downstream of whatever narrows your funnel."*
 - **Problem, community stat:** the ~80% stat no longer sequences community as phase two
   ("where the same runtime expands after academic centers prove it"). It now reads: *"The
   patients are already there; the execution system a sponsor can verify is not."*
 - **Problem, NCI stat:** dropped "leaving most eligible patients unmatched" (matching language,
   and an implicit eligible-patient claim).
-- **`#capability` (new section):** *"Most clinics aren't short on patients. They're short on
-  proof they can run the protocol."* Dek: *"Trial-capable, then provable to a sponsor."* Two
+- **`#capability` (new section):** *"Patients aren't scarce. Proof is."* Dek: *"Trial-capable, then provable to a sponsor."* Two
   cards (the question we answer / the question we don't), the determinism line, and the four
   things Damaros is measured on: protocols surfaced the site can run, a record a sponsor
   accepted, runs reconstructable on demand, deviations caught before findings. The first two
