@@ -121,10 +121,9 @@ Two consequences drove this ADR:
   is *"accuracy percentages we can't reproduce at your site"* instead. Enrollment-lift claims
   remain banned in outreach; they are simply not advertised as a refusal.
 - **Agents:** Sentinel ("surfaces open protocols this site can actually run"), Luna
-  ("reconstructs any run from the chain"), Trident, Eye. Dek: *"Surface, prove, draft, flag -
-  never decide."*
-- **Replay:** *"The artifact a monitor asks for during a visit, and the one a sponsor wants
-  before selecting a site."*
+  ("reconstructs any run from the chain"), Trident, Eye. Dek: *"Surface, prove, draft, flag.
+  Never decide."*
+- **Replay:** *"The record a sponsor wants before selecting a site."*
 
 ## Consequences
 
