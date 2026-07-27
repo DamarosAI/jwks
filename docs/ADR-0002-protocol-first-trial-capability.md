@@ -104,11 +104,19 @@ Two consequences drove this ADR:
 - **Hero:** *"The execution platform that makes sites trial-capable, then provable."* (Was: "The
   agentic execution platform for clinical trials.")
 - **Integrations:** "Not a replacement. One layer for the stack." + dek *"Downstream of whatever narrows your funnel."*
-- **Problem, community stat:** the ~80% stat no longer sequences community as phase two
-  ("where the same runtime expands after academic centers prove it"). It now reads: *"The
-  patients are already there; the execution system a sponsor can verify is not."*
-- **Problem, NCI stat:** dropped "leaving most eligible patients unmatched" (matching language,
-  and an implicit eligible-patient claim).
+- **Problem stats (refreshed 2026-07-27, approach A):** four cards only, no new section.
+  (1) **~5×** NCI vs community enrollment (21.6% vs 4.1%), Unger et al. JCO 2024;
+  (2) **>50%** treated in community settings with 85%/78% physician/admin access difficulty,
+  McKesson Dec 2025 (replaces the older ~80% COA line);
+  (3) **70%** of US counties with zero active cancer trials, Kirkwood et al. JCO Oncol Pract 2024;
+  (4) **15.5%** CRC turnover FY2024 and $50–60K replace cost, ACRP 2025.
+  Cut from ship: disparity abstracts, Ni enrollment-throughput deltas, sponsor day-cost ROI,
+  and any secondary-cited number without a primary document.
+- **Capability support:** Franc et al. JMIR 2024 (49.3% LLM self-repeatability) lands inside the
+  determinism card; Tufts CSDD 2024 (3.3 amendments/protocol, 45% avoidable) sits as a single
+  supporting line before "Built to prove."
+- **Security support:** Chen, Oermann et al. Nature Medicine 2026 (only a third of LLM-vs-human
+  clinical comparisons favor the model) sits under the PHI invariant, not as a fifth compliance chip.
 - **`#capability` (new section):** *"Patients aren't scarce. Proof is."* Dek: *"Trial-capable, then provable to a sponsor."* Two
   cards (the question we answer / the question we don't), the determinism line, and four
   outcomes under the header **"Built to prove"**: protocols surfaced the site can run, a record a
