@@ -6,7 +6,7 @@ Status: Accepted. Revised 2026-07-04 (previously 2026-06-27; originally 2026-06-
 > site-first GTM below is unchanged; ADR-0002 fixes *what* the site sells to that buyer:
 > protocol-first screening rather than patient-first matching, and trial capability rather than
 > trial throughput. It also retires "explainable" and "transparent" from all copy. Two items
-> below are narrowed by it: the **canonical hero** is now *"The execution system that makes
+> below are narrowed by it: the **canonical hero** is now *"The execution platform that makes
 > sites trial-capable, and provable"*, and **decision 4 ("agentic" is canon)** is scoped to the
 > operations layer and product copy rather than the hero. The guardrails behind the word are
 > untouched. Read both.
@@ -103,7 +103,7 @@ against an internal spec, we invert it: the site is the spec.
 > The struck clauses are preserved as the historical record.)*
 
 Hero (canonical, damaros.ai): ~~**The agentic execution platform for clinical trials.**~~
-*(Superseded 2026-07-27 by ADR-0002: **The execution system that makes sites trial-capable, and
+*(Superseded 2026-07-27 by ADR-0002: **The execution platform that makes sites trial-capable, and
 provable.** Retained for history.)*
 Site-first in substance throughout: the live demo runs the spine at a site, "Damaros runs
 the site," "Run one protocol through Damaros."

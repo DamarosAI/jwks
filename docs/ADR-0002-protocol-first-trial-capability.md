@@ -99,7 +99,7 @@ Two consequences drove this ADR:
 
 ## What the site says now (shipped)
 
-- **Hero:** *"The execution system that makes sites trial-capable, and provable."* (Was: "The
+- **Hero:** *"The execution platform that makes sites trial-capable, and provable."* (Was: "The
   agentic execution platform for clinical trials.")
 - **Integrations:** "Not a replacement." + dek *"Downstream of whatever narrows your funnel."*
 - **Problem, community stat:** the ~80% stat no longer sequences community as phase two
