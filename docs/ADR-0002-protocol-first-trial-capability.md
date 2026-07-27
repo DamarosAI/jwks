@@ -80,12 +80,11 @@ Two consequences drove this ADR:
    any mode we eventually offer: PHI never leaves the site and never enters a model.
 
 10. **The hero carries the position, not section four.** A hero that reads *the agentic
-    execution platform for clinical trials* leaves trial capability to appear a third of the
-    way down the page, which means it does not lead. The hero is now **"The execution system
-    that makes sites trial-capable, then provable."** Capability first, proof second, no
-    comparison to anything. The connective is **"then"**, not "and": sequential is the claim we
-    can defend, simultaneous is not. Hero, meta description, and the `#capability` dek carry the
-    identical phrasing; one central claim gets one wording.
+    execution platform for clinical trials* (or the interim *trial-capable, then provable*
+    line) leaves the category claim buried or over-specific. The hero is now **"Clinical trial
+    infrastructure, provable by design."** Infrastructure names the category; provable by design
+    is the architectural claim. Hero and `og:description` carry this exact line. No remnant of
+    prior heroes in live meta or first-screen copy.
 
 11. **"Agentic" is scoped out of the hero, not out of the vocabulary.** ADR-0001 blessed
     "agentic" as canon when the reader was an academic center with an innovation budget. To a
@@ -101,8 +100,11 @@ Two consequences drove this ADR:
 
 ## What the site says now (shipped)
 
-- **Hero:** *"The execution platform that makes sites trial-capable, then provable."* (Was: "The
-  agentic execution platform for clinical trials.")
+- **Hero:** *"Clinical trial infrastructure, provable by design."* (Was: "The execution platform
+  that makes sites trial-capable, then provable." Before that: "The agentic execution platform
+  for clinical trials.") `og:description` matches. No live remnant of prior heroes.
+- **`#capability` dek:** *"Site infrastructure a sponsor can verify."* (No longer echoes the
+  retired hero connective.)
 - **Integrations:** "Not a replacement. One layer for the stack." + dek *"Downstream of whatever narrows your funnel."*
 - **Problem stats (refreshed 2026-07-27, approach A):** four cards only, no new section.
   (1) **~5×** NCI vs community enrollment (21.6% vs 4.1%), Unger et al. JCO 2024;
@@ -114,20 +116,13 @@ Two consequences drove this ADR:
   and any secondary-cited number without a primary document.
 - **Capability support:** Franc et al. JMIR 2024 (49.3% LLM self-repeatability) lands inside the
   determinism card; Tufts CSDD 2024 (3.3 amendments/protocol, 45% avoidable) sits as a single
-  supporting line before "Built to prove."
+  supporting line under it. The **"Built to prove"** chip row was removed — redundant with the
+  cards and the determinism line above it.
 - **Security support:** Chen, Oermann et al. Nature Medicine 2026 (only a third of LLM-vs-human
   clinical comparisons favor the model) sits under the PHI invariant, not as a fifth compliance chip.
-- **`#capability` (new section):** *"Patients aren't scarce. Proof is."* Dek: *"Trial-capable, then provable to a sponsor."* Two
-  cards (the question we answer / the question we don't), the determinism line, and four
-  outcomes under the header **"Built to prove"**: protocols surfaced the site can run, a record a
-  sponsor can verify, runs reconstructable on demand, drift flagged while it's still fixable.
-  The first two are selection outcomes for a site that does not run trials yet; adjudication
-  turnaround and monitor visit prep were cut from this list because they only mean something to a
-  site that already runs trials and gets monitored, which is not the reader this header
-  addresses. **The header is "built to prove", not "measured on", and the sponsor line reads
-  "can verify", not "accepted".** With no completed pilot, "a record a sponsor accepted" claims a
-  track record that does not exist; that is the same overreach class as an enrollment-lift number.
-  When a real sponsor interaction exists, the past tense can be earned back.
+- **`#capability` (new section):** *"Patients aren't scarce. Proof is."* Cards titled **"What we
+  do" / "What we don't do"** (not "the question we answer"). Determinism line intact. No
+  outcomes chip row.
 - **Security, the PHI invariant is not a feature bullet.** "No LLM touches patient data" spans the
   full row above the eight security chips, at larger type, with its own reasoning ("the
   architecture, not a setting"). Set at equal visual weight to "RBAC · tenant isolation · OIDC /
