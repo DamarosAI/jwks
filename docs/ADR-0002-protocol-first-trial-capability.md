@@ -82,8 +82,10 @@ Two consequences drove this ADR:
 10. **The hero carries the position, not section four.** A hero that reads *the agentic
     execution platform for clinical trials* leaves trial capability to appear a third of the
     way down the page, which means it does not lead. The hero is now **"The execution system
-    that makes sites trial-capable, and provable."** Capability first, proof second, no
-    comparison to anything.
+    that makes sites trial-capable, then provable."** Capability first, proof second, no
+    comparison to anything. The connective is **"then"**, not "and": sequential is the claim we
+    can defend, simultaneous is not. Hero, meta description, and the `#capability` dek carry the
+    identical phrasing; one central claim gets one wording.
 
 11. **"Agentic" is scoped out of the hero, not out of the vocabulary.** ADR-0001 blessed
     "agentic" as canon when the reader was an academic center with an innovation budget. To a
@@ -99,7 +101,7 @@ Two consequences drove this ADR:
 
 ## What the site says now (shipped)
 
-- **Hero:** *"The execution platform that makes sites trial-capable, and provable."* (Was: "The
+- **Hero:** *"The execution platform that makes sites trial-capable, then provable."* (Was: "The
   agentic execution platform for clinical trials.")
 - **Integrations:** "Not a replacement. One layer for the stack." + dek *"Downstream of whatever narrows your funnel."*
 - **Problem, community stat:** the ~80% stat no longer sequences community as phase two
@@ -108,12 +110,30 @@ Two consequences drove this ADR:
 - **Problem, NCI stat:** dropped "leaving most eligible patients unmatched" (matching language,
   and an implicit eligible-patient claim).
 - **`#capability` (new section):** *"Patients aren't scarce. Proof is."* Dek: *"Trial-capable, then provable to a sponsor."* Two
-  cards (the question we answer / the question we don't), the determinism line, and the four
-  things Damaros is measured on: protocols surfaced the site can run, a record a sponsor
-  accepted, runs reconstructable on demand, deviations caught before findings. The first two
-  are selection outcomes for a site that does not run trials yet; adjudication turnaround and
-  monitor visit prep were cut from this list because they only mean something to a site that
-  already runs trials and gets monitored, which is not the reader this header addresses.
+  cards (the question we answer / the question we don't), the determinism line, and four
+  outcomes under the header **"Built to prove"**: protocols surfaced the site can run, a record a
+  sponsor can verify, runs reconstructable on demand, drift flagged while it's still fixable.
+  The first two are selection outcomes for a site that does not run trials yet; adjudication
+  turnaround and monitor visit prep were cut from this list because they only mean something to a
+  site that already runs trials and gets monitored, which is not the reader this header
+  addresses. **The header is "built to prove", not "measured on", and the sponsor line reads
+  "can verify", not "accepted".** With no completed pilot, "a record a sponsor accepted" claims a
+  track record that does not exist; that is the same overreach class as an enrollment-lift number.
+  When a real sponsor interaction exists, the past tense can be earned back.
+- **Security, the PHI invariant is not a feature bullet.** "No LLM touches patient data" spans the
+  full row above the eight security chips, at larger type, with its own reasoning ("the
+  architecture, not a setting"). Set at equal visual weight to "RBAC · tenant isolation · OIDC /
+  SAML" it read as one checkbox among many; it is the load-bearing architectural claim of the
+  whole product and is ranked accordingly.
+- **"Before it hardens into a finding" is Eye's tagline, used once.** It lives on Eye's agent
+  card. The demo panel reads *"while a correction is still cheap"* and the capability metric reads
+  *"drift flagged while it's still fixable"*. One idea, three surfaces, three wordings, so no
+  surface reads as boilerplate.
+- **About page:** the founder line closes the gap between *a site's patients and a protocol it can
+  provably run* ("execution should never be the reason a trial stays out of reach"). The prior
+  wording, *"the distance between patient and trial"* / *"the right therapeutic option should be
+  within reach"*, was a patient-matching mission statement, which contradicted the concession on
+  the homepage. Banned-phrase linting cannot catch this class of drift; positioning review must.
 - **The concession card does not list enrollment lift.** Refusing to claim unvalidated numbers
   is integrity, but listing enrollment lift as something we don't do reads to a site director
   as "we don't affect the outcome you care about," which is not what we mean. The fourth item
