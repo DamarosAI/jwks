@@ -12,7 +12,11 @@ This project is the brand + product design system for **Damaros**. It exists so 
 
 **Damaros makes trial execution visible.** Today, clinical trials run through PDFs, spreadsheets, inboxes, EHR fragments, and delayed status reports. Damaros turns that chaos into a live execution field: protocols become operable, evidence becomes traceable, screening becomes deterministic, human judgment becomes accountable, and every decision can be replayed.
 
-Positioning line (canonical, per damaros.ai): *the agentic execution platform for clinical trials.* **AI-native where operations scale, deterministic where trust requires.** No model ever casts an eligibility verdict; PHI never enters an LLM path.
+Positioning line (canonical, per damaros.ai, 2026-07-27): *the execution system that makes sites trial-capable, and provable.* **AI-native where operations scale, deterministic where trust requires.** No model ever casts an eligibility verdict; PHI never enters an LLM path. (The prior hero, *the agentic execution platform for clinical trials*, is retired from the first screen per ADR-0002; see the note on "agentic" below.)
+
+**Protocol-first, not patient-first (2026-07-27).** Damaros answers *"does this subject provably meet this protocol, and can we defend that decision later?"* It does **not** answer *"which trials fit this patient?"* Patient-to-trial matching is conceded out loud in site copy, and Damaros is positioned as the execution and audit layer underneath whatever narrows the funnel, never an alternative to it. The lead value is **trial capability, not trial throughput**: a site becomes able to run a protocol and to prove it ran clean. Academic depth (monitoring exposure, protocol load) runs underneath that lead, not instead of it.
+
+Two scoping rules that go with it. **"Underneath" is integration language only** - it belongs next to Epic and Veeva, never in a hero, because underneath is a good place to sit in an integration diagram and a bad place to sit on a first screen. And **hosting posture is never claimed ahead of the artifacts**: copy reads "institution-hosted or air-gapped, managed option on request" until a managed tier has a SOC 2 report, a BAA, an incident response plan, and a subprocessor list behind it. Our own security copy says SOC 2-*aligned*; write to that, not past it.
 
 ### One surface - the product grammar
 
@@ -28,12 +32,14 @@ Node is the one operator surface (Console was retired as a surface; the site nev
 
 ### The four agents (operator-facing, per damaros.ai)
 
-**Four agents. Zero verdicts.** *Sentinel finds trials. Trident tunes protocols. Eye guards quality. Luna answers audits.* Each is a visible agent panel the operator works with inside Node - never a verdict-caster.
+**Four agents. Zero verdicts.** *Sentinel surfaces runnable protocols. Luna reconstructs any run. Trident tunes protocols. Eye guards quality.* Each is a visible agent panel the operator works with inside Node - never a verdict-caster.
 
-- **Sentinel** - *Opportunity radar.* Matches open protocols to the site's real capabilities. No patient data.
+Shipped order on damaros.ai is **Sentinel, Luna, Trident, Eye**: capability first (protocols the site did not know it could run), proof second (the record a sponsor reads during site selection). Keep that sequence in new copy.
+
+- **Sentinel** - *Opportunity radar.* Surfaces open protocols this site can actually run. Site capacity only, no patient data.
+- **Luna** - *Audit chain.* Reconstructs any run from the chain, every row cited. Read-only on the record; PHI provably never enters it.
 - **Trident** - *At protocol.* Compiles criteria into locked logic and drafts amendments. Never commits an amendment.
 - **Eye** - *Quality signals.* Flags drift and deviations early, site-scoped, so the team can act before they harden into findings. Watches process, not people.
-- **Luna** - *Audit chain.* Rebuilds any finding from the chain, every row cited. Read-only on the record; PHI provably never enters it.
 
 The hard guardrails are unchanged and orthogonal to the framing: no model casts an eligibility verdict, PHI never enters a model, screening is deterministic.
 
@@ -80,10 +86,12 @@ The voice is **declarative, mineral, and disciplined.** It sounds like an instru
 **Person**
 - Speaks about the system in third person ("Node admits site-approved evidence…") and to the operator in second person for actions ("Commit Resolution", "Open Signal"). Avoids "we/our" marketing-speak.
 
-**Words to USE:** the agentic execution platform · Luna-governed agents (stage · assemble · accelerate · draft, never decide) · deterministic patient-path screening · permissioned execution truth · replayable proof · evidence-bound · requires review · human committed · governed · PHI-free · as-of the latest evidence ingest.
-**Words to AVOID:** "AI found this patient" · "the model decides" · "the model determines eligibility" · real-time/live screening · "regulatory-grade / FDA-ready / HIPAA compliant" (full stop) · CTMS replacement · trial matching · dashboard. (Full quarantine list lives in the repo's `PRODUCT_LANGUAGE.md`.)
+**Words to USE:** the execution system that makes sites trial-capable · trial-capable · protocol-first screening · reproducible · reconstructable · Luna-governed agents (stage · assemble · accelerate · draft, never decide) · deterministic patient-path screening · permissioned execution truth · replayable proof · evidence-bound · requires review · human committed · governed · PHI-free · as-of the latest evidence ingest.
+**Words to AVOID:** "AI found this patient" · "the model decides" · "the model determines eligibility" · real-time/live screening · "regulatory-grade / FDA-ready / HIPAA compliant" (full stop) · CTMS replacement · trial matching · patient-to-trial matching · "AI trial matching" · "find eligible patients" · AI-powered · "explainable AI" · explainable · transparent · any accuracy percentage · enrollment lift · dashboard. (Full quarantine list lives in the repo's `PRODUCT_LANGUAGE.md`.)
 
-**On "agentic":** the canonical hero is *the agentic execution platform for clinical trials* (damaros.ai). "Agentic" names the operations layer: Luna-governed agents stage, assemble, accelerate, and draft. It never names the verdict. The hard line holds regardless of the word: no model casts an eligibility verdict, PHI never enters a model, screening is deterministic. Use "agentic" for the platform; never say a model found a patient or decided eligibility.
+**On "explainable" and "transparent":** both are retired. They describe a model apologizing for itself, and they concede that the decision was probabilistic. Damaros claims **reproducibility** and **reconstruction** instead: same protocol, same evidence, same verdict, and the whole chain rebuildable months later. A signed record of a probabilistic decision is not proof.
+
+**On "agentic":** the word is approved for the operations layer and product copy, and it **no longer leads the hero** (ADR-0002). It was blessed when the reader was an academic center with an innovation budget; to a twelve-provider practice it is the word that closes the tab. The canonical hero is *the execution system that makes sites trial-capable, and provable.* "Agentic" names the operations layer: Luna-governed agents stage, assemble, accelerate, and draft. It never names the verdict. The hard line holds regardless of the word: no model casts an eligibility verdict, PHI never enters a model, screening is deterministic. Use "agentic" for the platform; never say a model found a patient or decided eligibility.
 
 ---
 
