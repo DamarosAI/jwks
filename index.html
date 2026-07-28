@@ -648,6 +648,7 @@ window.scrollTo(0, 0);
       .dm-site #problem [style*="margin:1px 22px"]{margin:1px 12px !important;}
       .dm-site #problem .dm-stat-grid p{font-size:11px !important;line-height:1.32 !important;}
       .dm-site #problem .dm-stat-grid [style*="text-transform:uppercase"]{font-size:8px !important;margin-top:4px !important;}
+      .dm-site #capability .dm-capability-grid{grid-template-columns:1fr !important;}
       .dm-site footer{padding-left:16px !important;padding-right:16px !important;}
       .dm-site header nav a[href="about.html"]{display:inline-flex !important;padding:8px 10px !important;font-size:13px !important;}
     }
@@ -1452,7 +1453,7 @@ window.scrollTo(0, 0);
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Trial capability</div>
       <h2 class="dm-section-title">Patients aren't scarce.<br><span class="dm-section-title__steel">Proof is.</span></h2>
       <p class="dm-section-dek">Site infrastructure a sponsor can verify.</p>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;margin-top:40px;">
+      <div class="dm-capability-grid" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:40px;">
         <div class="dm-card-lift" style="padding:22px;border-radius:14px;">
           <div style="font-family:var(--font-display);font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--state-pass);margin-bottom:16px;">What we do</div>
           <div style="display:flex;flex-direction:column;gap:13px;">
@@ -1471,13 +1472,13 @@ window.scrollTo(0, 0);
             <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:rgba(31,45,61,0.06);"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="var(--ink-dim)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5 11 11M11 5 5 11"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-faint);">Any model casting a verdict on a subject</span></div>
           </div>
         </div>
-        <div class="dm-card-lift dm-card-record" style="padding:20px 24px;border-radius:14px;">
+        <div class="dm-card-lift dm-card-record" style="display:flex;flex-direction:column;padding:20px 24px;border-radius:14px;">
           <p style="margin:0;font-size:13.5px;line-height:1.55;color:var(--ink-cold);">A signed record of a probabilistic decision is not proof. Given the same clinical triage prompt ten times, a leading commercial LLM repeated itself only <span style="color:var(--ink-steel);font-weight:600;">49.3%</span> of the time. Replay is reproducible by construction: <span style="color:var(--ink-steel);font-weight:600;">same protocol, same evidence, same as-of, same verdict, every run.</span></p>
-          <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-top:10px;">Franc et al. · JMIR 2024</div>
+          <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-top:auto;padding-top:10px;">Franc et al. · JMIR 2024</div>
         </div>
-        <div class="dm-card-lift dm-card-record" style="padding:20px 24px;border-radius:14px;">
-          <p style="margin:0;font-size:13.5px;line-height:1.55;color:var(--ink-cold);">Protocols now absorb a median <span style="color:var(--ink-steel);font-weight:600;">3.3 amendments</span> each, up 60% since 2015; sponsors themselves call <span style="color:var(--ink-steel);font-weight:600;">45%</span> of those avoidable.</p>
-          <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-top:10px;">Tufts CSDD · 2024</div>
+        <div class="dm-card-lift dm-card-record" style="display:flex;flex-direction:column;padding:20px 24px;border-radius:14px;">
+          <p style="margin:0;font-size:13.5px;line-height:1.55;color:var(--ink-cold);">Protocols now absorb a median <span style="color:var(--ink-steel);font-weight:600;">3.3 amendments</span> each, up 60% since 2015; sponsors themselves call <span style="color:var(--ink-steel);font-weight:600;">45%</span> of those avoidable. Trident recompiles each version into locked logic: <span style="color:var(--ink-steel);font-weight:600;">re-screens run against the protocol that governs the site, not the one a coordinator remembers.</span></p>
+          <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-top:auto;padding-top:10px;">Tufts CSDD · 2024</div>
         </div>
       </div>
     </div>
