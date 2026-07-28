@@ -28,7 +28,7 @@
 </script>
 <script src="./support.js" defer></script>
 <script src="./mail-cta.js?v=15" defer></script>
-<script src="./logo-marquee.js?v=2" defer></script>
+<script src="./logo-marquee.js?v=3" defer></script>
 <script src="./biomarker-matrix.js?v=52" defer></script>
 <script src="./hero-fit.js?v=3" defer></script>
 <script src="./section-title-fit.js?v=1" defer></script>
@@ -651,7 +651,7 @@ window.scrollTo(0, 0);
     .dm-logo-tile img{display:block;max-width:100%;height:auto;margin:0 auto;}
     .dm-logo-tile:has(img:not([src])),
     .dm-logo-tile:has(img.dm-logo-broken){display:none !important;}
-    /* Always a horizontal marquee: ~4 tiles visible, soft fade at both edges. */
+    /* Always a horizontal marquee: ~4 tiles on laptop/desktop, soft edge fade. */
     .dm-site .dm-logowall{
       display:flex !important;
       flex-wrap:nowrap !important;
@@ -661,15 +661,17 @@ window.scrollTo(0, 0);
       width:100%;
       max-width:100%;
       overflow:hidden;
-      -webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
-      mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
+      container-type:inline-size;
+      container-name:dm-logowall;
+      -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 8%,#000 92%,transparent 100%);
+      mask-image:linear-gradient(90deg,transparent 0%,#000 8%,#000 92%,transparent 100%);
     }
     .dm-site .dm-logo-track{
       display:flex !important;
       flex-wrap:nowrap;
       width:max-content;
       will-change:transform;
-      animation:dmLogoScroll 40s linear infinite;
+      animation:dmLogoScroll 42s linear infinite;
     }
     .dm-site .dm-logo-set{
       display:flex !important;
@@ -683,16 +685,19 @@ window.scrollTo(0, 0);
     .dm-site .dm-logo-tile{
       flex:0 0 auto;
       box-sizing:border-box;
-      /* Target ~4 across the integrations column (max 1000px). */
+      /* Fallback then cqi (~4 across the real wall width). */
       width:clamp(148px,calc((min(1000px,100vw) - 96px) / 4),220px) !important;
-      height:clamp(62px,6.4vw,78px) !important;
+      height:clamp(64px,6.4vw,78px) !important;
       padding:0 clamp(12px,1.6vw,20px) !important;
       transition:width 260ms cubic-bezier(0.22,1,0.36,1),height 260ms cubic-bezier(0.22,1,0.36,1),padding 260ms cubic-bezier(0.22,1,0.36,1);
+    }
+    @supports (width:1cqi){
+      .dm-site .dm-logo-tile{width:clamp(148px,calc((100cqi - 42px) / 4),220px) !important;}
     }
     /* Match OpenAI/Claude visual weight inside the shared tile (works on marquee clones too). */
     .dm-site .dm-logo-tile img[src*="openai-logo"],
     .dm-site .dm-logo-tile img[src*="claude-logo"]{
-      max-height:clamp(30px,4vw,36px) !important;
+      max-height:clamp(28px,3.8vw,36px) !important;
       width:auto !important;
       max-width:92% !important;
       height:auto !important;
@@ -703,6 +708,45 @@ window.scrollTo(0, 0);
     .dm-site .dm-logo-tile:has(img[src*="claude-logo"]){
       padding-left:clamp(10px,1.3vw,14px) !important;
       padding-right:clamp(10px,1.3vw,14px) !important;
+    }
+    @media (max-width:900px){
+      .dm-site .dm-logowall{
+        -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 10%,#000 90%,transparent 100%);
+        mask-image:linear-gradient(90deg,transparent 0%,#000 10%,#000 90%,transparent 100%);
+      }
+      .dm-site .dm-logo-track{animation-duration:34s;}
+      .dm-site .dm-logo-set{gap:12px;padding-right:12px;}
+      .dm-site .dm-logo-tile{
+        width:clamp(136px,calc((100cqi - 36px) / 3.25),200px) !important;
+        height:clamp(60px,7vw,72px) !important;
+      }
+    }
+    @media (max-width:760px){
+      .dm-site .dm-logowall{
+        -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 12%,#000 88%,transparent 100%);
+        mask-image:linear-gradient(90deg,transparent 0%,#000 12%,#000 88%,transparent 100%);
+      }
+      .dm-site .dm-logo-track{animation-duration:28s;}
+      .dm-site .dm-logo-set{gap:10px;padding-right:10px;}
+      .dm-site .dm-logo-tile{
+        width:clamp(128px,calc((100cqi - 20px) / 2.35),180px) !important;
+        height:60px !important;
+        padding:0 12px !important;
+      }
+      .dm-site .dm-logo-tile img{max-height:34px;}
+      .dm-site .dm-logo-tile img[src*="openai-logo"],
+      .dm-site .dm-logo-tile img[src*="claude-logo"]{max-height:30px !important;}
+    }
+    @media (max-width:480px){
+      .dm-site .dm-logo-tile{
+        width:clamp(118px,calc((100cqi - 16px) / 2.15),160px) !important;
+        height:56px !important;
+        padding:0 10px !important;
+        border-radius:12px !important;
+      }
+      .dm-site .dm-logo-tile img{max-height:30px;}
+      .dm-site .dm-logo-tile img[src*="openai-logo"],
+      .dm-site .dm-logo-tile img[src*="claude-logo"]{max-height:28px !important;}
     }
     @media (prefers-reduced-motion:reduce){
       .dm-site .dm-logo-tile{transition:none !important;}
