@@ -532,6 +532,47 @@ window.scrollTo(0, 0);
         margin:0 !important;
         z-index:1;
       }
+
+      /* Phone + tablet: horizontal snap carousels for card rows */
+      .dm-site #spine .dm-spine-grid,
+      .dm-site #agents .dm-agents-grid,
+      .dm-site #capability .dm-capability-grid{
+        display:flex !important;
+        grid-template-columns:none !important;
+        overflow-x:auto;
+        scroll-snap-type:x mandatory;
+        gap:12px;
+        margin-top:24px;
+        scrollbar-width:none;
+        -ms-overflow-style:none;
+        padding-bottom:2px;
+        -webkit-overflow-scrolling:touch;
+      }
+      .dm-site #spine .dm-spine-grid::-webkit-scrollbar,
+      .dm-site #agents .dm-agents-grid::-webkit-scrollbar,
+      .dm-site #capability .dm-capability-grid::-webkit-scrollbar{display:none;}
+      .dm-site #spine .dm-spine-grid > div,
+      .dm-site #agents .dm-agents-grid > div{
+        flex:0 0 min(80%,300px);
+        scroll-snap-align:center;
+        min-height:0 !important;
+      }
+      .dm-site #capability .dm-capability-col{
+        flex:0 0 min(86%,340px);
+        scroll-snap-align:center;
+      }
+      .dm-site #spine .dm-spine-indicator,
+      .dm-site #agents .dm-spine-indicator,
+      .dm-site #capability .dm-spine-indicator{
+        display:block;
+        text-align:center;
+        margin-top:14px;
+        font-family:var(--font-display);
+        font-size:12px;
+        letter-spacing:0.08em;
+        color:var(--ink-dim);
+        font-variant-numeric:tabular-nums;
+      }
     }
 
     /* Short landscape phones - keep the same composition, compress spacing */
@@ -595,6 +636,18 @@ window.scrollTo(0, 0);
     .dm-logo-dupe{display:none !important;}
     .dm-input-cards{display:flex;flex-direction:column;gap:12px;}
     .dm-spine-indicator{display:none;}
+    .dm-capability-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:14px;
+      margin-top:40px;
+    }
+    .dm-capability-col{
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      min-width:0;
+    }
     .dm-cta-tap{display:none;}
     /* Shift by one logo-set width (set via --dm-logo-shift) for a seamless loop */
     @keyframes dmLogoScroll{from{transform:translateX(0);}to{transform:translateX(calc(-1 * var(--dm-logo-shift,50%)));}}
@@ -627,10 +680,6 @@ window.scrollTo(0, 0);
       .dm-site .dm-logo-dupe{display:flex !important;}
       .dm-site .dm-logo-tile{flex:0 0 auto;}
 
-      .dm-site #spine .dm-spine-grid,.dm-site #agents .dm-agents-grid{display:flex !important;grid-template-columns:none !important;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;margin-top:24px;scrollbar-width:none;-ms-overflow-style:none;padding-bottom:2px;-webkit-overflow-scrolling:touch;}
-      .dm-site #spine .dm-spine-grid::-webkit-scrollbar,.dm-site #agents .dm-agents-grid::-webkit-scrollbar{display:none;}
-      .dm-site #spine .dm-spine-grid > div,.dm-site #agents .dm-agents-grid > div{flex:0 0 min(80%,300px);scroll-snap-align:center;min-height:0 !important;}
-      .dm-site #spine .dm-spine-indicator,.dm-site #agents .dm-spine-indicator{display:block;text-align:center;margin-top:14px;font-family:var(--font-display);font-size:12px;letter-spacing:0.08em;color:var(--ink-dim);font-variant-numeric:tabular-nums;}
       .dm-site #node .dm-node-grid{grid-template-columns:1fr !important;}
 
       .dm-site #output .dm-output-grid{grid-template-columns:1fr !important;}
@@ -642,13 +691,15 @@ window.scrollTo(0, 0);
 
       .dm-site .dm-demo-caption{white-space:normal !important;font-size:clamp(12px,3.2vw,15px) !important;max-width:36ch !important;margin-left:auto !important;margin-right:auto !important;}
       .dm-site #security .dm-security-note{white-space:normal !important;font-size:clamp(11px,3vw,13.5px) !important;}
+      .dm-site #security .dm-security-chips{grid-template-columns:1fr !important;}
       .dm-site #problem .dm-stat-grid{gap:8px !important;}
       .dm-site #problem [style*="font-variant-numeric:tabular-nums"]{width:58px !important;font-size:clamp(1.35rem,6vw,1.8rem) !important;}
       .dm-site #problem [style*="padding:20px 24px"]{padding:10px 13px !important;}
       .dm-site #problem [style*="margin:1px 22px"]{margin:1px 12px !important;}
       .dm-site #problem .dm-stat-grid p{font-size:11px !important;line-height:1.32 !important;}
       .dm-site #problem .dm-stat-grid [style*="text-transform:uppercase"]{font-size:8px !important;margin-top:4px !important;}
-      .dm-site #capability .dm-capability-grid{grid-template-columns:1fr !important;}
+      .dm-site #capability .dm-capability-col .dm-card-lift{padding:18px 18px !important;}
+      .dm-site #capability .dm-card-record p{font-size:13px !important;line-height:1.5 !important;}
       .dm-site footer{padding-left:16px !important;padding-right:16px !important;}
       .dm-site header nav a[href="about.html"]{display:inline-flex !important;padding:8px 10px !important;font-size:13px !important;}
     }
@@ -680,7 +731,9 @@ window.scrollTo(0, 0);
         margin-top:20px !important;
       }
       .dm-site #output .dm-input-cards{grid-template-columns:1fr !important;}
-      .dm-site #spine .dm-spine-grid > div,.dm-site #agents .dm-agents-grid > div{flex-basis:88% !important;}
+      .dm-site #spine .dm-spine-grid > div,
+      .dm-site #agents .dm-agents-grid > div,
+      .dm-site #capability .dm-capability-col{flex-basis:88% !important;}
     }
 
     @media (prefers-reduced-motion:reduce){
@@ -1403,7 +1456,7 @@ window.scrollTo(0, 0);
 
   <!-- ============ PROBLEM ============ -->
   <section id="problem" data-screen-label="The execution gap" style="position:relative;padding:clamp(52px,6vw,84px) clamp(20px,5vw,40px);">
-    <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:clamp(32px,5vw,68px);align-items:center;">
+    <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));gap:clamp(32px,5vw,68px);align-items:center;">
       <div>
         <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The problem</div>
         <h2 class="dm-section-title">Care is everywhere.<br><span class="dm-section-title__steel">Clinical trials aren't.</span></h2>
@@ -1453,34 +1506,39 @@ window.scrollTo(0, 0);
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Trial capability</div>
       <h2 class="dm-section-title">Patients aren't scarce.<br><span class="dm-section-title__steel">Proof is.</span></h2>
       <p class="dm-section-dek">Site infrastructure a sponsor can verify.</p>
-      <div class="dm-capability-grid" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:40px;">
-        <div class="dm-card-lift" style="padding:22px;border-radius:14px;">
-          <div style="font-family:var(--font-display);font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--state-pass);margin-bottom:16px;">What we do</div>
-          <div style="display:flex;flex-direction:column;gap:13px;">
-            <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:color-mix(in srgb,var(--state-pass) 13%,transparent);"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="var(--state-pass)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5 6.5 12 13 4.5"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-quiet);">Does this subject provably meet this protocol?</span></div>
-            <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:color-mix(in srgb,var(--state-pass) 13%,transparent);"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="var(--state-pass)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5 6.5 12 13 4.5"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-quiet);">Every compiled criterion evaluated against site evidence</span></div>
-            <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:color-mix(in srgb,var(--state-pass) 13%,transparent);"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="var(--state-pass)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5 6.5 12 13 4.5"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-quiet);">Ambiguous ones routed, cited, and signed by a human</span></div>
-            <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:color-mix(in srgb,var(--state-pass) 13%,transparent);"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="var(--state-pass)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5 6.5 12 13 4.5"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-quiet);">The whole chain reconstructable from the record, not from memory</span></div>
+      <div id="capabilityCarousel" class="dm-capability-grid">
+        <div class="dm-capability-col">
+          <div class="dm-card-lift" style="padding:22px;border-radius:14px;">
+            <div style="font-family:var(--font-display);font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--state-pass);margin-bottom:16px;">What we do</div>
+            <div style="display:flex;flex-direction:column;gap:13px;">
+              <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:color-mix(in srgb,var(--state-pass) 13%,transparent);"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="var(--state-pass)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5 6.5 12 13 4.5"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-quiet);">Does this subject provably meet this protocol?</span></div>
+              <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:color-mix(in srgb,var(--state-pass) 13%,transparent);"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="var(--state-pass)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5 6.5 12 13 4.5"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-quiet);">Every compiled criterion evaluated against site evidence</span></div>
+              <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:color-mix(in srgb,var(--state-pass) 13%,transparent);"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="var(--state-pass)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5 6.5 12 13 4.5"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-quiet);">Ambiguous ones routed, cited, and signed by a human</span></div>
+              <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:color-mix(in srgb,var(--state-pass) 13%,transparent);"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="var(--state-pass)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5 6.5 12 13 4.5"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-quiet);">The whole chain reconstructable from the record, not from memory</span></div>
+            </div>
+          </div>
+          <div class="dm-card-lift dm-card-record" style="display:flex;flex-direction:column;flex:1;padding:20px 24px;border-radius:14px;">
+            <p style="margin:0;font-size:13.5px;line-height:1.55;color:var(--ink-cold);">A signed record of a probabilistic decision is not proof. Given the same clinical triage prompt ten times, a leading commercial LLM repeated itself only <span style="color:var(--ink-steel);font-weight:600;">49.3%</span> of the time. Replay is reproducible by construction: <span style="color:var(--ink-steel);font-weight:600;">same protocol, same evidence, same as-of, same verdict, every run.</span></p>
+            <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-top:auto;padding-top:10px;">Franc et al. · JMIR 2024</div>
           </div>
         </div>
-        <div class="dm-card-lift" style="padding:22px;border-radius:14px;">
-          <div style="font-family:var(--font-display);font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:16px;">What we don't do</div>
-          <div style="display:flex;flex-direction:column;gap:13px;">
-            <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:rgba(31,45,61,0.06);"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="var(--ink-dim)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5 11 11M11 5 5 11"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-faint);">Which trials fit this patient</span></div>
-            <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:rgba(31,45,61,0.06);"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="var(--ink-dim)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5 11 11M11 5 5 11"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-faint);">Candidacy claims or eligible-patient counts</span></div>
-            <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:rgba(31,45,61,0.06);"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="var(--ink-dim)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5 11 11M11 5 5 11"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-faint);">Accuracy percentages we can't reproduce at your site</span></div>
-            <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:rgba(31,45,61,0.06);"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="var(--ink-dim)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5 11 11M11 5 5 11"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-faint);">Any model casting a verdict on a subject</span></div>
+        <div class="dm-capability-col">
+          <div class="dm-card-lift" style="padding:22px;border-radius:14px;">
+            <div style="font-family:var(--font-display);font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:16px;">What we don't do</div>
+            <div style="display:flex;flex-direction:column;gap:13px;">
+              <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:rgba(31,45,61,0.06);"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="var(--ink-dim)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5 11 11M11 5 5 11"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-faint);">Which trials fit this patient</span></div>
+              <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:rgba(31,45,61,0.06);"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="var(--ink-dim)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5 11 11M11 5 5 11"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-faint);">Candidacy claims or eligible-patient counts</span></div>
+              <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:rgba(31,45,61,0.06);"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="var(--ink-dim)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5 11 11M11 5 5 11"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-faint);">Accuracy percentages we can't reproduce at your site</span></div>
+              <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:rgba(31,45,61,0.06);"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="var(--ink-dim)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5 11 11M11 5 5 11"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-faint);">Any model casting a verdict on a subject</span></div>
+            </div>
           </div>
-        </div>
-        <div class="dm-card-lift dm-card-record" style="display:flex;flex-direction:column;padding:20px 24px;border-radius:14px;">
-          <p style="margin:0;font-size:13.5px;line-height:1.55;color:var(--ink-cold);">A signed record of a probabilistic decision is not proof. Given the same clinical triage prompt ten times, a leading commercial LLM repeated itself only <span style="color:var(--ink-steel);font-weight:600;">49.3%</span> of the time. Replay is reproducible by construction: <span style="color:var(--ink-steel);font-weight:600;">same protocol, same evidence, same as-of, same verdict, every run.</span></p>
-          <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-top:auto;padding-top:10px;">Franc et al. · JMIR 2024</div>
-        </div>
-        <div class="dm-card-lift dm-card-record" style="display:flex;flex-direction:column;padding:20px 24px;border-radius:14px;">
-          <p style="margin:0;font-size:13.5px;line-height:1.55;color:var(--ink-cold);">Protocols now absorb a median <span style="color:var(--ink-steel);font-weight:600;">3.3 amendments</span> each, up 60% since 2015; sponsors themselves call <span style="color:var(--ink-steel);font-weight:600;">45%</span> of those avoidable. Trident recompiles each version into locked logic: <span style="color:var(--ink-steel);font-weight:600;">re-screens run against the protocol that governs the site, not the one a coordinator remembers.</span></p>
-          <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-top:auto;padding-top:10px;">Tufts CSDD · 2024</div>
+          <div class="dm-card-lift dm-card-record" style="display:flex;flex-direction:column;flex:1;padding:20px 24px;border-radius:14px;">
+            <p style="margin:0;font-size:13.5px;line-height:1.55;color:var(--ink-cold);">Protocols now absorb a median <span style="color:var(--ink-steel);font-weight:600;">3.3 amendments</span> each, up 60% since 2015; sponsors themselves call <span style="color:var(--ink-steel);font-weight:600;">45%</span> of those avoidable. Trident recompiles each version into locked logic: <span style="color:var(--ink-steel);font-weight:600;">re-screens run against the protocol that governs the site, not the one a coordinator remembers.</span></p>
+            <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-top:auto;padding-top:10px;">Tufts CSDD · 2024</div>
+          </div>
         </div>
       </div>
+      <div class="dm-spine-indicator" aria-hidden="true"><span id="capabilityIndex">1</span> / 2</div>
     </div>
     <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToSpine }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
   </section>
@@ -1690,7 +1748,7 @@ window.scrollTo(0, 0);
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Security posture</div>
       <h2 class="dm-section-title">Every run is attributable.<br><span class="dm-section-title__steel">PHI stays off the model.</span></h2>
       <p class="dm-section-dek">Site-bounded controls, ready for audit.</p>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:12px;margin-top:34px;">
+      <div class="dm-security-chips" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,248px),1fr));gap:12px;margin-top:34px;">
         <div class="dm-card-lift" style="grid-column:1 / -1;display:flex;align-items:flex-start;gap:13px;padding:19px 22px;border-radius:12px;border-color:color-mix(in srgb,var(--state-pass) 30%,transparent) !important;background:linear-gradient(180deg,color-mix(in srgb,var(--state-pass) 7%,#ffffff) 0%,rgba(250,252,254,0.9) 100%) !important;"><span style="width:8px;height:8px;border-radius:50%;background:var(--state-pass);flex-shrink:0;margin-top:6px;"></span><span style="font-size:14.5px;line-height:1.45;color:var(--ink-quiet);"><strong style="color:var(--ink-cold);font-weight:700;">No LLM touches patient data.</strong> The architecture, not a setting. PHI is bounded at the site and never enters a model path. Only a third of published LLM-vs-human clinical comparisons favor the model; most rest on non-real data. <span style="display:block;font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-top:8px;">Chen, Oermann et al. · Nature Medicine 2026</span></span></div>
         <div class="dm-card-lift" style="display:flex;align-items:center;gap:11px;padding:15px 18px;border-radius:11px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--ink-steel);flex-shrink:0;"></span><span style="font-size:13px;color:var(--ink-quiet);"><strong style="color:var(--ink-cold);font-weight:600;">No sponsor path to raw PHI</strong> · aggregate egress</span></div>
         <div class="dm-card-lift" style="display:flex;align-items:center;gap:11px;padding:15px 18px;border-radius:11px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--ink-steel);flex-shrink:0;"></span><span style="font-size:13px;color:var(--ink-quiet);"><strong style="color:var(--ink-cold);font-weight:600;">Replayable proof</strong> · signed &amp; hash-verified</span></div>
@@ -1809,6 +1867,7 @@ class Component extends DCLogic {
   initSpineCarousel = () => {
     this.initCarousel("spineCarousel", "spineIndex");
     this.initCarousel("agentsCarousel", "agentsIndex");
+    this.initCarousel("capabilityCarousel", "capabilityIndex");
   };
   initReveal = () => {
     const secs = document.querySelectorAll(".dm-site section[data-screen-label]");
