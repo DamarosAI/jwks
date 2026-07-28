@@ -29,12 +29,13 @@
     });
 
     var display = window.getComputedStyle(track).display;
-    if (display === "contents") {
+    if (display === "contents" || display === "none") {
       track.style.removeProperty("--dm-logo-shift");
       return;
     }
 
-    var minWidth = Math.max(wall.clientWidth * 2, 1);
+    // Keep enough clones that a 4-across desktop viewport never runs dry.
+    var minWidth = Math.max(wall.clientWidth * 3, 1);
     var guard = 0;
     while (track.scrollWidth < minWidth && guard < 10) {
       var clone = source.cloneNode(true);

@@ -28,7 +28,7 @@
 </script>
 <script src="./support.js" defer></script>
 <script src="./mail-cta.js?v=15" defer></script>
-<script src="./logo-marquee.js?v=1" defer></script>
+<script src="./logo-marquee.js?v=2" defer></script>
 <script src="./biomarker-matrix.js?v=52" defer></script>
 <script src="./hero-fit.js?v=3" defer></script>
 <script src="./section-title-fit.js?v=1" defer></script>
@@ -630,10 +630,7 @@ window.scrollTo(0, 0);
     .dm-site #node .dm-node-copy{grid-column:1;grid-row:2;}
     .dm-site #node .dm-node-grid{grid-column:2;grid-row:2;}
 
-    /* ---- integration logo carousel + input-card baseline ---- */
-    .dm-logo-track{display:contents;}
-    .dm-logo-set{display:contents;}
-    .dm-logo-dupe{display:none !important;}
+    /* ---- integration logo carousel (always on) + input-card baseline ---- */
     .dm-input-cards{display:flex;flex-direction:column;gap:12px;}
     .dm-spine-indicator{display:none;}
     .dm-capability-grid{
@@ -654,9 +651,44 @@ window.scrollTo(0, 0);
     .dm-logo-tile img{display:block;max-width:100%;height:auto;margin:0 auto;}
     .dm-logo-tile:has(img:not([src])),
     .dm-logo-tile:has(img.dm-logo-broken){display:none !important;}
-    /* Continuously scale logo tiles with the viewport + ease each change so
-       they glide instead of snapping at a breakpoint. */
-    .dm-site .dm-logo-tile{width:clamp(120px,13vw,170px) !important;height:clamp(58px,5.7vw,74px) !important;padding:0 clamp(12px,1.8vw,24px) !important;transition:width 260ms cubic-bezier(0.22,1,0.36,1),height 260ms cubic-bezier(0.22,1,0.36,1),padding 260ms cubic-bezier(0.22,1,0.36,1);}
+    /* Always a horizontal marquee: ~4 tiles visible, soft fade at both edges. */
+    .dm-site .dm-logowall{
+      display:flex !important;
+      flex-wrap:nowrap !important;
+      justify-content:flex-start !important;
+      align-items:center;
+      gap:0 !important;
+      width:100%;
+      max-width:100%;
+      overflow:hidden;
+      -webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
+      mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
+    }
+    .dm-site .dm-logo-track{
+      display:flex !important;
+      flex-wrap:nowrap;
+      width:max-content;
+      will-change:transform;
+      animation:dmLogoScroll 40s linear infinite;
+    }
+    .dm-site .dm-logo-set{
+      display:flex !important;
+      flex-wrap:nowrap;
+      align-items:center;
+      gap:14px;
+      padding-right:14px;
+      flex:0 0 auto;
+    }
+    .dm-site .dm-logo-dupe{display:flex !important;}
+    .dm-site .dm-logo-tile{
+      flex:0 0 auto;
+      box-sizing:border-box;
+      /* Target ~4 across the integrations column (max 1000px). */
+      width:clamp(148px,calc((min(1000px,100vw) - 96px) / 4),220px) !important;
+      height:clamp(62px,6.4vw,78px) !important;
+      padding:0 clamp(12px,1.6vw,20px) !important;
+      transition:width 260ms cubic-bezier(0.22,1,0.36,1),height 260ms cubic-bezier(0.22,1,0.36,1),padding 260ms cubic-bezier(0.22,1,0.36,1);
+    }
     /* Match OpenAI/Claude visual weight inside the shared tile (works on marquee clones too). */
     .dm-site .dm-logo-tile img[src*="openai-logo"],
     .dm-site .dm-logo-tile img[src*="claude-logo"]{
@@ -672,7 +704,10 @@ window.scrollTo(0, 0);
       padding-left:clamp(10px,1.3vw,14px) !important;
       padding-right:clamp(10px,1.3vw,14px) !important;
     }
-    @media (prefers-reduced-motion:reduce){.dm-site .dm-logo-tile{transition:none !important;}}
+    @media (prefers-reduced-motion:reduce){
+      .dm-site .dm-logo-tile{transition:none !important;}
+      .dm-site .dm-logo-track{animation:none !important;}
+    }
 
     /* ---- caption hint hidden + tap label where the demo autoplays ---- */
     @media (max-width:760px),(pointer:coarse){
@@ -688,12 +723,6 @@ window.scrollTo(0, 0);
       .dm-site header nav a:not([href^="mailto"]){padding:8px 10px !important;font-size:13px !important;}
       .dm-site header nav > div{margin:0 6px !important;}
       .dm-site header nav a[href^="mailto"]{height:34px !important;padding:0 14px !important;font-size:11px !important;}
-
-      .dm-site .dm-logowall{flex-wrap:nowrap;overflow:hidden;justify-content:flex-start;gap:0;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);}
-      .dm-site .dm-logo-track{display:flex !important;flex-wrap:nowrap;width:max-content;will-change:transform;animation:dmLogoScroll 28s linear infinite;}
-      .dm-site .dm-logo-set{display:flex !important;flex-wrap:nowrap;align-items:center;gap:14px;padding-right:14px;flex:0 0 auto;}
-      .dm-site .dm-logo-dupe{display:flex !important;}
-      .dm-site .dm-logo-tile{flex:0 0 auto;}
 
       .dm-site #node .dm-node-grid{grid-template-columns:1fr !important;}
 
@@ -1439,7 +1468,7 @@ window.scrollTo(0, 0);
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:14px;">Built for the systems sites already run</div>
       <h2 class="dm-section-title dm-section-title--center">Not a replacement.<br><span class="dm-section-title__steel">One layer for the stack.</span></h2>
       <p class="dm-section-dek dm-section-dek--center" style="margin:14px auto 34px;">Works with the stack the site already runs.</p>
-      <div class="dm-logowall" style="display:flex;flex-wrap:wrap;justify-content:center;gap:14px;">
+      <div class="dm-logowall" style="display:flex;flex-wrap:nowrap;justify-content:flex-start;gap:0;overflow:hidden;">
         <div class="dm-logo-track">
         <div class="dm-logo-set">
           <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/pasted-1782494614917-0.png" alt="Veeva" style="max-width:100%;max-height:30px;object-fit:contain;display:block;"></div>
