@@ -757,16 +757,30 @@ window.scrollTo(0, 0);
       .dm-site .dm-cta-tap{display:inline;}
     }
 
-    /* ---- demo transport bar (restart / play-pause / count) ---- */
+    /* ---- demo transport: seek / play-pause / skip + count ---- */
     .dm-site .dm-transport{
-      display:flex;align-items:center;justify-content:center;gap:10px;
-      max-width:920px;margin:14px auto 0;padding:8px 12px;
-      border-radius:12px;border:1px solid rgba(31,45,61,0.1);
-      background:linear-gradient(180deg,#ffffff,#f3f6f9);
-      box-shadow:0 1px 0 rgba(255,255,255,0.05) inset, 0 8px 24px rgba(20,40,70,0.05);
+      position:relative;display:flex;align-items:center;justify-content:center;
+      max-width:920px;margin:10px auto 0;padding:0;
+      background:transparent;border:none;box-shadow:none;
     }
-    @media (max-width:760px){
-      .dm-site .dm-transport{gap:8px;padding:8px 10px;}
+    .dm-site .dm-transport__controls{
+      display:inline-flex;align-items:center;justify-content:center;gap:2px;
+    }
+    .dm-site .dm-transport__btn{
+      display:inline-flex;align-items:center;justify-content:center;
+      width:28px;height:28px;padding:0;margin:0;
+      border:none;border-radius:6px;background:transparent;
+      color:var(--ink-quiet);cursor:pointer;
+      transition:color 140ms ease,background 140ms ease;
+    }
+    .dm-site .dm-transport__btn:hover{color:var(--ink-cold);background:rgba(31,45,61,0.05);}
+    .dm-site .dm-transport__btn:focus-visible{outline:2px solid rgba(61,114,168,0.4);outline-offset:1px;}
+    .dm-site .dm-transport__btn svg{display:block;width:14px;height:14px;pointer-events:none;}
+    .dm-site .dm-transport__count{
+      position:absolute;left:50%;margin-left:54px;
+      font-family:ui-monospace,Menlo,monospace;font-size:11px;font-weight:600;
+      color:var(--ink-dim);font-variant-numeric:tabular-nums;letter-spacing:0.02em;
+      white-space:nowrap;pointer-events:none;
     }
 
     /* ---- phone / small tablet ---- */
@@ -1510,14 +1524,18 @@ window.scrollTo(0, 0);
     </div>
 
     <div class="dm-transport" data-autoplay-ctl>
-      <button onClick="{{ auto.onRestart }}" data-dc-style="{{ auto.iconBtn }}" aria-label="Restart the run" type="button">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="5" width="3" height="14" rx="1"></rect><path d="M20 12 L9 5.5 L9 18.5 Z"></path></svg>
-      </button>
-      <button onClick="{{ auto.onToggle }}" data-dc-style="{{ auto.playBtn }}" aria-label="{{ auto.aria }}" type="button">
-        <sc-if value="{{ auto.playing }}"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="5" y="4" width="5" height="16" rx="1"></rect><rect x="14" y="4" width="5" height="16" rx="1"></rect></svg></sc-if>
-        <sc-if value="{{ auto.showPlay }}"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5 L19 12 L8 18.5 Z"></path></svg></sc-if>
-      </button>
-      <span data-dc-style="{{ auto.countStyle }}">{{ auto.count }}</span>
+      <div class="dm-transport__controls">
+        <button class="dm-transport__btn" onClick="{{ auto.onSeekStart }}" aria-label="Seek to start" type="button">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="5" width="2.5" height="14" rx="0.5"></rect><path d="M20 5.5 L9.5 12 L20 18.5 Z"></path></svg>
+        </button>
+        <button class="dm-transport__btn" onClick="{{ auto.onToggle }}" aria-label="{{ auto.aria }}" type="button">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="2.5" y="5" width="2.5" height="14" rx="0.5"></rect><rect x="6.5" y="5" width="2.5" height="14" rx="0.5"></rect><path d="M12.5 5.5 L21.5 12 L12.5 18.5 Z"></path></svg>
+        </button>
+        <button class="dm-transport__btn" onClick="{{ auto.onSeekEnd }}" aria-label="Skip to end" type="button">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 5.5 L14.5 12 L4 18.5 Z"></path><rect x="18.5" y="5" width="2.5" height="14" rx="0.5"></rect></svg>
+        </button>
+      </div>
+      <span class="dm-transport__count">{{ auto.count }}</span>
     </div>
     </div>
     <div class="dm-scroll-chev dm-demo-chev"><button onClick="{{ onMore }}" aria-label="Continue scrolling" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
@@ -2009,6 +2027,20 @@ class Component extends DCLogic {
     else if (p === "done") this.replayAuto();
     else this.resumeAuto();
   };
+  seekToStart = () => {
+    this.__autoRunning = false;
+    if (this.__autoT) { clearTimeout(this.__autoT); this.__autoT = null; }
+    this.__autoUserPaused = true;
+    this.__autoForce = false;
+    this.__agClear();
+    this.snStopScan();
+    this.resetDemo();
+  };
+  seekToEnd = () => {
+    this.pauseAuto(true);
+    this.__agClear();
+    this.scrollPostDemo();
+  };
 
   layoutNode = () => {
     const stage = document.getElementById("nodeStage");
@@ -2016,8 +2048,8 @@ class Component extends DCLogic {
     if (!stage || !wrap) return;
     const REFW = 1160, REFH = 740;
     const availW = stage.clientWidth;
-    // Reserve headroom for nav + caption + transport bar + keep-scrolling chevron on every laptop/desktop height
-    const chrome = 62 + 72 + 56 + 64 + 40;
+    // Reserve headroom for nav + caption + transport + keep-scrolling chevron on every laptop/desktop height
+    const chrome = 62 + 72 + 40 + 64 + 40;
     const availH = Math.max(260, window.innerHeight - chrome);
     let s = Math.min(availW / REFW, availH / REFH, 1);
     if (!isFinite(s) || s <= 0) s = 1;
@@ -2765,30 +2797,13 @@ class Component extends DCLogic {
         ? "That's the full run · press play below to watch it again."
         : "Click the pulsing box to walk through it, or press play below.";
     const pad2 = (n) => (n < 10 ? "0" : "") + n;
-    const iconBtn = {
-      display: "inline-flex", alignItems: "center", justifyContent: "center",
-      width: 34, height: 34, borderRadius: 9, flexShrink: 0, cursor: "pointer",
-      border: "1px solid rgba(31,45,61,0.12)", background: "#ffffff", color: "var(--ink-cold)",
-      transition: "all 140ms ease"
-    };
     const auto = {
       status: autoStatus,
-      playing: autoPlaying,
-      showPlay: !autoPlaying,
       aria: autoPlaying ? "Pause autoplay" : autoDone ? "Replay the run" : "Play autoplay",
       count: pad2(step + 1) + " / " + pad2(this.autoStages.length),
       onToggle: this.toggleAuto,
-      onRestart: this.replayAuto,
-      iconBtn: iconBtn,
-      playBtn: Object.assign({}, iconBtn, {
-        border: "1px solid " + (autoPlaying ? "color-mix(in srgb,#2f6193 40%,transparent)" : "rgba(31,45,61,0.12)"),
-        background: autoPlaying ? "color-mix(in srgb,#2f6193 10%,transparent)" : "#ffffff"
-      }),
-      countStyle: {
-        fontFamily: "ui-monospace,Menlo,monospace", fontSize: 11, fontWeight: 600,
-        color: "var(--ink-dim)", fontVariantNumeric: "tabular-nums", flexShrink: 0, letterSpacing: "0.02em",
-        marginLeft: 4
-      },
+      onSeekStart: this.seekToStart,
+      onSeekEnd: this.seekToEnd,
       dotStyle: autoPlaying
         ? { width: 6, height: 6, borderRadius: "50%", background: "#2e9e6b", animation: "dmPulse 1.6s ease-in-out infinite", flexShrink: 0 }
         : { width: 6, height: 6, borderRadius: "50%", background: "var(--ink-steel)", flexShrink: 0 }
