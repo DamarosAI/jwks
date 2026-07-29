@@ -12,9 +12,9 @@
 
   // Section titles sit in ~1080px content; ceilings stay below the hero.
   var CURVE = [
-    [320, 26],
-    [400, 30],
-    [640, 38],
+    [320, 24],
+    [400, 28],
+    [640, 36],
     [900, 46],
     [1280, 52],
     [1440, 56]

@@ -28,10 +28,10 @@
 </script>
 <script src="./support.js" defer></script>
 <script src="./mail-cta.js?v=15" defer></script>
-<script src="./logo-marquee.js?v=3" defer></script>
+<script src="./logo-marquee.js?v=4" defer></script>
 <script src="./biomarker-matrix.js?v=52" defer></script>
 <script src="./hero-fit.js?v=4" defer></script>
-<script src="./section-title-fit.js?v=1" defer></script>
+<script src="./section-title-fit.js?v=2" defer></script>
 <script>
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 window.scrollTo(0, 0);
@@ -178,6 +178,9 @@ window.scrollTo(0, 0);
     /* Section dek under h2 - same quiet 15px one-liner proportion everywhere */
     .dm-section-dek{margin:22px 0 0;font-size:15px;line-height:1.6;color:var(--ink-faint);max-width:42ch;}
     .dm-section-dek--center{margin-left:auto;margin-right:auto;text-align:center;white-space:nowrap;max-width:none;}
+    @media (max-width:760px){
+      .dm-section-dek--center{white-space:normal;max-width:34ch;}
+    }
     @media (max-width:420px){.dm-section-dek--center{white-space:normal;max-width:28ch;}}
     /* Drum clearance + soft mid-card dissolve (matches canvas depthFade) */
     .dm-matrix--hero,.dm-matrix--close{
@@ -714,36 +717,42 @@ window.scrollTo(0, 0);
       .dm-site .dm-logo-track{animation-duration:34s;}
       .dm-site .dm-logo-set{gap:12px;padding-right:12px;}
       .dm-site .dm-logo-tile{
-        width:clamp(136px,calc((100cqi - 36px) / 3.25),200px) !important;
-        height:clamp(60px,7vw,72px) !important;
+        width:clamp(120px,calc((100cqi - 36px) / 3.4),168px) !important;
+        height:clamp(52px,6.2vw,64px) !important;
       }
     }
     @media (max-width:760px){
       .dm-site .dm-logowall{
-        -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 12%,#000 88%,transparent 100%);
-        mask-image:linear-gradient(90deg,transparent 0%,#000 12%,#000 88%,transparent 100%);
+        -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 14%,#000 86%,transparent 100%);
+        mask-image:linear-gradient(90deg,transparent 0%,#000 14%,#000 86%,transparent 100%);
       }
-      .dm-site .dm-logo-track{animation-duration:28s;}
-      .dm-site .dm-logo-set{gap:10px;padding-right:10px;}
+      .dm-site .dm-logo-track{animation-duration:26s;}
+      .dm-site .dm-logo-set{gap:8px;padding-right:8px;}
       .dm-site .dm-logo-tile{
-        width:clamp(128px,calc((100cqi - 20px) / 2.35),180px) !important;
-        height:60px !important;
-        padding:0 12px !important;
+        width:clamp(96px,calc((100cqi - 16px) / 3.15),124px) !important;
+        height:44px !important;
+        padding:0 8px !important;
+        border-radius:10px !important;
       }
-      .dm-site .dm-logo-tile img{max-height:34px;}
+      .dm-site .dm-logo-tile img{max-height:22px !important;}
       .dm-site .dm-logo-tile img[src*="openai-logo"],
-      .dm-site .dm-logo-tile img[src*="claude-logo"]{max-height:30px !important;}
+      .dm-site .dm-logo-tile img[src*="claude-logo"]{max-height:20px !important;}
+      .dm-site .dm-logo-tile:has(img[src*="openai-logo"]),
+      .dm-site .dm-logo-tile:has(img[src*="claude-logo"]){
+        padding-left:7px !important;
+        padding-right:7px !important;
+      }
     }
     @media (max-width:480px){
       .dm-site .dm-logo-tile{
-        width:clamp(118px,calc((100cqi - 16px) / 2.15),160px) !important;
-        height:56px !important;
-        padding:0 10px !important;
-        border-radius:12px !important;
+        width:clamp(88px,calc((100cqi - 12px) / 3.05),112px) !important;
+        height:40px !important;
+        padding:0 7px !important;
+        border-radius:9px !important;
       }
-      .dm-site .dm-logo-tile img{max-height:30px;}
+      .dm-site .dm-logo-tile img{max-height:20px !important;}
       .dm-site .dm-logo-tile img[src*="openai-logo"],
-      .dm-site .dm-logo-tile img[src*="claude-logo"]{max-height:28px !important;}
+      .dm-site .dm-logo-tile img[src*="claude-logo"]{max-height:18px !important;}
     }
     @media (prefers-reduced-motion:reduce){
       .dm-site .dm-logo-tile{transition:none !important;}
@@ -792,6 +801,31 @@ window.scrollTo(0, 0);
       .dm-site header nav a:not([href^="mailto"]){padding:8px 10px !important;font-size:13px !important;}
       .dm-site header nav > div{margin:0 6px !important;}
       .dm-site header nav a[href^="mailto"]{height:34px !important;padding:0 14px !important;font-size:11px !important;}
+
+      .dm-site section[data-screen-label]:not([data-screen-label="Hero"]):not([data-screen-label="Close"]){
+        padding-top:clamp(44px,11vw,72px) !important;
+        padding-bottom:clamp(44px,11vw,72px) !important;
+        padding-left:max(16px,env(safe-area-inset-left,0px)) !important;
+        padding-right:max(16px,env(safe-area-inset-right,0px)) !important;
+      }
+      .dm-site .dm-section-title{
+        line-height:1.04 !important;
+        letter-spacing:-0.028em !important;
+      }
+      .dm-site .dm-section-dek{
+        margin-top:14px !important;
+        font-size:clamp(13px,3.5vw,14.5px) !important;
+        line-height:1.5 !important;
+        max-width:36ch !important;
+      }
+      .dm-site .dm-section-dek--center{
+        margin:12px auto 22px !important;
+      }
+      .dm-site #integrations{
+        padding-top:clamp(36px,9vw,52px) !important;
+        padding-bottom:clamp(36px,9vw,52px) !important;
+      }
+      .dm-site #integrations .dm-section-dek--center{margin-bottom:22px !important;}
 
       .dm-site #node .dm-node-grid{grid-template-columns:1fr !important;}
 
@@ -2132,7 +2166,7 @@ class Component extends DCLogic {
       this.__autoIntentTypes = ["pointerdown", "keydown", "wheel"];
       this.__autoIntentTypes.forEach((t) => el.addEventListener(t, this.__onUserIntent, true));
     }
-    this.__autoUserPaused = true;
+    this.__autoUserPaused = !this.isSmallViewport();
     this.__onVisibility = () => {
       if (document.hidden) {
         if (this.state.autoPhase === "playing") this.pauseAuto(false);
@@ -2141,22 +2175,27 @@ class Component extends DCLogic {
       }
     };
     document.addEventListener("visibilitychange", this.__onVisibility);
+    const tryStartAuto = () => {
+      if (this.prefersReducedMotion()) return;
+      if (this.__autoUserPaused || this.state.autoPhase === "done" || this.state.autoPhase === "playing") return;
+      if (!this.__autoInView) return;
+      this.playAuto(this.state.autoPhase === "idle" ? 0 : this.autoIndexForStep(this.state.step));
+    };
     if (el && "IntersectionObserver" in window) {
       this.__io = new IntersectionObserver((entries) => {
         entries.forEach((en) => {
           this.__autoInView = en.isIntersecting;
           if (en.isIntersecting) {
-            if (this.prefersReducedMotion()) return;
-            if (this.__autoUserPaused || this.state.autoPhase === "done") return;
-            if (this.state.autoPhase === "paused") this.resumeAuto();
+            tryStartAuto();
           } else if (this.state.autoPhase === "playing") {
             this.pauseAuto(false);
           }
         });
-      }, { threshold: 0.25 });
+      }, { threshold: 0.22 });
       this.__io.observe(el);
     } else {
       this.__autoInView = true;
+      if (this.isSmallViewport()) setTimeout(tryStartAuto, 480);
     }
   }
   componentWillUnmount() {
