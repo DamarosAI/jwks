@@ -757,25 +757,16 @@ window.scrollTo(0, 0);
       .dm-site .dm-cta-tap{display:inline;}
     }
 
-    /* ---- demo transport bar (movie-style play / pause / restart + stage menu) ---- */
+    /* ---- demo transport bar (restart / play-pause / count) ---- */
     .dm-site .dm-transport{
-      display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-      max-width:920px;margin:14px auto 0;padding:10px 14px;
+      display:flex;align-items:center;justify-content:center;gap:10px;
+      max-width:920px;margin:14px auto 0;padding:8px 12px;
       border-radius:12px;border:1px solid rgba(31,45,61,0.1);
       background:linear-gradient(180deg,#ffffff,#f3f6f9);
       box-shadow:0 1px 0 rgba(255,255,255,0.05) inset, 0 8px 24px rgba(20,40,70,0.05);
     }
-    .dm-site .dm-transport__menu{
-      display:flex;align-items:center;gap:4px;flex:1;min-width:0;
-      overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;
-    }
-    .dm-site .dm-transport__menu::-webkit-scrollbar{display:none;}
     @media (max-width:760px){
-      .dm-site .dm-transport{gap:8px;padding:9px 10px;}
-      .dm-site .dm-transport__menu{order:3;flex:1 1 100%;}
-    }
-    @media (prefers-reduced-motion:reduce){
-      .dm-site .dm-transport [data-anim]{animation:none !important;}
+      .dm-site .dm-transport{gap:8px;padding:8px 10px;}
     }
 
     /* ---- phone / small tablet ---- */
@@ -1525,13 +1516,7 @@ window.scrollTo(0, 0);
       <button onClick="{{ auto.onToggle }}" data-dc-style="{{ auto.playBtn }}" aria-label="{{ auto.aria }}" type="button">
         <sc-if value="{{ auto.playing }}"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="5" y="4" width="5" height="16" rx="1"></rect><rect x="14" y="4" width="5" height="16" rx="1"></rect></svg></sc-if>
         <sc-if value="{{ auto.showPlay }}"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5 L19 12 L8 18.5 Z"></path></svg></sc-if>
-        <span data-dc-style="{{ auto.playLabelStyle }}">{{ auto.playLabel }}</span>
       </button>
-      <div class="dm-transport__menu">
-        <sc-for list="{{ auto.stages }}" as="s" hint-placeholder-count="9">
-          <button onClick="{{ s.onClick }}" data-dc-style="{{ s.style }}" type="button"><span data-dc-style="{{ s.dotStyle }}"></span>{{ s.label }}</button>
-        </sc-for>
-      </div>
       <span data-dc-style="{{ auto.countStyle }}">{{ auto.count }}</span>
     </div>
     </div>
@@ -2023,10 +2008,6 @@ class Component extends DCLogic {
     if (p === "playing") this.pauseAuto(true);
     else if (p === "done") this.replayAuto();
     else this.resumeAuto();
-  };
-  jumpAutoStage = (i) => {
-    this.pauseAuto(true);
-    this.setStep(i);
   };
 
   layoutNode = () => {
@@ -2781,58 +2762,32 @@ class Component extends DCLogic {
     const captionHint = autoPlaying
       ? "Autoplaying the full run · click anywhere in the demo to take over."
       : autoDone
-        ? "That's the full run · press replay below to watch it again."
+        ? "That's the full run · press play below to watch it again."
         : "Click the pulsing box to walk through it, or press play below.";
-    const autoStages = this.autoStages.map((label, i) => {
-      const on = step === i;
-      const past = step > i;
-      const dot = { width: 6, height: 6, borderRadius: "50%", flexShrink: 0, background: on ? "#2f6193" : past ? "#2f6193" : "rgba(31,45,61,0.22)" };
-      if (on && autoPlaying) dot.animation = "dmPulse 1.6s ease-in-out infinite";
-      return {
-        label,
-        onClick: () => this.jumpAutoStage(i),
-        style: {
-          display: "inline-flex", alignItems: "center", gap: 6, flexShrink: 0,
-          padding: "5px 10px", borderRadius: 999, cursor: "pointer", border: "1px solid " + (on ? "color-mix(in srgb,#2f6193 36%,transparent)" : "transparent"),
-          background: on ? "color-mix(in srgb,#2f6193 10%,transparent)" : "transparent",
-          fontFamily: "var(--font-display)", fontSize: 10, fontWeight: on ? 700 : 500, letterSpacing: "0.04em", textTransform: "uppercase",
-          color: on ? "var(--ink-cold)" : past ? "var(--ink-quiet)" : "var(--ink-dim)", whiteSpace: "nowrap", transition: "all 140ms ease"
-        },
-        dotStyle: dot
-      };
-    });
     const pad2 = (n) => (n < 10 ? "0" : "") + n;
+    const iconBtn = {
+      display: "inline-flex", alignItems: "center", justifyContent: "center",
+      width: 34, height: 34, borderRadius: 9, flexShrink: 0, cursor: "pointer",
+      border: "1px solid rgba(31,45,61,0.12)", background: "#ffffff", color: "var(--ink-cold)",
+      transition: "all 140ms ease"
+    };
     const auto = {
       status: autoStatus,
       playing: autoPlaying,
-      paused: autoPaused || autoPhase === "idle",
       showPlay: !autoPlaying,
-      playLabel: autoPlaying ? "Pause" : autoDone ? "Replay" : "Play",
       aria: autoPlaying ? "Pause autoplay" : autoDone ? "Replay the run" : "Play autoplay",
       count: pad2(step + 1) + " / " + pad2(this.autoStages.length),
-      stages: autoStages,
       onToggle: this.toggleAuto,
       onRestart: this.replayAuto,
-      iconBtn: {
-        display: "inline-flex", alignItems: "center", justifyContent: "center",
-        width: 34, height: 34, borderRadius: 9, flexShrink: 0, cursor: "pointer",
-        border: "1px solid rgba(31,45,61,0.12)", background: "#ffffff", color: "var(--ink-cold)",
-        transition: "all 140ms ease"
-      },
-      playBtn: {
-        display: "inline-flex", alignItems: "center", gap: 8, height: 34, padding: "0 14px",
-        borderRadius: 9, flexShrink: 0, cursor: "pointer",
+      iconBtn: iconBtn,
+      playBtn: Object.assign({}, iconBtn, {
         border: "1px solid " + (autoPlaying ? "color-mix(in srgb,#2f6193 40%,transparent)" : "rgba(31,45,61,0.12)"),
-        background: autoPlaying ? "color-mix(in srgb,#2f6193 10%,transparent)" : "#ffffff",
-        color: "var(--ink-cold)", transition: "all 140ms ease"
-      },
-      playLabelStyle: {
-        fontFamily: "var(--font-display)", fontSize: 11, fontWeight: 700,
-        letterSpacing: "0.06em", textTransform: "uppercase"
-      },
+        background: autoPlaying ? "color-mix(in srgb,#2f6193 10%,transparent)" : "#ffffff"
+      }),
       countStyle: {
         fontFamily: "ui-monospace,Menlo,monospace", fontSize: 11, fontWeight: 600,
-        color: "var(--ink-dim)", fontVariantNumeric: "tabular-nums", flexShrink: 0, letterSpacing: "0.02em"
+        color: "var(--ink-dim)", fontVariantNumeric: "tabular-nums", flexShrink: 0, letterSpacing: "0.02em",
+        marginLeft: 4
       },
       dotStyle: autoPlaying
         ? { width: 6, height: 6, borderRadius: "50%", background: "#2e9e6b", animation: "dmPulse 1.6s ease-in-out infinite", flexShrink: 0 }
