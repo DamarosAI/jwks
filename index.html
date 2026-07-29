@@ -2140,6 +2140,7 @@ class Component extends DCLogic {
       this.__autoIntentTypes = ["pointerdown", "keydown", "wheel"];
       this.__autoIntentTypes.forEach((t) => el.addEventListener(t, this.__onUserIntent, true));
     }
+    this.__autoUserPaused = true;
     this.__onVisibility = () => {
       if (document.hidden) {
         if (this.state.autoPhase === "playing") this.pauseAuto(false);
@@ -2155,16 +2156,15 @@ class Component extends DCLogic {
           if (en.isIntersecting) {
             if (this.prefersReducedMotion()) return;
             if (this.__autoUserPaused || this.state.autoPhase === "done") return;
-            if (this.state.autoPhase !== "playing") this.playAuto();
+            if (this.state.autoPhase === "paused") this.resumeAuto();
           } else if (this.state.autoPhase === "playing") {
             this.pauseAuto(false);
           }
         });
       }, { threshold: 0.25 });
       this.__io.observe(el);
-    } else if (!this.prefersReducedMotion()) {
+    } else {
       this.__autoInView = true;
-      this.playAuto();
     }
   }
   componentWillUnmount() {
