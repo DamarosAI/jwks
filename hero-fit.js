@@ -4,7 +4,8 @@
  * where neither line overflows the available width.
  */
 (function () {
-  var SEL = 'section[data-screen-label="Hero"] h1.dm-hero-title';
+  // Hero + Close share the same drum card composition; fit both to one curve.
+  var SEL = 'section[data-screen-label="Hero"] h1.dm-hero-title, section[data-screen-label="Close"] h2.dm-hero-title';
   var MIN = 15;
   var raf = 0;
   var armed = false; // Suppress the transition on the very first fit.
@@ -48,10 +49,12 @@
     st.id = "dm-hero-fit-style";
     // Eased font-size so live resize glides instead of stepping.
     st.textContent =
-      'section[data-screen-label="Hero"] h1.dm-hero-title{' +
+      'section[data-screen-label="Hero"] h1.dm-hero-title,' +
+      'section[data-screen-label="Close"] h2.dm-hero-title{' +
       "transition:font-size 260ms cubic-bezier(0.22,1,0.36,1);will-change:font-size;}" +
       "@media (prefers-reduced-motion:reduce){" +
-      'section[data-screen-label="Hero"] h1.dm-hero-title{transition:none;}}';
+      'section[data-screen-label="Hero"] h1.dm-hero-title,' +
+      'section[data-screen-label="Close"] h2.dm-hero-title{transition:none;}}';
     (document.head || document.documentElement).appendChild(st);
   }
 
@@ -139,7 +142,7 @@
   }
   window.addEventListener("load", schedule);
 
-  // DC remounts - re-fit when the hero h1 reappears.
+  // DC remounts - re-fit when hero/close titles reappear.
   var tries = 0;
   var poll = setInterval(function () {
     tries += 1;

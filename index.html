@@ -30,7 +30,7 @@
 <script src="./mail-cta.js?v=15" defer></script>
 <script src="./logo-marquee.js?v=3" defer></script>
 <script src="./biomarker-matrix.js?v=52" defer></script>
-<script src="./hero-fit.js?v=3" defer></script>
+<script src="./hero-fit.js?v=4" defer></script>
 <script src="./section-title-fit.js?v=1" defer></script>
 <script>
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
@@ -384,7 +384,8 @@ window.scrollTo(0, 0);
         padding-top:clamp(52px,calc(5vw + 24px),96px) !important;
         padding-bottom:clamp(28px,4vh,48px) !important;
       }
-      .dm-site section[data-screen-label="Hero"] h1.dm-hero-title{
+      .dm-site section[data-screen-label="Hero"] h1.dm-hero-title,
+      .dm-site section[data-screen-label="Close"] h2.dm-hero-title{
         font-size:clamp(1.4rem,calc(4.6rem * 100vw / var(--dm-ref)),4.6rem) !important;
         max-width:100% !important;
       }
@@ -432,7 +433,8 @@ window.scrollTo(0, 0);
 
     /* ---- 13-15" laptop ---- */
     @media (min-width:901px) and (max-width:1280px){
-      .dm-site section[data-screen-label="Hero"] h1.dm-hero-title{font-size:clamp(1.5rem,4.2vw,3.4rem) !important;max-width:100% !important;}
+      .dm-site section[data-screen-label="Hero"] h1.dm-hero-title,
+      .dm-site section[data-screen-label="Close"] h2.dm-hero-title{font-size:clamp(1.5rem,4.2vw,3.4rem) !important;max-width:100% !important;}
       .dm-site #spine [style*="grid-template-columns:repeat(5"]{gap:10px !important;}
       .dm-site header{padding-left:clamp(16px,2.5vw,28px) !important;padding-right:clamp(16px,2.5vw,28px) !important;}
     }
@@ -510,16 +512,13 @@ window.scrollTo(0, 0);
         max-width:min(520px,100%);
         z-index:1;
       }
-      .dm-site section[data-screen-label="Hero"] h1.dm-hero-title{
+      .dm-site section[data-screen-label="Hero"] h1.dm-hero-title,
+      .dm-site section[data-screen-label="Close"] h2.dm-hero-title{
         font-size:clamp(0.95rem,4.2vw,1.35rem) !important;
         max-width:100% !important;
         width:100% !important;
         margin:0 auto !important;
         line-height:0.97 !important;
-      }
-      .dm-site section[data-screen-label="Close"] h2.dm-section-title{
-        margin:0 auto !important;
-        max-width:100% !important;
       }
       .dm-site section[data-screen-label="Hero"] .dm-hero-cta,
       .dm-site section[data-screen-label="Close"] .dm-hero-cta{
@@ -587,11 +586,9 @@ window.scrollTo(0, 0);
         width:min(52vh,320px) !important;
         height:min(52vh,320px) !important;
       }
-      .dm-site section[data-screen-label="Hero"] h1.dm-hero-title{
+      .dm-site section[data-screen-label="Hero"] h1.dm-hero-title,
+      .dm-site section[data-screen-label="Close"] h2.dm-hero-title{
         font-size:clamp(0.9rem,4.2vh,1.25rem) !important;
-        max-width:100% !important;
-      }
-      .dm-site section[data-screen-label="Close"] h2.dm-section-title{
         max-width:100% !important;
       }
       .dm-site section[data-screen-label="Hero"] .dm-hero-cta,
@@ -828,11 +825,9 @@ window.scrollTo(0, 0);
         width:min(90vw,360px) !important;
         height:min(90vw,360px) !important;
       }
-      .dm-site section[data-screen-label="Hero"] h1.dm-hero-title{
+      .dm-site section[data-screen-label="Hero"] h1.dm-hero-title,
+      .dm-site section[data-screen-label="Close"] h2.dm-hero-title{
         font-size:clamp(0.9rem,4.6vw,1.2rem) !important;
-        max-width:100% !important;
-      }
-      .dm-site section[data-screen-label="Close"] h2.dm-section-title{
         max-width:100% !important;
       }
       .dm-site section[data-screen-label="Hero"] .dm-hero-cta,
@@ -1900,7 +1895,7 @@ window.scrollTo(0, 0);
     </div>
     <div class="dm-scroll-target dm-hero-copy" style="position:relative;max-width:980px;margin:0 auto;text-align:center;">
       <div class="dm-hero-core">
-        <h2 class="dm-section-title dm-section-title--center">Trial delays are<br><span class="dm-section-title__steel">treatment delays.</span></h2>
+        <h2 class="dm-hero-title" style="margin:0;width:100%;font-family:var(--font-display);font-weight:700;font-size:clamp(1.15rem,5.8vw,4.6rem);line-height:0.97;letter-spacing:-0.03em;white-space:nowrap;text-align:center;">Trial delays are<br><span style="color: var(--ink-steel);">treatment delays.</span></h2>
         <div class="dm-hero-cta" style="display:flex;justify-content:center;margin-top:30px;">
           <a href="mailto:team@damaros.ai?subject=Damaros%20Pilot%20Inquiry" data-pilot-form style="display:inline-flex;align-items:center;justify-content:center;border-radius:999px;font-family:var(--font-display);font-weight:500;letter-spacing:0.03em;text-transform:uppercase;color:#ffffff;background:linear-gradient(180deg,#3d72a8,#2f6193);border:1px solid color-mix(in srgb,#2f6193 50%,rgba(255,255,255,0.22));box-shadow:inset 0 1px 0 rgba(255,255,255,0.2), 0 8px 20px rgba(20,46,82,0.16);white-space:nowrap;height:48px;padding:0 22px;font-size:13px;">Start a pilot</a>
         </div>
