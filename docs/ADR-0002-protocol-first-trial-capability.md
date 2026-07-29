@@ -116,7 +116,7 @@ Two consequences drove this ADR:
   and any secondary-cited number without a primary document.
 - **Capability support:** Franc et al. JMIR 2024 (49.3% LLM self-repeatability) lands inside the
   determinism card; Tufts CSDD 2024 (3.3 amendments/protocol, 45% avoidable) sits as a single
-  supporting line under it. The **"Built to prove"** chip row was removed — redundant with the
+  supporting line under it. The **"Built to prove"** chip row was removed; redundant with the
   cards and the determinism line above it.
 - **Security support:** Chen, Oermann et al. Nature Medicine 2026 (only a third of LLM-vs-human
   clinical comparisons favor the model) sits under the PHI invariant, not as a fifth compliance chip.
@@ -198,7 +198,7 @@ backend's own honesty docs are the authority, and they are stricter than the sit
 `damaros/docs/product/CLAIMS_BOUNDARY.md` (allowed wording per claim),
 `damaros/docs/product/CURRENT_STATE.md` (what works on real data today), and
 `damaros/docs/operations/KNOWN_LIMITATIONS.md`. When the site and the backend disagree about what
-the product does, the backend wins — the reverse of ADR-0001's "site is canon", which governs
+the product does, the backend wins: the reverse of ADR-0001's "site is canon", which governs
 *positioning*, not *capability*.
 
 The core spine claims survived the audit intact: deterministic screening with no model verdict,
@@ -215,7 +215,7 @@ overstating and now does not.
   open protocols this site can actually run"; the service
   (`damaros/services/sentinel/sentinel_service.py`) computes PHI-free evidence-concept coverage
   against active-trial demand, k-anonymized at k=5, with `eligible` / `match score` /
-  `enrollment lift` structurally unrepresentable — a payload containing them fails closed. Copy
+  `enrollment lift` structurally unrepresentable: a payload containing them fails closed. Copy
   now reads **"surfaces open protocols the site's evidence already covers"**, and the demo panel's
   "Eligibility concepts covered" is now **"Evidence concepts covered"** (the old label would have
   tripped the backend's own forbidden-substring guard).
@@ -234,13 +234,13 @@ overstating and now does not.
   controls · not SOC 2 certified"**; "HIPAA-ready" is now **"HIPAA-aligned by design · BAA at the
   covered entity"**. The **FedRAMP-oriented** chip was deleted outright: it was supported by one
   KMS doc mention, no SSP, no boundary diagram, no authorization package. Its slot now carries a
-  claim that is real and enforced — **no sponsor path to raw PHI, aggregate egress**. SAML is
+  claim that is real and enforced: **no sponsor path to raw PHI, aggregate egress**. SAML is
   marked **optional** because it is off by default and returns 501 without the `[saml]` extra.
 - **The integration logo wall stays uncaptioned, and the limit is verbal.** Epic/Cerner is SMART
   on FHIR **sandbox-validated with no production tenant**; CTMS/EDC connectors are per-site
   configuration. A caption stating this was shipped and then pulled: the wall claims compatibility,
   not partnership, and a disclaimer under five logos reads as an admission of something nobody
-  asked about. The constraint still binds everywhere words are used — never "Epic-native", "Agent
+  asked about. The constraint still binds everywhere words are used: never "Epic-native", "Agent
   Factory integrated", or "Epic partnership", and integration maturity is stated plainly on a call
   and in any security or diligence packet.
 - **"Reconstructable eleven months later" was cut.** There is no retention or replay SLA in the

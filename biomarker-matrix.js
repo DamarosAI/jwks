@@ -318,7 +318,7 @@
       var tok = s.tokens[i] || "";
       var gw = Math.max(inst.fontPx, tok.length * inst.fontPx * 0.58);
       var gh = inst.fontPx;
-      // Fewer, slightly larger shards on mobile — same read at 30fps, less fillRect work.
+      // Fewer, slightly larger shards on mobile: same read at 30fps, less fillRect work.
       var count = lite
         ? (3 + ((alphaFor(i, TRAIL) * 7) | 0))
         : (6 + ((alphaFor(i, TRAIL) * 18) | 0));
@@ -549,7 +549,7 @@
 
   function resize(inst) {
     var r = inst.el.getBoundingClientRect();
-    // Cap DPR harder on lite viewports — half the pixels, same silhouette.
+    // Cap DPR harder on lite viewports: half the pixels, same silhouette.
     var dprCap = isLite() ? 1.25 : 2;
     var dpr = Math.min(window.devicePixelRatio || 1, dprCap);
     var w = Math.max(1, Math.floor(r.width));

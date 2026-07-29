@@ -2436,7 +2436,7 @@ function ReplayModule() {
     },
     human: {
       s: "none",
-      v: " -  pending"
+      v: " - pending"
     },
     state: "amber"
   }, {
@@ -4581,7 +4581,7 @@ try { (() => {
         color: "var(--ink-dim)",
         lineHeight: 1.45
       }
-    }, "Each requires its own verdict \u2014 judgments are not shared across patients.")) : null, /*#__PURE__*/React.createElement(Block, {
+    }, "Each requires its own verdict - judgments are not shared across patients.")) : null, /*#__PURE__*/React.createElement(Block, {
       K: K,
       title: "Replay impact"
     }, /*#__PURE__*/React.createElement(Mono, {
@@ -4596,7 +4596,7 @@ try { (() => {
         color: "var(--ink-dim)",
         lineHeight: 1.45
       }
-    }, "The verdict, its rationale, the evidence snapshot, and the reviewer are sealed together \u2014 reconstructable in Replay."))));
+    }, "The verdict, its rationale, the evidence snapshot, and the reviewer are sealed together - reconstructable in Replay."))));
   }
   function ZoneLabel({
     n,
