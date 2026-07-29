@@ -760,6 +760,27 @@ window.scrollTo(0, 0);
       .dm-site .dm-cta-tap{display:inline;}
     }
 
+    /* ---- demo transport bar (movie-style play / pause / restart + stage menu) ---- */
+    .dm-site .dm-transport{
+      display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+      max-width:920px;margin:14px auto 0;padding:10px 14px;
+      border-radius:12px;border:1px solid rgba(31,45,61,0.1);
+      background:linear-gradient(180deg,#ffffff,#f3f6f9);
+      box-shadow:0 1px 0 rgba(255,255,255,0.05) inset, 0 8px 24px rgba(20,40,70,0.05);
+    }
+    .dm-site .dm-transport__menu{
+      display:flex;align-items:center;gap:4px;flex:1;min-width:0;
+      overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;
+    }
+    .dm-site .dm-transport__menu::-webkit-scrollbar{display:none;}
+    @media (max-width:760px){
+      .dm-site .dm-transport{gap:8px;padding:9px 10px;}
+      .dm-site .dm-transport__menu{order:3;flex:1 1 100%;}
+    }
+    @media (prefers-reduced-motion:reduce){
+      .dm-site .dm-transport [data-anim]{animation:none !important;}
+    }
+
     /* ---- phone / small tablet ---- */
     @media (max-width:760px){
       .dm-site header{gap:10px !important;padding-left:14px !important;padding-right:14px !important;}
@@ -872,7 +893,7 @@ window.scrollTo(0, 0);
   <!-- ============ INSTRUMENT · clean Node UI ============ -->
   <section id="instrument" data-screen-label="Instrument" style="position:relative;padding:0 clamp(12px,2.5vw,28px) clamp(40px,6vw,72px);">
     <div class="dm-scroll-target">
-    <p class="dm-demo-caption" style="max-width:920px;margin:0 auto 16px;text-align:center;font-size:15px;font-weight:600;line-height:1.55;color:var(--ink-cold);">A demonstration of the Damaros<sup style="font-size:0.55em;letter-spacing:0;">™</sup> runtime on synthetic FHIR data.<span class="dm-caption-hint"> Click on the pulsing box to walk through it.</span></p>
+    <p class="dm-demo-caption" style="max-width:920px;margin:0 auto 16px;text-align:center;font-size:15px;font-weight:600;line-height:1.55;color:var(--ink-cold);">A demonstration of the Damaros<sup style="font-size:0.55em;letter-spacing:0;">™</sup> runtime on synthetic FHIR data.<span class="dm-caption-hint"> {{ captionHint }}</span></p>
 
     <div id="nodeStage" style="display:flex;justify-content:center;align-items:flex-start;overflow:hidden;">
       <div id="nodeScaleWrap" style="width:1160px;flex:0 0 1160px;transform-origin:top center;">
@@ -889,7 +910,7 @@ window.scrollTo(0, 0);
             
             
           </div>
-          <span style="margin-left:auto;display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;background:rgba(31,45,61,0.05);flex-shrink:0;"><span style="width:6px;height:6px;border-radius:50%;background:var(--ink-steel);"></span><span style="font-family:var(--font-display);font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-quiet);">Walkthrough · synthetic FHIR</span></span>
+          <span style="margin-left:auto;display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;background:rgba(31,45,61,0.05);flex-shrink:0;"><span data-dc-style="{{ auto.dotStyle }}"></span><span style="font-family:var(--font-display);font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-quiet);">{{ auto.status }} · synthetic FHIR</span></span>
         </div>
         <!-- body -->
         <div style="display:flex;height:692px;">
@@ -1501,6 +1522,23 @@ window.scrollTo(0, 0);
       </div>
       </div>
     </div>
+
+    <div class="dm-transport" data-autoplay-ctl>
+      <button onClick="{{ auto.onRestart }}" data-dc-style="{{ auto.iconBtn }}" aria-label="Restart the run" type="button">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="5" width="3" height="14" rx="1"></rect><path d="M20 12 L9 5.5 L9 18.5 Z"></path></svg>
+      </button>
+      <button onClick="{{ auto.onToggle }}" data-dc-style="{{ auto.playBtn }}" aria-label="{{ auto.aria }}" type="button">
+        <sc-if value="{{ auto.playing }}"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="5" y="4" width="5" height="16" rx="1"></rect><rect x="14" y="4" width="5" height="16" rx="1"></rect></svg></sc-if>
+        <sc-if value="{{ auto.showPlay }}"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5 L19 12 L8 18.5 Z"></path></svg></sc-if>
+        <span data-dc-style="{{ auto.playLabelStyle }}">{{ auto.playLabel }}</span>
+      </button>
+      <div class="dm-transport__menu">
+        <sc-for list="{{ auto.stages }}" as="s" hint-placeholder-count="9">
+          <button onClick="{{ s.onClick }}" data-dc-style="{{ s.style }}" type="button"><span data-dc-style="{{ s.dotStyle }}"></span>{{ s.label }}</button>
+        </sc-for>
+      </div>
+      <span data-dc-style="{{ auto.countStyle }}">{{ auto.count }}</span>
+    </div>
     </div>
     <div class="dm-scroll-chev dm-demo-chev"><button onClick="{{ onMore }}" aria-label="Continue scrolling" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
   </section>
@@ -1891,41 +1929,110 @@ window.scrollTo(0, 0);
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="text/x-dc" data-dc-script data-props="{&quot;showMarquee&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
 class Component extends DCLogic {
   initialState() {
-    return { step: 0, ci: 0, pick: null, committed: {}, hov: null, evSel: 0, scSel: "S-1066", scView: "board", evActed: {}, rpSel: 4, scFilter: null, rpFilter: null, rpExported: false, snCaps: { molecular: true, infusion: true, imaging: true, phase1: false }, snScanned: false, snScanning: false, snSurfaced: false, snSurfacedId: null, snOpenId: null, snSel: "NCT00000211", snActive: null, snDelta: {}, snNew: null, snEvent: null, snTick: 0, trSel: "c1", trStage: 0, trRequested: false, eySel: "lat", eyRouted: false, cbQ: null, cbStage: 0, cbCite: null, cbExported: false };
+    return { step: 0, ci: 0, pick: null, committed: {}, hov: null, evSel: 0, scSel: "S-1066", scView: "board", evActed: {}, rpSel: 4, scFilter: null, rpFilter: null, rpExported: false, snCaps: { molecular: true, infusion: true, imaging: true, phase1: false }, snScanned: false, snScanning: false, snSurfaced: false, snSurfacedId: null, snOpenId: null, snSel: "NCT00000211", snActive: null, snDelta: {}, snNew: null, snEvent: null, snTick: 0, trSel: "c1", trStage: 0, trRequested: false, eySel: "lat", eyRouted: false, cbQ: null, cbStage: 0, cbCite: null, cbExported: false, autoPhase: "idle" };
   }
   state = this.initialState();
   resetDemo = () => this.setState(this.initialState());
 
+  autoStages = ["Protocol", "Evidence", "Screening", "Resolve", "Replay", "Sentinel", "Trident", "Eye", "Luna"];
   autoSeq = [
-    { ms: 1300, run: () => this.setState({ step: 1 }) },
-    { ms: 1500, run: () => this.setState({ evSel: 1 }) },
-    { ms: 1600, run: () => this.setState((st) => { const m = Object.assign({}, st.evActed); m["E-4.2"] = true; return { evActed: m }; }) },
-    { ms: 1700, run: () => this.setState({ step: 2 }) },
-    { ms: 1500, run: () => this.setState({ scSel: "S-1047" }) },
-    { ms: 1700, run: () => this.setState({ step: 3, ci: 0, pick: null }) },
-    { ms: 1500, run: () => this.setState({ pick: "b" }) },
-    { ms: 1500, run: () => this.commit() },
-    { ms: 1800, run: () => this.setState({ step: 4 }) },
-    { ms: 1600, run: () => this.setState({ rpExported: true }) },
-    { ms: 2800, run: () => this.resetDemo() }
+    { step: 1, ms: 1300, run: () => this.setState({ step: 1 }) },
+    { step: 1, ms: 1500, run: () => this.setState({ evSel: 1 }) },
+    { step: 1, ms: 1600, run: () => this.setState((st) => { const m = Object.assign({}, st.evActed); m["E-4.2"] = true; return { evActed: m }; }) },
+    { step: 2, ms: 1700, run: () => this.setState({ step: 2 }) },
+    { step: 2, ms: 1500, run: () => this.setState({ scSel: "S-1047" }) },
+    { step: 3, ms: 1700, run: () => this.setState({ step: 3, ci: 0, pick: null }) },
+    { step: 3, ms: 1500, run: () => this.setState({ pick: "b" }) },
+    { step: 3, ms: 1500, run: () => this.commit() },
+    { step: 4, ms: 1800, run: () => this.setState({ step: 4 }) },
+    { step: 4, ms: 1500, run: () => this.setState({ rpSel: 7 }) },
+    { step: 4, ms: 1600, run: () => this.setState({ rpExported: true }) },
+    { step: 5, ms: 1700, run: () => this.setState({ step: 5 }) },
+    { step: 5, ms: 400, run: () => this.snScan() },
+    { step: 5, ms: 1800, run: () => this.snOpen("NCT00000211") },
+    { step: 5, ms: 1600, run: () => this.snSurface("NCT00000211") },
+    { step: 5, ms: 1400, run: () => this.snClose() },
+    { step: 6, ms: 1700, run: () => this.setState({ step: 6 }) },
+    { step: 6, ms: 1400, run: () => this.trSelCrit("c4") },
+    { step: 6, ms: 400, run: () => this.trDraft() },
+    { step: 6, ms: 1900, run: () => this.trRequest() },
+    { step: 7, ms: 1700, run: () => this.setState({ step: 7 }) },
+    { step: 7, ms: 1500, run: () => this.eySelSig("cmp") },
+    { step: 7, ms: 1600, run: () => this.eyRoute() },
+    { step: 8, ms: 1700, run: () => this.setState({ step: 8 }) },
+    { step: 8, ms: 400, run: () => this.cbAsk("q1") },
+    { step: 8, ms: 2000, run: () => this.cbSelCite(2) },
+    { step: 8, ms: 1600, run: () => this.setState({ autoPhase: "done" }) }
   ];
 
   isSmallViewport() {
     if (!window.matchMedia) return false;
     return window.matchMedia("(max-width:760px)").matches || window.matchMedia("(pointer:coarse)").matches;
   }
-  playAuto = () => {
-    if (this.__autoRunning || !this.isSmallViewport()) return;
+  prefersReducedMotion() {
+    return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion:reduce)").matches);
+  }
+  autoIndexForStep = (step) => {
+    const i = this.autoSeq.findIndex((e) => e.step === step);
+    return i < 0 ? 0 : i;
+  };
+  playAuto = (from) => {
+    if (this.__autoRunning) return;
+    const force = !!this.__autoForce;
+    this.__autoForce = false;
+    if (this.state.autoPhase === "done" && !force) return;
     this.__autoRunning = true;
-    let i = 0;
+    this.__autoUserPaused = false;
+    this.setState({ autoPhase: "playing" });
+    let i = typeof from === "number" ? from : this.autoIndexForStep(this.state.step);
+    if (i < 0) i = 0;
     const next = () => {
       if (!this.__autoRunning) return;
-      const stp = this.autoSeq[i % this.autoSeq.length];
-      this.__autoT = setTimeout(() => { if (!this.__autoRunning) return; stp.run(); i++; next(); }, stp.ms);
+      if (i >= this.autoSeq.length) {
+        this.__autoRunning = false;
+        this.__autoT = null;
+        this.setState({ autoPhase: "done" });
+        return;
+      }
+      const stp = this.autoSeq[i];
+      this.__autoT = setTimeout(() => {
+        if (!this.__autoRunning) return;
+        stp.run();
+        i++;
+        next();
+      }, stp.ms);
     };
     next();
   };
-  stopAuto = () => { this.__autoRunning = false; if (this.__autoT) { clearTimeout(this.__autoT); this.__autoT = null; } };
+  pauseAuto = (byUser) => {
+    this.__autoRunning = false;
+    if (this.__autoT) { clearTimeout(this.__autoT); this.__autoT = null; }
+    if (byUser) this.__autoUserPaused = true;
+    if (this.state.autoPhase === "playing") this.setState({ autoPhase: "paused" });
+  };
+  stopAuto = () => this.pauseAuto(false);
+  resumeAuto = () => {
+    if (this.state.autoPhase === "done") return;
+    this.playAuto(this.autoIndexForStep(this.state.step));
+  };
+  replayAuto = () => {
+    this.__autoRunning = false;
+    if (this.__autoT) { clearTimeout(this.__autoT); this.__autoT = null; }
+    this.__autoUserPaused = false;
+    this.__autoForce = true;
+    this.resetDemo();
+    this.__autoT = setTimeout(() => this.playAuto(0), 40);
+  };
+  toggleAuto = () => {
+    const p = this.state.autoPhase;
+    if (p === "playing") this.pauseAuto(true);
+    else if (p === "done") this.replayAuto();
+    else this.resumeAuto();
+  };
+  jumpAutoStage = (i) => {
+    this.pauseAuto(true);
+    this.setStep(i);
+  };
 
   layoutNode = () => {
     const stage = document.getElementById("nodeStage");
@@ -1933,8 +2040,8 @@ class Component extends DCLogic {
     if (!stage || !wrap) return;
     const REFW = 1160, REFH = 740;
     const availW = stage.clientWidth;
-    // Reserve headroom for nav + caption + keep-scrolling chevron on every laptop/desktop height
-    const chrome = 62 + 72 + 64 + 40;
+    // Reserve headroom for nav + caption + transport bar + keep-scrolling chevron on every laptop/desktop height
+    const chrome = 62 + 72 + 56 + 64 + 40;
     const availH = Math.max(260, window.innerHeight - chrome);
     let s = Math.min(availW / REFW, availH / REFH, 1);
     if (!isFinite(s) || s <= 0) s = 1;
@@ -2014,16 +2121,40 @@ class Component extends DCLogic {
     window.addEventListener("resize", this.__onResize, { passive: true });
     window.addEventListener("orientationchange", this.__onResize);
 
-    if (this.isSmallViewport()) {
-      const el = document.getElementById("instrument");
-      if (el && "IntersectionObserver" in window) {
-        this.__io = new IntersectionObserver((entries) => {
-          entries.forEach((en) => { if (en.isIntersecting) this.playAuto(); else this.stopAuto(); });
-        }, { threshold: 0.2 });
-        this.__io.observe(el);
-      } else {
-        this.playAuto();
+    const el = document.getElementById("instrument");
+    this.__onUserIntent = (e) => {
+      if (e.target && e.target.closest && e.target.closest("[data-autoplay-ctl]")) return;
+      if (this.state.autoPhase === "playing") this.pauseAuto(true);
+    };
+    if (el) {
+      this.__autoIntentTypes = ["pointerdown", "keydown", "wheel"];
+      this.__autoIntentTypes.forEach((t) => el.addEventListener(t, this.__onUserIntent, true));
+    }
+    this.__onVisibility = () => {
+      if (document.hidden) {
+        if (this.state.autoPhase === "playing") this.pauseAuto(false);
+      } else if (!this.__autoUserPaused && this.state.autoPhase === "paused" && this.__autoInView) {
+        this.resumeAuto();
       }
+    };
+    document.addEventListener("visibilitychange", this.__onVisibility);
+    if (el && "IntersectionObserver" in window) {
+      this.__io = new IntersectionObserver((entries) => {
+        entries.forEach((en) => {
+          this.__autoInView = en.isIntersecting;
+          if (en.isIntersecting) {
+            if (this.prefersReducedMotion()) return;
+            if (this.__autoUserPaused || this.state.autoPhase === "done") return;
+            if (this.state.autoPhase !== "playing") this.playAuto();
+          } else if (this.state.autoPhase === "playing") {
+            this.pauseAuto(false);
+          }
+        });
+      }, { threshold: 0.25 });
+      this.__io.observe(el);
+    } else if (!this.prefersReducedMotion()) {
+      this.__autoInView = true;
+      this.playAuto();
     }
   }
   componentWillUnmount() {
@@ -2038,6 +2169,11 @@ class Component extends DCLogic {
       window.removeEventListener("resize", this.__chevOnScroll);
       this.__chevOnScroll = null;
     }
+    const el = document.getElementById("instrument");
+    if (el && this.__onUserIntent && this.__autoIntentTypes) {
+      this.__autoIntentTypes.forEach((t) => el.removeEventListener(t, this.__onUserIntent, true));
+    }
+    if (this.__onVisibility) document.removeEventListener("visibilitychange", this.__onVisibility);
     this.__agClear();
   }
 
@@ -2276,7 +2412,8 @@ class Component extends DCLogic {
     else if (s.step === 6 && s.trStage === 0) { hint = "Draft the amendment"; target = "ag-tr-draft"; }
     else if (s.step === 6 && !s.trRequested) { hint = "Request the amendment from the sponsor"; target = "ag-tr-cta"; }
     else if (s.step === 6) { hint = "Next agent \u00b7 open Eye"; target = "rail-ag-2"; }
-    else if (s.step === 7 && !s.eyRouted) { hint = "Route a quality signal to the site team"; target = "ag-ey-route"; }
+    else if (s.step === 7 && s.eySel !== "cmp") { hint = "Select Chemistry-panel re-query rate"; target = "ag-ey-cmp"; }
+    else if (s.step === 7 && !s.eyRouted) { hint = "Escalate to sponsor quality"; target = "ag-ey-route"; }
     else if (s.step === 7) { hint = "Last agent \u00b7 open Luna"; target = "rail-ag-3"; }
     else if (s.step === 8 && s.cbStage === 0) { hint = "Ask the audit chain a question"; target = "ag-cb-q"; }
     else if (s.step === 8) { hint = "You've seen the full run · explore the rest below"; target = null; }
@@ -2623,7 +2760,7 @@ class Component extends DCLogic {
     const eyLabelOf = (ty) => ty === "drift" ? "Drift" : ty === "spike" ? "Spike" : ty === "deviation" ? "Deviation" : "Steady";
     const eySelId = this.state.eySel || this.eySignals[0].id;
     const eySpark = (arr, col, big) => { const mx = Math.max.apply(null, arr.concat([1])); return arr.map((v, i) => ({ style: big ? { flex: 1, height: (10 + (v / mx) * 46).toFixed(0) + "px", borderRadius: 2, background: i === arr.length - 1 ? col : "color-mix(in srgb," + col + " 40%,transparent)" } : { width: 4, height: (4 + (v / mx) * 15).toFixed(0) + "px", borderRadius: 1, background: i === arr.length - 1 ? col : "color-mix(in srgb," + col + " 35%,transparent)" } })); };
-    const eyRows = this.eySignals.map((s) => { const on = eySelId === s.id; const col = eyColOf(s.type); return { name: s.name, typeLabel: eyLabelOf(s.type), value: s.value, unit: s.unit, delta: s.delta, onClick: () => this.eySelSig(s.id), style: this.mergePulse({ display: "flex", alignItems: "center", gap: 11, width: "100%", textAlign: "left", cursor: "pointer", padding: "9px 12px", borderRadius: 10, border: "1px solid " + (on ? "color-mix(in srgb,#2f6193 40%,transparent)" : "rgba(31,45,61,0.08)"), background: on ? "color-mix(in srgb,#2f6193 6%,transparent)" : "#ffffff", transition: "all 140ms ease" }, false, false), chipStyle: this.chip(col), valStyle: { fontFamily: "var(--font-display)", fontSize: 14, fontWeight: 700, color: col, fontVariantNumeric: "tabular-nums", lineHeight: 1, flexShrink: 0 }, spark: eySpark(s.spark, col, false) }; });
+    const eyRows = this.eySignals.map((s) => { const on = eySelId === s.id; const col = eyColOf(s.type); return { name: s.name, typeLabel: eyLabelOf(s.type), value: s.value, unit: s.unit, delta: s.delta, onClick: () => this.eySelSig(s.id), style: this.mergePulse({ display: "flex", alignItems: "center", gap: 11, width: "100%", textAlign: "left", cursor: "pointer", padding: "9px 12px", borderRadius: 10, border: "1px solid " + (on ? "color-mix(in srgb,#2f6193 40%,transparent)" : "rgba(31,45,61,0.08)"), background: on ? "color-mix(in srgb,#2f6193 6%,transparent)" : "#ffffff", transition: "all 140ms ease" }, tgt === "ag-ey-cmp" && s.id === "cmp", false), chipStyle: this.chip(col), valStyle: { fontFamily: "var(--font-display)", fontSize: 14, fontWeight: 700, color: col, fontVariantNumeric: "tabular-nums", lineHeight: 1, flexShrink: 0 }, spark: eySpark(s.spark, col, false) }; });
     const eyS = this.eySignals.find((s) => s.id === eySelId) || this.eySignals[0];
     const eyDcol = eyColOf(eyS.type);
     const eyAttention = this.eySignals.filter((s) => s.type !== "steady").length; const eyKpis = [ { label: "Signals monitored", value: String(this.eySignals.length), color: "#2f6193" }, { label: "Need attention", value: String(eyAttention), color: "#bf831f" }, { label: "Routed this period", value: "6", color: "#2f6193" }, { label: "Screening throughput", value: "98%", color: "#2e9e6b" } ].map((k) => ({ label: k.label, value: k.value, valStyle: { fontFamily: "var(--font-display)", fontSize: 22, fontWeight: 700, color: k.color, lineHeight: 1, fontVariantNumeric: "tabular-nums" } })); const ey = { rows: eyRows, site: "Site 018", kpis: eyKpis, activeCount: eyAttention, detail: { name: eyS.name, typeLabel: eyLabelOf(eyS.type), typeStyle: this.chip(eyDcol), mag: eyS.mag, value: eyS.value, unit: eyS.unit, delta: eyS.delta, dcol: eyDcol, valStyle: { fontFamily: "var(--font-display)", fontSize: 30, fontWeight: 700, color: eyDcol, lineHeight: 1, fontVariantNumeric: "tabular-nums" }, text: eyS.detail, sees: eyS.sees, cause: eyS.cause, impact: eyS.impact, method: eyS.method, kri: eyS.kri, route: eyS.route, spark: eySpark(eyS.spark, eyDcol, true) }, routed: this.state.eyRouted, onRoute: this.eyRoute, routeStyle: this.mergePulse(Object.assign(this.primaryBtn(this.state.eyRouted, !this.state.eyRouted, { mt: 0 }), { width: "100%" }), tgt === "ag-ey-route", true), routeLabel: this.state.eyRouted ? "\u2713 Routed \u00b7 bound to Replay" : eyS.route, canRoute: eyS.type !== "steady", steady: eyS.type === "steady", ticket: eyS.ticket, dest: eyS.dest, note: eyS.note };
@@ -2641,13 +2778,78 @@ class Component extends DCLogic {
       cb.ans = cbActiveQ.ans.map((s) => { const cited = s.c != null; const onC = this.state.cbCite === s.c; return { text: s.t, cited: cited, plain: !cited, refLabel: cited ? String(s.c) : "", onClick: cited ? (() => this.cbSelCite(s.c)) : (() => {}), style: cited ? { display: "inline", background: onC ? "color-mix(in srgb,#2e9e6b 14%,transparent)" : "transparent", border: "none", padding: onC ? "1px 3px" : 0, borderRadius: 4, margin: 0, cursor: "pointer", font: "inherit", lineHeight: 1.7, color: "var(--ink-cold)", borderBottom: "1.5px solid " + (onC ? "#2e9e6b" : "color-mix(in srgb,#2e9e6b 45%,transparent)") } : {} }; });
     }
 
+    const autoPhase = this.state.autoPhase || "idle";
+    const autoPlaying = autoPhase === "playing";
+    const autoDone = autoPhase === "done";
+    const autoPaused = autoPhase === "paused";
+    const autoStatus = autoPlaying ? "Autoplaying" : autoDone ? "Run complete" : autoPaused ? "Paused" : "Walkthrough";
+    const captionHint = autoPlaying
+      ? "Autoplaying the full run · click anywhere in the demo to take over."
+      : autoDone
+        ? "That's the full run · press replay below to watch it again."
+        : "Click the pulsing box to walk through it, or press play below.";
+    const autoStages = this.autoStages.map((label, i) => {
+      const on = step === i;
+      const past = step > i;
+      const dot = { width: 6, height: 6, borderRadius: "50%", flexShrink: 0, background: on ? "#2f6193" : past ? "#2f6193" : "rgba(31,45,61,0.22)" };
+      if (on && autoPlaying) dot.animation = "dmPulse 1.6s ease-in-out infinite";
+      return {
+        label,
+        onClick: () => this.jumpAutoStage(i),
+        style: {
+          display: "inline-flex", alignItems: "center", gap: 6, flexShrink: 0,
+          padding: "5px 10px", borderRadius: 999, cursor: "pointer", border: "1px solid " + (on ? "color-mix(in srgb,#2f6193 36%,transparent)" : "transparent"),
+          background: on ? "color-mix(in srgb,#2f6193 10%,transparent)" : "transparent",
+          fontFamily: "var(--font-display)", fontSize: 10, fontWeight: on ? 700 : 500, letterSpacing: "0.04em", textTransform: "uppercase",
+          color: on ? "var(--ink-cold)" : past ? "var(--ink-quiet)" : "var(--ink-dim)", whiteSpace: "nowrap", transition: "all 140ms ease"
+        },
+        dotStyle: dot
+      };
+    });
+    const pad2 = (n) => (n < 10 ? "0" : "") + n;
+    const auto = {
+      status: autoStatus,
+      playing: autoPlaying,
+      paused: autoPaused || autoPhase === "idle",
+      showPlay: !autoPlaying,
+      playLabel: autoPlaying ? "Pause" : autoDone ? "Replay" : "Play",
+      aria: autoPlaying ? "Pause autoplay" : autoDone ? "Replay the run" : "Play autoplay",
+      count: pad2(step + 1) + " / " + pad2(this.autoStages.length),
+      stages: autoStages,
+      onToggle: this.toggleAuto,
+      onRestart: this.replayAuto,
+      iconBtn: {
+        display: "inline-flex", alignItems: "center", justifyContent: "center",
+        width: 34, height: 34, borderRadius: 9, flexShrink: 0, cursor: "pointer",
+        border: "1px solid rgba(31,45,61,0.12)", background: "#ffffff", color: "var(--ink-cold)",
+        transition: "all 140ms ease"
+      },
+      playBtn: {
+        display: "inline-flex", alignItems: "center", gap: 8, height: 34, padding: "0 14px",
+        borderRadius: 9, flexShrink: 0, cursor: "pointer",
+        border: "1px solid " + (autoPlaying ? "color-mix(in srgb,#2f6193 40%,transparent)" : "rgba(31,45,61,0.12)"),
+        background: autoPlaying ? "color-mix(in srgb,#2f6193 10%,transparent)" : "#ffffff",
+        color: "var(--ink-cold)", transition: "all 140ms ease"
+      },
+      playLabelStyle: {
+        fontFamily: "var(--font-display)", fontSize: 11, fontWeight: 700,
+        letterSpacing: "0.06em", textTransform: "uppercase"
+      },
+      countStyle: {
+        fontFamily: "ui-monospace,Menlo,monospace", fontSize: 11, fontWeight: 600,
+        color: "var(--ink-dim)", fontVariantNumeric: "tabular-nums", flexShrink: 0, letterSpacing: "0.02em"
+      },
+      dotStyle: autoPlaying
+        ? { width: 6, height: 6, borderRadius: "50%", background: "#2e9e6b", animation: "dmPulse 1.6s ease-in-out infinite", flexShrink: 0 }
+        : { width: 6, height: 6, borderRadius: "50%", background: "var(--ink-steel)", flexShrink: 0 }
+    };
 
     return {
       rail, rP: rail[0], rE: rail[1], rS: rail[2], rR: rail[3], rRp: rail[4],
       navSentinel, navTrident, navEye, navLuna,
       isAgSentinel, isAgTrident, isAgEye, isAgLuna,
       sn, tr, ey, cb,
-      screen: fld, hovTip, ev, sc, guide,
+      screen: fld, hovTip, ev, sc, guide, auto, captionHint,
       isProtocol: step === 0, isEvidence: step === 1, isScreening: step === 2, isResolve: step === 3, isReplay: step === 4,
       criteria, domains,
       candChips, opts, cur,
