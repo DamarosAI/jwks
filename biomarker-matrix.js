@@ -108,8 +108,14 @@
 
   var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var coarse = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+  // Phone / coarse: leaner debris + capped DPR so 30–60fps still reads.
+  function isLite() {
+    return coarse || (window.innerWidth > 0 && window.innerWidth <= 760);
+  }
   var instances = [];
   var raf = 0;
+  var MAX_DEBRIS_FULL = 140;
+  var MAX_DEBRIS_LITE = 52;
   // Session shatter tally - resets on refresh; mirrored on hero + close HUDs.
   var sessionBroken = 0;
   var breakHuds = [];
@@ -275,7 +281,8 @@
     inst.streams.splice(index, 1);
     if (inst.armed && !trailsFrozen()) {
       spawn(inst);
-      if (shatter) spawn(inst); // whack-a-mole only on shatter
+      // Desktop: second spawn for whack-a-mole pop. Lite: ensureField is enough.
+      if (shatter && !isLite()) spawn(inst);
       ensureField(inst);
     }
   }
@@ -295,23 +302,38 @@
   }
 
   function makeDebris(inst, s) {
+    var lite = isLite();
     var pts = trailPoints(s.points, TRAIL, inst.rowH);
-    for (var i = 0; i < pts.length; i++) {
+    var maxDebris = lite ? MAX_DEBRIS_LITE : MAX_DEBRIS_FULL;
+    // Drop oldest shards first so a fresh shatter always paints.
+    if (inst.debris.length > maxDebris - 8) {
+      inst.debris.splice(0, inst.debris.length - (maxDebris - 8));
+    }
+    // Subsample trail glyphs on lite so one shatter stays punchy, not a flood.
+    var stride = lite ? 2 : 1;
+    for (var i = 0; i < pts.length; i += stride) {
+      if (inst.debris.length >= maxDebris) break;
       var y = pts[i].y;
       if (y < -inst.rowH || y > inst.h + inst.rowH) continue;
-      var gw = Math.max(inst.fontPx, s.tokens[i].length * inst.fontPx * 0.58);
+      var tok = s.tokens[i] || "";
+      var gw = Math.max(inst.fontPx, tok.length * inst.fontPx * 0.58);
       var gh = inst.fontPx;
-      var count = 6 + ((alphaFor(i, TRAIL) * 18) | 0);
+      // Fewer, slightly larger shards on mobile — same read at 30fps, less fillRect work.
+      var count = lite
+        ? (3 + ((alphaFor(i, TRAIL) * 7) | 0))
+        : (6 + ((alphaFor(i, TRAIL) * 18) | 0));
+      var room = maxDebris - inst.debris.length;
+      if (count > room) count = room;
       for (var k = 0; k < count; k++) {
         var ox = (Math.random() - 0.5) * gw;
         var oy = (Math.random() - 0.5) * gh;
         var ang = Math.atan2(oy, ox || 0.001) + (Math.random() - 0.5) * 0.9;
-        var sp = 55 + Math.random() * 140;
+        var sp = (lite ? 70 : 55) + Math.random() * (lite ? 120 : 140);
         inst.debris.push({
           x: pts[i].x + ox, y: y + oy,
           vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp,
-          size: 1.5 + Math.random() * 2.0,
-          life: 1, ttl: 0.26 + Math.random() * 0.3
+          size: lite ? (2.2 + Math.random() * 2.6) : (1.5 + Math.random() * 2.0),
+          life: 1, ttl: lite ? (0.34 + Math.random() * 0.38) : (0.26 + Math.random() * 0.3)
         });
       }
     }
@@ -527,7 +549,9 @@
 
   function resize(inst) {
     var r = inst.el.getBoundingClientRect();
-    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    // Cap DPR harder on lite viewports — half the pixels, same silhouette.
+    var dprCap = isLite() ? 1.25 : 2;
+    var dpr = Math.min(window.devicePixelRatio || 1, dprCap);
     var w = Math.max(1, Math.floor(r.width));
     var h = Math.max(1, Math.floor(r.height));
     if (w === inst.w && h === inst.h && dpr === inst.dpr) return;
@@ -794,8 +818,12 @@
 
   function drawDebris(ctx, inst, secs) {
     var d = inst.debris;
+    // Soft drag so low-fps steps still arc instead of streaking.
+    var drag = Math.pow(0.92, secs * 60);
     for (var e = d.length - 1; e >= 0; e--) {
       var p = d[e];
+      p.vx *= drag;
+      p.vy *= drag;
       p.x += p.vx * secs;
       p.y += p.vy * secs;
       p.life -= secs / p.ttl;
@@ -804,7 +832,7 @@
         continue;
       }
       var a = p.life * 0.7 * VIS * depthFade(p.y, inst.h);
-      if (a < 0.01) continue;
+      if (a < 0.02) continue;
       ctx.fillStyle = "rgba(" + BLUE + "," + a.toFixed(3) + ")";
       var sz = p.size * (0.35 + p.life * 0.65);
       ctx.fillRect(p.x - sz * 0.5, p.y - sz * 0.5, sz, sz);
@@ -905,6 +933,8 @@
   function tick(ts) {
     raf = 0;
     var any = false;
+    // Cap Δt so 30fps and one missed frame stay continuous; avoid teleport on jank.
+    var dtCap = isLite() ? 40 : 48;
     for (var i = 0; i < instances.length; i++) {
       var inst = instances[i];
       if (!inst.el.isConnected) continue;
@@ -913,7 +943,7 @@
       var r = inst.el.getBoundingClientRect();
       if (r.bottom <= -20 || r.top >= window.innerHeight + 20) { inst.last = 0; continue; }
       any = true;
-      var dt = inst.last ? Math.min(48, ts - inst.last) : 16;
+      var dt = inst.last ? Math.min(dtCap, ts - inst.last) : 16;
       inst.last = ts;
       paint(inst, dt);
     }
