@@ -2526,7 +2526,7 @@ function ReplayModule() {
       letterSpacing: "0.14em",
       textTransform: "uppercase"
     }
-  }, "Flight recorder \xB7 Marcus Bell \xB7 S-1047 \xB7 scrub the chain"), /*#__PURE__*/React.createElement(Mono, {
+  }, "Flight recorder \xB7 C. Zavala \xB7 S-1047 \xB7 scrub the chain"), /*#__PURE__*/React.createElement(Mono, {
     c: "var(--ink-dim)",
     style: {
       marginLeft: "auto"
@@ -3243,7 +3243,7 @@ try { (() => {
   const GATES = ["Diagnosis", "Biomarker", "ECOG", "Washout", "Steroid"];
   const CANDIDATES = [{
     id: "S-1047",
-    name: "Marcus Bell",
+    name: "C. Zavala",
     mrn: "SYN-4471",
     age: 64,
     sex: "M",
@@ -3252,7 +3252,7 @@ try { (() => {
     note: "Structured ECOG 1 vs note 2"
   }, {
     id: "S-1051",
-    name: "Patricia Voss",
+    name: "E. Morn",
     mrn: "SYN-4490",
     age: 71,
     sex: "F",
@@ -3261,7 +3261,7 @@ try { (() => {
     note: "Assessment 19 days old"
   }, {
     id: "S-1066",
-    name: "Andre Coleman",
+    name: "L. Shaxx",
     mrn: "SYN-4512",
     age: 58,
     sex: "M",
@@ -3270,7 +3270,7 @@ try { (() => {
     note: "EGFR / ALK report missing"
   }, {
     id: "S-1071",
-    name: "Lena Marsh",
+    name: "M. Sov",
     mrn: "SYN-4530",
     age: 62,
     sex: "F",
@@ -3279,7 +3279,7 @@ try { (() => {
     note: "Molecular unmapped"
   }, {
     id: "S-1078",
-    name: "Raymond Tan",
+    name: "I. Rey",
     mrn: "SYN-4548",
     age: 69,
     sex: "M",
@@ -3288,7 +3288,7 @@ try { (() => {
     note: "Last-dose date conflict"
   }, {
     id: "S-1083",
-    name: "Sofia Reyes",
+    name: "A. Bray",
     mrn: "SYN-4560",
     age: 55,
     sex: "F",
