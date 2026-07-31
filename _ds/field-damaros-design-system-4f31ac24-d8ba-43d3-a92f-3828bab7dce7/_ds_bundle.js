@@ -2526,7 +2526,7 @@ function ReplayModule() {
       letterSpacing: "0.14em",
       textTransform: "uppercase"
     }
-  }, "Flight recorder \xB7 C. Zavala \xB7 S-1047 \xB7 scrub the chain"), /*#__PURE__*/React.createElement(Mono, {
+  }, "Flight recorder \xB7 J. Silverhand \xB7 S-1047 \xB7 scrub the chain"), /*#__PURE__*/React.createElement(Mono, {
     c: "var(--ink-dim)",
     style: {
       marginLeft: "auto"
@@ -3243,7 +3243,7 @@ try { (() => {
   const GATES = ["Diagnosis", "Biomarker", "ECOG", "Washout", "Steroid"];
   const CANDIDATES = [{
     id: "S-1047",
-    name: "C. Zavala",
+    name: "J. Silverhand",
     mrn: "SYN-4471",
     age: 64,
     sex: "M",
@@ -3297,7 +3297,7 @@ try { (() => {
     note: "Infusion record ambiguous"
   }, {
     id: "S-1090",
-    name: "Walter Kim",
+    name: "Claire Russell",
     mrn: "SYN-4577",
     age: 73,
     sex: "M",
@@ -3306,7 +3306,7 @@ try { (() => {
     note: "Dexamethasone taper unclear"
   }, {
     id: "S-1102",
-    name: "Grace Idris",
+    name: "Jackie Welles",
     mrn: "SYN-4601",
     age: 60,
     sex: "F",
@@ -3315,42 +3315,42 @@ try { (() => {
     note: "No repeat ECOG in window"
   }, {
     id: "S-1009",
-    name: "Thomas Vance",
+    name: "Solomon Reed",
     mrn: "SYN-4402",
     age: 67,
     sex: "M",
     stall: null
   }, {
     id: "S-1014",
-    name: "Nadia Hassan",
+    name: "Song So Mi",
     mrn: "SYN-4410",
     age: 59,
     sex: "F",
     stall: null
   }, {
     id: "S-1022",
-    name: "Carl Jensen",
+    name: "Alex Nox",
     mrn: "SYN-4423",
     age: 65,
     sex: "M",
     stall: null
   }, {
     id: "S-1031",
-    name: "Maria Lopez",
+    name: "Evelyn Parker",
     mrn: "SYN-4438",
     age: 70,
     sex: "F",
     stall: null
   }, {
     id: "S-1040",
-    name: "David Pak",
+    name: "Hanako Arasaka",
     mrn: "SYN-4455",
     age: 61,
     sex: "M",
     stall: null
   }, {
     id: "S-1055",
-    name: "Ruth Adeyemi",
+    name: "Alt Cunningham",
     mrn: "SYN-4498",
     age: 56,
     sex: "F",
