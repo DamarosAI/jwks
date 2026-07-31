@@ -887,9 +887,9 @@ const SPONSOR = {
   nct: "NCT03032484",
   protocol: "DMR-204 · v2.1",
   hash: "aead45cf",
-  monitor: "Dr. E. Salgado",
+  monitor: "Dr. I. Netero",
   monitorRole: "Medical Monitor",
-  cra: "J. Okafor",
+  cra: "J. Kujo",
   craRole: "Lead CRA",
   email: "trials@meridian-onc.com"
 };
@@ -4359,7 +4359,7 @@ try { (() => {
         gap: "9px 18px",
         padding: "14px 18px"
       }
-    }, [["Reviewer", "Dr. Sana"], ["Role", adj.role], ["Candidate", patient.id], ["Protocol", "v2.1 · aead45cf"], ["Evidence-hash", "c1f9…7e"], ["Committed", record.time]].map(([k, v]) => /*#__PURE__*/React.createElement("div", {
+    }, [["Reviewer", "Dr. M. Avdol"], ["Role", adj.role], ["Candidate", patient.id], ["Protocol", "v2.1 · aead45cf"], ["Evidence-hash", "c1f9…7e"], ["Committed", record.time]].map(([k, v]) => /*#__PURE__*/React.createElement("div", {
       key: k,
       style: {
         display: "flex",
