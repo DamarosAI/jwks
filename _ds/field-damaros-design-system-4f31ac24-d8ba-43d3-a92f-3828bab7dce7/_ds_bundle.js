@@ -3288,7 +3288,7 @@ try { (() => {
     note: "Last-dose date conflict"
   }, {
     id: "S-1083",
-    name: "A. Bray",
+    name: "C. Bray",
     mrn: "SYN-4560",
     age: 55,
     sex: "F",
