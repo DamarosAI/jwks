@@ -1042,7 +1042,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
                     <div style="font-family:var(--font-display);font-size:10px;color:var(--ink-dim);padding-top:11px;border-top:1px solid rgba(31,45,61,0.07);line-height:1.5;">Randomized 1:1 · target n=140 · stratified by ECOG &amp; prior lines</div>
                   </div>
                 </div>
-                <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-dim);margin:22px 0 10px;">Eligibility · 36 criteria · 25 Trident-mapped</div>
+                <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-dim);margin:22px 0 10px;">Eligibility · 36 criteria · 25 engine-mapped</div>
                 <div style="display:flex;flex-direction:column;gap:7px;">
                   <sc-for list="{{ criteria }}" as="c" hint-placeholder-count="5">
                     <div style="display:flex;align-items:center;gap:14px;padding:13px 16px;border-radius:12px;background:rgba(31,45,61,0.03);">
@@ -1060,7 +1060,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
               <div style="height:692px;overflow:hidden;display:flex;flex-direction:column;padding:22px 28px 24px;">
                 <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px;">
                   <span style="width:100%;font-family:var(--font-display);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-steel);">Evidence</span>
-                  <span style="font-family:var(--font-display);font-size:11px;color:var(--ink-dim);">How <span style="color:var(--ink-steel);font-weight:600;">Trident</span> maps the sponsor packet onto site evidence · PHI-bounded · 09:43</span>
+                  <span style="font-family:var(--font-display);font-size:11px;color:var(--ink-dim);">How the <span style="color:var(--ink-steel);font-weight:600;">Damaros</span> engine maps the sponsor packet onto site evidence · PHI-bounded · 09:43</span>
                 </div>
                 <div style="margin-bottom:16px;padding:13px 16px;border-radius:12px;border:1px solid rgba(31,45,61,0.1);background:rgba(31,45,61,0.02);">
                   <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:9px;"><span style="font-family:var(--font-display);font-size:11px;font-weight:600;color:var(--ink-cold);">Sponsor packet → evidence coverage</span><span style="font-family:var(--font-display);font-size:10px;color:var(--ink-dim);">Mapped 25 of 36 criteria · Protocol v2.1</span></div>
@@ -2674,7 +2674,7 @@ class Component extends DCLogic {
     const scSeg = { evaluated: 72, pass: 6, review: 13, fail: 53 };
     const LG = [
       { t:"09:40", ev:"Protocol loaded", obj:"v2.1 · 36 criteria", ac:"system", integ:"Verified", exc:"none", cls:["protocol"], eid:"EVT-1001",
-        rows:[["Version","v2.1 · locked"],["Intake","LLM · NCT00000204 + sponsor packet"],["Amendment","v2.0 → v2.1 · 06-21"],["Change","Narrowed prior-lines criterion"],["Re-screen","1 subject flagged","warn"],["Criteria","36 · 25 Trident-mapped"],["Record hash","aead45cf","ref"]], rel:"Evidence ingested" },
+        rows:[["Version","v2.1 · locked"],["Intake","LLM · NCT00000204 + sponsor packet"],["Amendment","v2.0 → v2.1 · 06-21"],["Change","Narrowed prior-lines criterion"],["Re-screen","1 subject flagged","warn"],["Criteria","36 · 25 engine-mapped"],["Record hash","aead45cf","ref"]], rel:"Evidence ingested" },
       { t:"09:42", ev:"Evidence ingested", obj:"Observation/ECOG-8841", ac:"system", integ:"Verified", exc:"none", cls:["evidence"], eid:"EVT-1041",
         rows:[["Actor","system · ingest"],["Object","Observation/ECOG-8841"],["Source","Epic · FHIR R4"],["Snapshot","pop-2026-06-22"],["Integrity","Verified · record intact","ok"],["Signature","n/a"]], rel:"Document indexed · Criterion evaluated" },
       { t:"09:43", ev:"Document indexed", obj:"Oncology note · DocumentReference", ac:"system", integ:"Verified", exc:"none", cls:["evidence"], eid:"EVT-1042",

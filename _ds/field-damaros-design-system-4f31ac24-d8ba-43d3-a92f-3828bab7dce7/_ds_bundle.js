@@ -796,7 +796,7 @@ const READY = {
   }
 };
 
-/* Protocol-level ingestion detail - how Trident maps each I/E rule. No patient data. */
+/* Protocol-level ingestion detail - how the Damaros engine maps each I/E rule. No patient data. */
 const PROTO = {
   "I-2.1": {
     rule: "EGFR / ALK molecular alteration present (targetable subtype).",
@@ -815,7 +815,7 @@ const PROTO = {
   "I-4.2": {
     rule: "ECOG performance status 0–1, assessed within 14 days of C1D1.",
     determinacy: "subjective",
-    note: "Trident maps the structured value deterministically; the narrative note is non-computable and can disagree - flagged for human judgment, never auto-resolved.",
+    note: "The Damaros engine maps the structured value deterministically; the narrative note is non-computable and can disagree - flagged for human judgment, never auto-resolved.",
     anchors: [{
       t: "Observation",
       code: "LOINC 89247-1",
@@ -839,7 +839,7 @@ const PROTO = {
   "E-5.3": {
     rule: "≥ 21-day washout from prior systemic therapy before C1D1.",
     determinacy: "source",
-    note: "Date arithmetic is deterministic, but the last-dose anchor resolves across multiple sources that may disagree - Trident surfaces the conflict for confirmation.",
+    note: "Date arithmetic is deterministic, but the last-dose anchor resolves across multiple sources that may disagree - the Damaros engine surfaces the conflict for confirmation.",
     anchors: [{
       t: "MedicationRequest",
       code: "last administration",
@@ -853,7 +853,7 @@ const PROTO = {
   "E-7": {
     rule: "Active CNS metastases requiring escalating corticosteroids.",
     determinacy: "subjective",
-    note: "‘Active’ and ‘escalating’ require clinical interpretation - Trident maps the anchors but routes the determination to a clinician.",
+    note: "‘Active’ and ‘escalating’ require clinical interpretation - the Damaros engine maps the anchors but routes the determination to a clinician.",
     anchors: [{
       t: "Condition",
       code: "SNOMED · CNS mets",
@@ -1361,7 +1361,7 @@ function ProtocolModule({
         whiteSpace: "nowrap",
         flexShrink: 0
       }
-    }, R.anchors, " \xB7 Trident"), /*#__PURE__*/React.createElement(Mono, {
+    }, R.anchors, " \xB7 engine"), /*#__PURE__*/React.createElement(Mono, {
       style: {
         fontSize: 10,
         marginLeft: "auto",
@@ -1386,7 +1386,7 @@ function ProtocolModule({
       display: "block",
       marginBottom: 20
     }
-  }, "NCT03032484 \xB7 hash aead45cf \xB7 36 criteria \xB7 25 Trident-mapped \xB7 amendment A3 pending"), /*#__PURE__*/React.createElement("div", {
+  }, "NCT03032484 \xB7 hash aead45cf \xB7 36 criteria \xB7 25 engine-mapped \xB7 amendment A3 pending"), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
       gap: 22
@@ -1446,7 +1446,7 @@ function ProtocolRail({
       textTransform: "uppercase",
       color: "var(--ink-dim)"
     }
-  }, "Trident ingestion"), /*#__PURE__*/React.createElement("div", {
+  }, "Engine ingestion"), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
       alignItems: "baseline",
