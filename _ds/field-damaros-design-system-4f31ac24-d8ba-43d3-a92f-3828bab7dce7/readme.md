@@ -36,7 +36,7 @@ Node is the one operator surface (Console was retired as a surface; the site nev
 
 Shipped order on damaros.ai is **Sentinel, Luna, Trident, Eye**: capability first (protocols the site did not know it could run), proof second (the record a sponsor reads during site selection). Keep that sequence in new copy.
 
-- **Sentinel** - *Opportunity radar.* Surfaces open protocols this site can actually run. Site capacity only, no patient data.
+- **Sentinel** - *Opportunity radar.* Surfaces open protocols this site can actually run — protocols to sites, never patients to protocols. Site capacity only, no patient data.
 - **Luna** - *Audit chain.* Reconstructs any run from the chain, every row cited. Read-only on the record; PHI provably never enters it.
 - **Trident** - *At protocol.* Compiles criteria into locked logic and drafts amendments. Never commits an amendment.
 - **Eye** - *Quality signals.* Flags drift and deviations early, site-scoped, so the team can act before they harden into findings. Watches process, not people.

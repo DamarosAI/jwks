@@ -1,0 +1,20 @@
+{
+  "projectId": "4f31ac24-d8ba-43d3-a92f-3828bab7dce7",
+  "shape": "none",
+  "converter": "disabled",
+  "note": "Consumer repo, not a design-system source. The converter must never run here and the remote project is hand-authored — see .design-sync/NOTES.md before doing anything. Sync is a writes-only push of the authored files in _ds/field-damaros-design-system-4f31ac24-d8ba-43d3-a92f-3828bab7dce7/.",
+  "pushFiles": [
+    "readme.md",
+    "styles.css",
+    "tokens/colors.css",
+    "tokens/effects.css",
+    "tokens/fonts.css",
+    "tokens/spacing.css",
+    "tokens/typography.css"
+  ],
+  "neverPush": [
+    "_ds_bundle.js",
+    "_ds_manifest.json",
+    "_adherence.oxlintrc.json"
+  ]
+}
