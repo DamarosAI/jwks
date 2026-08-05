@@ -1,8 +1,9 @@
 /**
- * Fit section headlines to exactly two lines on every viewport.
+ * Fit section headlines to one shared size across every section.
  * Each .dm-section-title uses a forced <br> + nowrap; first line stays ink,
- * second line is steel. Binary-searches the largest font-size where neither
- * line overflows the available width.
+ * second line is steel. Picks the largest viewport font that fits every
+ * title against a shared content width, so narrow columns cannot shrink
+ * one header below the rest.
  */
 (function () {
   var SEL = "h2.dm-section-title";
@@ -52,35 +53,62 @@
     (document.head || document.documentElement).appendChild(st);
   }
 
-  function fits(el) {
-    return el.scrollWidth <= el.clientWidth + 0.5;
+  function contentWidth(el) {
+    var node = el;
+    while (node && node !== document.body) {
+      if (node.classList && node.classList.contains("dm-scroll-target")) {
+        return node.clientWidth;
+      }
+      node = node.parentElement;
+    }
+    return el.clientWidth;
   }
 
-  function fitOne(el) {
-    if (!el) return;
-    var prev = el.style.fontSize;
-    el.style.transition = "none";
+  function sharedWidth(nodes) {
+    var best = 0;
+    for (var i = 0; i < nodes.length; i++) {
+      var w = contentWidth(nodes[i]);
+      if (w > best) best = w;
+    }
+    return best || (window.innerWidth || 1024);
+  }
 
-    var hi = maxForViewport();
+  function fitsAt(el, width, size) {
+    var prevSize = el.style.fontSize;
+    var prevWidth = el.style.width;
+    var prevMax = el.style.maxWidth;
+    el.style.setProperty("font-size", size + "px", "important");
+    el.style.setProperty("width", width + "px", "important");
+    el.style.setProperty("max-width", width + "px", "important");
+    var ok = el.scrollWidth <= width + 0.5;
+    if (prevSize) el.style.setProperty("font-size", prevSize, "important");
+    else el.style.removeProperty("font-size");
+    if (prevWidth) el.style.width = prevWidth;
+    else el.style.removeProperty("width");
+    if (prevMax) el.style.maxWidth = prevMax;
+    else el.style.removeProperty("max-width");
+    return ok;
+  }
+
+  function bestSizeFor(el, width, hi) {
+    if (fitsAt(el, width, hi)) return hi;
     var lo = MIN;
     var best = MIN;
-    el.style.setProperty("font-size", hi + "px", "important");
-    if (fits(el)) {
-      best = hi;
-    } else {
-      for (var i = 0; i < 40; i++) {
-        var mid = (lo + hi) / 2;
-        el.style.setProperty("font-size", mid + "px", "important");
-        if (fits(el)) {
-          best = mid;
-          lo = mid;
-        } else {
-          hi = mid;
-        }
+    for (var i = 0; i < 40; i++) {
+      var mid = (lo + hi) / 2;
+      if (fitsAt(el, width, mid)) {
+        best = mid;
+        lo = mid;
+      } else {
+        hi = mid;
       }
     }
+    return best;
+  }
 
-    var target = best.toFixed(2) + "px";
+  function applySize(el, target) {
+    var prev = el.style.fontSize;
+    el.style.transition = "none";
     if (armed && !reduced && prev && prev !== target) {
       el.style.setProperty("font-size", prev, "important");
       void el.offsetWidth;
@@ -95,7 +123,19 @@
   function fitAll() {
     raf = 0;
     var nodes = document.querySelectorAll(SEL);
-    for (var i = 0; i < nodes.length; i++) fitOne(nodes[i]);
+    if (!nodes.length) return;
+
+    var width = sharedWidth(nodes);
+    var hi = maxForViewport();
+    var shared = hi;
+
+    for (var i = 0; i < nodes.length; i++) {
+      var size = bestSizeFor(nodes[i], width, hi);
+      if (size < shared) shared = size;
+    }
+
+    var target = shared.toFixed(2) + "px";
+    for (var j = 0; j < nodes.length; j++) applySize(nodes[j], target);
   }
 
   function schedule() {

@@ -31,7 +31,7 @@
 <script src="./logo-marquee.js?v=4" defer></script>
 <script src="./biomarker-matrix.js?v=53" defer></script>
 <script src="./hero-fit.js?v=4" defer></script>
-<script src="./section-title-fit.js?v=2" defer></script>
+<script src="./section-title-fit.js?v=3" defer></script>
 <script>
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 window.scrollTo(0, 0);
@@ -420,10 +420,6 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
         padding-left:clamp(10px,calc(28px * 100vw / var(--dm-ref)),28px) !important;
         padding-right:clamp(10px,calc(28px * 100vw / var(--dm-ref)),28px) !important;
       }
-      .dm-site #problem [style*="minmax(330px"]{
-        grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr)) !important;
-        gap:clamp(24px,calc(68px * 100vw / var(--dm-ref)),68px) !important;
-      }
       .dm-site #output [style*="grid-template-columns:minmax(0,0.6fr)"]{
         gap:clamp(14px,calc(32px * 100vw / var(--dm-ref)),32px) !important;
       }
@@ -597,33 +593,19 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
         padding-left:10px !important;
         padding-right:10px !important;
       }
-      .dm-site #problem [style*="minmax(330px"]{
+      .dm-site #problem .dm-stat-grid{
         grid-template-columns:1fr !important;
       }
-      .dm-site #node .dm-node-split{
-        grid-template-columns:1fr !important;
-      }
-      .dm-site #node .dm-node-eyebrow,
-      .dm-site #node .dm-node-copy,
-      .dm-site #node .dm-node-grid{
-        grid-column:auto !important;
-        grid-row:auto !important;
-      }
+      .dm-site #node .dm-node-grid{grid-template-columns:1fr !important;}
       .dm-site #node .dm-node-grid{margin-top:clamp(28px,5vw,64px);}
     }
 
-    /* Platform: eyebrow alone on row 1; heading + control cards share row 2 so
-       card tops align with "Damaros helps" on laptop/desktop. */
-    .dm-site #node .dm-node-split{
+    /* Platform cards sit under a full-width section header. */
+    .dm-site #node .dm-node-grid{
       display:grid;
-      grid-template-columns:minmax(0,1fr) minmax(0,1fr);
-      column-gap:clamp(28px,5vw,64px);
-      row-gap:0;
-      align-items:start;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
     }
-    .dm-site #node .dm-node-eyebrow{grid-column:1;grid-row:1;}
-    .dm-site #node .dm-node-copy{grid-column:1;grid-row:2;}
-    .dm-site #node .dm-node-grid{grid-column:2;grid-row:2;}
 
     /* ---- integration logo carousel (always on) + input-card baseline ---- */
     .dm-input-cards{display:flex;flex-direction:column;gap:12px;}
@@ -1629,13 +1611,11 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
 
   <!-- ============ PROBLEM ============ -->
   <section id="problem" data-screen-label="The execution gap" style="position:relative;padding:clamp(52px,6vw,84px) clamp(20px,5vw,40px);">
-    <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));gap:clamp(32px,5vw,68px);align-items:center;">
-      <div>
-        <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The problem</div>
-        <h2 class="dm-section-title">When trial matching ends,<br><span class="dm-section-title__steel">years of manual labor begin.</span></h2>
-        <p class="dm-section-dek dm-section-dek--oneline">Discovery and reporting got solved; execution is still open.</p>
-      </div>
-      <div class="dm-stat-grid" style="display:flex;flex-direction:column;gap:12px;">
+    <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
+      <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The problem</div>
+      <h2 class="dm-section-title">When trial matching ends,<br><span class="dm-section-title__steel">years of manual labor begin.</span></h2>
+      <p class="dm-section-dek dm-section-dek--oneline">Discovery and reporting got solved; execution is still open.</p>
+      <div class="dm-stat-grid" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:40px;">
         <div class="dm-card-lift" style="display:flex;align-items:center;padding:20px 24px;border-radius:14px;">
           <div style="flex-shrink:0;width:118px;text-align:center;font-family:var(--font-display);font-size:clamp(2.4rem,3.2vw,3.1rem);font-weight:700;letter-spacing:-0.03em;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink-cold);">20<span style="font-size:0.44em;color:var(--ink-steel);vertical-align:0.6em;font-weight:600;margin-left:1px;">+</span></div>
           <div style="width:1px;align-self:stretch;background:rgba(31,45,61,0.12);margin:1px 22px;"></div>
@@ -1850,13 +1830,10 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
   <!-- ============ NODE ============ -->
   <section id="node" data-screen-label="Platform" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
-      <div class="dm-node-split">
-        <div class="dm-node-eyebrow" style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The platform</div>
-        <div class="dm-node-copy">
-          <h2 class="dm-section-title">Accountable execution<br><span class="dm-section-title__steel">owned and hosted by the site.</span></h2>
-          <p class="dm-section-dek">Site-hosted and site-governed, with PHI staying put.</p>
-        </div>
-        <div class="dm-node-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+      <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The platform</div>
+      <h2 class="dm-section-title">Accountable execution<br><span class="dm-section-title__steel">owned and hosted by the site.</span></h2>
+      <p class="dm-section-dek">Site-hosted and site-governed, with PHI staying put.</p>
+      <div class="dm-node-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:40px;">
           <div class="dm-card-lift" style="padding:22px;border-radius:14px;">
             <div style="font-family:var(--font-display);font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--state-pass);margin-bottom:16px;">What it controls</div>
             <div style="display:flex;flex-direction:column;gap:13px;">
@@ -1875,7 +1852,6 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
               <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:rgba(31,45,61,0.06);"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="var(--ink-dim)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5 11 11M11 5 5 11"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-faint);">Send PHI off-site</span></div>
             </div>
           </div>
-        </div>
       </div>
     </div>
     <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToSecurity }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
