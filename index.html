@@ -696,7 +696,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     @supports (width:1cqi){
       .dm-site .dm-logo-tile{width:clamp(148px,calc((100cqi - 42px) / 4),220px) !important;}
     }
-    /* Match OpenAI/Claude visual weight inside the shared tile (works on marquee clones too). */
+    /* Match OpenAI/Anthropic visual weight inside the shared tile (works on marquee clones too). */
     .dm-site .dm-logo-tile img[src*="openai-logo"],
     .dm-site .dm-logo-tile img[src*="claude-logo"]{
       max-height:clamp(28px,3.8vw,36px) !important;
@@ -1611,7 +1611,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
           <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/330px-2011.Cerner.logo.png" alt="Cerner" style="max-width:100%;max-height:30px;object-fit:contain;display:block;"></div>
           <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/pasted-1782493762954-0.png" alt="REDCap" style="max-width:100%;max-height:48px;object-fit:contain;display:block;"></div>
           <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 12px;"><img src="uploads/openai-logo.png?v=3" alt="OpenAI" style="max-width:92%;max-height:36px;width:auto;object-fit:contain;display:block;margin:0 auto;"></div>
-          <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 12px;"><img src="uploads/claude-logo.png" alt="Claude" style="max-width:92%;max-height:36px;width:auto;object-fit:contain;display:block;margin:0 auto;"></div>
+          <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 12px;"><img src="uploads/claude-logo.png" alt="Anthropic" style="max-width:92%;max-height:36px;width:auto;object-fit:contain;display:block;margin:0 auto;"></div>
         </div>
         <div class="dm-logo-set dm-logo-dupe" aria-hidden="true">
           <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/pasted-1782494614917-0.png" alt="" style="max-width:100%;max-height:30px;object-fit:contain;display:block;"></div>
@@ -1633,6 +1633,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
         </div>
         </div>
       </div>
+      <p style="margin:18px auto 0;max-width:52ch;font-size:12.5px;line-height:1.5;color:var(--ink-dim);">OpenAI and Anthropic support protocol compile only. Site evidence stays off every model path.</p>
     </div>
     <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToProblem }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
   </section>
@@ -1702,7 +1703,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
             </div>
           </div>
           <div class="dm-card-lift dm-card-record" style="display:flex;flex-direction:column;flex:1;padding:20px 24px;border-radius:14px;">
-            <p style="margin:0;font-size:13.5px;line-height:1.55;color:var(--ink-cold);">The model never evaluates a subject and never sees patient data. Swap the AI, swap the hardware. <span style="color:var(--ink-steel);font-weight:600;">Same inputs, same answer, every time.</span> Temperature zero buys reproducibility, not attribution.</p>
+            <p style="margin:0;font-size:13.5px;line-height:1.55;color:var(--ink-cold);">The model never evaluates a subject and never sees patient data. Swap the AI, swap the hardware. <span style="color:var(--ink-steel);font-weight:600;">Eligibility does not drift with the stack.</span> Temperature zero buys reproducibility, not attribution.</p>
             <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-top:auto;padding-top:10px;">Current architecture</div>
           </div>
         </div>
@@ -1819,7 +1820,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
   <section id="output" data-screen-label="What a run produces" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The outputs</div>
-      <h2 class="dm-section-title">Not a dashboard.<br><span class="dm-section-title__steel">A decision that checks out.</span></h2>
+      <h2 class="dm-section-title">Not a dashboard.<br><span class="dm-section-title__steel">A record you can replay.</span></h2>
       <p class="dm-section-dek">Criterion, evidence, human commit, hash-linked ledger.</p>
       <div class="dm-output-grid" style="display:grid;grid-template-columns:minmax(0,0.6fr) minmax(0,1fr);gap:clamp(16px,3vw,32px);margin-top:38px;align-items:stretch;">
         <div class="dm-input-col" style="display:flex;flex-direction:column;gap:12px;">
