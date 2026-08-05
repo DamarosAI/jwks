@@ -18,8 +18,8 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Damaros™">
-<meta name="description" content="The agentic execution platform for clinical trials. Protocol through audit — deterministic decisions, human signatures, replayable proof.">
-<meta property="og:description" content="The agentic execution platform for clinical trials. Protocol through audit — deterministic decisions, human signatures, replayable proof.">
+<meta name="description" content="The agentic execution platform for clinical trials. Protocol through audit: deterministic decisions, human signatures, replayable proof.">
+<meta property="og:description" content="The agentic execution platform for clinical trials. Protocol through audit: deterministic decisions, human signatures, replayable proof.">
 <meta property="og:url" content="https://www.damaros.ai/">
 <meta property="og:image" content="https://www.damaros.ai/favicon-192x192.png">
 <meta property="og:logo" content="https://www.damaros.ai/favicon-192x192.png">
@@ -179,14 +179,10 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       .dm-hero-mark.is-centurion-bounce > svg:not(.dm-centurion-glow){animation:none !important;will-change:auto;}
       .dm-hero-mark .dm-centurion-glow{animation:none;opacity:0.054;transform:none;will-change:auto;}
     }
-    /* Section dek under h2 - same quiet 15px one-liner proportion everywhere */
-    .dm-section-dek{margin:22px 0 0;font-size:15px;line-height:1.6;color:var(--ink-faint);max-width:42ch;}
-    .dm-section-dek--center{margin-left:auto;margin-right:auto;text-align:center;white-space:nowrap;max-width:none;}
-    .dm-section-dek--oneline{white-space:nowrap;max-width:none;font-size:clamp(11px,2.35vw,15px);line-height:1.35;}
-    @media (max-width:760px){
-      .dm-section-dek--center{white-space:normal;max-width:34ch;}
-    }
-    @media (max-width:420px){.dm-section-dek--center{white-space:normal;max-width:28ch;}}
+    /* Section dek under h2 - always one line, scales down to fit */
+    .dm-section-dek{margin:22px 0 0;font-size:clamp(11px,2.35vw,15px);line-height:1.35;color:var(--ink-faint);white-space:nowrap;max-width:none;}
+    .dm-section-dek--center{margin-left:auto;margin-right:auto;text-align:center;}
+    .dm-section-dek--oneline{white-space:nowrap;max-width:none;}
     /* Drum clearance + soft mid-card dissolve (matches canvas depthFade) */
     .dm-matrix--hero,.dm-matrix--close{
       -webkit-mask-image:radial-gradient(ellipse 46% 50% at 50% 48%,transparent 0%,transparent 58%,rgba(0,0,0,0.35) 78%,#000 100%),linear-gradient(180deg,#000 0%,#000 34%,rgba(0,0,0,0.55) 48%,rgba(0,0,0,0.16) 58%,transparent 70%);
@@ -835,15 +831,10 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       }
       .dm-site .dm-section-dek{
         margin-top:14px !important;
-        font-size:clamp(13px,3.5vw,14.5px) !important;
-        line-height:1.5 !important;
-        max-width:36ch !important;
-      }
-      .dm-site .dm-section-dek--oneline{
-        white-space:nowrap !important;
-        max-width:none !important;
         font-size:clamp(10px,2.8vw,14.5px) !important;
         line-height:1.35 !important;
+        white-space:nowrap !important;
+        max-width:none !important;
       }
       .dm-site .dm-section-dek--center{
         margin:12px auto 22px !important;
@@ -1698,7 +1689,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Where this fits</div>
       <h2 class="dm-section-title">Discovery is solved.<br><span class="dm-section-title__steel">Execution is open.</span></h2>
-      <p class="dm-section-dek">Protocol through audit — accountable execution by the site.</p>
+      <p class="dm-section-dek">Protocol through audit. Accountable execution by the site.</p>
       <div id="capabilityCarousel" class="dm-capability-grid">
         <div class="dm-capability-col">
           <div class="dm-card-lift" style="padding:22px;border-radius:14px;">
@@ -1711,7 +1702,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
             </div>
           </div>
           <div class="dm-card-lift dm-card-record" style="display:flex;flex-direction:column;flex:1;padding:20px 24px;border-radius:14px;">
-            <p style="margin:0;font-size:13.5px;line-height:1.55;color:var(--ink-cold);">The model never evaluates a subject and never sees patient data. Swap the AI, swap the hardware — <span style="color:var(--ink-steel);font-weight:600;">same inputs, same answer, every time.</span> Temperature zero buys reproducibility, not attribution.</p>
+            <p style="margin:0;font-size:13.5px;line-height:1.55;color:var(--ink-cold);">The model never evaluates a subject and never sees patient data. Swap the AI, swap the hardware. <span style="color:var(--ink-steel);font-weight:600;">Same inputs, same answer, every time.</span> Temperature zero buys reproducibility, not attribution.</p>
             <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-top:auto;padding-top:10px;">Architecture invariant</div>
           </div>
         </div>
@@ -1909,7 +1900,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;text-align:center;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Replay</div>
       <h2 class="dm-section-title dm-section-title--center">Not a log you trust.<br><span class="dm-section-title__steel">Proof you can replay.</span></h2>
-      <p class="dm-section-dek dm-section-dek--center">Any run rebuilds end to end — protocol version to signature.</p>
+      <p class="dm-section-dek dm-section-dek--center">Any run rebuilds end to end, protocol version to signature.</p>
       <div class="dm-card-lift dm-card-record" style="margin:44px auto 0;max-width:860px;border-radius:16px;overflow:hidden;text-align:left;">
         <div style="display:flex;align-items:center;gap:12px;padding:13px 22px;border-bottom:1px solid rgba(31,45,61,0.08);background:#fbfcfd;">
           <span style="font-family:var(--font-display);font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-steel);">Replay ledger</span>
@@ -1942,7 +1933,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Security posture</div>
       <h2 class="dm-section-title">Every run is attributable.<br><span class="dm-section-title__steel">PHI stays off the model.</span></h2>
       <p class="dm-section-dek">Site-bounded controls, ready for audit.</p>
-      <p style="margin:28px 0 0;max-width:54ch;font-size:clamp(1.05rem,1.6vw,1.25rem);line-height:1.45;letter-spacing:-0.01em;color:var(--ink-cold);"><strong style="font-weight:700;">No LLM touches patient data.</strong> <span style="color:var(--ink-quiet);font-weight:400;">The architecture, not a setting. PHI is bounded at the site and never enters a model path. Models, compute, and coverage can move — the decision stays identical.</span></p>
+      <p style="margin:28px 0 0;max-width:54ch;font-size:clamp(1.05rem,1.6vw,1.25rem);line-height:1.45;letter-spacing:-0.01em;color:var(--ink-cold);"><strong style="font-weight:700;">No LLM touches patient data.</strong> <span style="color:var(--ink-quiet);font-weight:400;">The architecture, not a setting. PHI is bounded at the site and never enters a model path. Models, compute, and coverage can move. The decision stays identical.</span></p>
       <div class="dm-security-chips" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,248px),1fr));gap:12px;margin-top:28px;">
         <div class="dm-card-lift" style="display:flex;align-items:center;gap:11px;padding:15px 18px;border-radius:11px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--ink-steel);flex-shrink:0;"></span><span style="font-size:13px;color:var(--ink-quiet);"><strong style="color:var(--ink-cold);font-weight:600;">No sponsor path to raw PHI</strong> · aggregate egress</span></div>
         <div class="dm-card-lift" style="display:flex;align-items:center;gap:11px;padding:15px 18px;border-radius:11px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--ink-steel);flex-shrink:0;"></span><span style="font-size:13px;color:var(--ink-quiet);"><strong style="color:var(--ink-cold);font-weight:600;">Replayable proof</strong> · signed &amp; hash-verified</span></div>
