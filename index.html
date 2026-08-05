@@ -218,7 +218,6 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     }
     @media (prefers-reduced-motion:reduce){.dm-card-lift{transition:none !important;}.dm-card-lift:hover{transform:none !important;}}
     .dm-spine-grid > .dm-spine-card{min-height:228px;}
-    @keyframes rpSweep{0%{left:-32%;}100%{left:100%;}}
     @keyframes chevBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(5px);}}
     @keyframes dmRadarSweep{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
     @keyframes dmFlow{to{stroke-dashoffset:16;}}
@@ -403,9 +402,6 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       .dm-site [style*="max-width:1080px"]{
         max-width:min(1080px,100%) !important;
       }
-      .dm-site #replay [style*="max-width:860px"]{
-        max-width:min(860px,100%) !important;
-      }
       .dm-site #spine [style*="grid-template-columns:repeat(5"]{
         gap:clamp(8px,calc(12px * 100vw / var(--dm-ref)),12px) !important;
       }
@@ -456,9 +452,6 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       }
       .dm-site #output [style*="grid-template-columns:minmax(0,0.6fr)"]{
         grid-template-columns:1fr !important;
-      }
-      .dm-site #replay [style*="grid-template-columns"]{
-        overflow-x:auto !important;
       }
       /* Full-viewport hero + close - headline/CTA centered on drum; demo at bottom */
       .dm-site section[data-screen-label="Hero"],
@@ -1891,38 +1884,6 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
         </div>
       </div>
     </div>
-    <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToReplay }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
-  </section>
-
-  <!-- ============ REPLAY ============ -->
-  <section id="replay" data-screen-label="Replay" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
-    <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;text-align:center;">
-      <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Replay</div>
-      <h2 class="dm-section-title dm-section-title--center">Not a log you trust.<br><span class="dm-section-title__steel">Proof you can replay.</span></h2>
-      <p class="dm-section-dek dm-section-dek--center">Any run rebuilds end to end, protocol version to signature.</p>
-      <div class="dm-card-lift dm-card-record" style="margin:44px auto 0;max-width:860px;border-radius:16px;overflow:hidden;text-align:left;">
-        <div style="display:flex;align-items:center;gap:12px;padding:13px 22px;border-bottom:1px solid rgba(31,45,61,0.08);background:#fbfcfd;">
-          <span style="font-family:var(--font-display);font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-steel);">Replay ledger</span>
-          <span style="font-family:var(--font-display);font-size:10.5px;color:var(--ink-dim);">RPL-2026-0622-018-1047</span>
-        </div>
-        <div style="position:relative;display:flex;align-items:flex-start;justify-content:center;gap:0;padding:34px 36px 70px;">
-          <div style="position:relative;width:36px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;"><span style="width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:#ffffff;border:1.5px solid color-mix(in srgb,var(--ink-steel) 55%,transparent);font-family:var(--font-display);font-size:12px;font-weight:600;color:var(--ink-steel);">01</span><span style="position:absolute;top:46px;left:50%;transform:translateX(-50%);white-space:nowrap;font-family:var(--font-display);font-size:13px;font-weight:600;letter-spacing:-0.01em;color:var(--ink-cold);">Protocol</span><span style="position:absolute;top:66px;left:50%;transform:translateX(-50%);white-space:nowrap;font-family:var(--font-display);font-size:9px;letter-spacing:0.04em;color:var(--ink-dim);">locked v2.1</span></div>
-          <div style="flex:1;min-width:30px;height:2px;margin-top:17px;border-radius:2px;background:color-mix(in srgb,var(--ink-steel) 26%,transparent);position:relative;overflow:hidden;"><div data-anim="" style="position:absolute;top:0;bottom:0;width:32%;left:-32%;background:linear-gradient(90deg,transparent,var(--ink-steel),transparent);animation:rpSweep 3.4s cubic-bezier(0.16,1,0.3,1) infinite;animation-delay:0s;"></div></div>
-          <div style="position:relative;width:36px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;"><span style="width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:#ffffff;border:1.5px solid color-mix(in srgb,var(--ink-steel) 55%,transparent);font-family:var(--font-display);font-size:12px;font-weight:600;color:var(--ink-steel);">02</span><span style="position:absolute;top:46px;left:50%;transform:translateX(-50%);white-space:nowrap;font-family:var(--font-display);font-size:13px;font-weight:600;letter-spacing:-0.01em;color:var(--ink-cold);">Evidence</span><span style="position:absolute;top:66px;left:50%;transform:translateX(-50%);white-space:nowrap;font-family:var(--font-display);font-size:9px;letter-spacing:0.04em;color:var(--ink-dim);">snapshot</span></div>
-          <div style="flex:1;min-width:30px;height:2px;margin-top:17px;border-radius:2px;background:color-mix(in srgb,var(--ink-steel) 26%,transparent);position:relative;overflow:hidden;"><div data-anim="" style="position:absolute;top:0;bottom:0;width:32%;left:-32%;background:linear-gradient(90deg,transparent,var(--ink-steel),transparent);animation:rpSweep 3.4s cubic-bezier(0.16,1,0.3,1) infinite;animation-delay:0.3s;"></div></div>
-          <div style="position:relative;width:36px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;"><span style="width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:#ffffff;border:1.5px solid color-mix(in srgb,var(--ink-steel) 55%,transparent);font-family:var(--font-display);font-size:12px;font-weight:600;color:var(--ink-steel);">03</span><span style="position:absolute;top:46px;left:50%;transform:translateX(-50%);white-space:nowrap;font-family:var(--font-display);font-size:13px;font-weight:600;letter-spacing:-0.01em;color:var(--ink-cold);">Screening</span><span style="position:absolute;top:66px;left:50%;transform:translateX(-50%);white-space:nowrap;font-family:var(--font-display);font-size:9px;letter-spacing:0.04em;color:var(--ink-dim);">deterministic</span></div>
-          <div style="flex:1;min-width:30px;height:2px;margin-top:17px;border-radius:2px;background:color-mix(in srgb,var(--ink-steel) 26%,transparent);position:relative;overflow:hidden;"><div data-anim="" style="position:absolute;top:0;bottom:0;width:32%;left:-32%;background:linear-gradient(90deg,transparent,var(--ink-steel),transparent);animation:rpSweep 3.4s cubic-bezier(0.16,1,0.3,1) infinite;animation-delay:0.6s;"></div></div>
-          <div style="position:relative;width:36px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;"><span style="width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:#ffffff;border:1.5px solid color-mix(in srgb,var(--ink-steel) 55%,transparent);font-family:var(--font-display);font-size:12px;font-weight:600;color:var(--ink-steel);">04</span><span style="position:absolute;top:46px;left:50%;transform:translateX(-50%);white-space:nowrap;font-family:var(--font-display);font-size:13px;font-weight:600;letter-spacing:-0.01em;color:var(--ink-cold);">Resolve</span><span style="position:absolute;top:66px;left:50%;transform:translateX(-50%);white-space:nowrap;font-family:var(--font-display);font-size:9px;letter-spacing:0.04em;color:var(--ink-dim);">human-signed</span></div>
-          <div style="flex:1;min-width:30px;height:2px;margin-top:17px;border-radius:2px;background:color-mix(in srgb,var(--ink-steel) 26%,transparent);position:relative;overflow:hidden;"><div data-anim="" style="position:absolute;top:0;bottom:0;width:32%;left:-32%;background:linear-gradient(90deg,transparent,var(--state-pass),transparent);animation:rpSweep 3.4s cubic-bezier(0.16,1,0.3,1) infinite;animation-delay:0.9s;"></div></div>
-          <div style="position:relative;width:36px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;"><span style="width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--state-pass) 12%,#ffffff);border:1.5px solid var(--state-pass);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--state-pass)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span><span style="position:absolute;top:46px;left:50%;transform:translateX(-50%);white-space:nowrap;font-family:var(--font-display);font-size:13px;font-weight:600;letter-spacing:-0.01em;color:var(--ink-cold);">Replay</span><span style="position:absolute;top:66px;left:50%;transform:translateX(-50%);white-space:nowrap;font-family:var(--font-display);font-size:9px;letter-spacing:0.04em;color:var(--state-pass);">sealed</span></div>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(31,45,61,0.08);border-top:1px solid rgba(31,45,61,0.08);">
-          <div style="background:#fbfcfd;padding:13px 20px;"><div style="font-family:var(--font-display);font-size:8.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:5px;">Protocol basis</div><div style="font-family:var(--font-display);font-size:11px;color:var(--ink-quiet);">v2.1 · aead45cf</div></div>
-          <div style="background:#fbfcfd;padding:13px 20px;"><div style="font-family:var(--font-display);font-size:8.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:5px;">Evidence snapshot</div><div style="font-family:var(--font-display);font-size:11px;color:var(--ink-quiet);">pop-2026-06-22</div></div>
-          <div style="background:#fbfcfd;padding:13px 20px;"><div style="font-family:var(--font-display);font-size:8.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:5px;">Signature</div><div style="font-family:var(--font-display);font-size:11px;color:var(--ink-quiet);">Ed25519 · verified</div></div>
-        </div>
-      </div>
-    </div>
     <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToSecurity }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
   </section>
 
@@ -2912,7 +2873,6 @@ class Component extends DCLogic {
       onToAgents: () => this.scrollCenter("agents"),
       onToOutput: () => this.scrollCenter("output"),
       onToNode: () => this.scrollCenter("node"),
-      onToReplay: () => this.scrollCenter("replay"),
       onToSecurity: () => this.scrollCenter("security"),
       onToClose: () => this.scrollCenter("close"),
       showMarquee: this.props.showMarquee !== false
