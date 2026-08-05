@@ -619,7 +619,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       .dm-site #node .dm-node-grid{margin-top:clamp(28px,5vw,64px);}
     }
 
-    /* Runtime: eyebrow alone on row 1; heading + control cards share row 2 so
+    /* Platform: eyebrow alone on row 1; heading + control cards share row 2 so
        card tops align with "Damaros helps" on laptop/desktop. */
     .dm-site #node .dm-node-split{
       display:grid;
@@ -950,7 +950,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
   <!-- ============ INSTRUMENT · clean Node UI ============ -->
   <section id="instrument" data-screen-label="Instrument" style="position:relative;padding:0 clamp(12px,2.5vw,28px) clamp(40px,6vw,72px);">
     <div class="dm-scroll-target">
-    <p class="dm-demo-caption" style="max-width:920px;margin:0 auto 16px;text-align:center;font-size:15px;font-weight:600;line-height:1.55;color:var(--ink-cold);">A demonstration of the Damaros<sup style="font-size:0.55em;letter-spacing:0;">™</sup> runtime on synthetic FHIR data.<span class="dm-caption-hint"> {{ captionHint }}</span></p>
+    <p class="dm-demo-caption" style="max-width:920px;margin:0 auto 16px;text-align:center;font-size:15px;font-weight:600;line-height:1.55;color:var(--ink-cold);">A demonstration of the Damaros<sup style="font-size:0.55em;letter-spacing:0;">™</sup> platform on synthetic FHIR data.<span class="dm-caption-hint"> {{ captionHint }}</span></p>
 
     <div id="nodeStage" style="display:flex;justify-content:center;align-items:flex-start;overflow:hidden;">
       <div id="nodeScaleWrap" style="width:1160px;flex:0 0 1160px;transform-origin:top center;">
@@ -984,10 +984,10 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
             <div style="margin-top:16px;padding-top:13px;border-top:1px solid rgba(31,45,61,0.06);">
               <div style="font-family:var(--font-body);font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-dim);padding:0 10px 8px;">Agents</div>
               <div style="display:flex;flex-direction:column;gap:2px;">
-                <button onClick="{{ navSentinel.onClick }}" data-dc-style="{{ navSentinel.rowStyle }}"><span data-dc-style="{{ navSentinel.iconStyle }}"><svg width="17" height="17" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="6.5"></circle><circle cx="9" cy="9" r="3"></circle><circle cx="9" cy="9" r="0.6" fill="currentColor" stroke="none"></circle><path d="M9 9 13.6 4.4"></path></svg></span><span data-dc-style="{{ navSentinel.labelStyle }}">Sentinel</span></button>
                 <button onClick="{{ navTrident.onClick }}" data-dc-style="{{ navTrident.rowStyle }}"><span data-dc-style="{{ navTrident.iconStyle }}"><svg width="17" height="17" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 16V8"></path><path d="M4.8 8.2V4M9 8V3.4M13.2 8.2V4"></path><path d="M4.8 8.2c0 2.2 8.4 2.2 8.4 0"></path></svg></span><span data-dc-style="{{ navTrident.labelStyle }}">Trident</span></button>
                 <button onClick="{{ navEye.onClick }}" data-dc-style="{{ navEye.rowStyle }}"><span data-dc-style="{{ navEye.iconStyle }}"><svg width="17" height="17" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 9S4 3.8 9 3.8 16.5 9 16.5 9 14 14.2 9 14.2 1.5 9 1.5 9Z"></path><circle cx="9" cy="9" r="2.1"></circle></svg></span><span data-dc-style="{{ navEye.labelStyle }}">Eye</span></button>
                 <button onClick="{{ navLuna.onClick }}" data-dc-style="{{ navLuna.rowStyle }}"><span data-dc-style="{{ navLuna.iconStyle }}"><svg width="17" height="17" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.8 3.4a6.6 6.6 0 1 0 0 11.2 5.2 5.2 0 0 1 0-11.2Z"></path></svg></span><span data-dc-style="{{ navLuna.labelStyle }}">Luna</span></button>
+                <button onClick="{{ navSentinel.onClick }}" data-dc-style="{{ navSentinel.rowStyle }}"><span data-dc-style="{{ navSentinel.iconStyle }}"><svg width="17" height="17" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="6.5"></circle><circle cx="9" cy="9" r="3"></circle><circle cx="9" cy="9" r="0.6" fill="currentColor" stroke="none"></circle><path d="M9 9 13.6 4.4"></path></svg></span><span data-dc-style="{{ navSentinel.labelStyle }}">Sentinel</span></button>
               </div>
             </div>
             <div style="margin-top:auto;padding:14px 10px 2px;border-top:1px solid rgba(31,45,61,0.06);display:flex;flex-direction:column;gap:8px;">
@@ -1861,10 +1861,10 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
   </section>
 
   <!-- ============ NODE ============ -->
-  <section id="node" data-screen-label="Runtime" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
+  <section id="node" data-screen-label="Platform" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
       <div class="dm-node-split">
-        <div class="dm-node-eyebrow" style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The runtime</div>
+        <div class="dm-node-eyebrow" style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The platform</div>
         <div class="dm-node-copy">
           <h2 class="dm-section-title">Accountable execution<br><span class="dm-section-title__steel">by the site.</span></h2>
           <p class="dm-section-dek">Site-hosted. Site-governed. PHI stays put.</p>
@@ -1884,9 +1884,8 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
             <div style="display:flex;flex-direction:column;gap:13px;">
               <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:rgba(31,45,61,0.06);"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="var(--ink-dim)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5 11 11M11 5 5 11"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-faint);">Become a network-controlled endpoint</span></div>
               <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:rgba(31,45,61,0.06);"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="var(--ink-dim)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5 11 11M11 5 5 11"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-faint);">Expose raw chart browsing by default</span></div>
-              <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:rgba(31,45,61,0.06);"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="var(--ink-dim)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5 11 11M11 5 5 11"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-faint);">Replace clinician judgment</span></div>
-              <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:rgba(31,45,61,0.06);"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="var(--ink-dim)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5 11 11M11 5 5 11"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-faint);">Sponsor-side patient matching or candidacy scoring</span></div>
-              <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:rgba(31,45,61,0.06);"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="var(--ink-dim)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5 11 11M11 5 5 11"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-faint);">Send PHI out of the site or let an LLM touch patient data</span></div>
+              <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:rgba(31,45,61,0.06);"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="var(--ink-dim)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5 11 11M11 5 5 11"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-faint);">Replace clinician judgment or score candidacy for sponsors</span></div>
+              <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:rgba(31,45,61,0.06);"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="var(--ink-dim)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5 11 11M11 5 5 11"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-faint);">Send PHI off-site or let an LLM touch patient data</span></div>
             </div>
           </div>
         </div>
