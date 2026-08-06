@@ -882,41 +882,49 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     }
   </style>
   <style>
-    /* ---- page section rail (desktop pointer only) ---- */
+    /* ---- page section rail (fine-pointer desktop / wide laptop) ---- */
     .dm-rail{
       position:fixed;
-      right:clamp(16px,2.4vw,32px);
+      right:max(12px,env(safe-area-inset-right,0px),clamp(12px,1.6vw,28px));
       top:50%;
       transform:translateY(-50%);
       z-index:40;
       display:flex;
       flex-direction:column;
+      align-items:stretch;
       gap:0;
       margin:0;
       padding:0;
+      width:max-content;
+      max-height:min(420px,70vh);
+      overflow:visible;
       opacity:0;
+      visibility:hidden;
       pointer-events:none;
-      transition:opacity 220ms ease;
+      transition:opacity 220ms ease, visibility 0s linear 220ms;
     }
     .dm-rail.is-visible{
       opacity:1;
+      visibility:visible;
       pointer-events:auto;
+      transition:opacity 220ms ease, visibility 0s linear 0s;
     }
     .dm-rail__item{
       position:relative;
       display:grid;
-      grid-template-columns:1fr 22px;
+      grid-template-columns:minmax(0,1fr) 18px;
       align-items:center;
-      gap:10px;
-      min-height:28px;
-      padding:3px 0;
+      column-gap:8px;
+      width:100%;
+      min-height:26px;
+      padding:2px 0;
       text-decoration:none;
       color:var(--ink-dim);
       font-family:var(--font-body);
-      font-size:11px;
+      font-size:10.5px;
       font-weight:500;
-      letter-spacing:0.02em;
-      line-height:1.2;
+      letter-spacing:0.01em;
+      line-height:1.15;
       transition:color 160ms ease;
     }
     .dm-rail__item:hover,
@@ -928,15 +936,19 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       justify-self:end;
       text-align:right;
       white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width:100%;
     }
     .dm-rail__tick{
       position:relative;
       justify-self:center;
-      width:8px;
+      width:7px;
       height:2px;
       border-radius:1px;
       background:rgba(31,45,61,0.22);
       transition:width 160ms ease, background 160ms ease;
+      flex-shrink:0;
     }
     /* vertical spine connector through the tick column */
     .dm-rail__item:not(:last-child) .dm-rail__tick::after{
@@ -945,7 +957,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       left:50%;
       top:2px;
       width:1px;
-      height:calc(100% + 26px);
+      height:calc(100% + 24px);
       transform:translateX(-50%);
       background:rgba(31,45,61,0.10);
       pointer-events:none;
@@ -955,7 +967,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       font-weight:700;
     }
     .dm-rail__item.is-active .dm-rail__tick{
-      width:14px;
+      width:12px;
       background:var(--ink-steel);
     }
     @media (prefers-reduced-motion:reduce){
@@ -963,7 +975,68 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       .dm-rail__item,
       .dm-rail__tick{transition:none;}
     }
-    @media (max-width:1240px),(pointer:coarse){
+    /* Mid laptops (1280–1365): ticks only — full labels crowd the 1080px column */
+    @media (max-width:1365px){
+      .dm-rail{
+        max-width:none;
+        width:auto;
+      }
+      .dm-rail__item{
+        grid-template-columns:18px;
+        column-gap:0;
+        justify-items:center;
+        min-height:24px;
+      }
+      .dm-rail__label{
+        position:absolute;
+        width:1px;
+        height:1px;
+        padding:0;
+        margin:-1px;
+        overflow:hidden;
+        clip:rect(0,0,0,0);
+        white-space:nowrap;
+        border:0;
+      }
+      .dm-rail__item:hover .dm-rail__label,
+      .dm-rail__item:focus-visible .dm-rail__label{
+        position:absolute;
+        right:calc(100% + 10px);
+        top:50%;
+        transform:translateY(-50%);
+        width:auto;
+        height:auto;
+        margin:0;
+        clip:auto;
+        overflow:visible;
+        padding:4px 8px;
+        border-radius:6px;
+        background:rgba(250,252,253,0.96);
+        border:1px solid rgba(31,45,61,0.12);
+        box-shadow:0 6px 18px rgba(20,33,48,0.08);
+        color:var(--ink-cold);
+        font-weight:600;
+        z-index:1;
+      }
+    }
+    /* Common laptops + desktops (≥1366): room for labels beside the content column */
+    @media (min-width:1366px){
+      .dm-rail{
+        max-width:none;
+        right:clamp(12px,1.5vw,24px);
+      }
+      .dm-rail__item{
+        grid-template-columns:1fr 22px;
+        column-gap:10px;
+        min-height:28px;
+        font-size:11px;
+      }
+      .dm-rail__tick{width:8px;}
+      .dm-rail__item.is-active .dm-rail__tick{width:14px;}
+      .dm-rail__item:not(:last-child) .dm-rail__tick::after{height:calc(100% + 26px);}
+    }
+    /* Phones / tablets / coarse pointer / narrow laptops: no rail */
+    @media (max-width:1279px),(pointer:coarse){
       .dm-rail{display:none !important;}
     }
   </style>
@@ -984,7 +1057,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     </nav>
   </header>
 
-  <nav class="dm-rail" aria-label="Page sections">
+  <nav class="dm-rail" aria-label="Page sections" aria-hidden="true">
     <a class="dm-rail__item" href="#instrument" data-rail-target="instrument"><span class="dm-rail__label">Demo</span><span class="dm-rail__tick"></span></a>
     <a class="dm-rail__item" href="#integrations" data-rail-target="integrations"><span class="dm-rail__label">Integrations</span><span class="dm-rail__tick"></span></a>
     <a class="dm-rail__item" href="#problem" data-rail-target="problem"><span class="dm-rail__label">Problem</span><span class="dm-rail__tick"></span></a>
@@ -995,66 +1068,6 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     <a class="dm-rail__item" href="#node" data-rail-target="node"><span class="dm-rail__label">Platform</span><span class="dm-rail__tick"></span></a>
     <a class="dm-rail__item" href="#security" data-rail-target="security"><span class="dm-rail__label">Security</span><span class="dm-rail__tick"></span></a>
   </nav>
-  <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    var rail = document.querySelector(".dm-rail");
-    if (!rail) return;
-
-    var items = Array.prototype.slice.call(rail.querySelectorAll("[data-rail-target]"));
-    var byId = {};
-    items.forEach(function (item) {
-      byId[item.getAttribute("data-rail-target")] = item;
-    });
-
-    var bookendVisible = { Hero: false, Close: false };
-    function syncRailVisibility() {
-      var hide = bookendVisible.Hero || bookendVisible.Close;
-      rail.classList.toggle("is-visible", !hide);
-    }
-
-    var bookends = document.querySelectorAll('section[data-screen-label="Hero"], section[data-screen-label="Close"]');
-    if ("IntersectionObserver" in window) {
-      var bookendObs = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          var label = entry.target.getAttribute("data-screen-label");
-          if (label === "Hero" || label === "Close") {
-            bookendVisible[label] = entry.isIntersecting;
-          }
-        });
-        syncRailVisibility();
-      }, { threshold: 0.15 });
-      bookends.forEach(function (el) { bookendObs.observe(el); });
-
-      var activeId = null;
-      var sectionObs = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (!entry.isIntersecting) return;
-          var id = entry.target.id;
-          if (!id || !byId[id] || id === activeId) return;
-          activeId = id;
-          items.forEach(function (item) {
-            item.classList.toggle("is-active", item.getAttribute("data-rail-target") === id);
-          });
-        });
-      }, { rootMargin: "-45% 0px -45% 0px", threshold: 0 });
-
-      items.forEach(function (item) {
-        var target = document.getElementById(item.getAttribute("data-rail-target"));
-        if (target) sectionObs.observe(target);
-      });
-    }
-
-    items.forEach(function (item) {
-      item.addEventListener("click", function (e) {
-        var id = item.getAttribute("data-rail-target");
-        var target = document.getElementById(id);
-        if (!target) return;
-        e.preventDefault();
-        target.scrollIntoView({ behavior: "smooth", block: "start" });
-      });
-    });
-  });
-  </script>
 
   <span id="top"></span>
 
@@ -2067,6 +2080,116 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
 </div>
 
 <template id="__bundler_thumbnail"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="#0c1118"></rect><g transform="translate(50 50) scale(0.075) translate(-238 -260)" fill="none" stroke="#A9C0D6" stroke-width="33" stroke-linejoin="round" stroke-linecap="round"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></g></svg></template></x-dc>
+<script>
+(function () {
+  var bound = false;
+  var mqHide = window.matchMedia("(max-width:1279px), (pointer:coarse)");
+  function railAllowed() { return !mqHide.matches; }
+
+  function bookendInView() {
+    var els = document.querySelectorAll('section[data-screen-label="Hero"], section[data-screen-label="Close"]');
+    var vh = window.innerHeight || 1;
+    var bandTop = vh * 0.38;
+    var bandBot = vh * 0.62;
+    for (var i = 0; i < els.length; i++) {
+      var r = els[i].getBoundingClientRect();
+      if (r.height < 8) continue;
+      if (r.bottom > bandTop && r.top < bandBot) return true;
+    }
+    return false;
+  }
+
+  function syncRailVisibility() {
+    var rail = document.querySelector(".dm-rail");
+    if (!rail) return;
+    var hide = !railAllowed() || bookendInView();
+    rail.classList.toggle("is-visible", !hide);
+    rail.setAttribute("aria-hidden", hide ? "true" : "false");
+  }
+
+  function syncActive() {
+    if (!railAllowed()) return;
+    var targets = ["instrument","integrations","problem","capability","spine","agents","output","node","security"];
+    var vh = window.innerHeight || 1;
+    var mid = vh * 0.5;
+    var best = null;
+    var bestDist = Infinity;
+    for (var i = 0; i < targets.length; i++) {
+      var el = document.getElementById(targets[i]);
+      if (!el) continue;
+      var r = el.getBoundingClientRect();
+      if (r.height < 8) continue;
+      if (r.bottom < vh * 0.15 || r.top > vh * 0.85) continue;
+      var center = (r.top + r.bottom) / 2;
+      var dist = Math.abs(center - mid);
+      if (dist < bestDist) { bestDist = dist; best = targets[i]; }
+    }
+    if (!best) return;
+    var items = document.querySelectorAll(".dm-rail [data-rail-target]");
+    for (var j = 0; j < items.length; j++) {
+      items[j].classList.toggle("is-active", items[j].getAttribute("data-rail-target") === best);
+    }
+  }
+
+  function syncAll() {
+    syncRailVisibility();
+    syncActive();
+  }
+
+  function ensureLabels() {
+    var items = document.querySelectorAll(".dm-rail [data-rail-target]");
+    for (var i = 0; i < items.length; i++) {
+      var item = items[i];
+      var labelEl = item.querySelector(".dm-rail__label");
+      if (!labelEl) continue;
+      var text = labelEl.textContent.trim();
+      if (!item.getAttribute("title")) item.setAttribute("title", text);
+      if (!item.getAttribute("aria-label")) item.setAttribute("aria-label", text);
+    }
+  }
+
+  function bind() {
+    if (bound) return;
+    if (!document.querySelector(".dm-rail")) return;
+    if (document.querySelectorAll('section[data-screen-label="Hero"], section[data-screen-label="Close"]').length < 2) return;
+    bound = true;
+    ensureLabels();
+    if (mqHide.addEventListener) mqHide.addEventListener("change", syncAll);
+    else if (mqHide.addListener) mqHide.addListener(syncAll);
+    window.addEventListener("resize", syncAll);
+    window.addEventListener("scroll", syncAll, { passive: true });
+    document.addEventListener("click", function (e) {
+      var item = e.target.closest && e.target.closest(".dm-rail [data-rail-target]");
+      if (!item) return;
+      var id = item.getAttribute("data-rail-target");
+      var target = document.getElementById(id);
+      if (!target) return;
+      e.preventDefault();
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    syncAll();
+    var n = 0;
+    var settle = setInterval(function () {
+      syncAll();
+      if (++n > 50) clearInterval(settle);
+    }, 100);
+  }
+
+  function boot() {
+    bind();
+    if (bound) return;
+    var tries = 0;
+    var timer = setInterval(function () {
+      bind();
+      if (bound || ++tries > 100) clearInterval(timer);
+    }, 50);
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+  window.addEventListener("load", function () { bind(); syncAll(); });
+})();
+</script>
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="text/x-dc" data-dc-script data-props="{&quot;showMarquee&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
 class Component extends DCLogic {
   initialState() {
