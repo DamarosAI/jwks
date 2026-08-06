@@ -892,7 +892,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       display:flex;
       flex-direction:column;
       align-items:flex-end;
-      gap:clamp(10px,1.2vh,16px);
+      gap:clamp(8px,1.1vh,14px);
       margin:0;
       padding:0;
       width:max-content;
@@ -912,8 +912,9 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     .dm-rail__item{
       position:relative;
       display:flex;
-      flex-direction:row-reverse;
-      align-items:center;
+      flex-direction:row;
+      align-items:baseline;
+      justify-content:flex-end;
       gap:8px;
       text-decoration:none;
       color:rgba(16,22,29,0.48);
@@ -925,27 +926,28 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       color:var(--ink-cold);
       outline:none;
     }
-    .dm-rail__idx{
-      flex-shrink:0;
-      font-size:9px;
-      font-weight:600;
-      letter-spacing:0.1em;
-      font-variant-numeric:tabular-nums;
-      line-height:1;
-      color:inherit;
-      opacity:0.72;
-    }
     .dm-rail__label{
       display:block;
-      writing-mode:vertical-rl;
-      transform:rotate(180deg);
       text-transform:uppercase;
-      font-size:10px;
+      font-size:10.5px;
       font-weight:700;
-      letter-spacing:0.16em;
-      line-height:1;
+      letter-spacing:0.14em;
+      line-height:1.15;
       white-space:nowrap;
+      text-align:right;
       color:inherit;
+    }
+    .dm-rail__idx{
+      flex-shrink:0;
+      min-width:1.6em;
+      font-size:9px;
+      font-weight:600;
+      letter-spacing:0.08em;
+      font-variant-numeric:tabular-nums;
+      line-height:1.15;
+      color:inherit;
+      opacity:0.72;
+      text-align:right;
     }
     .dm-rail__item.is-active{
       color:var(--ink-cold);
@@ -961,7 +963,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       .dm-rail,
       .dm-rail__item{transition:none;}
     }
-    /* Mid laptops: index numbers only */
+    /* Mid laptops: index numbers only — full labels crowd the content column */
     @media (max-width:1365px){
       .dm-rail{gap:12px;}
       .dm-rail__label{
@@ -969,10 +971,8 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
         width:1px;height:1px;padding:0;margin:-1px;
         overflow:hidden;clip:rect(0,0,0,0);
         white-space:nowrap;border:0;
-        writing-mode:horizontal-tb;transform:none;
       }
       .dm-rail__item{
-        flex-direction:row;
         min-height:22px;
         padding:2px 0;
       }
@@ -993,14 +993,14 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
         border:1px solid rgba(31,45,61,0.12);
         box-shadow:0 6px 18px rgba(20,33,48,0.1);
         color:var(--ink-cold);
-        font-size:10px;font-weight:700;letter-spacing:0.16em;
+        font-size:10px;font-weight:700;letter-spacing:0.14em;
         z-index:1;
       }
     }
     @media (min-width:1366px){
       .dm-rail{right:clamp(14px,1.8vw,28px);}
-      .dm-rail__label{font-size:10.5px;letter-spacing:0.18em;}
-      .dm-rail__idx{font-size:9px;}
+      .dm-rail__label{font-size:11px;letter-spacing:0.16em;}
+      .dm-rail__idx{font-size:9.5px;}
     }
     @media (max-width:1279px),(pointer:coarse){
       .dm-rail{display:none !important;}
