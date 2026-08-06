@@ -882,21 +882,21 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     }
   </style>
   <style>
-    /* ---- page section rail (fine-pointer desktop / wide laptop) ---- */
+    /* ---- page section rail - Mach-style product index ---- */
     .dm-rail{
       position:fixed;
-      right:max(12px,env(safe-area-inset-right,0px),clamp(12px,1.6vw,28px));
+      right:max(10px,env(safe-area-inset-right,0px),clamp(10px,1.4vw,22px));
       top:50%;
       transform:translateY(-50%);
       z-index:40;
       display:flex;
       flex-direction:column;
-      align-items:stretch;
-      gap:0;
+      align-items:flex-end;
+      gap:clamp(10px,1.2vh,16px);
       margin:0;
       padding:0;
       width:max-content;
-      max-height:min(420px,70vh);
+      max-height:none;
       overflow:visible;
       opacity:0;
       visibility:hidden;
@@ -911,20 +911,13 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     }
     .dm-rail__item{
       position:relative;
-      display:grid;
-      grid-template-columns:minmax(0,1fr) 18px;
+      display:flex;
+      flex-direction:row-reverse;
       align-items:center;
-      column-gap:8px;
-      width:100%;
-      min-height:26px;
-      padding:2px 0;
+      gap:8px;
       text-decoration:none;
-      color:var(--ink-dim);
-      font-family:var(--font-body);
-      font-size:10.5px;
-      font-weight:500;
-      letter-spacing:0.01em;
-      line-height:1.15;
+      color:rgba(16,22,29,0.48);
+      font-family:var(--font-display);
       transition:color 160ms ease;
     }
     .dm-rail__item:hover,
@@ -932,71 +925,61 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       color:var(--ink-cold);
       outline:none;
     }
-    .dm-rail__label{
-      justify-self:end;
-      text-align:right;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      max-width:100%;
-    }
-    .dm-rail__tick{
-      position:relative;
-      justify-self:center;
-      width:7px;
-      height:2px;
-      border-radius:1px;
-      background:rgba(31,45,61,0.22);
-      transition:width 160ms ease, background 160ms ease;
+    .dm-rail__idx{
       flex-shrink:0;
+      font-size:9px;
+      font-weight:600;
+      letter-spacing:0.1em;
+      font-variant-numeric:tabular-nums;
+      line-height:1;
+      color:inherit;
+      opacity:0.72;
     }
-    /* vertical spine connector through the tick column */
-    .dm-rail__item:not(:last-child) .dm-rail__tick::after{
-      content:"";
-      position:absolute;
-      left:50%;
-      top:2px;
-      width:1px;
-      height:calc(100% + 24px);
-      transform:translateX(-50%);
-      background:rgba(31,45,61,0.10);
-      pointer-events:none;
+    .dm-rail__label{
+      display:block;
+      writing-mode:vertical-rl;
+      transform:rotate(180deg);
+      text-transform:uppercase;
+      font-size:10px;
+      font-weight:700;
+      letter-spacing:0.16em;
+      line-height:1;
+      white-space:nowrap;
+      color:inherit;
     }
     .dm-rail__item.is-active{
       color:var(--ink-cold);
-      font-weight:700;
     }
-    .dm-rail__item.is-active .dm-rail__tick{
-      width:12px;
-      background:var(--ink-steel);
+    .dm-rail__item.is-active .dm-rail__idx{
+      color:var(--ink-steel);
+      opacity:1;
+    }
+    .dm-rail__item.is-active .dm-rail__label{
+      color:var(--ink-cold);
     }
     @media (prefers-reduced-motion:reduce){
       .dm-rail,
-      .dm-rail__item,
-      .dm-rail__tick{transition:none;}
+      .dm-rail__item{transition:none;}
     }
-    /* Mid laptops (1280–1365): ticks only — full labels crowd the 1080px column */
+    /* Mid laptops: index numbers only */
     @media (max-width:1365px){
-      .dm-rail{
-        max-width:none;
-        width:auto;
-      }
-      .dm-rail__item{
-        grid-template-columns:18px;
-        column-gap:0;
-        justify-items:center;
-        min-height:24px;
-      }
+      .dm-rail{gap:12px;}
       .dm-rail__label{
         position:absolute;
-        width:1px;
-        height:1px;
-        padding:0;
-        margin:-1px;
-        overflow:hidden;
-        clip:rect(0,0,0,0);
-        white-space:nowrap;
-        border:0;
+        width:1px;height:1px;padding:0;margin:-1px;
+        overflow:hidden;clip:rect(0,0,0,0);
+        white-space:nowrap;border:0;
+        writing-mode:horizontal-tb;transform:none;
+      }
+      .dm-rail__item{
+        flex-direction:row;
+        min-height:22px;
+        padding:2px 0;
+      }
+      .dm-rail__idx{
+        font-size:10px;
+        letter-spacing:0.12em;
+        opacity:0.85;
       }
       .dm-rail__item:hover .dm-rail__label,
       .dm-rail__item:focus-visible .dm-rail__label{
@@ -1004,38 +987,21 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
         right:calc(100% + 10px);
         top:50%;
         transform:translateY(-50%);
-        width:auto;
-        height:auto;
-        margin:0;
-        clip:auto;
-        overflow:visible;
-        padding:4px 8px;
-        border-radius:6px;
-        background:rgba(250,252,253,0.96);
+        width:auto;height:auto;margin:0;clip:auto;overflow:visible;
+        padding:5px 9px;border-radius:6px;
+        background:rgba(250,252,253,0.97);
         border:1px solid rgba(31,45,61,0.12);
-        box-shadow:0 6px 18px rgba(20,33,48,0.08);
+        box-shadow:0 6px 18px rgba(20,33,48,0.1);
         color:var(--ink-cold);
-        font-weight:600;
+        font-size:10px;font-weight:700;letter-spacing:0.16em;
         z-index:1;
       }
     }
-    /* Common laptops + desktops (≥1366): room for labels beside the content column */
     @media (min-width:1366px){
-      .dm-rail{
-        max-width:none;
-        right:clamp(12px,1.5vw,24px);
-      }
-      .dm-rail__item{
-        grid-template-columns:1fr 22px;
-        column-gap:10px;
-        min-height:28px;
-        font-size:11px;
-      }
-      .dm-rail__tick{width:8px;}
-      .dm-rail__item.is-active .dm-rail__tick{width:14px;}
-      .dm-rail__item:not(:last-child) .dm-rail__tick::after{height:calc(100% + 26px);}
+      .dm-rail{right:clamp(14px,1.8vw,28px);}
+      .dm-rail__label{font-size:10.5px;letter-spacing:0.18em;}
+      .dm-rail__idx{font-size:9px;}
     }
-    /* Phones / tablets / coarse pointer / narrow laptops: no rail */
     @media (max-width:1279px),(pointer:coarse){
       .dm-rail{display:none !important;}
     }
@@ -1058,15 +1024,15 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
   </header>
 
   <nav class="dm-rail" aria-label="Page sections" aria-hidden="true">
-    <a class="dm-rail__item" href="#instrument" data-rail-target="instrument"><span class="dm-rail__label">Demo</span><span class="dm-rail__tick"></span></a>
-    <a class="dm-rail__item" href="#integrations" data-rail-target="integrations"><span class="dm-rail__label">Integrations</span><span class="dm-rail__tick"></span></a>
-    <a class="dm-rail__item" href="#problem" data-rail-target="problem"><span class="dm-rail__label">Problem</span><span class="dm-rail__tick"></span></a>
-    <a class="dm-rail__item" href="#capability" data-rail-target="capability"><span class="dm-rail__label">Scope</span><span class="dm-rail__tick"></span></a>
-    <a class="dm-rail__item" href="#spine" data-rail-target="spine"><span class="dm-rail__label">Workflow</span><span class="dm-rail__tick"></span></a>
-    <a class="dm-rail__item" href="#agents" data-rail-target="agents"><span class="dm-rail__label">Agents</span><span class="dm-rail__tick"></span></a>
-    <a class="dm-rail__item" href="#output" data-rail-target="output"><span class="dm-rail__label">Proof</span><span class="dm-rail__tick"></span></a>
-    <a class="dm-rail__item" href="#node" data-rail-target="node"><span class="dm-rail__label">Platform</span><span class="dm-rail__tick"></span></a>
-    <a class="dm-rail__item" href="#security" data-rail-target="security"><span class="dm-rail__label">Security</span><span class="dm-rail__tick"></span></a>
+    <a class="dm-rail__item" href="#instrument" data-rail-target="instrument"><span class="dm-rail__idx">01</span><span class="dm-rail__label">Demo</span></a>
+    <a class="dm-rail__item" href="#integrations" data-rail-target="integrations"><span class="dm-rail__idx">02</span><span class="dm-rail__label">Integrations</span></a>
+    <a class="dm-rail__item" href="#problem" data-rail-target="problem"><span class="dm-rail__idx">03</span><span class="dm-rail__label">Problem</span></a>
+    <a class="dm-rail__item" href="#capability" data-rail-target="capability"><span class="dm-rail__idx">04</span><span class="dm-rail__label">Scope</span></a>
+    <a class="dm-rail__item" href="#spine" data-rail-target="spine"><span class="dm-rail__idx">05</span><span class="dm-rail__label">Workflow</span></a>
+    <a class="dm-rail__item" href="#agents" data-rail-target="agents"><span class="dm-rail__idx">06</span><span class="dm-rail__label">Agents</span></a>
+    <a class="dm-rail__item" href="#output" data-rail-target="output"><span class="dm-rail__idx">07</span><span class="dm-rail__label">Proof</span></a>
+    <a class="dm-rail__item" href="#node" data-rail-target="node"><span class="dm-rail__idx">08</span><span class="dm-rail__label">Platform</span></a>
+    <a class="dm-rail__item" href="#security" data-rail-target="security"><span class="dm-rail__idx">09</span><span class="dm-rail__label">Security</span></a>
   </nav>
 
   <span id="top"></span>
@@ -1094,8 +1060,9 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
   </section>
 
   <!-- ============ INSTRUMENT · clean Node UI ============ -->
-  <section id="instrument" data-screen-label="Instrument" style="position:relative;padding:0 clamp(12px,2.5vw,28px) clamp(40px,6vw,72px);">
+  <section id="instrument" data-screen-label="Demo" style="position:relative;padding:0 clamp(12px,2.5vw,28px) clamp(40px,6vw,72px);">
     <div class="dm-scroll-target">
+    <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin:0 auto 14px;text-align:center;">Demo</div>
     <p class="dm-demo-caption" style="max-width:920px;margin:0 auto 16px;text-align:center;font-size:15px;font-weight:600;line-height:1.55;color:var(--ink-cold);">A demonstration of the Damaros<sup style="font-size:0.55em;letter-spacing:0;">™</sup> platform on synthetic FHIR data.<span class="dm-caption-hint"> {{ captionHint }}</span></p>
 
     <div id="nodeStage" style="display:flex;justify-content:center;align-items:flex-start;overflow:hidden;">
@@ -1741,7 +1708,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
   <sc-if value="{{ showMarquee }}" hint-placeholder-val="{{ true }}">
   <section id="integrations" data-screen-label="Integrations" style="position:relative;padding:clamp(40px,5vw,56px) clamp(20px,5vw,40px);">
     <div class="dm-scroll-target" style="max-width:1000px;margin:0 auto;text-align:center;">
-      <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:14px;">The Compatibility</div>
+      <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:14px;">Integrations</div>
       <h2 class="dm-section-title dm-section-title--center">One system for<br><span class="dm-section-title__steel">the stack you already run.</span></h2>
       <p class="dm-section-dek dm-section-dek--center" style="margin:14px auto 34px;">Works with the software the site already runs.</p>
       <div class="dm-logowall" style="display:flex;flex-wrap:nowrap;justify-content:flex-start;gap:0;overflow:hidden;">
@@ -1781,9 +1748,9 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
   </sc-if>
 
   <!-- ============ PROBLEM ============ -->
-  <section id="problem" data-screen-label="The execution gap" style="position:relative;padding:clamp(52px,6vw,84px) clamp(20px,5vw,40px);">
+  <section id="problem" data-screen-label="Problem" style="position:relative;padding:clamp(52px,6vw,84px) clamp(20px,5vw,40px);">
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
-      <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The problem</div>
+      <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Problem</div>
       <h2 class="dm-section-title">When trial matching ends,<br><span class="dm-section-title__steel">years of manual labor begin.</span></h2>
       <p class="dm-section-dek dm-section-dek--oneline">Discovery and reporting got solved; execution is still open.</p>
       <div class="dm-stat-grid" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:40px;">
@@ -1825,9 +1792,9 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
   </section>
 
   <!-- ============ TRIAL CAPABILITY · the line we hold ============ -->
-  <section id="capability" data-screen-label="Trial capability" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
+  <section id="capability" data-screen-label="Scope" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
-      <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Where this fits</div>
+      <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Scope</div>
       <h2 class="dm-section-title">From protocol through audit,<br><span class="dm-section-title__steel">still the site's obligation.</span></h2>
       <p class="dm-section-dek">Sponsors write the rules and physicians sign the decisions.</p>
       <div id="capabilityCarousel" class="dm-capability-grid">
@@ -1866,9 +1833,9 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
   </section>
 
   <!-- ============ SPINE ============ -->
-  <section id="spine" data-screen-label="Execution spine" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
+  <section id="spine" data-screen-label="Workflow" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
-      <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The workflow</div>
+      <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Workflow</div>
       <h2 class="dm-section-title">One workflow from<br><span class="dm-section-title__steel">protocol through to proof.</span></h2>
       <p class="dm-section-dek">Each protocol deepens the site's knowledge graph so coverage only climbs.</p>
       <div id="spineCarousel" class="dm-spine-grid" style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:40px;">
@@ -1913,9 +1880,9 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
   </section>
 
   <!-- ============ AGENTS ============ -->
-  <section id="agents" data-screen-label="The agents" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
+  <section id="agents" data-screen-label="Agents" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
     <div class="dm-scroll-target" style="position:relative;max-width:1080px;margin:0 auto;">
-      <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The agents</div>
+      <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Agents</div>
       <h2 class="dm-section-title">Four agents share one graph.<br><span class="dm-section-title__steel">A human still makes every call.</span></h2>
       <p class="dm-section-dek">They read the site graph and write back to it.</p>
       <div id="agentsCarousel" class="dm-agents-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:14px;margin-top:40px;">
@@ -1954,9 +1921,9 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
   </section>
 
   <!-- ============ WHAT IT PRODUCES ============ -->
-  <section id="output" data-screen-label="What a run produces" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
+  <section id="output" data-screen-label="Proof" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
-      <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The outputs</div>
+      <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Proof</div>
       <h2 class="dm-section-title">Every run leaves<br><span class="dm-section-title__steel">a record you can replay.</span></h2>
       <p class="dm-section-dek">Criterion, evidence, human commit, hash-linked ledger.</p>
       <div class="dm-output-grid" style="display:grid;grid-template-columns:minmax(0,0.6fr) minmax(0,1fr);gap:clamp(16px,3vw,32px);margin-top:38px;align-items:stretch;">
@@ -2001,7 +1968,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
   <!-- ============ NODE ============ -->
   <section id="node" data-screen-label="Platform" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
-      <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">The platform</div>
+      <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Platform</div>
       <h2 class="dm-section-title">Accountable execution<br><span class="dm-section-title__steel">owned and hosted by the site.</span></h2>
       <p class="dm-section-dek">Site-hosted and site-governed, with PHI staying put.</p>
       <div class="dm-node-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:40px;">
@@ -2029,9 +1996,9 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
   </section>
 
   <!-- ============ SECURITY ============ -->
-  <section id="security" data-screen-label="Security posture" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
+  <section id="security" data-screen-label="Security" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
-      <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Security posture</div>
+      <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Security</div>
       <h2 class="dm-section-title">Every run is attributable<br><span class="dm-section-title__steel">in the site's own record.</span></h2>
       <p class="dm-section-dek">Site-bounded controls, ready for audit.</p>
       <div class="dm-security-chips" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:40px;">
