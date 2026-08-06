@@ -640,6 +640,16 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       .dm-site #problem .dm-stat-grid{
         grid-template-columns:1fr !important;
       }
+      .dm-site #problem .dm-stat-lead{
+        flex-direction:column !important;
+        align-items:flex-start !important;
+        gap:14px !important;
+      }
+      .dm-site #problem .dm-stat-lead__rule{
+        width:100% !important;
+        height:1px !important;
+        align-self:stretch !important;
+      }
       .dm-site #node .dm-node-grid{grid-template-columns:1fr !important;}
       .dm-site #node .dm-node-grid{margin-top:clamp(28px,5vw,64px);}
     }
@@ -888,10 +898,15 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       .dm-site .dm-demo-caption{white-space:normal !important;font-size:clamp(12px,3.2vw,15px) !important;max-width:36ch !important;margin-left:auto !important;margin-right:auto !important;}
       .dm-site #security .dm-security-note{white-space:normal !important;font-size:clamp(11px,3vw,13.5px) !important;}
       .dm-site #security .dm-security-chips{grid-template-columns:1fr !important;}
-      .dm-site #problem .dm-stat-grid{gap:8px !important;}
-      .dm-site #problem [style*="font-variant-numeric:tabular-nums"]{width:58px !important;font-size:clamp(1.35rem,6vw,1.8rem) !important;}
-      .dm-site #problem [style*="padding:20px 24px"]{padding:10px 13px !important;}
-      .dm-site #problem [style*="margin:1px 22px"]{margin:1px 12px !important;}
+      .dm-site #problem .dm-stat-lead{margin-top:28px !important;padding:16px 18px !important;gap:16px !important;}
+      .dm-site #problem .dm-stat-lead__num{width:auto !important;font-size:clamp(2.4rem,12vw,3.2rem) !important;}
+      .dm-site #problem .dm-stat-lead__rule{margin:1px 0 !important;}
+      .dm-site #problem .dm-stat-lead p{font-size:13px !important;line-height:1.45 !important;}
+      .dm-site #problem .dm-stat-connect{margin:14px 0 0 !important;font-size:12.5px !important;}
+      .dm-site #problem .dm-stat-grid{gap:8px !important;margin-top:16px !important;}
+      .dm-site #problem .dm-stat-grid [style*="font-variant-numeric:tabular-nums"]{width:58px !important;font-size:clamp(1.35rem,6vw,1.8rem) !important;}
+      .dm-site #problem .dm-stat-grid [style*="padding:20px 24px"]{padding:10px 13px !important;}
+      .dm-site #problem .dm-stat-grid [style*="margin:1px 22px"]{margin:1px 12px !important;}
       .dm-site #problem .dm-stat-grid p{font-size:12.5px !important;line-height:1.4 !important;}
       .dm-site #problem .dm-stat-grid [style*="text-transform:uppercase"]{font-size:10px !important;margin-top:6px !important;letter-spacing:0.06em;}
       .dm-site #capability .dm-capability-col .dm-card-lift{padding:18px 18px !important;}
@@ -1848,9 +1863,18 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
   <section id="problem" data-screen-label="Grind" style="position:relative;padding:clamp(52px,6vw,84px) clamp(20px,5vw,40px);">
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Grind</div>
-      <h2 class="dm-section-title">When trial matching ends,<br><span class="dm-section-title__steel">years of manual labor begin.</span></h2>
-      <p class="dm-section-dek dm-section-dek--oneline">Discovery and reporting got solved; execution is still open.</p>
-      <div class="dm-stat-grid" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:40px;">
+      <h2 class="dm-section-title">Execution is where<br><span class="dm-section-title__steel">clinical research stalls.</span></h2>
+      <p class="dm-section-dek" style="white-space:normal;max-width:42rem;">Discovery and reporting got solved. Execution is still open, and it's why the trials never open where the patients are.</p>
+      <div class="dm-stat-lead dm-card-lift dm-card-record" style="display:flex;align-items:center;gap:22px;padding:28px 32px;border-radius:16px;margin-top:40px;">
+        <div class="dm-stat-lead__num" style="flex-shrink:0;text-align:center;font-family:var(--font-display);font-size:clamp(3.4rem,5.2vw,4.6rem);font-weight:700;letter-spacing:-0.04em;line-height:0.92;font-variant-numeric:tabular-nums;color:var(--ink-cold);">70%</div>
+        <div class="dm-stat-lead__rule" style="width:1px;align-self:stretch;background:rgba(31,45,61,0.14);flex-shrink:0;"></div>
+        <div style="min-width:0;">
+          <p style="margin:0;font-size:15px;line-height:1.5;color:var(--ink-quiet);">of US counties had no active cancer treatment trial in 2022. In nonmetropolitan counties, 86%.</p>
+          <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-top:10px;">Kirkwood et al. · JCO Oncology Practice 2024</div>
+        </div>
+      </div>
+      <p class="dm-stat-connect" style="margin:18px 0 0;font-size:13.5px;line-height:1.45;color:var(--ink-faint);">Not for lack of patients or willing physicians. Four reasons, below.</p>
+      <div class="dm-stat-grid" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:22px;">
         <div class="dm-card-lift" style="display:flex;align-items:center;padding:20px 24px;border-radius:14px;">
           <div style="flex-shrink:0;width:118px;text-align:center;font-family:var(--font-display);font-size:clamp(2.4rem,3.2vw,3.1rem);font-weight:700;letter-spacing:-0.03em;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink-cold);">20<span style="font-size:0.44em;color:var(--ink-steel);vertical-align:0.6em;font-weight:600;margin-left:1px;">+</span></div>
           <div style="width:1px;align-self:stretch;background:rgba(31,45,61,0.12);margin:1px 22px;"></div>
