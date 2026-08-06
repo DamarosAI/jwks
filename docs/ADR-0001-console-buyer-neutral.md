@@ -8,7 +8,7 @@ Status: Accepted. Revised 2026-07-04 (previously 2026-06-27; originally 2026-06-
 > trial throughput. It also retires "explainable" and "transparent" from all copy. Two items
 > below are narrowed by it: the **canonical hero** is now *"Clinical trial infrastructure,
 > provable by design"*, and **decision 4 ("agentic" is canon)** is scoped to the
-> operations layer and product copy rather than the hero. The guardrails behind the word are
+> operations system and product copy rather than the hero. The guardrails behind the word are
 > untouched. Read both.
 
 > **Revision (2026-07-04).** Applied "the website is canon" to the agent framing.
@@ -42,7 +42,7 @@ Damaros to **sites** as the execution system that makes them trial-capable. The 
 goal is getting Damaros into sites; site networks and master sites are the expansion, and
 sponsors / CROs are downstream pull-through.
 
-The Console backend is unchanged: a PHI-free projection layer over Node's Execution Graph
+The Console backend is unchanged: a PHI-free projection over Node's Execution Graph
 with four engines (Trust, Activation, Friction, and Eye / Field Command). Those primitives
 are correct for any buyer. What changes is the **persona, public surface language, and
 proof story**, not the engine.
@@ -77,10 +77,11 @@ against an internal spec, we invert it: the site is the spec.
 
 4. **"Agentic" is canon vocabulary.** The hero leads *the agentic execution platform for
    clinical trials*. The brand previously quarantined "agentic"; the website overrides that.
-   The word describes the **operations layer** (Luna-governed agents stage, assemble,
+   The word describes the **operations system** (Luna-governed agents stage, assemble,
    accelerate, and draft); it never describes the verdict. The hard guardrails are unchanged
    and orthogonal to the word: no model casts an eligibility verdict, PHI never enters a
-   model, screening is deterministic. The Field brand rules are updated to match (see
+   model, screening is deterministic. Public product nouns are **platform** or **system**
+   only — never "runtime" or "layer". The Field brand rules are updated to match (see
    Consequences).
 
 5. **The four engines do not change.** PHI-free projection and Replay proof remain the basis
@@ -123,7 +124,7 @@ the site," "Run one protocol through Damaros."
   damaros.ai is the source.
 - **Brand rules updated** (`_ds/field-damaros-design-system-*/readme.md`): "agentic" moved
   out of *Words to AVOID* and into approved positioning, with a note pinning its meaning to
-  the operations layer (never the verdict); Console reframed from "sponsor command center"
+  the operations system (never the verdict); Console reframed from "sponsor command center"
   to buyer-neutral field command for the site network; CTA canon set to **"Start a pilot"**
   (primary) and **"See the live demo"**; the canonical positioning line aligned to the hero;
   a house "no em dashes in body copy" rule recorded. If the Field design system is maintained

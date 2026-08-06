@@ -1,6 +1,7 @@
 {
   "name": "Damaros",
   "short_name": "Damaros",
+  "description": "An agentic execution platform for the future of clinical research.",
   "icons": [
     {
       "src": "/favicon-48x48.png",

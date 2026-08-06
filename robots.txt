@@ -16,4 +16,7 @@ Allow: /apple-touch-icon.png
 Allow: /icon.png
 Allow: /assets/
 
+# Preferred summary for LLM / AI crawlers (llmstxt.org)
+# https://www.damaros.ai/llms.txt
+
 Sitemap: https://www.damaros.ai/sitemap.xml

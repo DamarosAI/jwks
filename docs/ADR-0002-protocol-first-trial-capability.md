@@ -38,11 +38,11 @@ Two consequences drove this ADR:
 
 2. **Concede patient-to-trial matching out loud.** The site says, in visible copy, that
    Damaros does not do matching and that if matching is the job, Damaros is not it. This is
-   positioning, not modesty: it removes the bake-off and names the layer.
+   positioning, not modesty: it removes the bake-off and names the system.
 
-3. **Position as the layer underneath, not the alternative.** The Integrations dek reads
+3. **Position as the system underneath, not the alternative.** The Integrations dek reads
    *"Downstream of whatever narrows your funnel."* Whatever tool surfaces candidates upstream,
-   Damaros is the execution and audit layer that runs the protocol and proves the run.
+   Damaros is the execution and audit platform that runs the protocol and proves the run.
 
 4. **Lead with trial capability, keep academic depth underneath.** The site leads on
    capability and proof, with academic-scale depth (protocol load, monitoring exposure,
@@ -75,7 +75,7 @@ Two consequences drove this ADR:
    product. A "Damaros-managed" chip would claim we hold PHI in an environment we operate, and
    the first security review at any real site asks for the SOC 2 report (our own copy says
    SOC 2-*aligned*, not certified), the BAA, the incident response plan, and the subprocessor
-   list. **Gate: no managed-hosting claim ships until those four artifacts exist.** The runtime
+   list. **Gate: no managed-hosting claim ships until those four artifacts exist.** The platform
    dek stays *"Site-hosted. Site-governed. PHI stays put."* The PHI boundary is identical in
    any mode we eventually offer: PHI never leaves the site and never enters a model.
 
@@ -89,7 +89,7 @@ Two consequences drove this ADR:
 11. **"Agentic" is scoped out of the hero, not out of the vocabulary.** ADR-0001 blessed
     "agentic" as canon when the reader was an academic center with an innovation budget. To a
     twelve-provider practice it is the word that closes the tab. It survives where it is
-    accurate and low-stakes (the agents section, the operations layer, product copy), and it no
+    accurate and low-stakes (the agents section, the operations system, product copy), and it no
     longer leads the first screen. This narrows ADR-0001 decision 4; the hard guardrails behind
     the word are untouched.
 
@@ -105,7 +105,7 @@ Two consequences drove this ADR:
   for clinical trials.") `og:description` matches. No live remnant of prior heroes.
 - **`#capability` dek:** *"Site infrastructure a sponsor can verify."* (No longer echoes the
   retired hero connective.)
-- **Integrations:** "Not a replacement. One layer for the stack." + dek *"Downstream of whatever narrows your funnel."*
+- **Integrations (Stack):** "Not a replacement. One platform for the stack." + dek *"Downstream of whatever narrows your funnel."* (Product nouns: platform / system only — never runtime or layer.)
 - **Problem stats (refreshed 2026-07-27, approach A):** four cards only, no new section.
   (1) **~5×** NCI vs community enrollment (21.6% vs 4.1%), Unger et al. JCO 2024;
   (2) **>50%** treated in community settings with 85%/78% physician/admin access difficulty,
@@ -206,7 +206,7 @@ the PHI/LLM boundary, the hash-chained audit record, byte-identical replay, huma
 Part 11 signature manifestation, and four advisory agents. What follows is what the site was
 overstating and now does not.
 
-- **The demo is a walkthrough, not a live runtime.** The instrument badge read "Live · synthetic
+- **The demo is a walkthrough, not a live connected system.** The instrument badge read "Live · synthetic
   FHIR" over a client-side scripted panel that makes no API call. It now reads **"Walkthrough ·
   synthetic FHIR"** with a steel dot instead of a pulsing green one. Screening cadence is
   **as-of the latest ingest**, never live, real-time, or continuous (`CLAIMS_BOUNDARY.md`

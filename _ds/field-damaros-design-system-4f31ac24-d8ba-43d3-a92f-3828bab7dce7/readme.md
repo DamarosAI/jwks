@@ -14,7 +14,7 @@ This project is the brand + product design system for **Damaros**. It exists so 
 
 Positioning line (canonical, per damaros.ai, 2026-07-27): *Clinical trial infrastructure, provable by design.* Hero and `og:description` carry this exact line. **AI-native where operations scale, deterministic where trust requires.** No model ever casts an eligibility verdict; PHI never enters an LLM path. (Prior heroes retired: *the agentic execution platform for clinical trials*; *the execution platform that makes sites trial-capable, then provable*.)
 
-**Protocol-first, not patient-first (2026-07-27).** Damaros answers *"does this subject provably meet this protocol, and can we defend that decision later?"* It does **not** answer *"which trials fit this patient?"* Patient-to-trial matching is conceded out loud in site copy, and Damaros is positioned as the execution and audit layer underneath whatever narrows the funnel, never an alternative to it. The lead value is **trial capability, not trial throughput**: a site becomes able to run a protocol and to prove it ran clean. Academic depth (monitoring exposure, protocol load) runs underneath that lead, not instead of it.
+**Protocol-first, not patient-first (2026-07-27).** Damaros answers *"does this subject provably meet this protocol, and can we defend that decision later?"* It does **not** answer *"which trials fit this patient?"* Patient-to-trial matching is conceded out loud in site copy, and Damaros is positioned as the execution and audit platform underneath whatever narrows the funnel, never an alternative to it. The lead value is **trial capability, not trial throughput**: a site becomes able to run a protocol and to prove it ran clean. Academic depth (monitoring exposure, protocol load) runs underneath that lead, not instead of it.
 
 Two scoping rules that go with it. **"Underneath" is integration language only** - it belongs next to Epic and Veeva, never in a hero, because underneath is a good place to sit in an integration diagram and a bad place to sit on a first screen. And **hosting posture is never claimed ahead of the artifacts**: copy reads "institution-hosted or air-gapped, managed option on request" until a managed tier has a SOC 2 report, a BAA, an incident response plan, and a subprocessor list behind it. Our own security copy says SOC 2-*aligned*; write to that, not past it.
 
@@ -22,9 +22,9 @@ Two scoping rules that go with it. **"Underneath" is integration language only**
 
 | Surface | What it is |
 |---|---|
-| **Node** | The **site runtime**. Where execution happens - a care site runs the trial under local control with replayable proof. Executes the one workflow: **Protocol → Evidence → Screening → Resolve → Replay**. (Helper label: *Clinic Node*.) |
+| **Node** | The **site platform**. Where execution happens - a care site runs the trial under local control with replayable proof. Executes the one workflow: **Protocol → Evidence → Screening → Resolve → Replay**. (Helper label: *Clinic Node*.) |
 
-Node is the one operator surface (Console was retired as a surface; the site never names it). The live demo on damaros.ai is a single-site Node runtime.
+Node is the one operator surface (Console was retired as a surface; the site never names it). The live demo on damaros.ai is a single-site Node platform.
 
 ### The one workflow (five steps)
 
@@ -48,7 +48,7 @@ The hard guardrails are unchanged and orthogonal to the framing: no model casts 
 - **Operations Mesh** - governed worker substrate (Forge = evidence assembly, Router = review triage). Workers add priority/proof, never authority.
 
 ### CTAs (canon, per damaros.ai)
-The primary CTA is **"Start a pilot"** (mailto). The demo link is **"See the live demo"** (it scrolls to the live runtime demo on synthetic FHIR). **Do not** use "Field" anywhere in public or product copy: "Field" is the internal name of this design system only, never a product noun, label, or CTA. Never "Explore platform."
+The primary CTA is **"Start a pilot"** (mailto). The demo link is **"See the live demo"** (it scrolls to the live platform demo on synthetic FHIR). **Do not** use "Field" anywhere in public or product copy: "Field" is the internal name of this design system only, never a product noun, label, or CTA. Never "Explore platform." Product nouns for Damaros itself are **platform** or **system** only — never "runtime" or "layer".
 
 ---
 
@@ -56,7 +56,7 @@ The primary CTA is **"Start a pilot"** (mailto). The demo link is **"See the liv
 
 This system was reverse-engineered from the real Damaros codebases. If you have access, read them to do an even better job:
 
-- **Product app + API** - `DamarosAI/damaros` (private). The Next.js operator console lives at `damaros/webapp/`; design tokens in `app/globals.css` (`:root`), component primitives in `components/design-system/`, polish layer in `app/common.css`. Canonical product language: `damaros/docs/product/PRODUCT_LANGUAGE.md` and `IDENTITY.md`.
+- **Product app + API** - `DamarosAI/damaros` (private). The Next.js operator console lives at `damaros/webapp/`; design tokens in `app/globals.css` (`:root`), component primitives in `components/design-system/`, polish styles in `app/common.css`. Canonical product language: `damaros/docs/product/PRODUCT_LANGUAGE.md` and `IDENTITY.md`.
   → https://github.com/DamarosAI/damaros
 - **Public marketing site (damaros.ai)** - `DamarosAI/damaros-jwks` (the visual canon). Brand palette + type live in `shared/journey.css`; the hero/landing experience is `index.html`; brand assets (logos, monogram, fonts) in `assets/`.
   → https://github.com/DamarosAI/damaros-jwks
@@ -89,7 +89,7 @@ The voice is **declarative, mineral, and disciplined.** It sounds like an instru
 **Words to USE:** clinical trial infrastructure · provable by design · trial-capable · protocol-first screening · reproducible · reconstructable · Luna-governed agents (stage · assemble · accelerate · draft, never decide) · deterministic patient-path screening · permissioned execution truth · replayable proof · evidence-bound · requires review · human committed · governed · PHI-free · as-of the latest evidence ingest.
 **Words to AVOID:** "AI found this patient" · "the model decides" · "the model determines eligibility" · real-time/live screening · "regulatory-grade / FDA-ready / HIPAA compliant" (full stop) · CTMS replacement · trial matching · patient-to-trial matching · "AI trial matching" · "find eligible patients" · AI-powered · "explainable AI" · explainable · transparent · any accuracy percentage · enrollment lift · dashboard. (Full quarantine list lives in the repo's `PRODUCT_LANGUAGE.md`.)
 
-**On capability claims (the backend is the authority):** the implementation repo carries its own honest-claims contract at `damaros/docs/product/CLAIMS_BOUNDARY.md`, plus `CURRENT_STATE.md` and `KNOWN_LIMITATIONS.md`. Read it before writing anything that describes what the product *does*. The site is canon for **positioning**; the backend is canon for **capability**. Standing translations, all conformed on the site 2026-07-27 (ADR-0002 claims-conformance section): screening is **as-of the latest ingest**, never "live" or "real-time"; the shipped demo is a **walkthrough on synthetic FHIR**, not a live runtime; Sentinel surfaces **aggregate evidence-concept coverage**, never protocols a site "can run" and never anything patient-level; the engine evaluates **every compiled criterion**, not every criterion; determinism requires a pinned **as-of**; the audit chain is **SHA-256 hash-linked** and **Ed25519 signs the export**, not each row; a human commit carries a **Part 11 signature manifestation**; controls are **audit-oriented, not SOC 2 certified**; **HIPAA-aligned by design**, never "HIPAA compliant" or "HIPAA-ready"; Epic and Cerner are **SMART on FHIR sandbox-validated with no production tenant**, and no vendor partnership may be implied. FedRAMP is not claimable at all.
+**On capability claims (the backend is the authority):** the implementation repo carries its own honest-claims contract at `damaros/docs/product/CLAIMS_BOUNDARY.md`, plus `CURRENT_STATE.md` and `KNOWN_LIMITATIONS.md`. Read it before writing anything that describes what the product *does*. The site is canon for **positioning**; the backend is canon for **capability**. Standing translations, all conformed on the site 2026-07-27 (ADR-0002 claims-conformance section): screening is **as-of the latest ingest**, never "live" or "real-time"; the shipped demo is a **walkthrough on synthetic FHIR**, not a live connected system; Sentinel surfaces **aggregate evidence-concept coverage**, never protocols a site "can run" and never anything patient-level; the engine evaluates **every compiled criterion**, not every criterion; determinism requires a pinned **as-of**; the audit chain is **SHA-256 hash-linked** and **Ed25519 signs the export**, not each row; a human commit carries a **Part 11 signature manifestation**; controls are **audit-oriented, not SOC 2 certified**; **HIPAA-aligned by design**, never "HIPAA compliant" or "HIPAA-ready"; Epic and Cerner are **SMART on FHIR sandbox-validated with no production tenant**, and no vendor partnership may be implied. FedRAMP is not claimable at all.
 
 **On mission language (any page, About included):** never frame the mission as shortening *the distance between patient and trial* or putting *the right therapeutic option within reach*. Neither trips the banned-phrase list, and both are patient-matching mission statements that contradict the homepage concession. The gap Damaros closes is between **the patients a site already treats and a protocol it can provably run**: execution should never be the reason a trial stays out of reach.
 
@@ -101,7 +101,7 @@ The voice is **declarative, mineral, and disciplined.** It sounds like an instru
 
 **On "explainable" and "transparent":** both are retired. They describe a model apologizing for itself, and they concede that the decision was probabilistic. Damaros claims **reproducibility** and **reconstruction** instead: same protocol, same evidence, same verdict, and the whole chain rebuildable months later. A signed record of a probabilistic decision is not proof.
 
-**On "agentic":** the word is approved for the operations layer and product copy, and it **no longer leads the hero** (ADR-0002). It was blessed when the reader was an academic center with an innovation budget; to a twelve-provider practice it is the word that closes the tab. The canonical hero is *Clinical trial infrastructure, provable by design.* "Agentic" names the operations layer: Luna-governed agents stage, assemble, accelerate, and draft. It never names the verdict. The hard line holds regardless of the word: no model casts an eligibility verdict, PHI never enters a model, screening is deterministic. Use "agentic" for the platform; never say a model found a patient or decided eligibility.
+**On "agentic":** the word is approved for the operations system and product copy, and it **no longer leads the hero** (ADR-0002). It was blessed when the reader was an academic center with an innovation budget; to a twelve-provider practice it is the word that closes the tab. The canonical hero is *Clinical trial infrastructure, provable by design.* "Agentic" names the operations system: Luna-governed agents stage, assemble, accelerate, and draft. It never names the verdict. The hard line holds regardless of the word: no model casts an eligibility verdict, PHI never enters a model, screening is deterministic. Use "agentic" for the platform; never say a model found a patient or decided eligibility.
 
 ---
 
@@ -154,7 +154,7 @@ Damaros uses **thin-stroke geometric line icons drawn as inline SVG** - there is
 - **`assets/`** - Damaros logos + monogram (white PNGs, brand SVG, recolorable `currentColor` SVG), favicon.
 - **`guidelines/`** - foundation specimen cards (Colors, Type, Spacing, Brand) shown in the Design System tab.
 - **`components/`** - reusable React primitives (see below).
-- **`ui_kits/`** - full-screen product recreations: `node/` (site runtime). (The retired Console kit exists upstream as reference-only; see the UI kits note below.)
+- **`ui_kits/`** - full-screen product recreations: `node/` (site platform). (The retired Console kit exists upstream as reference-only; see the UI kits note below.)
 - **`SKILL.md`** - Agent-Skills wrapper so this system works in Claude Code.
 
 **Components:** Button · StatusBadge (PASS/REVIEW/FAIL/governed disposition chip) · Card (glass) · Input / Textarea / Select · Eyebrow · Stepper (the five-step spine) · TrustPill · ReviewChip · Kbd. See `components/<group>/` and each `.prompt.md`.

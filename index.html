@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Damaros™</title>
+<title>Damaros™ | Agentic execution platform for clinical research</title>
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#fafcfd">
 <link rel="canonical" href="https://www.damaros.ai/">
@@ -16,15 +16,21 @@
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
 <link rel="manifest" href="/site.webmanifest">
+<meta name="description" content="An agentic execution platform for the future of clinical research.">
+<meta name="application-name" content="Damaros">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Damaros™">
-<meta name="description" content="The agentic execution platform for clinical trials. Protocol through audit: deterministic decisions, human signatures, replayable proof.">
-<meta property="og:description" content="The agentic execution platform for clinical trials. Protocol through audit: deterministic decisions, human signatures, replayable proof.">
+<meta property="og:site_name" content="Damaros">
+<meta property="og:title" content="Damaros™ | Agentic execution platform for clinical research">
+<meta property="og:description" content="An agentic execution platform for the future of clinical research.">
 <meta property="og:url" content="https://www.damaros.ai/">
 <meta property="og:image" content="https://www.damaros.ai/favicon-192x192.png">
 <meta property="og:logo" content="https://www.damaros.ai/favicon-192x192.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Damaros™ | Agentic execution platform for clinical research">
+<meta name="twitter:description" content="An agentic execution platform for the future of clinical research.">
+<meta name="twitter:image" content="https://www.damaros.ai/favicon-192x192.png">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"Organization","name":"Damaros","url":"https://www.damaros.ai/","logo":"https://www.damaros.ai/favicon-192x192.png"}
+{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://www.damaros.ai/#organization","name":"Damaros","alternateName":"Damaros™","url":"https://www.damaros.ai/","logo":"https://www.damaros.ai/favicon-192x192.png","description":"An agentic execution platform for the future of clinical research."},{"@type":"WebSite","@id":"https://www.damaros.ai/#website","name":"Damaros","url":"https://www.damaros.ai/","description":"An agentic execution platform for the future of clinical research.","publisher":{"@id":"https://www.damaros.ai/#organization"}},{"@type":"SoftwareApplication","name":"Damaros","applicationCategory":"HealthApplication","operatingSystem":"Web","url":"https://www.damaros.ai/","description":"An agentic execution platform for the future of clinical research.","publisher":{"@id":"https://www.damaros.ai/#organization"}}]}
 </script>
 <script src="./support.js" defer></script>
 <script src="./mail-cta.js?v=15" defer></script>
@@ -2470,11 +2476,11 @@ class Component extends DCLogic {
     { nct: "NCT00000090", name: "RESP-90 · severe asthma", phase: "Ph III", needs: ["infusion"], base: 29, concepts: ["eosinophilic", "FEV1 < 80%", "biologic-naive"], overlap: "respiratory" }
   ];
   trCrit = [
-    { id: "c1", code: "I-3.4", text: "Serum chemistry within a 7-day window", clause: "7-day", newText: "Serum chemistry within a 14-day window", newClause: "14-day", friction: 73, proj: 25, rationale: "A 7-day lab window forces a redundant confirmatory draw when routine labs are 8 to 10 days old at consent. 14 days matches outpatient cadence, and screening chemistry is stable across it.", unblocks: ["E. Morn \u00b7 S-1051", "Raul Silva \u00b7 S-1095"] },
+    { id: "c1", code: "I-3.4", text: "Serum chemistry within a 7-day window", clause: "7-day", newText: "Serum chemistry within a 14-day window", newClause: "14-day", friction: 73, proj: 25, rationale: "A 7-day lab window forces a redundant confirmatory draw when routine labs are 8 to 10 days old at consent. 14 days matches outpatient cadence, and screening chemistry is stable across it.", unblocks: ["E. Morn \u00b7 S-1051", "R. Silva \u00b7 S-1095"] },
     { id: "c2", code: "E-5.3", text: "At least 21-day prior-therapy washout", clause: "21-day", newText: "At least 14-day washout for oral agents", newClause: "14-day", friction: 61, proj: 28, rationale: "A 21-day washout excludes patients still tapering an oral targeted agent. At five half-lives in under 14 days, a 14-day washout is pharmacologically sufficient.", unblocks: ["I. Rey \u00b7 S-1078", "C. Bray \u00b7 S-1083"] },
-    { id: "c3", code: "I-4.2", text: "ECOG 0 to 1 within 14 days", clause: "0 to 1", newText: "ECOG 0 to 2 within 21 days", newClause: "0 to 2", friction: 44, proj: 22, rationale: "ECOG 0 to 1 screens out patients whose performance status reflects treatable disease burden. ECOG 0 to 2 matches the enrolled population in comparable second-line trials.", unblocks: ["Judy Alvarez \u00b7 S-1118"] },
-    { id: "c4", code: "I-2.1", text: "EGFR / ALK from an in-network lab", clause: "in-network lab", newText: "EGFR / ALK from any CAP/CLIA lab", newClause: "any CAP/CLIA lab", friction: 58, proj: 24, rationale: "Requiring an in-network lab re-tests patients who already hold a valid EGFR / ALK result. Concordant CAP/CLIA outside reports are accepted, removing weeks of delay.", unblocks: ["L. Shaxx \u00b7 S-1066", "M. Sov \u00b7 S-1071"] },
-    { id: "c5", code: "E-7", text: "No prior CNS metastases", clause: "No prior", newText: "No active, untreated CNS metastases", newClause: "No active, untreated", friction: 39, proj: 18, rationale: "Excluding any prior CNS metastasis rejects patients with treated, radiographically stable disease. Restricting to active, untreated lesions preserves the safety intent.", unblocks: ["Felix Leiter \u00b7 S-1109"] }
+    { id: "c3", code: "I-4.2", text: "ECOG 0 to 1 within 14 days", clause: "0 to 1", newText: "ECOG 0 to 2 within 21 days", newClause: "0 to 2", friction: 44, proj: 22, rationale: "ECOG 0 to 1 screens out patients whose performance status reflects treatable disease burden. ECOG 0 to 2 matches the enrolled population in comparable second-line trials.", unblocks: ["J. Alvarez \u00b7 S-1118"] },
+    { id: "c4", code: "I-2.1", text: "EGFR / ALK from an in-network lab", clause: "in-network lab", newText: "EGFR / ALK from any CAP/CLIA lab", newClause: "any CAP/CLIA lab", friction: 58, proj: 24, rationale: "Requiring an in-network lab re-tests patients who already hold a valid EGFR / ALK result. Concordant CAP/CLIA outside reports are accepted, removing weeks of delay.", unblocks: ["M. Hughes \u00b7 S-1066", "M. Sov \u00b7 S-1071"] },
+    { id: "c5", code: "E-7", text: "No prior CNS metastases", clause: "No prior", newText: "No active, untreated CNS metastases", newClause: "No active, untreated", friction: 39, proj: 18, rationale: "Excluding any prior CNS metastasis rejects patients with treated, radiographically stable disease. Restricting to active, untreated lesions preserves the safety intent.", unblocks: ["F. Leiter \u00b7 S-1109"] }
   ];
   trStages = ["Reading protocol and FDA guidance", "Mapping ontology concepts", "Drafting amendment"];
   eySignals = [
@@ -2586,7 +2592,7 @@ class Component extends DCLogic {
       kind: "conflict", a: { src: "Structured EHR", val: "1", note: "Observation \u00b7 06-18" }, b: { src: "Oncology note", val: "2", note: "Progress note \u00b7 06-20" },
       prompt: "Two sources disagree on performance status. A PI decides which governs.",
       options: [ { id: "a", label: "Accept structured \u00b7 ECOG 1", tone: "pass" }, { id: "b", label: "Accept note \u00b7 ECOG 2", tone: "review" }, { id: "r", label: "Request repeat ECOG", tone: "steel" } ] },
-    { id: "S-1066", name: "L. Shaxx", meta: "58M \u00b7 SYN-4512", crit: "I-2.1 \u00b7 EGFR / ALK molecular status", role: "Coordinator",
+    { id: "S-1066", name: "M. Hughes", meta: "58M \u00b7 SYN-4512", crit: "I-2.1 \u00b7 EGFR / ALK molecular status", role: "Coordinator",
       kind: "missing", need: "EGFR / ALK molecular report", note: "DiagnosticReport \u00b7 not received from lab",
       prompt: "Required evidence hasn't arrived. Nothing to adjudicate until it does.",
       options: [ { id: "req", label: "Request molecular report", tone: "steel" }, { id: "inel", label: "Mark ineligible", tone: "fail" }, { id: "def", label: "Defer", tone: "muted" } ] },
@@ -2603,21 +2609,21 @@ class Component extends DCLogic {
   screenClusters = [
     { id: "ecog", label: "ECOG", code: "I-4.2", x: 33, y: 32, state: "conflict", review: 5, fail: 18, pulse: true, patients: [
       { n: "J. Silverhand", id: "S-1047", why: "Structured ECOG 1 \u2260 oncology note 2", ci: 0 },
-      { n: "Jackie Welles", id: "S-1102", why: "No ECOG recorded inside the 14-day window" },
+      { n: "J. Welles", id: "S-1102", why: "No ECOG recorded inside the 14-day window" },
       { n: "H. Morow", id: "S-1110", why: "Qualifying assessment 19 days old, stale" },
-      { n: "Judy Alvarez", id: "S-1118", why: "Latest note reads performance status 2" },
-      { n: "Panam Palmer", id: "S-1124", why: "ECOG conflicts across two visits" } ] },
+      { n: "J. Alvarez", id: "S-1118", why: "Latest note reads performance status 2" },
+      { n: "P. Palmer", id: "S-1124", why: "ECOG conflicts across two visits" } ] },
     { id: "biomarker", label: "Biomarker", code: "I-2.1", x: 70, y: 30, state: "missing", review: 3, fail: 14, patients: [
-      { n: "L. Shaxx", id: "S-1066", why: "EGFR / ALK molecular report not received", ci: 1 },
+      { n: "M. Hughes", id: "S-1066", why: "EGFR / ALK molecular report not received", ci: 1 },
       { n: "M. Sov", id: "S-1071", why: "Outside-lab result unmapped to criterion" },
-      { n: "Goro Takemura", id: "S-1075", why: "Molecular pathology pending from lab" } ] },
+      { n: "G. Takemura", id: "S-1075", why: "Molecular pathology pending from lab" } ] },
     { id: "washout", label: "Washout", code: "E-5.3", x: 33, y: 72, state: "conflict", review: 3, fail: 12, patients: [
       { n: "I. Rey", id: "S-1078", why: "Last-dose date ambiguous, 05-30 vs 06-02", ci: 3 },
       { n: "C. Bray", id: "S-1083", why: "Infusion vs pharmacy dispense conflict" },
-      { n: "David Martinez", id: "S-1088", why: "Systemic therapy inside the 21-day window" } ] },
+      { n: "D. Martinez", id: "S-1088", why: "Systemic therapy inside the 21-day window" } ] },
     { id: "chemistry", label: "Chemistry", code: "I-3.4", x: 72, y: 70, state: "stale", review: 2, fail: 6, patients: [
       { n: "E. Morn", id: "S-1051", why: "K\u207a 5.0 mmol/L drawn 11 days ago, stale", ci: 2 },
-      { n: "Raul Silva", id: "S-1095", why: "Chemistry panel past 7-day freshness" } ] }
+      { n: "R. Silva", id: "S-1095", why: "Chemistry panel past 7-day freshness" } ] }
   ];
   screenLines = [ { x1: 50, y1: 22, x2: 21, y2: 55 }, { x1: 50, y1: 22, x2: 49, y2: 74 }, { x1: 49, y1: 74, x2: 78, y2: 45 }, { x1: 50, y1: 22, x2: 78, y2: 45 } ];
 
@@ -2625,22 +2631,22 @@ class Component extends DCLogic {
   evStatsData = [ { n: "41", label: "Screenable today", tone: "pass" }, { n: "16", label: "Missing evidence", tone: "missing" }, { n: "9", label: "Source conflict", tone: "fail" }, { n: "6", label: "Stale window", tone: "stale" }, { n: "11", label: "External pending", tone: "steel" } ];
 
   evReqs = [
-    { code: "I-2.1", fact: "EGFR / ALK molecular status", state: "missing", trigger: "MISSING_SOURCE", blocks: "blocks 14 review · 6 fail", requiredBy: "Inclusion I-2.1 · Exclusion E-4.2", sources: "Pathology DiagnosticReport · molecular PDF (DocumentReference) · sponsor packet · external lab (manual)", current: "Ordered, no final report found", checked: "Epic FHIR 09:42 · Pathology 09:43", action: "Request molecular report", patients: [ { n: "L. Shaxx", id: "S-1066", st: "missing", src: "No source found", date: "·" }, { n: "M. Sov", id: "S-1071", st: "ambiguous", src: "Outside-lab PDF · unmapped", date: "06-12" }, { n: "Goro Takemura", id: "S-1075", st: "missing", src: "Order placed · pending", date: "06-19" }, { n: "Sasai Arasaka", id: "S-1129", st: "missing", src: "No source found", date: "·" } ] },
-    { code: "E-4.2", fact: "ECOG performance status 0-1", state: "conflict", trigger: "CONFLICTING_SOURCE", blocks: "blocks 5 review", requiredBy: "Exclusion E-4.2", sources: "Structured Observation · oncology progress note", current: "Structured = 1, note = 2, conflict", checked: "Epic FHIR 09:42", action: "Route to PI review", patients: [ { n: "J. Silverhand", id: "S-1047", st: "conflict", src: "Obs 1 · note 2", date: "06-20" }, { n: "Judy Alvarez", id: "S-1118", st: "conflict", src: "Note reads PS 2", date: "06-17" }, { n: "Panam Palmer", id: "S-1124", st: "conflict", src: "Two visits disagree", date: "06-15" } ] },
-    { code: "I-3.4", fact: "CMP within 7-day window", state: "stale", trigger: "STALE_SOURCE", blocks: "blocks 2 review", requiredBy: "Inclusion I-3.4", sources: "Chemistry panel Observation", current: "Last CMP 11 days old", checked: "Epic FHIR 09:42", action: "Request CMP order", patients: [ { n: "E. Morn", id: "S-1051", st: "stale", src: "K⁺ 5.0 · drawn 06-09", date: "06-09" }, { n: "Raul Silva", id: "S-1095", st: "stale", src: "CMP past freshness", date: "06-08" } ] },
-    { code: "E-5.3", fact: "≥ 21-day prior-therapy washout", state: "ambiguous", trigger: "TEMPORAL_EDGE", blocks: "blocks 3 review", requiredBy: "Exclusion E-5.3", sources: "MedicationAdministration · discharge DocumentReference", current: "Last-dose date unclear, 05-30 vs 06-02", checked: "Epic FHIR 09:42", action: "Coordinator chart review", patients: [ { n: "I. Rey", id: "S-1078", st: "conflict", src: "Infusion 05-30 · DC 06-02", date: "06-02" }, { n: "C. Bray", id: "S-1083", st: "conflict", src: "Infusion vs dispense", date: "05-31" }, { n: "David Martinez", id: "S-1088", st: "missing", src: "Therapy inside window", date: "06-04" } ] },
+    { code: "I-2.1", fact: "EGFR / ALK molecular status", state: "missing", trigger: "MISSING_SOURCE", blocks: "blocks 14 review · 6 fail", requiredBy: "Inclusion I-2.1 · Exclusion E-4.2", sources: "Pathology DiagnosticReport · molecular PDF (DocumentReference) · sponsor packet · external lab (manual)", current: "Ordered, no final report found", checked: "Epic FHIR 09:42 · Pathology 09:43", action: "Request molecular report", patients: [ { n: "M. Hughes", id: "S-1066", st: "missing", src: "No source found", date: "·" }, { n: "M. Sov", id: "S-1071", st: "ambiguous", src: "Outside-lab PDF · unmapped", date: "06-12" }, { n: "G. Takemura", id: "S-1075", st: "missing", src: "Order placed · pending", date: "06-19" }, { n: "S. Arasaka", id: "S-1129", st: "missing", src: "No source found", date: "·" } ] },
+    { code: "E-4.2", fact: "ECOG performance status 0-1", state: "conflict", trigger: "CONFLICTING_SOURCE", blocks: "blocks 5 review", requiredBy: "Exclusion E-4.2", sources: "Structured Observation · oncology progress note", current: "Structured = 1, note = 2, conflict", checked: "Epic FHIR 09:42", action: "Route to PI review", patients: [ { n: "J. Silverhand", id: "S-1047", st: "conflict", src: "Obs 1 · note 2", date: "06-20" }, { n: "J. Alvarez", id: "S-1118", st: "conflict", src: "Note reads PS 2", date: "06-17" }, { n: "P. Palmer", id: "S-1124", st: "conflict", src: "Two visits disagree", date: "06-15" } ] },
+    { code: "I-3.4", fact: "CMP within 7-day window", state: "stale", trigger: "STALE_SOURCE", blocks: "blocks 2 review", requiredBy: "Inclusion I-3.4", sources: "Chemistry panel Observation", current: "Last CMP 11 days old", checked: "Epic FHIR 09:42", action: "Request CMP order", patients: [ { n: "E. Morn", id: "S-1051", st: "stale", src: "K⁺ 5.0 · drawn 06-09", date: "06-09" }, { n: "R. Silva", id: "S-1095", st: "stale", src: "CMP past freshness", date: "06-08" } ] },
+    { code: "E-5.3", fact: "≥ 21-day prior-therapy washout", state: "ambiguous", trigger: "TEMPORAL_EDGE", blocks: "blocks 3 review", requiredBy: "Exclusion E-5.3", sources: "MedicationAdministration · discharge DocumentReference", current: "Last-dose date unclear, 05-30 vs 06-02", checked: "Epic FHIR 09:42", action: "Coordinator chart review", patients: [ { n: "I. Rey", id: "S-1078", st: "conflict", src: "Infusion 05-30 · DC 06-02", date: "06-02" }, { n: "C. Bray", id: "S-1083", st: "conflict", src: "Infusion vs dispense", date: "05-31" }, { n: "D. Martinez", id: "S-1088", st: "missing", src: "Therapy inside window", date: "06-04" } ] },
     { code: "I-1.1", fact: "Histologically confirmed NSCLC", state: "ready", trigger: "READY", blocks: "all evidence ready", requiredBy: "Inclusion I-1.1", sources: "Pathology DiagnosticReport", current: "Confirmed, adenocarcinoma, stage IIIB", checked: "Pathology 09:43", action: "Confirm eligibility", patients: [] }
   ];
 
   scQueue = [
-    { id: "S-1066", name: "L. Shaxx", st: "REVIEW", crit: "I-2.1 · biomarker missing", trig: "MISSING_SOURCE", owner: "G. Freecss", ci: 1, blocker: "I-2.1 · EGFR / ALK molecular status", rule: "EGFR / ALK status required before randomization.", facts: ["No molecular DiagnosticReport found", "Order placed 06-19 · no result"], sources: ["(awaiting) DiagnosticReport", "DocumentReference · none"], result: "REVIEW, not FAIL", reason: "Required source not yet received", rec: "Request molecular report from pathology / external lab." },
+    { id: "S-1066", name: "M. Hughes", st: "REVIEW", crit: "I-2.1 · biomarker missing", trig: "MISSING_SOURCE", owner: "G. Freecss", ci: 1, blocker: "I-2.1 · EGFR / ALK molecular status", rule: "EGFR / ALK status required before randomization.", facts: ["No molecular DiagnosticReport found", "Order placed 06-19 · no result"], sources: ["(awaiting) DiagnosticReport", "DocumentReference · none"], result: "REVIEW, not FAIL", reason: "Required source not yet received", rec: "Request molecular report from pathology / external lab." },
     { id: "S-1051", name: "E. Morn", st: "REVIEW", crit: "I-3.4 · CMP stale", trig: "STALE_SOURCE", owner: "D. Brando", ci: 2, blocker: "I-3.4 · serum chemistry within window", rule: "CMP must be drawn within 7 days of C1D1.", facts: ["K⁺ 5.0 mmol/L drawn 06-09", "11 days old at evaluation"], sources: ["Observation/chem-5521"], result: "REVIEW, not FAIL", reason: "Evidence outside freshness window", rec: "Request a repeat CMP; PI / sub-I signs the order. Likely fixable." },
     { id: "S-1047", name: "J. Silverhand", st: "REVIEW", crit: "E-4.2 · ECOG conflict", trig: "CONFLICTING_SOURCE", owner: "G. Freecss", ci: 0, blocker: "E-4.2 · ECOG performance status", rule: "ECOG must be 0-1, assessed within 14 days of C1D1.", facts: ["Structured Observation: ECOG 1 (06-18)", "Oncology note: ECOG 2 (06-20)"], sources: ["Observation/ecog-8841", "DocumentReference/note-2207"], result: "REVIEW, not FAIL", reason: "Conflicting source facts", rec: "Route to PI; coordinator verifies the latest ECOG." },
     { id: "S-1078", name: "I. Rey", st: "REVIEW", crit: "E-5.3 · washout edge", trig: "TEMPORAL_EDGE", owner: "D. Brando", ci: 3, blocker: "E-5.3 · ≥ 21-day prior-therapy washout", rule: "≥ 21 days between last systemic therapy and C1D1.", facts: ["Infusion record: 05-30", "Discharge summary: 06-02"], sources: ["MedicationAdministration/inf-771", "DocumentReference/dc-3390"], result: "REVIEW, not FAIL", reason: "Last-dose date ambiguous across sources", rec: "Coordinator confirms last-dose date from infusion records." },
-    { id: "S-1088", name: "David Martinez", st: "FAIL", crit: "I-1.1 · histology mismatch", trig: "", owner: "Unassigned", ci: null, blocker: "I-1.1 · histologically confirmed NSCLC", rule: "Histologically confirmed NSCLC required.", facts: ["Pathology: small-cell carcinoma (SCLC)", "No NSCLC component"], sources: ["Pathology DiagnosticReport/path-3310"], result: "FAIL, hard", reason: "Confirmed SCLC; protocol requires NSCLC", rec: "Hard fail. Not NSCLC; no path to enrollment." },
-    { id: "S-1093", name: "Antonio Lucchesi", st: "FAIL", crit: "I-4.2 · ECOG 3", trig: "", owner: "Unassigned", ci: null, blocker: "I-4.2 · ECOG 0-1", rule: "ECOG performance status 0-1 required.", facts: ["ECOG 3 documented 06-18", "Declining performance status"], sources: ["Observation/ecog-7782"], result: "FAIL, hard", reason: "ECOG 3 exceeds the protocol limit", rec: "Hard fail. Performance status ineligible." },
-    { id: "S-1109", name: "Felix Leiter", st: "FAIL", crit: "E-7 · active CNS metastases", trig: "", owner: "Unassigned", ci: null, blocker: "E-7 · no active CNS metastases", rule: "No active, untreated CNS metastases on steroids.", facts: ["MRI: active untreated CNS lesions", "On dexamethasone"], sources: ["DocumentReference/mri-5567"], result: "FAIL, hard", reason: "Active untreated CNS metastases on steroids", rec: "Hard fail per exclusion E-7." },
-    { id: "S-1044", name: "James Bond", st: "ELIGIBLE", crit: "All criteria met · confirm", trig: "", owner: "G. Freecss", ci: null, blocker: "None", rule: "All inclusion met, no exclusion triggered.", facts: ["EGFR+ confirmed", "ECOG 1 · 06-19", "CMP fresh · 06-20"], sources: ["DiagnosticReport/mol-441", "Observation/ecog-9920"], result: "Confirm eligibility", reason: "All required evidence present and fresh", rec: "Ready for coordinator / PI confirmation." }
+    { id: "S-1088", name: "D. Martinez", st: "FAIL", crit: "I-1.1 · histology mismatch", trig: "", owner: "Unassigned", ci: null, blocker: "I-1.1 · histologically confirmed NSCLC", rule: "Histologically confirmed NSCLC required.", facts: ["Pathology: small-cell carcinoma (SCLC)", "No NSCLC component"], sources: ["Pathology DiagnosticReport/path-3310"], result: "FAIL, hard", reason: "Confirmed SCLC; protocol requires NSCLC", rec: "Hard fail. Not NSCLC; no path to enrollment." },
+    { id: "S-1093", name: "A. Lucchesi", st: "FAIL", crit: "I-4.2 · ECOG 3", trig: "", owner: "Unassigned", ci: null, blocker: "I-4.2 · ECOG 0-1", rule: "ECOG performance status 0-1 required.", facts: ["ECOG 3 documented 06-18", "Declining performance status"], sources: ["Observation/ecog-7782"], result: "FAIL, hard", reason: "ECOG 3 exceeds the protocol limit", rec: "Hard fail. Performance status ineligible." },
+    { id: "S-1109", name: "F. Leiter", st: "FAIL", crit: "E-7 · active CNS metastases", trig: "", owner: "Unassigned", ci: null, blocker: "E-7 · no active CNS metastases", rule: "No active, untreated CNS metastases on steroids.", facts: ["MRI: active untreated CNS lesions", "On dexamethasone"], sources: ["DocumentReference/mri-5567"], result: "FAIL, hard", reason: "Active untreated CNS metastases on steroids", rec: "Hard fail per exclusion E-7." },
+    { id: "S-1044", name: "J. Bond", st: "ELIGIBLE", crit: "All criteria met · confirm", trig: "", owner: "G. Freecss", ci: null, blocker: "None", rule: "All inclusion met, no exclusion triggered.", facts: ["EGFR+ confirmed", "ECOG 1 · 06-19", "CMP fresh · 06-20"], sources: ["DiagnosticReport/mol-441", "Observation/ecog-9920"], result: "Confirm eligibility", reason: "All required evidence present and fresh", rec: "Ready for coordinator / PI confirmation." }
   ];
 
   setHov = (h) => this.setState({ hov: h });
