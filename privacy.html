@@ -22,7 +22,7 @@
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Organization","name":"Damaros","url":"https://www.damaros.ai/","logo":"https://www.damaros.ai/favicon-192x192.png"}
 </script>
-<script src="./mail-cta.js?v=12" defer></script>
+<script src="./mail-cta.js?v=15" defer></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="_ds/field-damaros-design-system-4f31ac24-d8ba-43d3-a92f-3828bab7dce7/tokens/colors.css">
   <link rel="stylesheet" href="_ds/field-damaros-design-system-4f31ac24-d8ba-43d3-a92f-3828bab7dce7/tokens/typography.css">
@@ -74,19 +74,20 @@
     @media (max-width:560px){
       .dm-site header{gap:8px !important;padding-left:14px !important;padding-right:14px !important;}
       .dm-site header nav{gap:2px !important;}
-      .dm-site header nav a:not([href^="mailto"]){padding:6px 7px !important;font-size:12px !important;}
+      .dm-site header nav a:not([href^="mailto"]){padding:10px 12px !important;font-size:13px !important;min-height:44px;display:inline-flex;align-items:center;}
       .dm-site header nav > div{margin:0 5px !important;}
-      .dm-site header nav a[href^="mailto"]{height:34px !important;padding:0 13px !important;font-size:11px !important;}
-      .dm-site .dm-goback{display:inline-flex !important;font-size:9px !important;letter-spacing:0.1em !important;gap:4px !important;}
-      .dm-site .dm-goback svg{width:13px;height:13px;}
+      .dm-site header nav a[href^="mailto"]{height:44px !important;padding:0 15px !important;font-size:11px !important;}
+      .dm-site .dm-goback{display:inline-flex !important;font-size:11px !important;letter-spacing:0.08em !important;gap:5px !important;min-height:44px;align-items:center;}
+      .dm-site .dm-goback svg{width:14px;height:14px;}
       .dm-site header > a{gap:7px !important;min-width:0;}
       .dm-site footer{padding-left:16px !important;padding-right:16px !important;}
+      .dm-site footer a{min-height:44px;display:inline-flex;align-items:center;padding:10px 12px;}
     }
     @media (max-width:400px){
-      .dm-site header nav a:not([href^="mailto"]),
       .dm-site header nav > div{display:none !important;}
+      .dm-site header nav a:not([href^="mailto"]){display:inline-flex !important;}
     }
-    @media (prefers-reduced-motion:reduce){[data-anim]{animation:none !important;}}
+    @media (prefers-reduced-motion:reduce){[data-anim],.dm-hero-mark,[style*="animation:dmDrift"]{animation:none !important;}}
   </style>
 <script>
 window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };

@@ -17,6 +17,8 @@
   function bindImg(img) {
     if (img.dataset.dmBound) return;
     img.dataset.dmBound = "1";
+    if (!img.getAttribute("decoding")) img.setAttribute("decoding", "async");
+    if (!img.getAttribute("loading")) img.setAttribute("loading", "lazy");
     img.addEventListener("error", function () {
       img.classList.add("dm-logo-broken");
       var tile = img.closest(".dm-logo-tile");

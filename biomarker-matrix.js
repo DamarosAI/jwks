@@ -60,7 +60,10 @@
   function streamCap(w, h) {
     var area = Math.max(1, w * h);
     var n = Math.round(REF_STREAMS * (area / (REF_W * REF_H)));
-    return Math.max(MIN_STREAMS, Math.min(MAX_STREAMS_HARD, n));
+    n = Math.max(MIN_STREAMS, Math.min(MAX_STREAMS_HARD, n));
+    // Phones / coarse pointers: keep density low so scroll stays smooth.
+    if (isLite()) n = Math.min(n, 4);
+    return n;
   }
 
   // Speeds of the nearest live trails to the left and right of `col`.
@@ -550,7 +553,7 @@
   function resize(inst) {
     var r = inst.el.getBoundingClientRect();
     // Cap DPR harder on lite viewports: half the pixels, same silhouette.
-    var dprCap = isLite() ? 1.25 : 2;
+    var dprCap = isLite() ? 1 : 2;
     var dpr = Math.min(window.devicePixelRatio || 1, dprCap);
     var w = Math.max(1, Math.floor(r.width));
     var h = Math.max(1, Math.floor(r.height));
@@ -932,6 +935,7 @@
 
   function tick(ts) {
     raf = 0;
+    if (document.hidden) return;
     var any = false;
     // Cap Δt so 30fps and one missed frame stay continuous; avoid teleport on jank.
     var dtCap = isLite() ? 40 : 48;
@@ -951,7 +955,7 @@
   }
 
   function kick() {
-    if (reduced || raf) return;
+    if (reduced || raf || document.hidden) return;
     raf = requestAnimationFrame(tick);
   }
 
@@ -1013,6 +1017,14 @@
   window.addEventListener("scroll", kick, { passive: true });
   document.addEventListener("pointermove", onPointerMove, { passive: true });
   document.addEventListener("pointerdown", onPointerDown, { passive: true });
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) {
+      if (raf) { cancelAnimationFrame(raf); raf = 0; }
+      for (var i = 0; i < instances.length; i++) instances[i].last = 0;
+      return;
+    }
+    kick();
+  });
   window.addEventListener("resize", function () {
     for (var i = 0; i < instances.length; i++) resize(instances[i]);
     if (reduced) {

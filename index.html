@@ -34,8 +34,8 @@
 </script>
 <script src="./support.js" defer></script>
 <script src="./mail-cta.js?v=15" defer></script>
-<script src="./logo-marquee.js?v=4" defer></script>
-<script src="./biomarker-matrix.js?v=53" defer></script>
+<script src="./logo-marquee.js?v=5" defer></script>
+<script src="./biomarker-matrix.js?v=54" defer></script>
 <script src="./hero-fit.js?v=4" defer></script>
 <script src="./section-title-fit.js?v=3" defer></script>
 <script>
@@ -574,6 +574,44 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       }
     }
 
+    /* Short portrait phones: stack hero in-flow so headline / CTA / demo never collide */
+    @media (max-width:900px) and (max-height:740px) and (orientation:portrait){
+      .dm-site section[data-screen-label="Hero"],
+      .dm-site section[data-screen-label="Close"]{
+        height:auto !important;
+        min-height:calc(100svh - 62px) !important;
+        min-height:calc(100dvh - 62px) !important;
+        justify-content:flex-start !important;
+        padding-top:28px !important;
+        padding-bottom:max(20px,env(safe-area-inset-bottom,0px)) !important;
+      }
+      .dm-site section[data-screen-label="Hero"] > .dm-hero-copy,
+      .dm-site section[data-screen-label="Close"] > .dm-hero-copy{
+        height:auto !important;
+        flex:0 0 auto;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        gap:0;
+      }
+      .dm-site section[data-screen-label="Hero"] .dm-hero-core,
+      .dm-site section[data-screen-label="Close"] .dm-hero-core{
+        position:relative;
+        top:auto;
+        left:auto;
+        transform:none;
+        margin:clamp(72px,22vw,140px) auto 0;
+      }
+      .dm-site section[data-screen-label="Hero"] .dm-hero-demo,
+      .dm-site section[data-screen-label="Close"] .dm-hero-demo{
+        position:relative !important;
+        left:auto !important;
+        bottom:auto !important;
+        transform:none !important;
+        margin:clamp(28px,8vw,48px) auto 0 !important;
+      }
+    }
+
     /* Short landscape phones - keep the same composition, compress spacing */
     @media (max-width:900px) and (max-height:520px){
       .dm-site section[data-screen-label="Hero"],
@@ -739,7 +777,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     }
     @media (prefers-reduced-motion:reduce){
       .dm-site .dm-logo-tile{transition:none !important;}
-      .dm-site .dm-logo-track{animation:none !important;}
+      .dm-site .dm-logo-track{animation:none !important;will-change:auto !important;}
     }
 
     /* ---- tap CTA + caption tagline on coarse / phone (autoplay path) ---- */
@@ -750,11 +788,14 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
         padding-left:14px;
         padding-right:14px;
         max-width:calc(100vw - 24px);
+        min-height:44px;
       }
       .dm-site .dm-hero-demo__label{
-        white-space:nowrap;
+        white-space:normal;
+        text-align:center;
         letter-spacing:0.09em;
         font-size:clamp(11px,3.1vw,13px);
+        line-height:1.25;
       }
       .dm-site .dm-caption-hint{
         display:block;
@@ -762,6 +803,13 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
         font-weight:500;
         color:var(--ink-quiet);
       }
+      .dm-site .dm-scroll-chev button{
+        min-width:44px;min-height:44px;padding:10px 14px !important;
+      }
+      .dm-site .dm-transport__btn{
+        width:44px;height:44px;border-radius:10px;
+      }
+      .dm-site footer a{min-height:44px;display:inline-flex;align-items:center;padding:10px 12px !important;}
     }
 
     /* ---- demo transport: seek / play-pause + count ---- */
@@ -796,9 +844,9 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     @media (max-width:760px){
       .dm-site header{gap:10px !important;padding-left:14px !important;padding-right:14px !important;}
       .dm-site header nav{gap:2px !important;}
-      .dm-site header nav a:not([href^="mailto"]){padding:8px 10px !important;font-size:13px !important;}
+      .dm-site header nav a:not([href^="mailto"]){padding:10px 12px !important;font-size:13px !important;min-height:44px;display:inline-flex;align-items:center;}
       .dm-site header nav > div{margin:0 6px !important;}
-      .dm-site header nav a[href^="mailto"]{height:34px !important;padding:0 14px !important;font-size:11px !important;}
+      .dm-site header nav a[href^="mailto"]{height:44px !important;padding:0 16px !important;font-size:11px !important;}
 
       .dm-site section[data-screen-label]:not([data-screen-label="Hero"]):not([data-screen-label="Close"]){
         padding-top:clamp(44px,11vw,72px) !important;
@@ -810,12 +858,14 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
         line-height:1.04 !important;
         letter-spacing:-0.028em !important;
       }
-      .dm-site .dm-section-dek{
+      .dm-site .dm-section-dek,
+      .dm-site .dm-section-dek--oneline{
         margin-top:14px !important;
-        font-size:clamp(10px,2.8vw,14.5px) !important;
-        line-height:1.35 !important;
-        white-space:nowrap !important;
-        max-width:none !important;
+        font-size:clamp(12px,3.2vw,14.5px) !important;
+        line-height:1.45 !important;
+        white-space:normal !important;
+        text-wrap:pretty;
+        max-width:36rem !important;
       }
       .dm-site .dm-section-dek--center{
         margin:12px auto 22px !important;
@@ -842,13 +892,13 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       .dm-site #problem [style*="font-variant-numeric:tabular-nums"]{width:58px !important;font-size:clamp(1.35rem,6vw,1.8rem) !important;}
       .dm-site #problem [style*="padding:20px 24px"]{padding:10px 13px !important;}
       .dm-site #problem [style*="margin:1px 22px"]{margin:1px 12px !important;}
-      .dm-site #problem .dm-stat-grid p{font-size:11px !important;line-height:1.32 !important;}
-      .dm-site #problem .dm-stat-grid [style*="text-transform:uppercase"]{font-size:8px !important;margin-top:4px !important;}
+      .dm-site #problem .dm-stat-grid p{font-size:12.5px !important;line-height:1.4 !important;}
+      .dm-site #problem .dm-stat-grid [style*="text-transform:uppercase"]{font-size:10px !important;margin-top:6px !important;letter-spacing:0.06em;}
       .dm-site #capability .dm-capability-col .dm-card-lift{padding:18px 18px !important;}
       .dm-site #capability .dm-card-record p{font-size:13px !important;line-height:1.5 !important;}
       .dm-site footer{padding-left:16px !important;padding-right:16px !important;}
       .dm-site header nav a[href="about.html"],
-      .dm-site header nav a[href*="linkedin.com"]{display:inline-flex !important;padding:8px 10px !important;font-size:13px !important;}
+      .dm-site header nav a[href*="linkedin.com"]{display:inline-flex !important;padding:10px 12px !important;font-size:13px !important;}
     }
 
     @media (max-width:480px){
@@ -883,7 +933,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     }
 
     @media (prefers-reduced-motion:reduce){
-      [data-anim],.dm-logo-track,.dmPulse{animation:none !important;}
+      [data-anim],.dm-logo-track,.dmPulse,.dm-scroll-chev svg,.dm-hero-demo__chevs,.dm-hero-mark{animation:none !important;}
       html{scroll-behavior:auto !important;}
     }
   </style>
@@ -1046,7 +1096,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
   <!-- ============ HERO ============ -->
   <section data-screen-label="Hero" style="position:relative;min-height:calc(100vh - 62px);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:clamp(64px,7vw,96px) clamp(20px,5vw,40px) clamp(72px,8vw,104px);overflow:hidden;">
     <div class="dm-matrix dm-matrix--hero" aria-hidden="true"></div>
-    <div class="dm-hero-mark" aria-hidden="true" data-anim="" style="position:absolute;top:50%;left:50%;width:min(720px,104%);height:min(720px,104%);transform:translate(-50%,-50%);color:rgba(31,45,61,0.13);pointer-events:none;animation:dmDrift 22s ease-in-out infinite;"><svg viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="30" stroke-linejoin="round" stroke-linecap="round" style="width:100%;height:100%;"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg></div>
+    <div class="dm-hero-mark" aria-hidden="true" data-anim="" style="position:absolute;top:50%;left:50%;width:min(720px,100%);height:min(720px,100%);transform:translate(-50%,-50%);color:rgba(31,45,61,0.13);pointer-events:none;animation:dmDrift 22s ease-in-out infinite;"><svg viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="30" stroke-linejoin="round" stroke-linecap="round" style="width:100%;height:100%;"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg></div>
     <div class="dm-hero-copy" style="position:relative;max-width:980px;margin:0 auto;text-align:center;">
       <div class="dm-hero-core">
         <h1 class="dm-hero-title" style="margin:0;width:100%;font-family:var(--font-display);font-weight:700;font-size:clamp(1.15rem,5.8vw,4.6rem);line-height:0.97;letter-spacing:-0.03em;white-space:nowrap;">The agentic execution platform<br><span style="color: var(--ink-steel);">for clinical trials.</span></h1>
@@ -2047,7 +2097,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
   <!-- ============ CLOSE ============ -->
   <section id="close" data-screen-label="Close" style="position:relative;min-height:calc(100vh - 62px);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:clamp(48px,6vw,96px) clamp(20px,5vw,40px) clamp(28px,4vw,48px);overflow:hidden;">
     <div class="dm-matrix dm-matrix--close" aria-hidden="true"></div>
-    <div class="dm-hero-mark" aria-hidden="true" data-anim="" style="position:absolute;top:50%;left:50%;width:min(720px,104%);height:min(720px,104%);transform:translate(-50%,-50%);color:rgba(31,45,61,0.13);pointer-events:none;animation:dmDrift 22s ease-in-out infinite;">
+    <div class="dm-hero-mark" aria-hidden="true" data-anim="" style="position:absolute;top:50%;left:50%;width:min(720px,100%);height:min(720px,100%);transform:translate(-50%,-50%);color:rgba(31,45,61,0.13);pointer-events:none;animation:dmDrift 22s ease-in-out infinite;">
       <svg viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="30" stroke-linejoin="round" stroke-linecap="round" style="width:100%;height:100%;"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg>
     </div>
     <div class="dm-scroll-target dm-hero-copy" style="position:relative;max-width:980px;margin:0 auto;text-align:center;">
