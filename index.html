@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Damaros™</title>
 <meta name="color-scheme" content="light">
-<meta name="theme-color" content="#fafcfd">
+<meta name="theme-color" content="#f5f8fb">
 <link rel="canonical" href="https://www.damaros.ai/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,21 +16,21 @@
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
 <link rel="manifest" href="/site.webmanifest">
-<meta name="description" content="An agentic execution platform for the future of clinical research.">
+<meta name="description" content="An agentic execution infrastructure for the future of clinical research.">
 <meta name="application-name" content="Damaros">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Damaros">
-<meta property="og:title" content="Damaros™ | Agentic execution platform for clinical research">
-<meta property="og:description" content="An agentic execution platform for the future of clinical research.">
+<meta property="og:title" content="Damaros™ | Agentic execution infrastructure for clinical research">
+<meta property="og:description" content="An agentic execution infrastructure for the future of clinical research.">
 <meta property="og:url" content="https://www.damaros.ai/">
 <meta property="og:image" content="https://www.damaros.ai/favicon-192x192.png">
 <meta property="og:logo" content="https://www.damaros.ai/favicon-192x192.png">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Damaros™ | Agentic execution platform for clinical research">
-<meta name="twitter:description" content="An agentic execution platform for the future of clinical research.">
+<meta name="twitter:title" content="Damaros™ | Agentic execution infrastructure for clinical research">
+<meta name="twitter:description" content="An agentic execution infrastructure for the future of clinical research.">
 <meta name="twitter:image" content="https://www.damaros.ai/favicon-192x192.png">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://www.damaros.ai/#organization","name":"Damaros","alternateName":"Damaros™","url":"https://www.damaros.ai/","logo":"https://www.damaros.ai/favicon-192x192.png","description":"An agentic execution platform for the future of clinical research."},{"@type":"WebSite","@id":"https://www.damaros.ai/#website","name":"Damaros","url":"https://www.damaros.ai/","description":"An agentic execution platform for the future of clinical research.","publisher":{"@id":"https://www.damaros.ai/#organization"}},{"@type":"SoftwareApplication","name":"Damaros","applicationCategory":"HealthApplication","operatingSystem":"Web","url":"https://www.damaros.ai/","description":"An agentic execution platform for the future of clinical research.","publisher":{"@id":"https://www.damaros.ai/#organization"}}]}
+{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://www.damaros.ai/#organization","name":"Damaros","alternateName":"Damaros™","url":"https://www.damaros.ai/","logo":"https://www.damaros.ai/favicon-192x192.png","description":"An agentic execution infrastructure for the future of clinical research."},{"@type":"WebSite","@id":"https://www.damaros.ai/#website","name":"Damaros","url":"https://www.damaros.ai/","description":"An agentic execution infrastructure for the future of clinical research.","publisher":{"@id":"https://www.damaros.ai/#organization"}},{"@type":"SoftwareApplication","name":"Damaros","applicationCategory":"HealthApplication","operatingSystem":"Web","url":"https://www.damaros.ai/","description":"An agentic execution infrastructure for the future of clinical research.","publisher":{"@id":"https://www.damaros.ai/#organization"}}]}
 </script>
 <script src="./support.js" defer></script>
 <script src="./mail-cta.js?v=15" defer></script>
@@ -39,6 +39,7 @@
 <script src="./hero-fit.js?v=4" defer></script>
 <script src="./section-title-fit.js?v=3" defer></script>
 <script src="./demo-dek-fit.js?v=1" defer></script>
+<script src="./proof-tabs.js?v=1" defer></script>
 <script>
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 window.scrollTo(0, 0);
@@ -77,8 +78,8 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       --surface-highlight:rgba(20,33,48,0.06);
       --glass-ring:inset 0 0 0 1px rgba(20,33,48,0.12);
     }
-    html{scroll-behavior:auto;scroll-padding-top:62px;background:#fafcfd;min-height:100%;min-height:100dvh;}
-    body{margin:0;background:#fafcfd;color:var(--ink-cold);font-family:var(--font-body);font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100%;min-height:100dvh;}
+    html{scroll-behavior:auto;scroll-padding-top:62px;background:#f5f8fb;min-height:100%;min-height:100dvh;}
+    body{margin:0;background:#f5f8fb;color:var(--ink-cold);font-family:var(--font-body);font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100%;min-height:100dvh;}
     .eyeScroll{scrollbar-width:thin;scrollbar-color:rgba(31,45,61,0.28) transparent;}
     .eyeScroll::-webkit-scrollbar{width:8px;height:8px;}
     .eyeScroll::-webkit-scrollbar-track{background:transparent;}
@@ -1120,6 +1121,21 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     @media (max-width:1279px),(pointer:coarse){
       .dm-rail{display:none !important;}
     }
+
+    .dm-sec-mark{width:14px;height:15px;color:rgba(31,45,61,0.28);flex-shrink:0;display:block;}
+    .dm-site{background-color:#f5f8fb;}
+    .dm-proof-tab.is-active{background:#fff !important;color:var(--ink-cold) !important;box-shadow:0 1px 2px rgba(20,40,70,0.06);}
+    .dm-proof-panel[hidden]{display:none !important;}
+    @media (max-width:900px){
+      .dm-gap-row-a{grid-template-columns:repeat(2,minmax(0,1fr)) !important;}
+      .dm-agent-strip > div[style*="grid-template-columns:repeat(4"]{grid-template-columns:1fr 1fr !important;}
+      #asset .dm-scroll-target > div[style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr !important;}
+    }
+    @media (max-width:680px){
+      .dm-gap-row-a{grid-template-columns:1fr !important;}
+      .dm-gap-cause > div{grid-template-columns:72px 1fr !important;}
+      .dm-agent-strip > div[style*="grid-template-columns"]{grid-template-columns:1fr !important;}
+    }
   </style>
 </helmet>
 
@@ -1139,15 +1155,13 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
   </header>
 
   <nav class="dm-rail" aria-label="Page sections" aria-hidden="true">
-    <a class="dm-rail__item" href="#instrument" data-rail-target="instrument"><span class="dm-rail__idx">01</span><span class="dm-rail__label">Demo</span></a>
-    <a class="dm-rail__item" href="#integrations" data-rail-target="integrations"><span class="dm-rail__idx">02</span><span class="dm-rail__label">Stack</span></a>
-    <a class="dm-rail__item" href="#problem" data-rail-target="problem"><span class="dm-rail__idx">03</span><span class="dm-rail__label">Grind</span></a>
-    <a class="dm-rail__item" href="#capability" data-rail-target="capability"><span class="dm-rail__idx">04</span><span class="dm-rail__label">Scope</span></a>
-    <a class="dm-rail__item" href="#spine" data-rail-target="spine"><span class="dm-rail__idx">05</span><span class="dm-rail__label">Spine</span></a>
-    <a class="dm-rail__item" href="#agents" data-rail-target="agents"><span class="dm-rail__idx">06</span><span class="dm-rail__label">Agent</span></a>
-    <a class="dm-rail__item" href="#output" data-rail-target="output"><span class="dm-rail__idx">07</span><span class="dm-rail__label">Proof</span></a>
-    <a class="dm-rail__item" href="#node" data-rail-target="node"><span class="dm-rail__idx">08</span><span class="dm-rail__label">Node</span></a>
-    <a class="dm-rail__item" href="#security" data-rail-target="security"><span class="dm-rail__idx">09</span><span class="dm-rail__label">Trust</span></a>
+    <a class="dm-rail__item" href="#problem" data-rail-target="problem"><span class="dm-rail__idx">01</span><span class="dm-rail__label">Gap</span></a>
+    <a class="dm-rail__item" href="#instrument" data-rail-target="instrument"><span class="dm-rail__idx">02</span><span class="dm-rail__label">Demo</span></a>
+    <a class="dm-rail__item" href="#spine" data-rail-target="spine"><span class="dm-rail__idx">03</span><span class="dm-rail__label">Spine</span></a>
+    <a class="dm-rail__item" href="#asset" data-rail-target="asset"><span class="dm-rail__idx">04</span><span class="dm-rail__label">Asset</span></a>
+    <a class="dm-rail__item" href="#output" data-rail-target="output"><span class="dm-rail__idx">05</span><span class="dm-rail__label">Proof</span></a>
+    <a class="dm-rail__item" href="#node" data-rail-target="node"><span class="dm-rail__idx">06</span><span class="dm-rail__label">Node</span></a>
+    <a class="dm-rail__item" href="#security" data-rail-target="security"><span class="dm-rail__idx">07</span><span class="dm-rail__label">Trust</span></a>
   </nav>
 
   <span id="top"></span>
@@ -1158,27 +1172,87 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     <div class="dm-hero-mark" aria-hidden="true" data-anim="" style="position:absolute;top:50%;left:50%;width:min(720px,100%);height:min(720px,100%);transform:translate(-50%,-50%);color:rgba(31,45,61,0.13);pointer-events:none;animation:dmDrift 22s ease-in-out infinite;"><svg viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="30" stroke-linejoin="round" stroke-linecap="round" style="width:100%;height:100%;"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg></div>
     <div class="dm-hero-copy" style="position:relative;max-width:980px;margin:0 auto;text-align:center;">
       <div class="dm-hero-core">
-        <h1 class="dm-hero-title" style="margin:0;width:100%;font-family:var(--font-display);font-weight:700;font-size:clamp(1.15rem,5.8vw,4.6rem);line-height:0.97;letter-spacing:-0.03em;white-space:nowrap;">The agentic execution platform<br><span style="color: var(--ink-steel);">for clinical research.</span></h1>
-        <div class="dm-hero-cta" style="display:flex;justify-content:center;margin-top:30px;">
+        <h1 class="dm-hero-title" style="margin:0;width:100%;font-family:var(--font-display);font-weight:700;font-size:clamp(1.15rem,5.8vw,4.6rem);line-height:0.97;letter-spacing:-0.03em;white-space:nowrap;">Agentic execution infrastructure<br><span style="color: var(--ink-steel);">for clinical research.</span></h1>
+        <p class="dm-hero-sub" style="margin:clamp(18px,2.8vw,28px) 0 0;font-family:var(--font-display);font-size:clamp(1.05rem,2.4vw,1.55rem);font-weight:500;line-height:1.25;letter-spacing:-0.02em;color:var(--ink-steel);">The protocol arrives. Nothing runs it.</p>
+        <div class="dm-hero-cta" style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:30px;">
           <a href="mailto:team@damaros.ai?subject=Damaros%20Pilot%20Inquiry" data-pilot-form style="display:inline-flex;align-items:center;justify-content:center;border-radius:999px;font-family:var(--font-display);font-weight:500;letter-spacing:0.03em;text-transform:uppercase;color:#ffffff;background:linear-gradient(180deg,#3d72a8,#2f6193);border:1px solid color-mix(in srgb,#2f6193 50%,rgba(255,255,255,0.22));box-shadow:inset 0 1px 0 rgba(255,255,255,0.2), 0 8px 20px rgba(20,46,82,0.16);white-space:nowrap;height:48px;padding:0 22px;font-size:13px;">Start a pilot</a>
+          <button type="button" onClick="{{ onDemo }}" style="display:inline-flex;align-items:center;justify-content:center;border-radius:999px;font-family:var(--font-display);font-weight:500;letter-spacing:0.03em;text-transform:uppercase;color:var(--ink-cold);background:rgba(255,255,255,0.72);border:1px solid rgba(31,45,61,0.16);box-shadow:0 1px 2px rgba(20,40,70,0.04);white-space:nowrap;height:48px;padding:0 22px;font-size:13px;cursor:pointer;">See it live</button>
         </div>
       </div>
-      <button class="dm-hero-demo" onClick="{{ onDemo }}" aria-label="Go to the live demo">
-        <span class="dm-hero-demo__label"><span class="dm-cta-click">Click to see demo</span><span class="dm-cta-tap">Tap to see demo</span></span>
-        <span class="dm-hero-demo__chevs" aria-hidden="true">
-          <svg width="20" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
-          <svg width="20" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
-          <svg width="20" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
-        </span>
-      </button>
     </div>
+    <div class="dm-hero-hourglass" aria-hidden="true" style="position:absolute;left:clamp(12px,3vw,28px);bottom:clamp(16px,3vw,28px);width:36px;height:40px;color:rgba(31,45,61,0.18);pointer-events:none;z-index:2;">
+      <svg viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="34" stroke-linejoin="round" stroke-linecap="round" style="width:100%;height:100%;"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg>
+    </div>
+  </section>
+
+  <!-- ============ GAP ============ -->
+  <section id="problem" data-screen-label="Gap" style="position:relative;padding:clamp(52px,6vw,84px) 0 0;">
+    <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;padding:0 clamp(20px,5vw,40px);">
+      <div class="dm-sec-head" style="display:flex;align-items:center;gap:10px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid rgba(31,45,61,0.1);">
+        <svg class="dm-sec-mark" viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="34" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg>
+        <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);">Gap</div>
+      </div>
+      <h2 class="dm-section-title">Most of the country has<br><span class="dm-section-title__steel">no trial to be offered.</span></h2>
+      <p class="dm-section-dek" style="white-space:normal;max-width:40rem;">The hole is geographic, and it is not a demand problem.</p>
+      <div class="dm-gap-row-a" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin-top:44px;">
+        <div class="dm-gap-stat" style="padding:18px 16px 8px;border-top:1px solid rgba(31,45,61,0.18);">
+          <div style="font-family:var(--font-display);font-size:clamp(2.4rem,4.2vw,3.6rem);font-weight:700;letter-spacing:-0.04em;line-height:0.95;color:var(--ink-cold);">70%</div>
+          <p style="margin:12px 0 0;font-size:12.5px;line-height:1.4;color:var(--ink-quiet);">US counties with no active cancer treatment trial, 2022.</p>
+          <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-dim);margin-top:10px;">Kirkwood · JCO Oncol Pract 2024</div>
+        </div>
+        <div class="dm-gap-stat" style="padding:18px 16px 8px;border-top:1px solid rgba(31,45,61,0.18);">
+          <div style="font-family:var(--font-display);font-size:clamp(2.4rem,4.2vw,3.6rem);font-weight:700;letter-spacing:-0.04em;line-height:0.95;color:var(--ink-cold);">86%</div>
+          <p style="margin:12px 0 0;font-size:12.5px;line-height:1.4;color:var(--ink-quiet);">Nonmetropolitan counties with none.</p>
+          <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-dim);margin-top:10px;">Kirkwood · JCO Oncol Pract 2024</div>
+        </div>
+        <div class="dm-gap-stat" style="padding:18px 16px 8px;border-top:1px solid rgba(31,45,61,0.18);">
+          <div style="font-family:var(--font-display);font-size:clamp(2.4rem,4.2vw,3.6rem);font-weight:700;letter-spacing:-0.04em;line-height:0.95;color:var(--ink-cold);">80%</div>
+          <p style="margin:12px 0 0;font-size:12.5px;line-height:1.4;color:var(--ink-quiet);">Of cancer patients treated in community settings.</p>
+          <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-dim);margin-top:10px;">Community oncology</div>
+        </div>
+        <div class="dm-gap-stat" style="padding:18px 16px 8px;border-top:1px solid rgba(31,45,61,0.18);">
+          <div style="font-family:var(--font-display);font-size:clamp(2.4rem,4.2vw,3.6rem);font-weight:700;letter-spacing:-0.04em;line-height:0.95;color:var(--ink-cold);">5×</div>
+          <p style="margin:12px 0 0;font-size:12.5px;line-height:1.4;color:var(--ink-quiet);">Enrollment disparity. Between community-treated patients and patients at NCI-designated centers.</p>
+          <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-dim);margin-top:10px;">Unger et al. · JCO 2024</div>
+        </div>
+      </div>
+    </div>
+    <div class="dm-gap-row-b" style="margin-top:clamp(36px,5vw,56px);background:#10161d;color:#f5f8fb;padding:clamp(36px,5vw,56px) clamp(20px,5vw,40px);">
+      <div style="max-width:1080px;margin:0 auto;">
+        <div style="font-family:var(--font-display);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(245,248,251,0.45);margin-bottom:22px;">Why capacity is missing</div>
+        <div class="dm-gap-cause" style="display:flex;flex-direction:column;gap:0;">
+          <div style="display:grid;grid-template-columns:minmax(88px,120px) 1fr;gap:18px;padding:16px 0;border-top:1px solid rgba(245,248,251,0.1);align-items:start;">
+            <div style="font-family:var(--font-display);font-size:1.35rem;font-weight:700;letter-spacing:-0.03em;color:#f5f8fb;">20+</div>
+            <p style="margin:0;font-size:14px;line-height:1.45;color:rgba(245,248,251,0.78);"><span style="color:#f5f8fb;font-weight:600;">systems, 60% of sites.</span> The same trial touches every one. None of them talk.</p>
+          </div>
+          <div style="display:grid;grid-template-columns:minmax(88px,120px) 1fr;gap:18px;padding:16px 0;border-top:1px solid rgba(245,248,251,0.1);align-items:start;">
+            <div style="font-family:var(--font-display);font-size:1.35rem;font-weight:700;letter-spacing:-0.03em;color:#f5f8fb;">23%</div>
+            <p style="margin:0;font-size:14px;line-height:1.45;color:rgba(245,248,251,0.78);"><span style="color:#f5f8fb;font-weight:600;">of forms, 61,073 hours, $6.1M.</span> Re-verified by hand. 0.36% needed fixing.</p>
+          </div>
+          <div style="display:grid;grid-template-columns:minmax(88px,120px) 1fr;gap:18px;padding:16px 0;border-top:1px solid rgba(245,248,251,0.1);align-items:start;">
+            <div style="font-family:var(--font-display);font-size:1.35rem;font-weight:700;letter-spacing:-0.03em;color:#f5f8fb;">1 in 4</div>
+            <p style="margin:0;font-size:14px;line-height:1.45;color:rgba(245,248,251,0.78);"><span style="color:#f5f8fb;font-weight:600;">sites.</span> Declined a trial because the protocol was too complex to run.</p>
+          </div>
+          <div style="display:grid;grid-template-columns:minmax(88px,120px) 1fr;gap:18px;padding:16px 0;border-top:1px solid rgba(245,248,251,0.1);border-bottom:1px solid rgba(245,248,251,0.1);align-items:start;">
+            <div style="font-family:var(--font-display);font-size:1.35rem;font-weight:700;letter-spacing:-0.03em;color:#f5f8fb;">$535K</div>
+            <p style="margin:0;font-size:14px;line-height:1.45;color:rgba(245,248,251,0.78);"><span style="color:#f5f8fb;font-weight:600;">per amendment, 57% of trials.</span> Median cost of one substantial Phase III amendment.</p>
+          </div>
+        </div>
+        <p style="margin:28px 0 0;font-size:15px;line-height:1.5;color:#f5f8fb;max-width:42rem;">Capacity is not missing because the work is unwanted. It is missing because nobody built the thing that runs a protocol.</p>
+        <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(245,248,251,0.4);margin-top:18px;">SCRS 2023 · Abbasi et al. Communications Medicine 2025 · SCRS 2025 · Tufts CSDD</div>
+      </div>
+    </div>
+    <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onDemo }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
   </section>
 
   <!-- ============ INSTRUMENT · clean Node UI ============ -->
   <section id="instrument" data-screen-label="Demo" style="position:relative;padding:0 clamp(12px,2.5vw,28px) clamp(40px,6vw,72px);">
     <div class="dm-scroll-target">
-    <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin:0 auto 14px;text-align:center;">Demo</div>
-    <p class="dm-demo-caption" style="max-width:920px;margin:0 auto 16px;text-align:center;font-size:15px;font-weight:600;line-height:1.55;color:var(--ink-cold);">A demonstration of the Damaros<sup style="font-size:0.55em;letter-spacing:0;">™</sup> platform on synthetic FHIR data.<span class="dm-caption-hint"> {{ captionHint }}</span></p>
+    <div class="dm-sec-head" style="display:flex;align-items:center;justify-content:center;gap:10px;margin:0 auto 14px;padding-bottom:14px;border-bottom:1px solid rgba(31,45,61,0.1);max-width:920px;">
+      <svg class="dm-sec-mark" viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="34" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg>
+      <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);">Demo</div>
+    </div>
+    <p class="dm-demo-caption" style="max-width:920px;margin:0 auto 16px;text-align:center;font-size:15px;font-weight:600;line-height:1.55;color:var(--ink-cold);">One protocol, one site, one signed decision. Click any step.<span class="dm-caption-hint"> {{ captionHint }}</span></p>
 
     <div id="nodeStage" style="display:flex;justify-content:center;align-items:flex-start;overflow:hidden;">
       <div id="nodeScaleWrap" style="width:1160px;flex:0 0 1160px;transform-origin:top center;">
@@ -1195,7 +1269,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
             
             
           </div>
-          <span style="margin-left:auto;display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;background:rgba(31,45,61,0.05);flex-shrink:0;"><span data-dc-style="{{ auto.dotStyle }}"></span><span style="font-family:var(--font-display);font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-quiet);">{{ auto.status }} · synthetic FHIR</span></span>
+          <span style="margin-left:auto;display:inline-flex;align-items:center;gap:8px;flex-shrink:0;"><span style="display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;background:rgba(31,45,61,0.06);border:1px solid rgba(31,45,61,0.1);font-family:var(--font-display);font-size:9px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-quiet);">Synthetic FHIR · No patient data</span><span style="display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;background:rgba(31,45,61,0.05);"><span data-dc-style="{{ auto.dotStyle }}"></span><span style="font-family:var(--font-display);font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-quiet);">{{ auto.status }}</span></span></span>
         </div>
         <!-- body -->
         <div style="display:flex;height:692px;">
@@ -1209,13 +1283,13 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
               <button onClick="{{ rR.onClick }}" data-dc-style="{{ rR.rowStyle }}"><span data-dc-style="{{ rR.iconStyle }}"><svg width="17" height="17" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="6" r="2.6"></circle><path d="M3.5 15.5c0-3 2.6-5 5.5-5s5.5 2 5.5 5"></path></svg></span><span data-dc-style="{{ rR.labelStyle }}">Resolve</span></button>
               <button onClick="{{ rRp.onClick }}" data-dc-style="{{ rRp.rowStyle }}"><span data-dc-style="{{ rRp.iconStyle }}"><svg width="17" height="17" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5 4 9l5 4z"></path><path d="M14 5 9 9l5 4z"></path></svg></span><span data-dc-style="{{ rRp.labelStyle }}">Replay</span></button>
             </div>
-            <div style="margin-top:16px;padding-top:13px;border-top:1px solid rgba(31,45,61,0.06);">
-              <div style="font-family:var(--font-body);font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-dim);padding:0 10px 8px;">Agents</div>
-              <div style="display:flex;flex-direction:column;gap:2px;">
-                <button onClick="{{ navTrident.onClick }}" data-dc-style="{{ navTrident.rowStyle }}"><span data-dc-style="{{ navTrident.iconStyle }}"><svg width="17" height="17" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 16V8"></path><path d="M4.8 8.2V4M9 8V3.4M13.2 8.2V4"></path><path d="M4.8 8.2c0 2.2 8.4 2.2 8.4 0"></path></svg></span><span data-dc-style="{{ navTrident.labelStyle }}">Trident</span></button>
-                <button onClick="{{ navEye.onClick }}" data-dc-style="{{ navEye.rowStyle }}"><span data-dc-style="{{ navEye.iconStyle }}"><svg width="17" height="17" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 9S4 3.8 9 3.8 16.5 9 16.5 9 14 14.2 9 14.2 1.5 9 1.5 9Z"></path><circle cx="9" cy="9" r="2.1"></circle></svg></span><span data-dc-style="{{ navEye.labelStyle }}">Eye</span></button>
-                <button onClick="{{ navLuna.onClick }}" data-dc-style="{{ navLuna.rowStyle }}"><span data-dc-style="{{ navLuna.iconStyle }}"><svg width="17" height="17" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.8 3.4a6.6 6.6 0 1 0 0 11.2 5.2 5.2 0 0 1 0-11.2Z"></path></svg></span><span data-dc-style="{{ navLuna.labelStyle }}">Luna</span></button>
-                <button onClick="{{ navSentinel.onClick }}" data-dc-style="{{ navSentinel.rowStyle }}"><span data-dc-style="{{ navSentinel.iconStyle }}"><svg width="17" height="17" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="6.5"></circle><circle cx="9" cy="9" r="3"></circle><circle cx="9" cy="9" r="0.6" fill="currentColor" stroke="none"></circle><path d="M9 9 13.6 4.4"></path></svg></span><span data-dc-style="{{ navSentinel.labelStyle }}">Sentinel</span></button>
+            <div class="dm-demo-agents" style="margin-top:14px;padding-top:10px;border-top:1px solid rgba(31,45,61,0.06);">
+              <div style="font-family:var(--font-body);font-size:8.5px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-dim);padding:0 10px 6px;opacity:0.72;">Assisted by</div>
+              <div style="display:flex;flex-direction:column;gap:1px;opacity:0.78;">
+                <button onClick="{{ navTrident.onClick }}" data-dc-style="{{ navTrident.rowStyle }}" style="min-height:34px;font-size:12px;"><span data-dc-style="{{ navTrident.iconStyle }}" style="width:28px;height:28px;"><svg width="14" height="14" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 16V8"></path><path d="M4.8 8.2V4M9 8V3.4M13.2 8.2V4"></path><path d="M4.8 8.2c0 2.2 8.4 2.2 8.4 0"></path></svg></span><span data-dc-style="{{ navTrident.labelStyle }}" style="font-size:12px;">Trident</span></button>
+                <button onClick="{{ navEye.onClick }}" data-dc-style="{{ navEye.rowStyle }}" style="min-height:34px;"><span data-dc-style="{{ navEye.iconStyle }}" style="width:28px;height:28px;"><svg width="14" height="14" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 9S4 3.8 9 3.8 16.5 9 16.5 9 14 14.2 9 14.2 1.5 9 1.5 9Z"></path><circle cx="9" cy="9" r="2.1"></circle></svg></span><span data-dc-style="{{ navEye.labelStyle }}" style="font-size:12px;">Eye</span></button>
+                <button onClick="{{ navLuna.onClick }}" data-dc-style="{{ navLuna.rowStyle }}" style="min-height:34px;"><span data-dc-style="{{ navLuna.iconStyle }}" style="width:28px;height:28px;"><svg width="14" height="14" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.8 3.4a6.6 6.6 0 1 0 0 11.2 5.2 5.2 0 0 1 0-11.2Z"></path></svg></span><span data-dc-style="{{ navLuna.labelStyle }}" style="font-size:12px;">Luna</span></button>
+                <button onClick="{{ navSentinel.onClick }}" data-dc-style="{{ navSentinel.rowStyle }}" style="min-height:34px;"><span data-dc-style="{{ navSentinel.iconStyle }}" style="width:28px;height:28px;"><svg width="14" height="14" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="6.5"></circle><circle cx="9" cy="9" r="3"></circle><circle cx="9" cy="9" r="0.6" fill="currentColor" stroke="none"></circle><path d="M9 9 13.6 4.4"></path></svg></span><span data-dc-style="{{ navSentinel.labelStyle }}" style="font-size:12px;">Sentinel</span></button>
               </div>
             </div>
           </nav>
@@ -1816,150 +1890,16 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       <span class="dm-transport__count">{{ auto.count }}</span>
     </div>
     </div>
-    <div class="dm-scroll-chev dm-demo-chev"><button onClick="{{ onMore }}" aria-label="Continue scrolling" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
-  </section>
-
-  <!-- ============ INTEGRATIONS · logo wall ============ -->
-  <sc-if value="{{ showMarquee }}" hint-placeholder-val="{{ true }}">
-  <section id="integrations" data-screen-label="Stack" style="position:relative;padding:clamp(40px,5vw,56px) clamp(20px,5vw,40px);">
-    <div class="dm-scroll-target" style="max-width:1000px;margin:0 auto;text-align:center;">
-      <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:14px;">Stack</div>
-      <h2 class="dm-section-title dm-section-title--center">One system for<br><span class="dm-section-title__steel">the stack you already run.</span></h2>
-      <p class="dm-section-dek dm-section-dek--center" style="margin:14px auto 34px;">Works with the software the site already runs.</p>
-      <div class="dm-logowall" style="display:flex;flex-wrap:nowrap;justify-content:flex-start;gap:0;overflow:hidden;">
-        <div class="dm-logo-track">
-        <div class="dm-logo-set">
-          <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/pasted-1782494614917-0.png" alt="Veeva" style="max-width:100%;max-height:30px;object-fit:contain;display:block;"></div>
-          <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/pasted-1782492887940-0.png" alt="Medidata" style="max-width:100%;max-height:22px;object-fit:contain;display:block;"></div>
-          <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/epic-systems-corporation-seeklogo.png" alt="Epic" style="max-width:100%;max-height:38px;object-fit:contain;display:block;"></div>
-          <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/330px-2011.Cerner.logo.png" alt="Cerner" style="max-width:100%;max-height:30px;object-fit:contain;display:block;"></div>
-          <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/pasted-1782493762954-0.png" alt="REDCap" style="max-width:100%;max-height:48px;object-fit:contain;display:block;"></div>
-          <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 12px;"><img src="uploads/openai-logo.png?v=3" alt="OpenAI" style="max-width:92%;max-height:36px;width:auto;object-fit:contain;display:block;margin:0 auto;"></div>
-          <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 12px;"><img src="uploads/claude-logo.png" alt="Anthropic" style="max-width:92%;max-height:36px;width:auto;object-fit:contain;display:block;margin:0 auto;"></div>
-        </div>
-        <div class="dm-logo-set dm-logo-dupe" aria-hidden="true">
-          <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/pasted-1782494614917-0.png" alt="" style="max-width:100%;max-height:30px;object-fit:contain;display:block;"></div>
-          <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/pasted-1782492887940-0.png" alt="" style="max-width:100%;max-height:22px;object-fit:contain;display:block;"></div>
-          <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/epic-systems-corporation-seeklogo.png" alt="" style="max-width:100%;max-height:38px;object-fit:contain;display:block;"></div>
-          <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/330px-2011.Cerner.logo.png" alt="" style="max-width:100%;max-height:30px;object-fit:contain;display:block;"></div>
-          <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/pasted-1782493762954-0.png" alt="" style="max-width:100%;max-height:48px;object-fit:contain;display:block;"></div>
-          <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 12px;"><img src="uploads/openai-logo.png?v=3" alt="" style="max-width:92%;max-height:36px;width:auto;object-fit:contain;display:block;margin:0 auto;"></div>
-          <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 12px;"><img src="uploads/claude-logo.png" alt="" style="max-width:92%;max-height:36px;width:auto;object-fit:contain;display:block;margin:0 auto;"></div>
-        </div>
-        <div class="dm-logo-set dm-logo-dupe" aria-hidden="true">
-          <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/pasted-1782494614917-0.png" alt="" style="max-width:100%;max-height:30px;object-fit:contain;display:block;"></div>
-          <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/pasted-1782492887940-0.png" alt="" style="max-width:100%;max-height:22px;object-fit:contain;display:block;"></div>
-          <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/epic-systems-corporation-seeklogo.png" alt="" style="max-width:100%;max-height:38px;object-fit:contain;display:block;"></div>
-          <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/330px-2011.Cerner.logo.png" alt="" style="max-width:100%;max-height:30px;object-fit:contain;display:block;"></div>
-          <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 24px;"><img src="uploads/pasted-1782493762954-0.png" alt="" style="max-width:100%;max-height:48px;object-fit:contain;display:block;"></div>
-          <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 12px;"><img src="uploads/openai-logo.png?v=3" alt="" style="max-width:92%;max-height:36px;width:auto;object-fit:contain;display:block;margin:0 auto;"></div>
-          <div class="dm-logo-tile" style="width:170px;height:74px;border-radius:14px;background:#ffffff;border:1px solid rgba(20,33,48,0.09);box-shadow:0 1px 3px rgba(20,40,70,0.05);display:grid;place-items:center;padding:0 12px;"><img src="uploads/claude-logo.png" alt="" style="max-width:92%;max-height:36px;width:auto;object-fit:contain;display:block;margin:0 auto;"></div>
-        </div>
-        </div>
-      </div>
-    </div>
-    <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToProblem }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
-  </section>
-  </sc-if>
-
-  <!-- ============ PROBLEM ============ -->
-  <section id="problem" data-screen-label="Grind" style="position:relative;padding:clamp(52px,6vw,84px) clamp(20px,5vw,40px);">
-    <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
-      <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Grind</div>
-      <h2 class="dm-section-title">Execution is where<br><span class="dm-section-title__steel">trials stall.</span></h2>
-      <p class="dm-section-dek" style="white-space:normal;max-width:42rem;">Discovery and reporting got solved. Execution is still open.</p>
-      <div class="dm-stat-lead dm-card-lift dm-card-record" style="display:flex;align-items:center;gap:22px;padding:28px 32px;border-radius:16px;margin-top:40px;">
-        <div class="dm-stat-lead__num" style="flex-shrink:0;text-align:center;font-family:var(--font-display);font-size:clamp(3.4rem,5.2vw,4.6rem);font-weight:700;letter-spacing:-0.04em;line-height:0.92;font-variant-numeric:tabular-nums;color:var(--ink-cold);">70%</div>
-        <div class="dm-stat-lead__rule" style="width:1px;align-self:stretch;background:rgba(31,45,61,0.14);flex-shrink:0;"></div>
-        <div style="min-width:0;">
-          <p style="margin:0;font-size:15px;line-height:1.5;color:var(--ink-quiet);">of US counties had no active cancer treatment trial in 2022. In nonmetropolitan counties, 86%.</p>
-          <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-top:10px;">Kirkwood et al. · JCO Oncology Practice 2024</div>
-        </div>
-      </div>
-      <div class="dm-stat-grid" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:22px;">
-        <div class="dm-card-lift" style="display:flex;align-items:center;padding:20px 24px;border-radius:14px;">
-          <div style="flex-shrink:0;width:118px;text-align:center;font-family:var(--font-display);font-size:clamp(2.4rem,3.2vw,3.1rem);font-weight:700;letter-spacing:-0.03em;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink-cold);">20<span style="font-size:0.44em;color:var(--ink-steel);vertical-align:0.6em;font-weight:600;margin-left:1px;">+</span></div>
-          <div style="width:1px;align-self:stretch;background:rgba(31,45,61,0.12);margin:1px 22px;"></div>
-          <div style="min-width:0;">
-            <p style="margin:0;font-size:13px;line-height:1.45;color:var(--ink-quiet);">systems touched daily at 60% of sites.</p>
-            <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-top:7px;">SCRS Site Landscape Survey · 2023</div>
-          </div>
-        </div>
-        <div class="dm-card-lift" style="display:flex;align-items:center;padding:20px 24px;border-radius:14px;">
-          <div style="flex-shrink:0;width:118px;text-align:center;font-family:var(--font-display);font-size:clamp(1.55rem,2.2vw,2.05rem);font-weight:700;letter-spacing:-0.03em;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink-cold);">61,073</div>
-          <div style="width:1px;align-self:stretch;background:rgba(31,45,61,0.12);margin:1px 22px;"></div>
-          <div style="min-width:0;">
-            <p style="margin:0;font-size:13px;line-height:1.45;color:var(--ink-quiet);">person-hours · $6.1M to re-verify trial decisions record by record. Equivalent to one person working full-time for 29 years. 0.36% of those records needed fixing.</p>
-            <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-top:7px;">Abbasi et al. · Communications Medicine 2025</div>
-          </div>
-        </div>
-        <div class="dm-card-lift" style="display:flex;align-items:center;padding:20px 24px;border-radius:14px;">
-          <div style="flex-shrink:0;width:118px;text-align:center;font-family:var(--font-display);font-size:clamp(2.4rem,3.2vw,3.1rem);font-weight:700;letter-spacing:-0.03em;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink-cold);">1<span style="font-size:0.32em;color:var(--ink-steel);vertical-align:0.55em;font-weight:600;margin-left:3px;">in&nbsp;4</span></div>
-          <div style="width:1px;align-self:stretch;background:rgba(31,45,61,0.12);margin:1px 22px;"></div>
-          <div style="min-width:0;">
-            <p style="margin:0;font-size:13px;line-height:1.45;color:var(--ink-quiet);">research sites declined a trial because the protocol was too complex to run.</p>
-            <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-top:7px;">SCRS Global Site Solutions Summit · 2025</div>
-          </div>
-        </div>
-        <div class="dm-card-lift" style="display:flex;align-items:center;padding:20px 24px;border-radius:14px;">
-          <div style="flex-shrink:0;width:118px;text-align:center;font-family:var(--font-display);font-size:clamp(2.0rem,2.8vw,2.7rem);font-weight:700;letter-spacing:-0.03em;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink-cold);">$535<span style="font-size:0.44em;color:var(--ink-steel);vertical-align:0.6em;font-weight:600;margin-left:1px;">K</span></div>
-          <div style="width:1px;align-self:stretch;background:rgba(31,45,61,0.12);margin:1px 22px;"></div>
-          <div style="min-width:0;">
-            <p style="margin:0;font-size:13px;line-height:1.45;color:var(--ink-quiet);">median cost of one substantial Phase III amendment. 57% of trials face at least one.</p>
-            <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-top:7px;">Tufts CSDD</div>
-          </div>
-        </div>
-      </div>
-      <p class="dm-stat-connect" style="margin:28px 0 0;font-size:15px;line-height:1.5;color:var(--ink-cold);max-width:42rem;">The gap is not demand. It is execution capacity. Capacity is buildable.</p>
-    </div>
-    <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToCapability }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
-  </section>
-
-  <!-- ============ TRIAL CAPABILITY · the line we hold ============ -->
-  <section id="capability" data-screen-label="Scope" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
-    <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
-      <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Scope</div>
-      <h2 class="dm-section-title">From protocol through audit,<br><span class="dm-section-title__steel">still the site's obligation.</span></h2>
-      <p class="dm-section-dek">Whoever writes the protocol, the site signs the decision.</p>
-      <div id="capabilityCarousel" class="dm-capability-grid">
-        <div class="dm-capability-col">
-          <div class="dm-card-lift" style="padding:22px;border-radius:14px;">
-            <div style="font-family:var(--font-display);font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--state-pass);margin-bottom:16px;">What we do</div>
-            <div style="display:flex;flex-direction:column;gap:13px;">
-              <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:color-mix(in srgb,var(--state-pass) 13%,transparent);"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="var(--state-pass)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5 6.5 12 13 4.5"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-quiet);">Every compiled criterion evaluated against site evidence</span></div>
-              <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:color-mix(in srgb,var(--state-pass) 13%,transparent);"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="var(--state-pass)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5 6.5 12 13 4.5"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-quiet);">Ambiguous ones routed, cited, and signed by a human</span></div>
-              <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:color-mix(in srgb,var(--state-pass) 13%,transparent);"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="var(--state-pass)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5 6.5 12 13 4.5"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-quiet);">The whole chain reconstructable from the record, not from memory</span></div>
-            </div>
-          </div>
-          <div class="dm-card-lift dm-card-record" style="display:flex;flex-direction:column;flex:1;padding:20px 24px;border-radius:14px;">
-            <p style="margin:0;font-size:13.5px;line-height:1.55;color:var(--ink-cold);">A leading clinical LLM gave the same answer to the same triage prompt twice only <span style="color:var(--ink-steel);font-weight:600;">49.3%</span> of the time. Eligibility doesn't get to be that inconsistent. Swap the AI, swap the hardware. <span style="color:var(--ink-steel);font-weight:600;">The decision stays identical, every time.</span></p>
-            <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-top:auto;padding-top:10px;">JMIR · 2024</div>
-          </div>
-        </div>
-        <div class="dm-capability-col">
-          <div class="dm-card-lift" style="padding:22px;border-radius:14px;">
-            <div style="font-family:var(--font-display);font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:16px;">What we don't do</div>
-            <div style="display:flex;flex-direction:column;gap:13px;">
-              <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:rgba(31,45,61,0.06);"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="var(--ink-dim)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5 11 11M11 5 5 11"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-faint);">Accuracy percentages we can't reproduce at your site</span></div>
-              <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:rgba(31,45,61,0.06);"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="var(--ink-dim)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5 11 11M11 5 5 11"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-faint);">Any model casting a verdict on a subject</span></div>
-              <div style="display:flex;gap:11px;align-items:center;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:rgba(31,45,61,0.06);"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="var(--ink-dim)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5 11 11M11 5 5 11"></path></svg></span><span style="font-size:13px;line-height:1.35;color:var(--ink-faint);">Eligibility locked without a human-signed record</span></div>
-            </div>
-          </div>
-          <div class="dm-card-lift dm-card-record" style="display:flex;flex-direction:column;flex:1;padding:20px 24px;border-radius:14px;">
-            <p style="margin:0;font-size:13.5px;line-height:1.55;color:var(--ink-cold);">One substantial Phase III amendment costs a median <span style="color:var(--ink-steel);font-weight:600;">$535K</span>. <span style="color:var(--ink-steel);font-weight:600;">57%</span> of trials face at least one. Each version recompiles into locked logic: <span style="color:var(--ink-steel);font-weight:600;">re-screens run against the protocol that governs the site, not the one a coordinator remembers.</span></p>
-            <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-top:auto;padding-top:10px;">Tufts CSDD</div>
-          </div>
-        </div>
-      </div>
-      <div class="dm-spine-indicator" aria-hidden="true"><span id="capabilityIndex">1</span> / 2</div>
-    </div>
-    <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToSpine }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
+    <div class="dm-scroll-chev dm-demo-chev"><button onClick="{{ onToSpine }}" aria-label="Continue scrolling" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
   </section>
 
   <!-- ============ SPINE ============ -->
   <section id="spine" data-screen-label="Spine" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
-      <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Spine</div>
+      <div class="dm-sec-head" style="display:flex;align-items:center;gap:10px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid rgba(31,45,61,0.1);">
+        <svg class="dm-sec-mark" viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="34" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg>
+        <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);">Spine</div>
+      </div>
       <h2 class="dm-section-title">One workflow from<br><span class="dm-section-title__steel">protocol through to proof.</span></h2>
       <p class="dm-section-dek">Each protocol deepens the site's knowledge graph so coverage only climbs.</p>
       <div id="spineCarousel" class="dm-spine-grid" style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:40px;">
@@ -1999,57 +1939,72 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
         </div>
       </div>
       <div class="dm-spine-indicator" aria-hidden="true"><span id="spineIndex">1</span> / 5</div>
+      <div class="dm-do-list" style="margin-top:36px;display:flex;flex-direction:column;gap:10px;max-width:42rem;">
+        <div style="display:flex;gap:11px;align-items:flex-start;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:color-mix(in srgb,var(--state-pass) 13%,transparent);margin-top:1px;"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="var(--state-pass)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5 6.5 12 13 4.5"></path></svg></span><span style="font-size:14px;line-height:1.4;color:var(--ink-quiet);">Every compiled criterion evaluated against site evidence.</span></div>
+        <div style="display:flex;gap:11px;align-items:flex-start;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:color-mix(in srgb,var(--state-pass) 13%,transparent);margin-top:1px;"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="var(--state-pass)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5 6.5 12 13 4.5"></path></svg></span><span style="font-size:14px;line-height:1.4;color:var(--ink-quiet);">Ambiguous ones routed, cited, and signed by a human.</span></div>
+        <div style="display:flex;gap:11px;align-items:flex-start;"><span style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:color-mix(in srgb,var(--state-pass) 13%,transparent);margin-top:1px;"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="var(--state-pass)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5 6.5 12 13 4.5"></path></svg></span><span style="font-size:14px;line-height:1.4;color:var(--ink-quiet);">The whole chain reconstructable from the record, not from memory.</span></div>
+      </div>
+      <div class="dm-agent-strip" style="margin-top:40px;padding-top:22px;border-top:1px solid rgba(31,45,61,0.1);">
+        <div style="font-family:var(--font-display);font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:16px;">Assisted by</div>
+        <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;">
+          <div><div style="font-family:var(--font-display);font-size:0.92rem;font-weight:700;color:var(--ink-cold);">Trident</div><p style="margin:6px 0 0;font-size:12px;line-height:1.45;color:var(--ink-faint);">Surfaces high-friction criteria and drafts the amendment when a rule blocks enrollment.</p></div>
+          <div><div style="font-family:var(--font-display);font-size:0.92rem;font-weight:700;color:var(--ink-cold);">Eye</div><p style="margin:6px 0 0;font-size:12px;line-height:1.45;color:var(--ink-faint);">Catches drift while it is still cheap to fix.</p></div>
+          <div><div style="font-family:var(--font-display);font-size:0.92rem;font-weight:700;color:var(--ink-cold);">Luna</div><p style="margin:6px 0 0;font-size:12px;line-height:1.45;color:var(--ink-faint);">Every action lands in the ledger. Any decision replays years later.</p></div>
+          <div><div style="font-family:var(--font-display);font-size:0.92rem;font-weight:700;color:var(--ink-cold);">Sentinel</div><p style="margin:6px 0 0;font-size:12px;line-height:1.45;color:var(--ink-faint);">Surfaces which open protocols the site's graph already covers. Aggregate only.</p></div>
+        </div>
+        <p style="margin:18px 0 0;font-size:13.5px;line-height:1.45;color:var(--ink-quiet);">Four agents assist. None casts a verdict.</p>
+      </div>
     </div>
-    <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToAgents }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
+    <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToAsset }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
   </section>
 
-  <!-- ============ AGENTS ============ -->
-  <section id="agents" data-screen-label="Agent" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
-    <div class="dm-scroll-target" style="position:relative;max-width:1080px;margin:0 auto;">
-      <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Agent</div>
-      <h2 class="dm-section-title">Four agents share one graph.<br><span class="dm-section-title__steel">A human still makes every call.</span></h2>
-      <p class="dm-section-dek">They read the knowledge graph and write back to it.</p>
-      <div id="agentsCarousel" class="dm-agents-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:14px;margin-top:40px;">
-        <div class="dm-card-lift" style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;">
-          <span style="width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--ink-steel) 9%,transparent);border:1px solid color-mix(in srgb,var(--ink-steel) 24%,transparent);margin-bottom:16px;"><svg width="20" height="20" viewBox="0 0 18 18" fill="none" stroke="var(--ink-steel)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 16V8"></path><path d="M4.8 8.2V4M9 8V3.4M13.2 8.2V4"></path><path d="M4.8 8.2c0 2.2 8.4 2.2 8.4 0"></path></svg></span>
-          <div style="font-family:var(--font-display);font-size:1.2rem;font-weight:700;letter-spacing:-0.015em;color:var(--ink-cold);">Trident</div>
-          <div style="font-family:var(--font-display);font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-steel);margin-top:5px;">Protocol intelligence</div>
-          <p style="margin:12px 0 0;font-size:13px;line-height:1.55;color:var(--ink-faint);">Surfaces high-friction criteria and drafts the amendment when a rule blocks enrollment.</p>
-          <div style="margin-top:auto;padding-top:16px;"><div style="border-top:1px solid rgba(31,45,61,0.08);padding-top:11px;font-family:var(--font-display);font-size:9.5px;letter-spacing:0.06em;color:var(--ink-dim);">A person signs every amendment</div></div>
+  <!-- ============ ASSET ============ -->
+  <section id="asset" data-screen-label="Asset" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
+    <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
+      <div class="dm-sec-head" style="display:flex;align-items:center;gap:10px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid rgba(31,45,61,0.1);">
+        <svg class="dm-sec-mark" viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="34" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg>
+        <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);">Asset</div>
+      </div>
+      <h2 class="dm-section-title">Swap the AI. Swap the hardware.<br><span class="dm-section-title__steel">The decision still checks out.</span></h2>
+      <div class="dm-asset-callout" style="margin-top:36px;padding:clamp(28px,4vw,44px);border-radius:16px;background:#10161d;color:#f5f8fb;">
+        <div style="font-family:var(--font-display);font-size:clamp(3.8rem,9vw,7.2rem);font-weight:700;letter-spacing:-0.05em;line-height:0.9;color:#f5f8fb;">49.3%</div>
+        <p style="margin:18px 0 0;max-width:40rem;font-size:clamp(15px,2vw,18px);line-height:1.45;color:rgba(245,248,251,0.82);">A leading clinical LLM gave the same answer to the same triage prompt twice only <span style="color:#f5f8fb;font-weight:600;">49.3%</span> of the time. Eligibility does not get to be that inconsistent.</p>
+        <div style="font-family:var(--font-display);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,248,251,0.42);margin-top:16px;">JMIR · 2024</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:36px;">
+        <div>
+          <div style="font-family:var(--font-display);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:14px;">What goes into one decision</div>
+          <ol style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:12px;">
+            <li style="display:grid;grid-template-columns:28px 1fr;gap:10px;font-size:14px;line-height:1.45;color:var(--ink-quiet);"><span style="font-family:var(--font-display);color:var(--ink-steel);">1</span><span>Criterion, from a locked protocol version</span></li>
+            <li style="display:grid;grid-template-columns:28px 1fr;gap:10px;font-size:14px;line-height:1.45;color:var(--ink-quiet);"><span style="font-family:var(--font-display);color:var(--ink-steel);">2</span><span>The exact chart text it came from, as it read that day</span></li>
+            <li style="display:grid;grid-template-columns:28px 1fr;gap:10px;font-size:14px;line-height:1.45;color:var(--ink-quiet);"><span style="font-family:var(--font-display);color:var(--ink-steel);">3</span><span>Same inputs, same answer, every time</span></li>
+            <li style="display:grid;grid-template-columns:28px 1fr;gap:10px;font-size:14px;line-height:1.45;color:var(--ink-quiet);"><span style="font-family:var(--font-display);color:var(--ink-steel);">4</span><span>Human commit, then a hash-linked ledger</span></li>
+          </ol>
         </div>
-        <div class="dm-card-lift" style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;">
-          <span style="width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--ink-steel) 9%,transparent);border:1px solid color-mix(in srgb,var(--ink-steel) 24%,transparent);margin-bottom:16px;"><svg width="20" height="20" viewBox="0 0 18 18" fill="none" stroke="var(--ink-steel)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 9S4 3.8 9 3.8 16.5 9 16.5 9 14 14.2 9 14.2 1.5 9 1.5 9Z"></path><circle cx="9" cy="9" r="2.1"></circle></svg></span>
-          <div style="font-family:var(--font-display);font-size:1.2rem;font-weight:700;letter-spacing:-0.015em;color:var(--ink-cold);">Eye</div>
-          <div style="font-family:var(--font-display);font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-steel);margin-top:5px;">Quality signals</div>
-          <p style="margin:12px 0 0;font-size:13px;line-height:1.55;color:var(--ink-faint);">Catches drift and deviations while they are still cheap to fix, not at the audit.</p>
-          <div style="margin-top:auto;padding-top:16px;"><div style="border-top:1px solid rgba(31,45,61,0.08);padding-top:11px;font-family:var(--font-display);font-size:9.5px;letter-spacing:0.06em;color:var(--ink-dim);">Watches the process, not people</div></div>
-        </div>
-        <div class="dm-card-lift" style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;">
-          <span style="width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--ink-steel) 9%,transparent);border:1px solid color-mix(in srgb,var(--ink-steel) 24%,transparent);margin-bottom:16px;"><svg width="20" height="20" viewBox="0 0 18 18" fill="none" stroke="var(--ink-steel)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.8 3.4a6.6 6.6 0 1 0 0 11.2 5.2 5.2 0 0 1 0-11.2Z"></path></svg></span>
-          <div style="font-family:var(--font-display);font-size:1.2rem;font-weight:700;letter-spacing:-0.015em;color:var(--ink-cold);">Luna</div>
-          <div style="font-family:var(--font-display);font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-steel);margin-top:5px;">Action ledger</div>
-          <p style="margin:12px 0 0;font-size:13px;line-height:1.55;color:var(--ink-faint);">Every action lands in the ledger. Any decision replays step by step, years later.</p>
-          <div style="margin-top:auto;padding-top:16px;"><div style="border-top:1px solid rgba(31,45,61,0.08);padding-top:11px;font-family:var(--font-display);font-size:9.5px;letter-spacing:0.06em;color:var(--ink-dim);">Immutable record</div></div>
-        </div>
-        <div class="dm-card-lift" style="display:flex;flex-direction:column;padding:24px 22px;border-radius:16px;">
-          <span style="width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--ink-steel) 9%,transparent);border:1px solid color-mix(in srgb,var(--ink-steel) 24%,transparent);margin-bottom:16px;"><svg width="20" height="20" viewBox="0 0 18 18" fill="none" stroke="var(--ink-steel)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="6.5"></circle><circle cx="9" cy="9" r="3"></circle><circle cx="9" cy="9" r="0.6" fill="var(--ink-steel)" stroke="none"></circle><path d="M9 9 13.6 4.4"></path></svg></span>
-          <div style="font-family:var(--font-display);font-size:1.2rem;font-weight:700;letter-spacing:-0.015em;color:var(--ink-cold);">Sentinel</div>
-          <div style="font-family:var(--font-display);font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-steel);margin-top:5px;">Opportunity radar</div>
-          <p style="margin:12px 0 0;font-size:13px;line-height:1.55;color:var(--ink-faint);">Surfaces which open protocols the site's graph already covers. Industry or investigator-initiated.</p>
-          <div style="margin-top:auto;padding-top:16px;"><div style="border-top:1px solid rgba(31,45,61,0.08);padding-top:11px;font-family:var(--font-display);font-size:9.5px;letter-spacing:0.06em;color:var(--ink-dim);">Aggregate only &middot; no patient data</div></div>
+        <div>
+          <div style="font-family:var(--font-display);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:14px;">What moves and what doesn't</div>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div><div style="font-family:var(--font-display);font-size:12px;font-weight:600;color:var(--ink-cold);">Models</div><p style="margin:3px 0 0;font-size:13.5px;line-height:1.4;color:var(--ink-quiet);">OpenAI, Anthropic, or open source per site</p></div>
+            <div><div style="font-family:var(--font-display);font-size:12px;font-weight:600;color:var(--ink-cold);">Compute</div><p style="margin:3px 0 0;font-size:13.5px;line-height:1.4;color:var(--ink-quiet);">Cloud, hosted, or air-gapped with local inference</p></div>
+            <div><div style="font-family:var(--font-display);font-size:12px;font-weight:600;color:var(--ink-cold);">Coverage</div><p style="margin:3px 0 0;font-size:13.5px;line-height:1.4;color:var(--ink-quiet);">Every protocol adds criteria. Up, never down.</p></div>
+            <div><div style="font-family:var(--font-display);font-size:12px;font-weight:600;color:var(--ink-cold);">The decision</div><p style="margin:3px 0 0;font-size:13.5px;line-height:1.4;color:var(--ink-quiet);">Identical, at any model, in any year.</p></div>
+          </div>
         </div>
       </div>
-      <div class="dm-spine-indicator" aria-hidden="true"><span id="agentsIndex">1</span> / 4</div>
+      <p style="margin:28px 0 0;font-size:13px;line-height:1.5;color:var(--ink-dim);max-width:44rem;">The model never evaluates a subject and never sees patient data. Temperature zero buys reproducibility, not attribution.</p>
     </div>
     <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToOutput }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
   </section>
 
-  <!-- ============ WHAT IT PRODUCES ============ -->
+  <!-- ============ PROOF ============ -->
   <section id="output" data-screen-label="Proof" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
-      <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Proof</div>
-      <h2 class="dm-section-title">Every run leaves<br><span class="dm-section-title__steel">a record you can replay.</span></h2>
-      <p class="dm-section-dek">Criterion, evidence, human commit, hash-linked ledger.</p>
+      <div class="dm-sec-head" style="display:flex;align-items:center;gap:10px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid rgba(31,45,61,0.1);">
+        <svg class="dm-sec-mark" viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="34" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg>
+        <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);">Proof</div>
+      </div>
+      <h2 class="dm-section-title">What compounds is coverage,<br><span class="dm-section-title__steel">not judgment.</span></h2>
+      <p class="dm-section-dek" style="white-space:normal;max-width:40rem;">Nothing the system learns alters a decision already signed.</p>
       <div class="dm-output-grid" style="display:grid;grid-template-columns:minmax(0,0.6fr) minmax(0,1fr);gap:clamp(16px,3vw,32px);margin-top:38px;align-items:stretch;">
         <div class="dm-input-col" style="display:flex;flex-direction:column;gap:12px;">
           <div style="font-family:var(--font-display);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:2px;">Input</div>
@@ -2061,14 +2016,21 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
           <div class="dm-input-arrow" style="display:flex;align-items:center;gap:10px;padding:6px 2px;margin-top:2px;color:var(--ink-dim);"><span style="font-family:var(--font-display);font-size:11px;letter-spacing:0.04em;">deterministic engine</span><span style="flex:1;height:1px;background:rgba(31,45,61,0.16);"></span><span style="font-size:14px;color:var(--ink-steel);">→</span></div>
         </div>
         <div class="dm-output-col" style="display:flex;flex-direction:column;">
-          <div style="font-family:var(--font-display);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:14px;">Output · execution record</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap;">
+            <div style="font-family:var(--font-display);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-dim);">Output · execution record</div>
+            <div class="dm-proof-tabs" role="tablist" aria-label="Execution record examples" style="display:inline-flex;gap:4px;padding:3px;border-radius:999px;background:rgba(31,45,61,0.05);border:1px solid rgba(31,45,61,0.08);">
+              <button type="button" class="dm-proof-tab is-active" data-proof-tab="review" role="tab" aria-selected="true" style="border:0;background:transparent;cursor:pointer;padding:6px 12px;border-radius:999px;font-family:var(--font-display);font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-dim);">Review</button>
+              <button type="button" class="dm-proof-tab" data-proof-tab="pass" role="tab" aria-selected="false" style="border:0;background:transparent;cursor:pointer;padding:6px 12px;border-radius:999px;font-family:var(--font-display);font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-dim);">Pass</button>
+            </div>
+          </div>
+          <div class="dm-proof-panel is-active" data-proof-panel="review">
           <div class="dm-card-lift dm-card-record" style="flex:1;border-radius:14px;overflow:hidden;">
             <div style="display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid rgba(31,45,61,0.1);">
               <div style="min-width:0;">
                 <div style="font-size:15px;font-weight:600;color:var(--ink-cold);">Subject 018-017</div>
                 <div style="font-family:var(--font-display);font-size:10.5px;color:var(--ink-dim);margin-top:3px;">DMR-204 · v2.1 · I-3.4</div>
               </div>
-              <span role="status" style="margin-left:auto;flex-shrink:0;display:inline-flex;align-items:center;gap:6px;padding:2px 9px;border-radius:3px;font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;white-space:nowrap;color:var(--state-review);border:1px solid color-mix(in srgb,var(--state-review) 45%,transparent);background:color-mix(in srgb,var(--state-review) 10%,transparent);"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.25"/><path d="M8 4.5V9" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/><circle cx="8" cy="11.25" r="0.75" fill="currentColor"/></svg><span>Review</span></span>
+              <span role="status" style="margin-left:auto;flex-shrink:0;display:inline-flex;align-items:center;gap:6px;padding:2px 9px;border-radius:3px;font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;white-space:nowrap;color:var(--state-review);border:1px solid color-mix(in srgb,var(--state-review) 45%,transparent);background:color-mix(in srgb,var(--state-review) 10%,transparent);"><span>Review</span></span>
             </div>
             <div style="padding:14px 20px 6px;font-size:14px;font-weight:600;color:var(--ink-cold);">Serum chemistry within 7-day window</div>
             <div style="display:flex;flex-direction:column;">
@@ -2083,6 +2045,30 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
               <span style="font-family:var(--font-display);font-size:10px;letter-spacing:0.04em;color:var(--ink-dim);">Reviewer Dr. M. Avdol · PI / Sub-I · bound to Replay · PHI-free</span>
             </div>
           </div>
+          </div>
+          <div class="dm-proof-panel" data-proof-panel="pass" hidden>
+          <div class="dm-card-lift dm-card-record" style="flex:1;border-radius:14px;overflow:hidden;">
+            <div style="display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid rgba(31,45,61,0.1);">
+              <div style="min-width:0;">
+                <div style="font-size:15px;font-weight:600;color:var(--ink-cold);">Subject 018-009</div>
+                <div style="font-family:var(--font-display);font-size:10.5px;color:var(--ink-dim);margin-top:3px;">DMR-204 · v2.1 · I-2.1</div>
+              </div>
+              <span role="status" style="margin-left:auto;flex-shrink:0;display:inline-flex;align-items:center;gap:6px;padding:2px 9px;border-radius:3px;font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;white-space:nowrap;color:var(--state-pass);border:1px solid color-mix(in srgb,var(--state-pass) 45%,transparent);background:color-mix(in srgb,var(--state-pass) 10%,transparent);"><span>Pass</span></span>
+            </div>
+            <div style="padding:14px 20px 6px;font-size:14px;font-weight:600;color:var(--ink-cold);">Histologically confirmed EGFR-mutant NSCLC</div>
+            <div style="display:flex;flex-direction:column;">
+              <div style="display:grid;grid-template-columns:96px 1fr;gap:14px;padding:11px 20px;align-items:baseline;"><span style="font-family:var(--font-display);font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);">Driver</span><span style="font-size:12.5px;color:var(--state-pass);">Matched · criterion satisfied on current evidence</span></div>
+              <div style="display:grid;grid-template-columns:96px 1fr;gap:14px;padding:11px 20px;align-items:baseline;border-top:1px solid rgba(31,45,61,0.06);"><span style="font-family:var(--font-display);font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);">Evidence</span><span style="font-family:var(--font-display);font-size:11.5px;color:var(--ink-quiet);line-height:1.45;">Pathology · EGFR exon 19 deletion · reported 05-28<br>Epic / FHIR R4 · retrieved 06-20</span></div>
+              <div style="display:grid;grid-template-columns:96px 1fr;gap:14px;padding:11px 20px;align-items:baseline;border-top:1px solid rgba(31,45,61,0.06);"><span style="font-family:var(--font-display);font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);">Action</span><span style="font-size:12.5px;color:var(--ink-quiet);">No coordinator action required</span></div>
+              <div style="display:grid;grid-template-columns:96px 1fr;gap:14px;padding:11px 20px;align-items:baseline;border-top:1px solid rgba(31,45,61,0.06);"><span style="font-family:var(--font-display);font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);">Resolve</span><span style="font-size:12.5px;color:var(--ink-cold);">Sub-I signed pass · eligibility advanced</span></div>
+              <div style="display:grid;grid-template-columns:96px 1fr;gap:14px;padding:11px 20px;align-items:baseline;border-top:1px solid rgba(31,45,61,0.06);"><span style="font-family:var(--font-display);font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);">Replay</span><span style="font-size:12.5px;color:var(--ink-quiet);">Fully replayable from locked protocol + evidence snapshot</span></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;padding:13px 20px;border-top:1px solid rgba(31,45,61,0.1);background:rgba(31,45,61,0.02);">
+              <span style="width:6px;height:6px;border-radius:50%;background:var(--state-pass);flex-shrink:0;"></span>
+              <span style="font-family:var(--font-display);font-size:10px;letter-spacing:0.04em;color:var(--ink-dim);">Signer Dr. M. Avdol · PI / Sub-I · bound to Replay · PHI-free</span>
+            </div>
+          </div>
+          </div>
         </div>
       </div>
     </div>
@@ -2092,7 +2078,10 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
   <!-- ============ NODE ============ -->
   <section id="node" data-screen-label="Node" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
-      <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Node</div>
+      <div class="dm-sec-head" style="display:flex;align-items:center;gap:10px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid rgba(31,45,61,0.1);">
+        <svg class="dm-sec-mark" viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="34" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg>
+        <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);">Node</div>
+      </div>
       <h2 class="dm-section-title">Accountable execution<br><span class="dm-section-title__steel">owned and hosted by the site.</span></h2>
       <p class="dm-section-dek" style="white-space:normal;max-width:48rem;">As more sites stand up nodes, sponsors get denser attributable coverage, and each site sees more protocols already fit to its stack.</p>
       <div class="dm-node-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:40px;">
@@ -2115,16 +2104,22 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
             </div>
           </div>
       </div>
-      <div class="dm-card-lift dm-card-record dm-node-kicker" style="margin-top:14px;padding:20px 24px;border-radius:14px;">
-        <div style="font-family:var(--font-display);font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:10px;">What a node is</div>
-        <p style="margin:0;font-size:13.5px;line-height:1.55;color:var(--ink-cold);">A <span style="color:var(--ink-steel);font-weight:600;">node</span> is the site's own Damaros instance: evidence, signatures, and the execution record stay under site governance. PHI does not leave; only network-safe signal goes out. Every join raises the value of the nodes already live, without anyone surrendering control of the endpoint.</p>
+      <div class="dm-node-kicker" style="margin-top:14px;padding:24px 26px;border-radius:14px;background:#10161d;color:#f5f8fb;">
+        <p style="margin:0;font-size:15px;line-height:1.55;color:#f5f8fb;"><span style="font-weight:650;">A node is the site's own Damaros instance.</span> Evidence, signatures, and the execution record stay under site governance. PHI does not leave. Only network-safe signal goes out.</p>
+        <p style="margin:16px 0 0;font-size:15px;line-height:1.55;color:rgba(245,248,251,0.82);"><span style="font-weight:650;color:#f5f8fb;">Every join raises the value of the nodes already live.</span> As more sites stand up nodes, sponsors get denser attributable coverage, and each site sees more protocols already fit to its stack. Nobody surrenders control of the endpoint.</p>
+        <p style="margin:16px 0 0;font-size:14px;line-height:1.45;color:rgba(245,248,251,0.7);">Node one is valuable alone.</p>
       </div>
     </div>
     <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToSecurity }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
   </section>
+
+  <!-- ============ TRUST ============ -->
   <section id="security" data-screen-label="Trust" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
-      <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Trust</div>
+      <div class="dm-sec-head" style="display:flex;align-items:center;gap:10px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid rgba(31,45,61,0.1);">
+        <svg class="dm-sec-mark" viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="34" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg>
+        <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);">Trust</div>
+      </div>
       <h2 class="dm-section-title">Every run is attributable<br><span class="dm-section-title__steel">in the site's own record.</span></h2>
       <p class="dm-section-dek">Site-bounded controls, ready for audit.</p>
       <div class="dm-security-chips" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:36px;">
@@ -2156,11 +2151,27 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
           </div>
           <p style="margin:0;font-size:12.5px;line-height:1.45;color:var(--ink-quiet);">Site-run or disconnected deployments. Local inference where policy keeps models on-prem. Managed option on request. PHI still never leaves the site.</p>
         </div>
+        <div class="dm-card-lift" style="padding:16px 18px;border-radius:12px;">
+          <div style="display:flex;align-items:center;gap:9px;margin-bottom:8px;">
+            <span style="width:7px;height:7px;border-radius:50%;background:var(--ink-steel);flex-shrink:0;"></span>
+            <span style="font-family:var(--font-display);font-size:13px;font-weight:650;letter-spacing:-0.01em;color:var(--ink-cold);">What we don't claim</span>
+          </div>
+          <p style="margin:0;font-size:12.5px;line-height:1.45;color:var(--ink-quiet);">Accuracy percentages we can't reproduce at your site. Any model casting a verdict on a subject. Eligibility locked without a human-signed record.</p>
+        </div>
+        <div class="dm-card-lift" style="padding:16px 18px;border-radius:12px;">
+          <div style="display:flex;align-items:center;gap:9px;margin-bottom:8px;">
+            <span style="width:7px;height:7px;border-radius:50%;background:var(--ink-steel);flex-shrink:0;"></span>
+            <span style="font-family:var(--font-display);font-size:13px;font-weight:650;letter-spacing:-0.01em;color:var(--ink-cold);">Validation-ready</span>
+          </div>
+          <p style="margin:0;font-size:12.5px;line-height:1.45;color:var(--ink-quiet);">Validation Plan and Summary Report, requirements traceability, Part 11 assessment, SDLC and change control SOPs. Governed by FDA's October 2024 guidance on electronic systems and records.</p>
+        </div>
       </div>
-      <p class="dm-security-note" style="margin:26px 0 0;font-size:13.5px;line-height:1.55;color:var(--ink-dim);">We validate the execution chain. We do not claim clinical efficacy.</p>
+      <p class="dm-security-note" style="margin:26px 0 0;font-size:13.5px;line-height:1.55;color:var(--ink-dim);">Runs alongside Epic, Cerner, Veeva, Medidata, and REDCap. Model choice is the site's.</p>
+      <p style="margin:12px 0 0;font-size:13.5px;line-height:1.55;color:var(--ink-dim);">We validate the execution chain. We do not claim clinical efficacy.</p>
     </div>
     <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><button onClick="{{ onToClose }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
   </section>
+
 
   <!-- ============ CLOSE ============ -->
   <section id="close" data-screen-label="Close" style="position:relative;min-height:calc(100vh - 62px);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:clamp(48px,6vw,96px) clamp(20px,5vw,40px) clamp(28px,4vw,48px);overflow:hidden;">
@@ -2226,7 +2237,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
 
   function syncActive() {
     if (!railAllowed()) return;
-    var targets = ["instrument","integrations","problem","capability","spine","agents","output","node","security"];
+    var targets = ["problem","instrument","spine","asset","output","node","security"];
     var vh = window.innerHeight || 1;
     var mid = vh * 0.5;
     var best = null;
@@ -2464,8 +2475,6 @@ class Component extends DCLogic {
   };
   initSpineCarousel = () => {
     this.initCarousel("spineCarousel", "spineIndex");
-    this.initCarousel("agentsCarousel", "agentsIndex");
-    this.initCarousel("capabilityCarousel", "capabilityIndex");
   };
   initReveal = () => {
     const secs = document.querySelectorAll(".dm-site section[data-screen-label]");
@@ -2917,40 +2926,9 @@ class Component extends DCLogic {
     measure();
     requestAnimationFrame(() => requestAnimationFrame(measure));
   };
-  /* After the live demo: vertically center Integrations + Problem when both
-   * fit in the viewport; otherwise center Integrations alone. */
+  /* After the live demo: continue to Spine. */
   scrollPostDemo = () => {
-    const integ = document.getElementById("integrations");
-    const problem = document.getElementById("problem");
-    if (!integ && !problem) return;
-    if (!integ) { this.scrollCenter("problem"); return; }
-    if (!problem) { this.scrollCenter("integrations"); return; }
-    const reduced = window.matchMedia("(prefers-reduced-motion:reduce)").matches;
-    const measure = () => {
-      const a = integ.getBoundingClientRect();
-      const b = problem.getBoundingClientRect();
-      const topDoc = a.top + window.scrollY;
-      const bottomDoc = b.bottom + window.scrollY;
-      const blockH = Math.max(0, bottomDoc - topDoc);
-      const vh = window.innerHeight;
-      const head = 62;
-      const usable = Math.max(0, vh - head);
-      let top;
-      if (blockH <= usable - 12) {
-        top = topDoc - head - (usable - blockH) / 2;
-      } else {
-        const t = integ.querySelector(".dm-scroll-target") || integ;
-        const r = t.getBoundingClientRect();
-        const elTop = r.top + window.scrollY;
-        top = r.height >= usable ? elTop - head : elTop - head - (usable - r.height) / 2;
-      }
-      const max = Math.max(0, document.documentElement.scrollHeight - vh);
-      top = Math.max(0, Math.min(top, max));
-      window.scrollTo({ top, behavior: reduced ? "auto" : "smooth" });
-    };
-    measure();
-    requestAnimationFrame(() => requestAnimationFrame(measure));
-    setTimeout(measure, 120);
+    this.scrollCenter("spine");
   };
 
   renderVals() {
@@ -3246,9 +3224,8 @@ class Component extends DCLogic {
       onPilot: () => this.scrollTo("pilot"),
       onRunModel: () => this.scrollTo("spine"),
       onToProblem: () => this.scrollCenter("problem"),
-      onToCapability: () => this.scrollCenter("capability"),
+      onToAsset: () => this.scrollCenter("asset"),
       onToSpine: () => this.scrollCenter("spine"),
-      onToAgents: () => this.scrollCenter("agents"),
       onToOutput: () => this.scrollCenter("output"),
       onToNode: () => this.scrollCenter("node"),
       onToSecurity: () => this.scrollCenter("security"),
