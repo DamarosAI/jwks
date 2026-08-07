@@ -38,6 +38,7 @@
 <script src="./biomarker-matrix.js?v=54" defer></script>
 <script src="./hero-fit.js?v=4" defer></script>
 <script src="./section-title-fit.js?v=3" defer></script>
+<script src="./demo-dek-fit.js?v=1" defer></script>
 <script>
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 window.scrollTo(0, 0);
@@ -189,6 +190,8 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     .dm-section-dek{margin:22px 0 0;font-size:clamp(11px,2.35vw,15px);line-height:1.35;color:var(--ink-faint);white-space:nowrap;max-width:none;}
     .dm-section-dek--center{margin-left:auto;margin-right:auto;text-align:center;}
     .dm-section-dek--oneline{white-space:nowrap;max-width:none;}
+    /* Live-demo agent intros - one line; demo-dek-fit.js scales font to panel width */
+    .dm-demo-dek{margin:9px 0 0;font-size:13.5px;line-height:1.5;color:var(--ink-cold);white-space:nowrap;max-width:none;overflow:hidden;}
     /* Drum clearance + soft mid-card dissolve (matches canvas depthFade) */
     .dm-matrix--hero,.dm-matrix--close{
       -webkit-mask-image:radial-gradient(ellipse 46% 50% at 50% 48%,transparent 0%,transparent 58%,rgba(0,0,0,0.35) 78%,#000 100%),linear-gradient(180deg,#000 0%,#000 34%,rgba(0,0,0,0.55) 48%,rgba(0,0,0,0.16) 58%,transparent 70%);
@@ -1521,7 +1524,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
                   <span style="font-family:var(--font-display);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-steel);">Sentinel</span>
                   <span style="font-family:var(--font-display);font-size:10px;color:var(--ink-dim);margin-left:auto;">Trial finder</span>
                 </div>
-                <p style="margin:9px 0 0;font-size:13.5px;line-height:1.5;color:var(--ink-cold);max-width:66ch;">Surfaces which open trials the site's patients already fit. Aggregate only, no patient data.</p>
+                <p class="dm-demo-dek">Surfaces which open trials the site's patients already fit. Aggregate only, no patient data.</p>
                 <div style="display:flex;align-items:baseline;gap:8px;margin-top:14px;">
                   <span style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--ink-cold);line-height:1;font-variant-numeric:tabular-nums;">{{ sn.count }}</span>
                   <span style="font-family:var(--font-display);font-size:11px;color:var(--ink-dim);">of {{ sn.total }} open protocols fit Site 018</span>
@@ -1618,7 +1621,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
                   <span style="font-family:var(--font-display);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-steel);">Trident</span>
                   <span style="font-family:var(--font-display);font-size:10px;color:var(--ink-dim);margin-left:auto;">Protocol intelligence</span>
                 </div>
-                <p style="margin:9px 0 0;font-size:13.5px;line-height:1.5;color:var(--ink-cold);max-width:66ch;">Drafts the amendment when a rule blocks enrollment.</p>
+                <p class="dm-demo-dek">Drafts the amendment when a rule blocks enrollment.</p>
                 <div style="display:flex;gap:24px;flex:1;min-height:0;margin-top:16px;">
                   <div style="width:40%;display:flex;flex-direction:column;min-width:0;overflow:hidden;">
                     <div style="font-family:var(--font-display);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:9px;">High-friction criteria</div>
@@ -1698,7 +1701,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
                   <span style="font-family:var(--font-display);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-steel);">Eye</span>
                   <span style="font-family:var(--font-display);font-size:10px;color:var(--ink-dim);margin-left:auto;">Site 018 &middot; this run</span>
                 </div>
-                <p style="margin:9px 0 0;font-size:13.5px;line-height:1.5;color:var(--ink-cold);max-width:66ch;">Catches drift and deviations while they are still cheap to fix, not at the audit. Watches the process, not people.</p>
+                <p class="dm-demo-dek">Catches drift and deviations while they are still cheap to fix, not at the audit. Watches the process, not people.</p>
                 <div style="display:flex;gap:10px;margin-top:16px;"><sc-for list="{{ ey.kpis }}" as="k" hint-placeholder-count="4"><div style="flex:1;border:1px solid rgba(31,45,61,0.1);border-radius:11px;padding:10px 14px;background:rgba(31,45,61,0.015);"><div data-dc-style="{{ k.valStyle }}">{{ k.value }}</div><div style="font-family:var(--font-display);font-size:8px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-dim);margin-top:4px;">{{ k.label }}</div></div></sc-for></div>
                 <div style="display:flex;gap:24px;flex:1;min-height:0;margin-top:14px;">
                   <div style="width:46%;display:flex;flex-direction:column;min-width:0;">
@@ -1752,7 +1755,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
                   <span style="font-family:var(--font-display);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-steel);">Luna</span>
                   <span style="font-family:var(--font-display);font-size:10px;color:var(--ink-dim);margin-left:auto;">Action ledger</span>
                 </div>
-                <p style="margin:9px 0 0;font-size:13.5px;line-height:1.5;color:var(--ink-cold);max-width:70ch;">Every action lands in the ledger. Any decision replays step by step, years later. Luna reads the record; it never writes to it.</p>
+                <p class="dm-demo-dek">Every action lands in the ledger. Any decision replays step by step, years later. Luna reads the record; it never writes to it.</p>
                 <div style="display:flex;gap:10px;margin-top:14px;"><div style="flex:1;border:1px solid rgba(31,45,61,0.1);border-radius:11px;padding:10px 13px;background:rgba(31,45,61,0.015);"><div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:#2f6193;line-height:1;font-variant-numeric:tabular-nums;">847</div><div style="font-family:var(--font-display);font-size:8px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-dim);margin-top:5px;">Events in chain</div></div><div style="flex:1;border:1px solid rgba(31,45,61,0.1);border-radius:11px;padding:10px 13px;background:rgba(31,45,61,0.015);"><div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:#2f6193;line-height:1;font-variant-numeric:tabular-nums;">12</div><div style="font-family:var(--font-display);font-size:8px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-dim);margin-top:5px;">Sources reconciled</div></div><div style="flex:1;border:1px solid rgba(31,45,61,0.1);border-radius:11px;padding:10px 13px;background:rgba(31,45,61,0.015);"><div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:#2e9e6b;line-height:1;font-variant-numeric:tabular-nums;">1.4s</div><div style="font-family:var(--font-display);font-size:8px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-dim);margin-top:5px;">Median trace</div></div><div style="flex:1;border:1px solid rgba(31,45,61,0.1);border-radius:11px;padding:10px 13px;background:rgba(31,45,61,0.015);"><div style="font-family:var(--font-display);font-size:15px;font-weight:700;color:#2e9e6b;line-height:1;font-variant-numeric:tabular-nums;">Ed25519</div><div style="font-family:var(--font-display);font-size:8px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-dim);margin-top:5px;">Every row signed</div></div></div>
                 <div style="display:flex;gap:24px;flex:1;min-height:0;margin-top:13px;">
                   <div style="width:38%;display:flex;flex-direction:column;min-width:0;">
