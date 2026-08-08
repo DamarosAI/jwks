@@ -673,21 +673,24 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     }
     .dm-cta-tap{display:none;}
     .dm-site .dm-cluster{
-      --dm-cluster-size:min(440px,92vw);
+      /* Equal bubble diameter; ring radius keeps neighbors clear at max hover scale. */
+      --dm-bubble:clamp(124px,22vw,148px);
+      --dm-ring:calc(var(--dm-bubble) * 1.42);
+      --dm-pad:calc(var(--dm-bubble) * 0.62);
       position:relative;
-      width:var(--dm-cluster-size);
-      height:calc(var(--dm-cluster-size) * 0.92);
+      width:calc(var(--dm-ring) * 2 + var(--dm-pad) * 2);
+      height:calc(var(--dm-ring) * 2 + var(--dm-pad) * 2);
+      max-width:100%;
       margin:8px auto 0;
       touch-action:manipulation;
     }
     .dm-site .dm-cluster__bubble{
-      --dm-base:1;
       --dm-scale:1;
       position:absolute;
       left:var(--x);
       top:var(--y);
-      width:var(--s);
-      height:var(--s);
+      width:var(--dm-bubble);
+      height:var(--dm-bubble);
       margin:0;
       padding:0;
       border:1px solid rgba(20,33,48,0.08);
@@ -699,7 +702,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
         inset 0 1px 0 rgba(255,255,255,0.9);
       display:grid;
       place-items:center;
-      transform:translate(-50%,-50%) scale(calc(var(--dm-base) * var(--dm-scale)));
+      transform:translate(-50%,-50%) scale(var(--dm-scale));
       transform-origin:center center;
       transition:transform 160ms cubic-bezier(0.22,1,0.36,1),box-shadow 160ms ease,border-color 160ms ease;
       will-change:transform;
@@ -716,8 +719,8 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     }
     .dm-site .dm-cluster__bubble img{
       display:block;
-      max-width:58%;
-      max-height:42%;
+      max-width:74%;
+      max-height:54%;
       width:auto;
       height:auto;
       object-fit:contain;
@@ -726,15 +729,15 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     }
     .dm-site .dm-cluster__bubble--openai img,
     .dm-site .dm-cluster__bubble--anthropic img{
-      max-width:52%;
-      max-height:38%;
+      max-width:68%;
+      max-height:48%;
     }
-    .dm-site .dm-cluster__bubble--redcap img{max-height:48%;}
-    .dm-site .dm-cluster__bubble--epic img{max-height:46%;}
+    .dm-site .dm-cluster__bubble--redcap img{max-height:58%;}
+    .dm-site .dm-cluster__bubble--epic img{max-height:56%;}
     @media (max-width:760px){
       .dm-site .dm-cluster{
-        --dm-cluster-size:min(360px,94vw);
-        height:calc(var(--dm-cluster-size) * 0.96);
+        --dm-bubble:clamp(108px,28vw,128px);
+        --dm-ring:calc(var(--dm-bubble) * 1.4);
       }
     }
     @media (prefers-reduced-motion:reduce){
@@ -1108,13 +1111,13 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       <h2 class="dm-section-title dm-section-title--center">One system for<br><span class="dm-section-title__steel">the stack you already run.</span></h2>
       <p class="dm-section-dek dm-section-dek--center" style="margin:14px auto 28px;">Works with the software a site already runs.</p>
       <div class="dm-cluster" id="dmCluster" role="list" aria-label="Integrated platforms">
-        <div class="dm-cluster__bubble dm-cluster__bubble--epic" role="listitem" style="--x:50%;--y:50%;--s:118px;--dm-base:1.08;" title="Epic"><img src="uploads/epic-systems-corporation-seeklogo.png" alt="Epic"></div>
-        <div class="dm-cluster__bubble" role="listitem" style="--x:50%;--y:16%;--s:96px;--dm-base:0.98;" title="Veeva"><img src="uploads/pasted-1782494614917-0.png" alt="Veeva"></div>
-        <div class="dm-cluster__bubble" role="listitem" style="--x:82%;--y:32%;--s:96px;--dm-base:0.96;" title="Medidata"><img src="uploads/pasted-1782492887940-0.png" alt="Medidata"></div>
-        <div class="dm-cluster__bubble" role="listitem" style="--x:82%;--y:68%;--s:92px;--dm-base:0.94;" title="Cerner"><img src="uploads/330px-2011.Cerner.logo.png" alt="Cerner"></div>
-        <div class="dm-cluster__bubble dm-cluster__bubble--redcap" role="listitem" style="--x:50%;--y:84%;--s:92px;--dm-base:0.94;" title="REDCap"><img src="uploads/pasted-1782493762954-0.png" alt="REDCap"></div>
-        <div class="dm-cluster__bubble dm-cluster__bubble--openai" role="listitem" style="--x:18%;--y:68%;--s:88px;--dm-base:0.9;" title="OpenAI"><img src="uploads/openai-logo.png?v=3" alt="OpenAI"></div>
-        <div class="dm-cluster__bubble dm-cluster__bubble--anthropic" role="listitem" style="--x:18%;--y:32%;--s:88px;--dm-base:0.9;" title="Anthropic"><img src="uploads/claude-logo.png" alt="Anthropic"></div>
+        <div class="dm-cluster__bubble dm-cluster__bubble--epic" role="listitem" style="--x:50%;--y:50%;" title="Epic"><img src="uploads/epic-systems-corporation-seeklogo.png" alt="Epic"></div>
+        <div class="dm-cluster__bubble" role="listitem" style="--x:50%;--y:calc(50% - var(--dm-ring));" title="Veeva"><img src="uploads/pasted-1782494614917-0.png" alt="Veeva"></div>
+        <div class="dm-cluster__bubble" role="listitem" style="--x:calc(50% + var(--dm-ring) * 0.866);--y:calc(50% - var(--dm-ring) * 0.5);" title="Medidata"><img src="uploads/pasted-1782492887940-0.png" alt="Medidata"></div>
+        <div class="dm-cluster__bubble" role="listitem" style="--x:calc(50% + var(--dm-ring) * 0.866);--y:calc(50% + var(--dm-ring) * 0.5);" title="Cerner"><img src="uploads/330px-2011.Cerner.logo.png" alt="Cerner"></div>
+        <div class="dm-cluster__bubble dm-cluster__bubble--redcap" role="listitem" style="--x:50%;--y:calc(50% + var(--dm-ring));" title="REDCap"><img src="uploads/pasted-1782493762954-0.png" alt="REDCap"></div>
+        <div class="dm-cluster__bubble dm-cluster__bubble--openai" role="listitem" style="--x:calc(50% - var(--dm-ring) * 0.866);--y:calc(50% + var(--dm-ring) * 0.5);" title="OpenAI"><img src="uploads/openai-logo.png?v=3" alt="OpenAI"></div>
+        <div class="dm-cluster__bubble dm-cluster__bubble--anthropic" role="listitem" style="--x:calc(50% - var(--dm-ring) * 0.866);--y:calc(50% - var(--dm-ring) * 0.5);" title="Anthropic"><img src="uploads/claude-logo.png" alt="Anthropic"></div>
       </div>
     </div>
     <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><a href="#capability" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></a></div>
@@ -1425,7 +1428,8 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
   if (reduced || !canHover) return;
 
   var bubbles = Array.prototype.slice.call(cluster.querySelectorAll('.dm-cluster__bubble'));
-  var maxBoost = 0.34;
+  /* Keep max boost under the ring gap so neighbors never collide. */
+  var maxBoost = 0.12;
   var raf = 0;
   var mx = 0, my = 0, inside = false;
 
@@ -1433,8 +1437,17 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     return 1 - Math.pow(1 - t, 2.4);
   }
 
-  function pct(el, prop) {
-    return parseFloat(getComputedStyle(el).getPropertyValue(prop)) / 100;
+  function centerOf(b, cr) {
+    var r = b.getBoundingClientRect();
+    /* Use layout center: undo current scale so distance stays stable. */
+    var scale = parseFloat(getComputedStyle(b).getPropertyValue('--dm-scale')) || 1;
+    var w = r.width / scale;
+    var h = r.height / scale;
+    return {
+      x: r.left + r.width / 2,
+      y: r.top + r.height / 2,
+      size: Math.max(w, h)
+    };
   }
 
   function apply() {
@@ -1447,17 +1460,42 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       return;
     }
     var cr = cluster.getBoundingClientRect();
-    var maxDist = Math.max(120, Math.min(cr.width, cr.height) * 0.38);
-    bubbles.forEach(function (b) {
-      var cx = cr.left + cr.width * pct(b, '--x');
-      var cy = cr.top + cr.height * pct(b, '--y');
-      var dx = mx - cx;
-      var dy = my - cy;
+    var centers = bubbles.map(function (b) { return centerOf(b, cr); });
+    var bubbleSize = centers[0] ? centers[0].size : 130;
+    var maxDist = bubbleSize * 0.95;
+
+    /* First pass: raw proximity boosts */
+    var boosts = centers.map(function (c) {
+      var dx = mx - c.x;
+      var dy = my - c.y;
       var dist = Math.sqrt(dx * dx + dy * dy);
       var t = Math.max(0, 1 - dist / maxDist);
-      var boost = maxBoost * easeOut(t);
+      return maxBoost * easeOut(t);
+    });
+
+    /* Cap so any pair of scaled bubbles still clears by ~8px */
+    for (var i = 0; i < bubbles.length; i++) {
+      for (var j = i + 1; j < bubbles.length; j++) {
+        var dx = centers[i].x - centers[j].x;
+        var dy = centers[i].y - centers[j].y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        var need = (bubbleSize * (1 + boosts[i]) + bubbleSize * (1 + boosts[j])) / 2;
+        if (need > dist - 8) {
+          var room = Math.max(0, (dist - 8) / bubbleSize - 1);
+          var sum = boosts[i] + boosts[j];
+          if (sum > room && sum > 0) {
+            var factor = room / sum;
+            boosts[i] *= factor;
+            boosts[j] *= factor;
+          }
+        }
+      }
+    }
+
+    bubbles.forEach(function (b, i) {
+      var boost = boosts[i];
       b.style.setProperty('--dm-scale', String(1 + boost));
-      if (boost > 0.08) b.classList.add('is-near');
+      if (boost > 0.04) b.classList.add('is-near');
       else b.classList.remove('is-near');
     });
   }
