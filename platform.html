@@ -656,7 +656,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       gap:14px;
     }
 
-    /* ---- integrations frequency chart + input-card baseline ---- */
+    /* ---- integrations watchOS bubble cluster + input-card baseline ---- */
     .dm-input-cards{display:flex;flex-direction:column;gap:12px;}
     .dm-spine-indicator{display:none;}
     .dm-capability-grid{
@@ -672,61 +672,76 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       min-width:0;
     }
     .dm-cta-tap{display:none;}
-    .dm-site .dm-freq{
-      display:flex;
-      flex-wrap:wrap;
-      justify-content:center;
-      align-items:baseline;
-      gap:clamp(10px,2.2vw,22px) clamp(16px,3.4vw,36px);
-      max-width:720px;
-      margin:0 auto;
-      padding:clamp(8px,1.5vw,16px) 4px;
-      line-height:1.05;
-      text-align:center;
+    .dm-site .dm-cluster{
+      --dm-cluster-size:min(440px,92vw);
+      position:relative;
+      width:var(--dm-cluster-size);
+      height:calc(var(--dm-cluster-size) * 0.92);
+      margin:8px auto 0;
+      touch-action:manipulation;
     }
-    .dm-site .dm-freq__word{
-      font-family:var(--font-display);
-      font-weight:700;
-      letter-spacing:-0.03em;
-      color:var(--ink-cold);
-      white-space:nowrap;
-      transition:color 180ms ease, opacity 180ms ease;
+    .dm-site .dm-cluster__bubble{
+      --dm-base:1;
+      --dm-scale:1;
+      position:absolute;
+      left:var(--x);
+      top:var(--y);
+      width:var(--s);
+      height:var(--s);
+      margin:0;
+      padding:0;
+      border:1px solid rgba(20,33,48,0.08);
+      border-radius:50%;
+      background:linear-gradient(180deg,rgba(255,255,255,0.98) 0%,rgba(248,251,253,0.94) 100%);
+      box-shadow:
+        0 1px 2px rgba(20,40,70,0.04),
+        0 10px 28px rgba(20,40,70,0.07),
+        inset 0 1px 0 rgba(255,255,255,0.9);
+      display:grid;
+      place-items:center;
+      transform:translate(-50%,-50%) scale(calc(var(--dm-base) * var(--dm-scale)));
+      transform-origin:center center;
+      transition:transform 160ms cubic-bezier(0.22,1,0.36,1),box-shadow 160ms ease,border-color 160ms ease;
+      will-change:transform;
+      cursor:default;
+      z-index:1;
     }
-    .dm-site .dm-freq__word:hover{color:var(--ink-steel);}
-    .dm-site .dm-freq__word--1{
-      font-size:clamp(2.6rem,7.2vw,4.25rem);
-      color:var(--ink-cold);
-      letter-spacing:-0.045em;
+    .dm-site .dm-cluster__bubble.is-near{
+      z-index:3;
+      border-color:rgba(47,97,147,0.22);
+      box-shadow:
+        0 2px 4px rgba(20,40,70,0.05),
+        0 16px 36px rgba(20,46,82,0.12),
+        inset 0 1px 0 rgba(255,255,255,0.95);
     }
-    .dm-site .dm-freq__word--2{
-      font-size:clamp(1.85rem,4.8vw,2.85rem);
-      color:color-mix(in srgb,var(--ink-cold) 88%,var(--ink-steel));
+    .dm-site .dm-cluster__bubble img{
+      display:block;
+      max-width:58%;
+      max-height:42%;
+      width:auto;
+      height:auto;
+      object-fit:contain;
+      pointer-events:none;
+      user-select:none;
     }
-    .dm-site .dm-freq__word--3{
-      font-size:clamp(1.35rem,3.4vw,1.95rem);
-      color:var(--ink-quiet);
-      font-weight:600;
+    .dm-site .dm-cluster__bubble--openai img,
+    .dm-site .dm-cluster__bubble--anthropic img{
+      max-width:52%;
+      max-height:38%;
     }
-    .dm-site .dm-freq__word--4{
-      font-size:clamp(1.05rem,2.6vw,1.4rem);
-      color:var(--ink-faint);
-      font-weight:600;
-      letter-spacing:-0.01em;
-    }
-    .dm-site .dm-freq__word--5{
-      font-size:clamp(0.92rem,2.1vw,1.12rem);
-      color:var(--ink-dim);
-      font-weight:600;
-      letter-spacing:0;
-    }
+    .dm-site .dm-cluster__bubble--redcap img{max-height:48%;}
+    .dm-site .dm-cluster__bubble--epic img{max-height:46%;}
     @media (max-width:760px){
-      .dm-site .dm-freq{
-        gap:10px 18px;
-        max-width:26rem;
+      .dm-site .dm-cluster{
+        --dm-cluster-size:min(360px,94vw);
+        height:calc(var(--dm-cluster-size) * 0.96);
       }
     }
     @media (prefers-reduced-motion:reduce){
-      .dm-site .dm-freq__word{transition:none;}
+      .dm-site .dm-cluster__bubble{transition:none;}
+    }
+    @media (hover:none){
+      .dm-site .dm-cluster__bubble{--dm-scale:1 !important;}
     }
 
     /* ---- tap CTA + caption tagline on coarse / phone (autoplay path) ---- */
@@ -1086,20 +1101,20 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     </div>
   </section>
 
-  <!-- ============ INTEGRATIONS · platform frequency chart ============ -->
+  <!-- ============ INTEGRATIONS · watchOS bubble cluster ============ -->
   <section id="integrations" data-screen-label="Integrations" style="position:relative;padding:clamp(48px,6vw,72px) clamp(20px,5vw,40px) clamp(40px,5vw,56px);">
     <div class="dm-scroll-target" style="max-width:1000px;margin:0 auto;text-align:center;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:14px;">Integrations</div>
       <h2 class="dm-section-title dm-section-title--center">One system for<br><span class="dm-section-title__steel">the stack you already run.</span></h2>
-      <p class="dm-section-dek dm-section-dek--center" style="margin:14px auto 34px;">Works with the software a site already runs.</p>
-      <div class="dm-freq" role="list" aria-label="Most used platforms">
-        <span class="dm-freq__word dm-freq__word--1" role="listitem">Epic</span>
-        <span class="dm-freq__word dm-freq__word--2" role="listitem">Veeva</span>
-        <span class="dm-freq__word dm-freq__word--2" role="listitem">Medidata</span>
-        <span class="dm-freq__word dm-freq__word--3" role="listitem">Cerner</span>
-        <span class="dm-freq__word dm-freq__word--3" role="listitem">REDCap</span>
-        <span class="dm-freq__word dm-freq__word--4" role="listitem">OpenAI</span>
-        <span class="dm-freq__word dm-freq__word--5" role="listitem">Anthropic</span>
+      <p class="dm-section-dek dm-section-dek--center" style="margin:14px auto 28px;">Works with the software a site already runs.</p>
+      <div class="dm-cluster" id="dmCluster" role="list" aria-label="Integrated platforms">
+        <div class="dm-cluster__bubble dm-cluster__bubble--epic" role="listitem" style="--x:50%;--y:50%;--s:118px;--dm-base:1.08;" title="Epic"><img src="uploads/epic-systems-corporation-seeklogo.png" alt="Epic"></div>
+        <div class="dm-cluster__bubble" role="listitem" style="--x:50%;--y:16%;--s:96px;--dm-base:0.98;" title="Veeva"><img src="uploads/pasted-1782494614917-0.png" alt="Veeva"></div>
+        <div class="dm-cluster__bubble" role="listitem" style="--x:82%;--y:32%;--s:96px;--dm-base:0.96;" title="Medidata"><img src="uploads/pasted-1782492887940-0.png" alt="Medidata"></div>
+        <div class="dm-cluster__bubble" role="listitem" style="--x:82%;--y:68%;--s:92px;--dm-base:0.94;" title="Cerner"><img src="uploads/330px-2011.Cerner.logo.png" alt="Cerner"></div>
+        <div class="dm-cluster__bubble dm-cluster__bubble--redcap" role="listitem" style="--x:50%;--y:84%;--s:92px;--dm-base:0.94;" title="REDCap"><img src="uploads/pasted-1782493762954-0.png" alt="REDCap"></div>
+        <div class="dm-cluster__bubble dm-cluster__bubble--openai" role="listitem" style="--x:18%;--y:68%;--s:88px;--dm-base:0.9;" title="OpenAI"><img src="uploads/openai-logo.png?v=3" alt="OpenAI"></div>
+        <div class="dm-cluster__bubble dm-cluster__bubble--anthropic" role="listitem" style="--x:18%;--y:32%;--s:88px;--dm-base:0.9;" title="Anthropic"><img src="uploads/claude-logo.png" alt="Anthropic"></div>
       </div>
     </div>
     <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><a href="#capability" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></a></div>
@@ -1398,6 +1413,75 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
   initCarousel('spineCarousel', 'spineIndex');
   initCarousel('agentsCarousel', 'agentsIndex');
   initCarousel('capabilityCarousel', 'capabilityIndex');
+})();
+</script>
+
+<script>
+(function () {
+  var cluster = document.getElementById('dmCluster');
+  if (!cluster) return;
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (reduced || !canHover) return;
+
+  var bubbles = Array.prototype.slice.call(cluster.querySelectorAll('.dm-cluster__bubble'));
+  var maxBoost = 0.34;
+  var raf = 0;
+  var mx = 0, my = 0, inside = false;
+
+  function easeOut(t) {
+    return 1 - Math.pow(1 - t, 2.4);
+  }
+
+  function pct(el, prop) {
+    return parseFloat(getComputedStyle(el).getPropertyValue(prop)) / 100;
+  }
+
+  function apply() {
+    raf = 0;
+    if (!inside) {
+      bubbles.forEach(function (b) {
+        b.style.setProperty('--dm-scale', '1');
+        b.classList.remove('is-near');
+      });
+      return;
+    }
+    var cr = cluster.getBoundingClientRect();
+    var maxDist = Math.max(120, Math.min(cr.width, cr.height) * 0.38);
+    bubbles.forEach(function (b) {
+      var cx = cr.left + cr.width * pct(b, '--x');
+      var cy = cr.top + cr.height * pct(b, '--y');
+      var dx = mx - cx;
+      var dy = my - cy;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      var t = Math.max(0, 1 - dist / maxDist);
+      var boost = maxBoost * easeOut(t);
+      b.style.setProperty('--dm-scale', String(1 + boost));
+      if (boost > 0.08) b.classList.add('is-near');
+      else b.classList.remove('is-near');
+    });
+  }
+
+  function schedule() {
+    if (!raf) raf = requestAnimationFrame(apply);
+  }
+
+  cluster.addEventListener('pointermove', function (e) {
+    mx = e.clientX;
+    my = e.clientY;
+    inside = true;
+    schedule();
+  });
+  cluster.addEventListener('pointerenter', function (e) {
+    mx = e.clientX;
+    my = e.clientY;
+    inside = true;
+    schedule();
+  });
+  cluster.addEventListener('pointerleave', function () {
+    inside = false;
+    schedule();
+  });
 })();
 </script>
 </body>
