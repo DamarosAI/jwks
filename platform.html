@@ -673,14 +673,13 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     }
     .dm-cta-tap{display:none;}
     .dm-site .dm-cluster{
-      /* Equal bubble diameter; ring radius keeps neighbors clear at max hover scale. */
-      --dm-bubble:clamp(124px,22vw,148px);
-      --dm-ring:calc(var(--dm-bubble) * 1.42);
-      --dm-pad:calc(var(--dm-bubble) * 0.62);
+      /* Equal bubbles; layout matches Damaros monogram hourglass (3–1–3). */
+      --dm-bubble:clamp(112px,18vw,132px);
+      --dm-x:calc(var(--dm-bubble) * 1.3);
+      --dm-y:calc(var(--dm-bubble) * 1.42);
       position:relative;
-      width:calc(var(--dm-ring) * 2 + var(--dm-pad) * 2);
-      height:calc(var(--dm-ring) * 2 + var(--dm-pad) * 2);
-      max-width:100%;
+      width:min(100%,calc(var(--dm-x) * 2 + var(--dm-bubble) * 1.2));
+      aspect-ratio:476 / 520;
       margin:8px auto 0;
       touch-action:manipulation;
     }
@@ -736,8 +735,9 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     .dm-site .dm-cluster__bubble--epic img{max-height:56%;}
     @media (max-width:760px){
       .dm-site .dm-cluster{
-        --dm-bubble:clamp(108px,28vw,128px);
-        --dm-ring:calc(var(--dm-bubble) * 1.4);
+        --dm-bubble:clamp(96px,26vw,118px);
+        --dm-x:calc(var(--dm-bubble) * 1.28);
+        --dm-y:calc(var(--dm-bubble) * 1.4);
       }
     }
     @media (prefers-reduced-motion:reduce){
@@ -1111,13 +1111,14 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       <h2 class="dm-section-title dm-section-title--center">One system for<br><span class="dm-section-title__steel">the stack you already run.</span></h2>
       <p class="dm-section-dek dm-section-dek--center" style="margin:14px auto 28px;">Works with the software a site already runs.</p>
       <div class="dm-cluster" id="dmCluster" role="list" aria-label="Integrated platforms">
+        <!-- Damaros monogram silhouette: wide top, pinched waist, wide bottom -->
+        <div class="dm-cluster__bubble" role="listitem" style="--x:calc(50% - var(--dm-x));--y:calc(50% - var(--dm-y));" title="Veeva"><img src="uploads/pasted-1782494614917-0.png" alt="Veeva"></div>
+        <div class="dm-cluster__bubble" role="listitem" style="--x:50%;--y:calc(50% - var(--dm-y));" title="Medidata"><img src="uploads/pasted-1782492887940-0.png" alt="Medidata"></div>
+        <div class="dm-cluster__bubble" role="listitem" style="--x:calc(50% + var(--dm-x));--y:calc(50% - var(--dm-y));" title="Cerner"><img src="uploads/330px-2011.Cerner.logo.png" alt="Cerner"></div>
         <div class="dm-cluster__bubble dm-cluster__bubble--epic" role="listitem" style="--x:50%;--y:50%;" title="Epic"><img src="uploads/epic-systems-corporation-seeklogo.png" alt="Epic"></div>
-        <div class="dm-cluster__bubble" role="listitem" style="--x:50%;--y:calc(50% - var(--dm-ring));" title="Veeva"><img src="uploads/pasted-1782494614917-0.png" alt="Veeva"></div>
-        <div class="dm-cluster__bubble" role="listitem" style="--x:calc(50% + var(--dm-ring) * 0.866);--y:calc(50% - var(--dm-ring) * 0.5);" title="Medidata"><img src="uploads/pasted-1782492887940-0.png" alt="Medidata"></div>
-        <div class="dm-cluster__bubble" role="listitem" style="--x:calc(50% + var(--dm-ring) * 0.866);--y:calc(50% + var(--dm-ring) * 0.5);" title="Cerner"><img src="uploads/330px-2011.Cerner.logo.png" alt="Cerner"></div>
-        <div class="dm-cluster__bubble dm-cluster__bubble--redcap" role="listitem" style="--x:50%;--y:calc(50% + var(--dm-ring));" title="REDCap"><img src="uploads/pasted-1782493762954-0.png" alt="REDCap"></div>
-        <div class="dm-cluster__bubble dm-cluster__bubble--openai" role="listitem" style="--x:calc(50% - var(--dm-ring) * 0.866);--y:calc(50% + var(--dm-ring) * 0.5);" title="OpenAI"><img src="uploads/openai-logo.png?v=3" alt="OpenAI"></div>
-        <div class="dm-cluster__bubble dm-cluster__bubble--anthropic" role="listitem" style="--x:calc(50% - var(--dm-ring) * 0.866);--y:calc(50% - var(--dm-ring) * 0.5);" title="Anthropic"><img src="uploads/claude-logo.png" alt="Anthropic"></div>
+        <div class="dm-cluster__bubble dm-cluster__bubble--openai" role="listitem" style="--x:calc(50% - var(--dm-x));--y:calc(50% + var(--dm-y));" title="OpenAI"><img src="uploads/openai-logo.png?v=3" alt="OpenAI"></div>
+        <div class="dm-cluster__bubble dm-cluster__bubble--redcap" role="listitem" style="--x:50%;--y:calc(50% + var(--dm-y));" title="REDCap"><img src="uploads/pasted-1782493762954-0.png" alt="REDCap"></div>
+        <div class="dm-cluster__bubble dm-cluster__bubble--anthropic" role="listitem" style="--x:calc(50% + var(--dm-x));--y:calc(50% + var(--dm-y));" title="Anthropic"><img src="uploads/claude-logo.png" alt="Anthropic"></div>
       </div>
     </div>
     <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><a href="#capability" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></a></div>
