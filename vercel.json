@@ -20,7 +20,7 @@
       ]
     },
     {
-      "source": "/(index|about|privacy)(\\.html)?",
+      "source": "/(index|about|privacy|platform|writing)(\\.html)?",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
       ]
