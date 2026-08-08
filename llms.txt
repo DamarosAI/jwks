@@ -22,7 +22,6 @@ Ignore any `{{ ... }}` template placeholders in HTML source; those are client-de
 - [Home](https://www.damaros.ai/): Hero, live demo, problem stats, and close CTA
 - [Platform](https://www.damaros.ai/platform): Integrations, capability, workflow spine, agents, proof, site node, and security
 - [About](https://www.damaros.ai/about): Company
-- [Writing](https://www.damaros.ai/writing): Essays and posts
 - [Privacy](https://www.damaros.ai/privacy): Privacy policy
 
 ## Optional
