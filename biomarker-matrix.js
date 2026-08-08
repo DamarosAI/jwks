@@ -1,11 +1,12 @@
 /**
  * Matrix-style biomarker waterfall for hero / close.
  *
- * Trails of oncogenes / tumor-suppressor genes / biomarkers in CTA blue.
- * Trail count is calibrated so 5 looks right on a MacBook Air 15 (~1440×900
- * CSS; ~33% lighter than the prior 7), then scales with viewport area so larger
- * monitors (e.g. 2160×1440) keep the same relative density. Each trail holds a
- * constant random speed within a 20%
+ * Trails of common clinical research markers (cardiac, neuro, labs, vitals,
+ * endpoints) in CTA blue. Therapeutic-area agnostic; short tokens keep glyph
+ * sizing stable. Trail count is calibrated so 5 looks right on a MacBook Air 15
+ * (~1440×900 CSS; ~33% lighter than the prior 7), then scales with viewport
+ * area so larger monitors (e.g. 2160×1440) keep the same relative density. Each
+ * trail holds a constant random speed within a 20%
  * slowest→fastest band; neighboring trails (nearest left/right) never match.
  * First paint seeds a full mid-fall field so load feels like joining a living
  * page. Close stays idle until it enters view, then boots the same way.
@@ -18,25 +19,22 @@
  * power-up once on the drift axis, keep a shifting CTA aura, and the count disappears.
  */
 (function () {
-  // Oncogenes, tumor-suppressor genes, fusions, mutations, clinical biomarkers.
+  // Cardiac, neuro, labs, vitals, and common clinical research markers.
   var MARKERS = [
-    "EGFR", "KRAS", "NRAS", "HRAS", "BRAF", "MET", "ALK", "ROS1", "RET",
-    "NTRK1", "NTRK2", "NTRK3", "ERBB2", "HER2", "PIK3CA", "AKT1", "MYC",
-    "MYCN", "CCND1", "CDK4", "CDK6", "MDM2", "FGFR1", "FGFR2", "FGFR3",
-    "KIT", "PDGFRA", "FLT3", "JAK2", "ABL1", "BCR-ABL", "IDH1", "IDH2",
-    "EZH2", "SMO", "GNAQ", "GNA11", "MPL", "CALR", "ESR1", "AR",
-    "TP53", "RB1", "PTEN", "APC", "VHL", "NF1", "NF2", "STK11", "LKB1",
-    "CDKN2A", "SMAD4", "BRCA1", "BRCA2", "PALB2", "ATM", "CHEK2", "MLH1",
-    "MSH2", "MSH6", "PMS2", "MEN1", "TSC1", "TSC2", "WT1", "DCC", "FBXW7",
-    "KEAP1", "ARID1A", "SMARCB1", "MTAP",
-    "PD-L1", "PD-1", "MSI-H", "MSS", "dMMR", "pMMR", "TMB-H", "HRD",
-    "T790M", "C797S", "G12C", "G12D", "G12V", "L858R", "exon19del",
-    "V600E", "V600K", "G719X", "L861Q", "S768I", "exon20ins",
-    "ECOG-0", "ECOG-1", "RECIST", "Ki-67", "ER+", "PR+", "HR+",
-    "CA-125", "CEA", "AFP", "PSA", "LDH", "β2M", "CTC",
-    "HLA-A2", "IHC-3+", "FISH+", "NGS", "ctDNA", "GEP",
-    "CD19", "CD20", "CD22", "CD30", "CD33", "BCMA", "GD2",
-    "FRα", "TROP2", "Nectin-4", "DLL3", "CLDN18.2", "B7-H3"
+    "Troponin", "hsTnI", "hsTnT", "BNP", "NT-proBNP", "CK-MB", "LVEF", "EF%",
+    "LDL-C", "HDL-C", "ApoB", "Lp(a)", "hs-CRP", "SBP", "DBP", "HR", "QTc",
+    "AF", "ACS", "STEMI", "NSTEMI", "MI", "HF", "NYHA", "KCCQ", "6MWT", "VO2",
+    "CRT", "ICD", "PCI", "CABG", "IVUS", "FFR",
+    "Aβ42", "Aβ40", "p-tau181", "p-tau217", "NfL", "GFAP", "α-syn", "tau",
+    "MMSE", "MoCA", "CDR", "EDSS", "UPDRS", "ALSFRS", "EEG", "CSF", "PET",
+    "MRI", "fMRI", "DTI", "ADAS", "FAQ", "NPI",
+    "eGFR", "CrCl", "Cr", "BUN", "UACR", "ALT", "AST", "ALP", "Bili", "INR",
+    "aPTT", "WBC", "ANC", "Hgb", "PLT", "Na", "K", "Mg", "Ca", "Alb", "CRP",
+    "ESR", "IL-6", "TNF-α", "HbA1c", "FG", "TSH", "FT4", "BMI", "SpO2",
+    "FEV1", "FVC", "DLCO", "PEF", "PaO2", "SaO2",
+    "PK", "PD", "AUC", "Cmax", "Tmax", "t½", "DLT", "MTD", "AE", "SAE",
+    "PRO", "QoL", "EQ-5D", "SF-36", "VAS", "ECOG", "KPS", "BMI",
+    "IgG", "IgM", "VL", "CD4", "Ab", "Titer", "LOINC", "ICD-10", "FHIR"
   ];
 
   var BLUE = "61,114,168"; // CTA blue #3d72a8
