@@ -110,14 +110,21 @@ Two consequences drove this ADR:
   (1) **~5×** NCI vs community enrollment (21.6% vs 4.1%), Unger et al. JCO 2024;
   (2) **>50%** treated in community settings with 85%/78% physician/admin access difficulty,
   McKesson Dec 2025 (replaces the older ~80% COA line);
-  (3) **70%** of US counties with zero active cancer trials, Kirkwood et al. JCO Oncol Pract 2024;
-  (4) **15.5%** CRC turnover FY2024 and $50–60K replace cost, ACRP 2025.
+  (3) **70%** of US counties with zero active cancer trials, Kirkwood et al. JCO Oncol Pract
+  2025 (vol 21:427–437; online Oct 2024). Lead also carries authors' own framing: counties with
+  oncologists but limited research infrastructure are where expansion could land; regulatory
+  burden and resource requirements block it;
+  (4) **$4,862** per error found (Abbasi et al. Commun Med 2025), with $18/field, 61,073
+  person-hours on sample, and $18M / 180,000 hours if every patient were covered. Replaces the
+  older 61,073-hours / $6.1M framing that buried the cost-per-error figure.
   Cut from ship: disparity abstracts, Ni enrollment-throughput deltas, sponsor day-cost ROI,
-  and any secondary-cited number without a primary document.
-- **Capability support:** Franc et al. JMIR 2024 (49.3% LLM self-repeatability) lands inside the
-  determinism card; Tufts CSDD 2024 (3.3 amendments/protocol, 45% avoidable) sits as a single
-  supporting line under it. The **"Built to prove"** chip row was removed; redundant with the
-  cards and the determinism line above it.
+  and any secondary-cited number without a primary document. **49.3% does not exist** — never
+  cite it; it was a misread of Franc's prompt-floor accuracy (46.7%).
+- **Capability support:** Franc et al. JMIR Sep 2024 (gage R&R of ChatGPT on START triage:
+  63.9% accuracy; repeatability 14% of total variation; accuracy 46.7–71.8% by prompt; authors
+  concluded insufficient) lands inside the determinism card; Tufts CSDD ($535K median Phase III
+  amendment; 57% of trials face ≥1) sits as the paired supporting card. The **"Built to prove"**
+  chip row was removed; redundant with the cards and the determinism line above it.
 - **Security support:** Chen, Oermann et al. Nature Medicine 2026 (only a third of LLM-vs-human
   clinical comparisons favor the model) sits under the PHI invariant, not as a fifth compliance chip.
 - **`#capability` (new section):** *"Patients aren't scarce. Proof is."* Cards titled **"What we
