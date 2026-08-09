@@ -2,13 +2,14 @@
  * Fit the hero headline to exactly two lines on every viewport.
  * Relies on a forced <br> + nowrap; binary-searches the largest font-size
  * where neither line overflows the available width.
+ *
+ * No font-size transitions — the headline must stay optically still.
  */
 (function () {
   // Hero + Close share the same drum card composition; fit both to one curve.
   var SEL = 'section[data-screen-label="Hero"] h1.dm-hero-title, section[data-screen-label="Close"] h2.dm-hero-title';
   var MIN = 15;
   var raf = 0;
-  var armed = false; // Suppress the transition on the very first fit.
 
   // Continuous width -> max font ceiling. Piecewise-linear through control
   // points so the headline scales smoothly across every viewport instead of
@@ -39,23 +40,17 @@
     return CURVE[CURVE.length - 1][1];
   }
 
-  var reduced = false;
-  try {
-    reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  } catch (e) {}
-
-  function injectTransitionStyle() {
+  function injectStaticStyle() {
     if (document.getElementById("dm-hero-fit-style")) return;
     var st = document.createElement("style");
     st.id = "dm-hero-fit-style";
-    // Eased font-size so live resize glides instead of stepping.
+    // Hard-stop any pulse / eased resize on the headline itself.
     st.textContent =
       'section[data-screen-label="Hero"] h1.dm-hero-title,' +
       'section[data-screen-label="Close"] h2.dm-hero-title{' +
-      "transition:font-size 260ms cubic-bezier(0.22,1,0.36,1);will-change:font-size;}" +
-      "@media (prefers-reduced-motion:reduce){" +
-      'section[data-screen-label="Hero"] h1.dm-hero-title,' +
-      'section[data-screen-label="Close"] h2.dm-hero-title{transition:none;}}';
+      "transition:none !important;" +
+      "animation:none !important;" +
+      "will-change:auto !important;}";
     (document.head || document.documentElement).appendChild(st);
   }
 
@@ -68,10 +63,8 @@
 
   function fitOne(h1) {
     if (!h1) return;
-    var prev = h1.style.fontSize;
+    var prevPx = parseFloat(h1.style.fontSize) || 0;
 
-    // Measure with the transition suppressed so scrollWidth reflects the exact
-    // trial size, never a mid-animation value.
     h1.style.transition = "none";
 
     var hi = maxForViewport();
@@ -97,19 +90,14 @@
     // Nudge down a hair so subpixel AA never clips the final glyph on mobile.
     best = Math.max(MIN, best - 0.35);
 
-    var target = best.toFixed(2) + "px";
-
-    if (armed && !reduced && prev && prev !== target) {
-      // Rewind to the previous size, commit it, then let the CSS transition
-      // ease into the freshly-measured target.
-      h1.style.setProperty("font-size", prev, "important");
-      void h1.offsetWidth;
-      h1.style.transition = "";
-      h1.style.setProperty("font-size", target, "important");
-    } else {
-      h1.style.transition = "";
-      h1.style.setProperty("font-size", target, "important");
+    // Ignore sub-pixel thrash from remount/font settling so the text never
+    // visibly "breathes" after the first stable fit.
+    if (prevPx && Math.abs(prevPx - best) < 0.6) {
+      h1.style.setProperty("font-size", prevPx.toFixed(2) + "px", "important");
+      return;
     }
+
+    h1.style.setProperty("font-size", best.toFixed(2) + "px", "important");
   }
 
   function fitAll() {
@@ -124,10 +112,8 @@
   }
 
   function boot() {
-    injectTransitionStyle();
+    injectStaticStyle();
     fitAll();
-    // Arm the eased transition only after the first paint so load doesn't grow.
-    requestAnimationFrame(function () { armed = true; });
     // Fonts / late layout can change metrics after first paint.
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(schedule).catch(function () {});
