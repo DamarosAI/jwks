@@ -391,7 +391,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     .dm-site{--dm-ref:1920px;width:100%;}
     .dm-site section[id]:not(#instrument),[data-screen-label]:not([data-screen-label="Hero"]):not([data-screen-label="Close"]){content-visibility:auto;contain-intrinsic-size:1px 720px;}
 
-    /* Desktop/laptop: keep headline + CTA + demo as one vertically centered stack */
+    /* Desktop/laptop: headline bisects logo; pilot just below; demo at bottom */
     @media (min-width:901px){
       .dm-site section[data-screen-label="Hero"],
       .dm-site section[data-screen-label="Close"]{
@@ -401,37 +401,82 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
         height:calc(100dvh - 62px) !important;
         position:relative !important;
         box-sizing:border-box !important;
-        padding-top:clamp(48px,6vh,96px) !important;
-        padding-bottom:clamp(28px,4vh,48px) !important;
+        padding:0 clamp(20px,5vw,40px) !important;
         overflow:hidden !important;
-        display:flex !important;
-        flex-direction:column !important;
-        justify-content:center !important;
-        align-items:center !important;
+        display:block !important;
+      }
+      .dm-site section[data-screen-label="Hero"] > .dm-hero-mark,
+      .dm-site section[data-screen-label="Close"] > .dm-hero-mark{
+        top:50% !important;
+        left:50% !important;
+        transform:translate(-50%,-50%) !important;
+        z-index:1;
       }
       .dm-site section[data-screen-label="Hero"] > .dm-hero-copy,
       .dm-site section[data-screen-label="Close"] > .dm-hero-copy{
-        width:100%;
-        max-width:980px;
-        height:auto;
-        position:relative;
-        display:flex;
-        flex-direction:column;
-        align-items:center;
-        justify-content:center;
+        position:absolute !important;
+        inset:0 !important;
+        width:100% !important;
+        max-width:none !important;
+        height:auto !important;
+        margin:0 !important;
+        padding:0 clamp(20px,5vw,40px) !important;
+        box-sizing:border-box !important;
+        display:block !important;
+        text-align:center;
+        pointer-events:none;
+        z-index:2;
       }
+      /* Core = title only in flow; centered on the logo mark */
       .dm-site section[data-screen-label="Hero"] .dm-hero-core,
       .dm-site section[data-screen-label="Close"] .dm-hero-core{
-        position:relative;
-        z-index:1;
+        position:absolute !important;
+        top:50% !important;
+        left:50% !important;
+        transform:translate(-50%,-50%) !important;
+        width:min(980px,100%) !important;
+        max-width:980px !important;
+        margin:0 !important;
+        z-index:2;
+        pointer-events:auto;
       }
+      .dm-site section[data-screen-label="Hero"] h1.dm-hero-title,
+      .dm-site section[data-screen-label="Close"] h2.dm-hero-title{
+        margin:0 !important;
+        width:100% !important;
+      }
+      /* Start a pilot — just below the bisected headline */
+      .dm-site section[data-screen-label="Hero"] .dm-hero-cta,
+      .dm-site section[data-screen-label="Close"] .dm-hero-cta{
+        position:absolute !important;
+        top:100% !important;
+        left:50% !important;
+        transform:translateX(-50%) !important;
+        margin:28px 0 0 !important;
+        width:max-content !important;
+        display:flex !important;
+        justify-content:center !important;
+        pointer-events:auto;
+        z-index:3;
+      }
+      /* Click to see demo — bottom of the hero viewport */
       .dm-site section[data-screen-label="Hero"] .dm-hero-demo{
-        position:relative !important;
-        left:auto !important;
-        bottom:auto !important;
-        margin:42px auto 0 !important;
+        position:absolute !important;
+        left:0 !important;
+        right:0 !important;
+        top:auto !important;
+        bottom:clamp(18px,3.2vh,40px) !important;
+        margin:0 auto !important;
+        width:max-content !important;
         transform:none !important;
-        z-index:1;
+        z-index:3;
+        pointer-events:auto;
+      }
+      .dm-site.dm-chev-ready section[data-screen-label="Hero"] .dm-hero-demo:not(.dm-chev-active){
+        transform:translateY(6px) !important;
+      }
+      .dm-site.dm-chev-ready section[data-screen-label="Hero"] .dm-hero-demo.dm-chev-active:not(.dm-hero-demo-gone){
+        transform:none !important;
       }
     }
 
@@ -439,8 +484,6 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     @media (max-width:1919px){
       .dm-site section[data-screen-label="Hero"]{
         min-height:max(520px,calc(100svh - 62px)) !important;
-        padding-top:clamp(52px,calc(5vw + 24px),96px) !important;
-        padding-bottom:clamp(28px,4vh,48px) !important;
       }
       .dm-site section[data-screen-label="Hero"] h1.dm-hero-title,
       .dm-site section[data-screen-label="Close"] h2.dm-hero-title{
