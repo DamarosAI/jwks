@@ -44,7 +44,7 @@
 
 
 <script src="./biomarker-matrix.js?v=55" defer></script>
-<script src="./hero-fit.js?v=5" defer></script>
+<script src="./hero-fit.js?v=6" defer></script>
 <script src="./section-title-fit.js?v=5" defer></script>
 <script src="./demo-dek-fit.js?v=1" defer></script>
 <script>
@@ -232,7 +232,10 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     .dm-site section > .dm-scroll-target,.dm-site section > .dm-scroll-chev{position:relative;z-index:1;}
     section[data-screen-label="Hero"] > .dm-hero-mark,
     section[data-screen-label="Close"] > .dm-hero-mark{z-index:1;}
-    .dm-hero-title{display:block;max-width:100%;box-sizing:border-box;white-space:nowrap;}
+    .dm-hero-title{
+      display:block;max-width:100%;box-sizing:border-box;white-space:nowrap;
+      transition:none !important;animation:none !important;will-change:auto !important;
+    }
     /* Section H2: one line when short; even two-line split only when needed. Fit by section-title-fit.js */
     .dm-section-title{
       display:block;
