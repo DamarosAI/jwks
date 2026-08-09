@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="stylesheet" href="./float-nav.css?v=2">
+
 <title>Damaros™</title>
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#ffffff">
@@ -23,6 +25,8 @@
 {"@context":"https://schema.org","@type":"Organization","name":"Damaros","url":"https://www.damaros.ai/","logo":"https://www.damaros.ai/favicon-192x192.png"}
 </script>
 <script src="./mail-cta.js?v=15" defer></script>
+<script src="./float-nav.js?v=2" defer></script>
+
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="_ds/field-damaros-design-system-4f31ac24-d8ba-43d3-a92f-3828bab7dce7/tokens/colors.css">
   <link rel="stylesheet" href="_ds/field-damaros-design-system-4f31ac24-d8ba-43d3-a92f-3828bab7dce7/tokens/typography.css">
@@ -96,83 +100,7 @@
       .dm-site header nav a:not([href^="mailto"]){display:inline-flex !important;}
     }
     @media (prefers-reduced-motion:reduce){[data-anim],.dm-hero-mark,[style*="animation:dmDrift"]{animation:none !important;}}
-  
-    /* ---- floating centered nav ---- */
-    .dm-float-nav{
-      position:fixed;
-      top:max(12px,env(safe-area-inset-top,0px));
-      left:50%;
-      transform:translateX(-50%);
-      z-index:50;
-      width:min(740px,calc(100% - 20px));
-      pointer-events:none;
-    }
-    .dm-float-nav__inner{
-      position:relative;
-      pointer-events:auto;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      min-height:52px;
-      padding:6px 8px 6px 16px;
-      border-radius:999px;
-      background:rgba(255,255,255,0.78);
-      backdrop-filter:blur(14px) saturate(1.2);
-      -webkit-backdrop-filter:blur(14px) saturate(1.2);
-      border:1px solid rgba(31,45,61,0.10);
-      box-shadow:0 10px 32px rgba(20,40,70,0.08), inset 0 1px 0 rgba(255,255,255,0.65);
-    }
-    .dm-float-nav__brand{
-      position:relative;z-index:1;
-      display:inline-flex;align-items:center;flex-shrink:0;
-      text-decoration:none;
-      font-family:var(--font-display);font-weight:700;font-size:16px;letter-spacing:-0.022em;line-height:1;color:var(--ink-cold);
-    }
-    .dm-float-nav__brand sup{font-size:0.46em;font-weight:500;letter-spacing:0;color:var(--ink-dim);margin-left:1.5px;}
-    .dm-float-nav__tabs{
-      position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-      display:inline-flex;align-items:center;justify-content:center;gap:2px;
-      padding:3px;border-radius:999px;
-      background:rgba(31,45,61,0.045);
-    }
-    .dm-float-nav__tabs a{
-      display:inline-flex;align-items:center;justify-content:center;
-      padding:7px 14px;min-height:32px;border-radius:999px;
-      font-family:var(--font-display);font-size:13px;font-weight:500;
-      color:var(--ink-quiet);text-decoration:none;white-space:nowrap;
-      transition:color 160ms ease, background 160ms ease, box-shadow 160ms ease;
-    }
-    .dm-float-nav__tabs a:hover{color:var(--ink-cold);}
-    .dm-float-nav__tabs a.is-active{
-      font-weight:600;color:var(--ink-cold);background:#fff;
-      box-shadow:0 1px 2px rgba(20,40,70,0.06);
-    }
-    .dm-float-nav__cta-wrap{position:relative;z-index:1;flex-shrink:0;margin-left:auto;}
-    .dm-float-nav__cta{
-      display:inline-flex;align-items:center;justify-content:center;
-      height:36px;padding:0 14px;border-radius:999px;
-      font-family:var(--font-display);font-size:11.5px;font-weight:500;letter-spacing:0.03em;text-transform:uppercase;
-      color:#fff;text-decoration:none;white-space:nowrap;
-      background:linear-gradient(180deg,#3d72a8,#2f6193);
-      border:1px solid color-mix(in srgb,#2f6193 50%,rgba(255,255,255,0.22));
-      box-shadow:inset 0 1px 0 rgba(255,255,255,0.2), 0 8px 20px rgba(20,46,82,0.16);
-    }
-    .dm-float-nav-spacer{height:calc(68px + env(safe-area-inset-top,0px));flex-shrink:0;}
-    @media (max-width:620px){
-      .dm-float-nav{width:calc(100% - 16px);top:max(8px,env(safe-area-inset-top,0px));}
-      .dm-float-nav__inner{padding:5px 6px 5px 12px;gap:6px;min-height:48px;}
-      .dm-float-nav__brand{font-size:14px;}
-      .dm-float-nav__tabs a{padding:6px 10px;font-size:12px;min-height:30px;}
-      .dm-float-nav__cta{height:32px;padding:0 11px;font-size:10.5px;}
-    }
-    @media (max-width:420px){
-      .dm-float-nav__brand{display:none;}
-      .dm-float-nav__tabs a{padding:6px 9px;font-size:11.5px;}
-      .dm-float-nav__cta{padding:0 10px;}
-    }
-
-  </style>
+</style>
 <script>
 window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
 </script>
@@ -184,15 +112,21 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
 
   <!-- ============ NAV ============ -->
   <header class="dm-float-nav" role="banner">
+    <div class="dm-float-nav__backdrop" aria-hidden="true"></div>
     <div class="dm-float-nav__inner">
       <a class="dm-float-nav__brand" href="index.html">Damaros<sup>™</sup></a>
-      <nav class="dm-float-nav__tabs" aria-label="Primary">
+      <nav class="dm-float-nav__tabs" id="dm-float-nav-tabs" aria-label="Primary">
         <a href="index.html">Home</a>
         <a href="platform.html">Platform</a>
         <a href="about.html">About</a>
       </nav>
-      <div class="dm-float-nav__cta-wrap">
-        <a class="dm-float-nav__cta" href="mailto:team@damaros.ai?subject=Damaros%20Pilot%20Inquiry" data-pilot-form>Start a pilot</a>
+      <div class="dm-float-nav__actions">
+        <button type="button" class="dm-float-nav__menu" aria-label="Open menu" aria-expanded="false" aria-controls="dm-float-nav-tabs">
+          <span class="dm-float-nav__menu-bars" aria-hidden="true"></span>
+        </button>
+        <div class="dm-float-nav__cta-wrap">
+          <a class="dm-float-nav__cta" href="mailto:team@damaros.ai?subject=Damaros%20Pilot%20Inquiry" data-pilot-form><span class="dm-float-nav__cta-full">Start a pilot</span><span class="dm-float-nav__cta-short">Pilot</span></a>
+        </div>
       </div>
     </div>
   </header>

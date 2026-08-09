@@ -1,8 +1,8 @@
 {
   "scripts": {
     "build": "echo ok",
-    "test": "node --test api/lib/pilot-inquiry.test.js",
-    "smoke": "node --test api/lib/pilot-inquiry.test.js"
+    "test": "node --test api/lib/pilot-inquiry.test.js float-nav.test.js",
+    "smoke": "node --test api/lib/pilot-inquiry.test.js float-nav.test.js"
   },
   "engines": {
     "node": ">=20"

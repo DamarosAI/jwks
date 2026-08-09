@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="stylesheet" href="./float-nav.css?v=1">
+
 <title>Damaros™</title>
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#fafcfd">
@@ -38,9 +40,11 @@
 </script>
 <script src="./support.js" defer></script>
 <script src="./mail-cta.js?v=15" defer></script>
+<script src="./float-nav.js?v=2" defer></script>
+
 
 <script src="./biomarker-matrix.js?v=55" defer></script>
-<script src="./hero-fit.js?v=4" defer></script>
+<script src="./hero-fit.js?v=5" defer></script>
 <script src="./section-title-fit.js?v=5" defer></script>
 <script src="./demo-dek-fit.js?v=1" defer></script>
 <script>
@@ -59,83 +63,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     overflow:hidden;clip:rect(0,0,0,0);
     white-space:nowrap;border:0;
   }
-
-    /* ---- floating centered nav ---- */
-    .dm-float-nav{
-      position:fixed;
-      top:max(12px,env(safe-area-inset-top,0px));
-      left:50%;
-      transform:translateX(-50%);
-      z-index:50;
-      width:min(740px,calc(100% - 20px));
-      pointer-events:none;
-    }
-    .dm-float-nav__inner{
-      position:relative;
-      pointer-events:auto;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      min-height:52px;
-      padding:6px 8px 6px 16px;
-      border-radius:999px;
-      background:rgba(255,255,255,0.78);
-      backdrop-filter:blur(14px) saturate(1.2);
-      -webkit-backdrop-filter:blur(14px) saturate(1.2);
-      border:1px solid rgba(31,45,61,0.10);
-      box-shadow:0 10px 32px rgba(20,40,70,0.08), inset 0 1px 0 rgba(255,255,255,0.65);
-    }
-    .dm-float-nav__brand{
-      position:relative;z-index:1;
-      display:inline-flex;align-items:center;flex-shrink:0;
-      text-decoration:none;
-      font-family:var(--font-display);font-weight:700;font-size:16px;letter-spacing:-0.022em;line-height:1;color:var(--ink-cold);
-    }
-    .dm-float-nav__brand sup{font-size:0.46em;font-weight:500;letter-spacing:0;color:var(--ink-dim);margin-left:1.5px;}
-    .dm-float-nav__tabs{
-      position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-      display:inline-flex;align-items:center;justify-content:center;gap:2px;
-      padding:3px;border-radius:999px;
-      background:rgba(31,45,61,0.045);
-    }
-    .dm-float-nav__tabs a{
-      display:inline-flex;align-items:center;justify-content:center;
-      padding:7px 14px;min-height:32px;border-radius:999px;
-      font-family:var(--font-display);font-size:13px;font-weight:500;
-      color:var(--ink-quiet);text-decoration:none;white-space:nowrap;
-      transition:color 160ms ease, background 160ms ease, box-shadow 160ms ease;
-    }
-    .dm-float-nav__tabs a:hover{color:var(--ink-cold);}
-    .dm-float-nav__tabs a.is-active{
-      font-weight:600;color:var(--ink-cold);background:#fff;
-      box-shadow:0 1px 2px rgba(20,40,70,0.06);
-    }
-    .dm-float-nav__cta-wrap{position:relative;z-index:1;flex-shrink:0;margin-left:auto;}
-    .dm-float-nav__cta{
-      display:inline-flex;align-items:center;justify-content:center;
-      height:36px;padding:0 14px;border-radius:999px;
-      font-family:var(--font-display);font-size:11.5px;font-weight:500;letter-spacing:0.03em;text-transform:uppercase;
-      color:#fff;text-decoration:none;white-space:nowrap;
-      background:linear-gradient(180deg,#3d72a8,#2f6193);
-      border:1px solid color-mix(in srgb,#2f6193 50%,rgba(255,255,255,0.22));
-      box-shadow:inset 0 1px 0 rgba(255,255,255,0.2), 0 8px 20px rgba(20,46,82,0.16);
-    }
-    .dm-float-nav-spacer{height:calc(68px + env(safe-area-inset-top,0px));flex-shrink:0;}
-    @media (max-width:620px){
-      .dm-float-nav{width:calc(100% - 16px);top:max(8px,env(safe-area-inset-top,0px));}
-      .dm-float-nav__inner{padding:5px 6px 5px 12px;gap:6px;min-height:48px;}
-      .dm-float-nav__brand{font-size:14px;}
-      .dm-float-nav__tabs a{padding:6px 10px;font-size:12px;min-height:30px;}
-      .dm-float-nav__cta{height:32px;padding:0 11px;font-size:10.5px;}
-    }
-    @media (max-width:420px){
-      .dm-float-nav__brand{display:none;}
-      .dm-float-nav__tabs a{padding:6px 9px;font-size:11.5px;}
-      .dm-float-nav__cta{padding:0 10px;}
-    }
-
-  </style>
+</style>
 </head>
 <body>
 <article class="dm-crawl-summary" id="dm-crawl-summary">
@@ -601,8 +529,14 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       .dm-site section[data-screen-label="Close"] > .dm-hero-mark{
         top:50% !important;
         left:50% !important;
-        width:min(88vw,440px) !important;
-        height:min(88vw,440px) !important;
+        width:min(72vw,340px) !important;
+        height:min(72vw,340px) !important;
+        opacity:0.85;
+      }
+      .dm-site section[data-screen-label="Hero"] > .dm-matrix--hero,
+      .dm-site section[data-screen-label="Close"] > .dm-matrix--close{
+        inset:12px !important;
+        border-radius:18px;
       }
       .dm-site section[data-screen-label="Hero"] > .dm-hero-copy,
       .dm-site section[data-screen-label="Close"] > .dm-hero-copy{
@@ -613,11 +547,12 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
         min-height:0;
         height:auto;
         position:relative;
-        padding:0;
+        padding:0 2px;
         display:flex;
         flex-direction:column;
         align-items:center;
         justify-content:center;
+        gap:0;
       }
       .dm-site section[data-screen-label="Hero"] .dm-hero-core,
       .dm-site section[data-screen-label="Close"] .dm-hero-core{
@@ -630,27 +565,35 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
         align-items:center;
         width:100%;
         max-width:min(520px,100%);
-        z-index:1;
+        z-index:2;
       }
       .dm-site section[data-screen-label="Hero"] h1.dm-hero-title,
       .dm-site section[data-screen-label="Close"] h2.dm-hero-title{
-        font-size:clamp(0.95rem,4.2vw,1.35rem) !important;
+        font-size:clamp(1.05rem,5vw,1.45rem) !important;
         max-width:100% !important;
         width:100% !important;
         margin:0 auto !important;
-        line-height:0.97 !important;
+        line-height:1.05 !important;
+        padding:0 4px;
+        box-sizing:border-box;
       }
       .dm-site section[data-screen-label="Hero"] .dm-hero-cta,
       .dm-site section[data-screen-label="Close"] .dm-hero-cta{
-        margin-top:22px !important;
+        margin-top:18px !important;
+      }
+      .dm-site section[data-screen-label="Hero"] .dm-hero-cta a,
+      .dm-site section[data-screen-label="Close"] .dm-hero-cta a{
+        height:44px !important;
+        padding:0 18px !important;
+        font-size:12px !important;
       }
       .dm-site section[data-screen-label="Hero"] .dm-hero-demo{
         position:relative !important;
         left:auto !important;
         bottom:auto !important;
-        margin:28px auto 0 !important;
+        margin:20px auto 0 !important;
         transform:none !important;
-        z-index:1;
+        z-index:2;
       }
 
       /* Phone + tablet: horizontal snap carousels for card rows */
@@ -1058,23 +1001,27 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     @media (max-width:480px){
       .dm-site section[data-screen-label="Hero"],
       .dm-site section[data-screen-label="Close"]{
-        padding-left:max(18px,env(safe-area-inset-left,0px)) !important;
-        padding-right:max(18px,env(safe-area-inset-right,0px)) !important;
+        padding-left:max(20px,env(safe-area-inset-left,0px)) !important;
+        padding-right:max(20px,env(safe-area-inset-right,0px)) !important;
         padding-bottom:max(14px,env(safe-area-inset-bottom,0px)) !important;
       }
       .dm-site section[data-screen-label="Hero"] > .dm-hero-mark,
       .dm-site section[data-screen-label="Close"] > .dm-hero-mark{
-        width:min(90vw,360px) !important;
-        height:min(90vw,360px) !important;
+        width:min(68vw,280px) !important;
+        height:min(68vw,280px) !important;
       }
       .dm-site section[data-screen-label="Hero"] h1.dm-hero-title,
       .dm-site section[data-screen-label="Close"] h2.dm-hero-title{
-        font-size:clamp(0.9rem,4.6vw,1.2rem) !important;
+        font-size:clamp(1rem,5.2vw,1.25rem) !important;
         max-width:100% !important;
+        line-height:1.08 !important;
       }
       .dm-site section[data-screen-label="Hero"] .dm-hero-cta,
       .dm-site section[data-screen-label="Close"] .dm-hero-cta{
-        margin-top:20px !important;
+        margin-top:16px !important;
+      }
+      .dm-site section[data-screen-label="Hero"] .dm-hero-demo{
+        margin-top:16px !important;
       }
       .dm-site #output .dm-input-cards{grid-template-columns:1fr !important;}
       .dm-site #spine .dm-spine-grid > div,
@@ -1094,15 +1041,21 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
 
   <!-- ============ NAV ============ -->
   <header class="dm-float-nav" role="banner">
+    <div class="dm-float-nav__backdrop" aria-hidden="true"></div>
     <div class="dm-float-nav__inner">
       <a class="dm-float-nav__brand" href="#top">Damaros<sup>™</sup></a>
-      <nav class="dm-float-nav__tabs" aria-label="Primary">
+      <nav class="dm-float-nav__tabs" id="dm-float-nav-tabs" aria-label="Primary">
         <a href="index.html" class="is-active" aria-current="page">Home</a>
         <a href="platform.html">Platform</a>
         <a href="about.html">About</a>
       </nav>
-      <div class="dm-float-nav__cta-wrap">
-        <a class="dm-float-nav__cta" href="mailto:team@damaros.ai?subject=Damaros%20Pilot%20Inquiry" data-pilot-form>Start a pilot</a>
+      <div class="dm-float-nav__actions">
+        <button type="button" class="dm-float-nav__menu" aria-label="Open menu" aria-expanded="false" aria-controls="dm-float-nav-tabs">
+          <span class="dm-float-nav__menu-bars" aria-hidden="true"></span>
+        </button>
+        <div class="dm-float-nav__cta-wrap">
+          <a class="dm-float-nav__cta" href="mailto:team@damaros.ai?subject=Damaros%20Pilot%20Inquiry" data-pilot-form><span class="dm-float-nav__cta-full">Start a pilot</span><span class="dm-float-nav__cta-short">Pilot</span></a>
+        </div>
       </div>
     </div>
   </header>

@@ -1,0 +1,187 @@
+/* Shared floating site nav — desktop pill + mobile brand/menu/CTA */
+
+.dm-float-nav{
+  position:fixed;
+  top:max(12px,env(safe-area-inset-top,0px));
+  left:50%;
+  transform:translateX(-50%);
+  z-index:50;
+  width:min(740px,calc(100% - 20px));
+  pointer-events:none;
+}
+.dm-float-nav__inner{
+  position:relative;
+  pointer-events:auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  min-height:52px;
+  padding:6px 8px 6px 16px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.78);
+  backdrop-filter:blur(14px) saturate(1.2);
+  -webkit-backdrop-filter:blur(14px) saturate(1.2);
+  border:1px solid rgba(31,45,61,0.10);
+  box-shadow:0 10px 32px rgba(20,40,70,0.08), inset 0 1px 0 rgba(255,255,255,0.65);
+  min-width:0;
+  box-sizing:border-box;
+  overflow:hidden;
+}
+.dm-float-nav__brand{
+  position:relative;z-index:1;
+  display:inline-flex;align-items:center;flex-shrink:0;
+  text-decoration:none;
+  font-family:var(--font-display);font-weight:700;font-size:16px;letter-spacing:-0.022em;line-height:1;color:var(--ink-cold);
+}
+.dm-float-nav__brand sup{font-size:0.46em;font-weight:500;letter-spacing:0;color:var(--ink-dim);margin-left:1.5px;}
+.dm-float-nav__tabs{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  display:inline-flex;align-items:center;justify-content:center;gap:2px;
+  padding:3px;border-radius:999px;
+  background:rgba(31,45,61,0.045);
+}
+.dm-float-nav__tabs a{
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:7px 14px;min-height:32px;border-radius:999px;
+  font-family:var(--font-display);font-size:13px;font-weight:500;
+  color:var(--ink-quiet);text-decoration:none;white-space:nowrap;
+  transition:color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+}
+.dm-float-nav__tabs a:hover{color:var(--ink-cold);}
+.dm-float-nav__tabs a.is-active{
+  font-weight:600;color:var(--ink-cold);background:#fff;
+  box-shadow:0 1px 2px rgba(20,40,70,0.06);
+}
+.dm-float-nav__actions{
+  position:relative;z-index:1;
+  display:inline-flex;align-items:center;gap:6px;
+  flex-shrink:0;margin-left:auto;min-width:0;
+}
+.dm-float-nav__cta-wrap{position:relative;z-index:1;flex-shrink:0;margin-left:0;}
+.dm-float-nav__cta{
+  display:inline-flex;align-items:center;justify-content:center;
+  height:36px;padding:0 14px;border-radius:999px;
+  font-family:var(--font-display);font-size:11.5px;font-weight:500;letter-spacing:0.03em;text-transform:uppercase;
+  color:#fff;text-decoration:none;white-space:nowrap;
+  background:linear-gradient(180deg,#3d72a8,#2f6193);
+  border:1px solid color-mix(in srgb,#2f6193 50%,rgba(255,255,255,0.22));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.2), 0 8px 20px rgba(20,46,82,0.16);
+}
+.dm-float-nav__cta-short{display:none;}
+.dm-float-nav__menu{
+  display:none;
+  align-items:center;justify-content:center;
+  width:36px;height:36px;padding:0;border-radius:999px;
+  border:1px solid rgba(31,45,61,0.12);
+  background:rgba(255,255,255,0.92);
+  color:var(--ink-cold);
+  cursor:pointer;
+  flex-shrink:0;
+  -webkit-tap-highlight-color:transparent;
+}
+.dm-float-nav__menu:focus-visible{
+  outline:2px solid rgba(61,114,168,0.45);
+  outline-offset:2px;
+}
+.dm-float-nav__menu-bars,
+.dm-float-nav__menu-bars::before,
+.dm-float-nav__menu-bars::after{
+  display:block;
+  width:14px;height:1.5px;
+  border-radius:1px;
+  background:currentColor;
+  position:relative;
+  transition:transform 180ms ease, opacity 180ms ease;
+}
+.dm-float-nav__menu-bars::before,
+.dm-float-nav__menu-bars::after{
+  content:"";
+  position:absolute;left:0;
+}
+.dm-float-nav__menu-bars::before{top:-5px;}
+.dm-float-nav__menu-bars::after{top:5px;}
+.dm-float-nav.is-open .dm-float-nav__menu-bars{background:transparent;}
+.dm-float-nav.is-open .dm-float-nav__menu-bars::before{top:0;transform:rotate(45deg);}
+.dm-float-nav.is-open .dm-float-nav__menu-bars::after{top:0;transform:rotate(-45deg);}
+.dm-float-nav__backdrop{
+  display:none;
+  position:fixed;inset:0;
+  background:rgba(16,22,29,0.18);
+  pointer-events:none;
+  opacity:0;
+  transition:opacity 180ms ease;
+  z-index:49;
+}
+.dm-float-nav-spacer{height:calc(68px + env(safe-area-inset-top,0px));flex-shrink:0;}
+
+@media (max-width:720px){
+  .dm-float-nav{
+    width:calc(100% - 16px);
+    top:max(8px,env(safe-area-inset-top,0px));
+    overflow:visible;
+  }
+  .dm-float-nav__inner{
+    padding:5px 6px 5px 14px;
+    gap:8px;
+    min-height:48px;
+    overflow:visible;
+  }
+  .dm-float-nav__brand{
+    display:inline-flex !important;
+    font-size:15px;
+  }
+  .dm-float-nav__menu{display:inline-flex;}
+  .dm-float-nav__cta{height:34px;padding:0 12px;font-size:10.5px;}
+  .dm-float-nav__cta-full{display:none;}
+  .dm-float-nav__cta-short{display:inline;}
+  .dm-float-nav__tabs{
+    position:absolute;
+    left:0;right:0;
+    top:calc(100% + 8px);
+    transform:none;
+    display:none;
+    flex-direction:column;
+    align-items:stretch;
+    justify-content:flex-start;
+    gap:4px;
+    padding:8px;
+    border-radius:18px;
+    background:rgba(255,255,255,0.96);
+    backdrop-filter:blur(14px) saturate(1.2);
+    -webkit-backdrop-filter:blur(14px) saturate(1.2);
+    border:1px solid rgba(31,45,61,0.10);
+    box-shadow:0 14px 36px rgba(20,40,70,0.12);
+    pointer-events:auto;
+  }
+  .dm-float-nav.is-open .dm-float-nav__tabs{display:flex;}
+  .dm-float-nav__tabs a{
+    justify-content:flex-start;
+    padding:12px 14px;
+    min-height:44px;
+    font-size:14px;
+    border-radius:12px;
+  }
+  .dm-float-nav__tabs a.is-active{
+    background:rgba(61,114,168,0.08);
+    box-shadow:none;
+  }
+  .dm-float-nav.is-open .dm-float-nav__backdrop{
+    display:block;
+    pointer-events:auto;
+    opacity:1;
+  }
+  .dm-float-nav-spacer{height:calc(62px + env(safe-area-inset-top,0px));}
+}
+
+@media (max-width:360px){
+  .dm-float-nav__brand{font-size:14px;}
+  .dm-float-nav__cta{padding:0 10px;font-size:10px;}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .dm-float-nav__menu-bars,
+  .dm-float-nav__menu-bars::before,
+  .dm-float-nav__menu-bars::after,
+  .dm-float-nav__backdrop{transition:none;}
+}

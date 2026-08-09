@@ -16,6 +16,7 @@
   // trails clear the lettering.
   var CURVE = [
     [320, 22],
+    [390, 24],
     [400, 25],
     [640, 30],
     [900, 38],
@@ -60,6 +61,8 @@
 
   function fits(h1) {
     // nowrap + <br> → exactly two line boxes; overflow shows up as scrollWidth.
+    // When text fits, block scrollWidth === clientWidth, so only overflow (> )
+    // fails this check — do not subtract a margin here or every size fails.
     return h1.scrollWidth <= h1.clientWidth + 0.5;
   }
 
@@ -90,6 +93,9 @@
         }
       }
     }
+
+    // Nudge down a hair so subpixel AA never clips the final glyph on mobile.
+    best = Math.max(MIN, best - 0.35);
 
     var target = best.toFixed(2) + "px";
 
