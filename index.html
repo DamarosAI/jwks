@@ -415,7 +415,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       opacity:0;
       visibility:hidden;
       pointer-events:none;
-      transform:translate(-50%,6px);
+      transform:translateY(6px);
     }
     .dm-site.dm-chev-ready .dm-scroll-chev.dm-chev-active{
       opacity:1;
@@ -427,7 +427,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       opacity:1;
       visibility:visible;
       pointer-events:auto;
-      transform:translate(-50%,0);
+      transform:none;
     }
     #instrument > .dm-scroll-target{
       width:100%;
@@ -452,15 +452,15 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     @media (prefers-reduced-motion:reduce){
       .dm-scroll-chev{transition:none !important;transform:none !important;}
       .dm-hero-demo{transition:none !important;}
-      .dm-site.dm-chev-ready .dm-hero-demo:not(.dm-chev-active){transform:translate(-50%,0) !important;}
-      .dm-site.dm-chev-ready .dm-hero-demo.dm-chev-active:not(.dm-hero-demo-gone){transform:translate(-50%,0) !important;}
+      .dm-site.dm-chev-ready .dm-hero-demo:not(.dm-chev-active){transform:none !important;}
+      .dm-site.dm-chev-ready .dm-hero-demo.dm-chev-active:not(.dm-hero-demo-gone){transform:none !important;}
     }
     html,body{overflow-x:clip;max-width:100%;}
     img,svg,video{max-width:100%;height:auto;}
     .dm-site{--dm-ref:1920px;width:100%;}
     .dm-site section[id]:not(#instrument),[data-screen-label]:not([data-screen-label="Hero"]):not([data-screen-label="Close"]){content-visibility:auto;contain-intrinsic-size:1px 720px;}
 
-    /* Desktop/laptop: pin "See the live demo" near the bottom of the hero */
+    /* Desktop/laptop: keep headline + CTA + demo as one vertically centered stack */
     @media (min-width:901px){
       .dm-site section[data-screen-label="Hero"],
       .dm-site section[data-screen-label="Close"]{
@@ -473,12 +473,16 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
         padding-top:clamp(48px,6vh,96px) !important;
         padding-bottom:clamp(28px,4vh,48px) !important;
         overflow:hidden !important;
+        display:flex !important;
+        flex-direction:column !important;
+        justify-content:center !important;
+        align-items:center !important;
       }
       .dm-site section[data-screen-label="Hero"] > .dm-hero-copy,
       .dm-site section[data-screen-label="Close"] > .dm-hero-copy{
         width:100%;
         max-width:980px;
-        height:100%;
+        height:auto;
         position:relative;
         display:flex;
         flex-direction:column;
@@ -491,10 +495,11 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
         z-index:1;
       }
       .dm-site section[data-screen-label="Hero"] .dm-hero-demo{
-        position:absolute !important;
-        left:50% !important;
-        bottom:1.5vh !important;
-        margin:0 !important;
+        position:relative !important;
+        left:auto !important;
+        bottom:auto !important;
+        margin:42px auto 0 !important;
+        transform:none !important;
         z-index:1;
       }
     }
@@ -567,7 +572,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       .dm-site #output [style*="grid-template-columns:minmax(0,0.6fr)"]{
         grid-template-columns:1fr !important;
       }
-      /* Full-viewport hero + close - headline/CTA centered on drum; demo at bottom */
+      /* Full-viewport hero + close — headline, CTA, and demo as one centered stack */
       .dm-site section[data-screen-label="Hero"],
       .dm-site section[data-screen-label="Close"]{
         min-height:calc(100svh - 62px) !important;
@@ -604,19 +609,22 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
         width:100%;
         max-width:min(520px,100%) !important;
         margin:0 auto !important;
-        flex:1 1 auto;
+        flex:0 1 auto;
         min-height:0;
-        height:100%;
+        height:auto;
         position:relative;
         padding:0;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
       }
-      /* Lock geometric center of headline+CTA to drum center (50%/50%) */
       .dm-site section[data-screen-label="Hero"] .dm-hero-core,
       .dm-site section[data-screen-label="Close"] .dm-hero-core{
-        position:absolute;
-        top:50%;
-        left:50%;
-        transform:translate(-50%,-50%);
+        position:relative;
+        top:auto;
+        left:auto;
+        transform:none;
         display:flex;
         flex-direction:column;
         align-items:center;
@@ -637,10 +645,11 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
         margin-top:22px !important;
       }
       .dm-site section[data-screen-label="Hero"] .dm-hero-demo{
-        position:absolute !important;
-        left:50% !important;
-        bottom:calc(1.5vh + max(8px,env(safe-area-inset-bottom,0px))) !important;
-        margin:0 !important;
+        position:relative !important;
+        left:auto !important;
+        bottom:auto !important;
+        margin:28px auto 0 !important;
+        transform:none !important;
         z-index:1;
       }
 
@@ -686,24 +695,26 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       }
     }
 
-    /* Short portrait phones: stack hero in-flow so headline / CTA / demo never collide */
+    /* Short portrait phones: keep the same centered stack, tighten gaps */
     @media (max-width:900px) and (max-height:740px) and (orientation:portrait){
       .dm-site section[data-screen-label="Hero"],
       .dm-site section[data-screen-label="Close"]{
-        height:auto !important;
+        height:calc(100svh - 62px) !important;
+        height:calc(100dvh - 62px) !important;
         min-height:calc(100svh - 62px) !important;
         min-height:calc(100dvh - 62px) !important;
-        justify-content:flex-start !important;
-        padding-top:28px !important;
-        padding-bottom:max(20px,env(safe-area-inset-bottom,0px)) !important;
+        justify-content:center !important;
+        padding-top:16px !important;
+        padding-bottom:max(12px,env(safe-area-inset-bottom,0px)) !important;
       }
       .dm-site section[data-screen-label="Hero"] > .dm-hero-copy,
       .dm-site section[data-screen-label="Close"] > .dm-hero-copy{
         height:auto !important;
-        flex:0 0 auto;
+        flex:0 1 auto;
         display:flex;
         flex-direction:column;
         align-items:center;
+        justify-content:center;
         gap:0;
       }
       .dm-site section[data-screen-label="Hero"] .dm-hero-core,
@@ -712,7 +723,11 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
         top:auto;
         left:auto;
         transform:none;
-        margin:clamp(72px,22vw,140px) auto 0;
+        margin:0 auto;
+      }
+      .dm-site section[data-screen-label="Hero"] .dm-hero-cta,
+      .dm-site section[data-screen-label="Close"] .dm-hero-cta{
+        margin-top:18px !important;
       }
       .dm-site section[data-screen-label="Hero"] .dm-hero-demo,
       .dm-site section[data-screen-label="Close"] .dm-hero-demo{
@@ -720,7 +735,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
         left:auto !important;
         bottom:auto !important;
         transform:none !important;
-        margin:clamp(28px,8vw,48px) auto 0 !important;
+        margin:22px auto 0 !important;
       }
     }
 
