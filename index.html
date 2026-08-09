@@ -44,8 +44,8 @@
 
 
 <script src="./biomarker-matrix.js?v=55" defer></script>
-<script src="./hero-fit.js?v=6" defer></script>
-<script src="./section-title-fit.js?v=5" defer></script>
+<script src="./hero-fit.js?v=7" defer></script>
+<script src="./section-title-fit.js?v=6" defer></script>
 <script src="./demo-dek-fit.js?v=1" defer></script>
 <script>
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
@@ -279,7 +279,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     #instrument::after{display:none;}
     .dm-scroll-more{position:relative;z-index:1;}
     .dm-hero-demo.dm-hero-demo-gone{opacity:0 !important;visibility:hidden !important;pointer-events:none !important;transform:none !important;}
-    /* One active section chevron at a time - smooth fade; always viewport-centered */
+    /* Section chevrons hidden until JS marks the active one — avoids flash of all chevs */
     .dm-scroll-chev{
       width:100%;
       max-width:100%;
@@ -290,7 +290,11 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       text-align:center !important;
       margin-left:0 !important;
       margin-right:0 !important;
-      transition:opacity 320ms cubic-bezier(0.16,1,0.3,1),visibility 320ms linear,transform 320ms cubic-bezier(0.16,1,0.3,1);
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+      transform:translateY(6px);
+      transition:opacity 280ms cubic-bezier(0.16,1,0.3,1),visibility 280ms linear,transform 280ms cubic-bezier(0.16,1,0.3,1);
     }
     .dm-scroll-chev > button{
       margin-left:auto !important;
@@ -308,7 +312,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       color:#3d72a8;
       padding:17px 26px 14px;
       border-radius:17px;
-      transition:opacity 320ms cubic-bezier(0.16,1,0.3,1),visibility 320ms linear,transform 320ms cubic-bezier(0.16,1,0.3,1),background-color 220ms ease;
+      transition:opacity 280ms cubic-bezier(0.16,1,0.3,1),visibility 280ms linear,transform 280ms cubic-bezier(0.16,1,0.3,1),background-color 220ms ease;
     }
     .dm-hero-demo:hover{background:rgba(61,114,168,0.06);}
     .dm-hero-demo:focus-visible{outline:2px solid rgba(61,114,168,0.45);outline-offset:2px;}
@@ -389,7 +393,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     html,body{overflow-x:clip;max-width:100%;}
     img,svg,video{max-width:100%;height:auto;}
     .dm-site{--dm-ref:1920px;width:100%;}
-    .dm-site section[id]:not(#instrument),[data-screen-label]:not([data-screen-label="Hero"]):not([data-screen-label="Close"]){content-visibility:auto;contain-intrinsic-size:1px 720px;}
+    .dm-site section[id]:not(#instrument),[data-screen-label]:not([data-screen-label="Hero"]):not([data-screen-label="Close"]){content-visibility:visible;}
 
     /* Desktop/laptop: headline bisects logo; pilot just below; demo at bottom */
     @media (min-width:901px){
@@ -409,7 +413,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       .dm-site section[data-screen-label="Close"] > .dm-hero-mark{
         top:50% !important;
         left:50% !important;
-        transform:translate(-50%,-50%) !important;
+        /* Do not set transform — dmDrift keyframes own centering + rock */
         z-index:1;
       }
       .dm-site section[data-screen-label="Hero"] > .dm-hero-copy,

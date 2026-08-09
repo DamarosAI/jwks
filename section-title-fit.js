@@ -2,13 +2,16 @@
  * Fit section headlines. Prefer one line when the full sentence fits.
  * Two lines only when needed, with a near-even word break. Steel span
  * stays on the emphasis clause (original second segment, or second line).
+ *
+ * Measures on an off-DOM probe so binary search never paints intermediate
+ * sizes. No font-size transitions — settle instantly to avoid jitter.
  */
 (function () {
   var SEL = "h2.dm-section-title";
   var MIN = 18;
   var raf = 0;
-  var armed = false;
-  // Second line may be at most this much shorter/longer than first (ratio).
+  var resizeTimer = 0;
+  var lastW = 0;
   var BALANCE = 0.42;
 
   var CURVE = [
@@ -35,20 +38,14 @@
     return CURVE[CURVE.length - 1][1];
   }
 
-  var reduced = false;
-  try {
-    reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  } catch (e) {}
-
-  function injectTransitionStyle() {
+  function injectStaticStyle() {
     if (document.getElementById("dm-section-title-fit-style")) return;
     var st = document.createElement("style");
     st.id = "dm-section-title-fit-style";
     st.textContent =
       "h2.dm-section-title{" +
-      "transition:font-size 260ms cubic-bezier(0.22,1,0.36,1);}" +
-      "@media (prefers-reduced-motion:reduce){" +
-      "h2.dm-section-title{transition:none;}}";
+      "transition:none !important;" +
+      "animation:none !important;}";
     (document.head || document.documentElement).appendChild(st);
   }
 
@@ -127,43 +124,63 @@
       var ratio = Math.abs(left.length - right.length) / Math.max(left.length, right.length, 1);
       if (ratio > BALANCE) continue;
       var score = Math.abs(left.length - mid) + ratio * 40;
-      // Prefer keeping the original steel clause intact on line 2 when possible.
       if (preferredSteel && right === preferredSteel) score -= 12;
       if (!best || score < best.score) best = { left: left, right: right, score: score, ratio: ratio };
     }
     return best;
   }
 
-  function measureFits(el, width, size) {
-    var prevSize = el.style.fontSize;
-    var prevWidth = el.style.width;
-    var prevMax = el.style.maxWidth;
-    el.style.setProperty("font-size", size + "px", "important");
-    el.style.setProperty("width", width + "px", "important");
-    el.style.setProperty("max-width", width + "px", "important");
-    var ok = el.scrollWidth <= width + 0.5;
-    if (prevSize) el.style.setProperty("font-size", prevSize, "important");
-    else el.style.removeProperty("font-size");
-    if (prevWidth) el.style.width = prevWidth;
-    else el.style.removeProperty("width");
-    if (prevMax) el.style.maxWidth = prevMax;
-    else el.style.removeProperty("max-width");
+  function makeProbe(el, width) {
+    var probe = el.cloneNode(true);
+    probe.removeAttribute("id");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText =
+      "position:absolute !important;" +
+      "left:-10000px !important;" +
+      "top:0 !important;" +
+      "visibility:hidden !important;" +
+      "pointer-events:none !important;" +
+      "display:block !important;" +
+      "margin:0 !important;" +
+      "transform:none !important;" +
+      "transition:none !important;" +
+      "animation:none !important;" +
+      "white-space:nowrap !important;" +
+      "width:" + width + "px !important;" +
+      "max-width:" + width + "px !important;" +
+      "box-sizing:border-box !important;";
+    document.body.appendChild(probe);
+    return probe;
+  }
+
+  function measureFits(el, width, size, probe) {
+    var owned = !probe;
+    if (!probe) probe = makeProbe(el, width);
+    probe.style.setProperty("font-size", size + "px", "important");
+    var ok = probe.scrollWidth <= width + 0.5;
+    if (owned && probe.parentNode) probe.parentNode.removeChild(probe);
     return ok;
   }
 
   function bestSize(el, width, hi) {
-    if (measureFits(el, width, hi)) return hi;
+    var probe = makeProbe(el, width);
+    if (measureFits(el, width, hi, probe)) {
+      if (probe.parentNode) probe.parentNode.removeChild(probe);
+      return hi;
+    }
     var lo = MIN;
     var best = MIN;
-    for (var i = 0; i < 40; i++) {
-      var mid = (lo + hi) / 2;
-      if (measureFits(el, width, mid)) {
+    var top = hi;
+    for (var i = 0; i < 28; i++) {
+      var mid = (lo + top) / 2;
+      if (measureFits(el, width, mid, probe)) {
         best = mid;
         lo = mid;
       } else {
-        hi = mid;
+        top = mid;
       }
     }
+    if (probe.parentNode) probe.parentNode.removeChild(probe);
     return best;
   }
 
@@ -173,8 +190,6 @@
 
   function layoutTitle(el, width, hi) {
     var parts = parseTitle(el);
-    // Phones: one flowing title with balanced wrap — avoids orphan third lines
-    // from a forced <br> plus a long steel clause.
     if (isNarrow()) {
       renderOne(el, parts);
       el.style.removeProperty("font-size");
@@ -194,7 +209,6 @@
       renderTwo(el, br.left, br.right);
       return bestSize(el, width, hi);
     }
-    // Unbalanced fallback: keep original steel on line 2 if present.
     if (parts.steel && parts.ink) {
       renderTwo(el, parts.ink, parts.steel);
       return bestSize(el, width, hi);
@@ -204,17 +218,10 @@
   }
 
   function applySize(el, target) {
-    var prev = el.style.fontSize;
-    el.style.transition = "none";
-    if (armed && !reduced && prev && prev !== target) {
-      el.style.setProperty("font-size", prev, "important");
-      void el.offsetWidth;
-      el.style.transition = "";
-      el.style.setProperty("font-size", target, "important");
-    } else {
-      el.style.transition = "";
-      el.style.setProperty("font-size", target, "important");
-    }
+    var prev = parseFloat(el.style.fontSize) || 0;
+    var next = parseFloat(target) || 0;
+    if (prev && Math.abs(prev - next) < 1.0) return;
+    el.style.setProperty("font-size", target, "important");
   }
 
   function fitAll() {
@@ -250,20 +257,28 @@
     raf = requestAnimationFrame(fitAll);
   }
 
+  function scheduleResize() {
+    var w = window.innerWidth || 0;
+    if (Math.abs(w - lastW) < 2) return;
+    lastW = w;
+    if (resizeTimer) clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(schedule, 90);
+  }
+
   function boot() {
-    injectTransitionStyle();
+    injectStaticStyle();
+    lastW = window.innerWidth || 0;
     fitAll();
-    requestAnimationFrame(function () { armed = true; });
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(schedule).catch(function () {});
     }
-    setTimeout(schedule, 120);
-    setTimeout(schedule, 480);
+    setTimeout(schedule, 200);
   }
 
-  window.addEventListener("resize", schedule, { passive: true });
+  window.addEventListener("resize", scheduleResize, { passive: true });
   window.addEventListener("orientationchange", function () {
-    setTimeout(schedule, 80);
+    lastW = 0;
+    setTimeout(schedule, 100);
   }, { passive: true });
 
   if (document.readyState === "loading") {
@@ -272,14 +287,4 @@
     boot();
   }
   window.addEventListener("load", schedule);
-
-  var tries = 0;
-  var poll = setInterval(function () {
-    tries += 1;
-    if (document.querySelector(SEL)) {
-      schedule();
-      if (tries > 6) clearInterval(poll);
-    }
-    if (tries > 40) clearInterval(poll);
-  }, 250);
 })();

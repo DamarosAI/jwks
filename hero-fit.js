@@ -3,18 +3,16 @@
  * Relies on a forced <br> + nowrap; binary-searches the largest font-size
  * where neither line overflows the available width.
  *
- * No font-size transitions — the headline must stay optically still.
+ * Measures on an off-DOM probe so intermediate sizes never paint — no flash
+ * or jitter while fitting. No font-size transitions.
  */
 (function () {
-  // Hero + Close share the same drum card composition; fit both to one curve.
   var SEL = 'section[data-screen-label="Hero"] h1.dm-hero-title, section[data-screen-label="Close"] h2.dm-hero-title';
   var MIN = 15;
   var raf = 0;
+  var resizeTimer = 0;
+  var lastW = 0;
 
-  // Continuous width -> max font ceiling. Piecewise-linear through control
-  // points so the headline scales smoothly across every viewport instead of
-  // snapping at a handful of breakpoints. Mobile stays compact so matrix
-  // trails clear the lettering.
   var CURVE = [
     [320, 22],
     [390, 24],
@@ -44,7 +42,6 @@
     if (document.getElementById("dm-hero-fit-style")) return;
     var st = document.createElement("style");
     st.id = "dm-hero-fit-style";
-    // Hard-stop any pulse / eased resize on the headline itself.
     st.textContent =
       'section[data-screen-label="Hero"] h1.dm-hero-title,' +
       'section[data-screen-label="Close"] h2.dm-hero-title{' +
@@ -54,31 +51,49 @@
     (document.head || document.documentElement).appendChild(st);
   }
 
-  function fits(h1) {
-    // nowrap + <br> → exactly two line boxes; overflow shows up as scrollWidth.
-    // When text fits, block scrollWidth === clientWidth, so only overflow (> )
-    // fails this check — do not subtract a margin here or every size fails.
-    return h1.scrollWidth <= h1.clientWidth + 0.5;
+  function fitsProbe(probe) {
+    return probe.scrollWidth <= probe.clientWidth + 0.5;
+  }
+
+  function makeProbe(h1) {
+    var probe = h1.cloneNode(true);
+    probe.removeAttribute("id");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText =
+      "position:absolute !important;" +
+      "left:-10000px !important;" +
+      "top:0 !important;" +
+      "visibility:hidden !important;" +
+      "pointer-events:none !important;" +
+      "display:block !important;" +
+      "margin:0 !important;" +
+      "transform:none !important;" +
+      "transition:none !important;" +
+      "animation:none !important;" +
+      "white-space:nowrap !important;" +
+      "width:" + h1.clientWidth + "px !important;" +
+      "max-width:" + h1.clientWidth + "px !important;" +
+      "box-sizing:border-box !important;";
+    document.body.appendChild(probe);
+    return probe;
   }
 
   function fitOne(h1) {
-    if (!h1) return;
+    if (!h1 || !h1.clientWidth) return;
     var prevPx = parseFloat(h1.style.fontSize) || 0;
-
-    h1.style.transition = "none";
-
     var hi = maxForViewport();
     var lo = MIN;
     var best = MIN;
-    h1.style.setProperty("font-size", hi + "px", "important");
-    if (fits(h1)) {
+    var probe = makeProbe(h1);
+
+    probe.style.setProperty("font-size", hi + "px", "important");
+    if (fitsProbe(probe)) {
       best = hi;
     } else {
-      // ~40 halving steps → sub-pixel precision, no visible quantization.
-      for (var i = 0; i < 40; i++) {
+      for (var i = 0; i < 28; i++) {
         var mid = (lo + hi) / 2;
-        h1.style.setProperty("font-size", mid + "px", "important");
-        if (fits(h1)) {
+        probe.style.setProperty("font-size", mid + "px", "important");
+        if (fitsProbe(probe)) {
           best = mid;
           lo = mid;
         } else {
@@ -87,12 +102,12 @@
       }
     }
 
-    // Nudge down a hair so subpixel AA never clips the final glyph on mobile.
+    if (probe.parentNode) probe.parentNode.removeChild(probe);
+
     best = Math.max(MIN, best - 0.35);
 
-    // Ignore sub-pixel thrash from remount/font settling so the text never
-    // visibly "breathes" after the first stable fit.
-    if (prevPx && Math.abs(prevPx - best) < 0.6) {
+    // Ignore sub-pixel thrash so the text never visibly breathes.
+    if (prevPx && Math.abs(prevPx - best) < 1.0) {
       h1.style.setProperty("font-size", prevPx.toFixed(2) + "px", "important");
       return;
     }
@@ -111,20 +126,29 @@
     raf = requestAnimationFrame(fitAll);
   }
 
+  function scheduleResize() {
+    var w = window.innerWidth || 0;
+    if (Math.abs(w - lastW) < 2) return;
+    lastW = w;
+    if (resizeTimer) clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(schedule, 90);
+  }
+
   function boot() {
     injectStaticStyle();
+    lastW = window.innerWidth || 0;
     fitAll();
-    // Fonts / late layout can change metrics after first paint.
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(schedule).catch(function () {});
     }
-    setTimeout(schedule, 120);
-    setTimeout(schedule, 480);
+    // One late settle after layout/fonts — avoid repeated timers that reflow.
+    setTimeout(schedule, 200);
   }
 
-  window.addEventListener("resize", schedule, { passive: true });
+  window.addEventListener("resize", scheduleResize, { passive: true });
   window.addEventListener("orientationchange", function () {
-    setTimeout(schedule, 80);
+    lastW = 0;
+    setTimeout(schedule, 100);
   }, { passive: true });
 
   if (document.readyState === "loading") {
@@ -133,15 +157,4 @@
     boot();
   }
   window.addEventListener("load", schedule);
-
-  // DC remounts - re-fit when hero/close titles reappear.
-  var tries = 0;
-  var poll = setInterval(function () {
-    tries += 1;
-    if (document.querySelector(SEL)) {
-      schedule();
-      if (tries > 6) clearInterval(poll);
-    }
-    if (tries > 40) clearInterval(poll);
-  }, 250);
 })();
