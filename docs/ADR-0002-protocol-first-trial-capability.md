@@ -114,9 +114,9 @@ Two consequences drove this ADR:
   2025 (vol 21:427–437; online Oct 2024). Lead also carries authors' own framing: counties with
   oncologists but limited research infrastructure are where expansion could land; regulatory
   burden and resource requirements block it;
-  (4) **$4,862** per error found (Abbasi et al. Commun Med 2025), with $18/field, 61,073
-  person-hours on sample, and $18M / 180,000 hours if every patient were covered. Replaces the
-  older 61,073-hours / $6.1M framing that buried the cost-per-error figure.
+  (4) **$18M** extrapolated cost to re-verify every patient (Abbasi et al. Commun Med 2025),
+  with 180,000 hours; sample body carries 61,073 hours, $4,862/error, $18/field. Hero is the
+  full-coverage extrapolate for investor-scale impact; unit economics stay in the dek.
   Cut from ship: disparity abstracts, Ni enrollment-throughput deltas, sponsor day-cost ROI,
   and any secondary-cited number without a primary document. **49.3% does not exist** — never
   cite it; it was a misread of Franc's prompt-floor accuracy (46.7%).
