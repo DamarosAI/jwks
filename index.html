@@ -41,7 +41,7 @@
 
 <script src="./biomarker-matrix.js?v=55" defer></script>
 <script src="./hero-fit.js?v=4" defer></script>
-<script src="./section-title-fit.js?v=4" defer></script>
+<script src="./section-title-fit.js?v=5" defer></script>
 <script src="./demo-dek-fit.js?v=1" defer></script>
 <script>
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
@@ -977,8 +977,16 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
         padding-right:max(16px,env(safe-area-inset-right,0px)) !important;
       }
       .dm-site .dm-section-title{
-        line-height:1.04 !important;
+        line-height:1.08 !important;
         letter-spacing:-0.028em !important;
+        white-space:normal !important;
+        text-wrap:balance !important;
+        font-size:clamp(1.35rem,6.4vw,1.85rem) !important;
+        max-width:100% !important;
+      }
+      .dm-site .dm-section-title--fluid{
+        white-space:normal !important;
+        text-wrap:balance !important;
       }
       .dm-site .dm-section-dek,
       .dm-site .dm-section-dek--oneline{
@@ -1024,6 +1032,12 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       .dm-site #capability .dm-capability-col .dm-card-lift{padding:18px 18px !important;}
       .dm-site #capability .dm-card-record p{font-size:13px !important;line-height:1.5 !important;}
       .dm-site footer{padding-left:16px !important;padding-right:16px !important;}
+      .dm-site footer > div{
+        flex-direction:column !important;
+        align-items:flex-start !important;
+        gap:14px !important;
+      }
+      .dm-site footer > div > div:last-child{margin-left:0 !important;}
     }
 
     @media (max-width:480px){

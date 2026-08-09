@@ -68,8 +68,16 @@
     @keyframes dmDrift{0%,100%{transform:translate(-50%,-50%) rotate(0deg);}50%{transform:translate(-49%,-51%) rotate(2.5deg);}}
     @media (max-width:760px){
       .dm-site section[data-screen-label="Privacy hero"]{padding-top:clamp(48px,10vw,88px) !important;}
-      .dm-site section[data-screen-label="Privacy hero"] h1{font-size:clamp(1.85rem,7vw,2.6rem) !important;}
+      .dm-site section[data-screen-label="Privacy hero"] h1{font-size:clamp(1.85rem,7vw,2.6rem) !important;text-wrap:balance;line-height:1.08 !important;}
       .dm-site .pp{gap:28px !important;}
+      .dm-site .pp h2{text-wrap:balance;line-height:1.2 !important;}
+      .dm-site .pp p,.dm-site .pp li{line-height:1.55 !important;}
+      .dm-site footer > div{
+        flex-direction:column !important;
+        align-items:flex-start !important;
+        gap:14px !important;
+      }
+      .dm-site footer > div > div:last-child{margin-left:0 !important;}
     }
     @media (max-width:560px){
       .dm-site header{gap:8px !important;padding-left:14px !important;padding-right:14px !important;}

@@ -167,8 +167,24 @@
     return best;
   }
 
+  function isNarrow() {
+    return (window.innerWidth || 1024) <= 760;
+  }
+
   function layoutTitle(el, width, hi) {
     var parts = parseTitle(el);
+    // Phones: one flowing title with balanced wrap — avoids orphan third lines
+    // from a forced <br> plus a long steel clause.
+    if (isNarrow()) {
+      renderOne(el, parts);
+      el.style.removeProperty("font-size");
+      el.style.removeProperty("width");
+      el.style.removeProperty("max-width");
+      el.classList.add("dm-section-title--fluid");
+      el.classList.remove("dm-section-title--one", "dm-section-title--two");
+      return null;
+    }
+    el.classList.remove("dm-section-title--fluid");
     renderOne(el, parts);
     if (measureFits(el, width, Math.max(MIN, hi * 0.92))) {
       return bestSize(el, width, hi);
@@ -210,15 +226,23 @@
     var hi = maxForViewport();
     var sizes = [];
     var shared = hi;
+    var anySized = false;
 
     for (var i = 0; i < nodes.length; i++) {
       var size = layoutTitle(nodes[i], width, hi);
       sizes.push(size);
-      if (size < shared) shared = size;
+      if (size != null) {
+        anySized = true;
+        if (size < shared) shared = size;
+      }
     }
 
+    if (!anySized) return;
     var target = shared.toFixed(2) + "px";
-    for (var j = 0; j < nodes.length; j++) applySize(nodes[j], target);
+    for (var j = 0; j < nodes.length; j++) {
+      if (sizes[j] == null) continue;
+      applySize(nodes[j], target);
+    }
   }
 
   function schedule() {
