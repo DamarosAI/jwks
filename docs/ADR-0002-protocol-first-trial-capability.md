@@ -106,24 +106,31 @@ Two consequences drove this ADR:
 - **`#capability` dek:** *"Site infrastructure a sponsor can verify."* (No longer echoes the
   retired hero connective.)
 - **Integrations (Stack):** "Not a replacement. One platform for the stack." + dek *"Downstream of whatever narrows your funnel."* (Product nouns: platform / system only — never runtime or layer.)
-- **Problem stats (refreshed 2026-07-27, approach A):** four cards only, no new section.
-  (1) **~5×** NCI vs community enrollment (21.6% vs 4.1%), Unger et al. JCO 2024;
-  (2) **>50%** treated in community settings with 85%/78% physician/admin access difficulty,
-  McKesson Dec 2025 (replaces the older ~80% COA line);
-  (3) **70%** of US counties with zero active cancer trials, Kirkwood et al. JCO Oncol Pract
+- **Problem stats (refreshed 2026-08-10):** five site-side stats, no new section.
+  Arc: geography → tooling → labor → capacity → outcome.
+  (1) **70%** of US counties with zero active cancer trials, Kirkwood et al. JCO Oncol Pract
   2025 (vol 21:427–437; online Oct 2024). Lead also carries authors' own framing: counties with
   oncologists but limited research infrastructure are where expansion could land; regulatory
   burden and resource requirements block it;
-  (4) **$18M** extrapolated cost to re-verify every patient (Abbasi et al. Commun Med 2025),
-  with 180,000 hours; sample body carries 61,073 hours, $4,862/error, $18/field. Hero is the
-  full-coverage extrapolate for investor-scale impact; unit economics stay in the dek.
-  Cut from ship: disparity abstracts, Ni enrollment-throughput deltas, sponsor day-cost ROI,
-  and any secondary-cited number without a primary document. **49.3% does not exist** — never
-  cite it; it was a misread of Franc's prompt-floor accuracy (46.7%).
+  (2) **20+** systems touched daily at 60% of sites, SCRS Site Landscape Survey 2023;
+  (3) **$18M** Abbasi et al. Commun Med 2025 headline; dek is sample-accurate (23% of eCRFs /
+  30% of patients), with $4,862/error and $18/field. Do not say "every patient";
+  (4) **1 in 4** sites declined a trial for protocol complexity, SCRS Global Site Solutions
+  Summit 2025;
+  (5) **5×** community vs NCI enrollment gap, JCO Oncol Pract / NCORP (replaces Tufts $535K
+  sponsor-economics amendment cost, which does not belong in a site-side bottleneck grid).
+  Cut from ship: Tufts amendment cost in the problem grid, disparity abstracts, Ni
+  enrollment-throughput deltas, sponsor day-cost ROI, and any secondary-cited number without a
+  primary document. **49.3% does not exist** — never cite it; it was a misread of Franc's
+  prompt-floor accuracy (46.7%).
+- **SEO / crawler descriptor:** public meta, JSON-LD, crawl-summary, and webmanifest use
+  **agentic execution infrastructure** (not platform). Hero H1 already said infrastructure;
+  scraper surfaces now match. Nav "Platform" page label unchanged.
 - **Capability support:** Franc et al. JMIR Sep 2024 (gage R&R of ChatGPT on START triage:
   63.9% accuracy; repeatability 14% of total variation; accuracy 46.7–71.8% by prompt; authors
   concluded insufficient) lands inside the determinism card; Tufts CSDD ($535K median Phase III
-  amendment; 57% of trials face ≥1) sits as the paired supporting card. The **"Built to prove"**
+  amendment; 57% of trials face ≥1) remains only as the paired supporting card on
+  `platform.html` (protocol recompile), not in the homepage problem grid. The **"Built to prove"**
   chip row was removed; redundant with the cards and the determinism line above it.
 - **Security support:** Chen, Oermann et al. Nature Medicine 2026 (only a third of LLM-vs-human
   clinical comparisons favor the model) sits under the PHI invariant, not as a fifth compliance chip.
