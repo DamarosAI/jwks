@@ -117,7 +117,7 @@ Two consequences drove this ADR:
   30% of patients), with $4,862/error and $18/field. Do not say "every patient";
   (4) **1 in 4** sites declined a trial for protocol complexity, SCRS Global Site Solutions
   Summit 2025;
-  (5) **5×** community vs NCI enrollment gap, JCO Oncol Pract / NCORP (replaces Tufts $535K
+  (5) **4.1%** community treatment-trial enrollment vs **21.6%** at NCI-designated comprehensive centers (~5× lower); Unger et al. JCO 2024 / CoC (replaces Tufts $535K
   sponsor-economics amendment cost, which does not belong in a site-side bottleneck grid).
   Cut from ship: Tufts amendment cost in the problem grid, disparity abstracts, Ni
   enrollment-throughput deltas, sponsor day-cost ROI, and any secondary-cited number without a
