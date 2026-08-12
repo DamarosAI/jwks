@@ -276,7 +276,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     }
     @media (prefers-reduced-motion:reduce){.dm-card-lift{transition:none !important;}.dm-card-lift:hover{transform:none !important;}}
     .dm-spine-grid > .dm-spine-card{min-height:228px;}
-    @keyframes chevBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(5px);}}
+    @keyframes chevBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(2.5px);}}
     @keyframes dmRadarSweep{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
     @keyframes dmFlow{to{stroke-dashoffset:16;}}
     @keyframes dmSpin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
@@ -335,7 +335,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       flex-direction:column;
       align-items:center;
       color:#3d72a8;
-      animation:chevBounce 1.8s ease-in-out infinite;
+      animation:chevBounce 2.8s ease-in-out infinite;
     }
     .dm-scroll-chev__chevs svg{display:block;width:22px;height:14px;margin-top:-7px;}
     .dm-scroll-chev__chevs svg:first-child{margin-top:0;opacity:0.42;}
@@ -343,6 +343,36 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     .dm-scroll-chev__chevs svg:nth-child(3){opacity:1;}
     @media (prefers-reduced-motion:reduce){
       .dm-scroll-chev__chevs{animation:none;}
+    }
+    /* Thesis / problem: fill a viewport so centered scrolls land cleanly */
+    #thesis,#problem{
+      min-height:calc(100svh - 76px);
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      box-sizing:border-box;
+    }
+    #thesis .dm-scroll-target,#problem .dm-scroll-target{width:100%;}
+    .dm-thesis-close{
+      margin:28px 0 0;
+      max-width:40rem;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+    .dm-thesis-close__line{
+      margin:0;
+      font-family:var(--font-display);
+      font-size:clamp(1.2rem,2.1vw,1.45rem);
+      font-weight:700;
+      letter-spacing:-0.02em;
+      line-height:1.28;
+    }
+    .dm-thesis-close__line--cold{color:var(--ink-cold);}
+    .dm-thesis-close__line--brand{color:var(--ink-quiet);}
+    .dm-thesis-close__line--brand .dm-thesis-brand{
+      color:var(--ink-steel);
+      font-weight:700;
     }
     .dm-scroll-chev > button{
       margin-left:auto !important;
@@ -383,7 +413,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       align-items:center;
       gap:0;
       color:#3d72a8;
-      animation:chevBounce 1.8s ease-in-out infinite;
+      animation:chevBounce 2.8s ease-in-out infinite;
     }
     .dm-hero-demo__chevs svg{display:block;width:20px;height:14px;margin-top:-7px;}
     .dm-hero-demo__chevs svg:first-child{margin-top:0;opacity:0.42;}
@@ -1433,7 +1463,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
           <a class="dm-cta dm-cta--ghost" href="platform.html#demo" style="display:inline-flex;align-items:center;justify-content:center;border-radius:999px;font-family:var(--font-display);font-weight:600;letter-spacing:0.03em;text-transform:uppercase;color:var(--ink-steel);background:transparent;border:1px solid rgba(47,97,147,0.28);white-space:nowrap;height:48px;padding:0 22px;font-size:13px;">Explore the demo</a>
         </div>
       </div>
-      <a class="dm-hero-demo dm-chev-active" href="#thesis" aria-label="Why: scroll to the thesis">
+      <a class="dm-hero-demo dm-chev-active" href="#thesis" data-scroll-center="thesis" aria-label="Why: scroll to the thesis">
         <span class="dm-hero-demo__label">Why</span>
         <span class="dm-hero-demo__chevs" aria-hidden="true">
           <svg width="20" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
@@ -1446,17 +1476,19 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
 
 
   <!-- ============ THESIS ============ -->
-  <section id="thesis" data-screen-label="Thesis" style="position:relative;padding:clamp(64px,8vw,112px) clamp(20px,5vw,40px);scroll-margin-top:88px;">
+  <section id="thesis" data-screen-label="Thesis" style="position:relative;padding:clamp(56px,7vw,96px) clamp(20px,5vw,40px);">
     <div class="dm-scroll-target" style="max-width:720px;margin:0 auto;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Thesis</div>
       <h2 class="dm-section-title" style="white-space:normal;max-width:22ch;">The next generation of medicine cannot run on the last generation of research infrastructure.</h2>
       <p style="margin:22px 0 0;max-width:46rem;font-size:clamp(16px,1.6vw,18px);line-height:1.55;color:var(--ink-quiet);">Therapies are becoming more precise. Protocols are becoming more complex. The patients research needs are distributed across thousands of care settings.</p>
       <p style="margin:18px 0 0;max-width:46rem;font-size:clamp(16px,1.6vw,18px);line-height:1.55;color:var(--ink-quiet);">Most clinics cannot budget a research department or clinical trials office. The specialized infrastructure required to participate in research is the bottleneck.</p>
-      <p style="margin:28px 0 0;max-width:40rem;font-family:var(--font-display);font-size:clamp(1.15rem,2vw,1.35rem);font-weight:700;letter-spacing:-0.02em;line-height:1.25;color:var(--ink-cold);">Research execution has to become infrastructure.</p>
-      <p style="margin:18px 0 0;max-width:40rem;font-size:clamp(16px,1.6vw,18px);line-height:1.55;color:var(--ink-quiet);"><span style="font-family:var(--font-display);font-weight:700;color:var(--ink-steel);">Damaros<sup style="font-size:0.55em;letter-spacing:0;margin-left:1px;">™</sup></span> is building that infrastructure.</p>
+      <div class="dm-thesis-close">
+        <p class="dm-thesis-close__line dm-thesis-close__line--cold">Research execution has to become infrastructure.</p>
+        <p class="dm-thesis-close__line dm-thesis-close__line--brand"><span class="dm-thesis-brand">Damaros<sup style="font-size:0.55em;letter-spacing:0;margin-left:1px;">™</sup></span> is building that infrastructure.</p>
+      </div>
     </div>
-    <div class="dm-scroll-chev" style="margin:clamp(36px,5vw,56px) 0 0;">
-      <a href="#problem" aria-label="Why: scroll to the problem">
+    <div class="dm-scroll-chev" style="margin:clamp(28px,4vw,44px) 0 0;">
+      <a href="#problem" data-scroll-center="problem" aria-label="Why: scroll to the problem">
         <span class="dm-scroll-chev__label">Why</span>
         <span class="dm-scroll-chev__chevs" aria-hidden="true">
           <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
@@ -1468,11 +1500,11 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
   </section>
 
   <!-- ============ PROBLEM ============ -->
-  <section id="problem" data-screen-label="Problem" style="position:relative;padding:clamp(52px,6vw,84px) clamp(20px,5vw,40px);">
+  <section id="problem" data-screen-label="Problem" style="position:relative;padding:clamp(56px,7vw,96px) clamp(20px,5vw,40px);">
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Problem</div>
       <h2 class="dm-section-title dm-section-title--break">Research doesn't spread.<br><span class="dm-section-title__steel">It barely trickles down.</span></h2>
-      <p class="dm-section-dek" style="white-space:normal;max-width:42rem;">Discovery got solved. Site-side execution did not. The scarce resource is clinical research execution capacity—and capacity is buildable.</p>
+      <p class="dm-section-dek" style="white-space:normal;max-width:42rem;">Discovery got solved. Site-side execution did not. The scarce resource is clinical research execution capacity, and capacity is buildable.</p>
       <div class="dm-stat-lead dm-card-lift dm-card-record" style="display:flex;align-items:center;gap:22px;padding:28px 32px;border-radius:16px;margin-top:40px;">
         <div class="dm-stat-lead__num" style="flex-shrink:0;text-align:center;font-family:var(--font-display);font-size:clamp(3.4rem,5.2vw,4.6rem);font-weight:700;letter-spacing:-0.04em;line-height:0.92;font-variant-numeric:tabular-nums;color:var(--ink-cold);">70%</div>
         <div class="dm-stat-lead__rule" style="width:1px;align-self:stretch;background:rgba(31,45,61,0.14);flex-shrink:0;"></div>
@@ -1518,7 +1550,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       <p class="dm-stat-connect" style="margin:28px 0 0;font-size:15px;line-height:1.5;color:var(--ink-cold);max-width:42rem;">The gap is not demand. It is execution capacity. Capacity is buildable. By making protocol execution computable, locally controlled, and replayable, Damaros<sup style="font-size:0.55em;letter-spacing:0;">™</sup> reduces the specialized infrastructure a clinic needs to participate in research, without standing up a full clinical trials office.</p>
     </div>
     <div class="dm-scroll-chev" style="margin:clamp(30px,4vw,46px) 0 0;">
-      <a href="#close" aria-label="Scroll to the close">
+      <a href="#close" data-scroll-center="close" aria-label="Scroll to the close">
         <span class="dm-scroll-chev__chevs" aria-hidden="true">
           <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
           <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
@@ -1573,6 +1605,86 @@ class Component extends DCLogic {
     return { showMarquee: this.props.showMarquee !== false };
   }
 }
+</script>
+<script>
+(function () {
+  var reduce = function () {
+    return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  };
+  function navOffset() {
+    var nav = document.querySelector(".dm-float-nav");
+    var h = nav ? nav.getBoundingClientRect().height : 52;
+    return h + 16;
+  }
+  function targetYFor(id) {
+    var section = document.getElementById(id);
+    if (!section) return null;
+    var el = section.querySelector(".dm-scroll-target") || section;
+    var rect = el.getBoundingClientRect();
+    var top = rect.top + window.scrollY;
+    var height = rect.height;
+    var vh = window.innerHeight || document.documentElement.clientHeight;
+    var pad = navOffset();
+    var usable = Math.max(240, vh - pad);
+    var y;
+    if (height <= usable * 0.92) {
+      y = top - pad - (usable - height) / 2;
+    } else {
+      y = top - pad - Math.min(28, usable * 0.04);
+    }
+    var max = Math.max(0, (document.documentElement.scrollHeight || document.body.scrollHeight) - vh);
+    return Math.max(0, Math.min(y, max));
+  }
+  function easeInOutCubic(t) {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  }
+  var anim = null;
+  function smoothTo(y) {
+    if (reduce()) {
+      window.scrollTo(0, y);
+      return;
+    }
+    if (anim) cancelAnimationFrame(anim);
+    var start = window.scrollY || window.pageYOffset || 0;
+    var dist = y - start;
+    if (Math.abs(dist) < 1) return;
+    var dur = Math.min(980, Math.max(480, Math.abs(dist) * 0.62));
+    var t0 = performance.now();
+    function frame(now) {
+      var p = Math.min(1, (now - t0) / dur);
+      window.scrollTo(0, start + dist * easeInOutCubic(p));
+      if (p < 1) anim = requestAnimationFrame(frame);
+      else anim = null;
+    }
+    anim = requestAnimationFrame(frame);
+  }
+  function go(id, pushHash) {
+    var y = targetYFor(id);
+    if (y == null) return;
+    smoothTo(y);
+    if (pushHash !== false && history.replaceState) {
+      history.replaceState(null, "", "#" + id);
+    }
+  }
+  document.addEventListener("click", function (e) {
+    var a = e.target && e.target.closest && e.target.closest("[data-scroll-center]");
+    if (!a) return;
+    var id = a.getAttribute("data-scroll-center");
+    if (!id) return;
+    e.preventDefault();
+    go(id, true);
+  });
+  function hashGo() {
+    var id = (location.hash || "").replace(/^#/, "");
+    if (!id || !document.getElementById(id)) return;
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { go(id, false); });
+    });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", hashGo);
+  else hashGo();
+  window.addEventListener("hashchange", hashGo);
+})();
 </script>
 </body>
 </html>
