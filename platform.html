@@ -36,19 +36,27 @@
 <script src="./mail-cta.js?v=16" defer></script>
 <script src="./demo-dek-fit.js?v=2" defer></script>
 <script src="./float-nav.js?v=2" defer></script>
+<link rel="stylesheet" href="./scroll-chev.css?v=1">
+<style id="dm-scroll-chev-force-visible">.dm-site .dm-scroll-chev{opacity:1!important;visibility:visible!important;pointer-events:auto!important;transform:none!important;}</style>
+<script src="./scroll-center.js?v=1" defer></script>
 <script>
-/* Hash #demo / #instrument can fire before DC mounts; retry until the node exists. */
+/* Hash #demo / #instrument can fire before DC mounts; center with shared helper. */
 (function () {
   var hash = location.hash;
   if (hash !== "#demo" && hash !== "#instrument") return;
   var tries = 0;
   function go() {
-    var el = document.getElementById(hash.slice(1)) || document.getElementById("instrument");
-    if (el) {
-      el.scrollIntoView({ block: "start" });
+    var id = hash === "#demo" ? "instrument" : hash.slice(1);
+    if (window.dmScrollCenter && document.getElementById(id)) {
+      window.dmScrollCenter(id, false);
       return;
     }
-    if (++tries < 40) requestAnimationFrame(go);
+    var el = document.getElementById(id) || document.getElementById("instrument");
+    if (el) {
+      el.scrollIntoView({ block: "center" });
+      return;
+    }
+    if (++tries < 60) requestAnimationFrame(go);
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", go);
   else go();
@@ -73,6 +81,21 @@
       width:100%;
       margin-top:0 !important;
     }
+  }
+/* dm-platform-section-fluid */
+  @media (min-width:901px){
+    .dm-site section[data-screen-label]:not([data-screen-label="Demo"]){
+      min-height:calc(100svh - 76px);
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      box-sizing:border-box;
+    }
+    .dm-site section[data-screen-label] > .dm-scroll-target{width:100%;}
+  }
+  @media (max-width:900px), (max-height:820px){
+    .dm-site .dm-section-title{white-space:normal !important;text-wrap:balance;max-width:34ch;}
+    .dm-site .dm-section-dek{white-space:normal !important;max-width:46rem !important;}
   }
 </style>
 <script>
@@ -262,7 +285,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     }
     @media (prefers-reduced-motion:reduce){.dm-card-lift{transition:none !important;}.dm-card-lift:hover{transform:none !important;}}
     .dm-spine-grid > .dm-spine-card{min-height:228px;}
-    @keyframes chevBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(5px);}}
+    @keyframes chevBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(2.5px);}}
     @keyframes dmRadarSweep{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
     @keyframes dmFlow{to{stroke-dashoffset:16;}}
     @keyframes dmSpin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
@@ -1263,7 +1286,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     }
     @media (prefers-reduced-motion:reduce){.dm-card-lift{transition:none !important;}.dm-card-lift:hover{transform:none !important;}}
     .dm-spine-grid > .dm-spine-card{min-height:228px;}
-    @keyframes chevBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(5px);}}
+    @keyframes chevBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(2.5px);}}
     @keyframes dmRadarSweep{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
     @keyframes dmFlow{to{stroke-dashoffset:16;}}
     @keyframes dmSpin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
@@ -3020,7 +3043,15 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     </div>
     </div>
     </div>
-    <div class="dm-scroll-chev dm-demo-chev"><button onClick="{{ onToIntegrations }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
+    <div class="dm-scroll-chev dm-demo-chev" style="margin:clamp(24px,3vw,40px) 0 0;">
+      <a href="#integrations" data-scroll-center="integrations" aria-label="Scroll to integrations">
+        <span class="dm-scroll-chev__chevs" aria-hidden="true">
+          <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
+          <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
+          <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
+        </span>
+      </a>
+    </div>
   </section>
 
 
@@ -3045,7 +3076,15 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
         <div class="dm-cluster__bubble dm-cluster__bubble--anthropic" role="listitem" style="--x:70%;--y:76%;" title="Anthropic"><img src="uploads/claude-logo.png" alt="Anthropic"></div>
       </div>
     </div>
-    <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><a href="#capability" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></a></div>
+    <div class="dm-scroll-chev" style="margin:clamp(30px,4vw,46px) 0 0;">
+      <a href="#capability" data-scroll-center="capability" aria-label="Scroll to the next section">
+        <span class="dm-scroll-chev__chevs" aria-hidden="true">
+          <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
+          <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
+          <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
+        </span>
+      </a>
+    </div>
   </section>
 
   <!-- ============ TRIAL CAPABILITY · the line we hold ============ -->
@@ -3086,7 +3125,15 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       </div>
       <div class="dm-spine-indicator" aria-hidden="true"><span id="capabilityIndex">1</span> / 2</div>
     </div>
-    <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><a href="#spine" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></a></div>
+    <div class="dm-scroll-chev" style="margin:clamp(30px,4vw,46px) 0 0;">
+      <a href="#spine" data-scroll-center="spine" aria-label="Scroll to the next section">
+        <span class="dm-scroll-chev__chevs" aria-hidden="true">
+          <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
+          <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
+          <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
+        </span>
+      </a>
+    </div>
   </section>
 
   <!-- ============ SPINE ============ -->
@@ -3134,7 +3181,15 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       </div>
       <div class="dm-spine-indicator" aria-hidden="true"><span id="spineIndex">1</span> / 5</div>
     </div>
-    <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><a href="#agents" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></a></div>
+    <div class="dm-scroll-chev" style="margin:clamp(30px,4vw,46px) 0 0;">
+      <a href="#agents" data-scroll-center="agents" aria-label="Scroll to the next section">
+        <span class="dm-scroll-chev__chevs" aria-hidden="true">
+          <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
+          <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
+          <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
+        </span>
+      </a>
+    </div>
   </section>
 
   <!-- ============ AGENTS ============ -->
@@ -3175,7 +3230,15 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       </div>
       <div class="dm-spine-indicator" aria-hidden="true"><span id="agentsIndex">1</span> / 4</div>
     </div>
-    <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><a href="#output" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></a></div>
+    <div class="dm-scroll-chev" style="margin:clamp(30px,4vw,46px) 0 0;">
+      <a href="#output" data-scroll-center="output" aria-label="Scroll to the next section">
+        <span class="dm-scroll-chev__chevs" aria-hidden="true">
+          <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
+          <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
+          <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
+        </span>
+      </a>
+    </div>
   </section>
 
   <!-- ============ WHAT IT PRODUCES ============ -->
@@ -3220,7 +3283,15 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
         </div>
       </div>
     </div>
-    <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><a href="#node" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></a></div>
+    <div class="dm-scroll-chev" style="margin:clamp(30px,4vw,46px) 0 0;">
+      <a href="#node" data-scroll-center="node" aria-label="Scroll to the next section">
+        <span class="dm-scroll-chev__chevs" aria-hidden="true">
+          <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
+          <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
+          <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
+        </span>
+      </a>
+    </div>
   </section>
 
   <!-- ============ NODE ============ -->
@@ -3254,7 +3325,15 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
         <p style="margin:0;font-size:13.5px;line-height:1.55;color:var(--ink-cold);">A <span style="color:var(--ink-steel);font-weight:600;">node</span> is the site's own Damaros instance: evidence, signatures, and the execution record stay under site governance. PHI does not leave; only network-safe signal goes out. Every join raises the value of the nodes already live, without anyone surrendering control of the endpoint. Node one is valuable alone.</p>
       </div>
     </div>
-    <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><a href="#security" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></a></div>
+    <div class="dm-scroll-chev" style="margin:clamp(30px,4vw,46px) 0 0;">
+      <a href="#security" data-scroll-center="security" aria-label="Scroll to the next section">
+        <span class="dm-scroll-chev__chevs" aria-hidden="true">
+          <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
+          <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
+          <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
+        </span>
+      </a>
+    </div>
   </section>
   <section id="security" data-screen-label="Security" style="position:relative;padding:clamp(72px,10vw,128px) clamp(20px,5vw,40px);">
     <div class="dm-scroll-target" style="max-width:1080px;margin:0 auto;">
@@ -3293,7 +3372,15 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       </div>
       <p class="dm-security-note" style="margin:26px 0 0;font-size:13.5px;line-height:1.55;color:var(--ink-dim);">We validate the execution chain. We do not claim clinical efficacy.</p>
     </div>
-    <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><a href="index.html#close" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></a></div>
+    <div class="dm-scroll-chev" style="margin:clamp(30px,4vw,46px) 0 0;">
+      <a href="index.html#close" data-scroll-center="index.html#close" aria-label="Scroll to the next section">
+        <span class="dm-scroll-chev__chevs" aria-hidden="true">
+          <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
+          <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
+          <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
+        </span>
+      </a>
+    </div>
   </section>
 
 
@@ -4317,7 +4404,7 @@ class Component extends DCLogic {
       onPilot: () => this.scrollTo("pilot"),
       onRunModel: () => { window.location.href = "platform.html#spine"; },
       onToProblem: () => this.scrollCenter("integrations"),
-      onToIntegrations: () => this.scrollCenter("integrations"),
+      onToIntegrations: () => { if (window.dmScrollCenter) window.dmScrollCenter("integrations", true); else this.scrollCenter("integrations"); },
       onToCapability: () => { window.location.href = "platform.html#capability"; },
       onToSpine: () => { window.location.href = "platform.html#spine"; },
       onToAgents: () => { window.location.href = "platform.html#agents"; },

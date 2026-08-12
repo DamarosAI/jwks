@@ -41,6 +41,8 @@
 <script src="./support.js" defer></script>
 <script src="./mail-cta.js?v=16" defer></script>
 <script src="./float-nav.js?v=2" defer></script>
+<link rel="stylesheet" href="./scroll-chev.css?v=1">
+<script src="./scroll-center.js?v=1" defer></script>
 
 
 <script src="./biomarker-matrix.js?v=56" defer></script>
@@ -353,6 +355,17 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       box-sizing:border-box;
     }
     #thesis .dm-scroll-target,#problem .dm-scroll-target{width:100%;}
+    #thesis .dm-scroll-target{max-width:min(760px,100%);}
+    @media (max-width:900px), (max-height:820px){
+      #thesis .dm-scroll-target{max-width:min(920px,100%) !important;}
+      #thesis .dm-section-title{max-width:36ch !important;font-size:clamp(1.45rem,4.2vw,2.4rem) !important;white-space:normal !important;text-wrap:balance;}
+      #thesis .dm-thesis-close__line{font-size:clamp(1.12rem,2.6vw,1.35rem);}
+      #thesis p[style*="font-size:clamp(16px"]{font-size:clamp(15px,2.2vw,17px) !important;}
+    }
+    @media (max-width:640px){
+      #thesis .dm-scroll-target{max-width:100% !important;}
+      #thesis .dm-section-title{max-width:100% !important;}
+    }
     .dm-thesis-close{
       margin:28px 0 0;
       max-width:40rem;
@@ -1477,9 +1490,9 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
 
   <!-- ============ THESIS ============ -->
   <section id="thesis" data-screen-label="Thesis" style="position:relative;padding:clamp(56px,7vw,96px) clamp(20px,5vw,40px);">
-    <div class="dm-scroll-target" style="max-width:720px;margin:0 auto;">
+    <div class="dm-scroll-target" style="margin:0 auto;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Thesis</div>
-      <h2 class="dm-section-title" style="white-space:normal;max-width:22ch;">The next generation of medicine cannot run on the last generation of research infrastructure.</h2>
+      <h2 class="dm-section-title" style="white-space:normal;max-width:28ch;">The next generation of medicine cannot run on the last generation of research infrastructure.</h2>
       <p style="margin:22px 0 0;max-width:46rem;font-size:clamp(16px,1.6vw,18px);line-height:1.55;color:var(--ink-quiet);">Therapies are becoming more precise. Protocols are becoming more complex. The patients research needs are distributed across thousands of care settings.</p>
       <p style="margin:18px 0 0;max-width:46rem;font-size:clamp(16px,1.6vw,18px);line-height:1.55;color:var(--ink-quiet);">Most clinics cannot budget a research department or clinical trials office. The specialized infrastructure required to participate in research is the bottleneck.</p>
       <div class="dm-thesis-close">
@@ -1547,8 +1560,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
           </div>
         </div>
       </div>
-      <p class="dm-stat-connect" style="margin:28px 0 0;font-size:15px;line-height:1.5;color:var(--ink-cold);max-width:42rem;">The gap is not demand. It is execution capacity. Capacity is buildable. By making protocol execution computable, locally controlled, and replayable, Damaros<sup style="font-size:0.55em;letter-spacing:0;">™</sup> reduces the specialized infrastructure a clinic needs to participate in research, without standing up a full clinical trials office.</p>
-    </div>
+</div>
     <div class="dm-scroll-chev" style="margin:clamp(30px,4vw,46px) 0 0;">
       <a href="#close" data-scroll-center="close" aria-label="Scroll to the close">
         <span class="dm-scroll-chev__chevs" aria-hidden="true">
@@ -1605,86 +1617,6 @@ class Component extends DCLogic {
     return { showMarquee: this.props.showMarquee !== false };
   }
 }
-</script>
-<script>
-(function () {
-  var reduce = function () {
-    return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-  };
-  function navOffset() {
-    var nav = document.querySelector(".dm-float-nav");
-    var h = nav ? nav.getBoundingClientRect().height : 52;
-    return h + 16;
-  }
-  function targetYFor(id) {
-    var section = document.getElementById(id);
-    if (!section) return null;
-    var el = section.querySelector(".dm-scroll-target") || section;
-    var rect = el.getBoundingClientRect();
-    var top = rect.top + window.scrollY;
-    var height = rect.height;
-    var vh = window.innerHeight || document.documentElement.clientHeight;
-    var pad = navOffset();
-    var usable = Math.max(240, vh - pad);
-    var y;
-    if (height <= usable * 0.92) {
-      y = top - pad - (usable - height) / 2;
-    } else {
-      y = top - pad - Math.min(28, usable * 0.04);
-    }
-    var max = Math.max(0, (document.documentElement.scrollHeight || document.body.scrollHeight) - vh);
-    return Math.max(0, Math.min(y, max));
-  }
-  function easeInOutCubic(t) {
-    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-  }
-  var anim = null;
-  function smoothTo(y) {
-    if (reduce()) {
-      window.scrollTo(0, y);
-      return;
-    }
-    if (anim) cancelAnimationFrame(anim);
-    var start = window.scrollY || window.pageYOffset || 0;
-    var dist = y - start;
-    if (Math.abs(dist) < 1) return;
-    var dur = Math.min(980, Math.max(480, Math.abs(dist) * 0.62));
-    var t0 = performance.now();
-    function frame(now) {
-      var p = Math.min(1, (now - t0) / dur);
-      window.scrollTo(0, start + dist * easeInOutCubic(p));
-      if (p < 1) anim = requestAnimationFrame(frame);
-      else anim = null;
-    }
-    anim = requestAnimationFrame(frame);
-  }
-  function go(id, pushHash) {
-    var y = targetYFor(id);
-    if (y == null) return;
-    smoothTo(y);
-    if (pushHash !== false && history.replaceState) {
-      history.replaceState(null, "", "#" + id);
-    }
-  }
-  document.addEventListener("click", function (e) {
-    var a = e.target && e.target.closest && e.target.closest("[data-scroll-center]");
-    if (!a) return;
-    var id = a.getAttribute("data-scroll-center");
-    if (!id) return;
-    e.preventDefault();
-    go(id, true);
-  });
-  function hashGo() {
-    var id = (location.hash || "").replace(/^#/, "");
-    if (!id || !document.getElementById(id)) return;
-    requestAnimationFrame(function () {
-      requestAnimationFrame(function () { go(id, false); });
-    });
-  }
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", hashGo);
-  else hashGo();
-  window.addEventListener("hashchange", hashGo);
-})();
 </script>
 </body>
 </html>
