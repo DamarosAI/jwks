@@ -1339,11 +1339,13 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     <div class="dm-demo-eyebrow">Demo</div>
     <p class="dm-demo-caption">A demonstration of the Damaros<sup style="font-size:0.55em;letter-spacing:0;">™</sup> platform on synthetic FHIR data.<span class="dm-caption-hint"> {{ captionHint }}</span></p>
 
+    <div id="demoTheater" class="dm-demo-theater">
+    <button class="dm-demo-theater__exit" type="button" onClick="{{ auto.onFsExit }}" aria-label="Exit fullscreen">Exit</button>
     <div id="nodeStage" style="display:flex;justify-content:center;align-items:flex-start;overflow:hidden;">
       <div id="nodeScaleWrap" style="width:1160px;flex:0 0 1160px;transform-origin:top center;">
       <div style="width:1160px;margin:0;border-radius:12px;border:1px solid rgba(31,45,61,0.08);background:linear-gradient(180deg,#ffffff,#f3f6f9);box-shadow:0 1px 0 rgba(255,255,255,0.05) inset, 0 30px 80px rgba(20,40,70,0.08);overflow:hidden;">
         <!-- macOS title bar -->
-        <div style="position:relative;display:flex;align-items:center;height:46px;padding:0 18px;border-bottom:1px solid rgba(31,45,61,0.07);background:linear-gradient(180deg,rgba(31,45,61,0.05),rgba(31,45,61,0.015));">
+        <div style="position:relative;display:flex;align-items:center;height:46px;padding:0 14px 0 18px;border-bottom:1px solid rgba(31,45,61,0.07);background:linear-gradient(180deg,rgba(31,45,61,0.05),rgba(31,45,61,0.015));">
           <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
             <span style="width:12px;height:12px;border-radius:50%;background:#ff5f57;"></span>
             <span style="width:12px;height:12px;border-radius:50%;background:#febc2e;"></span>
@@ -1351,10 +1353,23 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
           </div>
           <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:8px;pointer-events:none;white-space:nowrap;">
             <svg viewBox="0 0 476 520" fill="none" stroke="currentColor" stroke-width="34" stroke-linejoin="round" stroke-linecap="round" style="height:13px;width:auto;color:var(--ink-quiet);display:block;"><path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"></path><path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"></path></svg>
-            
-            
           </div>
-          <span style="margin-left:auto;display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;background:rgba(31,45,61,0.05);flex-shrink:0;"><span data-dc-style="{{ auto.dotStyle }}"></span><span style="font-family:var(--font-display);font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-quiet);">{{ auto.status }} · synthetic FHIR</span></span>
+          <div style="margin-left:auto;display:inline-flex;align-items:center;gap:6px;flex-shrink:0;">
+            <span style="display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;background:rgba(31,45,61,0.05);"><span data-dc-style="{{ auto.dotStyle }}"></span><span style="font-family:var(--font-display);font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-quiet);">{{ auto.status }} · synthetic FHIR</span></span>
+            <div class="dm-demo-chrome-actions" data-autoplay-ctl>
+              <button class="dm-demo-chrome-btn" type="button" onClick="{{ auto.onSeekStart }}" aria-label="Reset demo" title="Reset">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v5h5"></path></svg>
+              </button>
+              <button class="dm-demo-chrome-btn" type="button" onClick="{{ auto.onFsToggle }}" aria-label="{{ auto.fsAria }}" title="{{ auto.fsAria }}">
+                <sc-if value="{{ auto.fs }}">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3v3a2 2 0 0 1-2 2H3"></path><path d="M21 8h-3a2 2 0 0 1-2-2V3"></path><path d="M3 16h3a2 2 0 0 1 2 2v3"></path><path d="M16 21v-3a2 2 0 0 1 2-2h3"></path></svg>
+                </sc-if>
+                <sc-if value="{{ auto.fsOff }}">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3"></path><path d="M21 8V5a2 2 0 0 0-2-2h-3"></path><path d="M3 16v3a2 2 0 0 0 2 2h3"></path><path d="M16 21h3a2 2 0 0 0 2-2v-3"></path></svg>
+                </sc-if>
+              </button>
+            </div>
+          </div>
         </div>
         <!-- body -->
         <div style="display:flex;height:692px;">
@@ -1964,15 +1979,15 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     </div>
 
     <div class="dm-transport" data-autoplay-ctl>
-      <div class="dm-transport__controls">
-        <button class="dm-transport__btn" onClick="{{ auto.onSeekStart }}" aria-label="Seek to start" type="button">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="5" width="2.5" height="14" rx="0.5"></rect><path d="M20 5.5 L9.5 12 L20 18.5 Z"></path></svg>
-        </button>
-        <button class="dm-transport__btn" onClick="{{ auto.onToggle }}" aria-label="{{ auto.aria }}" type="button">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="2.5" y="5" width="2.5" height="14" rx="0.5"></rect><rect x="6.5" y="5" width="2.5" height="14" rx="0.5"></rect><path d="M12.5 5.5 L21.5 12 L12.5 18.5 Z"></path></svg>
-        </button>
-      </div>
-      <span class="dm-transport__count">{{ auto.count }}</span>
+      <button class="dm-transport__btn" onClick="{{ auto.onToggle }}" aria-label="{{ auto.aria }}" type="button">
+        <sc-if value="{{ auto.playing }}">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg>
+        </sc-if>
+        <sc-if value="{{ auto.paused }}">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"></path></svg>
+        </sc-if>
+      </button>
+    </div>
     </div>
     </div>
     <div class="dm-scroll-chev dm-demo-chev"><button onClick="{{ onToProblem }}" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
@@ -2071,10 +2086,13 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="text/x-dc" data-dc-script data-props="{&quot;showMarquee&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
 class Component extends DCLogic {
   initialState() {
-    return { step: 0, ci: 0, pick: null, committed: {}, hov: null, evSel: 0, scSel: "S-1066", scView: "board", evActed: {}, rpSel: 4, scFilter: null, rpFilter: null, rpExported: false, snCaps: { molecular: true, infusion: true, imaging: true, phase1: false }, snScanned: false, snScanning: false, snSurfaced: false, snSurfacedId: null, snOpenId: null, snSel: "NCT00000211", snActive: null, snDelta: {}, snNew: null, snEvent: null, snTick: 0, trSel: "c1", trStage: 0, trRequested: false, eySel: "lat", eyRouted: false, cbQ: null, cbStage: 0, cbCite: null, cbExported: false, autoPhase: "idle" };
+    return { step: 0, ci: 0, pick: null, committed: {}, hov: null, evSel: 0, scSel: "S-1066", scView: "board", evActed: {}, rpSel: 4, scFilter: null, rpFilter: null, rpExported: false, snCaps: { molecular: true, infusion: true, imaging: true, phase1: false }, snScanned: false, snScanning: false, snSurfaced: false, snSurfacedId: null, snOpenId: null, snSel: "NCT00000211", snActive: null, snDelta: {}, snNew: null, snEvent: null, snTick: 0, trSel: "c1", trStage: 0, trRequested: false, eySel: "lat", eyRouted: false, cbQ: null, cbStage: 0, cbCite: null, cbExported: false, autoPhase: "idle", demoFs: false };
   }
   state = this.initialState();
-  resetDemo = () => this.setState(this.initialState());
+  resetDemo = () => {
+    const fs = !!this.state.demoFs;
+    this.setState(Object.assign(this.initialState(), { demoFs: fs, autoPhase: "idle" }));
+  };
 
   autoStages = ["Protocol", "Evidence", "Screening", "Resolve", "Replay", "Trident", "Eye", "Luna", "Sentinel"];
   autoSeq = [
@@ -2186,17 +2204,44 @@ class Component extends DCLogic {
     this.snStopScan();
     this.resetDemo();
   };
+  enterDemoFs = () => {
+    if (this.state.demoFs) return;
+    const theater = document.getElementById("demoTheater");
+    if (theater) theater.classList.add("is-fs");
+    document.body.classList.add("dm-demo-fs-lock");
+    this.setState({ demoFs: true });
+    requestAnimationFrame(() => {
+      this.layoutNode();
+      requestAnimationFrame(this.layoutNode);
+    });
+  };
+  exitDemoFs = () => {
+    if (!this.state.demoFs) return;
+    const theater = document.getElementById("demoTheater");
+    if (theater) theater.classList.remove("is-fs");
+    document.body.classList.remove("dm-demo-fs-lock");
+    this.setState({ demoFs: false });
+    requestAnimationFrame(() => {
+      this.layoutNode();
+      requestAnimationFrame(this.layoutNode);
+    });
+  };
+  toggleDemoFs = () => {
+    if (this.state.demoFs) this.exitDemoFs();
+    else this.enterDemoFs();
+  };
 
   layoutNode = () => {
     const stage = document.getElementById("nodeStage");
     const wrap = document.getElementById("nodeScaleWrap");
     if (!stage || !wrap) return;
     const REFW = 1160, REFH = 740;
+    const fs = !!(this.state && this.state.demoFs);
     const availW = stage.clientWidth;
-    // Reserve headroom for nav + caption + transport + keep-scrolling chevron on every laptop/desktop height
-    const chrome = 62 + 72 + 40 + 64 + 40;
+    // In-page: reserve nav + caption + transport + chevron. Fullscreen: tight chrome.
+    const chrome = fs ? 96 : (62 + 72 + 40 + 64 + 40);
     const availH = Math.max(260, window.innerHeight - chrome);
-    let s = Math.min(availW / REFW, availH / REFH, 1);
+    let s = Math.min(availW / REFW, availH / REFH, fs ? 1.35 : 1);
     if (!isFinite(s) || s <= 0) s = 1;
     s = Math.max(s, 0.2);
     wrap.style.transform = "scale(" + s + ")";
@@ -2270,6 +2315,10 @@ class Component extends DCLogic {
     };
     window.addEventListener("resize", this.__onResize, { passive: true });
     window.addEventListener("orientationchange", this.__onResize);
+    this.__onFsKey = (e) => {
+      if (e.key === "Escape" && this.state.demoFs) this.exitDemoFs();
+    };
+    window.addEventListener("keydown", this.__onFsKey);
 
     const el = document.getElementById("instrument");
     this.__onUserIntent = (e) => {
@@ -2318,6 +2367,8 @@ class Component extends DCLogic {
   componentWillUnmount() {
     if (this.__onPageShow) window.removeEventListener("pageshow", this.__onPageShow);
     if (this.__onResize) { window.removeEventListener("resize", this.__onResize); window.removeEventListener("orientationchange", this.__onResize); }
+    if (this.__onFsKey) window.removeEventListener("keydown", this.__onFsKey);
+    this.exitDemoFs();
     this.stopAuto();
     this.snStopScan();
     if (this.__io) { this.__io.disconnect(); this.__io = null; }
@@ -2921,13 +2972,19 @@ class Component extends DCLogic {
         : (tapUi
             ? "Tap the pulsing box to walk through it, or tap play below."
             : "Click the pulsing box to walk through it, or press play below.");
-    const pad2 = (n) => (n < 10 ? "0" : "") + n;
+    const demoFs = !!this.state.demoFs;
     const auto = {
       status: autoStatus,
-      aria: autoPlaying ? "Pause autoplay" : autoDone ? "Replay the run" : "Play autoplay",
-      count: pad2(step + 1) + " / " + pad2(this.autoStages.length),
+      aria: autoPlaying ? "Pause" : autoDone ? "Replay" : "Play",
+      playing: autoPlaying,
+      paused: !autoPlaying,
+      fs: demoFs,
+      fsOff: !demoFs,
+      fsAria: demoFs ? "Exit fullscreen" : "Enter fullscreen",
       onToggle: this.toggleAuto,
       onSeekStart: this.seekToStart,
+      onFsToggle: this.toggleDemoFs,
+      onFsExit: this.exitDemoFs,
       dotStyle: autoPlaying
         ? { width: 6, height: 6, borderRadius: "50%", background: "#2e9e6b", animation: "dmPulse 1.6s ease-in-out infinite", flexShrink: 0 }
         : { width: 6, height: 6, borderRadius: "50%", background: "var(--ink-steel)", flexShrink: 0 }
