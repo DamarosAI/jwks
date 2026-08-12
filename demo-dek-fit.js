@@ -1,19 +1,25 @@
 /**
- * Keep live-demo agent dek lines on a single line.
- * Binary-searches font-size so scrollWidth fits the panel content width
- * when agent panels remount via sc-if step changes.
+ * Keep live-demo agent dek lines and the Demo section caption on one line.
+ * Binary-searches font-size so scrollWidth fits available width.
  */
 (function () {
-  var SEL = "#instrument .dm-demo-dek";
-  var MAX = 13.5;
-  var MIN = 10;
+  var TARGETS = [
+    { sel: "#instrument .dm-demo-dek", max: 13.5, min: 10, mode: "panel" },
+    { sel: "#instrument .dm-demo-caption", max: 20, min: 12, mode: "section" }
+  ];
   var raf = 0;
 
   function fits(el) {
     return el.scrollWidth <= el.clientWidth + 0.5;
   }
 
-  function availableWidth(el) {
+  function availableWidth(el, mode) {
+    if (mode === "section") {
+      var stage = document.getElementById("nodeStage") || el.parentElement;
+      var w = stage ? stage.clientWidth : 0;
+      if (w < 40 && el.parentElement) w = el.parentElement.clientWidth;
+      return Math.max(0, w - 8);
+    }
     var parent = el.parentElement;
     if (!parent) return el.clientWidth || 0;
     var style = window.getComputedStyle(parent);
@@ -23,19 +29,20 @@
     return Math.max(0, parent.clientWidth - pad);
   }
 
-  function fitOne(el) {
+  function fitOne(el, max, min, mode) {
     if (!el || !el.isConnected) return;
-    var width = availableWidth(el);
+    var width = availableWidth(el, mode);
     if (width < 40) return;
 
     el.style.setProperty("white-space", "nowrap", "important");
     el.style.setProperty("max-width", "none", "important");
     el.style.setProperty("width", width + "px", "important");
+    el.style.setProperty("overflow", "hidden", "important");
     el.style.transition = "none";
 
-    var hi = MAX;
-    var lo = MIN;
-    var best = MIN;
+    var hi = max;
+    var lo = min;
+    var best = min;
     el.style.setProperty("font-size", hi + "px", "important");
     if (fits(el)) {
       best = hi;
@@ -56,8 +63,11 @@
 
   function fitAll() {
     raf = 0;
-    var nodes = document.querySelectorAll(SEL);
-    for (var i = 0; i < nodes.length; i++) fitOne(nodes[i]);
+    for (var t = 0; t < TARGETS.length; t++) {
+      var cfg = TARGETS[t];
+      var nodes = document.querySelectorAll(cfg.sel);
+      for (var i = 0; i < nodes.length; i++) fitOne(nodes[i], cfg.max, cfg.min, cfg.mode);
+    }
   }
 
   function schedule() {

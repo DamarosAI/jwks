@@ -15,7 +15,7 @@
  * Glyph swaps are infrequent/time-based so fall stays smooth while scrolling.
  * Trails dissolve softly around mid-card height on hero and close (no hard cut).
  * A quiet CTA-blue session counter (bottom-left on hero + close) tallies
- * trails shattered this page load and resets on refresh. At 100, both drums
+ * trails shattered this page load and resets on refresh. At 10, both drums
  * power-up once on the drift axis, keep a shifting CTA aura, and the count disappears.
  */
 (function () {
@@ -122,7 +122,7 @@
   var breakHuds = [];
   var breakTickT = 0;
   var celebrated = false;
-  var CENTURION_AT = 100;
+  var CENTURION_AT = 10;
   var hitsPausedUntil = 0;
   var POWER_MS = 2200;
 

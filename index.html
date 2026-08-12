@@ -43,10 +43,10 @@
 <script src="./float-nav.js?v=2" defer></script>
 
 
-<script src="./biomarker-matrix.js?v=55" defer></script>
+<script src="./biomarker-matrix.js?v=56" defer></script>
 <script src="./hero-fit.js?v=7" defer></script>
 <script src="./section-title-fit.js?v=6" defer></script>
-<script src="./demo-dek-fit.js?v=1" defer></script>
+<script src="./demo-dek-fit.js?v=2" defer></script>
 <script>
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 window.scrollTo(0, 0);
@@ -184,7 +184,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     .dm-matrix-breaks.is-tick{opacity:1;transition:opacity 80ms ease,visibility 80ms linear;}
     .dm-matrix-breaks.is-gone{opacity:0 !important;visibility:hidden !important;}
     @media (prefers-reduced-motion:reduce){.dm-matrix-breaks{transition:none;}}
-    /* 100 breaks: power-up sway + tiny CTA aura (glow never rides the bounce) */
+    /* 10 breaks: power-up sway + tiny CTA aura (glow never rides the bounce) */
     .dm-hero-mark.is-centurion{isolation:isolate;}
     .dm-hero-mark.is-centurion > svg:not(.dm-centurion-glow){
       position:relative;
@@ -1043,33 +1043,112 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       .dm-site footer a{min-height:44px;display:inline-flex;align-items:center;padding:10px 12px !important;}
     }
 
-    /* ---- demo transport: seek / play-pause + count ---- */
-    .dm-site .dm-transport{
-      position:relative;display:flex;align-items:center;justify-content:center;
-      width:fit-content;max-width:920px;margin:12px auto 0;padding:6px 14px;
-      border-radius:12px;border:1px solid rgba(31,45,61,0.08);
-      background:linear-gradient(180deg,#ffffff,#f3f6f9);
-      box-shadow:0 1px 0 rgba(255,255,255,0.05) inset, 0 8px 24px rgba(20,40,70,0.06);
+    /* ---- demo eyebrow + caption (one line; demo-dek-fit.js scales caption) ---- */
+    .dm-site .dm-demo-eyebrow{
+      font-family:var(--font-body);
+      font-size:clamp(15px,1.7vw,20px);
+      font-weight:700;
+      letter-spacing:0.2em;
+      text-transform:uppercase;
+      color:var(--ink-steel);
+      margin:0 auto 16px;
+      text-align:center;
+      line-height:1.1;
     }
-    .dm-site .dm-transport__controls{
-      display:inline-flex;align-items:center;justify-content:center;gap:2px;
+    .dm-site .dm-demo-caption{
+      white-space:nowrap !important;
+      overflow:hidden;
+      text-overflow:clip;
+      max-width:100%;
+      margin:0 auto 18px !important;
+      text-align:center;
+      font-size:clamp(16px,1.65vw,20px);
+      font-weight:600;
+      line-height:1.4;
+      color:var(--ink-cold);
     }
-    .dm-site .dm-transport__btn{
+    .dm-site .dm-caption-hint{font-weight:500;color:var(--ink-quiet);}
+
+    /* ---- demo theater / fullscreen ---- */
+    .dm-site .dm-demo-theater{
+      position:relative;
+      width:100%;
+    }
+    .dm-site .dm-demo-theater.is-fs{
+      position:fixed;
+      inset:0;
+      z-index:12000;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      padding:clamp(16px,3vh,36px) clamp(12px,3vw,40px) clamp(20px,4vh,40px);
+      background:rgba(8,12,18,0.92);
+      backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px);
+      animation:dmDemoFsIn 360ms cubic-bezier(0.22,1,0.36,1) both;
+    }
+    @keyframes dmDemoFsIn{
+      from{opacity:0;transform:scale(0.965);}
+      to{opacity:1;transform:scale(1);}
+    }
+    .dm-site .dm-demo-theater.is-fs #nodeStage{
+      width:min(100%,1400px);
+      flex:0 1 auto;
+    }
+    .dm-site .dm-demo-theater.is-fs .dm-transport{margin-top:16px;}
+    .dm-site .dm-demo-theater__exit{
+      display:none;
+      position:absolute;top:max(14px,env(safe-area-inset-top));right:max(14px,env(safe-area-inset-right));
+      z-index:2;
+      align-items:center;justify-content:center;gap:8px;
+      height:40px;padding:0 14px;border-radius:999px;
+      border:1px solid rgba(255,255,255,0.14);
+      background:rgba(255,255,255,0.08);color:#f5f8fb;
+      font-family:var(--font-display);font-size:11px;font-weight:600;
+      letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;
+    }
+    .dm-site .dm-demo-theater.is-fs .dm-demo-theater__exit{display:inline-flex;}
+    .dm-site .dm-demo-theater__exit:hover{background:rgba(255,255,255,0.14);}
+    .dm-site .dm-demo-chrome-btn{
       display:inline-flex;align-items:center;justify-content:center;
-      width:32px;height:32px;padding:0;margin:0;
-      border:none;border-radius:7px;background:transparent;
+      width:30px;height:30px;padding:0;margin:0;flex-shrink:0;
+      border:none;border-radius:8px;background:transparent;
       color:var(--ink-quiet);cursor:pointer;
       transition:color 140ms ease,background 140ms ease;
     }
-    .dm-site .dm-transport__btn:hover{color:var(--ink-cold);background:rgba(31,45,61,0.05);}
-    .dm-site .dm-transport__btn:focus-visible{outline:2px solid rgba(61,114,168,0.4);outline-offset:1px;}
-    .dm-site .dm-transport__btn svg{display:block;width:17px;height:17px;pointer-events:none;}
-    .dm-site .dm-transport__count{
-      margin-left:12px;
-      font-family:ui-monospace,Menlo,monospace;font-size:11px;font-weight:600;
-      color:var(--ink-dim);font-variant-numeric:tabular-nums;letter-spacing:0.02em;
-      white-space:nowrap;pointer-events:none;
+    .dm-site .dm-demo-chrome-btn:hover{color:var(--ink-cold);background:rgba(31,45,61,0.07);}
+    .dm-site .dm-demo-chrome-btn:focus-visible{outline:2px solid rgba(61,114,168,0.4);outline-offset:1px;}
+    .dm-site .dm-demo-chrome-btn svg{display:block;width:15px;height:15px;pointer-events:none;}
+    .dm-site .dm-demo-chrome-actions{display:inline-flex;align-items:center;gap:2px;margin-left:8px;flex-shrink:0;}
+    body.dm-demo-fs-lock{overflow:hidden !important;}
+
+    /* ---- demo transport: play / pause only ---- */
+    .dm-site .dm-transport{
+      position:relative;display:flex;align-items:center;justify-content:center;
+      width:fit-content;max-width:920px;margin:12px auto 0;padding:6px;
+      border-radius:999px;border:1px solid rgba(31,45,61,0.08);
+      background:linear-gradient(180deg,#ffffff,#f3f6f9);
+      box-shadow:0 1px 0 rgba(255,255,255,0.05) inset, 0 8px 24px rgba(20,40,70,0.06);
     }
+    .dm-site .dm-demo-theater.is-fs .dm-transport{
+      border-color:rgba(255,255,255,0.12);
+      background:rgba(255,255,255,0.1);
+      box-shadow:none;
+    }
+    .dm-site .dm-demo-theater.is-fs .dm-transport__btn{color:#e8eef5;}
+    .dm-site .dm-demo-theater.is-fs .dm-transport__btn:hover{color:#fff;background:rgba(255,255,255,0.12);}
+    .dm-site .dm-transport__btn{
+      display:inline-flex;align-items:center;justify-content:center;
+      width:44px;height:44px;padding:0;margin:0;
+      border:none;border-radius:50%;background:transparent;
+      color:var(--ink-quiet);cursor:pointer;
+      transition:color 140ms ease,background 140ms ease,transform 160ms ease;
+    }
+    .dm-site .dm-transport__btn:hover{color:var(--ink-cold);background:rgba(31,45,61,0.05);}
+    .dm-site .dm-transport__btn:active{transform:scale(0.94);}
+    .dm-site .dm-transport__btn:focus-visible{outline:2px solid rgba(61,114,168,0.4);outline-offset:1px;}
+    .dm-site .dm-transport__btn svg{display:block;width:20px;height:20px;pointer-events:none;}
 
     /* ---- phone / small tablet ---- */
     @media (max-width:760px){
@@ -1124,7 +1203,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       .dm-site #output .dm-input-cards > div > div:last-child{font-size:10px;}
       .dm-site #output .dm-input-arrow{display:none !important;}
 
-      .dm-site .dm-demo-caption{white-space:normal !important;font-size:clamp(12px,3.2vw,15px) !important;max-width:36ch !important;margin-left:auto !important;margin-right:auto !important;}
+      .dm-site .dm-demo-caption{white-space:nowrap !important;max-width:100% !important;margin-left:auto !important;margin-right:auto !important;}
       .dm-site #security .dm-security-note{white-space:normal !important;font-size:clamp(11px,3vw,13.5px) !important;}
       .dm-site #security .dm-security-chips{grid-template-columns:1fr !important;}
       .dm-site #problem .dm-stat-lead{margin-top:28px !important;padding:16px 18px !important;gap:16px !important;}
@@ -1257,8 +1336,8 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
   <!-- ============ INSTRUMENT · clean Node UI ============ -->
   <section id="instrument" data-screen-label="Demo" data-nosnippet style="position:relative;padding:0 clamp(12px,2.5vw,28px) clamp(40px,6vw,72px);">
     <div class="dm-scroll-target">
-    <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin:0 auto 14px;text-align:center;">Demo</div>
-    <p class="dm-demo-caption" style="max-width:920px;margin:0 auto 16px;text-align:center;font-size:15px;font-weight:600;line-height:1.55;color:var(--ink-cold);">A demonstration of the Damaros<sup style="font-size:0.55em;letter-spacing:0;">™</sup> infrastructure on synthetic FHIR data.<span class="dm-caption-hint"> {{ captionHint }}</span></p>
+    <div class="dm-demo-eyebrow">Demo</div>
+    <p class="dm-demo-caption">A demonstration of the Damaros<sup style="font-size:0.55em;letter-spacing:0;">™</sup> platform on synthetic FHIR data.<span class="dm-caption-hint"> {{ captionHint }}</span></p>
 
     <div id="nodeStage" style="display:flex;justify-content:center;align-items:flex-start;overflow:hidden;">
       <div id="nodeScaleWrap" style="width:1160px;flex:0 0 1160px;transform-origin:top center;">
@@ -2201,19 +2280,20 @@ class Component extends DCLogic {
       this.__autoIntentTypes = ["pointerdown", "keydown", "wheel"];
       this.__autoIntentTypes.forEach((t) => el.addEventListener(t, this.__onUserIntent, true));
     }
-    this.__autoUserPaused = this.prefersReducedMotion();
+    // Desktop/laptop: wait for play. Phone/coarse: autoplay when in view.
+    this.__autoUserPaused = !this.isSmallViewport() || this.prefersReducedMotion();
     const tryStartAuto = () => {
+      if (!this.isSmallViewport()) return;
       if (this.prefersReducedMotion()) return;
       if (this.__autoUserPaused || this.__autoRunning || this.state.autoPhase === "playing") return;
       if (!this.__autoInView) return;
-      // Always reset to the top, then play (same as seek + play).
       this.replayAuto();
     };
     this.__tryStartAuto = tryStartAuto;
     this.__onVisibility = () => {
       if (document.hidden) {
         if (this.state.autoPhase === "playing") this.pauseAuto(false);
-      } else if (!this.__autoUserPaused && this.__autoInView && this.state.autoPhase !== "playing") {
+      } else if (this.isSmallViewport() && !this.__autoUserPaused && this.__autoInView && this.state.autoPhase !== "playing") {
         tryStartAuto();
       }
     };
@@ -2232,7 +2312,7 @@ class Component extends DCLogic {
       this.__io.observe(el);
     } else {
       this.__autoInView = true;
-      setTimeout(tryStartAuto, 480);
+      if (this.isSmallViewport()) setTimeout(tryStartAuto, 480);
     }
   }
   componentWillUnmount() {
@@ -2832,12 +2912,12 @@ class Component extends DCLogic {
     const tapUi = this.isSmallViewport();
     const captionHint = autoPlaying
       ? (tapUi
-          ? "Autoplaying the full run · tap anywhere in the demo to take over."
-          : "Autoplaying the full run · click anywhere in the demo to take over.")
+          ? "Autoplaying · tap the demo to take over."
+          : "Autoplaying · click the demo to take over.")
       : autoDone
         ? (tapUi
-            ? "That's the full run · tap play below to watch it again."
-            : "That's the full run · press play below to watch it again.")
+            ? "Run complete · tap play below to watch again."
+            : "Run complete · press play below to watch again.")
         : (tapUi
             ? "Tap the pulsing box to walk through it, or tap play below."
             : "Click the pulsing box to walk through it, or press play below.");
@@ -2873,11 +2953,11 @@ class Component extends DCLogic {
       onDemo: () => {
         this.hideHeroDemo();
         this.layoutNode();
-        this.__autoUserPaused = this.prefersReducedMotion();
+        if (this.isSmallViewport()) this.__autoUserPaused = this.prefersReducedMotion();
         requestAnimationFrame(() => {
           this.layoutNode();
           this.scrollCenter("instrument");
-          if (!this.prefersReducedMotion()) {
+          if (this.isSmallViewport() && !this.prefersReducedMotion()) {
             setTimeout(() => {
               if (this.__autoUserPaused || this.__autoRunning || this.state.autoPhase === "playing") return;
               this.__autoInView = true;
