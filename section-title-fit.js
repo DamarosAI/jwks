@@ -4,7 +4,7 @@
  * stays on the emphasis clause (original second segment, or second line).
  *
  * Measures on an off-DOM probe so binary search never paints intermediate
- * sizes. No font-size transitions — settle instantly to avoid jitter.
+ * sizes. No font-size transitions - settle instantly to avoid jitter.
  */
 (function () {
   var SEL = "h2.dm-section-title";

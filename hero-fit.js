@@ -3,7 +3,7 @@
  * Relies on a forced <br> + nowrap; binary-searches the largest font-size
  * where neither line overflows the available width.
  *
- * Measures on an off-DOM probe so intermediate sizes never paint — no flash
+ * Measures on an off-DOM probe so intermediate sizes never paint - no flash
  * or jitter while fitting. No font-size transitions.
  */
 (function () {
@@ -141,7 +141,7 @@
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(schedule).catch(function () {});
     }
-    // One late settle after layout/fonts — avoid repeated timers that reflow.
+    // One late settle after layout/fonts - avoid repeated timers that reflow.
     setTimeout(schedule, 200);
   }
 

@@ -109,7 +109,7 @@
 
   var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var coarse = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
-  // Phone / coarse: leaner debris + capped DPR so 30–60fps still reads.
+  // Phone / coarse: leaner debris + capped DPR so 30-60fps still reads.
   function isLite() {
     return coarse || (window.innerWidth > 0 && window.innerWidth <= 760);
   }
@@ -563,7 +563,7 @@
     var prevRowH = inst.rowH;
     var hadField = inst.streams.length > 0;
 
-    // Ignore 1–2px chrome jitter from mobile URL bars / sticky headers while
+    // Ignore 1-2px chrome jitter from mobile URL bars / sticky headers while
     // scrolling - full reboot is what reads as flicker going down the page.
     if (prevW > 0 && prevH > 0 && dpr === inst.dpr) {
       var dw = Math.abs(w - prevW);
