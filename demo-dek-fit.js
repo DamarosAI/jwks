@@ -5,7 +5,7 @@
 (function () {
   var TARGETS = [
     { sel: "#instrument .dm-demo-dek", max: 13.5, min: 10, mode: "panel" },
-    { sel: "#instrument .dm-demo-caption", max: 20, min: 12, mode: "section" }
+    { sel: ".dm-demo-caption", max: 20, min: 12, mode: "section" }
   ];
   var raf = 0;
 

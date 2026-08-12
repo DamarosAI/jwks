@@ -1055,7 +1055,8 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       text-align:center;
       line-height:1.1;
     }
-    .dm-site .dm-demo-caption{
+    .dm-site .dm-demo-caption,
+    .dm-demo-theater .dm-demo-caption{
       white-space:nowrap !important;
       overflow:hidden;
       text-overflow:clip;
@@ -1067,7 +1068,16 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       line-height:1.4;
       color:var(--ink-cold);
     }
-    .dm-site .dm-caption-hint{font-weight:500;color:var(--ink-quiet);}
+    .dm-site .dm-caption-hint,
+    .dm-demo-theater .dm-caption-hint{font-weight:500;color:var(--ink-quiet);}
+    .dm-demo-theater.is-fs .dm-demo-caption{
+      position:relative;z-index:1;
+      width:min(100%,1400px);
+      margin:0 auto 14px !important;
+      color:#f5f8fb;
+      font-size:clamp(15px,1.7vw,19px);
+    }
+    .dm-demo-theater.is-fs .dm-caption-hint{color:rgba(245,248,251,0.72);}
 
     /* ---- demo theater / fullscreen (ported to body; opaque shell) ---- */
     .dm-site .dm-demo-theater{
@@ -1372,10 +1382,10 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
   <section id="instrument" data-screen-label="Demo" data-nosnippet style="position:relative;padding:0 clamp(12px,2.5vw,28px) clamp(40px,6vw,72px);">
     <div class="dm-scroll-target">
     <div class="dm-demo-eyebrow">Demo</div>
-    <p class="dm-demo-caption">A demonstration of the Damaros<sup style="font-size:0.55em;letter-spacing:0;">™</sup> platform on synthetic FHIR data.<span class="dm-caption-hint"> {{ captionHint }}</span></p>
 
     <div id="demoTheater" class="dm-demo-theater">
     <button class="dm-demo-theater__exit" type="button" onClick="{{ auto.onFsExit }}" aria-label="Exit fullscreen">Exit</button>
+    <p class="dm-demo-caption">A demonstration of the Damaros<sup style="font-size:0.55em;letter-spacing:0;">™</sup> platform on synthetic FHIR data.<span class="dm-caption-hint"> {{ captionHint }}</span></p>
     <div id="nodeStage" style="display:flex;justify-content:center;align-items:flex-start;overflow:hidden;">
       <div id="nodeScaleWrap" style="width:1160px;flex:0 0 1160px;transform-origin:top center;">
       <div style="width:1160px;margin:0;border-radius:12px;border:1px solid rgba(31,45,61,0.08);background:linear-gradient(180deg,#ffffff,#f3f6f9);box-shadow:0 1px 0 rgba(255,255,255,0.05) inset, 0 30px 80px rgba(20,40,70,0.08);overflow:hidden;">
@@ -2243,6 +2253,9 @@ class Component extends DCLogic {
     this.snStopScan();
     this.resetDemo();
   };
+  refitDemoCaption = () => {
+    window.dispatchEvent(new Event("resize"));
+  };
   enterDemoFs = () => {
     if (this.state.demoFs) return;
     const theater = document.getElementById("demoTheater");
@@ -2257,7 +2270,11 @@ class Component extends DCLogic {
     this.setState({ demoFs: true });
     requestAnimationFrame(() => {
       this.layoutNode();
-      requestAnimationFrame(this.layoutNode);
+      this.refitDemoCaption();
+      requestAnimationFrame(() => {
+        this.layoutNode();
+        this.refitDemoCaption();
+      });
     });
   };
   exitDemoFs = () => {
@@ -2280,7 +2297,11 @@ class Component extends DCLogic {
     this.setState({ demoFs: false });
     requestAnimationFrame(() => {
       this.layoutNode();
-      requestAnimationFrame(this.layoutNode);
+      this.refitDemoCaption();
+      requestAnimationFrame(() => {
+        this.layoutNode();
+        this.refitDemoCaption();
+      });
     });
   };
   toggleDemoFs = () => {
