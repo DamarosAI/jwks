@@ -1078,28 +1078,33 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     }
     .dm-site .dm-demo-theater.is-fs .dm-caption-hint{color:rgba(245,248,251,0.72);}
 
-    /* ---- demo theater / fullscreen (in-tree; body scrim; no DOM move) ---- */
-    .dm-demo-fs-scrim{
-      display:none;
-      position:fixed;
-      inset:0;
-      z-index:2147482990;
-      background:#0b1017;
-    }
-    .dm-demo-fs-scrim.is-on{display:block;}
+    /* ---- demo theater / fullscreen (in-tree; opaque shell on theater; no body scrim) ---- */
     .dm-site .dm-demo-theater{
       position:relative;
       width:100%;
     }
+    /* Let fixed theater escape clip/transform/stacking traps from ancestors. */
     html.dm-demo-fs-active #instrument,
-    html.dm-demo-fs-active #instrument .dm-scroll-target,
-    html.dm-demo-fs-active #instrument .dm-reveal,
-    html.dm-demo-fs-active #instrument .dm-reveal.dm-in{
+    html.dm-demo-fs-active #instrument > .dm-scroll-target{
+      position:relative !important;
+      z-index:2147483000 !important;
       transform:none !important;
       filter:none !important;
       perspective:none !important;
       contain:none !important;
       will-change:auto !important;
+      transition:none !important;
+      overflow:visible !important;
+      overflow-x:visible !important;
+      overflow-y:visible !important;
+      clip:auto !important;
+      clip-path:none !important;
+    }
+    html.dm-demo-fs-active #instrument .dm-reveal,
+    html.dm-demo-fs-active #instrument .dm-reveal.dm-in{
+      opacity:1 !important;
+      transform:none !important;
+      filter:none !important;
       transition:none !important;
     }
     .dm-site .dm-demo-theater.is-fs{
@@ -1116,9 +1121,8 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       justify-content:center;
       padding:clamp(16px,3vh,36px) clamp(12px,3vw,40px) clamp(20px,4vh,48px);
       box-sizing:border-box;
-      background:transparent;
+      background:#0b1017;
       animation:dmDemoFsIn 320ms cubic-bezier(0.22,1,0.36,1) both;
-      isolation:isolate;
     }
     @keyframes dmDemoFsIn{
       from{opacity:0;}
@@ -2258,23 +2262,14 @@ class Component extends DCLogic {
   refitDemoCaption = () => {
     window.dispatchEvent(new Event("resize"));
   };
-  ensureFsScrim = () => {
-    let scrim = document.getElementById("demoFsScrim");
-    if (scrim) return scrim;
-    scrim = document.createElement("div");
-    scrim.id = "demoFsScrim";
-    scrim.className = "dm-demo-fs-scrim";
-    scrim.setAttribute("aria-hidden", "true");
-    document.body.appendChild(scrim);
-    return scrim;
-  };
   enterDemoFs = () => {
     if (this.state.demoFs) return;
     const theater = document.getElementById("demoTheater");
     if (!theater) return;
-    // Keep theater in the component tree so DC bindings stay alive.
-    const scrim = this.ensureFsScrim();
-    scrim.classList.add("is-on");
+    // Keep theater in-tree so DC bindings stay alive. Opaque shell is on .is-fs itself
+    // (no body scrim — that painted over the instrument stacking context).
+    const staleScrim = document.getElementById("demoFsScrim");
+    if (staleScrim) staleScrim.remove();
     theater.classList.add("is-fs");
     document.documentElement.classList.add("dm-demo-fs-active");
     this.setState({ demoFs: true });
@@ -2290,9 +2285,7 @@ class Component extends DCLogic {
   exitDemoFs = () => {
     if (!this.state.demoFs && !document.documentElement.classList.contains("dm-demo-fs-active")) return;
     const theater = document.getElementById("demoTheater");
-    const scrim = document.getElementById("demoFsScrim");
     if (theater) theater.classList.remove("is-fs");
-    if (scrim) scrim.classList.remove("is-on");
     document.documentElement.classList.remove("dm-demo-fs-active");
     this.setState({ demoFs: false });
     requestAnimationFrame(() => {
