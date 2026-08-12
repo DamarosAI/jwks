@@ -299,11 +299,50 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       text-align:center !important;
       margin-left:0 !important;
       margin-right:0 !important;
-      opacity:0;
-      visibility:hidden;
-      pointer-events:none;
-      transform:translateY(6px);
+      opacity:1;
+      visibility:visible;
+      pointer-events:auto;
+      transform:none;
       transition:opacity 280ms cubic-bezier(0.16,1,0.3,1),visibility 280ms linear,transform 280ms cubic-bezier(0.16,1,0.3,1);
+    }
+    .dm-scroll-chev > a{
+      display:inline-flex !important;
+      flex-direction:column;
+      align-items:center;
+      gap:6px;
+      margin-left:auto !important;
+      margin-right:auto !important;
+      text-decoration:none;
+      color:#3d72a8;
+      background:transparent;
+      border:none;
+      cursor:pointer;
+      padding:12px 20px;
+      border-radius:17px;
+      transition:background-color 220ms ease;
+    }
+    .dm-scroll-chev > a:hover{background:rgba(61,114,168,0.06);}
+    .dm-scroll-chev__label{
+      font-family:var(--font-display);
+      font-size:12.5px;
+      font-weight:800;
+      letter-spacing:0.16em;
+      text-transform:uppercase;
+      color:#3d72a8;
+    }
+    .dm-scroll-chev__chevs{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      color:#3d72a8;
+      animation:chevBounce 1.8s ease-in-out infinite;
+    }
+    .dm-scroll-chev__chevs svg{display:block;width:22px;height:14px;margin-top:-7px;}
+    .dm-scroll-chev__chevs svg:first-child{margin-top:0;opacity:0.42;}
+    .dm-scroll-chev__chevs svg:nth-child(2){opacity:0.7;}
+    .dm-scroll-chev__chevs svg:nth-child(3){opacity:1;}
+    @media (prefers-reduced-motion:reduce){
+      .dm-scroll-chev__chevs{animation:none;}
     }
     .dm-scroll-chev > button{
       margin-left:auto !important;
@@ -319,8 +358,12 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       border:none;
       cursor:pointer;
       color:#3d72a8;
+      text-decoration:none;
       padding:17px 26px 14px;
       border-radius:17px;
+      opacity:1;
+      visibility:visible;
+      pointer-events:auto;
       transition:opacity 280ms cubic-bezier(0.16,1,0.3,1),visibility 280ms linear,transform 280ms cubic-bezier(0.16,1,0.3,1),background-color 220ms ease;
     }
     .dm-hero-demo:hover{background:rgba(61,114,168,0.06);}
@@ -1390,12 +1433,20 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
           <a href="platform.html#demo" style="display:inline-flex;align-items:center;justify-content:center;border-radius:999px;font-family:var(--font-display);font-weight:600;letter-spacing:0.03em;text-transform:uppercase;color:var(--ink-steel);background:transparent;border:1px solid rgba(47,97,147,0.28);white-space:nowrap;height:48px;padding:0 22px;font-size:13px;">Explore the demo</a>
         </div>
       </div>
+      <a class="dm-hero-demo dm-chev-active" href="#thesis" aria-label="Why: scroll to the thesis">
+        <span class="dm-hero-demo__label">Why</span>
+        <span class="dm-hero-demo__chevs" aria-hidden="true">
+          <svg width="20" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
+          <svg width="20" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
+          <svg width="20" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
+        </span>
+      </a>
     </div>
   </section>
 
 
   <!-- ============ THESIS ============ -->
-  <section id="thesis" data-screen-label="Thesis" style="position:relative;padding:clamp(64px,8vw,112px) clamp(20px,5vw,40px);">
+  <section id="thesis" data-screen-label="Thesis" style="position:relative;padding:clamp(64px,8vw,112px) clamp(20px,5vw,40px);scroll-margin-top:88px;">
     <div class="dm-scroll-target" style="max-width:720px;margin:0 auto;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Thesis</div>
       <h2 class="dm-section-title" style="white-space:normal;max-width:22ch;">The next generation of medicine cannot run on the last generation of research infrastructure.</h2>
@@ -1404,7 +1455,16 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       <p style="margin:28px 0 0;max-width:40rem;font-family:var(--font-display);font-size:clamp(1.15rem,2vw,1.35rem);font-weight:700;letter-spacing:-0.02em;line-height:1.25;color:var(--ink-cold);">Research execution has to become infrastructure.</p>
       <p style="margin:18px 0 0;max-width:40rem;font-size:clamp(16px,1.6vw,18px);line-height:1.55;color:var(--ink-quiet);"><span style="font-family:var(--font-display);font-weight:700;color:var(--ink-steel);">Damaros<sup style="font-size:0.55em;letter-spacing:0;margin-left:1px;">™</sup></span> is building that infrastructure.</p>
     </div>
-    <div class="dm-scroll-chev" style="text-align:center;margin:clamp(36px,5vw,56px) 0 0;"><a href="#problem" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></a></div>
+    <div class="dm-scroll-chev" style="margin:clamp(36px,5vw,56px) 0 0;">
+      <a href="#problem" aria-label="Why: scroll to the problem">
+        <span class="dm-scroll-chev__label">Why</span>
+        <span class="dm-scroll-chev__chevs" aria-hidden="true">
+          <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
+          <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
+          <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
+        </span>
+      </a>
+    </div>
   </section>
 
   <!-- ============ PROBLEM ============ -->
@@ -1457,7 +1517,15 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       </div>
       <p class="dm-stat-connect" style="margin:28px 0 0;font-size:15px;line-height:1.5;color:var(--ink-cold);max-width:42rem;">The gap is not demand. It is execution capacity. Capacity is buildable. By making protocol execution computable, locally controlled, and replayable, Damaros<sup style="font-size:0.55em;letter-spacing:0;">™</sup> reduces the specialized infrastructure a clinic needs to participate in research, without standing up a full clinical trials office.</p>
     </div>
-    <div class="dm-scroll-chev" style="text-align:center;margin:clamp(30px,4vw,46px) 0 0;"><a href="#close" aria-label="Scroll to the next section" style="display:inline-flex;justify-content:center;align-items:center;background:transparent;border:none;cursor:pointer;color:var(--ink-steel);padding:4px 12px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:chevBounce 1.6s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg></a></div>
+    <div class="dm-scroll-chev" style="margin:clamp(30px,4vw,46px) 0 0;">
+      <a href="#close" aria-label="Scroll to the close">
+        <span class="dm-scroll-chev__chevs" aria-hidden="true">
+          <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
+          <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
+          <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
+        </span>
+      </a>
+    </div>
   </section>
 
   <!-- ============ CLOSE ============ -->

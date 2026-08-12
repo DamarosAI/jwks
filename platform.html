@@ -57,6 +57,24 @@
 </script>
 
 <script src="./section-title-fit.js?v=6" defer></script>
+<style>
+  /* Desktop/laptop: float the demo in the viewport under the nav (fullscreen still available). */
+  @media (min-width:901px){
+    .dm-site #instrument{
+      min-height:calc(100svh - 76px) !important;
+      display:flex !important;
+      flex-direction:column !important;
+      justify-content:center !important;
+      box-sizing:border-box !important;
+      padding-top:clamp(56px,8vh,112px) !important;
+      padding-bottom:clamp(48px,7vh,96px) !important;
+    }
+    .dm-site #instrument > .dm-scroll-target{
+      width:100%;
+      margin-top:0 !important;
+    }
+  }
+</style>
 <script>
 window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
 </script>
@@ -2345,7 +2363,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
   <div class="dm-float-nav-spacer" aria-hidden="true"></div>
 
   <!-- ============ INSTRUMENT · clean Node UI ============ -->
-  <section id="instrument" data-screen-label="Demo" data-nosnippet style="position:relative;padding:0 clamp(12px,2.5vw,28px) clamp(40px,6vw,72px);scroll-margin-top:96px;">
+  <section id="instrument" data-screen-label="Demo" data-nosnippet style="position:relative;padding:clamp(40px,7vh,96px) clamp(12px,2.5vw,28px) clamp(48px,8vh,104px);scroll-margin-top:96px;">
     <span id="demo" style="position:absolute;top:0;left:0;width:1px;height:1px;scroll-margin-top:96px;" aria-hidden="true"></span>
     <div class="dm-scroll-target">
     <div class="dm-demo-eyebrow">Demo</div>
