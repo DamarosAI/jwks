@@ -1123,10 +1123,10 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     .dm-site .dm-demo-chrome-actions{display:inline-flex;align-items:center;gap:2px;margin-left:8px;flex-shrink:0;}
     body.dm-demo-fs-lock{overflow:hidden !important;}
 
-    /* ---- demo transport: play / pause only ---- */
+    /* ---- demo transport: reset · play/pause · count ---- */
     .dm-site .dm-transport{
-      position:relative;display:flex;align-items:center;justify-content:center;
-      width:fit-content;max-width:920px;margin:12px auto 0;padding:6px;
+      position:relative;display:flex;align-items:center;justify-content:center;gap:4px;
+      width:fit-content;max-width:920px;margin:12px auto 0;padding:6px 14px 6px 6px;
       border-radius:999px;border:1px solid rgba(31,45,61,0.08);
       background:linear-gradient(180deg,#ffffff,#f3f6f9);
       box-shadow:0 1px 0 rgba(255,255,255,0.05) inset, 0 8px 24px rgba(20,40,70,0.06);
@@ -1138,17 +1138,27 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     }
     .dm-site .dm-demo-theater.is-fs .dm-transport__btn{color:#e8eef5;}
     .dm-site .dm-demo-theater.is-fs .dm-transport__btn:hover{color:#fff;background:rgba(255,255,255,0.12);}
+    .dm-site .dm-demo-theater.is-fs .dm-transport__count{color:rgba(232,238,245,0.85);}
     .dm-site .dm-transport__btn{
       display:inline-flex;align-items:center;justify-content:center;
-      width:44px;height:44px;padding:0;margin:0;
+      width:40px;height:40px;padding:0;margin:0;flex-shrink:0;
       border:none;border-radius:50%;background:transparent;
       color:var(--ink-quiet);cursor:pointer;
       transition:color 140ms ease,background 140ms ease,transform 160ms ease;
     }
-    .dm-site .dm-transport__btn:hover{color:var(--ink-cold);background:rgba(31,45,61,0.05);}
+    .dm-site .dm-transport__btn:hover{color:var(--ink-cold);background:rgba(31,45,61,0.06);}
     .dm-site .dm-transport__btn:active{transform:scale(0.94);}
     .dm-site .dm-transport__btn:focus-visible{outline:2px solid rgba(61,114,168,0.4);outline-offset:1px;}
-    .dm-site .dm-transport__btn svg{display:block;width:20px;height:20px;pointer-events:none;}
+    .dm-site .dm-transport__btn svg{display:block;width:18px;height:18px;pointer-events:none;}
+    .dm-site .dm-transport__btn--play{background:rgba(31,45,61,0.04);}
+    .dm-site .dm-transport__btn--play:hover{background:rgba(31,45,61,0.08);}
+    .dm-site .dm-transport__icon{display:none;line-height:0;}
+    .dm-site .dm-transport__count{
+      min-width:4.6em;margin:0 2px 0 6px;padding:0;
+      font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:600;
+      color:var(--ink-dim);font-variant-numeric:tabular-nums;letter-spacing:0.04em;
+      text-align:center;white-space:nowrap;pointer-events:none;line-height:1;
+    }
 
     /* ---- phone / small tablet ---- */
     @media (max-width:760px){
@@ -1979,14 +1989,18 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     </div>
 
     <div class="dm-transport" data-autoplay-ctl>
-      <button class="dm-transport__btn" onClick="{{ auto.onToggle }}" aria-label="{{ auto.aria }}" type="button">
-        <sc-if value="{{ auto.playing }}">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg>
-        </sc-if>
-        <sc-if value="{{ auto.paused }}">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"></path></svg>
-        </sc-if>
+      <button class="dm-transport__btn" type="button" onClick="{{ auto.onSeekStart }}" aria-label="Reset demo" title="Reset">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v5h5"></path></svg>
       </button>
+      <button class="dm-transport__btn dm-transport__btn--play" type="button" onClick="{{ auto.onToggle }}" aria-label="{{ auto.aria }}" title="{{ auto.aria }}">
+        <span class="dm-transport__icon" data-dc-style="{{ auto.pauseIconStyle }}" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg>
+        </span>
+        <span class="dm-transport__icon" data-dc-style="{{ auto.playIconStyle }}" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 6.2v11.6L18.5 12z"></path></svg>
+        </span>
+      </button>
+      <span class="dm-transport__count">{{ auto.count }}</span>
     </div>
     </div>
     </div>
@@ -2973,11 +2987,13 @@ class Component extends DCLogic {
             ? "Tap the pulsing box to walk through it, or tap play below."
             : "Click the pulsing box to walk through it, or press play below.");
     const demoFs = !!this.state.demoFs;
+    const pad2 = (n) => (n < 10 ? "0" : "") + n;
     const auto = {
       status: autoStatus,
       aria: autoPlaying ? "Pause" : autoDone ? "Replay" : "Play",
-      playing: autoPlaying,
-      paused: !autoPlaying,
+      count: pad2(step + 1) + " / " + pad2(this.autoStages.length),
+      playIconStyle: { display: autoPlaying ? "none" : "block", lineHeight: 0 },
+      pauseIconStyle: { display: autoPlaying ? "block" : "none", lineHeight: 0 },
       fs: demoFs,
       fsOff: !demoFs,
       fsAria: demoFs ? "Exit fullscreen" : "Enter fullscreen",
