@@ -2055,6 +2055,12 @@ class Component extends DCLogic {
         this.__autoRunning = false;
         this.__autoT = null;
         this.setState({ autoPhase: "done" });
+        // Live demo: brief beat on complete, then reset and play again while in view.
+        this.__autoT = setTimeout(() => {
+          if (!this.__autoInView || this.__autoUserPaused || this.prefersReducedMotion()) return;
+          if (this.state.autoPhase !== "done") return;
+          this.replayAuto();
+        }, 1600);
         return;
       }
       const stp = this.autoSeq[i];
@@ -2195,21 +2201,23 @@ class Component extends DCLogic {
       this.__autoIntentTypes = ["pointerdown", "keydown", "wheel"];
       this.__autoIntentTypes.forEach((t) => el.addEventListener(t, this.__onUserIntent, true));
     }
-    this.__autoUserPaused = !this.isSmallViewport();
+    this.__autoUserPaused = this.prefersReducedMotion();
+    const tryStartAuto = () => {
+      if (this.prefersReducedMotion()) return;
+      if (this.__autoUserPaused || this.__autoRunning || this.state.autoPhase === "playing") return;
+      if (!this.__autoInView) return;
+      // Always reset to the top, then play (same as seek + play).
+      this.replayAuto();
+    };
+    this.__tryStartAuto = tryStartAuto;
     this.__onVisibility = () => {
       if (document.hidden) {
         if (this.state.autoPhase === "playing") this.pauseAuto(false);
-      } else if (!this.__autoUserPaused && this.state.autoPhase === "paused" && this.__autoInView) {
-        this.resumeAuto();
+      } else if (!this.__autoUserPaused && this.__autoInView && this.state.autoPhase !== "playing") {
+        tryStartAuto();
       }
     };
     document.addEventListener("visibilitychange", this.__onVisibility);
-    const tryStartAuto = () => {
-      if (this.prefersReducedMotion()) return;
-      if (this.__autoUserPaused || this.state.autoPhase === "done" || this.state.autoPhase === "playing") return;
-      if (!this.__autoInView) return;
-      this.playAuto(this.state.autoPhase === "idle" ? 0 : this.autoIndexForStep(this.state.step));
-    };
     if (el && "IntersectionObserver" in window) {
       this.__io = new IntersectionObserver((entries) => {
         entries.forEach((en) => {
@@ -2224,7 +2232,7 @@ class Component extends DCLogic {
       this.__io.observe(el);
     } else {
       this.__autoInView = true;
-      if (this.isSmallViewport()) setTimeout(tryStartAuto, 480);
+      setTimeout(tryStartAuto, 480);
     }
   }
   componentWillUnmount() {
@@ -2865,15 +2873,15 @@ class Component extends DCLogic {
       onDemo: () => {
         this.hideHeroDemo();
         this.layoutNode();
-        if (this.isSmallViewport()) this.__autoUserPaused = false;
+        this.__autoUserPaused = this.prefersReducedMotion();
         requestAnimationFrame(() => {
           this.layoutNode();
           this.scrollCenter("instrument");
-          if (this.isSmallViewport() && !this.prefersReducedMotion()) {
+          if (!this.prefersReducedMotion()) {
             setTimeout(() => {
-              if (this.__autoUserPaused || this.state.autoPhase === "playing" || this.state.autoPhase === "done") return;
+              if (this.__autoUserPaused || this.__autoRunning || this.state.autoPhase === "playing") return;
               this.__autoInView = true;
-              this.playAuto(this.state.autoPhase === "idle" ? 0 : this.autoIndexForStep(this.state.step));
+              this.replayAuto();
             }, 520);
           }
         });
