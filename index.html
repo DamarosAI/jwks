@@ -1107,6 +1107,13 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       filter:none !important;
       transition:none !important;
     }
+    .dm-demo-fs-place{
+      display:none;
+      width:100%;
+      pointer-events:none;
+      visibility:hidden;
+    }
+    html.dm-demo-fs-active .dm-demo-fs-place{display:block;}
     .dm-site .dm-demo-theater.is-fs{
       position:fixed !important;
       inset:0 !important;
@@ -1122,11 +1129,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       padding:clamp(16px,3vh,36px) clamp(12px,3vw,40px) clamp(20px,4vh,48px);
       box-sizing:border-box;
       background:#0b1017;
-      animation:dmDemoFsIn 320ms cubic-bezier(0.22,1,0.36,1) both;
-    }
-    @keyframes dmDemoFsIn{
-      from{opacity:0;}
-      to{opacity:1;}
+      opacity:1 !important;
     }
     .dm-site .dm-demo-theater.is-fs #nodeStage{
       width:min(100%,1400px);
@@ -2262,6 +2265,29 @@ class Component extends DCLogic {
   refitDemoCaption = () => {
     window.dispatchEvent(new Event("resize"));
   };
+  ensureFsPlace = (theater) => {
+    let place = document.getElementById("demoFsPlace");
+    if (!place) {
+      place = document.createElement("div");
+      place.id = "demoFsPlace";
+      place.className = "dm-demo-fs-place";
+      place.setAttribute("aria-hidden", "true");
+    }
+    if (place.parentNode !== theater.parentNode) {
+      theater.parentNode.insertBefore(place, theater);
+    }
+    return place;
+  };
+  restoreFsScroll = () => {
+    const y = typeof this.__fsScrollY === "number" ? this.__fsScrollY : 0;
+    const apply = () => {
+      window.scrollTo(0, y);
+      if (document.documentElement) document.documentElement.scrollTop = y;
+      if (document.body) document.body.scrollTop = y;
+    };
+    apply();
+    requestAnimationFrame(apply);
+  };
   enterDemoFs = () => {
     if (this.state.demoFs) return;
     const theater = document.getElementById("demoTheater");
@@ -2270,13 +2296,21 @@ class Component extends DCLogic {
     // (no body scrim — that painted over the instrument stacking context).
     const staleScrim = document.getElementById("demoFsScrim");
     if (staleScrim) staleScrim.remove();
+    // Fixed theater leaves flow and collapses page height; browsers clamp scroll to top.
+    // Hold the prior scroll and reserve in-flow height so exit lands where the user was.
+    this.__fsScrollY = window.scrollY || window.pageYOffset || 0;
+    const place = this.ensureFsPlace(theater);
+    place.style.height = Math.max(1, Math.ceil(theater.getBoundingClientRect().height)) + "px";
     theater.classList.add("is-fs");
     document.documentElement.classList.add("dm-demo-fs-active");
+    this.restoreFsScroll();
     this.setState({ demoFs: true });
     requestAnimationFrame(() => {
+      this.restoreFsScroll();
       this.layoutNode();
       this.refitDemoCaption();
       requestAnimationFrame(() => {
+        this.restoreFsScroll();
         this.layoutNode();
         this.refitDemoCaption();
       });
@@ -2285,13 +2319,21 @@ class Component extends DCLogic {
   exitDemoFs = () => {
     if (!this.state.demoFs && !document.documentElement.classList.contains("dm-demo-fs-active")) return;
     const theater = document.getElementById("demoTheater");
+    const place = document.getElementById("demoFsPlace");
     if (theater) theater.classList.remove("is-fs");
+    if (place) {
+      place.style.height = "0px";
+      place.remove();
+    }
     document.documentElement.classList.remove("dm-demo-fs-active");
+    this.restoreFsScroll();
     this.setState({ demoFs: false });
     requestAnimationFrame(() => {
+      this.restoreFsScroll();
       this.layoutNode();
       this.refitDemoCaption();
       requestAnimationFrame(() => {
+        this.restoreFsScroll();
         this.layoutNode();
         this.refitDemoCaption();
       });
