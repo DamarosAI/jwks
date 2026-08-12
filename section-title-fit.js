@@ -190,7 +190,17 @@
 
   function layoutTitle(el, width, hi) {
     var parts = parseTitle(el);
+    var forceBreak = el.classList.contains("dm-section-title--break") && parts.ink && parts.steel;
     if (isNarrow()) {
+      if (forceBreak) {
+        renderTwo(el, parts.ink, parts.steel);
+        el.classList.add("dm-section-title--fluid");
+        el.classList.remove("dm-section-title--one", "dm-section-title--two");
+        el.style.removeProperty("font-size");
+        el.style.removeProperty("width");
+        el.style.removeProperty("max-width");
+        return null;
+      }
       renderOne(el, parts);
       el.style.removeProperty("font-size");
       el.style.removeProperty("width");
@@ -200,6 +210,10 @@
       return null;
     }
     el.classList.remove("dm-section-title--fluid");
+    if (forceBreak) {
+      renderTwo(el, parts.ink, parts.steel);
+      return bestSize(el, width, hi);
+    }
     renderOne(el, parts);
     if (measureFits(el, width, Math.max(MIN, hi * 0.92))) {
       return bestSize(el, width, hi);
