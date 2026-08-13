@@ -141,8 +141,6 @@
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(schedule).catch(function () {});
     }
-    // One late settle after layout/fonts - avoid repeated timers that reflow.
-    setTimeout(schedule, 200);
   }
 
   window.addEventListener("resize", scheduleResize, { passive: true });
@@ -156,5 +154,4 @@
   } else {
     boot();
   }
-  window.addEventListener("load", schedule);
 })();

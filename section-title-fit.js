@@ -326,7 +326,6 @@
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(schedule).catch(function () {});
     }
-    setTimeout(schedule, 200);
   }
 
   var api = {
@@ -350,6 +349,5 @@
     } else {
       boot();
     }
-    window.addEventListener("load", schedule);
   }
 })();
