@@ -262,29 +262,11 @@
         return null;
       }
       renderOne(el, parts);
-      el.style.removeProperty("font-size");
-      el.style.removeProperty("width");
-      el.style.removeProperty("max-width");
-      el.classList.add("dm-section-title--fluid");
-      el.classList.remove("dm-section-title--one", "dm-section-title--two");
-      return null;
+      return bestSize(el, width, hi);
     }
     el.classList.remove("dm-section-title--fluid");
     if (forced) {
       renderTwo(el, forced.left, forced.right, steelSecond(parts, forced.right));
-      return bestSize(el, width, hi);
-    }
-    renderOne(el, parts);
-    if (measureFits(el, width, Math.max(MIN, hi * 0.92))) {
-      return bestSize(el, width, hi);
-    }
-    var br = balancedBreak(parts.full, parts.steel);
-    if (br) {
-      renderTwo(el, br.left, br.right, steelSecond(parts, br.right));
-      return bestSize(el, width, hi);
-    }
-    if (parts.steel && parts.ink) {
-      renderTwo(el, parts.ink, parts.steel, true);
       return bestSize(el, width, hi);
     }
     renderOne(el, parts);
@@ -307,22 +289,20 @@
     var hi = maxForViewport();
     var sizes = [];
     var shared = hi;
-    var anySized = false;
 
     for (var i = 0; i < nodes.length; i++) {
       var size = layoutTitle(nodes[i], width, hi);
       sizes.push(size);
-      if (size != null) {
-        anySized = true;
+      if (size != null && !(nodes[i].closest && nodes[i].closest("#thesis"))) {
         if (size < shared) shared = size;
       }
     }
 
-    if (!anySized) return;
-    var target = shared.toFixed(2) + "px";
     for (var j = 0; j < nodes.length; j++) {
       if (sizes[j] == null) continue;
-      applySize(nodes[j], target);
+      var px = (nodes[j].closest && nodes[j].closest("#thesis")) ? sizes[j] : shared;
+      if (px == null) continue;
+      applySize(nodes[j], px.toFixed(2) + "px");
     }
   }
 

@@ -47,7 +47,7 @@
 
 <script src="./biomarker-matrix.js?v=56" defer></script>
 <script src="./hero-fit.js?v=9" defer></script>
-<script src="./section-title-fit.js?v=8" defer></script>
+<script src="./section-title-fit.js?v=9" defer></script>
 <script>
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 window.scrollTo(0, 0);
@@ -355,10 +355,11 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       box-sizing:border-box;
     }
     #thesis .dm-scroll-target,#problem .dm-scroll-target{width:100%;}
-    #thesis .dm-scroll-target{max-width:min(760px,100%);}
+    #thesis .dm-scroll-target{max-width:min(1080px,100%);}
+    #thesis .dm-section-title{white-space:nowrap !important;text-wrap:nowrap !important;}
     @media (max-width:900px), (max-height:820px){
       #thesis .dm-scroll-target{max-width:min(920px,100%) !important;}
-      #thesis .dm-section-title{font-size:clamp(1.45rem,4.2vw,2.4rem) !important;}
+      #thesis .dm-section-title{font-size:clamp(1.45rem,4.2vw,2.4rem) !important;white-space:nowrap !important;}
       #thesis .dm-thesis-close__line{font-size:clamp(1.12rem,2.6vw,1.35rem);}
       #thesis p[style*="font-size:clamp(16px"]{font-size:clamp(15px,2.2vw,17px) !important;}
     }
@@ -1331,7 +1332,8 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       }
       #thesis .dm-section-title,
       #thesis .dm-section-title--fluid{
-        text-wrap:pretty !important;
+        white-space:nowrap !important;
+        text-wrap:nowrap !important;
       }
       .dm-site .dm-section-dek,
       .dm-site .dm-section-dek--oneline{
@@ -1496,7 +1498,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
   <section id="thesis" data-screen-label="Thesis" style="position:relative;padding:clamp(56px,7vw,96px) clamp(20px,5vw,40px);">
     <div class="dm-scroll-target" style="margin:0 auto;">
       <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Thesis</div>
-      <h2 class="dm-section-title">The next generation of medicine<br>cannot run on&nbsp;the last generation of research infrastructure.</h2>
+      <h2 class="dm-section-title">The next generation of medicine cannot run on the last generation of research infrastructure.</h2>
       <p style="margin:22px 0 0;max-width:46rem;font-size:clamp(16px,1.6vw,18px);line-height:1.55;color:var(--ink-quiet);">Therapies are becoming more precise. Protocols are becoming more complex. The patients research needs are distributed across thousands of care settings.</p>
       <p style="margin:18px 0 0;max-width:46rem;font-size:clamp(16px,1.6vw,18px);line-height:1.55;color:var(--ink-quiet);">Most clinics cannot budget a research department or clinical trials office. The specialized infrastructure required to participate in research is the bottleneck.</p>
       <div class="dm-thesis-close">
