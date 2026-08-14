@@ -2140,23 +2140,39 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       width:100% !important;
       max-width:none !important;
       height:100% !important;
+      max-height:100dvh !important;
       margin:0 !important;
       display:flex !important;
       flex-direction:column;
       align-items:center;
       justify-content:center;
-      padding:clamp(16px,3vh,36px) clamp(12px,3vw,40px) clamp(20px,4vh,48px);
+      gap:0;
+      padding:clamp(12px,2.5vh,28px) clamp(10px,2.5vw,32px) clamp(14px,3vh,36px);
       box-sizing:border-box;
       background:#0b1017;
       opacity:1 !important;
+      overflow:hidden !important;
+      min-height:0 !important;
+    }
+    .dm-site .dm-demo-theater.is-fs .dm-demo-caption{
+      flex:0 0 auto;
+      max-width:min(920px,100%);
     }
     .dm-site .dm-demo-theater.is-fs #nodeStage{
       width:min(100%,1400px);
       flex:0 1 auto;
+      min-height:0;
+      max-height:100%;
       position:relative;
       z-index:1;
+      overflow:hidden;
     }
-    .dm-site .dm-demo-theater.is-fs .dm-transport-row{margin-top:16px;position:relative;z-index:1;}
+    .dm-site .dm-demo-theater.is-fs .dm-transport-row{
+      margin-top:clamp(10px,1.8vh,16px);
+      position:relative;
+      z-index:1;
+      flex:0 0 auto;
+    }
     html.dm-demo-fs-active,
     html.dm-demo-fs-active body{overflow:hidden !important;}
     html.dm-demo-fs-active .dm-float-nav,
@@ -3609,13 +3625,27 @@ class Component extends DCLogic {
     if (!stage || !wrap) return;
     const REFW = 1160, REFH = 740;
     const fs = !!(this.state && this.state.demoFs);
-    const availW = stage.clientWidth;
-    // In-page: reserve nav + caption + transport + chevron. Fullscreen: tight chrome.
-    const chrome = fs ? 96 : (62 + 72 + 40 + 64 + 40);
-    const availH = Math.max(260, window.innerHeight - chrome);
+    const theater = document.getElementById("demoTheater");
+    const availW = Math.max(1, stage.clientWidth || (theater ? theater.clientWidth : window.innerWidth));
+    let availH;
+    if (fs && theater) {
+      // Fit caption + scaled UI + transport inside the fixed theater on any viewport.
+      const cs = window.getComputedStyle(theater);
+      const padY = (parseFloat(cs.paddingTop) || 0) + (parseFloat(cs.paddingBottom) || 0);
+      const caption = theater.querySelector(".dm-demo-caption");
+      const transport = theater.querySelector(".dm-transport-row");
+      const capH = caption ? caption.getBoundingClientRect().height : 0;
+      const trH = transport ? transport.getBoundingClientRect().height : 0;
+      const gap = transport ? (parseFloat(window.getComputedStyle(transport).marginTop) || 16) : 16;
+      const shell = padY + capH + trH + gap + 12;
+      availH = Math.max(160, (theater.clientHeight || window.innerHeight) - shell);
+    } else {
+      const chrome = 62 + 72 + 40 + 64 + 40;
+      availH = Math.max(260, window.innerHeight - chrome);
+    }
     let s = Math.min(availW / REFW, availH / REFH, fs ? 1.35 : 1);
     if (!isFinite(s) || s <= 0) s = 1;
-    s = Math.max(s, 0.2);
+    s = Math.max(s, 0.15);
     wrap.style.transform = "scale(" + s + ")";
     stage.style.height = Math.ceil(REFH * s) + "px";
   };

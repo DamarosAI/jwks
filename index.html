@@ -346,48 +346,15 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     @media (prefers-reduced-motion:reduce){
       .dm-scroll-chev__chevs{animation:none;}
     }
-    /* Thesis / problem: fill a viewport so centered scrolls land cleanly */
-    #thesis,#problem{
+    /* Problem: fill a viewport so centered scrolls land cleanly */
+    #problem{
       min-height:calc(100svh - 76px);
       display:flex;
       flex-direction:column;
       justify-content:center;
       box-sizing:border-box;
     }
-    #thesis .dm-scroll-target,#problem .dm-scroll-target{width:100%;}
-    #thesis .dm-scroll-target{max-width:min(1080px,100%);}
-    #thesis .dm-section-title{white-space:nowrap !important;text-wrap:nowrap !important;}
-    @media (max-width:900px), (max-height:820px){
-      #thesis .dm-scroll-target{max-width:min(920px,100%) !important;}
-      #thesis .dm-section-title{font-size:clamp(1.45rem,4.2vw,2.4rem) !important;white-space:nowrap !important;}
-      #thesis .dm-thesis-close__line{font-size:clamp(1.12rem,2.6vw,1.35rem);}
-      #thesis p[style*="font-size:clamp(16px"]{font-size:clamp(15px,2.2vw,17px) !important;}
-    }
-    @media (max-width:640px){
-      #thesis .dm-scroll-target{max-width:100% !important;}
-      #thesis .dm-section-title{max-width:100% !important;}
-    }
-    .dm-thesis-close{
-      margin:28px 0 0;
-      max-width:40rem;
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-    }
-    .dm-thesis-close__line{
-      margin:0;
-      font-family:var(--font-display);
-      font-size:clamp(1.2rem,2.1vw,1.45rem);
-      font-weight:700;
-      letter-spacing:-0.02em;
-      line-height:1.28;
-    }
-    .dm-thesis-close__line--cold{color:var(--ink-cold);}
-    .dm-thesis-close__line--brand{color:var(--ink-quiet);}
-    .dm-thesis-close__line--brand .dm-thesis-brand{
-      color:var(--ink-steel);
-      font-weight:700;
-    }
+    #problem .dm-scroll-target{width:100%;}
     .dm-scroll-chev > button{
       margin-left:auto !important;
       margin-right:auto !important;
@@ -1330,11 +1297,6 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
         white-space:normal !important;
         text-wrap:balance !important;
       }
-      #thesis .dm-section-title,
-      #thesis .dm-section-title--fluid{
-        white-space:nowrap !important;
-        text-wrap:nowrap !important;
-      }
       .dm-site .dm-section-dek,
       .dm-site .dm-section-dek--oneline{
         margin-top:14px !important;
@@ -1482,37 +1444,12 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
           <a class="dm-cta dm-cta--ghost" href="platform.html#demo" style="display:inline-flex;align-items:center;justify-content:center;border-radius:999px;font-family:var(--font-display);font-weight:600;letter-spacing:0.03em;text-transform:uppercase;color:var(--ink-steel);background:transparent;border:1px solid rgba(47,97,147,0.28);white-space:nowrap;height:48px;padding:0 22px;font-size:13px;">Explore the demo</a>
         </div>
       </div>
-      <a class="dm-hero-demo dm-chev-active" href="#thesis" data-scroll-center="thesis" aria-label="Why: scroll to the thesis">
+      <a class="dm-hero-demo dm-chev-active" href="#problem" data-scroll-center="problem" aria-label="Why: scroll to the problem">
         <span class="dm-hero-demo__label">Why</span>
         <span class="dm-hero-demo__chevs" aria-hidden="true">
           <svg width="20" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
           <svg width="20" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
           <svg width="20" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
-        </span>
-      </a>
-    </div>
-  </section>
-
-
-  <!-- ============ THESIS ============ -->
-  <section id="thesis" data-screen-label="Thesis" style="position:relative;padding:clamp(56px,7vw,96px) clamp(20px,5vw,40px);">
-    <div class="dm-scroll-target" style="margin:0 auto;">
-      <div style="font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-steel);margin-bottom:18px;">Thesis</div>
-      <h2 class="dm-section-title">The next generation of medicine cannot run on the last generation of research infrastructure.</h2>
-      <p style="margin:22px 0 0;max-width:46rem;font-size:clamp(16px,1.6vw,18px);line-height:1.55;color:var(--ink-quiet);">Therapies are becoming more precise. Protocols are becoming more complex. The patients research needs are distributed across thousands of care settings.</p>
-      <p style="margin:18px 0 0;max-width:46rem;font-size:clamp(16px,1.6vw,18px);line-height:1.55;color:var(--ink-quiet);">Most clinics cannot budget a research department or clinical trials office. The specialized infrastructure required to participate in research is the bottleneck.</p>
-      <div class="dm-thesis-close">
-        <p class="dm-thesis-close__line dm-thesis-close__line--cold">Research execution has to become infrastructure.</p>
-        <p class="dm-thesis-close__line dm-thesis-close__line--brand"><span class="dm-thesis-brand">Damaros<sup style="font-size:0.55em;letter-spacing:0;margin-left:1px;">™</sup></span> is building that infrastructure.</p>
-      </div>
-    </div>
-    <div class="dm-scroll-chev" style="margin:clamp(28px,4vw,44px) 0 0;">
-      <a href="#problem" data-scroll-center="problem" aria-label="Why: scroll to the problem">
-        <span class="dm-scroll-chev__label">Why</span>
-        <span class="dm-scroll-chev__chevs" aria-hidden="true">
-          <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
-          <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
-          <svg width="22" height="14" viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 12 10 18 4"></polyline></svg>
         </span>
       </a>
     </div>
