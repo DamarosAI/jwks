@@ -65,13 +65,13 @@ body {
   font-size: 16px;
   font-weight: 400;
   line-height: 1.5;
-  font-optical-sizing: auto;
-  text-rendering: optimizeLegibility;
-  font-kerning: normal;
-  font-variant-ligatures: common-ligatures contextual;
-  font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
-  -webkit-font-smoothing: subpixel-antialiased;
-  -moz-osx-font-smoothing: auto;
+  font-optical-sizing: none;
+  text-rendering: geometricPrecision;
+  font-kerning: none;
+  font-variant-ligatures: none;
+  font-feature-settings: 'kern' 0, 'liga' 0, 'calt' 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 a {
@@ -168,21 +168,15 @@ strong {
 .pilot-status,
 .pilot-grid input,
 .pilot-grid textarea,
-.mobile-menu > a {
-  text-rendering: optimizeLegibility;
-  font-kerning: normal;
-  font-variant-ligatures: common-ligatures contextual;
-  font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+.mobile-menu > a,
+.footer-mark,
+.footer-mark p,
+.footer-links {
+  text-rendering: geometricPrecision;
+  font-kerning: none;
+  font-variant-ligatures: none;
+  font-feature-settings: 'kern' 0, 'liga' 0, 'calt' 0;
   font-synthesis: none;
-  -webkit-font-smoothing: subpixel-antialiased;
-  -moz-osx-font-smoothing: auto;
-}
-
-.button-primary,
-.trident-primary,
-.source-primary-action,
-.source-replay-head button,
-.resolve-sign-row button {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -2129,8 +2123,8 @@ strong {
 .final-cta .button-primary {
   background: white;
   color: var(--accent-strong);
-  -webkit-font-smoothing: subpixel-antialiased;
-  -moz-osx-font-smoothing: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .final-cta .button-primary:hover {
@@ -8382,17 +8376,18 @@ html { scroll-padding-top: 96px; }
   }
 }
 
-/* Endless chrome: hinted sizes, kerned faces, no italic shear. */
+/* Endless chrome: one Regular face. No kern, no liga, no italic shear. */
 .landing-source-demo,
 .hero-workspace,
 .agent-console,
 .live-workspace {
   font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  font-kerning: normal;
-  font-variant-ligatures: common-ligatures contextual;
-  -webkit-font-smoothing: subpixel-antialiased;
-  -moz-osx-font-smoothing: auto;
+  text-rendering: geometricPrecision;
+  font-kerning: none;
+  font-variant-ligatures: none;
+  font-feature-settings: 'kern' 0, 'liga' 0, 'calt' 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .landing-source-demo :is(em, i),
@@ -11279,7 +11274,7 @@ html.is-hidden .hero-agent.is-active i,
 
 @media (max-width: 640px) {
   body {
-    text-rendering: optimizeLegibility;
+    text-rendering: geometricPrecision;
     background:
       radial-gradient(circle at 84% 4%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 18rem),
       var(--bg);
@@ -11287,8 +11282,9 @@ html.is-hidden .hero-agent.is-active i,
 
   .wordmark,
   .button {
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: subpixel-antialiased;
+    text-rendering: geometricPrecision;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   .landing-hero {
@@ -11709,8 +11705,31 @@ html.is-hidden .hero-agent.is-active i,
   }
 }
 
-/* Endless ships as one unhinted Regular face. Compact controls need optical
-   spacing, not synthetic weights or browser kerning. Keep this contract last. */
+/* Endless ships as one unhinted Regular face. Compact chrome needs optical
+   spacing, grayscale AA, and no browser kerning. Keep this contract last. */
+#root :is(
+  button,
+  .button,
+  [role='button'],
+  input[type='button'],
+  input[type='submit'],
+  .wordmark,
+  .brand-tm,
+  .desktop-nav-links a,
+  .mobile-menu > a,
+  .footer-mark,
+  .footer-mark p,
+  .footer-links
+) {
+  font-weight: 400;
+  font-kerning: none;
+  font-variant-ligatures: none;
+  font-feature-settings: 'kern' 0, 'liga' 0, 'calt' 0;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 #root :is(
   button,
   .button,
@@ -11718,14 +11737,7 @@ html.is-hidden .hero-agent.is-active i,
   input[type='button'],
   input[type='submit']
 ) {
-  font-weight: 400;
-  font-kerning: none;
-  font-variant-ligatures: none;
-  font-feature-settings: 'kern' 0, 'liga' 0, 'calt' 0;
-  text-rendering: auto;
   letter-spacing: var(--tracking-control);
-  -webkit-font-smoothing: subpixel-antialiased;
-  -moz-osx-font-smoothing: auto;
 }
 
 #root .button {
