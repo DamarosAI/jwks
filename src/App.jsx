@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom'
+import { isAutoplayToggle, useAutoplayHold } from './autoplay'
 import { PilotButton, PilotProvider } from './PilotInquiry'
 import PrivacyPage from './PrivacyPage'
 import { useGSAP } from '@gsap/react'
@@ -491,13 +492,12 @@ function MiniRun() {
   const [previous, setPrevious] = useState(null)
   const [transitionMode, setTransitionMode] = useState('manual')
   const [tick, setTick] = useState(0)
-  const [autoplayPaused, setAutoplayPaused] = useState(false)
-  const idleTimer = useRef(null)
+  const { held, hold } = useAutoplayHold(reduced)
   const transitionTimer = useRef(null)
   const steps = ['Protocol', 'Evidence', 'Screening', 'Resolve', 'Replay']
 
   useEffect(() => {
-    if (reduced || autoplayPaused) return undefined
+    if (reduced || held) return undefined
     const stageTimer = window.setInterval(() => {
       setActive((current) => {
         const next = (current + 1) % steps.length
@@ -511,21 +511,12 @@ function MiniRun() {
     }, 18000)
     const tickTimer = window.setInterval(() => setTick((value) => value + 1), 3600)
     return () => { window.clearInterval(stageTimer); window.clearInterval(tickTimer) }
-  }, [reduced, autoplayPaused, steps.length])
+  }, [reduced, held, steps.length])
 
-  useEffect(() => () => {
-    window.clearTimeout(idleTimer.current)
-    window.clearTimeout(transitionTimer.current)
-  }, [])
-
-  const deferAutoplay = () => {
-    if (reduced) return
-    setAutoplayPaused(true)
-    window.clearTimeout(idleTimer.current)
-    idleTimer.current = window.setTimeout(() => setAutoplayPaused(false), 12000)
-  }
+  useEffect(() => () => window.clearTimeout(transitionTimer.current), [])
 
   const selectStage = (index) => {
+    hold()
     if (index === active) return
     setPrevious(active)
     setTransitionMode('manual')
@@ -546,7 +537,7 @@ function MiniRun() {
   )
 
   return (
-    <div className="hero-workspace" aria-label="Live synthetic Damaros workspace preview" onClickCapture={deferAutoplay}>
+    <div className="hero-workspace" aria-label="Live synthetic Damaros workspace preview" onClickCapture={hold}>
       <div className="mac-titlebar">
         <div className="traffic-lights" aria-hidden="true"><i /><i /><i /></div>
         <span className="window-title hero-window-brand"><img src="/assets/damaros-monogram-blue.svg" alt="Damaros" /></span>
@@ -652,15 +643,23 @@ function CapacityBento() {
   const reduced = useReducedMotion()
 
   useGSAP(() => {
-    if (reduced || window.innerWidth <= 900) return
-    gsap.from('.capacity-bento > *, .systems-banner', {
-      opacity: 0,
-      y: 28,
-      duration: 0.72,
-      stagger: 0.08,
-      ease: 'power3.out',
-      scrollTrigger: { trigger: root.current, start: 'top 70%' },
-    })
+    if (!reduced && window.innerWidth > 900) {
+      gsap.from('.capacity-bento > *, .systems-banner', {
+        opacity: 0,
+        y: 28,
+        duration: 0.72,
+        stagger: 0.08,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: root.current, start: 'top 70%' },
+      })
+    }
+    if (reduced) return
+    const record = root.current?.querySelector('.evidence-record-card')
+    if (!record) return
+    const chain = gsap.timeline({ scrollTrigger: { trigger: record, start: 'top 78%' } })
+    chain
+      .from('.record-spine', { scaleY: 0, duration: 0.7, ease: 'power2.out' }, 0)
+      .from('.record-event, .record-seal', { opacity: 0, y: 10, duration: 0.42, stagger: 0.14, ease: 'power3.out' }, 0.08)
   }, { scope: root, dependencies: [reduced] })
 
   return (
@@ -695,13 +694,35 @@ function CapacityBento() {
           <cite>Journal of Clinical Oncology · national benchmark</cite>
         </article>
         <article className="bento-card evidence-record-card">
-          <div className="record-head"><span className="product-label">EXECUTION RECORD</span></div>
+          <div className="record-head"><span className="product-label">Site-owned execution</span></div>
           <div className="record-chain">
-            <span><CheckCircle size={16} weight="fill" /> Protocol v2.1 <small>aead45cf</small></span>
-            <span><CheckCircle size={16} weight="fill" /> Evidence snapshot <small>1,284 resources</small></span>
-            <span><CheckCircle size={16} weight="fill" /> Signed resolution <small>Site reviewer</small></span>
+            <i className="record-spine" aria-hidden="true" />
+            <ol aria-label="Site execution chain">
+              <li className="record-event">
+                <b>LOCKED</b>
+                <strong>Protocol v2.1 locked</strong>
+                <small>Sponsor packet · aead45cf</small>
+                <em>HIPAA-aligned hold · compiled at site</em>
+              </li>
+              <li className="record-event">
+                <b>BOUND</b>
+                <strong>1,284 source records bound</strong>
+                <small>Evidence snapshot · 09:55</small>
+                <em>PHI on-site · no raw egress</em>
+              </li>
+              <li className="record-event is-signed">
+                <b>SIGNED</b>
+                <strong>PI decision signed</strong>
+                <small>Dr. M. Avdol · 14:07</small>
+                <em>Local authority · attributable</em>
+              </li>
+              <li className="record-seal"><b>SEALED</b><strong>Replay sealed · Record intact</strong><small>sha256 · rpl…1047</small></li>
+            </ol>
           </div>
-          <h3>The execution record stays under site control.</h3>
+          <div className="record-copy">
+            <h3><span>Software prepares the record.</span><span className="accent-text">Your site makes the call.</span></h3>
+            <p>Every protocol version, source, and signed decision stays bound, reconstructable, and under local control.</p>
+          </div>
         </article>
       </div>
       <div className="systems-banner">
@@ -769,7 +790,7 @@ function ProtocolView({ onAdvance }) {
   )
 }
 
-function EvidenceView({ refreshing, tick, onAdvance }) {
+function EvidenceView({ refreshing, onAdvance }) {
   const [selected, setSelected] = useState(1)
   const [acted, setActed] = useState({})
   const [pendingAction, setPendingAction] = useState(null)
@@ -794,7 +815,7 @@ function EvidenceView({ refreshing, tick, onAdvance }) {
     setActionComplete(true)
   }
   return (
-    <div className="workspace-view source-evidence-view" key={`evidence-${tick % 2}`}>
+    <div className="workspace-view source-evidence-view">
       <div className="source-view-intro"><span>EVIDENCE</span><small>How Damaros maps the sponsor packet onto site evidence · PHI-bounded · 09:43</small></div>
       <div className="evidence-coverage"><div><strong>Sponsor packet → evidence coverage</strong><small>Mapped 25 of 36 criteria · Protocol v2.1</small></div><div className="coverage-track"><i /><i /><i /><i /></div><footer><span className="mapped">Mapped · 25</span><span className="missing">Missing · 4</span><span className="conflict">Conflict · 3</span><span className="stale">Stale · 4</span></footer></div>
       <div className="source-evidence-grid"><div className="obligation-list"><span>PROTOCOL OBLIGATIONS · SOURCE MAPPING</span>{obligations.map((item, index) => <button type="button" className={`${selected === index ? 'active ' : ''}${item.status.toLowerCase()}`} onClick={() => { setSelected(index); setPendingAction(null); setActionComplete(false) }} key={item.code}><div><b>{item.code}</b><strong>{item.fact}</strong><em>{acted[item.code] ? 'ROUTED' : item.status}</em></div><footer><span>{item.cls}</span><small>{acted[item.code] ? 'Action recorded' : item.action} →</small></footer></button>)}</div><div className="obligation-detail"><header><span>{detail.code}</span><em className={detail.status.toLowerCase()}>{isActed ? 'ROUTED' : detail.status}</em><small>{detail.cls}</small></header><h4>{detail.fact}</h4><p>Maps to protocol {detail.code} · Inclusion · governs screening</p>{pendingAction?.code === detail.code ? <InlineActionPanel open complete={actionComplete} eyebrow="ACTION REQUIRED" title={detail.action} description={detail.note} rows={[["Criterion", detail.code], ["Owner", actionOwner], ["SLA", 'Review within 24 hours'], ["Record", `${actionTicket} · replay-linked`]]} confirmLabel={detail.action} successTitle="Work item created" successDescription={`${detail.action} now sits in the site worklist. Nothing left the site.`} onClose={() => setPendingAction(null)} onConfirm={confirmEvidenceAction} /> : <><dl><div><dt>CURRENT</dt><dd>{detail.current}</dd></div><div><dt>SOURCE PLANE</dt><dd>{detail.sources}</dd></div><div><dt>CHECKED</dt><dd>{detail.checked}</dd></div><div><dt>PROVENANCE</dt><dd>Human decision · source trace available</dd></div></dl><div className={`evidence-guidance ${detail.status === 'CONFIRM' ? 'computable' : ''}`}><span>{detail.status === 'CONFIRM' ? 'NO JUDGMENT REQUIRED' : 'NEXT STEP'}</span><strong>{detail.note}</strong></div>{isActed ? <div className="evidence-action-receipt"><header><span>✓ ACTION RECORDED</span><strong>{actionTicket}</strong></header><dl><div><dt>OWNER</dt><dd>{actionOwner}</dd></div><div><dt>SLA</dt><dd>Review within 24 hours</dd></div><div><dt>REPLAY</dt><dd>Linked to {detail.code} evidence node</dd></div></dl><button type="button" onClick={onAdvance}>Continue to Screening →</button></div> : <button className="source-primary-action" type="button" onClick={openEvidenceAction}>{detail.action}</button>}</>}</div></div>
@@ -802,7 +823,7 @@ function EvidenceView({ refreshing, tick, onAdvance }) {
   )
 }
 
-function ScreeningView({ tick, onAdvance }) {
+function ScreeningView({ onAdvance }) {
   const [selectedSubject, setSelectedSubject] = useState(2)
   const subject = PLATFORM_SCREENING_QUEUE[selectedSubject]
   const reviewTrigger = {
@@ -815,7 +836,7 @@ function ScreeningView({ tick, onAdvance }) {
     'S-1078': 'Reconcile the last-dose date with pharmacy.',
   }[subject.id]
   return (
-    <div className="workspace-view source-screening-view" key={`screen-${tick % 2}`}>
+    <div className="workspace-view source-screening-view">
       <div className="source-view-intro"><span>SCREENING</span><small>Protocol v2.1</small></div>
       <div className="screen-summary-strip"><div className="pass"><strong>1</strong><span>Pass</span></div><div className="review"><strong>4</strong><span>Review</span></div><div className="fail"><strong>3</strong><span>Fail</span></div></div>
       <div className="source-screen-grid">
@@ -926,10 +947,12 @@ function LiveDemo() {
   const [active, setActive] = useState(0)
   const [activeAgent, setActiveAgent] = useState(0)
   const [playing, setPlaying] = useState(() => !window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+  const { held, hold, clearHold } = useAutoplayHold(reduced)
   const [refreshing, setRefreshing] = useState(false)
   const [tick, setTick] = useState(0)
   const [stageLeaving, setStageLeaving] = useState(false)
   const [utility, setUtility] = useState(null)
+  const live = playing && !held
 
   useGSAP(() => {
     if (reduced || window.innerWidth <= 900) return
@@ -937,7 +960,7 @@ function LiveDemo() {
   }, { scope: root, dependencies: [reduced] })
 
   useEffect(() => {
-    if (!playing || reduced) return undefined
+    if (!live || reduced) return undefined
     const timer = window.setInterval(() => {
       setStageLeaving(true)
       window.clearTimeout(stageTransition.current)
@@ -948,27 +971,37 @@ function LiveDemo() {
           return next
         })
         window.requestAnimationFrame(() => setStageLeaving(false))
-      }, 110)
-    }, 4200)
+      }, 160)
+    }, 5200)
     return () => { window.clearInterval(timer); window.clearTimeout(stageTransition.current) }
-  }, [playing, reduced])
+  }, [live, reduced])
 
   useEffect(() => {
-    if (!playing || reduced) return undefined
-    const timer = window.setInterval(() => setTick((value) => value + 1), 1200)
+    if (!live || reduced) return undefined
+    const timer = window.setInterval(() => setTick((value) => value + 1), 1600)
     return () => window.clearInterval(timer)
-  }, [playing, reduced])
+  }, [live, reduced])
 
   useEffect(() => () => window.clearTimeout(stageTransition.current), [])
 
   const selectStage = (index) => {
+    hold()
     if (index === active) return
     setStageLeaving(true)
     window.clearTimeout(stageTransition.current)
     stageTransition.current = window.setTimeout(() => {
       setActive(index)
       window.requestAnimationFrame(() => setStageLeaving(false))
-    }, reduced ? 0 : 110)
+    }, reduced ? 0 : 160)
+  }
+
+  const togglePlaying = () => {
+    if (held && playing) {
+      clearHold()
+      return
+    }
+    clearHold()
+    setPlaying((value) => !value)
   }
   const refreshEvidence = () => {
     selectStage(1)
@@ -983,11 +1016,11 @@ function LiveDemo() {
         <h2>Enter the site workspace.</h2>
         <p>One synthetic record keeps moving through protocol, evidence, review, agents, and proof.</p>
       </div>
-      <div className="live-workspace">
+      <div className="live-workspace" onClickCapture={(event) => { if (!isAutoplayToggle(event.target)) hold() }}>
         <div className="mac-titlebar">
           <div className="traffic-lights" aria-hidden="true"><i /><i /><i /></div>
           <span className="window-title">Damaros Spine · Site MRN-018</span>
-          <div className="workspace-window-actions"><span className="window-live"><i /> Live synthetic · event {String(tick + 1).padStart(2, '0')}</span><button type="button" aria-label={playing ? 'Pause live run' : 'Play live run'} onClick={() => setPlaying((value) => !value)}>{playing ? <Pause size={13} weight="fill" /> : <Play size={13} weight="fill" />}</button></div>
+          <div className="workspace-window-actions"><span className="window-live"><i /> Live synthetic · event {String(tick + 1).padStart(2, '0')}</span><button type="button" data-autoplay-toggle aria-label={playing && !held ? 'Pause live run' : 'Play live run'} onClick={togglePlaying}>{playing && !held ? <Pause size={13} weight="fill" /> : <Play size={13} weight="fill" />}</button></div>
         </div>
         <div className="workspace-app">
           <aside className="workspace-sidebar">
@@ -999,8 +1032,8 @@ function LiveDemo() {
           <div className="workspace-center">
             <div className="workspace-toolbar"><span>Studies <CaretRight size={12} /> DMR-204 <CaretRight size={12} /> <strong>{DEMO_STAGES[active].label}</strong></span><div><button type="button" onClick={refreshEvidence} disabled={refreshing}><Database size={13} /> {refreshing ? 'Refreshing' : 'Refresh'}</button><button type="button" aria-expanded={utility === 'search'} onClick={() => setUtility((value) => value === 'search' ? null : 'search')}><MagnifyingGlass size={14} /> Search</button><button type="button" aria-label="More options" aria-expanded={utility === 'more'} onClick={() => setUtility((value) => value === 'more' ? null : 'more')}><DotsThree size={17} /></button></div></div>
             {utility === 'search' && <div className="workspace-utility workspace-search"><label><MagnifyingGlass size={15} /><input autoFocus aria-label="Search workspace" placeholder="Search subject, criterion, source…" /></label><button type="button" onClick={() => { selectStage(0); setUtility(null) }}><span>DMR-204</span><small>Study record</small></button><button type="button" onClick={() => { selectStage(2); setUtility(null) }}><span>018-017</span><small>Synthetic subject</small></button><button type="button" onClick={() => { selectStage(3); setUtility(null) }}><span>E-5.3</span><small>Open site judgment</small></button></div>}
-            {utility === 'more' && <div className="workspace-utility workspace-more"><button type="button" onClick={() => { selectStage(4); setUtility(null) }}>Open replay record <ArrowRight size={13} /></button><button type="button" onClick={() => { selectStage(5); setUtility(null) }}>Inspect agent run <ArrowRight size={13} /></button><button type="button" onClick={() => { setPlaying((value) => !value); setUtility(null) }}>{playing ? 'Pause autoplay' : 'Resume autoplay'} <ArrowRight size={13} /></button></div>}
-            <div className={`workspace-stage-copy ${stageLeaving ? 'stage-leaving' : ''}`}><span>{DEMO_STAGES[active].title}</span><small>Autoplaying · event {String(tick + 1).padStart(2, '0')} · controls live</small></div>
+            {utility === 'more' && <div className="workspace-utility workspace-more"><button type="button" onClick={() => { selectStage(4); setUtility(null) }}>Open replay record <ArrowRight size={13} /></button><button type="button" onClick={() => { selectStage(5); setUtility(null) }}>Inspect agent run <ArrowRight size={13} /></button><button type="button" data-autoplay-toggle onClick={() => { togglePlaying(); setUtility(null) }}>{playing && !held ? 'Pause autoplay' : 'Resume autoplay'} <ArrowRight size={13} /></button></div>}
+            <div className={`workspace-stage-copy ${stageLeaving ? 'stage-leaving' : ''}`}><span>{DEMO_STAGES[active].title}</span><small>{playing && !held ? 'Autoplaying' : 'Paused'} · event {String(tick + 1).padStart(2, '0')} · controls live</small></div>
             <div className={`workspace-canvas ${stageLeaving ? 'stage-leaving' : ''}`} aria-live="polite">
               {active === 0 && <ProtocolView tick={tick} />}
               {active === 1 && <EvidenceView refreshing={refreshing} tick={tick} />}
@@ -1012,7 +1045,7 @@ function LiveDemo() {
           </div>
           <ActivityDock active={active} activeAgent={activeAgent} setActiveAgent={setActiveAgent} setActive={selectStage} tick={tick} />
         </div>
-        <div className="workspace-playback"><button type="button" onClick={() => setPlaying((value) => !value)}>{playing ? <Pause size={14} weight="fill" /> : <Play size={14} weight="fill" />} {playing ? 'Pause' : 'Resume'}</button>{DEMO_STAGES.map((stage, index) => <button type="button" aria-label={`Open ${stage.label}`} className={active === index ? 'active' : ''} onClick={() => selectStage(index)} key={stage.key}><span>{index + 1}</span>{stage.label}</button>)}<button type="button" aria-label="Advance one stage" onClick={() => selectStage((active + 1) % DEMO_STAGES.length)}><SkipForward size={14} weight="fill" /></button></div>
+        <div className="workspace-playback"><button type="button" data-autoplay-toggle onClick={togglePlaying}>{playing && !held ? <Pause size={14} weight="fill" /> : <Play size={14} weight="fill" />} {playing && !held ? 'Pause' : 'Resume'}</button>{DEMO_STAGES.map((stage, index) => <button type="button" aria-label={`Open ${stage.label}`} className={active === index ? 'active' : ''} onClick={() => selectStage(index)} key={stage.key}><span>{index + 1}</span>{stage.label}</button>)}<button type="button" aria-label="Advance one stage" onClick={() => selectStage((active + 1) % DEMO_STAGES.length)}><SkipForward size={14} weight="fill" /></button></div>
       </div>
     </section>
   )
@@ -1040,7 +1073,7 @@ function TridentWorkbench({ selected, setSelected, stage, setStage }) {
 
   return (
     <div className="trident-workbench" aria-live="polite">
-      <div className="trident-list"><div><span>HIGH-FRICTION CRITERIA</span><small>4 candidate amendments</small></div>{criteria.map((item, index) => <button className={index === selected ? 'active' : ''} type="button" onClick={() => { setSelected(index); setStage(0); setRequestOpen(false); setRequestComplete(false) }} key={item.code}><span><b>{item.code}</b><strong>{item.current}</strong><i><span style={{ width: `${item.friction}%` }} /></i></span><em>{item.friction}%</em></button>)}</div>
+      <div className="trident-list">{criteria.map((item, index) => <button className={index === selected ? 'active' : ''} type="button" onClick={() => { setSelected(index); setStage(0); setRequestOpen(false); setRequestComplete(false) }} key={item.code}><span><b>{item.code}</b><strong>{item.current}</strong><i><span style={{ width: `${item.friction}%` }} /></i></span><em>{item.friction}%</em></button>)}</div>
       <div className="trident-detail">
         <div className="trident-detail-head"><span><small>SELECTED CRITERION</small><strong>{criterion.code}</strong></span><em>{requested ? 'REQUESTED' : drafted ? 'DRAFT READY' : drafting ? 'DRAFTING' : 'REVIEW'}</em></div>
         {requestOpen ? <InlineActionPanel open complete={requestComplete} title="Request amendment from sponsor" description="Send Trident's PHI-free case to Meridian Oncology Therapeutics. Sponsor authors and signs the amendment." rows={[["Criterion", criterion.code], ["Projected friction", `${criterion.friction}% → ${criterion.projected}%`], ["Evidence", "FDA guidance · ontology-normalized criteria"], ["Authority", "Sponsor medical monitor"]]} confirmLabel="Send request" successTitle="Request sent to sponsor" successDescription="Meridian received Trident's draft. SLA 5 business days. Request bound to Replay." onClose={() => { setRequestOpen(false); if (!requestComplete) setStage(3) }} onConfirm={() => { setRequestComplete(true); setStage(5) }} /> : drafting ? <div className="agent-processing-state"><span /><strong>{stage === 1 ? 'Reading protocol and FDA guidance…' : 'Mapping ontology concepts…'}</strong><small>Source links remain attached while Trident builds the bounded delta.</small></div> : <>
@@ -1054,11 +1087,7 @@ function TridentWorkbench({ selected, setSelected, stage, setStage }) {
   )
 }
 
-function AgentLiveLoader({ label }) {
-  return <span className="agent-live-loader"><i /><i /><i />{label}</span>
-}
-
-function EyeWorkbench({ selected, setSelected, routed, setRouted, tick }) {
+function EyeWorkbench({ selected, setSelected, routed, setRouted }) {
   const [routeOpen, setRouteOpen] = useState(false)
   const [routeComplete, setRouteComplete] = useState(false)
   const signals = [
@@ -1068,19 +1097,29 @@ function EyeWorkbench({ selected, setSelected, routed, setRouted, tick }) {
     { id: 'thr', name: 'Screening throughput', type: 'Steady', value: '98%', unit: 'of control band', delta: 'within band', sees: 'Throughput is holding at 98% of the control band.', cause: 'Stable. Eye stays quiet when nothing needs attention.', impact: 'No action required. Surfacing only deviations keeps the site team focused.', method: 'Statistical process control · within ±2σ', route: '', ticket: '', owner: '' },
   ]
   const signal = signals[selected]
-  const step = ['Monitoring 8 site signals', 'Comparing 90-day baseline', 'Binding deviations to Replay'][tick % 3]
+  const done = routed === signal.id || (signal.type === 'Steady')
   return <div className="agent-workbench agent-eye-workbench" aria-live="polite">
-    <div className="agent-workbench-head"><span>QUALITY SIGNALS</span><AgentLiveLoader label={step} /></div>
     <div className="eye-kpis"><div><strong>8</strong><small>Signals monitored</small></div><div><strong>7</strong><small>Need attention</small></div><div><strong>6</strong><small>Routed this period</small></div><div><strong>98%</strong><small>Screening throughput</small></div></div>
-    <div className="quality-signal-grid"><div className="quality-list">{signals.map((item, index) => <button className={selected === index ? 'active' : ''} type="button" aria-pressed={selected === index} onClick={() => { setSelected(index); setRouted(false); setRouteOpen(false); setRouteComplete(false) }} key={item.id}><span><b>{item.type}</b><strong>{item.name}</strong><small>{item.delta}</small></span><em>{item.value}</em></button>)}</div><div className="quality-detail">{routeOpen ? <InlineActionPanel open complete={routeComplete} title={signal.route} description="Create an evidence-bound advisory. Eye does not change screening results or site decisions." rows={[["Signal", signal.name], ["Owner", signal.owner], ["SLA", "24 hours"], ["Record", `${signal.ticket} · replay-linked`]]} confirmLabel={signal.route} successTitle="Quality signal routed" successDescription={`${signal.ticket} reached ${signal.owner}. Source signal stays linked.`} onClose={() => setRouteOpen(false)} onConfirm={() => { setRouted(true); setRouteComplete(true) }} /> : <><span>{signal.type} · KRI</span><h4>{signal.name}</h4><div className="eye-metric"><strong>{signal.value}</strong><span>{signal.unit}</span><em>{signal.delta}</em></div><div className="eye-spark" aria-hidden="true">{[2, 2, 3, 3, 4, 6].map((value, index) => <i style={{ height: `${9 + value * 5}px` }} key={index} />)}</div><div className="eye-explanation"><div><small>WHAT EYE SEES</small><p>{signal.sees}</p></div><div><small>LIKELY CAUSE</small><p>{signal.cause}</p></div><div><small>IF UNADDRESSED</small><p>{signal.impact}</p></div></div><div><small>METHOD</small><strong>{signal.method}</strong></div>{signal.type === 'Steady' ? <div className="agent-written"><CheckCircle size={18} weight="fill" /><span><strong>Within control band</strong><small>No routing needed. Eye stays quiet.</small></span></div> : !routed ? <button className="trident-primary" type="button" onClick={() => { setRouteOpen(true); setRouteComplete(false) }}>{signal.route} <ArrowRight size={18} weight="bold" /></button> : <div className="agent-written"><CheckCircle size={18} weight="fill" /><span><strong>{signal.ticket} routed</strong><small>{signal.owner} · bound to Replay</small></span></div>}</>}</div></div>
+    <div className="quality-signal-grid">
+      <div className="quality-list">{signals.map((item, index) => <button className={selected === index ? 'active' : ''} type="button" aria-pressed={selected === index} onClick={() => { setSelected(index); setRouteOpen(false); setRouteComplete(false) }} key={item.id}><span><b>{item.type}</b><strong>{item.name}</strong><small>{item.delta}</small></span><em>{item.value}</em></button>)}</div>
+      <div className="quality-detail">
+        <span>{signal.type} · KRI</span>
+        <h4>{signal.name}</h4>
+        <div className="eye-metric"><strong>{signal.value}</strong><span>{signal.unit}</span><em>{signal.delta}</em></div>
+        <div className="eye-spark" aria-hidden="true">{[2, 2, 3, 3, 4, 6].map((value, index) => <i style={{ height: `${9 + value * 5}px` }} key={index} />)}</div>
+        <div className="eye-explanation"><div><small>WHAT EYE SEES</small><p>{signal.sees}</p></div><div><small>LIKELY CAUSE</small><p>{signal.cause}</p></div><div><small>IF UNADDRESSED</small><p>{signal.impact}</p></div></div>
+        <div className="eye-method"><small>METHOD</small><strong>{signal.method}</strong></div>
+        <div className="agent-action-slot">
+          {routeOpen ? <InlineActionPanel open complete={routeComplete} title={signal.route} description="Create an evidence-bound advisory. Eye does not change screening results or site decisions." rows={[["Signal", signal.name], ["Owner", signal.owner], ["SLA", "24 hours"], ["Record", `${signal.ticket} · replay-linked`]]} confirmLabel={signal.route} successTitle="Quality signal routed" successDescription={`${signal.ticket} reached ${signal.owner}. Source signal stays linked.`} onClose={() => setRouteOpen(false)} onConfirm={() => { setRouted(signal.id); setRouteComplete(true) }} /> : done ? <div className="agent-written"><CheckCircle size={18} weight="fill" /><span><strong>{signal.type === 'Steady' ? 'Within control band' : `${signal.ticket} routed`}</strong><small>{signal.type === 'Steady' ? 'No routing needed. Eye stays quiet.' : `${signal.owner} · bound to Replay`}</small></span></div> : <button className="trident-primary" type="button" onClick={() => { setRouteOpen(true); setRouteComplete(false) }}>{signal.route} <ArrowRight size={18} weight="bold" /></button>}
+        </div>
+      </div>
+    </div>
   </div>
 }
 
-function LunaWorkbench({ asked, setAsked, tick }) {
-  const [question, setQuestion] = useState(1)
-  const [phase, setPhase] = useState(asked ? 'answered' : 'idle')
+function LunaWorkbench({ asked, setAsked }) {
+  const [question, setQuestion] = useState(asked ? 1 : 0)
   const [openedCitation, setOpenedCitation] = useState(null)
-  const timerRef = useRef([])
   const investigations = [
     { q: 'Why was S-1051 deferred?', cat: 'Eligibility', sub: 'Traces a deferral to its source observation and rule.', answer: 'S-1051 deferred on criterion I-3.4 because the qualifying potassium was drawn 06-09, 11 days before evaluation, past the 7-day window. It was routed, not failed.', citations: [{ id: 'Observation/chem-5521', type: 'FHIR OBSERVATION', value: 'K⁺ 5.0 mmol/L · drawn 06-09', source: '10:02 · signed chain row', hash: 'sha256 · 5521…09af' }, { id: 'Criterion/I-3.4', type: 'PROTOCOL RULE', value: 'Serum chemistry · 7-day window', source: 'Protocol v2.1 · 10:02', hash: 'sha256 · i34…v21' }, { id: 'Review/R-901', type: 'SITE WORK ITEM', value: 'STALE_SOURCE · routed to coordinator', source: '10:04 · site worklist', hash: 'Ed25519 · verified' }] },
     { q: 'Who signed the ECOG override on S-1047?', cat: 'Accountability', sub: 'Names signer and rationale for an override.', answer: 'The PI signed at 14:07, citing the latest oncology note as superseding the stale structured ECOG. The decision was signed and hash-anchored.', citations: [{ id: 'Resolve/EVT-1207', type: 'SIGNED SITE DECISION', value: 'PI signature on ECOG conflict', source: '14:07 · Resolve', hash: 'Ed25519 · verified' }, { id: 'Actor/PI-018', type: 'ACCOUNTABLE ACTOR', value: 'Dr. M. Avdol · PI / Sub-I', source: '14:07 · site signature', hash: 'sha256 · pi18…1407' }, { id: 'Rationale/R-884', type: 'DECISION RATIONALE', value: 'Latest note supersedes stale ECOG', source: 'Review R-884 · 14:07', hash: 'sha256 · r884…ecog' }] },
@@ -1088,26 +1127,30 @@ function LunaWorkbench({ asked, setAsked, tick }) {
   ]
   const activeQuestion = investigations[question]
   const citations = activeQuestion.citations
-  const citationRecord = citations.find((citation) => citation.id === openedCitation)
-
-  useEffect(() => () => timerRef.current.forEach((timer) => window.clearTimeout(timer)), [])
+  const citationRecord = citations.find((citation) => citation.id === openedCitation) || citations[0]
 
   const runInvestigation = (index) => {
-    timerRef.current.forEach((timer) => window.clearTimeout(timer))
     setQuestion(index)
     setOpenedCitation(null)
     setAsked(true)
-    setPhase('retrieving')
-    timerRef.current = [window.setTimeout(() => setPhase('rows'), 720), window.setTimeout(() => setPhase('answered'), 1480)]
   }
 
   return <div className="agent-workbench agent-luna-workbench" aria-live="polite">
-    <div className="agent-workbench-head"><span>AUDIT CHAIN · 847 EVENTS</span><AgentLiveLoader label={phase === 'answered' ? 'Chain hash verified' : ['Reading signed events', 'Resolving linked evidence', 'Verifying record'][tick % 3]} /></div>
-    <div className="luna-investigation-grid"><div className="luna-question-list"><span>INVESTIGATIONS · SELECT ONE</span>{investigations.map((item, index) => <button className={question === index ? 'active' : ''} type="button" onClick={() => runInvestigation(index)} key={item.q}><strong>{item.q}</strong><em>{item.cat}</em><small>{item.sub}</small></button>)}</div><div className="audit-answer luna-answer-panel">{phase === 'idle' && <div className="luna-idle"><strong>Select an investigation.</strong><small>Luna reconstructs the finding from the audit chain and cites every row used.</small></div>}{phase === 'retrieving' && <div className="agent-processing-state"><span /><strong>Reconstructing from 847 audit events…</strong><small>Read-only. No record changes.</small></div>}{(phase === 'rows' || phase === 'answered') && <><div><span>{phase === 'answered' ? 'FINDING · RECONSTRUCTED FROM CHAIN' : 'EVIDENCE · 3 CHAIN ROWS RETRIEVED'}</span><em>{phase === 'answered' ? 'CHAIN VERIFIED' : 'READING'}</em></div>{phase === 'answered' && <p>{activeQuestion.answer}</p>}<div className="audit-citations">{citations.map((citation, index) => <button className={openedCitation === citation.id ? 'active' : ''} type="button" aria-pressed={openedCitation === citation.id} onClick={() => setOpenedCitation(citation.id)} key={citation.id}><b>[{index + 1}]</b>{citation.id}</button>)}</div>{citationRecord ? <div className="audit-citation-record"><span><b>{citationRecord.type}</b><small>{citationRecord.id}</small></span><strong>{citationRecord.value}</strong><div><small>{citationRecord.source}</small><em>{citationRecord.hash}</em></div></div> : <small>Every claim links to a chain row. Select a citation to inspect it.</small>}</>}</div></div>
+    <div className="luna-investigation-grid">
+      <div className="luna-question-list">
+        {investigations.map((item, index) => <button className={question === index ? 'active' : ''} type="button" onClick={() => runInvestigation(index)} key={item.q}><strong>{item.q}</strong><em>{item.cat}</em><small>{item.sub}</small></button>)}
+      </div>
+      <div className="audit-answer luna-answer-panel">
+        <div><span>FINDING · RECONSTRUCTED FROM CHAIN</span><em>CHAIN VERIFIED</em></div>
+        <p>{activeQuestion.answer}</p>
+        <div className="audit-citations">{citations.map((citation, index) => <button className={(openedCitation || citations[0].id) === citation.id ? 'active' : ''} type="button" aria-pressed={(openedCitation || citations[0].id) === citation.id} onClick={() => setOpenedCitation(citation.id)} key={citation.id}><b>[{index + 1}]</b>{citation.id}</button>)}</div>
+        <div className="audit-citation-record"><span><b>{citationRecord.type}</b><small>{citationRecord.id}</small></span><strong>{citationRecord.value}</strong><div><small>{citationRecord.source}</small><em>{citationRecord.hash}</em></div></div>
+      </div>
+    </div>
   </div>
 }
 
-function SentinelWorkbench({ selected, setSelected, surfaced, setSurfaced, tick }) {
+function SentinelWorkbench({ selected, setSelected, surfaced, setSurfaced }) {
   const [surfaceOpen, setSurfaceOpen] = useState(false)
   const [surfaceComplete, setSurfaceComplete] = useState(false)
   const studies = [
@@ -1116,10 +1159,23 @@ function SentinelWorkbench({ selected, setSelected, surfaced, setSurfaced, tick 
     { id: 'NCT00000009', title: 'AVT-9 · KRAS G12C solid tumor', phase: 'Ph I/II', coverage: '6 / 10 capabilities', fit: '68%', status: 'Possible fit', sponsor: 'Helix Therapeutics', pi: 'Dr. J. Kujo', sites: '17 active sites', concepts: ['KRAS G12C', 'solid tumor', 'dose escalation', 'prior IO allowed'] },
   ]
   const study = studies[selected]
+  const done = surfaced === study.id
   return <div className="agent-workbench agent-sentinel-workbench" aria-live="polite">
-    <div className="agent-workbench-head"><span>TRIAL FINDER · SITE 018</span><AgentLiveLoader label={surfaced ? 'Aggregate signal replay-linked' : ['Scanning open registries', 'Comparing capability graph', 'Ranking protocol fit'][tick % 3]} /></div>
     <div className="sentinel-summary"><strong>3</strong><span>of 9 open protocols fit Site 018</span><em>Aggregate only · synthetic</em></div>
-    <div className="sentinel-grid"><div className="sentinel-studies">{studies.map((item, index) => <button className={selected === index ? 'active' : ''} type="button" onClick={() => { setSelected(index); setSurfaced(false); setSurfaceOpen(false); setSurfaceComplete(false) }} key={item.id}><span><b>{item.id}</b><strong>{item.title}</strong><small>{item.phase} · {item.coverage}</small></span><em>{item.fit}<small>{item.status}</small></em></button>)}</div><div className="sentinel-detail">{surfaceOpen ? <InlineActionPanel open complete={surfaceComplete} title="Surface site capacity" description="Share one aggregate opportunity signal. Sponsor sees capability supply, not a patient." rows={[["Protocol", `${study.id} · ${study.phase}`], ["Sponsor", study.sponsor], ["Coverage", `${study.fit} · ${study.coverage}`], ["Boundary", "PHI-free · no patient-level data"]]} confirmLabel="Surface to sponsor" successTitle="Opportunity surfaced" successDescription={`${study.sponsor} received aggregate site capacity. Signal bound to Replay.`} onClose={() => setSurfaceOpen(false)} onConfirm={() => { setSurfaced(true); setSurfaceComplete(true) }} /> : <><span>SELECTED PROTOCOL</span><h4>{study.title}</h4><div className="sentinel-coverage"><strong>{study.fit}</strong><span>{Array.from({ length: 10 }, (_, index) => <i className={index < Number.parseInt(study.coverage, 10) ? 'filled' : ''} key={index} />)}</span></div><div className="sentinel-meta"><div><small>SPONSOR</small><strong>{study.sponsor}</strong></div><div><small>PI</small><strong>{study.pi}</strong></div><div><small>SITES</small><strong>{study.sites}</strong></div></div><div className="sentinel-concepts"><small>EVIDENCE CONCEPTS COVERED</small><div>{study.concepts.map((concept) => <span key={concept}>{concept}</span>)}</div></div><p>Site coverage graph only. Patient data and source evidence remain inside Site 018.</p>{!surfaced ? <button className="trident-primary" type="button" onClick={() => { setSurfaceOpen(true); setSurfaceComplete(false) }}>Surface to sponsor <ArrowRight size={18} weight="bold" /></button> : <div className="agent-written"><CheckCircle size={18} weight="fill" /><span><strong>Opportunity surfaced</strong><small>{study.sponsor} · aggregate signal · no PHI</small></span></div>}</>}</div></div>
+    <div className="sentinel-grid">
+      <div className="sentinel-studies">{studies.map((item, index) => <button className={selected === index ? 'active' : ''} type="button" onClick={() => { setSelected(index); setSurfaceOpen(false); setSurfaceComplete(false) }} key={item.id}><span><b>{item.id}</b><strong>{item.title}</strong><small>{item.phase} · {item.coverage}</small></span><em>{item.fit}<small>{item.status}</small></em></button>)}</div>
+      <div className="sentinel-detail">
+        <span>SELECTED PROTOCOL</span>
+        <h4>{study.title}</h4>
+        <div className="sentinel-coverage"><strong>{study.fit}</strong><span>{Array.from({ length: 10 }, (_, index) => <i className={index < Number.parseInt(study.coverage, 10) ? 'filled' : ''} key={index} />)}</span></div>
+        <div className="sentinel-meta"><div><small>SPONSOR</small><strong>{study.sponsor}</strong></div><div><small>PI</small><strong>{study.pi}</strong></div><div><small>SITES</small><strong>{study.sites}</strong></div></div>
+        <div className="sentinel-concepts"><small>EVIDENCE CONCEPTS COVERED</small><div>{study.concepts.map((concept) => <span key={concept}>{concept}</span>)}</div></div>
+        <p>Site coverage graph only. Patient data and source evidence remain inside Site 018.</p>
+        <div className="agent-action-slot">
+          {surfaceOpen ? <InlineActionPanel open complete={surfaceComplete} title="Surface site capacity" description="Share one aggregate opportunity signal. Sponsor sees capability supply, not a patient." rows={[["Protocol", `${study.id} · ${study.phase}`], ["Sponsor", study.sponsor], ["Coverage", `${study.fit} · ${study.coverage}`], ["Boundary", "PHI-free · no patient-level data"]]} confirmLabel="Surface to sponsor" successTitle="Opportunity surfaced" successDescription={`${study.sponsor} received aggregate site capacity. Signal bound to Replay.`} onClose={() => setSurfaceOpen(false)} onConfirm={() => { setSurfaced(study.id); setSurfaceComplete(true) }} /> : done ? <div className="agent-written"><CheckCircle size={18} weight="fill" /><span><strong>Opportunity surfaced</strong><small>{study.sponsor} · aggregate signal · no PHI</small></span></div> : <button className="trident-primary" type="button" onClick={() => { setSurfaceOpen(true); setSurfaceComplete(false) }}>Surface to sponsor <ArrowRight size={18} weight="bold" /></button>}
+        </div>
+      </div>
+    </div>
   </div>
 }
 
@@ -1128,6 +1184,7 @@ function AgentOperations() {
   const reduced = useReducedMotion()
   const [active, setActive] = useState(0)
   const [tick, setTick] = useState(0)
+  const { held, hold } = useAutoplayHold(reduced)
   const [tridentCriterion, setTridentCriterion] = useState(3)
   const [tridentStage, setTridentStage] = useState(0)
   const [eyeSelected, setEyeSelected] = useState(0)
@@ -1138,10 +1195,10 @@ function AgentOperations() {
   const agent = AGENTS[active]
 
   useEffect(() => {
-    if (reduced) return undefined
+    if (reduced || held) return undefined
     const traceTimer = window.setInterval(() => setTick((value) => value + 1), 1600)
     return () => window.clearInterval(traceTimer)
-  }, [reduced])
+  }, [reduced, held])
 
   useGSAP(() => {
     if (reduced || window.innerWidth <= 900) return
@@ -1161,7 +1218,7 @@ function AgentOperations() {
         <h2>Four agents.</h2>
         <p>Find, draft, flag, cite. Never decide.</p>
       </div>
-      <div className="agent-console">
+      <div className="agent-console" onClickCapture={hold}>
         <div className="mac-titlebar">
           <div className="traffic-lights" aria-hidden="true"><i /><i /><i /></div>
           <span className="window-title">Damaros Spine · Agent workspace</span>
@@ -1171,22 +1228,20 @@ function AgentOperations() {
           <aside className="agent-console-nav">
             <span>AGENTS</span>
             {AGENTS.map((item, index) => (
-              <button className={index === active ? 'active' : ''} style={{ '--agent-color': item.color }} type="button" aria-expanded={index === active} aria-controls="agent-expanded-panel" onClick={() => { setActive(index); setTick(0) }} key={item.name}>
+              <button className={index === active ? 'active' : ''} style={{ '--agent-color': item.color }} type="button" aria-pressed={index === active} onClick={() => { setActive(index); setTick(0) }} key={item.name}>
                 <AgentGlyph kind={item.icon} size={17} />
                 <span><strong>{item.name}</strong><small>{item.role}</small></span>
-                <CaretRight className="agent-expand-caret" size={13} />
               </button>
             ))}
             <div className="agent-console-context"><small>CURRENT RUN</small><strong>DMR-204 · v2.1</strong><span>Site 018 · synthetic</span></div>
           </aside>
-          <main className="agent-console-main" id="agent-expanded-panel">
+          <main className="agent-console-main">
             <div className="agent-console-state" style={{ '--agent-color': agent.color }} key={agent.name}>
               <div className="agent-console-header" style={{ '--agent-color': agent.color }}>
                 <div><span><AgentGlyph kind={agent.icon} size={15} /> {agent.name} · {agent.role}</span><h3>{agent.task}</h3><p>{agent.text}</p></div>
-                {((active === 0 && tridentStage < 5) || (active === 1 && eyeSelected !== 3 && !eyeRouted) || (active === 2 && !lunaAsked) || (active === 3 && !sentinelSurfaced)) && <em className="agent-working-state"><i /> {active === 0 && tridentStage === 0 ? 'Ready' : active === 2 && !lunaAsked ? 'Read only' : 'Working'}</em>}
-                {((active === 0 && tridentStage >= 5) || (active === 1 && (eyeSelected === 3 || eyeRouted)) || (active === 2 && lunaAsked) || (active === 3 && sentinelSurfaced)) && <em><CheckCircle size={14} weight="fill" /> {active === 1 && eyeSelected === 3 ? 'No action' : 'Complete'}</em>}
+                {active === 2 ? <em>Read only</em> : ((active === 0 && tridentStage < 5) || (active === 1 && eyeSelected !== 3 && !eyeRouted) || (active === 3 && !sentinelSurfaced)) ? <em className="agent-working-state"><i /> {active === 0 && tridentStage === 0 ? 'Ready' : 'Working'}</em> : <em><CheckCircle size={14} weight="fill" /> {active === 1 && eyeSelected === 3 ? 'No action' : 'Complete'}</em>}
               </div>
-              {active === 0 ? <TridentWorkbench selected={tridentCriterion} setSelected={setTridentCriterion} stage={tridentStage} setStage={setTridentStage} /> : active === 1 ? <EyeWorkbench selected={eyeSelected} setSelected={setEyeSelected} routed={eyeRouted} setRouted={setEyeRouted} tick={tick} /> : active === 2 ? <LunaWorkbench asked={lunaAsked} setAsked={setLunaAsked} tick={tick} /> : active === 3 ? <SentinelWorkbench selected={sentinelSelected} setSelected={setSentinelSelected} surfaced={sentinelSurfaced} setSurfaced={setSentinelSurfaced} tick={tick} /> : <><div className="agent-quick-demo" style={{ '--agent-color': agent.color }}>
+              {active === 0 ? <TridentWorkbench selected={tridentCriterion} setSelected={setTridentCriterion} stage={tridentStage} setStage={setTridentStage} /> : active === 1 ? <EyeWorkbench selected={eyeSelected} setSelected={setEyeSelected} routed={eyeRouted} setRouted={setEyeRouted} /> : active === 2 ? <LunaWorkbench asked={lunaAsked} setAsked={setLunaAsked} /> : active === 3 ? <SentinelWorkbench selected={sentinelSelected} setSelected={setSentinelSelected} surfaced={sentinelSurfaced} setSurfaced={setSentinelSurfaced} /> : <><div className="agent-quick-demo" style={{ '--agent-color': agent.color }}>
                 <div className="agent-quick-demo-head"><span>{agent.demoLabel}</span><small>{agent.input} → {agent.output}</small></div>
                 <div className="agent-quick-demo-columns">{agent.demoColumns.map((column) => <span key={column}>{column}</span>)}</div>
                 {agent.demoRows.map((row, index) => <div className={index === tick % agent.demoRows.length ? 'active' : ''} key={row[0]}>{row.map((cell) => <span key={cell}>{cell}</span>)}</div>)}

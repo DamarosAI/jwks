@@ -30,6 +30,7 @@ Use these framings. They are intentional and preferred over generic "AI for clin
 
 - Category creation, not feature comparison: lead with execution capacity as the scarce, buildable resource
 - Infrastructure, not a dashboard: the product produces defensible execution records a site can reopen
+- Site-owned execution: software prepares the record; authority never leaves the site. Protocol versions, sources, and signed decisions stay bound, reconstructable, and under local control. PHI stays on-site. Controls are HIPAA-aligned.
 - Site-buyer: clinics and research sites that must sign; not a sponsor-only workflow tool
 - Agentic for operations; never for the eligibility verdict itself
 - Protocol intelligence that finds structural enrollment friction; does not invent clinical efficacy claims

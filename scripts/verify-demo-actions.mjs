@@ -43,9 +43,17 @@ if (css.includes('.biomarker-rain span::before')) throw new Error('Biomarker lin
 
 if (!app.includes("aria-live=\"polite\"")) throw new Error('Demo actions need an announced confirmation region')
 if (!app.includes('A research department,</span>') || !app.includes('deployed like software.')) throw new Error('Capacity thesis drifted')
+if (!app.includes('Site-owned execution') || !app.includes('Your site makes the call.') || !app.includes('Replay sealed · Record intact')) {
+  throw new Error('Execution record copy drifted')
+}
+if (app.includes('The execution record stays under site control.')) throw new Error('Old execution record headline remains')
+if (!css.includes('.record-spine') || !css.includes('.record-event.is-signed')) throw new Error('Execution record chain styles missing')
 if (!app.includes('<h2>Four agents.</h2>') || app.includes('Zero decisions.')) throw new Error('Agent heading drifted')
 if (!app.includes('<PageSpine />') || !app.includes('<PageSpine about />')) throw new Error('Page spine missing')
 if (!app.includes('landing-source-view')) throw new Error('Landing demo must use source product views')
 if (app.includes('>Platform</')) throw new Error('Platform navigation must stay removed')
+if (app.includes('key={`evidence-') || app.includes('key={`screen-')) throw new Error('Autoplay must not remount evidence or screening on every tick')
+if (!app.includes('useAutoplayHold')) throw new Error('Demo click must hold autoplay')
+if (app.includes('TRIAL FINDER') || app.includes('HIGH-FRICTION CRITERIA')) throw new Error('Agent workspace labels must stay out of the header copy')
 
 console.log(`Verified ${requiredActions.length} source-native demo actions and inline workflow panels.`)
