@@ -84,6 +84,9 @@ if (!app.includes('node-security-workspace') || !app.includes('Release aggregate
   throw new Error('Site control must remain inspectable and show exact outbound payload before release')
 }
 if (!app.includes('<PageSpine />') || !app.includes('<PageSpine about />')) throw new Error('Page spine missing')
+if (!app.includes('sectionScrollTarget') || !app.includes('easeSectionScroll') || !css.includes('.page-spine button') || app.includes('Jump to section') || css.includes('.page-spine a {')) {
+  throw new Error('Page spine must scroll sections into the viewport center as buttons, not hash links')
+}
 if (!app.includes('landing-source-view')) throw new Error('Landing demo must use source product views')
 if (app.includes('>Platform</')) throw new Error('Platform navigation must stay removed')
 if (app.includes('key={`evidence-') || app.includes('key={`screen-')) throw new Error('Autoplay must not remount evidence or screening on every tick')

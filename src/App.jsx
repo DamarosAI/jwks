@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom'
 import { AGENT_ROTATE_TICKS, AGENT_TICK_MS, HERO_STAGE_MS, HERO_TICK_MS, LIVE_STAGE_MS, LIVE_TICK_MS, autoplayIndex, isAutoplayToggle, shouldKeepPreviousStage, shouldPlayAutoplay, useAutoplayHold, useInView, useScrollIdle } from './autoplay'
-import { usePaneSettle } from './motion'
+import { easeSectionScroll, sectionScrollDuration, sectionScrollTarget, usePaneSettle } from './motion'
 import { PilotButton, PilotProvider } from './PilotInquiry'
 import PrivacyPage from './PrivacyPage'
 import { useGSAP } from '@gsap/react'
@@ -287,6 +287,35 @@ function useReducedMotion() {
   return reduced
 }
 
+function measureSectionInsets() {
+  const nav = document.querySelector('.site-nav-wrap')
+  const spine = document.querySelector('.page-spine.is-visible')
+  const insetTop = Math.max(0, Math.round(nav?.getBoundingClientRect().bottom ?? 0))
+  const spineBox = spine?.getBoundingClientRect()
+  const insetBottom = spineBox && spineBox.top > window.innerHeight * 0.6
+    ? Math.max(0, Math.round(window.innerHeight - spineBox.top + 8))
+    : 0
+  return { insetTop, insetBottom }
+}
+
+function sectionVisual(selector) {
+  const target = document.querySelector(selector)
+  if (!target) return null
+  return selector === '#agents' ? target.querySelector('.agent-console') || target : target
+}
+
+function sectionScrollEnd(selector) {
+  const visual = sectionVisual(selector)
+  if (!visual) return null
+  return sectionScrollTarget({
+    sectionTop: visual.getBoundingClientRect().top + window.scrollY,
+    sectionHeight: visual.offsetHeight,
+    viewportHeight: window.innerHeight,
+    documentHeight: document.documentElement.scrollHeight,
+    ...measureSectionInsets(),
+  })
+}
+
 function PageReset() {
   const { pathname, hash } = useLocation()
   const mounted = useRef(false)
@@ -295,7 +324,10 @@ function PageReset() {
   useEffect(() => {
     if (hash) {
       const needsPosition = !mounted.current || previousPath.current !== pathname
-      const frame = needsPosition ? window.requestAnimationFrame(() => document.querySelector(hash)?.scrollIntoView({ behavior: 'instant', block: 'start' })) : 0
+      const frame = needsPosition ? window.requestAnimationFrame(() => {
+        const end = sectionScrollEnd(hash)
+        if (end != null) window.scrollTo({ top: end, left: 0, behavior: 'instant' })
+      }) : 0
       mounted.current = true
       previousPath.current = pathname
       return () => window.cancelAnimationFrame(frame)
@@ -329,28 +361,36 @@ function PageMeta({ title, description, path = '/' }) {
 }
 
 function smoothSection(event, selector) {
-  const target = document.querySelector(selector)
-  if (!target) return
-  const visualTarget = selector === '#agents' ? target.querySelector('.agent-console') || target : target
-  event.preventDefault()
-  window.history.pushState({}, '', selector)
+  event?.preventDefault()
+  const end = sectionScrollEnd(selector)
+  if (end == null) return
+  if (window.location.hash !== selector) window.history.replaceState({}, '', selector)
+  const start = window.scrollY
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  if (reduce) {
-    visualTarget.scrollIntoView({ behavior: 'auto', block: 'center' })
+  window.cancelAnimationFrame(sectionScrollFrame)
+  sectionScrollFrame = 0
+  if (reduce || start === end) {
+    window.scrollTo({ top: end, left: 0, behavior: 'instant' })
     return
   }
-  window.cancelAnimationFrame(sectionScrollFrame)
-  const start = window.scrollY
-  const targetTop = visualTarget.getBoundingClientRect().top + start
-  const targetHeight = Math.min(visualTarget.offsetHeight, window.innerHeight * 0.8)
-  const end = Math.max(0, targetTop - ((window.innerHeight - targetHeight) / 2))
+  const duration = sectionScrollDuration(end - start, window.innerHeight)
   const started = performance.now()
-  const move = (now) => {
-    const progress = Math.min(1, (now - started) / 560)
-    const eased = 1 - ((1 - progress) ** 4)
-    window.scrollTo(0, start + ((end - start) * eased))
-    if (progress < 1) sectionScrollFrame = window.requestAnimationFrame(move)
+  const stop = () => {
+    window.cancelAnimationFrame(sectionScrollFrame)
+    sectionScrollFrame = 0
+    window.removeEventListener('wheel', stop)
+    window.removeEventListener('touchstart', stop)
+    window.removeEventListener('keydown', stop)
   }
+  const move = (now) => {
+    const progress = Math.min(1, (now - started) / duration)
+    window.scrollTo({ top: start + ((end - start) * easeSectionScroll(progress)), left: 0, behavior: 'instant' })
+    if (progress < 1) sectionScrollFrame = window.requestAnimationFrame(move)
+    else stop()
+  }
+  window.addEventListener('wheel', stop, { passive: true })
+  window.addEventListener('touchstart', stop, { passive: true })
+  window.addEventListener('keydown', stop)
   sectionScrollFrame = window.requestAnimationFrame(move)
 }
 
@@ -403,11 +443,11 @@ function PageSpine({ about = false }) {
   }, [about, items])
 
   return (
-    <nav className={`page-spine${visible ? ' is-visible' : ''}`} aria-label="Jump to section" aria-hidden={!visible} inert={!visible}>
+    <nav className={`page-spine${visible ? ' is-visible' : ''}`} aria-label="On this page" aria-hidden={!visible} inert={!visible}>
       {items.map(([id, label], index) => (
-        <a className={active === id ? 'active' : ''} href={`#${id}`} aria-current={active === id ? 'step' : undefined} aria-label={`Jump to ${label}`} onClick={(event) => { setActive(id); smoothSection(event, `#${id}`) }} key={id}>
+        <button className={active === id ? 'active' : ''} type="button" aria-current={active === id ? 'true' : undefined} aria-label={label} onClick={() => { setActive(id); smoothSection(null, `#${id}`) }} key={id}>
           <span>{String(index + 1).padStart(2, '0')}</span><strong>{label}</strong>
-        </a>
+        </button>
       ))}
     </nav>
   )

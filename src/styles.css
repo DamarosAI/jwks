@@ -82,7 +82,7 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
   background: var(--bg);
 }
 
@@ -346,26 +346,33 @@ strong {
   transition-delay: 0s;
 }
 
-.page-spine a {
+.page-spine button {
   position: relative;
   display: grid;
   min-height: 39px;
+  width: 100%;
   grid-template-columns: 34px max-content;
   align-items: center;
   gap: 9px;
+  padding: 0;
+  border: 0;
+  background: transparent;
   color: var(--faint);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
   transition: color 180ms ease;
 }
 
-.page-spine a > span { color: inherit; font-size: 0.72rem; font-variant-numeric: tabular-nums; font-weight: 750; letter-spacing: -0.02em; }
-.page-spine a > strong { color: inherit; font-size: 0.67rem; font-weight: 650; opacity: 0; transform: translateX(-5px); transition: opacity 160ms ease, transform 160ms ease; }
-.page-spine a:hover,
-.page-spine a:focus-visible,
-.page-spine a.active { color: var(--accent); }
-.page-spine a:hover > strong,
-.page-spine a:focus-visible > strong,
-.page-spine a.active > strong { opacity: 1; transform: none; }
-.page-spine a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.page-spine button > span { color: inherit; font-size: 0.72rem; font-variant-numeric: tabular-nums; font-weight: 750; letter-spacing: -0.02em; }
+.page-spine button > strong { color: inherit; font-size: 0.67rem; font-weight: 650; opacity: 0; transform: translateX(-5px); transition: opacity 160ms ease, transform 160ms ease; }
+.page-spine button:hover,
+.page-spine button:focus-visible,
+.page-spine button.active { color: var(--accent); }
+.page-spine button:hover > strong,
+.page-spine button:focus-visible > strong,
+.page-spine button.active > strong { opacity: 1; transform: none; }
+.page-spine button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 @media (max-width: 900px) {
   .page-spine {
@@ -386,14 +393,14 @@ strong {
     backdrop-filter: blur(14px);
   }
   .page-spine:not(.is-visible) { transform: translate3d(0, 12px, 0); }
-  .page-spine a { min-height: 34px; grid-template-columns: 1fr; padding: 0 8px; }
-  .page-spine a > span { font-size: 0.66rem; }
-  .page-spine a > strong { display: none; }
+  .page-spine button { min-height: 34px; grid-template-columns: 1fr; padding: 0 8px; }
+  .page-spine button > span { font-size: 0.66rem; }
+  .page-spine button > strong { display: none; }
 }
 
 @media (max-width: 520px) {
   .page-spine { right: 9px; bottom: 9px; left: 9px; justify-content: space-around; }
-  .page-spine a { padding-inline: 7px; }
+  .page-spine button { padding-inline: 7px; }
 }
 
 .landing-hero {
