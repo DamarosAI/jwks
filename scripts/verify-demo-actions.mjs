@@ -132,6 +132,12 @@ if (!css.includes('html.is-scrolling') || !css.includes('content-visibility: aut
 if (!app.includes('shouldKeepPreviousStage')) {
   throw new Error('Manual stage clicks must swap instantly')
 }
+if (!app.includes('useSoftSwap') || !app.includes('shouldHoldAutoplayFromClick') || !css.includes('is-fading')) {
+  throw new Error('Autoplay must fade one layer in place and stop on click')
+}
+if (!css.includes('subpixel-antialiased') || !css.includes('--nav-height: 72px') || !css.includes('font-size: 21px')) {
+  throw new Error('Chrome type must stay hinted: larger wordmark, subpixel smoothing, no raw geometric faces')
+}
 if (/key=\{detail\.code\}|key=\{subject\.id\}|key=\{selectedWork\.key\}|key=\{selectedEvent\.id\}|key=\{criterion\.code\}|key=\{signal\.id\}|key=\{activeQuestion\.q\}|key=\{study\.id\}/.test(app)) {
   throw new Error('Selection panes must update in place, not remount')
 }

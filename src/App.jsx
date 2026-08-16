@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom'
-import { AGENT_ROTATE_TICKS, AGENT_TICK_MS, HERO_STAGE_MS, HERO_TICK_MS, NARROW_VIEWPORT, autoplayIndex, shouldKeepPreviousStage, shouldPlayAutoplay, shouldRunAmbient, useAutoplayHold, useDocumentVisible, useInView, useMediaQuery, useScrollIdle } from './autoplay'
+import { AGENT_ROTATE_TICKS, AGENT_TICK_MS, HERO_STAGE_MS, HERO_TICK_MS, NARROW_VIEWPORT, autoplayIndex, nextStageIndex, shouldHoldAutoplayFromClick, shouldKeepPreviousStage, shouldPlayAutoplay, shouldRunAmbient, useAutoplayHold, useDocumentVisible, useInView, useMediaQuery, useScrollIdle, useSoftSwap } from './autoplay'
 import { easeSectionScroll, sectionScrollDuration, sectionScrollTarget, usePaneSettle, viewportHeight } from './motion'
 import { PilotButton, PilotProvider } from './PilotInquiry'
 import PrivacyPage from './PrivacyPage'
@@ -501,7 +501,7 @@ function SiteNav() {
           <NavLink to="/about">About</NavLink>
         </div>
         <PilotButton className="button button-small button-primary desktop-pilot">
-          Start a pilot <ArrowUpRight size={15} weight="bold" />
+          Start a pilot <ArrowUpRight size={16} weight="bold" />
         </PilotButton>
         <button
           className="menu-button"
@@ -548,62 +548,37 @@ function MiniRun() {
   const root = useRef(null)
   const reduced = useReducedMotion()
   const inView = useInView(root)
-  const scrollIdle = useScrollIdle()
   const [active, setActive] = useState(0)
-  const [previous, setPrevious] = useState(null)
-  const [transitionMode, setTransitionMode] = useState('manual')
   const [tick, setTick] = useState(0)
   const { held, hold } = useAutoplayHold(reduced)
   const visible = useDocumentVisible()
-  const narrow = useMediaQuery(NARROW_VIEWPORT)
-  const transitionTimer = useRef(null)
-  const tickRef = useRef(0)
-  const exitTick = useRef(0)
+  const { fading, swap } = useSoftSwap(reduced)
   const steps = ['Protocol', 'Evidence', 'Screening', 'Resolve', 'Replay']
-  const playing = shouldPlayAutoplay({ reduced, held, inView, scrollIdle, visible, narrow })
-  tickRef.current = tick
+  const playing = shouldPlayAutoplay({ reduced, held, inView, visible })
 
   useEffect(() => {
     if (!playing) return undefined
     const stageTimer = window.setInterval(() => {
-      setActive((current) => {
-        exitTick.current = tickRef.current
-        setPrevious(current)
-        setTransitionMode('auto')
-        window.clearTimeout(transitionTimer.current)
-        transitionTimer.current = window.setTimeout(() => setPrevious(null), 420)
-        return (current + 1) % steps.length
+      swap(() => {
+        setActive((current) => nextStageIndex(current, steps.length))
+        setTick(0)
       })
-      setTick(0)
     }, HERO_STAGE_MS)
     const tickTimer = window.setInterval(() => setTick((value) => value + 1), HERO_TICK_MS)
     return () => { window.clearInterval(stageTimer); window.clearInterval(tickTimer) }
-  }, [playing, steps.length])
-
-  useEffect(() => () => window.clearTimeout(transitionTimer.current), [])
+  }, [playing, steps.length, swap])
 
   const selectStage = (index) => {
     hold()
     if (index === active) return
-    setPrevious(null)
-    setTransitionMode('manual')
-    setActive(index)
-    setTick(0)
-    window.clearTimeout(transitionTimer.current)
+    swap(() => {
+      setActive(index)
+      setTick(0)
+    }, shouldKeepPreviousStage('manual', null))
   }
 
-  const renderStage = (index, stageTick = tick) => (
-    <div className="landing-source-view">
-      {index === 0 && <ProtocolView tick={stageTick} onAdvance={() => selectStage(1)} />}
-      {index === 1 && <EvidenceView refreshing={false} tick={stageTick} onAdvance={() => selectStage(2)} />}
-      {index === 2 && <ScreeningView tick={stageTick} onAdvance={() => selectStage(3)} />}
-      {index === 3 && <ResolveView tick={stageTick} />}
-      {index === 4 && <ReplayView tick={stageTick} />}
-    </div>
-  )
-
   return (
-    <div className="hero-workspace" ref={root} aria-label="Live synthetic Damaros workspace preview" onClickCapture={hold}>
+    <div className="hero-workspace" ref={root} aria-label="Live synthetic Damaros workspace preview" onClickCapture={(event) => { if (shouldHoldAutoplayFromClick(event.target)) hold() }}>
       <div className="mac-titlebar">
         <div className="traffic-lights" aria-hidden="true"><i /><i /><i /></div>
         <WindowBrand />
@@ -621,9 +596,16 @@ function MiniRun() {
           {AGENTS.map((agent, index) => <span className={`hero-agent${index === tick % AGENTS.length ? ' is-active' : ''}`} style={{ '--agent-color': agent.color }} key={agent.name}><i /> <AgentGlyph kind={agent.icon} size={14} /> {agent.name}</span>)}
         </aside>
         <div className="hero-app-main">
-          <div className={`hero-state-canvas landing-source-demo transition-${transitionMode}`}>
-            {shouldKeepPreviousStage(transitionMode, previous) && <div className="hero-state-layer is-exiting" aria-hidden="true">{renderStage(previous, exitTick.current)}</div>}
-            <div className={`hero-state-layer${transitionMode === 'auto' ? ' is-entering' : ''}`} key={active}>{renderStage(active)}</div>
+          <div className={`hero-state-canvas landing-source-demo${fading ? ' is-fading' : ''}`}>
+            <div className="hero-state-layer">
+              <div className="landing-source-view">
+                {active === 0 && <ProtocolView tick={tick} onAdvance={() => selectStage(1)} />}
+                {active === 1 && <EvidenceView refreshing={false} tick={tick} onAdvance={() => selectStage(2)} />}
+                {active === 2 && <ScreeningView tick={tick} onAdvance={() => selectStage(3)} />}
+                {active === 3 && <ResolveView tick={tick} />}
+                {active === 4 && <ReplayView tick={tick} />}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1151,12 +1133,11 @@ function AgentOperations() {
   const root = useRef(null)
   const reduced = useReducedMotion()
   const inView = useInView(root)
-  const scrollIdle = useScrollIdle()
   const [active, setActive] = useState(0)
   const [tick, setTick] = useState(0)
   const { held, hold } = useAutoplayHold(reduced)
   const visible = useDocumentVisible()
-  const narrow = useMediaQuery(NARROW_VIEWPORT)
+  const { fading, swap } = useSoftSwap(reduced)
   const [tridentCriterion, setTridentCriterion] = useState(3)
   const [tridentStage, setTridentStage] = useState(0)
   const [eyeSelected, setEyeSelected] = useState(0)
@@ -1165,7 +1146,7 @@ function AgentOperations() {
   const [sentinelSelected, setSentinelSelected] = useState(2)
   const [sentinelSurfaced, setSentinelSurfaced] = useState(false)
   const agent = AGENTS[active]
-  const playing = shouldPlayAutoplay({ reduced, held, inView, scrollIdle, visible, narrow })
+  const playing = shouldPlayAutoplay({ reduced, held, inView, visible })
   const runContext = [
     {
       object: `Criterion ${['I-3.4', 'E-5.3', 'I-4.2', 'I-2.1'][tridentCriterion]}`,
@@ -1205,12 +1186,14 @@ function AgentOperations() {
 
   useEffect(() => {
     if (!playing || tick === 0 || tick % AGENT_ROTATE_TICKS !== 0) return
-    setActive((value) => (value + 1) % AGENTS.length)
-    setTick(0)
-  }, [tick, playing])
+    swap(() => {
+      setActive((value) => (value + 1) % AGENTS.length)
+      setTick(0)
+    })
+  }, [tick, playing, swap])
 
   useEffect(() => {
-    if (!playing || tick === 0) return
+    if (!playing || tick === 0 || tick % AGENT_ROTATE_TICKS === 0) return
     if (tridentStage === 0) setTridentCriterion(autoplayIndex(tick, 4))
     setEyeSelected(autoplayIndex(tick, 4))
     setSentinelSelected(autoplayIndex(tick, SENTINEL_STUDIES.length))
@@ -1231,7 +1214,7 @@ function AgentOperations() {
         <h2>Four agents.</h2>
         <p>Find, draft, flag, cite. Never decide.</p>
       </div>
-      <div className="agent-console" onClickCapture={hold}>
+      <div className="agent-console" onClickCapture={(event) => { if (shouldHoldAutoplayFromClick(event.target)) hold() }}>
         <div className="mac-titlebar">
           <div className="traffic-lights" aria-hidden="true"><i /><i /><i /></div>
           <WindowBrand />
@@ -1241,7 +1224,7 @@ function AgentOperations() {
           <aside className="agent-console-nav">
             <span>AGENTS</span>
             {AGENTS.map((item, index) => (
-              <button className={index === active ? 'active' : ''} style={{ '--agent-color': item.color }} type="button" aria-pressed={index === active} onClick={() => { setActive(index); setTick(0) }} key={item.name}>
+              <button className={index === active ? 'active' : ''} style={{ '--agent-color': item.color }} type="button" aria-pressed={index === active} onClick={() => { hold(); swap(() => { setActive(index); setTick(0) }, false) }} key={item.name}>
                 <AgentGlyph kind={item.icon} size={17} />
                 <span><strong>{item.name}</strong><small>{item.role}</small></span>
               </button>
@@ -1249,7 +1232,7 @@ function AgentOperations() {
             <div className="agent-console-context"><small>CURRENT RUN</small><strong>DMR-204 · v2.1</strong><span>Site 018 · synthetic</span></div>
           </aside>
           <main className="agent-console-main">
-            <div className="agent-console-state" style={{ '--agent-color': agent.color }}>
+            <div className={`agent-console-state${fading ? ' is-fading' : ''}`} style={{ '--agent-color': agent.color }}>
               <div className="agent-console-header" style={{ '--agent-color': agent.color }}>
                 <div><span><AgentGlyph kind={agent.icon} size={15} /> {agent.name} · {agent.role}</span><h3>{agent.task}</h3><p>{agent.text}</p></div>
                 {active === 2 ? <em>Read only</em> : ((active === 0 && tridentStage < 5) || (active === 1 && eyeSelected !== 3 && !eyeRouted) || (active === 3 && !sentinelSurfaced)) ? <em className="agent-working-state"><i /> {active === 0 && tridentStage === 0 ? 'Ready' : 'Working'}</em> : <em><CheckCircle size={14} weight="fill" /> {active === 1 && eyeSelected === 3 ? 'No action' : 'Complete'}</em>}

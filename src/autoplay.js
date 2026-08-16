@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-export const AUTOPLAY_RESUME_MS = 12000
-export const HERO_STAGE_MS = 12000
-export const HERO_TICK_MS = 2600
+export const AUTOPLAY_RESUME_MS = 18000
+export const HERO_STAGE_MS = 16000
+export const HERO_TICK_MS = 3600
 export const LIVE_STAGE_MS = 9000
 export const LIVE_TICK_MS = 2100
-export const AGENT_TICK_MS = 1800
-export const AGENT_ROTATE_TICKS = 6
+export const AGENT_TICK_MS = 2800
+export const AGENT_ROTATE_TICKS = 7
+export const STAGE_FADE_MS = 240
 export const SCROLL_IDLE_MS = 640
 export const NARROW_VIEWPORT = '(max-width: 640px)'
 
@@ -23,11 +24,18 @@ export function shouldPlayAutoplay({
   reduced = false,
   held = false,
   inView = true,
-  scrollIdle = true,
   visible = true,
-  narrow = false,
 } = {}) {
-  return !reduced && !held && inView && scrollIdle && visible && !narrow
+  return !reduced && !held && inView && visible
+}
+
+export function nextStageIndex(current, length) {
+  if (!Number.isFinite(current) || length <= 0) return 0
+  return ((current + 1) % length + length) % length
+}
+
+export function shouldHoldAutoplayFromClick(target) {
+  return !isAutoplayToggle(target)
 }
 
 export function shouldRunAmbient({ reduced = false, inView = true, narrow = false } = {}) {
@@ -165,6 +173,29 @@ export function useScrollIdle(ms = SCROLL_IDLE_MS) {
   }, [ms])
 
   return idle
+}
+
+export function useSoftSwap(reduced) {
+  const [fading, setFading] = useState(false)
+  const timer = useRef(0)
+
+  useEffect(() => () => window.clearTimeout(timer.current), [])
+
+  const swap = useCallback((apply, animate = true) => {
+    window.clearTimeout(timer.current)
+    if (reduced || !animate) {
+      setFading(false)
+      apply()
+      return
+    }
+    setFading(true)
+    timer.current = window.setTimeout(() => {
+      apply()
+      timer.current = window.setTimeout(() => setFading(false), 48)
+    }, STAGE_FADE_MS)
+  }, [reduced])
+
+  return { fading, swap }
 }
 
 export function useAutoplayHold(reduced) {

@@ -9,9 +9,12 @@ import {
   LIVE_STAGE_MS,
   LIVE_TICK_MS,
   SCROLL_IDLE_MS,
+  STAGE_FADE_MS,
   autoplayIndex,
   isAutoplayToggle,
+  nextStageIndex,
   scrollingDocumentClass,
+  shouldHoldAutoplayFromClick,
   shouldKeepPreviousStage,
   shouldPlayAutoplay,
   shouldRunAmbient,
@@ -22,14 +25,19 @@ function node(match) {
 }
 
 describe('autoplay hold', () => {
-  it('resumes 12 seconds after a click', () => {
-    assert.equal(AUTOPLAY_RESUME_MS, 12000)
+  it('stays stopped after a click long enough to read', () => {
+    assert.equal(AUTOPLAY_RESUME_MS, 18000)
+    assert.equal(shouldHoldAutoplayFromClick(node('[data-autoplay-toggle]')), false)
+    assert.equal(shouldHoldAutoplayFromClick(node('button')), true)
   })
 
-  it('keeps hero, live, and agent clocks deliberate but alive', () => {
-    assert.ok(HERO_STAGE_MS >= 10000 && HERO_STAGE_MS <= 14000 && HERO_TICK_MS <= 2800)
+  it('keeps hero and agent clocks slow and even', () => {
+    assert.ok(HERO_STAGE_MS >= 14000 && HERO_STAGE_MS <= 18000 && HERO_TICK_MS >= 3200 && HERO_TICK_MS <= 4000)
     assert.ok(LIVE_STAGE_MS >= 8000 && LIVE_STAGE_MS <= 10000 && LIVE_TICK_MS <= 2200)
-    assert.ok(AGENT_TICK_MS >= 1600 && AGENT_TICK_MS <= 2000 && AGENT_ROTATE_TICKS >= 5)
+    assert.ok(AGENT_TICK_MS >= 2400 && AGENT_TICK_MS <= 3200 && AGENT_ROTATE_TICKS >= 6)
+    assert.ok(STAGE_FADE_MS >= 200 && STAGE_FADE_MS <= 320)
+    assert.equal(nextStageIndex(4, 5), 0)
+    assert.equal(nextStageIndex(0, 4), 1)
   })
 
   it('wraps selection indexes', () => {
@@ -44,14 +52,14 @@ describe('autoplay hold', () => {
     assert.equal(isAutoplayToggle(null), false)
   })
 
-  it('plays only when the demo is visible and the page is idle', () => {
+  it('plays on every viewport when the demo is on screen', () => {
     assert.equal(shouldPlayAutoplay({}), true)
     assert.equal(shouldPlayAutoplay({ reduced: true }), false)
     assert.equal(shouldPlayAutoplay({ held: true }), false)
     assert.equal(shouldPlayAutoplay({ inView: false }), false)
-    assert.equal(shouldPlayAutoplay({ scrollIdle: false }), false)
     assert.equal(shouldPlayAutoplay({ visible: false }), false)
-    assert.equal(shouldPlayAutoplay({ narrow: true }), false)
+    assert.equal(shouldPlayAutoplay({ narrow: true }), true)
+    assert.equal(shouldPlayAutoplay({ scrollIdle: false }), true)
     assert.ok(SCROLL_IDLE_MS >= 480 && SCROLL_IDLE_MS <= 800)
   })
 
