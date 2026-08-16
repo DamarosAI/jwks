@@ -474,6 +474,10 @@ function usePageScrollFlow(root, reduced) {
   ), '(min-width: 641px)')
 }
 
+function BrandName() {
+  return <>Damaros<sup className="brand-tm">TM</sup></>
+}
+
 function WindowBrand() {
   return (
     <span className="window-title window-brand">
@@ -494,7 +498,7 @@ function SiteNav() {
     <header className="site-nav-wrap">
       <nav className="site-nav" aria-label="Primary navigation">
         <NavLink className="wordmark" to="/" aria-label="Damaros home">
-          Damaros<sup>TM</sup>
+          <BrandName />
         </NavLink>
         <div className="desktop-nav-links">
           <NavLink to="/" end>Home</NavLink>
@@ -526,7 +530,7 @@ function Footer() {
   return (
     <footer className="site-footer">
       <div className="footer-mark">
-        <span>Damaros<sup>TM</sup></span>
+        <span><BrandName /></span>
         <p>Agentic execution infrastructure for clinical research.</p>
       </div>
       <div className="footer-links">
@@ -537,7 +541,7 @@ function Footer() {
         <a href="mailto:team@damaros.ai">Email</a>
       </div>
       <div className="footer-bottom">
-        <span>© 2026 Damaros</span>
+        <span>© 2026 <BrandName /></span>
         <span>Clinical efficacy claims are outside platform scope.</span>
       </div>
     </footer>
@@ -636,7 +640,7 @@ function LandingHero() {
           <span className="hero-line">Clinical research,</span>
           <span className="hero-line accent-text">built to execute anywhere.</span>
         </h1>
-        <p>Damaros turns protocols into evidence-bound decisions, signed locally and replayable on demand.</p>
+        <p><BrandName /> turns protocols into evidence-bound decisions, signed locally and replayable on demand.</p>
         <div className="hero-actions">
           <PilotButton className="button button-primary">Start a pilot <ArrowUpRight size={17} weight="bold" /></PilotButton>
           <a className="button button-secondary" href="#agents" onClick={(event) => smoothSection(event, '#agents')}>See agents work <ArrowRight size={17} weight="bold" /></a>
@@ -663,7 +667,6 @@ function ThesisSection() {
   return (
     <section className="thesis-section section-space" id="thesis" ref={root}>
       <div className="thesis-head">
-        <span className="section-kicker">Thesis</span>
         <h2><span className="accent-text">The next generation of medicine</span> cannot run on the last generation of research infrastructure.</h2>
       </div>
     </section>
@@ -867,7 +870,7 @@ function EvidenceView({ refreshing, onAdvance, tick = 0 }) {
   }
   return (
     <div className="workspace-view source-evidence-view">
-      <div className="source-view-intro"><span>EVIDENCE</span><small>How Damaros maps the sponsor packet onto site evidence · PHI-bounded · 09:43</small></div>
+      <div className="source-view-intro"><span>EVIDENCE</span><small>How <BrandName /> maps the sponsor packet onto site evidence · PHI-bounded · 09:43</small></div>
       <div className="evidence-coverage"><div><strong>Sponsor packet → evidence coverage</strong><small>Mapped 25 of 36 criteria · Protocol v2.1</small></div><div className="coverage-track"><i /><i /><i /><i /></div><footer><span className="mapped">Mapped · 25</span><span className="missing">Missing · 4</span><span className="conflict">Conflict · 3</span><span className="stale">Stale · 4</span></footer></div>
       <div className="source-evidence-grid"><div className="obligation-list"><span>PROTOCOL OBLIGATIONS · SOURCE MAPPING</span>{obligations.map((item, index) => <button type="button" className={`${selected === index ? 'active ' : ''}${item.status.toLowerCase()}`} onClick={() => { setSelected(index); setPendingAction(null); setActionComplete(false) }} key={item.code}><div><b>{item.code}</b><strong>{item.fact}</strong><em>{acted[item.code] ? 'ROUTED' : item.status}</em></div><footer><span>{item.cls}</span><small>{acted[item.code] ? 'Action recorded' : item.action} →</small></footer></button>)}</div><div className="obligation-detail"><div className={settle}><header><span>{detail.code}</span><em className={detail.status.toLowerCase()}>{isActed ? 'ROUTED' : detail.status}</em><small>{detail.cls}</small></header><h4>{detail.fact}</h4><p>Maps to protocol {detail.code} · Inclusion · governs screening</p>{pendingAction?.code === detail.code ? <InlineActionPanel open complete={actionComplete} eyebrow="ACTION REQUIRED" title={detail.action} description={detail.note} rows={[["Criterion", detail.code], ["Owner", actionOwner], ["SLA", 'Review within 24 hours'], ["Record", `${actionTicket} · replay-linked`]]} confirmLabel={detail.action} successTitle="Work item created" successDescription={`${detail.action} now sits in the site worklist. Nothing left the site.`} onClose={() => setPendingAction(null)} onConfirm={confirmEvidenceAction} /> : <><dl><div><dt>CURRENT</dt><dd>{detail.current}</dd></div><div><dt>SOURCE PLANE</dt><dd>{detail.sources}</dd></div><div><dt>CHECKED</dt><dd>{detail.checked}</dd></div><div><dt>PROVENANCE</dt><dd>Human decision · source trace available</dd></div></dl><div className={`evidence-guidance ${detail.status === 'CONFIRM' ? 'computable' : ''}`}><span>{detail.status === 'CONFIRM' ? 'NO JUDGMENT REQUIRED' : 'NEXT STEP'}</span><strong>{detail.note}</strong></div>{isActed ? <div className="evidence-action-receipt"><header><span>✓ ACTION RECORDED</span><strong>{actionTicket}</strong></header><dl><div><dt>OWNER</dt><dd>{actionOwner}</dd></div><div><dt>SLA</dt><dd>Review within 24 hours</dd></div><div><dt>REPLAY</dt><dd>Linked to {detail.code} evidence node</dd></div></dl><button type="button" onClick={onAdvance}>Continue to Screening →</button></div> : <button className="source-primary-action" type="button" onClick={openEvidenceAction}>{detail.action}</button>}</>}</div></div></div>
     </div>
@@ -1395,7 +1398,7 @@ function AboutHero() {
     <section className="about-hero" id="about-top" ref={root}>
       <div className="about-hero-copy">
         <h1 aria-label="Research capacity, everywhere."><span>Research capacity,</span><span className="accent-text">everywhere.</span></h1>
-        <p>Damaros makes complex clinical research deployable where patients already receive care.</p>
+        <p><BrandName /> makes complex clinical research deployable where patients already receive care.</p>
       </div>
       <div className="about-network">
         <img className="about-drum" src="/assets/damaros-monogram-blue.svg" alt="" aria-hidden="true" decoding="async" />

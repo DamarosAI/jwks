@@ -195,13 +195,22 @@ strong {
   line-height: 1;
 }
 
-.wordmark sup,
-.footer-mark sup {
-  margin-left: 3px;
+.brand-tm {
+  margin-left: 0.16em;
   color: var(--accent);
-  font-size: 10px;
-  letter-spacing: 0.02em;
+  font-size: 0.48em;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 0;
   vertical-align: super;
+}
+
+.footer-mark .brand-tm {
+  font-size: 0.22em;
+}
+
+.footer-bottom .brand-tm {
+  font-size: 0.7em;
 }
 
 .desktop-nav-links {
