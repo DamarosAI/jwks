@@ -448,13 +448,13 @@ function SiteNav() {
   return (
     <header className="site-nav-wrap">
       <nav className="site-nav" aria-label="Primary navigation">
+        <NavLink className="wordmark" to="/" aria-label="Damaros home">
+          Damaros<sup>TM</sup>
+        </NavLink>
         <div className="desktop-nav-links">
           <NavLink to="/" end>Home</NavLink>
           <NavLink to="/about">About</NavLink>
         </div>
-        <NavLink className="wordmark" to="/" aria-label="Damaros home">
-          <img src="/assets/damaros-monogram-blue.svg" alt="" />
-        </NavLink>
         <PilotButton className="button button-small button-primary desktop-pilot">
           Start a pilot <ArrowUpRight size={15} weight="bold" />
         </PilotButton>
