@@ -5207,7 +5207,7 @@ html { scroll-padding-top: 96px; }
 
 .agent-console-nav button strong { color: var(--text-soft); font-size: 0.68rem; }
 .agent-console-nav button small { overflow: hidden; font-size: 0.5rem; text-overflow: ellipsis; white-space: nowrap; }
-.agent-console-nav button.active { border-color: color-mix(in srgb, var(--agent-color) 32%, var(--border)); background: white; color: var(--agent-color); box-shadow: inset 3px 0 0 var(--agent-color), 0 5px 18px rgba(33,77,121,.07); }
+.agent-console-nav button.active { border-color: var(--border); background: var(--surface-solid); color: var(--text); box-shadow: 0 5px 16px rgba(33, 77, 121, 0.08); }
 
 .agent-console-context {
   display: grid;
@@ -5463,8 +5463,8 @@ html { scroll-padding-top: 96px; }
 .trident-list button b { color: var(--accent); font-size: 0.67rem; letter-spacing: 0.04em; }
 .trident-list button strong { display: -webkit-box; overflow: hidden; color: var(--text-soft); font-size: 0.74rem; line-height: 1.2; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
 .trident-list button em { flex: 0 0 auto; color: #a8661d; font-size: 0.82rem; font-style: normal; font-variant-numeric: tabular-nums; }
-.trident-list button:hover, .trident-list button.active { border-color: color-mix(in srgb, var(--accent) 48%, var(--border)); background: color-mix(in srgb, var(--accent-soft) 48%, white); }
-.trident-list button.active { box-shadow: inset 3px 0 0 var(--accent); }
+.trident-list button:hover, .trident-list button.active { border-color: color-mix(in srgb, var(--accent) 50%, var(--border)); background: color-mix(in srgb, var(--accent-soft) 30%, white); }
+.trident-list button.active { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent); }
 .trident-detail { display: grid; min-height: 0; align-content: start; gap: 13px; padding: 17px; border: 1px solid var(--border); border-radius: 11px; background: #fff; }
 .trident-detail-head { display: flex; align-items: start; justify-content: space-between; gap: 14px; }
 .trident-detail-head > span { display: grid; gap: 3px; }
@@ -5539,7 +5539,7 @@ html { scroll-padding-top: 96px; }
 .quality-signal-grid, .sentinel-grid { display: grid; grid-template-columns: minmax(210px, 0.78fr) minmax(0, 1.22fr); gap: 14px; }
 .quality-list, .sentinel-studies { display: grid; gap: 7px; }
 .quality-list button, .sentinel-studies button { display: flex; min-height: 80px; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 13px; border: 1px solid var(--border); border-radius: 9px; background: white; color: var(--text); font-family: inherit; text-align: left; cursor: pointer; transition: border-color 160ms ease, background 160ms ease; }
-.quality-list button.active, .quality-list button:hover, .sentinel-studies button.active, .sentinel-studies button:hover { border-color: color-mix(in srgb, var(--agent-color) 42%, var(--border)); background: color-mix(in srgb, var(--agent-color) 6%, white); box-shadow: inset 3px 0 0 var(--agent-color); }
+.quality-list button.active, .quality-list button:hover, .sentinel-studies button.active, .sentinel-studies button:hover { border-color: color-mix(in srgb, var(--accent) 50%, var(--border)); background: color-mix(in srgb, var(--accent-soft) 30%, white); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent); }
 .quality-list button span, .sentinel-studies button span { display: grid; min-width: 0; gap: 3px; }
 .quality-list button b, .sentinel-studies button b { color: var(--agent-color); font-size: 0.57rem; letter-spacing: 0.06em; }
 .quality-list button strong, .sentinel-studies button strong { color: var(--text-soft); font-size: 0.73rem; line-height: 1.18; }
@@ -6594,7 +6594,7 @@ html { scroll-padding-top: 96px; }
 .luna-question-list { display: flex; flex-direction: column; align-content: stretch; gap: 8px; height: 100%; min-height: 0; }
 .luna-question-list > span { margin-bottom: 2px; color: var(--muted); font-size: .62rem; font-weight: 740; letter-spacing: .08em; }
 .luna-question-list button { display: grid; flex: 0 0 auto; min-height: 0; align-content: start; gap: 3px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: white; color: var(--text-soft); font-family: inherit; text-align: left; cursor: pointer; }
-.luna-question-list button.active { border-color: color-mix(in srgb, var(--agent-color) 48%, var(--border)); background: color-mix(in srgb, var(--agent-color) 5%, white); box-shadow: inset 3px 0 0 var(--agent-color); }
+.luna-question-list button.active { border-color: color-mix(in srgb, var(--accent) 50%, var(--border)); background: color-mix(in srgb, var(--accent-soft) 30%, white); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent); }
 .luna-question-list button strong { font-size: .84rem; line-height: 1.25; }
 .luna-question-list button em { width: max-content; color: var(--agent-color); font-style: normal; font-size: .62rem; font-weight: 740; letter-spacing: .06em; }
 .luna-question-list button small { color: var(--muted); line-height: 1.35; }
@@ -8558,12 +8558,12 @@ html { scroll-padding-top: 96px; }
   height: 100%;
   max-height: 100%;
   min-height: 0;
-  gap: 3px;
-  padding: 8px;
+  gap: 6px;
+  padding: 0;
   overflow: hidden;
   border: 0;
-  border-radius: 20px;
-  background: color-mix(in srgb, var(--agent-color) 5%, #f5f7f9);
+  border-radius: 0;
+  background: transparent;
 }
 
 .agent-luna-workbench .luna-question-list button {
@@ -8845,8 +8845,9 @@ html { scroll-padding-top: 96px; }
 }
 
 .luna-chain button.active {
-  background: white;
-  box-shadow: 0 10px 24px color-mix(in srgb, var(--agent-color) 12%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--border));
+  background: color-mix(in srgb, var(--accent-soft) 30%, white);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent);
 }
 
 .luna-chain button small {
@@ -8895,12 +8896,12 @@ html { scroll-padding-top: 96px; }
   height: 100%;
   max-height: 100%;
   min-height: 0;
-  gap: 3px;
-  padding: 8px;
+  gap: 6px;
+  padding: 0;
   overflow: hidden;
   border: 0;
-  border-radius: 20px;
-  background: color-mix(in srgb, var(--agent-color) 5%, #f5f7f9);
+  border-radius: 0;
+  background: transparent;
 }
 
 .agent-console .agent-sentinel-workbench .sentinel-studies button {
@@ -9026,14 +9027,16 @@ html { scroll-padding-top: 96px; }
 .agent-console-nav button,
 .agent-console-nav button.active {
   border: 1px solid transparent;
-  border-radius: 14px;
+  border-radius: 8px;
+  background: transparent;
   box-shadow: none;
 }
 
 .agent-console-nav button.active {
-  border-color: color-mix(in srgb, var(--accent) 36%, #d5dde3);
-  background: white;
-  box-shadow: 0 8px 22px color-mix(in srgb, var(--accent) 12%, transparent);
+  border-color: var(--border);
+  background: var(--surface-solid);
+  color: var(--text);
+  box-shadow: 0 5px 16px rgba(33, 77, 121, 0.08);
 }
 
 .agent-console-header em {
@@ -9047,16 +9050,15 @@ html { scroll-padding-top: 96px; }
 }
 
 .agent-console :is(.trident-list button, .quality-list button, .sentinel-studies button, .luna-question-list button, .luna-chain button) {
-  border: 0;
-  border-radius: 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
   box-shadow: none;
 }
 
-.agent-console :is(.trident-list button, .quality-list button).active,
-.agent-console :is(.trident-list button, .quality-list button):hover {
-  border-color: transparent;
-  background: color-mix(in srgb, var(--agent-color) 8%, white);
-  box-shadow: none;
+.agent-console :is(.trident-list button, .quality-list button).active {
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--border));
+  background: color-mix(in srgb, var(--accent-soft) 30%, white);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent);
 }
 
 .agent-console :is(.trident-detail, .quality-detail, .sentinel-detail, .audit-question, .audit-answer, .luna-answer-panel) {
@@ -9088,8 +9090,9 @@ html { scroll-padding-top: 96px; }
 }
 
 .agent-console .luna-chain button.active {
-  background: white;
-  box-shadow: 0 10px 24px color-mix(in srgb, var(--agent-color) 12%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--border));
+  background: color-mix(in srgb, var(--accent-soft) 30%, white);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent);
 }
 
 .agent-console .trident-rationale {
@@ -9205,14 +9208,15 @@ html { scroll-padding-top: 96px; }
 }
 
 .agent-console-nav button:hover {
-  border-color: color-mix(in srgb, var(--accent) 22%, #d5dde3);
-  background: #fff;
+  border-color: transparent;
+  background: transparent;
 }
 
 .agent-console-nav button.active {
-  border-color: color-mix(in srgb, var(--accent) 36%, #d5dde3);
-  background: #fff;
-  box-shadow: 0 8px 22px color-mix(in srgb, var(--accent) 12%, transparent);
+  border-color: var(--border);
+  background: var(--surface-solid);
+  color: var(--text);
+  box-shadow: 0 5px 16px rgba(33, 77, 121, 0.08);
 }
 
 .agent-console-nav button strong {
@@ -9454,44 +9458,44 @@ html { scroll-padding-top: 96px; }
 }
 
 .agent-console :is(.trident-detail, .quality-detail, .sentinel-detail, .audit-answer, .luna-answer-panel) {
-  border: 1px solid color-mix(in srgb, var(--agent-color) 14%, #d5dde3);
-  border-radius: 16px;
-  background: color-mix(in srgb, var(--agent-color) 3%, #f8fafb);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fafbfc;
 }
 
 .agent-console :is(.trident-list, .quality-list, .sentinel-studies, .luna-question-list),
 .agent-console .agent-luna-workbench .luna-question-list,
 .agent-console .agent-sentinel-workbench .sentinel-studies {
-  padding: 2px 0;
+  padding: 0;
   border: 0;
   border-radius: 0;
   background: transparent;
   box-shadow: none;
 }
 
-.agent-console :is(.trident-list button, .quality-list button, .sentinel-studies button, .luna-question-list button),
+.agent-console :is(.trident-list button, .quality-list button, .sentinel-studies button, .luna-question-list button, .luna-chain button),
 .agent-console .agent-luna-workbench .luna-question-list button,
 .agent-console .agent-sentinel-workbench .sentinel-studies button {
-  border: 1px solid color-mix(in srgb, var(--agent-color) 16%, #d4dce2);
-  border-radius: 14px;
-  background: #fff;
-  box-shadow: 0 1px 0 rgba(40, 68, 90, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: white;
+  box-shadow: none;
 }
 
-.agent-console :is(.trident-list button, .quality-list button, .sentinel-studies button, .luna-question-list button):hover,
+.agent-console :is(.trident-list button, .quality-list button, .sentinel-studies button, .luna-question-list button, .luna-chain button):hover,
 .agent-console .agent-luna-workbench .luna-question-list button:hover,
 .agent-console .agent-sentinel-workbench .sentinel-studies button:hover {
-  border-color: color-mix(in srgb, var(--agent-color) 34%, #c5d0d8);
-  background: #fff;
-  box-shadow: 0 8px 22px color-mix(in srgb, var(--agent-color) 12%, transparent);
+  border-color: var(--border);
+  background: white;
+  box-shadow: none;
 }
 
-.agent-console :is(.trident-list button, .quality-list button, .sentinel-studies button, .luna-question-list button).active,
+.agent-console :is(.trident-list button, .quality-list button, .sentinel-studies button, .luna-question-list button, .luna-chain button).active,
 .agent-console .agent-luna-workbench .luna-question-list button.active,
 .agent-console .agent-sentinel-workbench .sentinel-studies button.active {
-  border-color: color-mix(in srgb, var(--agent-color) 48%, #c5d0d8);
-  background: #fff;
-  box-shadow: 0 10px 26px color-mix(in srgb, var(--agent-color) 16%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--border));
+  background: color-mix(in srgb, var(--accent-soft) 30%, white);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent);
 }
 
 .agent-console :is(.trident-list button strong, .quality-list button strong, .sentinel-studies button strong, .luna-question-list button strong) {
