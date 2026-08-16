@@ -67,6 +67,12 @@ if (!app.includes('When was Replay sealed') || !app.includes('Why is S-1066 stil
 if (!css.includes('.agent-console .agent-sentinel-workbench .sentinel-studies') || !app.includes('SENTINEL_STUDIES') || !app.includes('LUNA_INVESTIGATIONS')) {
   throw new Error('Luna and Sentinel left rails must be compact inventories')
 }
+if (!app.includes('agent-run-rail') || !app.includes('LIVE ACTIVITY') || !app.includes('CONTROL BOUNDARY') || !css.includes('.agent-workspace-body')) {
+  throw new Error('Agent workspace must keep source, activity, and authority context beside live work')
+}
+if (!app.includes('node-security-workspace') || !app.includes('Release aggregate coverage signal') || !app.includes('0 patient fields') || !css.includes('.node-control-detail')) {
+  throw new Error('Site control must remain inspectable and show exact outbound payload before release')
+}
 if (!app.includes('<PageSpine />') || !app.includes('<PageSpine about />')) throw new Error('Page spine missing')
 if (!app.includes('landing-source-view')) throw new Error('Landing demo must use source product views')
 if (app.includes('>Platform</')) throw new Error('Platform navigation must stay removed')

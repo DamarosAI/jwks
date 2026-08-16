@@ -20,14 +20,14 @@ function node(match) {
 }
 
 describe('autoplay hold', () => {
-  it('resumes 9 seconds after a click', () => {
-    assert.equal(AUTOPLAY_RESUME_MS, 9000)
+  it('resumes 12 seconds after a click', () => {
+    assert.equal(AUTOPLAY_RESUME_MS, 12000)
   })
 
-  it('keeps hero, live, and agent clocks in a living range', () => {
-    assert.ok(HERO_STAGE_MS <= 9000 && HERO_TICK_MS <= 2400)
-    assert.ok(LIVE_STAGE_MS <= 7000 && LIVE_TICK_MS <= 1800)
-    assert.ok(AGENT_TICK_MS <= 1600 && AGENT_ROTATE_TICKS >= 4)
+  it('keeps hero, live, and agent clocks deliberate but alive', () => {
+    assert.ok(HERO_STAGE_MS >= 10000 && HERO_STAGE_MS <= 14000 && HERO_TICK_MS <= 2800)
+    assert.ok(LIVE_STAGE_MS >= 8000 && LIVE_STAGE_MS <= 10000 && LIVE_TICK_MS <= 2200)
+    assert.ok(AGENT_TICK_MS >= 1600 && AGENT_TICK_MS <= 2000 && AGENT_ROTATE_TICKS >= 5)
   })
 
   it('wraps selection indexes', () => {

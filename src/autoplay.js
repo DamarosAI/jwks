@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-export const AUTOPLAY_RESUME_MS = 9000
-export const HERO_STAGE_MS = 9000
-export const HERO_TICK_MS = 2200
-export const LIVE_STAGE_MS = 6200
-export const LIVE_TICK_MS = 1600
-export const AGENT_TICK_MS = 1400
-export const AGENT_ROTATE_TICKS = 5
+export const AUTOPLAY_RESUME_MS = 12000
+export const HERO_STAGE_MS = 12000
+export const HERO_TICK_MS = 2600
+export const LIVE_STAGE_MS = 9000
+export const LIVE_TICK_MS = 2100
+export const AGENT_TICK_MS = 1800
+export const AGENT_ROTATE_TICKS = 6
 export const SCROLL_IDLE_MS = 640
 
 export function isAutoplayToggle(target) {

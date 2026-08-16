@@ -1252,6 +1252,36 @@ function AgentOperations() {
   const [sentinelSurfaced, setSentinelSurfaced] = useState(false)
   const agent = AGENTS[active]
   const playing = shouldPlayAutoplay({ reduced, held, inView, scrollIdle })
+  const runContext = [
+    {
+      object: `Criterion ${['I-3.4', 'E-5.3', 'I-4.2', 'I-2.1'][tridentCriterion]}`,
+      source: 'Protocol v2.1 · sponsor packet',
+      boundary: 'Draft only',
+      authority: 'Sponsor medical monitor',
+      events: ['Criterion normalized', 'Site friction compared', tridentStage >= 3 ? 'Bounded draft prepared' : 'Evidence case assembling'],
+    },
+    {
+      object: ['Latency drift', 'Chemistry re-query', 'Query backlog', 'Throughput'][eyeSelected],
+      source: 'Site 018 · 90-day baseline',
+      boundary: 'Process signal only',
+      authority: 'Site quality lead',
+      events: ['Baseline window read', 'Deviation source-bound', eyeRouted ? 'Advisory routed' : 'Advisory awaiting review'],
+    },
+    {
+      object: 'Replay RPL-1047',
+      source: 'Signed execution chain',
+      boundary: 'Read only',
+      authority: 'Record remains unchanged',
+      events: ['Question parsed', 'Chain rows retrieved', 'Answer cited to source'],
+    },
+    {
+      object: SENTINEL_STUDIES[sentinelSelected].id,
+      source: 'Aggregate coverage graph',
+      boundary: 'No patient-level data',
+      authority: 'Site release required',
+      events: ['Open protocols compared', 'Coverage gap checked', sentinelSurfaced ? 'Capacity signal released' : 'Signal awaiting site release'],
+    },
+  ][active]
 
   useEffect(() => {
     if (!playing) return undefined
@@ -1308,11 +1338,13 @@ function AgentOperations() {
             <div className="agent-console-context"><small>CURRENT RUN</small><strong>DMR-204 · v2.1</strong><span>Site 018 · synthetic</span></div>
           </aside>
           <main className="agent-console-main">
-            <div className="agent-console-state" style={{ '--agent-color': agent.color }} key={agent.name}>
+            <div className="agent-console-state" style={{ '--agent-color': agent.color }}>
               <div className="agent-console-header" style={{ '--agent-color': agent.color }}>
                 <div><span><AgentGlyph kind={agent.icon} size={15} /> {agent.name} · {agent.role}</span><h3>{agent.task}</h3><p>{agent.text}</p></div>
                 {active === 2 ? <em>Read only</em> : ((active === 0 && tridentStage < 5) || (active === 1 && eyeSelected !== 3 && !eyeRouted) || (active === 3 && !sentinelSurfaced)) ? <em className="agent-working-state"><i /> {active === 0 && tridentStage === 0 ? 'Ready' : 'Working'}</em> : <em><CheckCircle size={14} weight="fill" /> {active === 1 && eyeSelected === 3 ? 'No action' : 'Complete'}</em>}
               </div>
+              <div className="agent-workspace-body">
+                <div className="agent-workspace-live">
               {active === 0 ? <TridentWorkbench selected={tridentCriterion} setSelected={setTridentCriterion} stage={tridentStage} setStage={setTridentStage} /> : active === 1 ? <EyeWorkbench selected={eyeSelected} setSelected={setEyeSelected} routed={eyeRouted} setRouted={setEyeRouted} /> : active === 2 ? <LunaWorkbench asked={lunaAsked} setAsked={setLunaAsked} tick={tick} playing={playing} /> : active === 3 ? <SentinelWorkbench selected={sentinelSelected} setSelected={setSentinelSelected} surfaced={sentinelSurfaced} setSurfaced={setSentinelSurfaced} /> : <><div className="agent-quick-demo" style={{ '--agent-color': agent.color }}>
                 <div className="agent-quick-demo-head"><span>{agent.demoLabel}</span><small>{agent.input} → {agent.output}</small></div>
                 <div className="agent-quick-demo-columns">{agent.demoColumns.map((column) => <span key={column}>{column}</span>)}</div>
@@ -1321,6 +1353,18 @@ function AgentOperations() {
                 <div className="agent-console-trace-head"><span>RUN TRACE</span><small>Source-linked · synthetic</small></div>
                 {agent.trace.map((event, index) => <div className={index === tick % agent.trace.length ? 'active' : ''} key={event}><span>{String(index + 1).padStart(2, '0')}</span><CheckCircle size={16} weight="fill" /><strong>{event}</strong><small>{index === tick % agent.trace.length ? 'working now' : 'complete'}</small></div>)}
               </div></>}
+                </div>
+                <aside className="agent-run-rail" aria-label={`${agent.name} run context`}>
+                  <div className="agent-run-object"><span>CURRENT OBJECT</span><strong>{runContext.object}</strong><small>DMR-204 · Site 018</small></div>
+                  <dl>
+                    <div><dt>SOURCE</dt><dd>{runContext.source}</dd></div>
+                    <div><dt>BOUNDARY</dt><dd>{runContext.boundary}</dd></div>
+                    <div><dt>AUTHORITY</dt><dd>{runContext.authority}</dd></div>
+                  </dl>
+                  <div className="agent-run-activity"><span>LIVE ACTIVITY</span>{runContext.events.map((event, index) => <div className={index === tick % runContext.events.length ? 'active' : ''} key={event}><i /><span><strong>{event}</strong><small>{index === tick % runContext.events.length ? 'working now' : 'verified'}</small></span></div>)}</div>
+                  <div className="agent-run-boundary"><ShieldCheck size={17} /><span><small>CONTROL BOUNDARY</small><strong>{agent.guardrail}</strong></span></div>
+                </aside>
+              </div>
             </div>
           </main>
         </div>
@@ -1332,6 +1376,16 @@ function AgentOperations() {
 function SiteNodeSection() {
   const root = useRef(null)
   const reduced = useReducedMotion()
+  const [selectedControl, setSelectedControl] = useState(0)
+  const [releaseOpen, setReleaseOpen] = useState(false)
+  const [released, setReleased] = useState(false)
+  const controls = [
+    { name: 'Evidence visibility', policy: 'Site roles only', scope: 'FHIR resources, documents, and mapped facts', checked: '10:41 · 4 approved sources', record: 'POL-018-EV4' },
+    { name: 'Artifact release', policy: 'PI or delegated signer', scope: 'Replay bundles and sponsor-facing artifacts', checked: '10:42 · signer roster current', record: 'POL-018-AR2' },
+    { name: 'Network signal', policy: 'Aggregate coverage only', scope: 'Protocol capability and site capacity', checked: '10:42 · 0 patient fields', record: 'POL-018-NS7' },
+    { name: 'Model execution', policy: 'Local inference allowed', scope: 'Site node runtime inside institution boundary', checked: '10:43 · runtime attested', record: 'POL-018-ME3' },
+  ]
+  const control = controls[selectedControl]
   useGSAP(() => {
     if (reduced || window.innerWidth <= 900) return
     gsap.from('.node-copy > *', {
@@ -1356,23 +1410,26 @@ function SiteNodeSection() {
         <div className="node-product-grid">
           <aside className="node-source-nav">
             <span>APPROVED SOURCES</span>
-            <div><Database size={15} /><strong>Epic · FHIR R4</strong><i /></div>
-            <div><FileText size={15} /><strong>Lab interface</strong><i /></div>
-            <div><Fingerprint size={15} /><strong>Imaging archive</strong><i /></div>
-            <div><ShieldCheck size={15} /><strong>eReg · CTMS</strong><i /></div>
+            <button type="button" onClick={() => setSelectedControl(0)}><Database size={16} /><span><strong>Epic · FHIR R4</strong><small>Last read 10:41</small></span><i /></button>
+            <button type="button" onClick={() => setSelectedControl(0)}><FileText size={16} /><span><strong>Lab interface</strong><small>Last read 10:41</small></span><i /></button>
+            <button type="button" onClick={() => setSelectedControl(0)}><Fingerprint size={16} /><span><strong>Imaging archive</strong><small>Last read 10:40</small></span><i /></button>
+            <button type="button" onClick={() => setSelectedControl(1)}><ShieldCheck size={16} /><span><strong>eReg · CTMS</strong><small>Signer sync 10:42</small></span><i /></button>
+            <div className="node-boundary-card"><small>INSTITUTION BOUNDARY</small><strong>Site 018 · Northstar Health</strong><span>4 sources · 7 site roles</span></div>
           </aside>
           <div className="node-policy-main">
             <div className="node-policy-header"><span><small>SITE CONTROL PLANE</small><strong>Local sources. Local signatures.</strong></span><em><ShieldCheck size={16} /> All controls healthy</em></div>
-            <div className="node-status-grid"><div><strong>4</strong><span>approved sources</span></div><div><strong>0</strong><span>raw PHI egress paths</span></div><div><strong>12</strong><span>signed artifacts today</span></div></div>
-            <div className="node-policy-list">
-              {[
-                ['Evidence visibility', 'Site roles only', 'ENFORCED'],
-                ['Artifact release', 'PI or delegated signer', 'ENFORCED'],
-                ['Network signal', 'Aggregate coverage only', 'ENFORCED'],
-                ['Model execution', 'Local inference allowed', 'READY'],
-              ].map(([name, policy, state]) => <div key={name}><ShieldCheck size={14} /><strong>{name}</strong><span>{policy}</span><small>{state}</small></div>)}
+            <div className="node-security-workspace">
+              <div className="node-policy-list"><span>ACTIVE CONTROLS</span>{controls.map((item, index) => <button className={selectedControl === index ? 'active' : ''} type="button" aria-pressed={selectedControl === index} onClick={() => { setSelectedControl(index); setReleaseOpen(false) }} key={item.name}><ShieldCheck size={15} /><span><strong>{item.name}</strong><small>{item.policy}</small></span><em>ENFORCED</em></button>)}</div>
+              <div className="node-control-detail">
+                {releaseOpen ? <InlineActionPanel open complete={released} eyebrow="SITE RELEASE" title="Release aggregate coverage signal" description="Review exact outbound payload before site signature. No patient facts or identifiers are present." rows={[["Payload", "Protocol capability · Site 018"], ["Patient fields", "0"], ["Recipient", "Meridian Oncology"], ["Authority", "Dr. M. Avdol · delegated signer"]]} confirmLabel="Release aggregate signal" successTitle="Aggregate signal released" successDescription="Site signature recorded. Sponsor received coverage only. Event bound to Replay." onClose={() => setReleaseOpen(false)} onConfirm={() => setReleased(true)} /> : <>
+                  <header><span><small>INSPECTING CONTROL</small><h4>{control.name}</h4></span><em><i /> ENFORCED</em></header>
+                  <p>{control.policy}. Damaros checks this rule before any source read, agent run, or outbound artifact.</p>
+                  <dl><div><dt>SCOPE</dt><dd>{control.scope}</dd></div><div><dt>LAST CHECK</dt><dd>{control.checked}</dd></div><div><dt>POLICY RECORD</dt><dd>{control.record} · signed</dd></div></dl>
+                  <div className="node-event-ledger"><span>RECENT POLICY EVENTS</span><div><time>10:43</time><strong>Local agent run attested</strong><small>ME3 · verified</small></div><div><time>10:42</time><strong>Outbound payload reduced</strong><small>0 patient fields</small></div><div><time>10:42</time><strong>Delegated signer matched</strong><small>AR2 · Dr. M. Avdol</small></div></div>
+                  <div className={`node-release-card ${released ? 'released' : ''}`}><span><small>{released ? 'RELEASE RECORDED' : 'OUTBOUND SIGNAL READY'}</small><strong>{released ? 'Coverage signal · SIG-018-204' : 'Protocol coverage · aggregate only'}</strong><em>{released ? 'Replay-linked · 10:44' : '0 patient fields · site signature required'}</em></span><button type="button" onClick={() => setReleaseOpen(true)}>{released ? 'View receipt' : 'Review release'} <ArrowRight size={15} /></button></div>
+                </>}
+              </div>
             </div>
-            <div className="node-egress-row"><ShieldCheck size={15} /><span><strong>Outbound signal prepared</strong><small>Protocol coverage · aggregate only · no patient data</small></span><em><i /> Awaiting site release</em></div>
           </div>
         </div>
       </div>
