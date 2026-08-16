@@ -10872,7 +10872,6 @@ html { scroll-padding-top: 96px; }
 }
 
 html.is-scrolling .biomarker-rain span,
-html.is-scrolling .integration-track,
 html.is-scrolling .network-core i,
 html.is-scrolling .clinic-node i,
 html.is-scrolling .hero-agent.is-active i,
@@ -10973,29 +10972,6 @@ html.is-hidden .hero-agent.is-active i,
     animation: none;
     transform: none;
     will-change: auto;
-  }
-
-  .integration-track {
-    animation: none;
-    transform: none;
-    will-change: auto;
-  }
-
-  .integration-group[aria-hidden="true"] {
-    display: none;
-  }
-
-  .integration-viewport {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x proximity;
-    overscroll-behavior-x: contain;
-  }
-
-  .integration-logo {
-    scroll-snap-align: start;
-    background: var(--surface-solid);
-    box-shadow: var(--shadow-soft);
   }
 
   .mini-run,

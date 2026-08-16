@@ -678,10 +678,9 @@ function CapacityBento() {
   const root = useRef(null)
   const reduced = useReducedMotion()
 
-  const narrow = useMediaQuery(NARROW_VIEWPORT)
   const integrations = useRef(null)
   const integrationsInView = useInView(integrations, { threshold: 0 })
-  const integrationsPlay = shouldRunAmbient({ reduced, inView: integrationsInView, narrow })
+  const integrationsPlay = shouldRunAmbient({ reduced, inView: integrationsInView })
 
   useEnterMotion(root, reduced, () => {
     const record = root.current?.querySelector('.evidence-record-card')
