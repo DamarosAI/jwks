@@ -138,14 +138,11 @@ if (!app.includes('about-scroll-cue') || !app.includes('CaretDown') || !app.incl
 if (!css.includes('.thesis-section.section-space') || !css.includes('22vh')) {
   throw new Error('Home hero and thesis must share a scroll stop')
 }
-if (!app.includes('whether a site runs one trial or a hundred') || app.includes('Most clinics cannot budget')) {
-  throw new Error('Thesis must stay one NCI-safe panel')
+if (!app.includes('The next generation of medicine') || app.includes('Most clinics cannot budget') || app.includes('whether a site runs one trial or a hundred') || app.includes('building that infrastructure')) {
+  throw new Error('Thesis must keep the headline and drop the bottleneck panel')
 }
 if (app.includes('—') || css.includes('—')) {
   throw new Error('Public copy and styles must not use em dashes')
-}
-if (!app.includes('className="thesis-closer"') || /<div className="thesis-panel">(?:(?!<\/div>)[\s\S])*building that infrastructure/.test(app)) {
-  throw new Error('Thesis closer must sit outside the panel')
 }
 if (!app.includes('<span>Evidence stays</span>') || !app.includes('<span>with the site.</span>')) {
   throw new Error('Site control heading must break onto two lines')

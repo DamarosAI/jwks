@@ -624,7 +624,7 @@ function ThesisSection() {
 
   useGSAP(() => {
     if (reduced || window.innerWidth <= 900) return
-    gsap.from('.thesis-head > *, .thesis-panel, .thesis-closer', {
+    gsap.from('.thesis-head > *', {
       opacity: 0,
       y: 24,
       duration: 0.8,
@@ -640,10 +640,6 @@ function ThesisSection() {
         <span className="section-kicker">Thesis</span>
         <h2><span className="accent-text">The next generation of medicine</span> cannot run on the last generation of research infrastructure.</h2>
       </div>
-      <div className="thesis-panel">
-        <p>Therapies got more precise. Protocols got harder. The patients research needs sit across thousands of care settings. Specialized execution infrastructure is the bottleneck, whether a site runs one trial or a hundred.</p>
-      </div>
-      <p className="thesis-closer">Damaros™ is building that infrastructure.</p>
     </section>
   )
 }
