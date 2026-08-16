@@ -551,7 +551,8 @@ function MiniRun() {
   const tickRef = useRef(0)
   const exitTick = useRef(0)
   const steps = ['Protocol', 'Evidence', 'Screening', 'Resolve', 'Replay']
-  const playing = shouldPlayAutoplay({ reduced, held, inView, scrollIdle })
+  // Mobile workspaces stay user-directed so content height never jumps beneath a reader.
+  const playing = (typeof window === 'undefined' || window.innerWidth > 640) && shouldPlayAutoplay({ reduced, held, inView, scrollIdle })
   tickRef.current = tick
 
   useEffect(() => {

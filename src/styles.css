@@ -10441,3 +10441,170 @@ html { scroll-padding-top: 96px; }
     grid-template-columns: 1fr;
   }
 }
+
+/* Mobile agent pass: compact record pickers, one focused work surface, one guardrail. */
+@media (max-width: 640px) {
+  .agent-operations-section {
+    padding-inline: 14px;
+  }
+
+  .agent-console {
+    width: calc(100% + 4px);
+    margin-left: -2px;
+    border-radius: 16px;
+    overflow-anchor: none;
+  }
+
+  .agent-console-nav {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4px;
+    padding: 7px;
+  }
+
+  .agent-console-nav button {
+    min-height: 62px;
+    gap: 5px;
+    padding: 7px 3px;
+    border-radius: 10px;
+  }
+
+  .agent-console-nav button strong {
+    font-size: 0.72rem;
+  }
+
+  .agent-console-main {
+    min-height: 0;
+    padding: 18px 14px 20px;
+  }
+
+  .agent-console-state {
+    min-height: 0;
+    gap: 13px;
+  }
+
+  .agent-console-header {
+    gap: 8px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .agent-console-header h3 {
+    min-height: 0;
+    margin-top: 5px;
+    font-size: clamp(1.42rem, 7vw, 1.75rem);
+    line-height: 1.06;
+  }
+
+  .agent-console-header p {
+    font-size: 0.78rem;
+    line-height: 1.42;
+  }
+
+  .agent-workspace-body {
+    gap: 12px;
+  }
+
+  .agent-workspace-live .trident-workbench,
+  .agent-workspace-live .quality-signal-grid,
+  .agent-workspace-live .sentinel-grid,
+  .agent-workspace-live .agent-luna-workbench .luna-investigation-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    height: auto;
+  }
+
+  .agent-console :is(.trident-list, .quality-list, .sentinel-studies, .luna-question-list),
+  .agent-console .agent-luna-workbench .luna-question-list,
+  .agent-console .agent-sentinel-workbench .sentinel-studies {
+    display: grid;
+    height: auto;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: 1fr;
+    gap: 7px;
+  }
+
+  .agent-console :is(.trident-list, .quality-list, .sentinel-studies, .luna-question-list) > span {
+    grid-column: 1 / -1;
+  }
+
+  .agent-console :is(.trident-list button, .quality-list button, .sentinel-studies button, .luna-question-list button),
+  .agent-console .agent-luna-workbench .luna-question-list button,
+  .agent-console .agent-sentinel-workbench .sentinel-studies button {
+    width: 100%;
+    height: auto;
+    min-height: 94px;
+    padding: 11px;
+    border-radius: 11px;
+  }
+
+  .agent-console .trident-list button {
+    align-items: stretch;
+  }
+
+  .agent-console :is(.trident-list button strong, .quality-list button strong, .sentinel-studies button strong, .luna-question-list button strong) {
+    font-size: 0.77rem;
+    line-height: 1.3;
+  }
+
+  .agent-console .sentinel-studies button {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+  }
+
+  .agent-console .sentinel-studies button > em {
+    font-size: 0.8rem;
+  }
+
+  .agent-console .luna-question-list button {
+    align-content: center;
+  }
+
+  .agent-console :is(.trident-detail, .quality-detail, .sentinel-detail, .audit-answer, .luna-answer-panel) {
+    height: auto;
+    min-height: 0;
+    padding: 15px;
+    overflow: visible;
+    border-radius: 13px;
+  }
+
+  .agent-console :is(.trident-detail, .quality-detail, .sentinel-detail, .luna-answer-panel) > .pane-settle {
+    overflow: visible;
+  }
+
+  .agent-console .trident-primary,
+  .agent-console .agent-header-action,
+  .agent-console .audit-citations button {
+    min-height: 50px;
+    font-size: 0.8rem;
+  }
+
+  .trident-impact-pair {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .agent-run-rail {
+    display: block;
+    padding: 0;
+    overflow: visible;
+    background: transparent;
+  }
+
+  .agent-run-object,
+  .agent-run-rail dl,
+  .agent-run-activity {
+    display: none;
+  }
+
+  .agent-run-boundary {
+    min-height: 64px;
+    margin: 0;
+    padding: 13px;
+    border: 1px solid color-mix(in srgb, var(--agent-color) 20%, var(--border));
+    border-radius: 12px;
+  }
+
+  .agent-run-boundary strong {
+    font-size: 0.72rem;
+  }
+}
