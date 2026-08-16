@@ -68,7 +68,7 @@ const SECTIONS = [
 
 export default function PrivacyPage() {
   useEffect(() => {
-    document.title = 'Privacy | Damaros'
+    document.title = 'Damaros™'
     const tag = document.querySelector('meta[name="description"]')
     if (tag) tag.setAttribute('content', 'What the Damaros website collects, how it is used, and the choices you have.')
     const canonical = document.querySelector('link[rel="canonical"]')

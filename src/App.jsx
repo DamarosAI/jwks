@@ -313,7 +313,7 @@ function PageReset() {
 
 function PageMeta({ title, description, path = '/' }) {
   useEffect(() => {
-    document.title = title
+    document.title = 'Damaros™'
     const absolute = `https://www.damaros.ai${path}`
     const descriptionTag = document.querySelector('meta[name="description"]')
     if (descriptionTag) descriptionTag.setAttribute('content', description)

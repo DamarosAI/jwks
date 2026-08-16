@@ -4,6 +4,9 @@ import { fileURLToPath } from 'node:url'
 const root = fileURLToPath(new URL('../', import.meta.url))
 const app = await readFile(`${root}src/App.jsx`, 'utf8')
 const css = await readFile(`${root}src/styles.css`, 'utf8')
+const html = await readFile(`${root}index.html`, 'utf8')
+const vercel = await readFile(`${root}vercel.json`, 'utf8')
+const privacy = await readFile(`${root}src/PrivacyPage.jsx`, 'utf8')
 
 const requiredActions = [
   'Open Evidence',
@@ -151,6 +154,12 @@ if ((app.match(/Evidence stays/g) || []).length !== 1 || !app.includes('Local so
 }
 if (!css.includes('.node-copy h2 span') || !css.includes('white-space: nowrap')) {
   throw new Error('Site headline lines must not wrap mid-phrase')
+}
+if (!html.includes('<title>Damaros™</title>') || !app.includes("document.title = 'Damaros™'") || !privacy.includes("document.title = 'Damaros™'")) {
+  throw new Error('Chrome tab title must be Damaros with a trademark mark')
+}
+if (!vercel.includes('"framework": "vite"') || !vercel.includes('"buildCommand": "npm run build"') || !vercel.includes('"outputDirectory": "dist"')) {
+  throw new Error('Vercel must build the Vite app and serve dist, not raw JSX')
 }
 
 console.log(`Verified ${requiredActions.length} source-native demo actions and inline workflow panels.`)
