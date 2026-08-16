@@ -434,19 +434,27 @@ function usePageScrollFlow(root, reduced) {
   }, { scope: root, dependencies: [reduced] })
 }
 
+function WindowBrand() {
+  return (
+    <span className="window-title window-brand">
+      <img src="/assets/damaros-monogram-blue.svg" alt="Damaros" />
+    </span>
+  )
+}
+
 function SiteNav() {
   const [open, setOpen] = useState(false)
 
   return (
     <header className="site-nav-wrap">
       <nav className="site-nav" aria-label="Primary navigation">
-        <NavLink className="wordmark" to="/" aria-label="Damaros home">
-          Damaros<sup>TM</sup>
-        </NavLink>
         <div className="desktop-nav-links">
           <NavLink to="/" end>Home</NavLink>
           <NavLink to="/about">About</NavLink>
         </div>
+        <NavLink className="wordmark" to="/" aria-label="Damaros home">
+          <img src="/assets/damaros-monogram-blue.svg" alt="" />
+        </NavLink>
         <PilotButton className="button button-small button-primary desktop-pilot">
           Start a pilot <ArrowUpRight size={15} weight="bold" />
         </PilotButton>
@@ -551,7 +559,7 @@ function MiniRun() {
     <div className="hero-workspace" ref={root} aria-label="Live synthetic Damaros workspace preview" onClickCapture={hold}>
       <div className="mac-titlebar">
         <div className="traffic-lights" aria-hidden="true"><i /><i /><i /></div>
-        <span className="window-title hero-window-brand"><img src="/assets/damaros-monogram-blue.svg" alt="Damaros" /></span>
+        <WindowBrand />
         <span aria-hidden="true" />
       </div>
       <div className="hero-app-grid">
@@ -1049,7 +1057,7 @@ function LiveDemo() {
       <div className="live-workspace" onClickCapture={(event) => { if (!isAutoplayToggle(event.target)) hold() }}>
         <div className="mac-titlebar">
           <div className="traffic-lights" aria-hidden="true"><i /><i /><i /></div>
-          <span className="window-title">Damaros Spine · Site MRN-018</span>
+          <WindowBrand />
           <div className="workspace-window-actions"><span className="window-live"><i /> Live synthetic · event {String(tick + 1).padStart(2, '0')}</span><button type="button" data-autoplay-toggle aria-label={playing && !held ? 'Pause live run' : 'Play live run'} onClick={togglePlaying}>{playing && !held ? <Pause size={13} weight="fill" /> : <Play size={13} weight="fill" />}</button></div>
         </div>
         <div className="workspace-app">
@@ -1321,7 +1329,7 @@ function AgentOperations() {
       <div className="agent-console" onClickCapture={hold}>
         <div className="mac-titlebar">
           <div className="traffic-lights" aria-hidden="true"><i /><i /><i /></div>
-          <span className="window-title">Damaros Spine · Agent workspace</span>
+          <WindowBrand />
           <span className="window-live" style={{ '--agent-color': agent.color }}><i /> {agent.name} working</span>
         </div>
         <div className="agent-console-grid">
@@ -1404,7 +1412,7 @@ function SiteNodeSection() {
   return (
     <section className="node-section section-space" id="site-control" ref={root}>
       <div className="node-system" aria-label="Damaros site node control model">
-        <div className="mac-titlebar"><div className="traffic-lights" aria-hidden="true"><i /><i /><i /></div><span className="window-title">Damaros · Site node MRN-018</span><span className="window-live"><i /> Institution-held</span></div>
+        <div className="mac-titlebar"><div className="traffic-lights" aria-hidden="true"><i /><i /><i /></div><WindowBrand /><span className="window-live"><i /> Institution-held</span></div>
         <div className="node-product-grid">
           <aside className="node-source-nav">
             <span>APPROVED SOURCES</span>
