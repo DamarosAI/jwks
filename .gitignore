@@ -13,6 +13,9 @@
 .DS_Store
 Thumbs.db
 
+# build
+dist/
+
 # dependencies
 node_modules/
 

@@ -1,7 +1,7 @@
 {
   "name": "Damaros",
   "short_name": "Damaros",
-  "description": "Damaros is an agentic execution infrastructure for the future of clinical research—built around clinical research execution capacity.",
+  "description": "Damaros is an agentic execution infrastructure for the future of clinical research, built around clinical research execution capacity.",
   "icons": [
     {
       "src": "/favicon-48x48.png",
@@ -19,8 +19,8 @@
       "type": "image/png"
     }
   ],
-  "theme_color": "#ffffff",
-  "background_color": "#000000",
+  "theme_color": "#f8fafc",
+  "background_color": "#f8fafc",
   "display": "browser",
   "start_url": "/"
 }
