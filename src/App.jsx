@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom'
-import { isAutoplayToggle, useAutoplayHold } from './autoplay'
+import { AGENT_ROTATE_TICKS, AGENT_TICK_MS, HERO_STAGE_MS, HERO_TICK_MS, LIVE_STAGE_MS, LIVE_TICK_MS, autoplayIndex, isAutoplayToggle, shouldKeepPreviousStage, shouldPlayAutoplay, useAutoplayHold, useInView, useScrollIdle } from './autoplay'
+import { usePaneSettle } from './motion'
 import { PilotButton, PilotProvider } from './PilotInquiry'
 import PrivacyPage from './PrivacyPage'
 import { useGSAP } from '@gsap/react'
@@ -10,6 +11,7 @@ import {
   ArrowRight,
   ArrowUpRight,
   Bell,
+  CaretDown,
   CaretRight,
   CheckCircle,
   ClockCounterClockwise,
@@ -118,6 +120,28 @@ const AGENTS = [
   },
 ]
 
+const LUNA_INVESTIGATIONS = [
+  { q: 'Why was S-1051 deferred?', cat: 'Eligibility', subject: 'S-1051', asked: '10:04', answer: 'S-1051 deferred on criterion I-3.4 because the qualifying potassium was drawn 06-09, 11 days before evaluation, past the 7-day window. It was routed, not failed.', citations: [{ id: 'Observation/chem-5521', type: 'FHIR OBSERVATION', value: 'K⁺ 5.0 mmol/L · drawn 06-09', source: '10:02 · signed chain row', hash: 'sha256 · 5521…09af' }, { id: 'Criterion/I-3.4', type: 'PROTOCOL RULE', value: 'Serum chemistry · 7-day window', source: 'Protocol v2.1 · 10:02', hash: 'sha256 · i34…v21' }, { id: 'Review/R-901', type: 'SITE WORK ITEM', value: 'STALE_SOURCE · routed to coordinator', source: '10:04 · site worklist', hash: 'Ed25519 · verified' }, { id: 'Route/WRK-441', type: 'WORKLIST WRITE', value: 'Deferred · not a screen fail', source: '10:04 · coordinator queue', hash: 'sha256 · wrk…441' }] },
+  { q: 'Who signed the ECOG override on S-1047?', cat: 'Accountability', subject: 'S-1047', asked: '14:08', answer: 'The PI signed at 14:07, citing the latest oncology note as superseding the stale structured ECOG. The decision was signed and hash-anchored.', citations: [{ id: 'Resolve/EVT-1207', type: 'SIGNED SITE DECISION', value: 'PI signature on ECOG conflict', source: '14:07 · Resolve', hash: 'Ed25519 · verified' }, { id: 'Actor/PI-018', type: 'ACCOUNTABLE ACTOR', value: 'Dr. M. Avdol · PI / Sub-I', source: '14:07 · site signature', hash: 'sha256 · pi18…1407' }, { id: 'Rationale/R-884', type: 'DECISION RATIONALE', value: 'Latest note supersedes stale ECOG', source: 'Review R-884 · 14:07', hash: 'sha256 · r884…ecog' }] },
+  { q: "Is this run's chain intact?", cat: 'Integrity', subject: 'DMR-204', asked: '14:08', answer: 'Yes. Chain remains intact across all 9 events. Signature is verified. Sponsor-safe replay excludes raw PHI.', citations: [{ id: 'Replay/RPL-1047', type: 'REPLAY RECORD', value: 'Chain intact · 9 of 9 events', source: '14:08 · Replay sealed', hash: 'sha256 · rpl…1047' }, { id: 'Signature/EVT-1207', type: 'SIGNATURE', value: 'Verified · Ed25519', source: '14:08 · manifest', hash: 'Ed25519 · verified' }, { id: 'Export/Boundary', type: 'DATA BOUNDARY', value: 'Sponsor-safe · PHI-free', source: '14:08 · export policy', hash: 'policy · verified' }] },
+  { q: 'When was Replay sealed for S-1047?', cat: 'Replay', subject: 'S-1047', asked: '14:09', answer: 'Replay sealed at 14:08 after the PI signature. The sealed record is RPL-1047. Later reads cite that row; they do not rewrite it.', citations: [{ id: 'Replay/RPL-1047', type: 'REPLAY RECORD', value: 'Sealed 14:08 · 9 events', source: '14:08 · Replay', hash: 'sha256 · rpl…1047' }, { id: 'Resolve/EVT-1207', type: 'PRIOR WRITE', value: 'PI signature closed the open item', source: '14:07 · Resolve', hash: 'Ed25519 · verified' }, { id: 'Policy/Seal', type: 'SEAL RULE', value: 'Immutable after seal', source: '14:08 · site policy', hash: 'policy · verified' }] },
+  { q: 'What bound the potassium on S-1051?', cat: 'Evidence', subject: 'S-1051', asked: '10:03', answer: 'Observation/chem-5521 bound the potassium: 5.0 mmol/L, drawn 06-09, signed into the chain at 10:02. I-3.4 then read that row. Luna did not invent the value.', citations: [{ id: 'Observation/chem-5521', type: 'FHIR OBSERVATION', value: 'K⁺ 5.0 mmol/L · drawn 06-09', source: '10:02 · signed chain row', hash: 'sha256 · 5521…09af' }, { id: 'Bind/EVT-1104', type: 'EVIDENCE BIND', value: 'Source attached to S-1051', source: '10:02 · Evidence', hash: 'sha256 · bind…1104' }, { id: 'Criterion/I-3.4', type: 'PROTOCOL RULE', value: 'Read bound chem-5521', source: '10:02 · Screening', hash: 'sha256 · i34…v21' }] },
+  { q: 'Who wrote the last ledger row?', cat: 'Ledger', subject: 'Site 018', asked: '14:09', answer: 'Last write is Replay seal RPL-1047 at 14:08, system-attributed after Dr. Avdol signed EVT-1207. Luna is read-only and is not on that row.', citations: [{ id: 'Replay/RPL-1047', type: 'LAST WRITE', value: 'Replay sealed · 14:08', source: '14:08 · ledger head', hash: 'sha256 · rpl…1047' }, { id: 'Actor/PI-018', type: 'PRIOR ACTOR', value: 'Dr. M. Avdol signed EVT-1207', source: '14:07 · Resolve', hash: 'Ed25519 · verified' }, { id: 'Guard/Luna', type: 'READ BOUNDARY', value: 'Luna never writes the ledger', source: '14:09 · this read', hash: 'policy · verified' }] },
+  { q: 'Why is S-1066 still REVIEW?', cat: 'Pending', subject: 'S-1066', asked: '09:58', answer: 'S-1066 stays REVIEW on I-2.1. The EGFR / ALK order is bound. No finalized DiagnosticReport is in the chain. Luna will not invent a result.', citations: [{ id: 'ServiceRequest/mol-1904', type: 'MOLECULAR ORDER', value: 'EGFR / ALK ordered 06-19', source: '09:55 · Evidence', hash: 'sha256 · mol…1904' }, { id: 'DiagnosticReport/mol-pending', type: 'SOURCE STATUS', value: 'Result pending · no final report', source: '09:58 · lab connector', hash: 'sha256 · pend…1066' }, { id: 'Criterion/I-2.1', type: 'PROTOCOL RULE', value: 'EGFR / ALK status required', source: '09:58 · Screening', hash: 'sha256 · i21…v21' }] },
+  { q: 'Which events sit in RPL-1047?', cat: 'Replay', subject: 'RPL-1047', asked: '14:09', answer: 'RPL-1047 holds 9 sealed events from the S-1047 run, ending at the PI signature and Replay seal. Later reads cite that row. They do not rewrite it.', citations: [{ id: 'Replay/RPL-1047', type: 'SEALED RECORD', value: '9 of 9 events · sealed 14:08', source: '14:08 · Replay', hash: 'sha256 · rpl…1047' }, { id: 'Resolve/EVT-1207', type: 'TERMINAL EVENT', value: 'PI signature closed the open item', source: '14:07 · Resolve', hash: 'Ed25519 · verified' }, { id: 'Policy/Seal', type: 'SEAL RULE', value: 'Immutable after seal', source: '14:08 · site policy', hash: 'policy · verified' }] },
+]
+
+const SENTINEL_STUDIES = [
+  { id: 'NCT00000211', title: 'AXL-211 · EGFR+ NSCLC (post-TKI)', phase: 'Ph II', coverage: '9 / 10 capabilities', fit: '94%', status: 'Strong fit', sponsor: 'Cascade Therapeutics', pi: 'Dr. Higashikata', sites: '21 active US sites', window: 'Open through 09-30', scanned: '14:02 · coverage graph', gap: 'None material', concepts: ['EGFR T790M / C797S', 'NSCLC IIIB–IV', 'post-osimertinib', 'ECOG 0–1'] },
+  { id: 'NCT00000031', title: 'HEM-31 · second-line DLBCL', phase: 'Ph II', coverage: '8 / 10 capabilities', fit: '82%', status: 'Strong fit', sponsor: 'Northlake Biosciences', pi: 'Dr. Giovanna', sites: '31 active sites', window: 'Open through 10-12', scanned: '14:02 · coverage graph', gap: 'Apheresis slot', concepts: ['DLBCL', 'second line', 'PET-avid', 'CAR-T naive'] },
+  { id: 'NCT00000009', title: 'AVT-9 · KRAS G12C solid tumor', phase: 'Ph I/II', coverage: '6 / 10 capabilities', fit: '68%', status: 'Possible fit', sponsor: 'Helix Therapeutics', pi: 'Dr. J. Kujo', sites: '17 active sites', window: 'Dose escalation open', scanned: '14:02 · coverage graph', gap: 'NGS turnaround', concepts: ['KRAS G12C', 'solid tumor', 'dose escalation', 'prior IO allowed'] },
+  { id: 'NCT00000184', title: 'CARD-184 · HFpEF outcomes', phase: 'Ph III', coverage: '8 / 10 capabilities', fit: '79%', status: 'Strong fit', sponsor: 'Harbor Cardiometabolic', pi: 'Dr. L. Chen', sites: '44 active US sites', window: 'Open through 11-15', scanned: '14:02 · coverage graph', gap: 'Echo read time', concepts: ['HFpEF', 'NT-proBNP', 'echo within 30 days', 'eGFR ≥ 30'] },
+  { id: 'NCT00000077', title: 'IMM-77 · moderate-severe UC', phase: 'Ph II', coverage: '7 / 10 capabilities', fit: '74%', status: 'Possible fit', sponsor: 'Solstice Immunology', pi: 'Dr. A. Okonkwo', sites: '28 active sites', window: 'Open through 08-22', scanned: '14:02 · coverage graph', gap: 'Endoscopy calendar', concepts: ['UC', 'Mayo score', 'prior anti-TNF', 'stool calprotectin'] },
+  { id: 'NCT00000112', title: 'NEU-112 · early Alzheimer', phase: 'Ph II', coverage: '7 / 10 capabilities', fit: '71%', status: 'Possible fit', sponsor: 'Vesper Neurosciences', pi: 'Dr. S. Rahman', sites: '19 active sites', window: 'Open through 12-01', scanned: '14:02 · coverage graph', gap: 'PET slot', concepts: ['MCI / early AD', 'p-tau217', 'MMSE 22–30', 'study partner'] },
+  { id: 'NCT00000155', title: 'END-155 · T2D cardiovascular outcomes', phase: 'Ph III', coverage: '8 / 10 capabilities', fit: '77%', status: 'Strong fit', sponsor: 'Northwind Metabolic', pi: 'Dr. P. Ibarra', sites: '52 active sites', window: 'Open through 10-28', scanned: '14:02 · coverage graph', gap: 'CGM upload lag', concepts: ['T2D', 'HbA1c 7–10%', 'prior MACE', 'eGFR ≥ 45'] },
+  { id: 'NCT00000090', title: 'RHE-90 · RA TNF-IR', phase: 'Ph II', coverage: '6 / 10 capabilities', fit: '66%', status: 'Possible fit', sponsor: 'Keystone Immunology', pi: 'Dr. N. Voss', sites: '24 active sites', window: 'Open through 09-18', scanned: '14:02 · coverage graph', gap: 'Infusion chair', concepts: ['RA', 'TNF-IR', 'DAS28', 'prior MTX'] },
+]
+
 const BIOMARKERS = [
   ['Troponin', '7%', '-5s', '20s', '42px'],
   ['HbA1c', '18%', '-13s', '24s', '-34px'],
@@ -128,33 +152,6 @@ const BIOMARKERS = [
   ['SpO2', '81%', '-19s', '28s', '31px'],
   ['FHIR', '91%', '-7s', '21s', '-38px'],
 ]
-
-const CLINIC_NETWORK_HUBS = [
-  ['Seattle', 11, 17], ['Spokane', 18, 20], ['Portland', 10, 27], ['Eugene', 10, 33], ['San Francisco', 10, 44], ['Sacramento', 13, 40], ['Fresno', 13, 50], ['Los Angeles', 13, 58], ['San Diego', 15, 65],
-  ['Boise', 25, 30], ['Reno', 20, 44], ['Las Vegas', 23, 56], ['Phoenix', 29, 65], ['Tucson', 30, 72], ['Salt Lake City', 31, 43], ['Albuquerque', 39, 62], ['Santa Fe', 40, 57], ['El Paso', 44, 73],
-  ['Missoula', 34, 20], ['Helena', 38, 22], ['Billings', 42, 27], ['Casper', 43, 36], ['Cheyenne', 44, 39], ['Denver', 45, 47], ['Bismarck', 53, 26], ['Fargo', 57, 25], ['Rapid City', 51, 37], ['Sioux Falls', 57, 36], ['Omaha', 60, 45], ['Lincoln', 59, 48], ['Wichita', 58, 55],
-  ['Oklahoma City', 58, 63], ['Tulsa', 62, 59], ['Dallas', 60, 72], ['Fort Worth', 58, 71], ['Austin', 61, 79], ['San Antonio', 58, 83], ['Houston', 66, 80], ['Minneapolis', 65, 31], ['Duluth', 66, 26], ['Des Moines', 65, 44], ['Cedar Rapids', 68, 42],
-  ['Kansas City', 67, 51], ['St. Louis', 72, 54], ['Chicago', 72, 39], ['Springfield IL', 72, 47], ['Milwaukee', 70, 33], ['Green Bay', 72, 29], ['Detroit', 79, 37], ['Grand Rapids', 76, 35], ['Indianapolis', 76, 47], ['Fort Wayne', 78, 44], ['Louisville', 78, 54], ['Lexington', 81, 53], ['Nashville', 79, 61],
-  ['Memphis', 75, 66], ['Little Rock', 71, 66], ['Fayetteville AR', 68, 60], ['New Orleans', 74, 82], ['Baton Rouge', 73, 77], ['Jackson', 78, 75], ['Gulfport', 78, 80], ['Birmingham', 82, 70], ['Huntsville', 82, 63], ['Atlanta', 86, 65], ['Savannah', 90, 71], ['Knoxville', 83, 58], ['Charlotte', 88, 58],
-  ['Columbia SC', 89, 64], ['Charleston', 91, 68], ['Jacksonville', 91, 77], ['Tampa', 89, 82], ['Orlando', 92, 83], ['Miami', 94, 89], ['Raleigh', 91, 54], ['Greensboro', 89, 55], ['Richmond', 92, 48], ['Norfolk', 95, 51], ['Washington', 93, 44], ['Baltimore', 94, 42],
-  ['Philadelphia', 94, 38], ['Pittsburgh', 88, 40], ['Erie', 87, 35], ['Cleveland', 82, 39], ['Columbus', 82, 44], ['Cincinnati', 80, 49], ['Charleston WV', 86, 49], ['Wilmington DE', 95, 42], ['Newark', 95, 36], ['New York', 95, 34], ['Buffalo', 90, 31], ['Albany', 94, 29],
-  ['Hartford', 95, 31], ['Bridgeport', 96, 33], ['Providence', 96, 30], ['Boston', 96, 26], ['Worcester', 95, 27], ['Burlington', 93, 22], ['Manchester', 95, 24], ['Portland ME', 97, 20],
-]
-
-const CLINIC_NETWORK_POINTS = CLINIC_NETWORK_HUBS.flatMap(([, hubX, hubY], hubIndex) => (
-  Array.from({ length: 12 }, (_, ringIndex) => {
-    const angle = ((ringIndex * 137.5) + (hubIndex * 23)) * (Math.PI / 180)
-    const radius = 0.55 + (ringIndex % 6) * 0.54 + Math.floor(ringIndex / 6) * 0.46
-    return {
-      city: CLINIC_NETWORK_HUBS[hubIndex][0],
-      x: hubX + Math.cos(angle) * radius,
-      y: hubY + Math.sin(angle) * radius * 0.64,
-      delay: ((hubIndex % 7) * 0.42 + ringIndex * 0.13).toFixed(2),
-    }
-  })
-))
-
-const CONTIGUOUS_STATES_MAP_URL = 'https://upload.wikimedia.org/wikipedia/commons/e/e9/Blank_US_Map_48states.svg'
 
 // Canonical landing-demo queue, ported from C:\repos\jwks\platform.html.
 const PLATFORM_SCREENING_QUEUE = [
@@ -365,24 +362,45 @@ function PageSpine({ about = false }) {
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
+    let frame = 0
+    let lastActive = items[0][0]
+    let lastVisible = false
     const update = () => {
       const anchor = window.innerHeight * 0.42
       const gate = document.querySelector(about ? '.about-hero' : '.landing-hero')
-      const revealAt = Math.max(76, window.innerHeight * 0.12)
       let currentIndex = 0
       items.forEach(([id], index) => {
         const section = document.getElementById(id)
         if (section && section.getBoundingClientRect().top <= anchor) currentIndex = index
       })
-      setActive(items[currentIndex][0])
-      setVisible(!gate || gate.getBoundingClientRect().bottom <= revealAt)
+      const nextActive = items[currentIndex][0]
+      const next = document.getElementById(about ? 'founder' : 'thesis')
+      const nextTop = next?.getBoundingClientRect().top ?? Number.POSITIVE_INFINITY
+      const heroBottom = gate?.getBoundingClientRect().bottom ?? 0
+      const nextVisible = nextTop <= window.innerHeight * 0.92 || heroBottom <= window.innerHeight * 0.82
+      if (nextActive !== lastActive) {
+        lastActive = nextActive
+        setActive(nextActive)
+      }
+      if (nextVisible !== lastVisible) {
+        lastVisible = nextVisible
+        setVisible(nextVisible)
+      }
+    }
+    const onScroll = () => {
+      if (frame) return
+      frame = window.requestAnimationFrame(() => {
+        frame = 0
+        update()
+      })
     }
     update()
-    window.addEventListener('scroll', update, { passive: true })
-    window.addEventListener('resize', update)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
     return () => {
-      window.removeEventListener('scroll', update)
-      window.removeEventListener('resize', update)
+      window.cancelAnimationFrame(frame)
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
     }
   }, [about, items])
 
@@ -400,32 +418,19 @@ function PageSpine({ about = false }) {
 function usePageScrollFlow(root, reduced) {
   useGSAP(() => {
     if (reduced || window.innerWidth <= 640) return undefined
-    const chapters = gsap.utils.toArray('.thesis-section, .capacity-section, .agent-operations-section, .node-section, .founder-section, .why-now, .human-outcomes, .final-cta', root.current)
-    const timelines = chapters.map((chapter) => {
-      const heading = chapter.querySelector('.thesis-head, .section-heading, .agent-story-heading, .node-copy, .why-now-title, .final-cta > h2')
-      const surface = chapter.querySelector('.thesis-body, .capacity-bento, .agent-console, .node-system, .founder-signature, .why-now-lines, .outcome-switcher, .final-cta > .button')
-      const timeline = gsap.timeline({
-        scrollTrigger: {
-          trigger: chapter,
-          start: 'top 96%',
-          end: 'bottom 4%',
-          scrub: 0.78,
-          invalidateOnRefresh: true,
-        },
+    const chapters = gsap.utils.toArray('.founder-section, .human-outcomes, .final-cta', root.current)
+    const tweens = chapters.map((chapter) => {
+      const heading = chapter.querySelector('.founder-signature, .section-heading, .final-cta > h2, .final-cta > .button')
+      if (!heading) return null
+      return gsap.from(heading, {
+        y: 16,
+        opacity: 0,
+        duration: 0.65,
+        ease: 'power2.out',
+        scrollTrigger: { trigger: chapter, start: 'top 86%', once: true },
       })
-      if (heading) {
-        timeline
-          .fromTo(heading, { y: 68, opacity: 0.42 }, { y: 0, opacity: 1, duration: 0.36, ease: 'none' }, 0)
-          .to(heading, { y: -34, opacity: 0.82, duration: 0.64, ease: 'none' }, 0.36)
-      }
-      if (surface) {
-        timeline
-          .fromTo(surface, { y: 92, scale: 0.975, opacity: 0.38 }, { y: 0, scale: 1, opacity: 1, duration: 0.42, ease: 'none' }, 0.04)
-          .to(surface, { y: -42, scale: 0.995, opacity: 0.9, duration: 0.58, ease: 'none' }, 0.42)
-      }
-      return timeline
     })
-    return () => timelines.forEach((timeline) => timeline.kill())
+    return () => tweens.forEach((tween) => tween?.kill())
   }, { scope: root, dependencies: [reduced] })
 }
 
@@ -487,57 +492,63 @@ function Footer() {
 }
 
 function MiniRun() {
+  const root = useRef(null)
   const reduced = useReducedMotion()
+  const inView = useInView(root)
+  const scrollIdle = useScrollIdle()
   const [active, setActive] = useState(0)
   const [previous, setPrevious] = useState(null)
   const [transitionMode, setTransitionMode] = useState('manual')
   const [tick, setTick] = useState(0)
   const { held, hold } = useAutoplayHold(reduced)
   const transitionTimer = useRef(null)
+  const tickRef = useRef(0)
+  const exitTick = useRef(0)
   const steps = ['Protocol', 'Evidence', 'Screening', 'Resolve', 'Replay']
+  const playing = shouldPlayAutoplay({ reduced, held, inView, scrollIdle })
+  tickRef.current = tick
 
   useEffect(() => {
-    if (reduced || held) return undefined
+    if (!playing) return undefined
     const stageTimer = window.setInterval(() => {
       setActive((current) => {
-        const next = (current + 1) % steps.length
+        exitTick.current = tickRef.current
         setPrevious(current)
         setTransitionMode('auto')
         window.clearTimeout(transitionTimer.current)
-        transitionTimer.current = window.setTimeout(() => setPrevious(null), 720)
-        return next
+        transitionTimer.current = window.setTimeout(() => setPrevious(null), 420)
+        return (current + 1) % steps.length
       })
       setTick(0)
-    }, 18000)
-    const tickTimer = window.setInterval(() => setTick((value) => value + 1), 3600)
+    }, HERO_STAGE_MS)
+    const tickTimer = window.setInterval(() => setTick((value) => value + 1), HERO_TICK_MS)
     return () => { window.clearInterval(stageTimer); window.clearInterval(tickTimer) }
-  }, [reduced, held, steps.length])
+  }, [playing, steps.length])
 
   useEffect(() => () => window.clearTimeout(transitionTimer.current), [])
 
   const selectStage = (index) => {
     hold()
     if (index === active) return
-    setPrevious(active)
+    setPrevious(null)
     setTransitionMode('manual')
     setActive(index)
     setTick(0)
     window.clearTimeout(transitionTimer.current)
-    transitionTimer.current = window.setTimeout(() => setPrevious(null), reduced ? 0 : 380)
   }
 
-  const renderStage = (index) => (
+  const renderStage = (index, stageTick = tick) => (
     <div className="landing-source-view">
-      {index === 0 && <ProtocolView tick={tick} onAdvance={() => selectStage(1)} />}
-      {index === 1 && <EvidenceView refreshing={false} tick={tick} onAdvance={() => selectStage(2)} />}
-      {index === 2 && <ScreeningView tick={tick} onAdvance={() => selectStage(3)} />}
-      {index === 3 && <ResolveView />}
-      {index === 4 && <ReplayView tick={tick} />}
+      {index === 0 && <ProtocolView tick={stageTick} onAdvance={() => selectStage(1)} />}
+      {index === 1 && <EvidenceView refreshing={false} tick={stageTick} onAdvance={() => selectStage(2)} />}
+      {index === 2 && <ScreeningView tick={stageTick} onAdvance={() => selectStage(3)} />}
+      {index === 3 && <ResolveView tick={stageTick} />}
+      {index === 4 && <ReplayView tick={stageTick} />}
     </div>
   )
 
   return (
-    <div className="hero-workspace" aria-label="Live synthetic Damaros workspace preview" onClickCapture={hold}>
+    <div className="hero-workspace" ref={root} aria-label="Live synthetic Damaros workspace preview" onClickCapture={hold}>
       <div className="mac-titlebar">
         <div className="traffic-lights" aria-hidden="true"><i /><i /><i /></div>
         <span className="window-title hero-window-brand"><img src="/assets/damaros-monogram-blue.svg" alt="Damaros" /></span>
@@ -556,8 +567,8 @@ function MiniRun() {
         </aside>
         <div className="hero-app-main">
           <div className={`hero-state-canvas landing-source-demo transition-${transitionMode}`}>
-            {previous !== null && <div className="hero-state-layer is-exiting" aria-hidden="true">{renderStage(previous)}</div>}
-            <div className="hero-state-layer is-entering" key={active}>{renderStage(active)}</div>
+            {shouldKeepPreviousStage(transitionMode, previous) && <div className="hero-state-layer is-exiting" aria-hidden="true">{renderStage(previous, exitTick.current)}</div>}
+            <div className={`hero-state-layer${transitionMode === 'auto' ? ' is-entering' : ''}`} key={active}>{renderStage(active)}</div>
           </div>
         </div>
       </div>
@@ -571,11 +582,11 @@ function LandingHero() {
 
   useGSAP(() => {
     if (reduced || window.innerWidth < 700) return
-    const timeline = gsap.timeline({ defaults: { ease: 'power3.out' } })
+    const timeline = gsap.timeline({ defaults: { ease: 'power2.out' } })
     timeline
-      .from('.hero-line', { yPercent: 110, duration: 1.1, stagger: 0.12 })
-      .from('.hero-copy > p, .hero-actions', { opacity: 0, y: 24, duration: 0.75, stagger: 0.1 }, '-=0.55')
-      .from('.hero-workspace', { opacity: 0, scale: 0.94, y: 54, duration: 1.15 }, '-=0.75')
+      .from('.hero-line', { yPercent: 110, duration: 1.2, stagger: 0.14 })
+      .from('.hero-copy > p, .hero-actions', { opacity: 0, y: 18, duration: 0.9, stagger: 0.12 }, '-=0.5')
+      .from('.hero-workspace', { opacity: 0, y: 36, duration: 1.15 }, '-=0.7')
   }, { scope: root, dependencies: [reduced] })
 
   return (
@@ -605,12 +616,12 @@ function ThesisSection() {
 
   useGSAP(() => {
     if (reduced || window.innerWidth <= 900) return
-    gsap.from('.thesis-head > *, .thesis-body > *, .thesis-close > *', {
+    gsap.from('.thesis-head > *, .thesis-panel, .thesis-closer', {
       opacity: 0,
-      y: 30,
-      duration: 0.85,
-      stagger: 0.11,
-      ease: 'power3.out',
+      y: 24,
+      duration: 0.8,
+      stagger: 0.1,
+      ease: 'power2.out',
       scrollTrigger: { trigger: root.current, start: 'top 68%' },
     })
   }, { scope: root, dependencies: [reduced] })
@@ -621,15 +632,10 @@ function ThesisSection() {
         <span className="section-kicker">Thesis</span>
         <h2><span className="accent-text">The next generation of medicine</span> cannot run on the last generation of research infrastructure.</h2>
       </div>
-      <div className="thesis-lower">
-        <div className="thesis-body">
-          <p>Therapies are becoming more precise. Protocols are becoming more complex. The patients research needs are distributed across thousands of care settings.</p>
-          <p>Most clinics cannot budget a research department or clinical trials office. The specialized infrastructure required to participate in research is the bottleneck.</p>
-        </div>
-        <div className="thesis-close">
-          <p>Damaros™ is building that infrastructure.</p>
-        </div>
+      <div className="thesis-panel">
+        <p>Therapies got more precise. Protocols got harder. The patients research needs sit across thousands of care settings. Specialized execution infrastructure is the bottleneck, whether a site runs one trial or a hundred.</p>
       </div>
+      <p className="thesis-closer">Damaros™ is building that infrastructure.</p>
     </section>
   )
 }
@@ -647,9 +653,9 @@ function CapacityBento() {
       gsap.from('.capacity-bento > *, .systems-banner', {
         opacity: 0,
         y: 28,
-        duration: 0.72,
-        stagger: 0.08,
-        ease: 'power3.out',
+        duration: 0.86,
+        stagger: 0.1,
+        ease: 'power2.out',
         scrollTrigger: { trigger: root.current, start: 'top 70%' },
       })
     }
@@ -659,13 +665,13 @@ function CapacityBento() {
     const chain = gsap.timeline({ scrollTrigger: { trigger: record, start: 'top 78%' } })
     chain
       .from('.record-spine', { scaleY: 0, duration: 0.7, ease: 'power2.out' }, 0)
-      .from('.record-event, .record-seal', { opacity: 0, y: 10, duration: 0.42, stagger: 0.14, ease: 'power3.out' }, 0.08)
+      .from('.record-event, .record-seal', { opacity: 0, y: 8, duration: 0.5, stagger: 0.16, ease: 'power2.out' }, 0.08)
   }, { scope: root, dependencies: [reduced] })
 
   return (
     <section className="capacity-section section-space" id="capacity" ref={root}>
       <div className="section-heading centered-heading">
-        <h2><span className="capacity-title-line">A research department,</span>{' '}<span className="capacity-title-line">deployed like software.</span></h2>
+        <h2><span className="capacity-title-line">A research department,</span><span className="capacity-title-line">deployed like software.</span></h2>
         <p>Disease-agnostic by design. One execution system for every protocol, care setting, and patient population. Each protocol adds reusable coverage. Every decision keeps human accountability and local control.</p>
       </div>
       <div className="capacity-bento">
@@ -770,7 +776,7 @@ function InlineActionPanel({ open, complete = false, eyebrow = 'ACTION REQUIRED'
   )
 }
 
-function ProtocolView({ onAdvance }) {
+function ProtocolView({ tick = 0, onAdvance }) {
   const criteria = [
     ['I-2.1', 'EGFR / ALK molecular status', 'Source-dependent'],
     ['I-4.2', 'ECOG 0-1 within 14 days', 'Subjective'],
@@ -778,23 +784,29 @@ function ProtocolView({ onAdvance }) {
     ['E-5.3', '21-day therapy washout', 'Source-dependent'],
     ['E-5.8', 'No uncontrolled CNS disease', 'Human review'],
   ]
+  const focus = autoplayIndex(tick, criteria.length)
   return (
     <div className="workspace-view source-protocol-view" key="protocol">
-      <div className="protocol-source-head"><span>PROTOCOL</span><em><i /> INGESTED · LOCKED V2.1</em><small><b>LLM</b> fetched NCT00000204 · parsed sponsor packet · 06-21 14:02Z</small></div>
+      <div className="protocol-source-head"><span>PROTOCOL</span><em><i /> INGESTED · LOCKED V2.1</em><small>Fetched NCT00000204 · parsed sponsor packet · 06-21 14:02Z</small></div>
       <h4>DMR-204 · EGFR-mutant NSCLC</h4><p>NCT00000204 · Phase II · randomized 1:1 · hash aead45cf</p>
       <div className="source-amendment"><span>AMENDMENT CASCADE</span><strong>v2.0 · 04-12 <ArrowRight size={14} /> v2.1 · 06-21</strong><small>Narrowed prior-lines criterion · re-screen triggered</small></div>
       <div className="source-protocol-summary"><section><span>SPONSOR</span><h5>Meridian Oncology Therapeutics</h5><p>NCT00000204 · DMR-204 · v2.1 · Phase II</p><div><i>IN</i><span><strong>Dr. I. Netero</strong><small>Medical Monitor</small></span><i>JK</i><span><strong>J. Kujo</strong><small>Lead CRA</small></span></div></section><section><span>STUDY ARMS · LLM-PARSED FROM PACKET</span><div className="source-arm"><b>ARM A</b><span><strong>Velartinib · 80 mg PO daily</strong><small>Investigational · oral 3rd-gen EGFR-TKI</small></span></div><div className="source-arm"><b>ARM B</b><span><strong>Platinum doublet</strong><small>Comparator · standard of care</small></span></div><p>Randomized 1:1 · target n=140 · stratified by ECOG and prior lines</p></section></div>
       <div className="source-criteria-head"><span>ELIGIBILITY · 36 CRITERIA · 25 ENGINE-MAPPED</span><button type="button" onClick={onAdvance}>Open Evidence →</button></div>
-      <div className="source-criteria-list">{criteria.map(([id, name, type]) => <div key={id}><span>{id}</span><strong>{name}</strong><em>{type}</em></div>)}</div>
+      <div className="source-criteria-list">{criteria.map(([id, name, type], index) => <div className={index === focus ? 'is-live' : ''} key={id}><span>{id}</span><strong>{name}</strong><em>{type}</em></div>)}</div>
     </div>
   )
 }
 
-function EvidenceView({ refreshing, onAdvance }) {
+function EvidenceView({ refreshing, onAdvance, tick = 0 }) {
   const [selected, setSelected] = useState(1)
   const [acted, setActed] = useState({})
   const [pendingAction, setPendingAction] = useState(null)
   const [actionComplete, setActionComplete] = useState(false)
+  const settle = usePaneSettle()
+  useEffect(() => {
+    if (refreshing || pendingAction) return
+    setSelected(autoplayIndex(tick, 5))
+  }, [tick, refreshing, pendingAction])
   if (refreshing) {
     return <div className="workspace-view workspace-loading" aria-live="polite" aria-busy="true"><span>Refreshing site evidence</span>{[1, 2, 3, 4, 5].map((item) => <i key={item} />)}</div>
   }
@@ -818,13 +830,17 @@ function EvidenceView({ refreshing, onAdvance }) {
     <div className="workspace-view source-evidence-view">
       <div className="source-view-intro"><span>EVIDENCE</span><small>How Damaros maps the sponsor packet onto site evidence · PHI-bounded · 09:43</small></div>
       <div className="evidence-coverage"><div><strong>Sponsor packet → evidence coverage</strong><small>Mapped 25 of 36 criteria · Protocol v2.1</small></div><div className="coverage-track"><i /><i /><i /><i /></div><footer><span className="mapped">Mapped · 25</span><span className="missing">Missing · 4</span><span className="conflict">Conflict · 3</span><span className="stale">Stale · 4</span></footer></div>
-      <div className="source-evidence-grid"><div className="obligation-list"><span>PROTOCOL OBLIGATIONS · SOURCE MAPPING</span>{obligations.map((item, index) => <button type="button" className={`${selected === index ? 'active ' : ''}${item.status.toLowerCase()}`} onClick={() => { setSelected(index); setPendingAction(null); setActionComplete(false) }} key={item.code}><div><b>{item.code}</b><strong>{item.fact}</strong><em>{acted[item.code] ? 'ROUTED' : item.status}</em></div><footer><span>{item.cls}</span><small>{acted[item.code] ? 'Action recorded' : item.action} →</small></footer></button>)}</div><div className="obligation-detail"><header><span>{detail.code}</span><em className={detail.status.toLowerCase()}>{isActed ? 'ROUTED' : detail.status}</em><small>{detail.cls}</small></header><h4>{detail.fact}</h4><p>Maps to protocol {detail.code} · Inclusion · governs screening</p>{pendingAction?.code === detail.code ? <InlineActionPanel open complete={actionComplete} eyebrow="ACTION REQUIRED" title={detail.action} description={detail.note} rows={[["Criterion", detail.code], ["Owner", actionOwner], ["SLA", 'Review within 24 hours'], ["Record", `${actionTicket} · replay-linked`]]} confirmLabel={detail.action} successTitle="Work item created" successDescription={`${detail.action} now sits in the site worklist. Nothing left the site.`} onClose={() => setPendingAction(null)} onConfirm={confirmEvidenceAction} /> : <><dl><div><dt>CURRENT</dt><dd>{detail.current}</dd></div><div><dt>SOURCE PLANE</dt><dd>{detail.sources}</dd></div><div><dt>CHECKED</dt><dd>{detail.checked}</dd></div><div><dt>PROVENANCE</dt><dd>Human decision · source trace available</dd></div></dl><div className={`evidence-guidance ${detail.status === 'CONFIRM' ? 'computable' : ''}`}><span>{detail.status === 'CONFIRM' ? 'NO JUDGMENT REQUIRED' : 'NEXT STEP'}</span><strong>{detail.note}</strong></div>{isActed ? <div className="evidence-action-receipt"><header><span>✓ ACTION RECORDED</span><strong>{actionTicket}</strong></header><dl><div><dt>OWNER</dt><dd>{actionOwner}</dd></div><div><dt>SLA</dt><dd>Review within 24 hours</dd></div><div><dt>REPLAY</dt><dd>Linked to {detail.code} evidence node</dd></div></dl><button type="button" onClick={onAdvance}>Continue to Screening →</button></div> : <button className="source-primary-action" type="button" onClick={openEvidenceAction}>{detail.action}</button>}</>}</div></div>
+      <div className="source-evidence-grid"><div className="obligation-list"><span>PROTOCOL OBLIGATIONS · SOURCE MAPPING</span>{obligations.map((item, index) => <button type="button" className={`${selected === index ? 'active ' : ''}${item.status.toLowerCase()}`} onClick={() => { setSelected(index); setPendingAction(null); setActionComplete(false) }} key={item.code}><div><b>{item.code}</b><strong>{item.fact}</strong><em>{acted[item.code] ? 'ROUTED' : item.status}</em></div><footer><span>{item.cls}</span><small>{acted[item.code] ? 'Action recorded' : item.action} →</small></footer></button>)}</div><div className="obligation-detail"><div className={settle}><header><span>{detail.code}</span><em className={detail.status.toLowerCase()}>{isActed ? 'ROUTED' : detail.status}</em><small>{detail.cls}</small></header><h4>{detail.fact}</h4><p>Maps to protocol {detail.code} · Inclusion · governs screening</p>{pendingAction?.code === detail.code ? <InlineActionPanel open complete={actionComplete} eyebrow="ACTION REQUIRED" title={detail.action} description={detail.note} rows={[["Criterion", detail.code], ["Owner", actionOwner], ["SLA", 'Review within 24 hours'], ["Record", `${actionTicket} · replay-linked`]]} confirmLabel={detail.action} successTitle="Work item created" successDescription={`${detail.action} now sits in the site worklist. Nothing left the site.`} onClose={() => setPendingAction(null)} onConfirm={confirmEvidenceAction} /> : <><dl><div><dt>CURRENT</dt><dd>{detail.current}</dd></div><div><dt>SOURCE PLANE</dt><dd>{detail.sources}</dd></div><div><dt>CHECKED</dt><dd>{detail.checked}</dd></div><div><dt>PROVENANCE</dt><dd>Human decision · source trace available</dd></div></dl><div className={`evidence-guidance ${detail.status === 'CONFIRM' ? 'computable' : ''}`}><span>{detail.status === 'CONFIRM' ? 'NO JUDGMENT REQUIRED' : 'NEXT STEP'}</span><strong>{detail.note}</strong></div>{isActed ? <div className="evidence-action-receipt"><header><span>✓ ACTION RECORDED</span><strong>{actionTicket}</strong></header><dl><div><dt>OWNER</dt><dd>{actionOwner}</dd></div><div><dt>SLA</dt><dd>Review within 24 hours</dd></div><div><dt>REPLAY</dt><dd>Linked to {detail.code} evidence node</dd></div></dl><button type="button" onClick={onAdvance}>Continue to Screening →</button></div> : <button className="source-primary-action" type="button" onClick={openEvidenceAction}>{detail.action}</button>}</>}</div></div></div>
     </div>
   )
 }
 
-function ScreeningView({ onAdvance }) {
+function ScreeningView({ onAdvance, tick = 0 }) {
+  const settle = usePaneSettle()
   const [selectedSubject, setSelectedSubject] = useState(2)
+  useEffect(() => {
+    setSelectedSubject(autoplayIndex(tick, PLATFORM_SCREENING_QUEUE.length))
+  }, [tick])
   const subject = PLATFORM_SCREENING_QUEUE[selectedSubject]
   const reviewTrigger = {
     'S-1066': 'Missing source', 'S-1051': 'Stale source', 'S-1047': 'Conflicting sources', 'S-1078': 'Ambiguous date',
@@ -841,13 +857,14 @@ function ScreeningView({ onAdvance }) {
       <div className="screen-summary-strip"><div className="pass"><strong>1</strong><span>Pass</span></div><div className="review"><strong>4</strong><span>Review</span></div><div className="fail"><strong>3</strong><span>Fail</span></div></div>
       <div className="source-screen-grid">
         <div className="source-patient-list"><span>PATIENT QUEUE · DECISIVE CRITERION</span>{PLATFORM_SCREENING_QUEUE.map((patient, index) => <button type="button" className={`${index === selectedSubject ? 'active ' : ''}${patient.status.toLowerCase()}`} onClick={() => setSelectedSubject(index)} key={patient.id}><i /><span><strong>{patient.name}<small>{patient.id}</small></strong><em>{patient.criterion}</em></span><b>{patient.status === 'PASS' ? 'CONFIRM' : patient.status}</b></button>)}</div>
-        <div className="source-patient-detail"><header><h4>{subject.name}<small>{subject.id}</small></h4><em className={subject.status.toLowerCase()}>{subject.status === 'PASS' ? 'CONFIRM' : subject.status}</em></header><span>PRIMARY BLOCKER</span><h5>{subject.criterion.split(' · ')[0]} · {subject.blocker}</h5><span>NORMALIZED RULE</span><p>{subject.rule}</p><span>PATIENT FACTS USED</span><ul>{subject.facts.map((fact) => <li key={fact}>{fact}</li>)}</ul><span>EVIDENCE SOURCES</span><p className="source-records">{subject.sources.join(' · ')}</p><div className="screen-result-pair"><span><small>DETERMINISTIC RESULT</small><strong>{subject.status === 'REVIEW' ? 'REVIEW, not FAIL' : subject.status}</strong></span><span><small>REVIEW TRIGGER</small><strong>{reviewTrigger}</strong></span></div>{recommendation && <div className="recommended-action"><span>RECOMMENDED NEXT ACTION</span><strong>{recommendation}</strong></div>}{subject.status === 'REVIEW' && <button className="source-primary-action" type="button" onClick={onAdvance}>Open in Resolve →</button>}</div>
+        <div className="source-patient-detail"><div className={settle}><header><h4>{subject.name}<small>{subject.id}</small></h4><em className={subject.status.toLowerCase()}>{subject.status === 'PASS' ? 'CONFIRM' : subject.status}</em></header><span>PRIMARY BLOCKER</span><h5>{subject.criterion.split(' · ')[0]} · {subject.blocker}</h5><span>NORMALIZED RULE</span><p>{subject.rule}</p><span>PATIENT FACTS USED</span><ul>{subject.facts.map((fact) => <li key={fact}>{fact}</li>)}</ul><span>EVIDENCE SOURCES</span><p className="source-records">{subject.sources.join(' · ')}</p><div className="screen-result-pair"><span><small>DETERMINISTIC RESULT</small><strong>{subject.status === 'REVIEW' ? 'REVIEW, not FAIL' : subject.status}</strong></span><span><small>REVIEW TRIGGER</small><strong>{reviewTrigger}</strong></span></div>{recommendation && <div className="recommended-action"><span>RECOMMENDED NEXT ACTION</span><strong>{recommendation}</strong></div>}{subject.status === 'REVIEW' && <button className="source-primary-action" type="button" onClick={onAdvance}>Open in Resolve →</button>}</div></div>
       </div>
     </div>
   )
 }
 
-function ResolveView() {
+function ResolveView({ tick = 0 }) {
+  const settle = usePaneSettle()
   const [decision, setDecision] = useState(null)
   const [work, setWork] = useState(0)
   const [signedDecisions, setSignedDecisions] = useState({})
@@ -865,20 +882,28 @@ function ResolveView() {
     if (decision) setSignedDecisions((current) => ({ ...current, [selectedWork.key]: decision }))
   }
 
+  useEffect(() => {
+    if (decision) return
+    selectWork(autoplayIndex(tick, RESOLVE_WORK_ITEMS.length))
+  }, [tick, decision])
+
   return (
     <div className="workspace-view source-resolve-view" key="resolve">
       <div className="source-resolve-top"><span>RESOLVE</span><small>{remaining} awaiting judgment · {Object.keys(signedDecisions).length} committed</small></div>
       <div className="resolve-person-tabs">{RESOLVE_WORK_ITEMS.map((item, index) => <button type="button" className={`${work === index ? 'active ' : ''}${signedDecisions[item.key] ? 'committed' : ''}`} onClick={() => selectWork(index)} key={item.key}><i>{item.patient.split(' ').map((part) => part[0]).join('')}</i>{item.patient}</button>)}</div>
+      <div className={settle}>
       <div className="resolve-subject-title"><h4>{selectedWork.patient}<small>{selectedWork.subject}</small></h4><span>{selectedWork.criterion} · {selectedWork.rule}</span></div>
       <div className="resolve-compare-bar"><div><span>{selectedWork.evidence[0].label}</span><strong>{selectedWork.evidence[0].value}</strong><small>{selectedWork.evidence[0].meta}</small></div><b>{selectedWork.symbol}</b><div><span>{selectedWork.evidence[1].label}</span><strong>{selectedWork.evidence[1].value}</strong><small>{selectedWork.evidence[1].meta}</small></div></div>
       <p className="resolve-prompt">{selectedWork.prompt}</p>
       <div className="source-decision-list"><span>YOUR CALL</span>{selectedWork.actions.map((action) => <button className={decision === action.id ? 'selected' : ''} type="button" disabled={Boolean(signed)} onClick={() => setDecision(action.id)} key={action.id}><i />{action.label}</button>)}</div>
       {signed ? <div className="resolve-signed-receipt"><span>DECISION SIGNED · BOUND TO REPLAY</span><strong>{selectedWork.actions.find((action) => action.id === signed)?.label}</strong><small>{selectedWork.signer} · {selectedWork.role} · {selectedWork.record}</small></div> : <div className="resolve-sign-row"><small>{decision ? `${selectedWork.role} signs · evidence preserved · PHI-free` : 'Select a decision to sign'}</small><button type="button" disabled={!decision} onClick={signDecision}>Sign decision</button></div>}
       </div>
+      </div>
   )
 }
 
-function ReplayView() {
+function ReplayView({ tick = 0 }) {
+  const settle = usePaneSettle()
   const [exportOpen, setExportOpen] = useState(false)
   const [exportReady, setExportReady] = useState(false)
   const [selected, setSelected] = useState(4)
@@ -895,10 +920,15 @@ function ReplayView() {
   ]
   const selectedEvent = chain[selected]
 
+  useEffect(() => {
+    if (exportOpen) return
+    setSelected(autoplayIndex(tick, chain.length))
+  }, [tick, exportOpen, chain.length])
+
   return (
     <div className="workspace-view source-replay-view" key="replay">
       <div className="source-replay-head"><span><b>REPLAY</b><small>Subject S-1047 · DMR-204 · Site 018 · Protocol v2.1 · Run RPL-2026-0622-018-1047 · 06-22</small></span><button className={exportReady ? 'ready' : ''} type="button" onClick={() => { setExportOpen(true); if (exportReady) setExportReady(false) }}>{exportReady ? '✓ Replay ready' : 'Export Replay'}</button></div>
-      <div className="source-replay-grid"><div className="replay-ledger"><span>RECONSTRUCTION LEDGER</span><header><small>TIME</small><small>EVENT</small><small>ACTOR</small><small>INTEGRITY</small></header>{chain.map((item, index) => <button type="button" className={selected === index ? 'active' : ''} onClick={() => { setSelected(index); setExportOpen(false) }} key={item.id}><time>{item.time}</time><span><strong>{item.event}</strong><small>{item.detail}</small></span><em>{item.actor}</em><b>✓ Verified</b></button>)}</div><div className="replay-event-detail">{exportOpen ? <InlineActionPanel open complete={exportReady} eyebrow="ACTION REQUIRED" title="Prepare sponsor-safe replay" description="Review chain integrity and data boundary before marking this replay ready. Raw PHI stays excluded." rows={[["Replay", "RPL-2026-0622-018-1047"], ["Events", "9 verified · chain intact"], ["Signature", "Ed25519 · verified"], ["Data boundary", "Sponsor-safe · raw PHI excluded"]]} confirmLabel="Prepare replay" successTitle="Replay ready" successDescription="Sponsor-safe replay is ready inside Damaros. Nothing downloaded to this device." onClose={() => setExportOpen(false)} onConfirm={() => setExportReady(true)} /> : <><span>SELECTED EVENT</span><header><h4>{selectedEvent.event}</h4>{selectedEvent.flag && <em>{selectedEvent.flag}</em>}<small>{selectedEvent.time} · {selectedEvent.id}</small></header><dl>{selectedEvent.rows.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl><footer><span>RELATED EVENTS</span><small>{selected > 0 ? chain[selected - 1].event : 'Protocol intake'} · {selected < chain.length - 1 ? chain[selected + 1].event : 'Export bundle'}</small></footer></>}</div></div>
+      <div className="source-replay-grid"><div className="replay-ledger"><span>RECONSTRUCTION LEDGER</span><header><small>TIME</small><small>EVENT</small><small>ACTOR</small><small>INTEGRITY</small></header>{chain.map((item, index) => <button type="button" className={selected === index ? 'active' : ''} onClick={() => { setSelected(index); setExportOpen(false) }} key={item.id}><time>{item.time}</time><span><strong>{item.event}</strong><small>{item.detail}</small></span><em>{item.actor}</em><b>✓ Verified</b></button>)}</div><div className="replay-event-detail"><div className={settle}>{exportOpen ? <InlineActionPanel open complete={exportReady} eyebrow="ACTION REQUIRED" title="Prepare sponsor-safe replay" description="Review chain integrity and data boundary before marking this replay ready. Raw PHI stays excluded." rows={[["Replay", "RPL-2026-0622-018-1047"], ["Events", "9 verified · chain intact"], ["Signature", "Ed25519 · verified"], ["Data boundary", "Sponsor-safe · raw PHI excluded"]]} confirmLabel="Prepare replay" successTitle="Replay ready" successDescription="Sponsor-safe replay is ready inside Damaros. Nothing downloaded to this device." onClose={() => setExportOpen(false)} onConfirm={() => setExportReady(true)} /> : <><span>SELECTED EVENT</span><header><h4>{selectedEvent.event}</h4>{selectedEvent.flag && <em>{selectedEvent.flag}</em>}<small>{selectedEvent.time} · {selectedEvent.id}</small></header><dl>{selectedEvent.rows.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl><footer><span>RELATED EVENTS</span><small>{selected > 0 ? chain[selected - 1].event : 'Protocol intake'} · {selected < chain.length - 1 ? chain[selected + 1].event : 'Export bundle'}</small></footer></>}</div></div></div>
     </div>
   )
 }
@@ -910,7 +940,7 @@ function AgentsView({ activeAgent, setActiveAgent, tick }) {
       <ProductViewHeader label="AGENTS · SITE EXECUTION GRAPH" title={`${agent.name} · ${agent.role}`} status="Working in record" icon={<AgentGlyph kind={agent.icon} size={14} />} />
       <div className="agent-workspace">
         <div className="agent-roster">{AGENTS.map((item, index) => <button className={index === activeAgent ? 'active' : ''} style={{ '--agent-color': item.color }} type="button" onClick={() => setActiveAgent(index)} key={item.name}><AgentGlyph kind={item.icon} size={17} /><span><strong>{item.name}</strong><small>{item.role}</small></span><i className={index === activeAgent ? 'working' : ''} /></button>)}</div>
-        <div className="agent-run-detail">
+        <div className="agent-run-detail pane-settle is-settling" key={agent.name}>
           <div className="agent-objective"><span><small>CURRENT OBJECTIVE</small><strong>{agent.task}</strong></span><em><i /> Live</em></div>
           <div className="agent-io"><div><small>INPUT</small><strong>{agent.input}</strong></div><CaretRight size={16} /><div><small>ACTION</small><strong>{agent.action}</strong></div><CaretRight size={16} /><div><small>OUTPUT</small><strong>{agent.output}</strong></div></div>
           <div className="agent-trace"><span>RUN TRACE</span>{agent.trace.map((event, index) => <div className={index === tick % agent.trace.length ? 'active' : ''} key={event}><CheckCircle size={14} weight="fill" /><strong>{event}</strong><small>{index === tick % agent.trace.length ? 'now' : `${index + 1}s`}</small></div>)}</div>
@@ -956,7 +986,7 @@ function LiveDemo() {
 
   useGSAP(() => {
     if (reduced || window.innerWidth <= 900) return
-    gsap.from('.live-workspace', { opacity: 0, y: 48, scale: 0.985, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: root.current, start: 'top 72%' } })
+    gsap.from('.live-workspace', { opacity: 0, y: 32, duration: 1.05, ease: 'power2.out', scrollTrigger: { trigger: root.current, start: 'top 72%' } })
   }, { scope: root, dependencies: [reduced] })
 
   useEffect(() => {
@@ -972,13 +1002,13 @@ function LiveDemo() {
         })
         window.requestAnimationFrame(() => setStageLeaving(false))
       }, 160)
-    }, 5200)
+    }, LIVE_STAGE_MS)
     return () => { window.clearInterval(timer); window.clearTimeout(stageTransition.current) }
   }, [live, reduced])
 
   useEffect(() => {
     if (!live || reduced) return undefined
-    const timer = window.setInterval(() => setTick((value) => value + 1), 1600)
+    const timer = window.setInterval(() => setTick((value) => value + 1), LIVE_TICK_MS)
     return () => window.clearInterval(timer)
   }, [live, reduced])
 
@@ -1038,7 +1068,7 @@ function LiveDemo() {
               {active === 0 && <ProtocolView tick={tick} />}
               {active === 1 && <EvidenceView refreshing={refreshing} tick={tick} />}
               {active === 2 && <ScreeningView tick={tick} />}
-              {active === 3 && <ResolveView />}
+              {active === 3 && <ResolveView tick={tick} />}
               {active === 4 && <ReplayView tick={tick} />}
               {active === 5 && <AgentsView activeAgent={activeAgent} setActiveAgent={setActiveAgent} tick={tick} />}
             </div>
@@ -1052,6 +1082,7 @@ function LiveDemo() {
 }
 
 function TridentWorkbench({ selected, setSelected, stage, setStage }) {
+  const settle = usePaneSettle()
   const [requestOpen, setRequestOpen] = useState(false)
   const [requestComplete, setRequestComplete] = useState(false)
   const criteria = [
@@ -1075,19 +1106,22 @@ function TridentWorkbench({ selected, setSelected, stage, setStage }) {
     <div className="trident-workbench" aria-live="polite">
       <div className="trident-list">{criteria.map((item, index) => <button className={index === selected ? 'active' : ''} type="button" onClick={() => { setSelected(index); setStage(0); setRequestOpen(false); setRequestComplete(false) }} key={item.code}><span><b>{item.code}</b><strong>{item.current}</strong><i><span style={{ width: `${item.friction}%` }} /></i></span><em>{item.friction}%</em></button>)}</div>
       <div className="trident-detail">
+        <div className={settle}>
         <div className="trident-detail-head"><span><small>SELECTED CRITERION</small><strong>{criterion.code}</strong></span><em>{requested ? 'REQUESTED' : drafted ? 'DRAFT READY' : drafting ? 'DRAFTING' : 'REVIEW'}</em></div>
         {requestOpen ? <InlineActionPanel open complete={requestComplete} title="Request amendment from sponsor" description="Send Trident's PHI-free case to Meridian Oncology Therapeutics. Sponsor authors and signs the amendment." rows={[["Criterion", criterion.code], ["Projected friction", `${criterion.friction}% → ${criterion.projected}%`], ["Evidence", "FDA guidance · ontology-normalized criteria"], ["Authority", "Sponsor medical monitor"]]} confirmLabel="Send request" successTitle="Request sent to sponsor" successDescription="Meridian received Trident's draft. SLA 5 business days. Request bound to Replay." onClose={() => { setRequestOpen(false); if (!requestComplete) setStage(3) }} onConfirm={() => { setRequestComplete(true); setStage(5) }} /> : drafting ? <div className="agent-processing-state"><span /><strong>{stage === 1 ? 'Reading protocol and FDA guidance…' : 'Mapping ontology concepts…'}</strong><small>Source links remain attached while Trident builds the bounded delta.</small></div> : <>
           <div className="trident-compare"><div><small>CURRENT · {criterion.code}</small><strong>{criterion.current}</strong></div><div><small>PROPOSED</small><strong>{criterion.proposed}</strong></div></div>
           {drafted && <><div className="trident-impact-pair"><div><small>CURRENT FRICTION</small><strong>{criterion.friction}%</strong><i><span style={{ width: `${criterion.friction}%` }} /></i></div><div><small>PROJECTED · DOWN {criterion.friction - criterion.projected} PTS</small><strong>{criterion.projected}%</strong><i><span style={{ width: `${criterion.projected}%` }} /></i></div></div><div className="trident-draft-sheet"><div><span>THE CASE TRIDENT HANDS THE SPONSOR</span><small>Amendment draft · v2.2</small></div><p><strong>Endpoints unaffected.</strong> Structural eligibility change only. Primary and secondary endpoints stay untouched.</p><p><strong>PHI-free, clinician-led.</strong> Sponsor medical monitor decides and signs.</p><small>Unblocks · {criterion.unblocks}</small></div></>}
-          <div className="trident-rationale"><span>WHY THIS CHANGES</span><p>{criterion.rationale}</p><div><small>UNBLOCKS · STAGED FOR HUMAN DECISION</small><strong>{criterion.unblocks}</strong></div></div>
+          {!drafted && <div className="trident-rationale"><span>WHY THIS CHANGES</span><p>{criterion.rationale}</p><div><small>UNBLOCKS · STAGED FOR HUMAN DECISION</small><strong>{criterion.unblocks}</strong></div></div>}
           <div className="trident-actions">{!drafted && <button className="trident-primary" type="button" onClick={() => setStage(1)}>Draft amendment · {criterion.code} <ArrowRight size={18} weight="bold" /></button>}{drafted && !requested && <button className="trident-primary" type="button" onClick={() => { setRequestOpen(true); setRequestComplete(false); setStage(4) }}>Request amendment from sponsor <ArrowRight size={18} weight="bold" /></button>}{requested && <div className="trident-complete"><CheckCircle size={19} weight="fill" /><span><strong>Request sent to sponsor</strong><small>Meridian Oncology Therapeutics · SLA 5 business days · replay-linked</small></span></div>}<small>{!drafted ? 'Trident drafts. Sponsor decides.' : !requested ? 'Draft remains editable until request.' : 'No protocol logic changed without sponsor review.'}</small></div>
         </>}
+        </div>
       </div>
     </div>
   )
 }
 
 function EyeWorkbench({ selected, setSelected, routed, setRouted }) {
+  const settle = usePaneSettle()
   const [routeOpen, setRouteOpen] = useState(false)
   const [routeComplete, setRouteComplete] = useState(false)
   const signals = [
@@ -1103,12 +1137,14 @@ function EyeWorkbench({ selected, setSelected, routed, setRouted }) {
     <div className="quality-signal-grid">
       <div className="quality-list">{signals.map((item, index) => <button className={selected === index ? 'active' : ''} type="button" aria-pressed={selected === index} onClick={() => { setSelected(index); setRouteOpen(false); setRouteComplete(false) }} key={item.id}><span><b>{item.type}</b><strong>{item.name}</strong><small>{item.delta}</small></span><em>{item.value}</em></button>)}</div>
       <div className="quality-detail">
+        <div className={settle}>
         <span>{signal.type} · KRI</span>
         <h4>{signal.name}</h4>
         <div className="eye-metric"><strong>{signal.value}</strong><span>{signal.unit}</span><em>{signal.delta}</em></div>
         <div className="eye-spark" aria-hidden="true">{[2, 2, 3, 3, 4, 6].map((value, index) => <i style={{ height: `${9 + value * 5}px` }} key={index} />)}</div>
         <div className="eye-explanation"><div><small>WHAT EYE SEES</small><p>{signal.sees}</p></div><div><small>LIKELY CAUSE</small><p>{signal.cause}</p></div><div><small>IF UNADDRESSED</small><p>{signal.impact}</p></div></div>
         <div className="eye-method"><small>METHOD</small><strong>{signal.method}</strong></div>
+        </div>
         <div className="agent-action-slot">
           {routeOpen ? <InlineActionPanel open complete={routeComplete} title={signal.route} description="Create an evidence-bound advisory. Eye does not change screening results or site decisions." rows={[["Signal", signal.name], ["Owner", signal.owner], ["SLA", "24 hours"], ["Record", `${signal.ticket} · replay-linked`]]} confirmLabel={signal.route} successTitle="Quality signal routed" successDescription={`${signal.ticket} reached ${signal.owner}. Source signal stays linked.`} onClose={() => setRouteOpen(false)} onConfirm={() => { setRouted(signal.id); setRouteComplete(true) }} /> : done ? <div className="agent-written"><CheckCircle size={18} weight="fill" /><span><strong>{signal.type === 'Steady' ? 'Within control band' : `${signal.ticket} routed`}</strong><small>{signal.type === 'Steady' ? 'No routing needed. Eye stays quiet.' : `${signal.owner} · bound to Replay`}</small></span></div> : <button className="trident-primary" type="button" onClick={() => { setRouteOpen(true); setRouteComplete(false) }}>{signal.route} <ArrowRight size={18} weight="bold" /></button>}
         </div>
@@ -1117,17 +1153,19 @@ function EyeWorkbench({ selected, setSelected, routed, setRouted }) {
   </div>
 }
 
-function LunaWorkbench({ asked, setAsked }) {
+function LunaWorkbench({ asked, setAsked, tick, playing }) {
+  const settle = usePaneSettle()
   const [question, setQuestion] = useState(asked ? 1 : 0)
   const [openedCitation, setOpenedCitation] = useState(null)
-  const investigations = [
-    { q: 'Why was S-1051 deferred?', cat: 'Eligibility', sub: 'Traces a deferral to its source observation and rule.', answer: 'S-1051 deferred on criterion I-3.4 because the qualifying potassium was drawn 06-09, 11 days before evaluation, past the 7-day window. It was routed, not failed.', citations: [{ id: 'Observation/chem-5521', type: 'FHIR OBSERVATION', value: 'K⁺ 5.0 mmol/L · drawn 06-09', source: '10:02 · signed chain row', hash: 'sha256 · 5521…09af' }, { id: 'Criterion/I-3.4', type: 'PROTOCOL RULE', value: 'Serum chemistry · 7-day window', source: 'Protocol v2.1 · 10:02', hash: 'sha256 · i34…v21' }, { id: 'Review/R-901', type: 'SITE WORK ITEM', value: 'STALE_SOURCE · routed to coordinator', source: '10:04 · site worklist', hash: 'Ed25519 · verified' }] },
-    { q: 'Who signed the ECOG override on S-1047?', cat: 'Accountability', sub: 'Names signer and rationale for an override.', answer: 'The PI signed at 14:07, citing the latest oncology note as superseding the stale structured ECOG. The decision was signed and hash-anchored.', citations: [{ id: 'Resolve/EVT-1207', type: 'SIGNED SITE DECISION', value: 'PI signature on ECOG conflict', source: '14:07 · Resolve', hash: 'Ed25519 · verified' }, { id: 'Actor/PI-018', type: 'ACCOUNTABLE ACTOR', value: 'Dr. M. Avdol · PI / Sub-I', source: '14:07 · site signature', hash: 'sha256 · pi18…1407' }, { id: 'Rationale/R-884', type: 'DECISION RATIONALE', value: 'Latest note supersedes stale ECOG', source: 'Review R-884 · 14:07', hash: 'sha256 · r884…ecog' }] },
-    { q: "Is this run's chain intact?", cat: 'Integrity', sub: 'Verifies chain and signature end to end.', answer: 'Yes. Chain remains intact across all 9 events. Signature is verified. Sponsor-safe replay excludes raw PHI.', citations: [{ id: 'Replay/RPL-1047', type: 'REPLAY RECORD', value: 'Chain intact · 9 of 9 events', source: '14:08 · Replay sealed', hash: 'sha256 · rpl…1047' }, { id: 'Signature/EVT-1207', type: 'SIGNATURE', value: 'Verified · Ed25519', source: '14:08 · manifest', hash: 'Ed25519 · verified' }, { id: 'Export/Boundary', type: 'DATA BOUNDARY', value: 'Sponsor-safe · PHI-free', source: '14:08 · export policy', hash: 'policy · verified' }] },
-  ]
-  const activeQuestion = investigations[question]
+  const activeQuestion = LUNA_INVESTIGATIONS[question]
   const citations = activeQuestion.citations
-  const citationRecord = citations.find((citation) => citation.id === openedCitation) || citations[0]
+  const openCitation = citations.find((citation) => citation.id === (openedCitation || citations[0].id)) || citations[0]
+
+  useEffect(() => {
+    if (!playing || asked || tick === 0) return
+    setQuestion(autoplayIndex(tick, LUNA_INVESTIGATIONS.length))
+    setOpenedCitation(null)
+  }, [tick, playing, asked])
 
   const runInvestigation = (index) => {
     setQuestion(index)
@@ -1138,39 +1176,57 @@ function LunaWorkbench({ asked, setAsked }) {
   return <div className="agent-workbench agent-luna-workbench" aria-live="polite">
     <div className="luna-investigation-grid">
       <div className="luna-question-list">
-        {investigations.map((item, index) => <button className={question === index ? 'active' : ''} type="button" onClick={() => runInvestigation(index)} key={item.q}><strong>{item.q}</strong><em>{item.cat}</em><small>{item.sub}</small></button>)}
+        <span>OPEN READS · {LUNA_INVESTIGATIONS.length}</span>
+        {LUNA_INVESTIGATIONS.map((item, index) => (
+          <button className={question === index ? 'active' : ''} type="button" onClick={() => runInvestigation(index)} key={item.q}>
+            <em>{item.cat}</em>
+            <strong>{item.q}</strong>
+          </button>
+        ))}
       </div>
       <div className="audit-answer luna-answer-panel">
-        <div><span>FINDING · RECONSTRUCTED FROM CHAIN</span><em>CHAIN VERIFIED</em></div>
+        <div className={settle}>
+        <div className="luna-finding-head"><span>FINDING · RECONSTRUCTED FROM CHAIN</span><em>CHAIN VERIFIED</em></div>
+        <div className="luna-finding-meta"><div><small>SUBJECT</small><strong>{activeQuestion.subject}</strong></div><div><small>ASKED</small><strong>{activeQuestion.asked}</strong></div><div><small>CITED</small><strong>{citations.length} chain rows</strong></div></div>
         <p>{activeQuestion.answer}</p>
-        <div className="audit-citations">{citations.map((citation, index) => <button className={(openedCitation || citations[0].id) === citation.id ? 'active' : ''} type="button" aria-pressed={(openedCitation || citations[0].id) === citation.id} onClick={() => setOpenedCitation(citation.id)} key={citation.id}><b>[{index + 1}]</b>{citation.id}</button>)}</div>
-        <div className="audit-citation-record"><span><b>{citationRecord.type}</b><small>{citationRecord.id}</small></span><strong>{citationRecord.value}</strong><div><small>{citationRecord.source}</small><em>{citationRecord.hash}</em></div></div>
+        <div className="luna-chain">{citations.map((citation, index) => (
+          <button className={openCitation.id === citation.id ? 'active' : ''} type="button" aria-pressed={openCitation.id === citation.id} onClick={() => setOpenedCitation(citation.id)} key={citation.id}>
+            <b>[{index + 1}]</b>
+            <span><small>{citation.type}</small><strong>{citation.value}</strong><em>{citation.source}</em></span>
+            <i>{citation.hash}</i>
+          </button>
+        ))}</div>
+        <div className="luna-citation-record">
+          <div><small>OPEN CITATION</small><b>{openCitation.id}</b></div>
+          <strong>{openCitation.value}</strong>
+          <p>{openCitation.source}</p>
+          <em>{openCitation.hash}</em>
+        </div>
+        </div>
       </div>
     </div>
   </div>
 }
 
 function SentinelWorkbench({ selected, setSelected, surfaced, setSurfaced }) {
+  const settle = usePaneSettle()
   const [surfaceOpen, setSurfaceOpen] = useState(false)
   const [surfaceComplete, setSurfaceComplete] = useState(false)
-  const studies = [
-    { id: 'NCT00000211', title: 'AXL-211 · EGFR+ NSCLC (post-TKI)', phase: 'Ph II', coverage: '9 / 10 capabilities', fit: '94%', status: 'Strong fit', sponsor: 'Cascade Therapeutics', pi: 'Dr. Higashikata', sites: '21 active US sites', concepts: ['EGFR T790M / C797S', 'NSCLC IIIB–IV', 'post-osimertinib', 'ECOG 0–1'] },
-    { id: 'NCT00000031', title: 'HEM-31 · second-line DLBCL', phase: 'Ph II', coverage: '8 / 10 capabilities', fit: '82%', status: 'Strong fit', sponsor: 'Northlake Biosciences', pi: 'Dr. Giovanna', sites: '31 active sites', concepts: ['DLBCL', 'second line', 'PET-avid', 'CAR-T naive'] },
-    { id: 'NCT00000009', title: 'AVT-9 · KRAS G12C solid tumor', phase: 'Ph I/II', coverage: '6 / 10 capabilities', fit: '68%', status: 'Possible fit', sponsor: 'Helix Therapeutics', pi: 'Dr. J. Kujo', sites: '17 active sites', concepts: ['KRAS G12C', 'solid tumor', 'dose escalation', 'prior IO allowed'] },
-  ]
-  const study = studies[selected]
+  const study = SENTINEL_STUDIES[selected]
   const done = surfaced === study.id
   return <div className="agent-workbench agent-sentinel-workbench" aria-live="polite">
-    <div className="sentinel-summary"><strong>3</strong><span>of 9 open protocols fit Site 018</span><em>Aggregate only · synthetic</em></div>
+    <div className="sentinel-summary"><strong>{SENTINEL_STUDIES.length}</strong><span>of 9 open protocols fit Site 018</span><em>Aggregate only · synthetic</em></div>
     <div className="sentinel-grid">
-      <div className="sentinel-studies">{studies.map((item, index) => <button className={selected === index ? 'active' : ''} type="button" onClick={() => { setSelected(index); setSurfaceOpen(false); setSurfaceComplete(false) }} key={item.id}><span><b>{item.id}</b><strong>{item.title}</strong><small>{item.phase} · {item.coverage}</small></span><em>{item.fit}<small>{item.status}</small></em></button>)}</div>
+      <div className="sentinel-studies">{SENTINEL_STUDIES.map((item, index) => <button className={selected === index ? 'active' : ''} type="button" onClick={() => { setSelected(index); setSurfaceOpen(false); setSurfaceComplete(false) }} key={item.id}><span><b>{item.id}</b><strong>{item.title}</strong><small>{item.phase} · {item.coverage}</small></span><em>{item.fit}<small>{item.status}</small></em></button>)}</div>
       <div className="sentinel-detail">
-        <span>SELECTED PROTOCOL</span>
+        <div className={settle}>
+        <span>SELECTED PROTOCOL · {study.id}</span>
         <h4>{study.title}</h4>
         <div className="sentinel-coverage"><strong>{study.fit}</strong><span>{Array.from({ length: 10 }, (_, index) => <i className={index < Number.parseInt(study.coverage, 10) ? 'filled' : ''} key={index} />)}</span></div>
-        <div className="sentinel-meta"><div><small>SPONSOR</small><strong>{study.sponsor}</strong></div><div><small>PI</small><strong>{study.pi}</strong></div><div><small>SITES</small><strong>{study.sites}</strong></div></div>
+        <div className="sentinel-meta"><div><small>SPONSOR</small><strong>{study.sponsor}</strong></div><div><small>PI</small><strong>{study.pi}</strong></div><div><small>SITES</small><strong>{study.sites}</strong></div><div><small>WINDOW</small><strong>{study.window}</strong></div><div><small>LAST MATCH</small><strong>{study.scanned}</strong></div><div><small>COVERAGE GAP</small><strong>{study.gap}</strong></div></div>
         <div className="sentinel-concepts"><small>EVIDENCE CONCEPTS COVERED</small><div>{study.concepts.map((concept) => <span key={concept}>{concept}</span>)}</div></div>
-        <p>Site coverage graph only. Patient data and source evidence remain inside Site 018.</p>
+        <div className="sentinel-note"><small>COVERAGE NOTE</small><p>{study.gap === 'None material' ? 'No blocking site gap on the coverage graph. Patient data stays inside Site 018.' : `Open site gap: ${study.gap}. Coverage graph only. Patient data stays inside Site 018.`}</p></div>
+        </div>
         <div className="agent-action-slot">
           {surfaceOpen ? <InlineActionPanel open complete={surfaceComplete} title="Surface site capacity" description="Share one aggregate opportunity signal. Sponsor sees capability supply, not a patient." rows={[["Protocol", `${study.id} · ${study.phase}`], ["Sponsor", study.sponsor], ["Coverage", `${study.fit} · ${study.coverage}`], ["Boundary", "PHI-free · no patient-level data"]]} confirmLabel="Surface to sponsor" successTitle="Opportunity surfaced" successDescription={`${study.sponsor} received aggregate site capacity. Signal bound to Replay.`} onClose={() => setSurfaceOpen(false)} onConfirm={() => { setSurfaced(study.id); setSurfaceComplete(true) }} /> : done ? <div className="agent-written"><CheckCircle size={18} weight="fill" /><span><strong>Opportunity surfaced</strong><small>{study.sponsor} · aggregate signal · no PHI</small></span></div> : <button className="trident-primary" type="button" onClick={() => { setSurfaceOpen(true); setSurfaceComplete(false) }}>Surface to sponsor <ArrowRight size={18} weight="bold" /></button>}
         </div>
@@ -1182,6 +1238,8 @@ function SentinelWorkbench({ selected, setSelected, surfaced, setSurfaced }) {
 function AgentOperations() {
   const root = useRef(null)
   const reduced = useReducedMotion()
+  const inView = useInView(root)
+  const scrollIdle = useScrollIdle()
   const [active, setActive] = useState(0)
   const [tick, setTick] = useState(0)
   const { held, hold } = useAutoplayHold(reduced)
@@ -1193,20 +1251,34 @@ function AgentOperations() {
   const [sentinelSelected, setSentinelSelected] = useState(2)
   const [sentinelSurfaced, setSentinelSurfaced] = useState(false)
   const agent = AGENTS[active]
+  const playing = shouldPlayAutoplay({ reduced, held, inView, scrollIdle })
 
   useEffect(() => {
-    if (reduced || held) return undefined
-    const traceTimer = window.setInterval(() => setTick((value) => value + 1), 1600)
+    if (!playing) return undefined
+    const traceTimer = window.setInterval(() => setTick((value) => value + 1), AGENT_TICK_MS)
     return () => window.clearInterval(traceTimer)
-  }, [reduced, held])
+  }, [playing])
+
+  useEffect(() => {
+    if (!playing || tick === 0 || tick % AGENT_ROTATE_TICKS !== 0) return
+    setActive((value) => (value + 1) % AGENTS.length)
+    setTick(0)
+  }, [tick, playing])
+
+  useEffect(() => {
+    if (!playing || tick === 0) return
+    if (tridentStage === 0) setTridentCriterion(autoplayIndex(tick, 4))
+    setEyeSelected(autoplayIndex(tick, 4))
+    setSentinelSelected(autoplayIndex(tick, SENTINEL_STUDIES.length))
+  }, [tick, playing, tridentStage])
 
   useGSAP(() => {
     if (reduced || window.innerWidth <= 900) return
     gsap.from('.agent-console', {
       opacity: 0,
       y: 36,
-      duration: 0.85,
-      ease: 'power3.out',
+      duration: 0.95,
+      ease: 'power2.out',
       scrollTrigger: { trigger: root.current, start: 'top 72%' },
     })
   }, { scope: root, dependencies: [reduced] })
@@ -1241,7 +1313,7 @@ function AgentOperations() {
                 <div><span><AgentGlyph kind={agent.icon} size={15} /> {agent.name} · {agent.role}</span><h3>{agent.task}</h3><p>{agent.text}</p></div>
                 {active === 2 ? <em>Read only</em> : ((active === 0 && tridentStage < 5) || (active === 1 && eyeSelected !== 3 && !eyeRouted) || (active === 3 && !sentinelSurfaced)) ? <em className="agent-working-state"><i /> {active === 0 && tridentStage === 0 ? 'Ready' : 'Working'}</em> : <em><CheckCircle size={14} weight="fill" /> {active === 1 && eyeSelected === 3 ? 'No action' : 'Complete'}</em>}
               </div>
-              {active === 0 ? <TridentWorkbench selected={tridentCriterion} setSelected={setTridentCriterion} stage={tridentStage} setStage={setTridentStage} /> : active === 1 ? <EyeWorkbench selected={eyeSelected} setSelected={setEyeSelected} routed={eyeRouted} setRouted={setEyeRouted} /> : active === 2 ? <LunaWorkbench asked={lunaAsked} setAsked={setLunaAsked} /> : active === 3 ? <SentinelWorkbench selected={sentinelSelected} setSelected={setSentinelSelected} surfaced={sentinelSurfaced} setSurfaced={setSentinelSurfaced} /> : <><div className="agent-quick-demo" style={{ '--agent-color': agent.color }}>
+              {active === 0 ? <TridentWorkbench selected={tridentCriterion} setSelected={setTridentCriterion} stage={tridentStage} setStage={setTridentStage} /> : active === 1 ? <EyeWorkbench selected={eyeSelected} setSelected={setEyeSelected} routed={eyeRouted} setRouted={setEyeRouted} /> : active === 2 ? <LunaWorkbench asked={lunaAsked} setAsked={setLunaAsked} tick={tick} playing={playing} /> : active === 3 ? <SentinelWorkbench selected={sentinelSelected} setSelected={setSentinelSelected} surfaced={sentinelSurfaced} setSurfaced={setSentinelSurfaced} /> : <><div className="agent-quick-demo" style={{ '--agent-color': agent.color }}>
                 <div className="agent-quick-demo-head"><span>{agent.demoLabel}</span><small>{agent.input} → {agent.output}</small></div>
                 <div className="agent-quick-demo-columns">{agent.demoColumns.map((column) => <span key={column}>{column}</span>)}</div>
                 {agent.demoRows.map((row, index) => <div className={index === tick % agent.demoRows.length ? 'active' : ''} key={row[0]}>{row.map((cell) => <span key={cell}>{cell}</span>)}</div>)}
@@ -1290,7 +1362,7 @@ function SiteNodeSection() {
             <div><ShieldCheck size={15} /><strong>eReg · CTMS</strong><i /></div>
           </aside>
           <div className="node-policy-main">
-            <div className="node-policy-header"><span><small>SITE CONTROL PLANE</small><strong>Evidence and authority stay local.</strong></span><em><ShieldCheck size={14} /> All controls healthy</em></div>
+            <div className="node-policy-header"><span><small>SITE CONTROL PLANE</small><strong>Local sources. Local signatures.</strong></span><em><ShieldCheck size={16} /> All controls healthy</em></div>
             <div className="node-status-grid"><div><strong>4</strong><span>approved sources</span></div><div><strong>0</strong><span>raw PHI egress paths</span></div><div><strong>12</strong><span>signed artifacts today</span></div></div>
             <div className="node-policy-list">
               {[
@@ -1305,7 +1377,7 @@ function SiteNodeSection() {
         </div>
       </div>
       <div className="node-copy">
-        <h2>Evidence stays with the site.</h2>
+        <h2><span>Evidence stays</span><span>with the site.</span></h2>
         <p>Patient data, evidence, signatures, and execution records remain under site governance. Only aggregate, patient-free coverage signals can leave.</p>
         <div className="node-facts">
           <span><ShieldCheck size={18} /> Replayable proof</span>
@@ -1352,86 +1424,31 @@ function HomePage() {
 
 function AboutHero() {
   const root = useRef(null)
-  const pointerFrame = useRef(null)
-  const pendingPointer = useRef(null)
   const reduced = useReducedMotion()
-  const [networkPointer, setNetworkPointer] = useState(null)
   useGSAP(() => {
     if (reduced || window.innerWidth < 700) return
-    const timeline = gsap.timeline({ defaults: { ease: 'power3.out' } })
+    const timeline = gsap.timeline({ defaults: { ease: 'power2.out' } })
     timeline
       .from('.about-hero h1 span', { yPercent: 115, stagger: 0.1, duration: 1 })
-      .from('.about-hero-copy p', { opacity: 0, y: 24, duration: 0.7 }, '-=0.5')
-      .from('.about-network', { opacity: 0, scale: 0.94, y: 42, duration: 0.9 }, '-=0.65')
-      .from('.clinic-network-layer', { opacity: 0, duration: 0.62 }, '-=0.4')
+      .from('.about-hero-copy p', { opacity: 0, y: 18, duration: 0.85 }, '-=0.5')
+      .from('.about-network', { opacity: 0, y: 28, duration: 1 }, '-=0.65')
+      .from('.about-drum', { opacity: 0, y: 14, duration: 0.9 }, '-=0.75')
   }, { scope: root, dependencies: [reduced] })
-
-  const updateNetworkPointer = (event) => {
-    const layer = event.currentTarget.querySelector('.clinic-network-layer')
-    const bounds = (layer || event.currentTarget).getBoundingClientRect()
-    pendingPointer.current = { x: ((event.clientX - bounds.left) / bounds.width) * 100, y: ((event.clientY - bounds.top) / bounds.height) * 100 }
-    if (pointerFrame.current) return
-    pointerFrame.current = window.requestAnimationFrame(() => {
-      setNetworkPointer(pendingPointer.current)
-      pointerFrame.current = null
-    })
-  }
-
-  const clearNetworkPointer = () => {
-    if (pointerFrame.current) window.cancelAnimationFrame(pointerFrame.current)
-    pointerFrame.current = null
-    pendingPointer.current = null
-    setNetworkPointer(null)
-  }
-
-  useEffect(() => () => {
-    if (pointerFrame.current) window.cancelAnimationFrame(pointerFrame.current)
-  }, [])
-
-  const nodeGravity = (x, y) => {
-    if (!networkPointer) return 0
-    const distance = Math.hypot(x - networkPointer.x, y - networkPointer.y)
-    return Math.max(0, 1 - distance / 20).toFixed(3)
-  }
 
   return (
     <section className="about-hero" id="about-top" ref={root}>
-      <img className="about-drum-motif" src="/assets/damaros-monogram-blue.svg" alt="" aria-hidden="true" />
       <div className="about-hero-copy">
         <h1 aria-label="Research capacity, everywhere."><span>Research capacity,</span><span className="accent-text">everywhere.</span></h1>
         <p>Damaros makes complex clinical research deployable where patients already receive care.</p>
       </div>
-      <div className="about-network" aria-label="Expanding network of research-capable clinics" onPointerMove={updateNetworkPointer} onPointerLeave={clearNetworkPointer}>
-        <UsClinicMap />
-        <div className="clinic-network-layer" aria-hidden="true">
-          {CLINIC_NETWORK_HUBS.map(([city, x, y], index) => <span className="clinic-hub" style={{ '--x': `${x}%`, '--y': `${y}%`, '--delay': `${(index % 7) * 0.42}s`, '--gravity': nodeGravity(x, y) }} key={city}><i /></span>)}
-          {CLINIC_NETWORK_POINTS.map(({ city, x, y, delay }, index) => <span className="clinic-node" style={{ '--x': `${x}%`, '--y': `${y}%`, '--delay': `${delay}s`, '--size': `${index % 7 === 0 ? 1.2 : 0.82}`, '--gravity': nodeGravity(x, y) }} key={`${city}-${index}`}><i /></span>)}
-        </div>
+      <div className="about-network">
+        <img className="about-drum" src="/assets/damaros-monogram-blue.svg" alt="" aria-hidden="true" />
       </div>
+      <a className="about-scroll-cue" href="#founder" aria-label="Continue to the founder letter" onClick={(event) => smoothSection(event, '#founder')}>
+        <CaretDown size={22} weight="bold" />
+      </a>
     </section>
   )
-}
-
-function UsClinicMap() {
-  const [svg, setSvg] = useState(null)
-
-  useEffect(() => {
-    let cancelled = false
-    fetch(CONTIGUOUS_STATES_MAP_URL)
-      .then((response) => response.ok ? response.text() : Promise.reject(new Error('Map unavailable')))
-      .then((markup) => {
-        if (cancelled) return
-        setSvg(markup
-          .replace(/<script[\s\S]*?<\/script>/gi, '')
-          .replace(/\son\w+=("[^"]*"|'[^']*')/gi, '')
-          .replace('<svg', '<svg viewBox="0 0 958.69 592.79" preserveAspectRatio="xMidYMid meet"'))
-      })
-      .catch(() => undefined)
-    return () => { cancelled = true }
-  }, [])
-
-  if (!svg) return <img className="network-us-map" src={CONTIGUOUS_STATES_MAP_URL} alt="Contiguous United States map with state boundaries" />
-  return <div className="network-us-map network-us-map-inline" role="img" aria-label="Contiguous United States map with state boundaries" dangerouslySetInnerHTML={{ __html: svg }} />
 }
 
 function FounderLetter() {
@@ -1492,7 +1509,7 @@ function HumanOutcomes() {
   return (
     <section className="human-outcomes section-space" id="people">
       <div className="section-heading"><h2>Built around the people holding the line.</h2></div>
-      <div className="outcome-accordion" role="tablist" aria-label="Damaros outcomes">
+      <div className="outcome-accordion" data-active={active} role="tablist" aria-label="Damaros outcomes">
         {Object.entries(outcomes).map(([key, [name, copy]], index) => (
           <button key={key} type="button" role="tab" aria-selected={active === key} className={`outcome-panel${active === key ? ' active' : ''}`} onClick={() => setActive(key)}>
             <span>0{index + 1}</span>
