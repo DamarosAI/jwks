@@ -34,6 +34,14 @@ describe('site-control workspace geometry', () => {
     assert.match(app, /Authenticated site reviewer/)
   })
 
+  it('aligns the site-control rail with the agents console', () => {
+    assert.match(css, /#root \.node-section \{\s*width:\s*min\(100%, 1500px\);/)
+    assert.match(css, /#root \.node-product-grid \{\s*grid-template-columns:\s*220px minmax\(0, 1fr\);/)
+    assert.match(app, /Site 018 - Damaros Health/)
+    assert.doesNotMatch(app, /Northstar/)
+    assert.doesNotMatch(app, /node-source-item[\s\S]*?<strong>\{source\.name\}<\/strong>/)
+  })
+
   it('keeps every security workflow control inside one geometry system', () => {
     assert.match(css, /\.site-control-review \{[\s\S]*?flex:\s*1;[\s\S]*?overflow:\s*hidden;[\s\S]*?border-radius:\s*12px;/)
     assert.match(css, /\.site-control-review > footer \.button \{[\s\S]*?height:\s*48px;[\s\S]*?border-radius:\s*10px;[\s\S]*?font-size:\s*15px;/)

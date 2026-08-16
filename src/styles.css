@@ -9741,9 +9741,11 @@ html { scroll-padding-top: 96px; }
   min-width: 0;
 }
 
-.node-source-item strong {
+.node-source-item strong,
+.node-source-item > span > span {
   color: #263641;
   font-size: 0.68rem;
+  font-weight: 400;
 }
 
 .node-source-item small {
@@ -11108,8 +11110,10 @@ html { scroll-padding-top: 96px; }
     border-radius: 12px;
   }
 
-  .node-source-item strong {
+  .node-source-item strong,
+  .node-source-item > span > span {
     font-size: 0.7rem;
+    font-weight: 400;
     line-height: 1.25;
   }
 
@@ -11925,6 +11929,21 @@ html.is-hidden .hero-agent.is-active i,
 }
 
 #root .agent-console-header > div > span {
+  font-family: var(--font-ui);
+  font-weight: 400;
+}
+
+#root .node-section {
+  width: min(100%, 1500px);
+}
+
+#root .node-product-grid {
+  grid-template-columns: 220px minmax(0, 1fr);
+}
+
+#root .node-source-nav > span,
+#root .node-source-item,
+#root .node-source-item :is(span, small) {
   font-family: var(--font-ui);
   font-weight: 400;
 }

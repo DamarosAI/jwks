@@ -1423,9 +1423,9 @@ function SiteNodeSection() {
             <span>APPROVED SOURCES</span>
             {sources.map((source) => {
               const Icon = source.icon
-              return <div className="node-source-item" key={source.name}><Icon size={16} /><span><strong>{source.name}</strong><small>{source.read}</small></span><i /></div>
+              return <div className="node-source-item" key={source.name}><Icon size={16} /><span><span>{source.name}</span><small>{source.read}</small></span><i /></div>
             })}
-            <div className="node-boundary-card"><small>INSTITUTION BOUNDARY</small><strong>Site 018 - Northstar Health</strong><span>4 sources - 7 site roles</span></div>
+            <div className="node-boundary-card"><small>INSTITUTION BOUNDARY</small><strong>Site 018 - Damaros Health</strong><span>4 sources - 7 site roles</span></div>
           </aside>
           <div className="node-policy-main">
             <div className="node-policy-header"><span><small>SITE CONTROL PLANE</small><strong>Local sources. Local signatures.</strong></span><em><ShieldCheck size={16} /> All controls healthy</em></div>
