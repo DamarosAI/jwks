@@ -11,11 +11,11 @@ const privacy = await readFile(`${root}src/PrivacyPage.jsx`, 'utf8')
 const requiredActions = [
   'Open Evidence',
   'Route to PI review',
-  'Open in Resolve →',
-  'Accept newer note · ECOG 2',
+  'Open in Resolve',
+  'Accept newer note - ECOG 2',
   'Hold for final pathology',
   'Await scheduled repeat draw',
-  'Attest last dose · 05-30',
+  'Attest last dose - 05-30',
   'Sign decision',
   'Export Replay',
   'Request amendment from sponsor',
@@ -46,12 +46,12 @@ if (css.includes('.biomarker-rain span::before')) throw new Error('Biomarker lin
 
 if (!app.includes("aria-live=\"polite\"")) throw new Error('Demo actions need an announced confirmation region')
 if (!app.includes('A research department,</span>') || !app.includes('deployed like software.')) throw new Error('Capacity thesis drifted')
-if (!app.includes('Site-owned execution') || !app.includes('Your site makes the call.') || !app.includes('Replay sealed · Record intact')) {
+if (!app.includes('Site-owned execution') || !app.includes('Your site makes the call.') || !app.includes('Replay sealed - Record intact')) {
   throw new Error('Execution record copy drifted')
 }
 if (app.includes('The execution record stays under site control.')) throw new Error('Old execution record headline remains')
 if (app.includes('record-spine') || css.includes('.record-spine {')) throw new Error('Site-owned execution cards must not keep a left spine')
-if (!css.includes('.record-event') || !app.includes('Replay sealed · Record intact') || !css.includes('background: var(--accent-strong)')) throw new Error('Execution record cards must stay blue and bound')
+if (!css.includes('.record-event') || !app.includes('Replay sealed - Record intact') || !css.includes('background: var(--accent-strong)')) throw new Error('Execution record cards must stay blue and bound')
 if (!app.includes('<h2>Four agents.</h2>') || app.includes('Zero decisions.')) throw new Error('Agent heading drifted')
 if (!css.includes('Agent workspace: one locked frame') || !css.includes('height: 780px') || !css.includes('max-height: 780px') || !css.includes('No nested scroll') || css.includes('grid-template-columns: 180px minmax(0, 1fr) 230px')) {
   throw new Error('Agent workspace must keep a locked frame and must not keep a phantom inspector column')
@@ -135,8 +135,8 @@ if (!app.includes('shouldKeepPreviousStage')) {
 if (!app.includes('useSoftSwap') || !app.includes('shouldHoldAutoplayFromClick') || !css.includes('is-fading')) {
   throw new Error('Autoplay must fade one layer in place and stop on click')
 }
-if (!css.includes('subpixel-antialiased') || !css.includes('--nav-height: 72px') || !css.includes('font-size: 21px')) {
-  throw new Error('Chrome type must stay hinted: larger wordmark, subpixel smoothing, no raw geometric faces')
+if (css.includes('subpixel-antialiased') || !css.includes('text-rendering: auto') || !css.includes('--nav-height: 72px') || !css.includes('font-size: 21px')) {
+  throw new Error('Chrome type must use stable native rendering and the larger wordmark')
 }
 if (/key=\{detail\.code\}|key=\{subject\.id\}|key=\{selectedWork\.key\}|key=\{selectedEvent\.id\}|key=\{criterion\.code\}|key=\{signal\.id\}|key=\{activeQuestion\.q\}|key=\{study\.id\}/.test(app)) {
   throw new Error('Selection panes must update in place, not remount')

@@ -17,10 +17,11 @@ describe('site type', () => {
 
   it('declares the supplied Endless file honestly and protects compact controls', () => {
     assert.match(css, /@font-face\s*\{[\s\S]*?font-weight:\s*400;/)
+    assert.match(css, /unicode-range:\s*U\+0020-007E;/)
     assert.doesNotMatch(css, /@font-face\s*\{[\s\S]*?font-weight:\s*100\s+900;/)
     assert.match(css, /#root :is\([\s\S]*?button,[\s\S]*?font-kerning:\s*none;/)
     assert.match(css, /#root :is\([\s\S]*?button,[\s\S]*?font-feature-settings:\s*'kern'\s+0,\s*'liga'\s+0,\s*'calt'\s+0;/)
-    assert.match(css, /#root :is\([\s\S]*?button,[\s\S]*?text-rendering:\s*geometricPrecision;/)
+    assert.match(css, /#root :is\([\s\S]*?button,[\s\S]*?text-rendering:\s*auto;/)
     assert.match(css, /#root :is\([\s\S]*?button,[\s\S]*?-webkit-font-smoothing:\s*antialiased;/)
     assert.match(css, /#root :is\([\s\S]*?\.wordmark,[\s\S]*?\.desktop-nav-links a,[\s\S]*?\.footer-mark p/)
     assert.match(css, /#root :is\([\s\S]*?button,[\s\S]*?letter-spacing:\s*var\(--tracking-control\);/)
@@ -32,7 +33,13 @@ describe('site type', () => {
     assert.doesNotMatch(css, /transform-style:\s*preserve-3d/)
     assert.doesNotMatch(css, /skewX|matrix\(/)
     assert.doesNotMatch(css, /-webkit-font-smoothing:\s*subpixel-antialiased/)
-    assert.doesNotMatch(css, /text-rendering:\s*optimizeLegibility/)
+    assert.doesNotMatch(css, /text-rendering:\s*(optimizeLegibility|geometricPrecision)/)
+  })
+
+  it('keeps rendered copy inside the supplied font character set', () => {
+    const renderedCopy = app.replace("document.title = 'Damaros™'", '')
+    const unsupported = [...renderedCopy].filter((character) => character.codePointAt(0) > 127)
+    assert.deepEqual(unsupported, [])
   })
 
   it('clears enter transforms so Endless does not stay sheared', () => {
@@ -41,5 +48,9 @@ describe('site type', () => {
     assert.match(app, /\.from\('\.hero-workspace',\s*\{[^}]*clearProps:\s*'transform'/)
     assert.match(app, /gsap\.from\('\.agent-console',\s*\{[\s\S]*?clearProps:\s*'transform'/)
     assert.match(app, /gsap\.from\('\.node-system > \*',\s*\{[\s\S]*?clearProps:\s*'transform'/)
+    assert.match(css, /@keyframes view-in\s*\{\s*from\s*\{\s*opacity:\s*0;\s*\}\s*\}/)
+    assert.match(css, /@keyframes workspace-enter\s*\{\s*from\s*\{\s*opacity:\s*0;\s*\}\s*\}/)
+    assert.match(css, /@keyframes inline-action-in\s*\{[\s\S]*?from\s*\{\s*opacity:\s*0;\s*\}[\s\S]*?to\s*\{\s*opacity:\s*1;\s*\}/)
+    assert.match(css, /\.page-spine\s*\{[\s\S]*?transform:\s*none;/)
   })
 })
