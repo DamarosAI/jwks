@@ -116,14 +116,24 @@ function usePilotViewport(rootRef) {
       root.toggleAttribute('data-kb', viewport.height < window.innerHeight * 0.82)
     }
 
+    let frame = 0
+    const schedule = () => {
+      if (frame) return
+      frame = window.requestAnimationFrame(() => {
+        frame = 0
+        sync()
+      })
+    }
+
     sync()
-    window.visualViewport?.addEventListener('resize', sync)
-    window.visualViewport?.addEventListener('scroll', sync)
-    window.addEventListener('resize', sync)
+    window.visualViewport?.addEventListener('resize', schedule)
+    window.visualViewport?.addEventListener('scroll', schedule)
+    window.addEventListener('resize', schedule)
     return () => {
-      window.visualViewport?.removeEventListener('resize', sync)
-      window.visualViewport?.removeEventListener('scroll', sync)
-      window.removeEventListener('resize', sync)
+      window.cancelAnimationFrame(frame)
+      window.visualViewport?.removeEventListener('resize', schedule)
+      window.visualViewport?.removeEventListener('scroll', schedule)
+      window.removeEventListener('resize', schedule)
     }
   }, [rootRef])
 }

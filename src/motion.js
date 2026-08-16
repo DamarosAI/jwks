@@ -13,6 +13,11 @@ export function paneSettleClass(armed, reduced) {
   return `${PANE_SETTLE_CLASS} is-settling`
 }
 
+/** Prefer the visual viewport so mobile chrome does not shear section hops. */
+export function viewportHeight(view = globalThis) {
+  return Math.round(view.visualViewport?.height ?? view.innerHeight ?? 0)
+}
+
 /** Center a section in the usable viewport. Tall sections keep their opening in frame. */
 export function sectionScrollTarget({
   sectionTop,

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom'
-import { AGENT_ROTATE_TICKS, AGENT_TICK_MS, HERO_STAGE_MS, HERO_TICK_MS, LIVE_STAGE_MS, LIVE_TICK_MS, autoplayIndex, isAutoplayToggle, shouldKeepPreviousStage, shouldPlayAutoplay, useAutoplayHold, useInView, useScrollIdle } from './autoplay'
-import { easeSectionScroll, sectionScrollDuration, sectionScrollTarget, usePaneSettle } from './motion'
+import { AGENT_ROTATE_TICKS, AGENT_TICK_MS, HERO_STAGE_MS, HERO_TICK_MS, NARROW_VIEWPORT, autoplayIndex, shouldKeepPreviousStage, shouldPlayAutoplay, shouldRunAmbient, useAutoplayHold, useDocumentVisible, useInView, useMediaQuery, useScrollIdle } from './autoplay'
+import { easeSectionScroll, sectionScrollDuration, sectionScrollTarget, usePaneSettle, viewportHeight } from './motion'
 import { PilotButton, PilotProvider } from './PilotInquiry'
 import PrivacyPage from './PrivacyPage'
 import { useGSAP } from '@gsap/react'
@@ -10,40 +10,33 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import {
   ArrowRight,
   ArrowUpRight,
-  Bell,
   CaretDown,
-  CaretRight,
   CheckCircle,
-  ClockCounterClockwise,
   Database,
-  DotsThree,
   EnvelopeSimple,
   FileText,
   Fingerprint,
   List,
-  LockKey,
-  MagnifyingGlass,
-  Pause,
-  Play,
   ShieldCheck,
-  SkipForward,
-  UserCircle,
-  Warning,
   X,
 } from '@phosphor-icons/react'
 
 gsap.registerPlugin(ScrollTrigger, useGSAP)
+ScrollTrigger.config({ ignoreMobileResize: true })
+
+function useEnterMotion(root, reduced, setup, query = '(min-width: 901px)') {
+  useGSAP(() => {
+    if (reduced) return undefined
+    const mm = gsap.matchMedia()
+    mm.add(query, () => {
+      const tweens = setup() || []
+      return () => (Array.isArray(tweens) ? tweens : [tweens]).forEach((tween) => tween?.kill?.())
+    })
+    return () => mm.revert()
+  }, { scope: root, dependencies: [reduced] })
+}
 
 let sectionScrollFrame = 0
-
-const DEMO_STAGES = [
-  { key: 'protocol', label: 'Protocol', title: 'Protocol logic, locked to one version.' },
-  { key: 'evidence', label: 'Evidence', title: 'Site evidence, mapped to every criterion.' },
-  { key: 'screening', label: 'Screening', title: 'Deterministic screening with sources attached.' },
-  { key: 'resolve', label: 'Resolve', title: 'Human judgment, staged inside the record.' },
-  { key: 'replay', label: 'Replay', title: 'A complete chain, rebuilt on demand.' },
-  { key: 'agents', label: 'Agents', title: 'Agents prepare work inside the same record.' },
-]
 
 const AGENTS = [
   {
@@ -248,9 +241,15 @@ const HOME_SPINE = [['home', 'Home', 'Damaros'], ['thesis', 'Thesis', 'Why now']
 const ABOUT_SPINE = [['about-top', 'About', 'Damaros'], ['founder', 'Founder', 'Origin'], ['why-now', 'Why now', 'Constraint'], ['people', 'People', 'Ownership'], ['pilot', 'Pilot', 'Start here']]
 
 function BiomarkerRain() {
+  const root = useRef(null)
+  const reduced = useReducedMotion()
+  const narrow = useMediaQuery(NARROW_VIEWPORT)
+  const inView = useInView(root, { threshold: 0 })
+  const animate = shouldRunAmbient({ reduced, inView, narrow })
+  const marks = narrow ? BIOMARKERS.filter((_, index) => index % 2 === 0) : BIOMARKERS
   return (
-    <div className="biomarker-rain" aria-hidden="true">
-      {BIOMARKERS.map(([label, x, delay, duration, drift]) => (
+    <div className={`biomarker-rain${animate ? '' : ' is-paused'}`} ref={root} aria-hidden="true">
+      {reduced ? null : marks.map(([label, x, delay, duration, drift]) => (
         <span style={{ '--x': x, '--delay': delay, '--duration': duration, '--drift': drift }} key={label}>{label}</span>
       ))}
     </div>
@@ -287,13 +286,13 @@ function useReducedMotion() {
   return reduced
 }
 
-function measureSectionInsets() {
+function measureSectionInsets(height = viewportHeight()) {
   const nav = document.querySelector('.site-nav-wrap')
   const spine = document.querySelector('.page-spine.is-visible')
   const insetTop = Math.max(0, Math.round(nav?.getBoundingClientRect().bottom ?? 0))
   const spineBox = spine?.getBoundingClientRect()
-  const insetBottom = spineBox && spineBox.top > window.innerHeight * 0.6
-    ? Math.max(0, Math.round(window.innerHeight - spineBox.top + 8))
+  const insetBottom = spineBox && spineBox.top > height * 0.6
+    ? Math.max(0, Math.round(height - spineBox.top + 8))
     : 0
   return { insetTop, insetBottom }
 }
@@ -307,12 +306,13 @@ function sectionVisual(selector) {
 function sectionScrollEnd(selector) {
   const visual = sectionVisual(selector)
   if (!visual) return null
+  const height = viewportHeight()
   return sectionScrollTarget({
     sectionTop: visual.getBoundingClientRect().top + window.scrollY,
     sectionHeight: visual.offsetHeight,
-    viewportHeight: window.innerHeight,
+    viewportHeight: height,
     documentHeight: document.documentElement.scrollHeight,
-    ...measureSectionInsets(),
+    ...measureSectionInsets(height),
   })
 }
 
@@ -373,7 +373,7 @@ function smoothSection(event, selector) {
     window.scrollTo({ top: end, left: 0, behavior: 'instant' })
     return
   }
-  const duration = sectionScrollDuration(end - start, window.innerHeight)
+  const duration = sectionScrollDuration(end - start, viewportHeight())
   const started = performance.now()
   const stop = () => {
     window.cancelAnimationFrame(sectionScrollFrame)
@@ -404,7 +404,8 @@ function PageSpine({ about = false }) {
     let lastActive = items[0][0]
     let lastVisible = false
     const update = () => {
-      const anchor = window.innerHeight * 0.42
+      const height = viewportHeight()
+      const anchor = height * 0.42
       const gate = document.querySelector(about ? '.about-hero' : '.landing-hero')
       let currentIndex = 0
       items.forEach(([id], index) => {
@@ -415,7 +416,7 @@ function PageSpine({ about = false }) {
       const next = document.getElementById(about ? 'founder' : 'thesis')
       const nextTop = next?.getBoundingClientRect().top ?? Number.POSITIVE_INFINITY
       const heroBottom = gate?.getBoundingClientRect().bottom ?? 0
-      const nextVisible = about || nextTop <= window.innerHeight * 0.92 || heroBottom <= window.innerHeight * 0.82
+      const nextVisible = about || nextTop <= height * 0.92 || heroBottom <= height * 0.82
       if (nextActive !== lastActive) {
         lastActive = nextActive
         setActive(nextActive)
@@ -435,10 +436,14 @@ function PageSpine({ about = false }) {
     update()
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onScroll)
+    window.visualViewport?.addEventListener('resize', onScroll)
+    window.visualViewport?.addEventListener('scroll', onScroll)
     return () => {
       window.cancelAnimationFrame(frame)
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
+      window.visualViewport?.removeEventListener('resize', onScroll)
+      window.visualViewport?.removeEventListener('scroll', onScroll)
     }
   }, [about, items])
 
@@ -454,10 +459,8 @@ function PageSpine({ about = false }) {
 }
 
 function usePageScrollFlow(root, reduced) {
-  useGSAP(() => {
-    if (reduced || window.innerWidth <= 640) return undefined
-    const chapters = gsap.utils.toArray('.founder-section, .human-outcomes, .final-cta', root.current)
-    const tweens = chapters.map((chapter) => {
+  useEnterMotion(root, reduced, () => (
+    gsap.utils.toArray('.founder-section, .human-outcomes, .final-cta', root.current).map((chapter) => {
       const heading = chapter.querySelector('.founder-signature, .section-heading, .final-cta > h2, .final-cta > .button')
       if (!heading) return null
       return gsap.from(heading, {
@@ -468,20 +471,24 @@ function usePageScrollFlow(root, reduced) {
         scrollTrigger: { trigger: chapter, start: 'top 86%', once: true },
       })
     })
-    return () => tweens.forEach((tween) => tween?.kill())
-  }, { scope: root, dependencies: [reduced] })
+  ), '(min-width: 641px)')
 }
 
 function WindowBrand() {
   return (
     <span className="window-title window-brand">
-      <img src="/assets/damaros-monogram-blue.svg" alt="Damaros" />
+      <img src="/assets/damaros-monogram-blue.svg" alt="Damaros" decoding="async" />
     </span>
   )
 }
 
 function SiteNav() {
   const [open, setOpen] = useState(false)
+  const { pathname } = useLocation()
+
+  useEffect(() => {
+    setOpen(false)
+  }, [pathname])
 
   return (
     <header className="site-nav-wrap">
@@ -547,12 +554,13 @@ function MiniRun() {
   const [transitionMode, setTransitionMode] = useState('manual')
   const [tick, setTick] = useState(0)
   const { held, hold } = useAutoplayHold(reduced)
+  const visible = useDocumentVisible()
+  const narrow = useMediaQuery(NARROW_VIEWPORT)
   const transitionTimer = useRef(null)
   const tickRef = useRef(0)
   const exitTick = useRef(0)
   const steps = ['Protocol', 'Evidence', 'Screening', 'Resolve', 'Replay']
-  // Mobile workspaces stay user-directed so content height never jumps beneath a reader.
-  const playing = (typeof window === 'undefined' || window.innerWidth > 640) && shouldPlayAutoplay({ reduced, held, inView, scrollIdle })
+  const playing = shouldPlayAutoplay({ reduced, held, inView, scrollIdle, visible, narrow })
   tickRef.current = tick
 
   useEffect(() => {
@@ -627,20 +635,20 @@ function LandingHero() {
   const root = useRef(null)
   const reduced = useReducedMotion()
 
-  useGSAP(() => {
-    if (reduced || window.innerWidth < 700) return
+  useEnterMotion(root, reduced, () => {
     const timeline = gsap.timeline({ defaults: { ease: 'power2.out' } })
     timeline
       .from('.hero-line', { yPercent: 110, duration: 1.2, stagger: 0.14 })
       .from('.hero-copy > p, .hero-actions', { opacity: 0, y: 18, duration: 0.9, stagger: 0.12 }, '-=0.5')
       .from('.hero-workspace', { opacity: 0, y: 36, duration: 1.15 }, '-=0.7')
-  }, { scope: root, dependencies: [reduced] })
+    return timeline
+  }, '(min-width: 700px)')
 
   return (
     <section className="landing-hero" id="home" ref={root}>
       <div className="ambient-field" aria-hidden="true" />
       <BiomarkerRain />
-      <img className="hero-drum-motif" src="/assets/damaros-monogram-blue.svg" alt="" aria-hidden="true" />
+      <img className="hero-drum-motif" src="/assets/damaros-monogram-blue.svg" alt="" aria-hidden="true" decoding="async" />
       <div className="hero-copy">
         <h1 className="hero-heading" aria-label="Clinical research, built to execute anywhere.">
           <span className="hero-line">Clinical research,</span>
@@ -661,17 +669,14 @@ function ThesisSection() {
   const root = useRef(null)
   const reduced = useReducedMotion()
 
-  useGSAP(() => {
-    if (reduced || window.innerWidth <= 900) return
-    gsap.from('.thesis-head > *', {
-      opacity: 0,
-      y: 24,
-      duration: 0.8,
-      stagger: 0.1,
-      ease: 'power2.out',
-      scrollTrigger: { trigger: root.current, start: 'top 68%' },
-    })
-  }, { scope: root, dependencies: [reduced] })
+  useEnterMotion(root, reduced, () => gsap.from('.thesis-head > *', {
+    opacity: 0,
+    y: 24,
+    duration: 0.8,
+    stagger: 0.1,
+    ease: 'power2.out',
+    scrollTrigger: { trigger: root.current, start: 'top 68%', once: true },
+  }))
 
   return (
     <section className="thesis-section section-space" id="thesis" ref={root}>
@@ -691,22 +696,32 @@ function CapacityBento() {
   const root = useRef(null)
   const reduced = useReducedMotion()
 
-  useGSAP(() => {
-    if (!reduced && window.innerWidth > 900) {
+  const narrow = useMediaQuery(NARROW_VIEWPORT)
+  const integrations = useRef(null)
+  const integrationsInView = useInView(integrations, { threshold: 0 })
+  const integrationsPlay = shouldRunAmbient({ reduced, inView: integrationsInView, narrow })
+
+  useEnterMotion(root, reduced, () => {
+    const record = root.current?.querySelector('.evidence-record-card')
+    return [
       gsap.from('.capacity-bento > *, .systems-banner', {
         opacity: 0,
         y: 28,
         duration: 0.86,
         stagger: 0.1,
         ease: 'power2.out',
-        scrollTrigger: { trigger: root.current, start: 'top 70%' },
-      })
-    }
-    if (reduced) return
-    const record = root.current?.querySelector('.evidence-record-card')
-    if (!record) return
-    gsap.from('.record-event', { opacity: 0, y: 8, duration: 0.5, stagger: 0.16, ease: 'power2.out', scrollTrigger: { trigger: record, start: 'top 78%' } })
-  }, { scope: root, dependencies: [reduced] })
+        scrollTrigger: { trigger: root.current, start: 'top 70%', once: true },
+      }),
+      record ? gsap.from('.record-event', {
+        opacity: 0,
+        y: 8,
+        duration: 0.5,
+        stagger: 0.16,
+        ease: 'power2.out',
+        scrollTrigger: { trigger: record, start: 'top 78%', once: true },
+      }) : null,
+    ]
+  })
 
   return (
     <section className="capacity-section section-space" id="capacity" ref={root}>
@@ -782,11 +797,11 @@ function CapacityBento() {
         </div>
         <div className="connector-closeup">
           <div className="connector-head"><span>Connectors</span><small>Site-controlled</small></div>
-          <div className="integration-viewport" aria-label="Damaros connectors">
+          <div className={`integration-viewport${integrationsPlay ? '' : ' is-paused'}`} ref={integrations} aria-label="Damaros connectors">
             <div className="integration-track">
               {[0, 1].map((group) => (
                 <div className="integration-group" aria-hidden={group === 1} key={group}>
-                  {INTEGRATIONS.map(([name, src]) => <div className={`integration-logo integration-${name.toLowerCase()}`} key={`${group}-${name}`}><img src={src} alt={group === 0 ? name : ''} /></div>)}
+                  {INTEGRATIONS.map(([name, src]) => <div className={`integration-logo integration-${name.toLowerCase()}`} key={`${group}-${name}`}><img src={src} alt={group === 0 ? name : ''} loading="lazy" decoding="async" /></div>)}
                 </div>
               ))}
             </div>
@@ -976,154 +991,6 @@ function ReplayView({ tick = 0 }) {
   )
 }
 
-function AgentsView({ activeAgent, setActiveAgent, tick }) {
-  const agent = AGENTS[activeAgent]
-  return (
-    <div className="workspace-view" key={`agent-${activeAgent}`}>
-      <ProductViewHeader label="AGENTS · SITE EXECUTION GRAPH" title={`${agent.name} · ${agent.role}`} status="Working in record" icon={<AgentGlyph kind={agent.icon} size={14} />} />
-      <div className="agent-workspace">
-        <div className="agent-roster">{AGENTS.map((item, index) => <button className={index === activeAgent ? 'active' : ''} style={{ '--agent-color': item.color }} type="button" onClick={() => setActiveAgent(index)} key={item.name}><AgentGlyph kind={item.icon} size={17} /><span><strong>{item.name}</strong><small>{item.role}</small></span><i className={index === activeAgent ? 'working' : ''} /></button>)}</div>
-        <div className="agent-run-detail pane-settle is-settling" key={agent.name}>
-          <div className="agent-objective"><span><small>CURRENT OBJECTIVE</small><strong>{agent.task}</strong></span><em><i /> Live</em></div>
-          <div className="agent-io"><div><small>INPUT</small><strong>{agent.input}</strong></div><CaretRight size={16} /><div><small>ACTION</small><strong>{agent.action}</strong></div><CaretRight size={16} /><div><small>OUTPUT</small><strong>{agent.output}</strong></div></div>
-          <div className="agent-trace"><span>RUN TRACE</span>{agent.trace.map((event, index) => <div className={index === tick % agent.trace.length ? 'active' : ''} key={event}><CheckCircle size={14} weight="fill" /><strong>{event}</strong><small>{index === tick % agent.trace.length ? 'now' : `${index + 1}s`}</small></div>)}</div>
-        </div>
-        <aside className="agent-guardrail"><ShieldCheck size={20} /><span>CONTROL BOUNDARY</span><strong>{agent.guardrail}</strong><p>All outputs remain attributable to source context and await accountable site action.</p><div><LockKey size={14} /> Site-held graph</div><div><Fingerprint size={14} /> Human signature retained</div></aside>
-      </div>
-    </div>
-  )
-}
-
-function ActivityDock({ active, activeAgent, setActiveAgent, setActive, tick }) {
-  const activity = [
-    ['Trident', 'Compiled amendment v2.1'],
-    ['Eye', 'Bound 3 evidence sources'],
-    ['Luna', 'Verified replay chain'],
-    ['Sentinel', 'Updated coverage signal'],
-  ]
-  return (
-    <aside className="activity-dock">
-      <div className="dock-head"><span>Agent activity</span><Bell size={15} /></div>
-      <div className="dock-agents">{AGENTS.map((agent, index) => <button style={{ '--agent-color': agent.color }} type="button" onClick={() => { setActiveAgent(index); setActive(5) }} key={agent.name}><AgentGlyph kind={agent.icon} size={15} /><span><strong>{agent.name}</strong><small>{index === activeAgent ? 'Working' : index === (activeAgent + 1) % 4 ? 'Watching' : 'Ready'}</small></span><i className={index === activeAgent ? 'working' : ''} /></button>)}</div>
-      <div className="dock-divider" />
-      <div className="dock-context"><span>CURRENT CONTEXT</span><strong>{DEMO_STAGES[active].label}</strong><small>DMR-204 · Subject 018-017</small></div>
-      <div className="dock-events"><span>LIVE EVENTS</span>{activity.map(([agent, event], index) => <div className={index === tick % activity.length ? 'new' : ''} key={agent}><i /><p><strong>{agent}</strong>{event}</p><time>{index === tick % activity.length ? 'now' : `${index + 2}s`}</time></div>)}</div>
-      <div className="dock-security"><ShieldCheck size={14} /> Site-governed · synthetic data</div>
-    </aside>
-  )
-}
-
-function LiveDemo() {
-  const root = useRef(null)
-  const stageTransition = useRef(0)
-  const reduced = useReducedMotion()
-  const [active, setActive] = useState(0)
-  const [activeAgent, setActiveAgent] = useState(0)
-  const [playing, setPlaying] = useState(() => !window.matchMedia('(prefers-reduced-motion: reduce)').matches)
-  const { held, hold, clearHold } = useAutoplayHold(reduced)
-  const [refreshing, setRefreshing] = useState(false)
-  const [tick, setTick] = useState(0)
-  const [stageLeaving, setStageLeaving] = useState(false)
-  const [utility, setUtility] = useState(null)
-  const live = playing && !held
-
-  useGSAP(() => {
-    if (reduced || window.innerWidth <= 900) return
-    gsap.from('.live-workspace', { opacity: 0, y: 32, duration: 1.05, ease: 'power2.out', scrollTrigger: { trigger: root.current, start: 'top 72%' } })
-  }, { scope: root, dependencies: [reduced] })
-
-  useEffect(() => {
-    if (!live || reduced) return undefined
-    const timer = window.setInterval(() => {
-      setStageLeaving(true)
-      window.clearTimeout(stageTransition.current)
-      stageTransition.current = window.setTimeout(() => {
-        setActive((value) => {
-          const next = (value + 1) % DEMO_STAGES.length
-          setActiveAgent(next % AGENTS.length)
-          return next
-        })
-        window.requestAnimationFrame(() => setStageLeaving(false))
-      }, 160)
-    }, LIVE_STAGE_MS)
-    return () => { window.clearInterval(timer); window.clearTimeout(stageTransition.current) }
-  }, [live, reduced])
-
-  useEffect(() => {
-    if (!live || reduced) return undefined
-    const timer = window.setInterval(() => setTick((value) => value + 1), LIVE_TICK_MS)
-    return () => window.clearInterval(timer)
-  }, [live, reduced])
-
-  useEffect(() => () => window.clearTimeout(stageTransition.current), [])
-
-  const selectStage = (index) => {
-    hold()
-    if (index === active) return
-    setStageLeaving(true)
-    window.clearTimeout(stageTransition.current)
-    stageTransition.current = window.setTimeout(() => {
-      setActive(index)
-      window.requestAnimationFrame(() => setStageLeaving(false))
-    }, reduced ? 0 : 160)
-  }
-
-  const togglePlaying = () => {
-    if (held && playing) {
-      clearHold()
-      return
-    }
-    clearHold()
-    setPlaying((value) => !value)
-  }
-  const refreshEvidence = () => {
-    selectStage(1)
-    setRefreshing(true)
-    window.setTimeout(() => setRefreshing(false), 900)
-  }
-
-  return (
-    <section className="demo-section system-demo-section" id="demo" ref={root}>
-      <div className="system-demo-heading">
-        <span className="section-kicker">LIVE SYSTEM</span>
-        <h2>Enter the site workspace.</h2>
-        <p>One synthetic record keeps moving through protocol, evidence, review, agents, and proof.</p>
-      </div>
-      <div className="live-workspace" onClickCapture={(event) => { if (!isAutoplayToggle(event.target)) hold() }}>
-        <div className="mac-titlebar">
-          <div className="traffic-lights" aria-hidden="true"><i /><i /><i /></div>
-          <WindowBrand />
-          <div className="workspace-window-actions"><span className="window-live"><i /> Live synthetic · event {String(tick + 1).padStart(2, '0')}</span><button type="button" data-autoplay-toggle aria-label={playing && !held ? 'Pause live run' : 'Play live run'} onClick={togglePlaying}>{playing && !held ? <Pause size={13} weight="fill" /> : <Play size={13} weight="fill" />}</button></div>
-        </div>
-        <div className="workspace-app">
-          <aside className="workspace-sidebar">
-            <div className="workspace-brand"><span>D</span><strong>Damaros</strong></div>
-            <div className="sidebar-group"><span>SPINE</span>{DEMO_STAGES.slice(0, 5).map((stage, index) => <button key={stage.key} type="button" className={active === index ? 'active' : ''} onClick={() => selectStage(index)}><span>{stage.label}</span>{index === 3 && <b>1</b>}{active === index && <i />}</button>)}</div>
-            <div className="sidebar-group agent-side-group"><span>AGENTS</span>{AGENTS.map((agent, index) => <button style={{ '--agent-color': agent.color }} type="button" className={active === 5 && activeAgent === index ? 'active' : ''} onClick={() => { setActiveAgent(index); selectStage(5) }} key={agent.name}><AgentGlyph kind={agent.icon} size={14} /><span>{agent.name}</span><i className={index === activeAgent ? 'working' : ''} /></button>)}</div>
-            <div className="sidebar-node"><ShieldCheck size={14} /><span><strong>Site node</strong><small>Local control</small></span></div>
-          </aside>
-          <div className="workspace-center">
-            <div className="workspace-toolbar"><span>Studies <CaretRight size={12} /> DMR-204 <CaretRight size={12} /> <strong>{DEMO_STAGES[active].label}</strong></span><div><button type="button" onClick={refreshEvidence} disabled={refreshing}><Database size={13} /> {refreshing ? 'Refreshing' : 'Refresh'}</button><button type="button" aria-expanded={utility === 'search'} onClick={() => setUtility((value) => value === 'search' ? null : 'search')}><MagnifyingGlass size={14} /> Search</button><button type="button" aria-label="More options" aria-expanded={utility === 'more'} onClick={() => setUtility((value) => value === 'more' ? null : 'more')}><DotsThree size={17} /></button></div></div>
-            {utility === 'search' && <div className="workspace-utility workspace-search"><label><MagnifyingGlass size={15} /><input autoFocus aria-label="Search workspace" placeholder="Search subject, criterion, source…" /></label><button type="button" onClick={() => { selectStage(0); setUtility(null) }}><span>DMR-204</span><small>Study record</small></button><button type="button" onClick={() => { selectStage(2); setUtility(null) }}><span>018-017</span><small>Synthetic subject</small></button><button type="button" onClick={() => { selectStage(3); setUtility(null) }}><span>E-5.3</span><small>Open site judgment</small></button></div>}
-            {utility === 'more' && <div className="workspace-utility workspace-more"><button type="button" onClick={() => { selectStage(4); setUtility(null) }}>Open replay record <ArrowRight size={13} /></button><button type="button" onClick={() => { selectStage(5); setUtility(null) }}>Inspect agent run <ArrowRight size={13} /></button><button type="button" data-autoplay-toggle onClick={() => { togglePlaying(); setUtility(null) }}>{playing && !held ? 'Pause autoplay' : 'Resume autoplay'} <ArrowRight size={13} /></button></div>}
-            <div className={`workspace-stage-copy ${stageLeaving ? 'stage-leaving' : ''}`}><span>{DEMO_STAGES[active].title}</span><small>{playing && !held ? 'Autoplaying' : 'Paused'} · event {String(tick + 1).padStart(2, '0')} · controls live</small></div>
-            <div className={`workspace-canvas ${stageLeaving ? 'stage-leaving' : ''}`} aria-live="polite">
-              {active === 0 && <ProtocolView tick={tick} />}
-              {active === 1 && <EvidenceView refreshing={refreshing} tick={tick} />}
-              {active === 2 && <ScreeningView tick={tick} />}
-              {active === 3 && <ResolveView tick={tick} />}
-              {active === 4 && <ReplayView tick={tick} />}
-              {active === 5 && <AgentsView activeAgent={activeAgent} setActiveAgent={setActiveAgent} tick={tick} />}
-            </div>
-          </div>
-          <ActivityDock active={active} activeAgent={activeAgent} setActiveAgent={setActiveAgent} setActive={selectStage} tick={tick} />
-        </div>
-        <div className="workspace-playback"><button type="button" data-autoplay-toggle onClick={togglePlaying}>{playing && !held ? <Pause size={14} weight="fill" /> : <Play size={14} weight="fill" />} {playing && !held ? 'Pause' : 'Resume'}</button>{DEMO_STAGES.map((stage, index) => <button type="button" aria-label={`Open ${stage.label}`} className={active === index ? 'active' : ''} onClick={() => selectStage(index)} key={stage.key}><span>{index + 1}</span>{stage.label}</button>)}<button type="button" aria-label="Advance one stage" onClick={() => selectStage((active + 1) % DEMO_STAGES.length)}><SkipForward size={14} weight="fill" /></button></div>
-      </div>
-    </section>
-  )
-}
-
 function TridentWorkbench({ selected, setSelected, stage, setStage }) {
   const settle = usePaneSettle()
   const [requestOpen, setRequestOpen] = useState(false)
@@ -1288,6 +1155,8 @@ function AgentOperations() {
   const [active, setActive] = useState(0)
   const [tick, setTick] = useState(0)
   const { held, hold } = useAutoplayHold(reduced)
+  const visible = useDocumentVisible()
+  const narrow = useMediaQuery(NARROW_VIEWPORT)
   const [tridentCriterion, setTridentCriterion] = useState(3)
   const [tridentStage, setTridentStage] = useState(0)
   const [eyeSelected, setEyeSelected] = useState(0)
@@ -1296,7 +1165,7 @@ function AgentOperations() {
   const [sentinelSelected, setSentinelSelected] = useState(2)
   const [sentinelSurfaced, setSentinelSurfaced] = useState(false)
   const agent = AGENTS[active]
-  const playing = shouldPlayAutoplay({ reduced, held, inView, scrollIdle })
+  const playing = shouldPlayAutoplay({ reduced, held, inView, scrollIdle, visible, narrow })
   const runContext = [
     {
       object: `Criterion ${['I-3.4', 'E-5.3', 'I-4.2', 'I-2.1'][tridentCriterion]}`,
@@ -1347,16 +1216,13 @@ function AgentOperations() {
     setSentinelSelected(autoplayIndex(tick, SENTINEL_STUDIES.length))
   }, [tick, playing, tridentStage])
 
-  useGSAP(() => {
-    if (reduced || window.innerWidth <= 900) return
-    gsap.from('.agent-console', {
-      opacity: 0,
-      y: 36,
-      duration: 0.95,
-      ease: 'power2.out',
-      scrollTrigger: { trigger: root.current, start: 'top 72%' },
-    })
-  }, { scope: root, dependencies: [reduced] })
+  useEnterMotion(root, reduced, () => gsap.from('.agent-console', {
+    opacity: 0,
+    y: 36,
+    duration: 0.95,
+    ease: 'power2.out',
+    scrollTrigger: { trigger: root.current, start: 'top 72%', once: true },
+  }))
 
   return (
     <section className="agent-operations-section section-space" id="agents" ref={root}>
@@ -1433,26 +1299,25 @@ function SiteNodeSection() {
   const controls = [
     { name: 'Evidence visibility', policy: 'Site roles only', title: 'Inspect evidence access boundary', description: 'Only approved site roles can open source evidence or mapped patient facts.', scope: 'FHIR resources, documents, and mapped facts', checked: '10:41 · 4 approved sources', record: 'POL-018-EV4', recipient: '7 approved site roles', patientFields: 'Site-held', action: 'Review access boundary', success: 'Access review recorded' },
     { name: 'Artifact release', policy: 'PI or delegated signer', title: 'Review sponsor artifact release', description: 'Replay bundles remain at the site until a PI or delegated signer releases the exact artifact.', scope: 'Replay bundle · RPL-1047', checked: '10:42 · signer roster current', record: 'POL-018-AR2', recipient: 'Meridian Oncology', patientFields: '0 in sponsor artifact', action: 'Review artifact release', success: 'Artifact review recorded' },
-    { name: 'Network signal', policy: 'Aggregate coverage only', title: 'Release aggregate coverage signal', description: 'Review the exact outbound payload. Sponsor receives site capability, never patient facts.', scope: 'Protocol capability · Site 018', checked: '10:42 · payload reduced', record: 'POL-018-NS7', recipient: 'Meridian Oncology', patientFields: '0', action: 'Review signal release', success: 'Signal review recorded' },
+    { name: 'Network signal', policy: 'Aggregate coverage only', title: 'Release aggregate coverage signal', description: 'Review the exact outbound payload. Sponsor receives site capability, never patient facts.', scope: 'Protocol capability · Site 018', checked: '10:42 · payload reduced', record: 'POL-018-NS7', recipient: 'Meridian Oncology', patientFields: '0 patient fields', action: 'Review signal release', success: 'Signal review recorded' },
     { name: 'Model execution', policy: 'Local inference allowed', title: 'Inspect local model attestation', description: 'Model execution stays inside the institution boundary and writes only source-linked work products.', scope: 'Site node runtime · Run 018-017', checked: '10:43 · runtime attested', record: 'POL-018-ME3', recipient: 'Site execution record', patientFields: 'No raw egress', action: 'Review run attestation', success: 'Attestation review recorded' },
   ]
   const control = controls[selectedControl]
-  useGSAP(() => {
-    if (reduced || window.innerWidth <= 900) return
+  useEnterMotion(root, reduced, () => [
     gsap.from('.node-copy > *', {
       opacity: 0,
       y: 32,
       duration: 0.8,
       stagger: 0.12,
-      scrollTrigger: { trigger: root.current, start: 'top 70%' },
-    })
+      scrollTrigger: { trigger: root.current, start: 'top 70%', once: true },
+    }),
     gsap.from('.node-system > *', {
       opacity: 0,
       y: 18,
       stagger: 0.1,
-      scrollTrigger: { trigger: root.current, start: 'top 70%' },
-    })
-  }, { scope: root, dependencies: [reduced] })
+      scrollTrigger: { trigger: root.current, start: 'top 70%', once: true },
+    }),
+  ])
 
   return (
     <section className="node-section section-space" id="site-control" ref={root}>
@@ -1501,7 +1366,7 @@ function SiteNodeSection() {
 function FinalCta({ about = false }) {
   return (
     <section className="final-cta section-space" id="pilot">
-      <img className="final-cta-mark" src="/assets/damaros-monogram.svg" alt="" aria-hidden="true" />
+      <img className="final-cta-mark" src="/assets/damaros-monogram.svg" alt="" aria-hidden="true" loading="lazy" decoding="async" />
       <p>{about ? 'Build capacity where care already happens.' : 'Bring one protocol. Leave with a replayable run.'}</p>
       <h2>{about ? 'Make research capacity buildable.' : 'Start with a real site workflow.'}</h2>
       <PilotButton className="button button-primary button-large">Start a pilot <ArrowUpRight size={20} weight="bold" /></PilotButton>
@@ -1534,15 +1399,15 @@ function HomePage() {
 function AboutHero() {
   const root = useRef(null)
   const reduced = useReducedMotion()
-  useGSAP(() => {
-    if (reduced || window.innerWidth < 700) return
+  useEnterMotion(root, reduced, () => {
     const timeline = gsap.timeline({ defaults: { ease: 'power2.out' } })
     timeline
       .from('.about-hero h1 span', { yPercent: 115, stagger: 0.1, duration: 1 })
       .from('.about-hero-copy p', { opacity: 0, y: 18, duration: 0.85 }, '-=0.5')
       .from('.about-network', { opacity: 0, y: 28, duration: 1 }, '-=0.65')
       .from('.about-drum', { opacity: 0, y: 14, duration: 0.9 }, '-=0.75')
-  }, { scope: root, dependencies: [reduced] })
+    return timeline
+  }, '(min-width: 700px)')
 
   return (
     <section className="about-hero" id="about-top" ref={root}>
@@ -1551,7 +1416,7 @@ function AboutHero() {
         <p>Damaros makes complex clinical research deployable where patients already receive care.</p>
       </div>
       <div className="about-network">
-        <img className="about-drum" src="/assets/damaros-monogram-blue.svg" alt="" aria-hidden="true" />
+        <img className="about-drum" src="/assets/damaros-monogram-blue.svg" alt="" aria-hidden="true" decoding="async" />
       </div>
       <a className="about-scroll-cue" href="#founder" aria-label="Continue to the founder letter" onClick={(event) => smoothSection(event, '#founder')}>
         <CaretDown size={22} weight="bold" />
@@ -1581,16 +1446,13 @@ function FounderLetter() {
 function WhyNow() {
   const root = useRef(null)
   const reduced = useReducedMotion()
-  useGSAP(() => {
-    if (reduced || window.innerWidth <= 900) return
-    gsap.from('.why-now-line', {
-      opacity: 0,
-      y: 30,
-      stagger: 0.16,
-      duration: 0.85,
-      scrollTrigger: { trigger: root.current, start: 'top 68%' },
-    })
-  }, { scope: root, dependencies: [reduced] })
+  useEnterMotion(root, reduced, () => gsap.from('.why-now-line', {
+    opacity: 0,
+    y: 30,
+    stagger: 0.16,
+    duration: 0.85,
+    scrollTrigger: { trigger: root.current, start: 'top 68%', once: true },
+  }))
 
   return (
     <section className="why-now section-space" id="why-now" ref={root}>
@@ -1656,13 +1518,14 @@ function AboutPage() {
 }
 
 export default function App() {
-  const { pathname } = useLocation()
+  useScrollIdle()
+  useDocumentVisible()
 
   return (
     <PilotProvider>
       <div className="app-root">
         <PageReset />
-        <SiteNav key={pathname} />
+        <SiteNav />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />

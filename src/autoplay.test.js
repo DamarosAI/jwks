@@ -11,8 +11,10 @@ import {
   SCROLL_IDLE_MS,
   autoplayIndex,
   isAutoplayToggle,
+  scrollingDocumentClass,
   shouldKeepPreviousStage,
   shouldPlayAutoplay,
+  shouldRunAmbient,
 } from './autoplay.js'
 
 function node(match) {
@@ -48,7 +50,18 @@ describe('autoplay hold', () => {
     assert.equal(shouldPlayAutoplay({ held: true }), false)
     assert.equal(shouldPlayAutoplay({ inView: false }), false)
     assert.equal(shouldPlayAutoplay({ scrollIdle: false }), false)
+    assert.equal(shouldPlayAutoplay({ visible: false }), false)
+    assert.equal(shouldPlayAutoplay({ narrow: true }), false)
     assert.ok(SCROLL_IDLE_MS >= 480 && SCROLL_IDLE_MS <= 800)
+  })
+
+  it('keeps ambient motion off on small, hidden, or reduced views', () => {
+    assert.equal(shouldRunAmbient({}), true)
+    assert.equal(shouldRunAmbient({ reduced: true }), false)
+    assert.equal(shouldRunAmbient({ inView: false }), false)
+    assert.equal(shouldRunAmbient({ narrow: true }), false)
+    assert.equal(scrollingDocumentClass(true), '')
+    assert.equal(scrollingDocumentClass(false), 'is-scrolling')
   })
 
   it('keeps the exiting stage only for autoplay crossfades', () => {

@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
-import { PANE_SETTLE_CLASS, PANE_SETTLE_MS, easeSectionScroll, paneSettleClass, prefersReducedMotion, sectionScrollDuration, sectionScrollTarget } from './motion.js'
+import { PANE_SETTLE_CLASS, PANE_SETTLE_MS, easeSectionScroll, paneSettleClass, prefersReducedMotion, sectionScrollDuration, sectionScrollTarget, viewportHeight } from './motion.js'
 
 describe('pane settle', () => {
   it('keeps first paint still and arms later swaps', () => {
@@ -62,6 +62,11 @@ describe('section scroll', () => {
       documentHeight: 4000,
       insetTop: 90,
     }), 0)
+  })
+
+  it('prefers the visual viewport when the chrome resizes', () => {
+    assert.equal(viewportHeight({ innerHeight: 900 }), 900)
+    assert.equal(viewportHeight({ innerHeight: 900, visualViewport: { height: 640.4 } }), 640)
   })
 
   it('keeps hops short and eases through the middle', () => {

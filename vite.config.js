@@ -7,5 +7,8 @@ export default defineConfig({
     outDir: 'dist',
     assetsDir: 'assets',
     sourcemap: false,
+    cssMinify: true,
+    modulePreload: { polyfill: false },
+    target: 'es2022',
   },
 })
