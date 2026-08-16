@@ -1421,6 +1421,9 @@ function AgentOperations() {
 function SiteNodeSection() {
   const root = useRef(null)
   const reduced = useReducedMotion()
+  const [selectedControl, setSelectedControl] = useState(1)
+  const [reviewOpen, setReviewOpen] = useState(false)
+  const [reviewComplete, setReviewComplete] = useState(false)
   const sources = [
     { name: 'Epic · FHIR R4', read: 'Last read 10:41', icon: Database },
     { name: 'Lab interface', read: 'Last read 10:41', icon: FileText },
@@ -1428,11 +1431,12 @@ function SiteNodeSection() {
     { name: 'eReg · CTMS', read: 'Signer sync 10:42', icon: ShieldCheck },
   ]
   const controls = [
-    { name: 'Evidence visibility', policy: 'Site roles only', scope: 'FHIR resources, documents, and mapped facts', checked: '10:41 · 4 approved sources', record: 'POL-018-EV4' },
-    { name: 'Artifact release', policy: 'PI or delegated signer', scope: 'Replay bundles and sponsor-facing artifacts', checked: '10:42 · signer roster current', record: 'POL-018-AR2' },
-    { name: 'Network signal', policy: 'Aggregate coverage only', scope: 'Protocol capability and site capacity', checked: '10:42 · 0 patient fields', record: 'POL-018-NS7' },
-    { name: 'Model execution', policy: 'Local inference allowed', scope: 'Site node runtime inside institution boundary', checked: '10:43 · runtime attested', record: 'POL-018-ME3' },
+    { name: 'Evidence visibility', policy: 'Site roles only', title: 'Inspect evidence access boundary', description: 'Only approved site roles can open source evidence or mapped patient facts.', scope: 'FHIR resources, documents, and mapped facts', checked: '10:41 · 4 approved sources', record: 'POL-018-EV4', recipient: '7 approved site roles', patientFields: 'Site-held', action: 'Review access boundary', success: 'Access review recorded' },
+    { name: 'Artifact release', policy: 'PI or delegated signer', title: 'Review sponsor artifact release', description: 'Replay bundles remain at the site until a PI or delegated signer releases the exact artifact.', scope: 'Replay bundle · RPL-1047', checked: '10:42 · signer roster current', record: 'POL-018-AR2', recipient: 'Meridian Oncology', patientFields: '0 in sponsor artifact', action: 'Review artifact release', success: 'Artifact review recorded' },
+    { name: 'Network signal', policy: 'Aggregate coverage only', title: 'Release aggregate coverage signal', description: 'Review the exact outbound payload. Sponsor receives site capability, never patient facts.', scope: 'Protocol capability · Site 018', checked: '10:42 · payload reduced', record: 'POL-018-NS7', recipient: 'Meridian Oncology', patientFields: '0', action: 'Review signal release', success: 'Signal review recorded' },
+    { name: 'Model execution', policy: 'Local inference allowed', title: 'Inspect local model attestation', description: 'Model execution stays inside the institution boundary and writes only source-linked work products.', scope: 'Site node runtime · Run 018-017', checked: '10:43 · runtime attested', record: 'POL-018-ME3', recipient: 'Site execution record', patientFields: 'No raw egress', action: 'Review run attestation', success: 'Attestation review recorded' },
   ]
+  const control = controls[selectedControl]
   useGSAP(() => {
     if (reduced || window.innerWidth <= 900) return
     gsap.from('.node-copy > *', {
@@ -1466,13 +1470,16 @@ function SiteNodeSection() {
           <div className="node-policy-main">
             <div className="node-policy-header"><span><small>SITE CONTROL PLANE</small><strong>Local sources. Local signatures.</strong></span><em><ShieldCheck size={16} /> All controls healthy</em></div>
             <div className="node-security-workspace">
-              <div className="node-policy-list"><span>ACTIVE CONTROLS</span>{controls.map((item) => <div className="node-policy-item" key={item.name}><ShieldCheck size={15} /><span><strong>{item.name}</strong><small>{item.policy}</small></span><em>ENFORCED</em></div>)}</div>
+              <div className="node-policy-list"><span>ACTIVE CONTROLS</span>{controls.map((item, index) => <button className={`node-policy-item${selectedControl === index ? ' active' : ''}`} type="button" aria-pressed={selectedControl === index} onClick={() => { setSelectedControl(index); setReviewOpen(false); setReviewComplete(false) }} key={item.name}><ShieldCheck size={15} /><span><strong>{item.name}</strong><small>{item.policy}</small></span><em>ENFORCED</em></button>)}</div>
               <div className="node-control-detail">
-                <header><span><small>OUTBOUND PAYLOAD</small><h4>Release aggregate coverage signal</h4></span><em><i /> ENFORCED</em></header>
-                <p>Review exact outbound payload before site signature. No patient facts or identifiers are present.</p>
-                <dl><div><dt>PAYLOAD</dt><dd>Protocol capability · Site 018</dd></div><div><dt>PATIENT FIELDS</dt><dd>0</dd></div><div><dt>RECIPIENT</dt><dd>Meridian Oncology</dd></div><div><dt>AUTHORITY</dt><dd>Dr. M. Avdol · delegated signer</dd></div></dl>
-                <div className="node-event-ledger"><span>RECENT POLICY EVENTS</span><div><time>10:43</time><strong>Local agent run attested</strong><small>ME3 · verified</small></div><div><time>10:42</time><strong>Outbound payload reduced</strong><small>0 patient fields</small></div><div><time>10:42</time><strong>Delegated signer matched</strong><small>AR2 · Dr. M. Avdol</small></div></div>
-                <div className="node-release-card"><span><small>COVERAGE BOUNDARY</small><strong>Protocol coverage · aggregate only</strong><em>0 patient fields · site signature required</em></span></div>
+                <header><span><small>SELECTED CONTROL · {control.record}</small><h4>{control.title}</h4></span><em><i /> ENFORCED</em></header>
+                {reviewOpen ? <InlineActionPanel open complete={reviewComplete} eyebrow="SITE REVIEW" title={control.action} description={control.description} rows={[["Scope", control.scope], ["Recipient", control.recipient], ["Patient fields", control.patientFields], ["Authority", control.policy]]} confirmLabel="Record site review" successTitle={control.success} successDescription={`${control.record} stays enforced. Review was written to the site execution record.`} onClose={() => setReviewOpen(false)} onConfirm={() => setReviewComplete(true)} /> : <>
+                  <p>{control.description}</p>
+                  <dl><div><dt>SCOPE</dt><dd>{control.scope}</dd></div><div><dt>PATIENT FIELDS</dt><dd>{control.patientFields}</dd></div><div><dt>RECIPIENT</dt><dd>{control.recipient}</dd></div><div><dt>AUTHORITY</dt><dd>{control.policy}</dd></div></dl>
+                  <div className="node-event-ledger"><span>RECENT POLICY EVENTS</span><div><time>10:43</time><strong>{control.name} checked</strong><small>{control.record} · verified</small></div><div><time>10:42</time><strong>Outbound boundary evaluated</strong><small>{control.patientFields}</small></div><div><time>10:42</time><strong>Site authority matched</strong><small>{control.policy}</small></div></div>
+                  <div className="node-release-card"><span><small>CONTROL BOUNDARY</small><strong>{control.scope}</strong><em>{control.checked} · site review required</em></span></div>
+                  <button className="node-review-button" type="button" onClick={() => { setReviewOpen(true); setReviewComplete(false) }}>{control.action} <ArrowRight size={17} weight="bold" /></button>
+                </>}
               </div>
             </div>
           </div>
