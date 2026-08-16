@@ -407,14 +407,15 @@ h2 {
   border: 0;
   background: transparent;
   color: var(--faint);
-  font: inherit;
+  font-family: var(--font-ui);
+  font-weight: 400;
   text-align: left;
   cursor: pointer;
   transition: color 180ms ease;
 }
 
-.page-spine button > span { color: inherit; font-size: 0.8rem; font-variant-numeric: tabular-nums; font-weight: 650; letter-spacing: 0.01em; }
-.page-spine button > strong { color: inherit; font-size: 0.67rem; font-weight: 650; opacity: 0; transform: none; transition: opacity 160ms ease; }
+.page-spine button > span { color: inherit; font-family: inherit; font-size: 0.8rem; font-variant-numeric: tabular-nums; font-weight: 400; letter-spacing: 0.01em; }
+.page-spine button > strong { color: inherit; font-family: inherit; font-size: 0.67rem; font-weight: 400; opacity: 0; transform: none; transition: opacity 160ms ease; }
 .page-spine button:hover,
 .page-spine button:focus-visible,
 .page-spine button.active { color: var(--accent); }
@@ -11880,6 +11881,12 @@ html.is-hidden .hero-agent.is-active i,
   .thesis-head p,
   .capacity-section .section-heading p
 ) {
+  font-family: var(--font-ui);
+  font-weight: 400;
+}
+
+#root .page-spine,
+#root .page-spine :is(button, span, strong) {
   font-family: var(--font-ui);
   font-weight: 400;
 }

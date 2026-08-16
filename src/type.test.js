@@ -68,5 +68,6 @@ describe('site type', () => {
     assert.match(css, /@keyframes workspace-enter\s*\{\s*from\s*\{\s*opacity:\s*0;\s*\}\s*\}/)
     assert.match(css, /@keyframes inline-action-in\s*\{[\s\S]*?from\s*\{\s*opacity:\s*0;\s*\}[\s\S]*?to\s*\{\s*opacity:\s*1;\s*\}/)
     assert.match(css, /\.page-spine\s*\{[\s\S]*?transform:\s*none;/)
+    assert.match(css, /#root \.page-spine :is\(button, span, strong\) \{\s*font-family:\s*var\(--font-ui\);\s*font-weight:\s*400;/)
   })
 })
