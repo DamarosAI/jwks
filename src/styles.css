@@ -498,7 +498,7 @@ strong {
   max-width: 600px;
   margin-top: 30px;
   color: var(--text-soft);
-  font-size: clamp(1rem, 1.4vw, 1.22rem);
+  font-size: clamp(1.16rem, 1.62vw, 1.42rem);
   line-height: 1.45;
 }
 
@@ -968,7 +968,7 @@ strong {
   max-width: 620px;
   margin-top: 19px;
   color: var(--muted);
-  font-size: 1rem;
+  font-size: 1.16rem;
 }
 
 .centered-heading p {
@@ -1377,7 +1377,7 @@ strong {
   max-width: 410px;
   margin-top: 19px;
   color: var(--muted);
-  font-size: 0.94rem;
+  font-size: 1.09rem;
 }
 
 .demo-controls {
@@ -2210,7 +2210,7 @@ strong {
   max-width: 560px;
   margin-top: 28px;
   color: var(--text-soft);
-  font-size: 1.08rem;
+  font-size: 1.25rem;
 }
 
 .about-network {
@@ -2701,7 +2701,7 @@ strong {
 
   .hero-copy > p {
     margin-top: 23px;
-    font-size: 0.96rem;
+    font-size: 1.11rem;
   }
 
   .hero-actions {
@@ -4272,7 +4272,7 @@ html { scroll-padding-top: 96px; }
   max-width: 620px;
   margin-top: 17px;
   color: var(--muted);
-  font-size: 1rem;
+  font-size: 1.16rem;
 }
 
 .live-workspace {
@@ -4917,7 +4917,7 @@ html { scroll-padding-top: 96px; }
 .agent-story-heading p {
   margin-top: 20px;
   color: var(--accent);
-  font-size: clamp(1.15rem, 1.8vw, 1.7rem);
+  font-size: clamp(1.33rem, 2.09vw, 1.97rem);
   font-weight: 700;
 }
 
@@ -6294,7 +6294,7 @@ html { scroll-padding-top: 96px; }
 /* About page rebuild: one type scale, one spatial rhythm, one map-led hero. */
 .about-hero { width: min(100%, 1420px); grid-template-columns: minmax(0, 0.93fr) minmax(520px, 1.07fr); gap: clamp(52px, 7vw, 110px); padding-top: 132px; padding-bottom: 88px; }
 .about-hero-copy h1 { max-width: 700px; font-size: clamp(3.35rem, 5.1vw, 5.35rem); letter-spacing: -0.03em; line-height: 0.98; }
-.about-hero-copy p { max-width: 540px; margin-top: 23px; font-size: clamp(1rem, 1.35vw, 1.2rem); line-height: 1.45; }
+.about-hero-copy p { max-width: 540px; margin-top: 23px; font-size: clamp(1.16rem, 1.57vw, 1.39rem); line-height: 1.45; }
 .about-network { min-height: 430px; background: radial-gradient(circle at 53% 48%, color-mix(in srgb, var(--accent) 11%, transparent), transparent 34%), #f8fbfd; }
 .network-us-map { position: absolute; inset: 38px 26px 24px; width: calc(100% - 52px); height: calc(100% - 62px); object-fit: contain; opacity: 0.68; filter: sepia(72%) saturate(910%) hue-rotate(165deg) brightness(83%) contrast(88%); }
 .network-core { top: 49%; left: 57%; width: 72px; height: 72px; padding: 16px; border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); background: #f8fbfd; box-shadow: 0 0 0 13px color-mix(in srgb, var(--accent) 8%, transparent), 0 14px 34px rgba(33, 77, 121, 0.16); }
@@ -6317,7 +6317,7 @@ html { scroll-padding-top: 96px; }
 }
 
 @media (max-width: 640px) {
-  .about-hero { padding: 112px 20px 62px; }.about-hero-copy h1 { font-size: clamp(3rem, 13vw, 4.3rem); }.about-hero-copy p { font-size: 1rem; }.about-network { min-height: 350px; }.network-us-map { inset: 35px 10px 10px; width: calc(100% - 20px); height: calc(100% - 45px); }.network-core { width: 56px; height: 56px; padding: 12px; }.clinic-node { width: 11px; min-width: 11px; height: 11px; }.founder-section { padding-inline: 20px; }.founder-section blockquote { font-size: clamp(1.9rem, 9vw, 3rem); }.why-now { grid-template-columns: 1fr; padding-inline: 20px; }.why-now-line { min-height: 220px; padding: 22px; }.why-now-title { min-height: 270px; }.why-now-title h2 { font-size: clamp(2.25rem, 10.5vw, 3.2rem); }.human-outcomes { padding-inline: 20px; }.outcome-switcher { grid-template-columns: 1fr; min-height: auto; }.outcome-tabs { flex-direction: row; padding: 8px; border-right: 0; border-bottom: 1px solid var(--border); }.outcome-tabs button { flex: 1; justify-content: center; padding: 12px 6px; font-size: 0.71rem; }.outcome-tabs button svg { display: none; }.outcome-copy { min-height: 270px; padding: 32px 24px; }.outcome-copy p { font-size: clamp(1.8rem, 8.7vw, 2.65rem); }
+  .about-hero { padding: 112px 20px 62px; }.about-hero-copy h1 { font-size: clamp(3rem, 13vw, 4.3rem); }.about-hero-copy p { font-size: 1.16rem; }.about-network { min-height: 350px; }.network-us-map { inset: 35px 10px 10px; width: calc(100% - 20px); height: calc(100% - 45px); }.network-core { width: 56px; height: 56px; padding: 12px; }.clinic-node { width: 11px; min-width: 11px; height: 11px; }.founder-section { padding-inline: 20px; }.founder-section blockquote { font-size: clamp(1.9rem, 9vw, 3rem); }.why-now { grid-template-columns: 1fr; padding-inline: 20px; }.why-now-line { min-height: 220px; padding: 22px; }.why-now-title { min-height: 270px; }.why-now-title h2 { font-size: clamp(2.25rem, 10.5vw, 3.2rem); }.human-outcomes { padding-inline: 20px; }.outcome-switcher { grid-template-columns: 1fr; min-height: auto; }.outcome-tabs { flex-direction: row; padding: 8px; border-right: 0; border-bottom: 1px solid var(--border); }.outcome-tabs button { flex: 1; justify-content: center; padding: 12px 6px; font-size: 0.71rem; }.outcome-tabs button svg { display: none; }.outcome-copy { min-height: 270px; padding: 32px 24px; }.outcome-copy p { font-size: clamp(1.8rem, 8.7vw, 2.65rem); }
 }
 
 /* Dense continental network: actual state boundaries, no labels or links. */
@@ -6784,7 +6784,7 @@ html { scroll-padding-top: 96px; }
   max-width: 330px;
   margin: 0;
   color: color-mix(in srgb, #f8fbfd 76%, transparent);
-  font-size: 0.95rem;
+  font-size: 1.1rem;
   line-height: 1.48;
 }
 
@@ -6826,7 +6826,7 @@ html { scroll-padding-top: 96px; }
   .why-now { margin-inline: 20px; width: auto; }
   .why-now-title.why-now-line { min-height: 270px; padding: 30px 26px; }
   .why-now-title h2 { font-size: clamp(2.9rem, 13vw, 4rem); }
-  .why-now-title p { font-size: 0.88rem; }
+  .why-now-title p { font-size: 1.02rem; }
   .why-now-lines .why-now-line { grid-template-columns: 38px minmax(0, 1fr); gap: 12px; min-height: 0; padding: 25px 22px; }
   .why-now-lines .why-now-line > div { gap: 7px; }
   .why-now-lines .why-now-line p { font-size: 0.84rem; }
