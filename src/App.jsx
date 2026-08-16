@@ -1570,7 +1570,7 @@ function HumanOutcomes() {
 
   return (
     <section className="human-outcomes section-space" id="people">
-      <div className="section-heading"><h2>Built around the people holding the line.</h2></div>
+      <div className="section-heading"><h2><span className="people-title-line">Built around the people</span><span className="people-title-line">holding the line.</span></h2></div>
       <div className="outcome-accordion" data-active={active} role="tablist" aria-label="Damaros outcomes">
         {Object.entries(outcomes).map(([key, [name, copy]], index) => (
           <button key={key} type="button" role="tab" aria-selected={active === key} className={`outcome-panel${active === key ? ' active' : ''}`} onClick={() => setActive(key)}>
