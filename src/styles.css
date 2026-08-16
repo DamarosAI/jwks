@@ -10163,3 +10163,10 @@ html { scroll-padding-top: 96px; }
     grid-template-columns: 1fr;
   }
 }
+
+/* Mobile product pass: keep page navigation out of embedded workspaces. */
+@media (max-width: 640px) {
+  .page-spine {
+    display: none;
+  }
+}
