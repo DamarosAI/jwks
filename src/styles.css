@@ -32,6 +32,7 @@
   --nav-height: 72px;
   --type-control: 16px;
   --type-product-control: 15px;
+  --type-product-floor: 13px;
   --tracking-control: 0.025em;
   --node-detail-min-height: 647px;
   --motion-press-in: 70ms cubic-bezier(0.4, 0, 1, 1);
@@ -3406,7 +3407,7 @@ html { scroll-padding-top: 96px; }
 .landing-source-demo small,
 .landing-source-demo time,
 .landing-source-demo em,
-.landing-source-demo b { font-size: 0.7rem !important; }
+.landing-source-demo b { font-size: var(--type-product-floor) !important; }
 .landing-source-demo button,
 .landing-source-demo [role='button'] { border-radius: 8px; font-size: 0.75rem; }
 .landing-source-demo button strong,
@@ -8401,7 +8402,7 @@ html { scroll-padding-top: 96px; }
 .hero-workspace :is(b, strong),
 .agent-console :is(b, strong),
 .live-workspace :is(b, strong) {
-  font-weight: 700;
+  font-weight: 400;
 }
 
 .protocol-source-head > span,
@@ -11754,4 +11755,30 @@ html.is-hidden .hero-agent.is-active i,
   .inline-action-panel footer button
 ) {
   font-size: var(--type-product-control);
+}
+
+#root :is(
+  .landing-source-demo,
+  .hero-workspace,
+  .agent-console,
+  .node-security-workspace,
+  .site-control-review,
+  .live-workspace
+) :is(*) {
+  font-weight: 400;
+  font-kerning: none;
+  font-variant-ligatures: none;
+  font-feature-settings: 'kern' 0, 'liga' 0, 'calt' 0;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root :is(
+  .landing-source-demo,
+  .agent-console,
+  .node-security-workspace,
+  .site-control-review
+) :is(small, em, time, b, dt, span) {
+  font-size: max(var(--type-product-floor), 13px);
 }

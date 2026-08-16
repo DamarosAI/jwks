@@ -626,7 +626,7 @@ function LandingHero() {
     timeline
       .from('.hero-line', { yPercent: 110, duration: 1.2, stagger: 0.14 })
       .from('.hero-copy > p, .hero-actions', { opacity: 0, y: 18, duration: 0.9, stagger: 0.12 }, '-=0.5')
-      .from('.hero-workspace', { opacity: 0, y: 36, duration: 1.15 }, '-=0.7')
+      .from('.hero-workspace', { opacity: 0, y: 36, duration: 1.15, clearProps: 'transform' }, '-=0.7')
     return timeline
   }, '(min-width: 700px)')
 
@@ -1294,6 +1294,7 @@ function AgentOperations() {
     y: 36,
     duration: 0.95,
     ease: 'power2.out',
+    clearProps: 'transform',
     scrollTrigger: { trigger: root.current, start: 'top 72%', once: true },
   }))
 
@@ -1404,12 +1405,14 @@ function SiteNodeSection() {
       y: 32,
       duration: 0.8,
       stagger: 0.12,
+      clearProps: 'transform',
       scrollTrigger: { trigger: root.current, start: 'top 70%', once: true },
     }),
     gsap.from('.node-system > *', {
       opacity: 0,
       y: 18,
       stagger: 0.1,
+      clearProps: 'transform',
       scrollTrigger: { trigger: root.current, start: 'top 70%', once: true },
     }),
   ])
