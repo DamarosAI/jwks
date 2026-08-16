@@ -818,6 +818,74 @@ function InlineActionPanel({ open, complete = false, eyebrow = 'ACTION REQUIRED'
   )
 }
 
+function SiteControlReview({ control, phase, reduced, onBack, onConfirm, onReturn }) {
+  const root = useRef(null)
+  const complete = phase === 'complete'
+  const saving = phase === 'saving'
+
+  useGSAP(() => {
+    if (reduced || !root.current) return undefined
+    const targets = root.current.querySelectorAll('[data-review-motion]')
+    const tween = gsap.fromTo(targets, { opacity: 0, y: 8 }, {
+      opacity: 1,
+      y: 0,
+      duration: 0.36,
+      stagger: 0.045,
+      ease: 'power2.out',
+      clearProps: 'transform',
+    })
+    return () => tween.kill()
+  }, { scope: root, dependencies: [phase, control.record, reduced] })
+
+  return (
+    <section className={`site-control-review is-${phase}`} ref={root} role="region" aria-label={complete ? `${control.success} receipt` : control.action}>
+      <header data-review-motion>
+        <span className="site-review-state-icon" aria-hidden="true">{complete ? <CheckCircle size={20} weight="fill" /> : saving ? <i /> : <ShieldCheck size={20} />}</span>
+        <div><small>{complete ? 'REVIEW RECORDED' : saving ? 'WRITING TO EXECUTION RECORD' : 'SITE REVIEW'}</small><h5>{complete ? control.success : saving ? 'Binding site decision' : control.action}</h5></div>
+      </header>
+
+      {saving ? (
+        <div className="site-review-saving" aria-live="polite" aria-busy="true" data-review-motion>
+          <strong>Recording {control.record}</strong>
+          <p>Preserving reviewer authority, boundary result, and source trace.</p>
+          <div className="site-review-progress">
+            <span><CheckCircle size={16} weight="fill" /><b>Policy scope verified</b><small>{control.scope}</small></span>
+            <span><CheckCircle size={16} weight="fill" /><b>Patient boundary verified</b><small>{control.patientFields}</small></span>
+            <span className="is-writing"><i /><b>Signing execution record</b><small>{control.receipt}</small></span>
+          </div>
+        </div>
+      ) : complete ? (
+        <>
+          <p data-review-motion>{control.outcome}</p>
+          <div className="site-review-receipt" data-review-motion>
+            <span><small>REVIEW ID</small><strong>{control.receipt}</strong></span>
+            <span><small>DECISION</small><strong>{control.decision}</strong></span>
+            <span><small>ACTOR</small><strong>Authenticated site reviewer</strong></span>
+            <span><small>INTEGRITY</small><strong>Ed25519 · verified</strong></span>
+          </div>
+          <div className="site-review-chain" data-review-motion><small>BOUND RECORD</small><span><time>10:42</time><strong>Boundary evaluated</strong><em>{control.patientFields}</em></span><span><time>10:43</time><strong>Authority matched</strong><em>{control.policy}</em></span><span><time>10:44</time><strong>Review signed</strong><em>{control.receipt}</em></span></div>
+          <div className="site-review-confirmation" data-review-motion><CheckCircle size={18} weight="fill" /><span><strong>Execution record updated</strong><small>{control.record} · 10:44 · institution-held</small></span></div>
+        </>
+      ) : (
+        <>
+          <p data-review-motion>{control.description}</p>
+          <dl className="site-review-summary" data-review-motion>
+            <div><dt>SCOPE</dt><dd>{control.scope}</dd></div>
+            <div><dt>RECIPIENT</dt><dd>{control.recipient}</dd></div>
+            <div><dt>PATIENT FIELDS</dt><dd>{control.patientFields}</dd></div>
+            <div><dt>AUTHORITY</dt><dd>{control.policy}</dd></div>
+          </dl>
+          <div className="site-review-decision" data-review-motion><small>DECISION TO RECORD</small><strong>{control.decision}</strong><span>{control.outcome}</span></div>
+        </>
+      )}
+
+      <footer data-review-motion>
+        {complete ? <button className="button button-primary" type="button" onClick={onReturn}>Return to control</button> : saving ? <button className="button button-primary" type="button" disabled>Recording review</button> : <><button className="button button-secondary" type="button" onClick={onBack}>Back</button><button className="button button-primary" type="button" onClick={onConfirm}>Record site review</button></>}
+      </footer>
+    </section>
+  )
+}
+
 function ProtocolView({ tick = 0, onAdvance }) {
   const criteria = [
     ['I-2.1', 'EGFR / ALK molecular status', 'Source-dependent'],
@@ -1271,10 +1339,11 @@ function AgentOperations() {
 
 function SiteNodeSection() {
   const root = useRef(null)
+  const reviewTimer = useRef(0)
   const reduced = useReducedMotion()
   const [selectedControl, setSelectedControl] = useState(1)
-  const [reviewOpen, setReviewOpen] = useState(false)
-  const [reviewComplete, setReviewComplete] = useState(false)
+  const [reviewPhase, setReviewPhase] = useState('idle')
+  const [reviewedControls, setReviewedControls] = useState({})
   const sources = [
     { name: 'Epic · FHIR R4', read: 'Last read 10:41', icon: Database },
     { name: 'Lab interface', read: 'Last read 10:41', icon: FileText },
@@ -1282,12 +1351,33 @@ function SiteNodeSection() {
     { name: 'eReg · CTMS', read: 'Signer sync 10:42', icon: ShieldCheck },
   ]
   const controls = [
-    { name: 'Evidence visibility', policy: 'Site roles only', title: 'Inspect evidence access boundary', description: 'Only approved site roles can open source evidence or mapped patient facts.', scope: 'FHIR resources, documents, and mapped facts', checked: '10:41 · 4 approved sources', record: 'POL-018-EV4', recipient: '7 approved site roles', patientFields: 'Site-held', action: 'Review access boundary', success: 'Access review recorded' },
-    { name: 'Artifact release', policy: 'PI or delegated signer', title: 'Review sponsor artifact release', description: 'Replay bundles remain at the site until a PI or delegated signer releases the exact artifact.', scope: 'Replay bundle · RPL-1047', checked: '10:42 · signer roster current', record: 'POL-018-AR2', recipient: 'Meridian Oncology', patientFields: '0 in sponsor artifact', action: 'Review artifact release', success: 'Artifact review recorded' },
-    { name: 'Network signal', policy: 'Aggregate coverage only', title: 'Release aggregate coverage signal', description: 'Review the exact outbound payload. Sponsor receives site capability, never patient facts.', scope: 'Protocol capability · Site 018', checked: '10:42 · payload reduced', record: 'POL-018-NS7', recipient: 'Meridian Oncology', patientFields: '0 patient fields', action: 'Review signal release', success: 'Signal review recorded' },
-    { name: 'Model execution', policy: 'Local inference allowed', title: 'Inspect local model attestation', description: 'Model execution stays inside the institution boundary and writes only source-linked work products.', scope: 'Site node runtime · Run 018-017', checked: '10:43 · runtime attested', record: 'POL-018-ME3', recipient: 'Site execution record', patientFields: 'No raw egress', action: 'Review run attestation', success: 'Attestation review recorded' },
+    { name: 'Evidence visibility', policy: 'Site roles only', title: 'Inspect evidence access boundary', description: 'Only approved site roles can open source evidence or mapped patient facts.', scope: 'FHIR resources, documents, and mapped facts', checked: '10:41 · 4 approved sources', record: 'POL-018-EV4', receipt: 'REV-018-EV4-1044', recipient: '7 approved site roles', patientFields: 'Site-held', action: 'Review access boundary', decision: 'Confirm current access boundary', outcome: 'Access remains limited to 7 approved site roles. No external principal receives patient evidence.', success: 'Access review recorded' },
+    { name: 'Artifact release', policy: 'PI or delegated signer', title: 'Review sponsor artifact release', description: 'Replay bundles remain at the site until a PI or delegated signer releases the exact artifact.', scope: 'Replay bundle · RPL-1047', checked: '10:42 · signer roster current', record: 'POL-018-AR2', receipt: 'REV-018-AR2-1044', recipient: 'Meridian Oncology', patientFields: '0 in sponsor artifact', action: 'Review artifact release', decision: 'Confirm delegated release authority', outcome: 'Replay remains site-held until a PI or delegated signer releases this exact artifact.', success: 'Artifact review recorded' },
+    { name: 'Network signal', policy: 'Aggregate coverage only', title: 'Release aggregate coverage signal', description: 'Review the exact outbound payload. Sponsor receives site capability, never patient facts.', scope: 'Protocol capability · Site 018', checked: '10:42 · payload reduced', record: 'POL-018-NS7', receipt: 'REV-018-NS7-1044', recipient: 'Meridian Oncology', patientFields: '0 patient fields', action: 'Review signal release', decision: 'Approve aggregate-only payload', outcome: 'Coverage signal contains 0 patient fields. Site capability is the only outbound payload.', success: 'Signal review recorded' },
+    { name: 'Model execution', policy: 'Local inference allowed', title: 'Inspect local model attestation', description: 'Model execution stays inside the institution boundary and writes only source-linked work products.', scope: 'Site node runtime · Run 018-017', checked: '10:43 · runtime attested', record: 'POL-018-ME3', receipt: 'REV-018-ME3-1044', recipient: 'Site execution record', patientFields: 'No raw egress', action: 'Review run attestation', decision: 'Accept local runtime attestation', outcome: 'Run remains site-bound. Only source-linked work products enter the execution record.', success: 'Attestation review recorded' },
   ]
   const control = controls[selectedControl]
+  const completedReview = reviewedControls[control.record]
+
+  useEffect(() => () => window.clearTimeout(reviewTimer.current), [])
+
+  const selectControl = (index) => {
+    window.clearTimeout(reviewTimer.current)
+    setSelectedControl(index)
+    setReviewPhase('idle')
+  }
+
+  const openControlReview = () => setReviewPhase(completedReview ? 'complete' : 'review')
+
+  const confirmControlReview = () => {
+    const record = control.record
+    window.clearTimeout(reviewTimer.current)
+    setReviewPhase('saving')
+    reviewTimer.current = window.setTimeout(() => {
+      setReviewedControls((current) => ({ ...current, [record]: true }))
+      setReviewPhase('complete')
+    }, reduced ? 120 : 900)
+  }
   useEnterMotion(root, reduced, () => [
     gsap.from('.node-copy > *', {
       opacity: 0,
@@ -1320,15 +1410,15 @@ function SiteNodeSection() {
           <div className="node-policy-main">
             <div className="node-policy-header"><span><small>SITE CONTROL PLANE</small><strong>Local sources. Local signatures.</strong></span><em><ShieldCheck size={16} /> All controls healthy</em></div>
             <div className="node-security-workspace">
-              <div className="node-policy-list"><span>ACTIVE CONTROLS</span>{controls.map((item, index) => <button className={`node-policy-item${selectedControl === index ? ' active' : ''}`} type="button" aria-pressed={selectedControl === index} onClick={() => { setSelectedControl(index); setReviewOpen(false); setReviewComplete(false) }} key={item.name}><ShieldCheck size={15} /><span><strong>{item.name}</strong><small>{item.policy}</small></span><em>ENFORCED</em></button>)}</div>
+              <div className="node-policy-list"><span>ACTIVE CONTROLS</span>{controls.map((item, index) => <button className={`node-policy-item${selectedControl === index ? ' active' : ''}${reviewedControls[item.record] ? ' is-reviewed' : ''}`} type="button" aria-pressed={selectedControl === index} onClick={() => selectControl(index)} key={item.name}><ShieldCheck size={15} /><span><strong>{item.name}</strong><small>{item.policy}</small></span><em>{reviewedControls[item.record] ? 'REVIEWED' : 'ENFORCED'}</em></button>)}</div>
               <div className="node-control-detail">
-                <header><span><small>SELECTED CONTROL · {control.record}</small><h4>{control.title}</h4></span><em><i /> ENFORCED</em></header>
-                {reviewOpen ? <InlineActionPanel open complete={reviewComplete} eyebrow="SITE REVIEW" title={control.action} description={control.description} rows={[["Scope", control.scope], ["Recipient", control.recipient], ["Patient fields", control.patientFields], ["Authority", control.policy]]} confirmLabel="Record site review" successTitle={control.success} successDescription={`${control.record} stays enforced. Review was written to the site execution record.`} onClose={() => setReviewOpen(false)} onConfirm={() => setReviewComplete(true)} /> : <>
+                <header><span><small>SELECTED CONTROL · {control.record}</small><h4>{control.title}</h4></span><em><i /> {completedReview ? 'REVIEWED' : 'ENFORCED'}</em></header>
+                {reviewPhase !== 'idle' ? <SiteControlReview control={control} phase={reviewPhase} reduced={reduced} onBack={() => setReviewPhase('idle')} onConfirm={confirmControlReview} onReturn={() => setReviewPhase('idle')} /> : <>
                   <p>{control.description}</p>
                   <dl><div><dt>SCOPE</dt><dd>{control.scope}</dd></div><div><dt>PATIENT FIELDS</dt><dd>{control.patientFields}</dd></div><div><dt>RECIPIENT</dt><dd>{control.recipient}</dd></div><div><dt>AUTHORITY</dt><dd>{control.policy}</dd></div></dl>
-                  <div className="node-event-ledger"><span>RECENT POLICY EVENTS</span><div><time>10:43</time><strong>{control.name} checked</strong><small>{control.record} · verified</small></div><div><time>10:42</time><strong>Outbound boundary evaluated</strong><small>{control.patientFields}</small></div><div><time>10:42</time><strong>Site authority matched</strong><small>{control.policy}</small></div></div>
-                  <div className="node-release-card"><span><small>CONTROL BOUNDARY</small><strong>{control.scope}</strong><em>{control.checked} · site review required</em></span></div>
-                  <button className="node-review-button" type="button" onClick={() => { setReviewOpen(true); setReviewComplete(false) }}>{control.action} <ArrowRight size={17} weight="bold" /></button>
+                  <div className="node-event-ledger"><span>RECENT POLICY EVENTS</span>{completedReview && <div className="is-reviewed"><time>10:44</time><strong>Site review recorded</strong><small>{control.receipt} · signed</small></div>}<div><time>10:43</time><strong>{control.name} checked</strong><small>{control.record} · verified</small></div><div><time>10:42</time><strong>Outbound boundary evaluated</strong><small>{control.patientFields}</small></div></div>
+                  <div className={`node-release-card${completedReview ? ' released' : ''}`}><span><small>{completedReview ? 'LAST SITE REVIEW' : 'CONTROL BOUNDARY'}</small><strong>{completedReview ? control.decision : control.scope}</strong><em>{completedReview ? `${control.receipt} · signed 10:44` : `${control.checked} · site review required`}</em></span></div>
+                  <button className="node-review-button" type="button" onClick={openControlReview}>{completedReview ? 'Open review receipt' : control.action} <ArrowRight size={17} weight="bold" /></button>
                 </>}
               </div>
             </div>
