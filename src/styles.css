@@ -11937,8 +11937,69 @@ html.is-hidden .hero-agent.is-active i,
   width: min(100%, 1500px);
 }
 
+#root .node-system {
+  display: flex;
+  flex-direction: column;
+  height: 780px;
+  min-height: 780px;
+  max-height: 780px;
+  overflow: hidden;
+}
+
 #root .node-product-grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
   grid-template-columns: 220px minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  overflow: hidden;
+}
+
+#root .node-source-nav,
+#root .node-policy-main {
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+#root .node-policy-main {
+  display: flex;
+  flex-direction: column;
+}
+
+#root .node-security-workspace {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+#root .node-control-detail {
+  min-height: 0;
+  height: 100%;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+#root .node-control-detail h4 {
+  display: -webkit-box;
+  min-height: 2.6em;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+#root .node-control-detail > p {
+  display: -webkit-box;
+  min-height: 4.35em;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+#root .site-control-review {
+  height: 100%;
+  max-height: 100%;
+  overflow: hidden;
 }
 
 #root .node-source-nav > span,
@@ -11992,6 +12053,25 @@ html.is-hidden .hero-agent.is-active i,
   line-height: 1.2;
   text-overflow: clip;
   white-space: normal;
+}
+
+@media (max-width: 1100px) {
+  #root .node-system {
+    height: auto;
+    min-height: 0;
+    max-height: none;
+  }
+
+  #root .node-product-grid,
+  #root .node-source-nav,
+  #root .node-policy-main {
+    height: auto;
+  }
+
+  #root .node-control-detail {
+    min-height: var(--node-detail-min-height);
+    max-height: var(--node-detail-min-height);
+  }
 }
 
 @media (max-width: 900px) {

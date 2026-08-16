@@ -9,6 +9,10 @@ describe('site-control workspace geometry', () => {
   it('holds one desktop height across every control and review state', () => {
     assert.match(css, /--node-detail-min-height:\s*647px/)
     assert.match(css, /\.node-control-detail \{[\s\S]*?min-height:\s*var\(--node-detail-min-height\)/)
+    assert.match(css, /#root \.node-system \{[\s\S]*?height:\s*780px;[\s\S]*?min-height:\s*780px;[\s\S]*?max-height:\s*780px;[\s\S]*?overflow:\s*hidden;/)
+    assert.match(css, /#root \.node-control-detail \{[\s\S]*?height:\s*100%;[\s\S]*?max-height:\s*100%;[\s\S]*?overflow:\s*hidden;/)
+    assert.match(app, /className=\{completedReview \? 'is-reviewed' : 'is-pending'\}/)
+    assert.doesNotMatch(app, /completedReview && <div className="is-reviewed">/)
   })
 
   it('uses the landing workspace control geometry', () => {
@@ -36,7 +40,7 @@ describe('site-control workspace geometry', () => {
 
   it('aligns the site-control rail with the agents console', () => {
     assert.match(css, /#root \.node-section \{\s*width:\s*min\(100%, 1500px\);/)
-    assert.match(css, /#root \.node-product-grid \{\s*grid-template-columns:\s*220px minmax\(0, 1fr\);/)
+    assert.match(css, /#root \.node-product-grid \{[\s\S]*?grid-template-columns:\s*220px minmax\(0, 1fr\);/)
     assert.match(app, /Site 018 - Damaros Health/)
     assert.doesNotMatch(app, /Northstar/)
     assert.doesNotMatch(app, /node-source-item[\s\S]*?<strong>\{source\.name\}<\/strong>/)
