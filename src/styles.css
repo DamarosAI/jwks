@@ -33,6 +33,7 @@
   --type-control: 16px;
   --type-product-control: 15px;
   --tracking-control: 0.025em;
+  --node-detail-min-height: 647px;
   --motion-press-in: 70ms cubic-bezier(0.4, 0, 1, 1);
   --motion-press-out: 220ms cubic-bezier(0.16, 1, 0.3, 1);
   --motion-settle: 180ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -5752,7 +5753,7 @@ html { scroll-padding-top: 96px; }
 .node-status-grid strong { font-size: 1.7rem; letter-spacing: -0.03em; }
 .node-status-grid span { color: var(--muted); font-size: 0.72rem; line-height: 1.25; }
 .node-policy-list { display: grid; gap: 8px; margin-top: 16px; }
-.node-policy-list > .node-policy-item { display: grid; min-height: 72px; grid-template-columns: 18px minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 12px; border: 1px solid color-mix(in srgb, var(--accent) 16%, #d4dce2); border-radius: 14px; background: #fff; color: var(--accent); }
+.node-policy-list > .node-policy-item { display: grid; min-height: 64px; grid-template-columns: 18px minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 12px; border: 1px solid color-mix(in srgb, var(--accent) 16%, #d4dce2); border-radius: 10px; background: #fff; color: var(--accent); }
 .node-policy-list strong { color: var(--text-soft); font-size: 0.8rem; }
 .node-policy-list span { color: var(--muted); font-size: 0.72rem; }
 .node-policy-list small { color: var(--success); font-size: 0.64rem; font-weight: 750; letter-spacing: 0.04em; }
@@ -6509,8 +6510,8 @@ html { scroll-padding-top: 96px; }
 .inline-action-panel dl > div { display: grid; gap: 3px; padding: 9px 0; border-bottom: 1px solid var(--border); }
 .inline-action-panel dt { color: var(--muted); font-size: .7rem; font-weight: 650; letter-spacing: .04em; text-transform: uppercase; }
 .inline-action-panel dd { margin: 0; color: var(--text-soft); font-size: .8rem; line-height: 1.4; overflow-wrap: anywhere; }
-.inline-action-panel footer { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; padding-top: 4px; }
-.inline-action-panel footer .button { min-width: 112px; min-height: 48px; padding: 0 22px; }
+.inline-action-panel footer { display: flex; align-self: end; align-items: center; flex-wrap: wrap; justify-content: flex-end; gap: 10px; padding-top: 4px; }
+.inline-action-panel footer .button { min-width: 112px; height: 48px; min-height: 48px; padding: 0 22px; border-radius: 10px; font-size: 15px; }
 .inline-action-panel.is-complete footer .button-primary { background: var(--success); box-shadow: 0 10px 24px color-mix(in srgb, var(--success) 24%, transparent); }
 
 @keyframes inline-action-in {
@@ -9780,13 +9781,13 @@ html { scroll-padding-top: 96px; }
 
 .node-policy-item {
   display: grid;
-  min-height: 72px;
+  min-height: 64px;
   grid-template-columns: 18px minmax(0, 1fr) auto;
   gap: 8px;
   align-items: center;
   padding: 12px;
   border: 1px solid color-mix(in srgb, var(--accent) 16%, #d4dce2);
-  border-radius: 14px;
+  border-radius: 10px;
   background: #fff;
   color: var(--accent);
   box-shadow: 0 1px 0 rgba(40, 68, 90, 0.04);
@@ -9820,7 +9821,7 @@ html { scroll-padding-top: 96px; }
 .node-control-detail {
   display: flex;
   min-width: 0;
-  min-height: 0;
+  min-height: var(--node-detail-min-height);
   flex-direction: column;
   gap: 16px;
   padding: 22px;
@@ -9980,7 +9981,9 @@ html { scroll-padding-top: 96px; }
 }
 
 .node-control-detail .inline-action-panel {
-  min-height: 100%;
+  flex: 1;
+  min-height: 0;
+  margin-top: 0;
   border: 0;
   border-radius: 12px;
   background: #fff;
@@ -10139,7 +10142,7 @@ html { scroll-padding-top: 96px; }
   }
 
   .node-control-detail {
-    min-height: 520px;
+    min-height: var(--node-detail-min-height);
   }
 }
 
@@ -10663,11 +10666,11 @@ html { scroll-padding-top: 96px; }
   margin-top: auto;
   padding: 0 18px;
   border: 1px solid var(--accent);
-  border-radius: 11px;
+  border-radius: 10px;
   background: var(--accent);
   color: white;
   font-family: inherit;
-  font-size: 0.94rem;
+  font-size: 15px;
   font-weight: 650;
   letter-spacing: 0.015em;
   cursor: pointer;
@@ -10777,7 +10780,7 @@ html { scroll-padding-top: 96px; }
     align-items: start;
     gap: 5px 7px;
     padding: 11px 10px;
-    border-radius: 12px;
+    border-radius: 10px;
   }
 
   .node-policy-item > em {
@@ -10850,7 +10853,7 @@ html { scroll-padding-top: 96px; }
     width: 100%;
     min-height: 50px;
     margin-top: 0;
-    font-size: 0.8rem;
+    font-size: 15px;
   }
 
   .node-control-detail > .inline-action-panel {
