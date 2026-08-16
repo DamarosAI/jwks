@@ -137,9 +137,7 @@ const SENTINEL_STUDIES = [
   { id: 'NCT00000009', title: 'AVT-9 · KRAS G12C solid tumor', phase: 'Ph I/II', coverage: '6 / 10 capabilities', fit: '68%', status: 'Possible fit', sponsor: 'Helix Therapeutics', pi: 'Dr. J. Kujo', sites: '17 active sites', window: 'Dose escalation open', scanned: '14:02 · coverage graph', gap: 'NGS turnaround', concepts: ['KRAS G12C', 'solid tumor', 'dose escalation', 'prior IO allowed'] },
   { id: 'NCT00000184', title: 'CARD-184 · HFpEF outcomes', phase: 'Ph III', coverage: '8 / 10 capabilities', fit: '79%', status: 'Strong fit', sponsor: 'Harbor Cardiometabolic', pi: 'Dr. L. Chen', sites: '44 active US sites', window: 'Open through 11-15', scanned: '14:02 · coverage graph', gap: 'Echo read time', concepts: ['HFpEF', 'NT-proBNP', 'echo within 30 days', 'eGFR ≥ 30'] },
   { id: 'NCT00000077', title: 'IMM-77 · moderate-severe UC', phase: 'Ph II', coverage: '7 / 10 capabilities', fit: '74%', status: 'Possible fit', sponsor: 'Solstice Immunology', pi: 'Dr. A. Okonkwo', sites: '28 active sites', window: 'Open through 08-22', scanned: '14:02 · coverage graph', gap: 'Endoscopy calendar', concepts: ['UC', 'Mayo score', 'prior anti-TNF', 'stool calprotectin'] },
-  { id: 'NCT00000112', title: 'NEU-112 · early Alzheimer', phase: 'Ph II', coverage: '7 / 10 capabilities', fit: '71%', status: 'Possible fit', sponsor: 'Vesper Neurosciences', pi: 'Dr. S. Rahman', sites: '19 active sites', window: 'Open through 12-01', scanned: '14:02 · coverage graph', gap: 'PET slot', concepts: ['MCI / early AD', 'p-tau217', 'MMSE 22–30', 'study partner'] },
   { id: 'NCT00000155', title: 'END-155 · T2D cardiovascular outcomes', phase: 'Ph III', coverage: '8 / 10 capabilities', fit: '77%', status: 'Strong fit', sponsor: 'Northwind Metabolic', pi: 'Dr. P. Ibarra', sites: '52 active sites', window: 'Open through 10-28', scanned: '14:02 · coverage graph', gap: 'CGM upload lag', concepts: ['T2D', 'HbA1c 7–10%', 'prior MACE', 'eGFR ≥ 45'] },
-  { id: 'NCT00000090', title: 'RHE-90 · RA TNF-IR', phase: 'Ph II', coverage: '6 / 10 capabilities', fit: '66%', status: 'Possible fit', sponsor: 'Keystone Immunology', pi: 'Dr. N. Voss', sites: '24 active sites', window: 'Open through 09-18', scanned: '14:02 · coverage graph', gap: 'Infusion chair', concepts: ['RA', 'TNF-IR', 'DAS28', 'prior MTX'] },
 ]
 
 const BIOMARKERS = [
@@ -1140,7 +1138,8 @@ function EyeWorkbench({ selected, setSelected, routed, setRouted }) {
     <div className="eye-kpis"><div><strong>8</strong><small>Signals monitored</small></div><div><strong>7</strong><small>Need attention</small></div><div><strong>6</strong><small>Routed this period</small></div><div><strong>98%</strong><small>Screening throughput</small></div></div>
     <div className="quality-signal-grid">
       <div className="quality-list">{signals.map((item, index) => <button className={selected === index ? 'active' : ''} type="button" aria-pressed={selected === index} onClick={() => { setSelected(index); setRouteOpen(false); setRouteComplete(false) }} key={item.id}><span><b>{item.type}</b><strong>{item.name}</strong><small>{item.delta}</small></span><em>{item.value}</em></button>)}</div>
-      <div className="quality-detail">
+      <div className={`quality-detail${routeOpen ? ' is-action' : ''}`}>
+        {routeOpen ? <InlineActionPanel open complete={routeComplete} title={signal.route} description="Create an evidence-bound advisory. Eye does not change screening results or site decisions." rows={[["Signal", signal.name], ["Owner", signal.owner], ["SLA", "24 hours"], ["Record", `${signal.ticket} · replay-linked`]]} confirmLabel={signal.route} successTitle="Quality signal routed" successDescription={`${signal.ticket} reached ${signal.owner}. Source signal stays linked.`} onClose={() => setRouteOpen(false)} onConfirm={() => { setRouted(signal.id); setRouteComplete(true) }} /> : <>
         <div className={settle}>
         <span>{signal.type} · KRI</span>
         <h4>{signal.name}</h4>
@@ -1150,8 +1149,9 @@ function EyeWorkbench({ selected, setSelected, routed, setRouted }) {
         <div className="eye-method"><small>METHOD</small><strong>{signal.method}</strong></div>
         </div>
         <div className="agent-action-slot">
-          {routeOpen ? <InlineActionPanel open complete={routeComplete} title={signal.route} description="Create an evidence-bound advisory. Eye does not change screening results or site decisions." rows={[["Signal", signal.name], ["Owner", signal.owner], ["SLA", "24 hours"], ["Record", `${signal.ticket} · replay-linked`]]} confirmLabel={signal.route} successTitle="Quality signal routed" successDescription={`${signal.ticket} reached ${signal.owner}. Source signal stays linked.`} onClose={() => setRouteOpen(false)} onConfirm={() => { setRouted(signal.id); setRouteComplete(true) }} /> : done ? <div className="agent-written"><CheckCircle size={18} weight="fill" /><span><strong>{signal.type === 'Steady' ? 'Within control band' : `${signal.ticket} routed`}</strong><small>{signal.type === 'Steady' ? 'No routing needed. Eye stays quiet.' : `${signal.owner} · bound to Replay`}</small></span></div> : <button className="trident-primary" type="button" onClick={() => { setRouteOpen(true); setRouteComplete(false) }}>{signal.route} <ArrowRight size={18} weight="bold" /></button>}
+          {done ? <div className="agent-written"><CheckCircle size={18} weight="fill" /><span><strong>{signal.type === 'Steady' ? 'Within control band' : `${signal.ticket} routed`}</strong><small>{signal.type === 'Steady' ? 'No routing needed. Eye stays quiet.' : `${signal.owner} · bound to Replay`}</small></span></div> : <button className="trident-primary" type="button" onClick={() => { setRouteOpen(true); setRouteComplete(false) }}>{signal.route} <ArrowRight size={18} weight="bold" /></button>}
         </div>
+        </>}
       </div>
     </div>
   </div>
@@ -1220,7 +1220,8 @@ function SentinelWorkbench({ selected, setSelected, surfaced, setSurfaced }) {
     <div className="sentinel-summary"><strong>{SENTINEL_STUDIES.length}</strong><span>of 9 open protocols fit Site 018</span><em>Aggregate only · synthetic</em></div>
     <div className="sentinel-grid">
       <div className="sentinel-studies">{SENTINEL_STUDIES.map((item, index) => <button className={selected === index ? 'active' : ''} type="button" onClick={() => { setSelected(index); setSurfaceOpen(false); setSurfaceComplete(false) }} key={item.id}><span><b>{item.id}</b><strong>{item.title}</strong><small>{item.phase} · {item.coverage}</small></span><em>{item.fit}<small>{item.status}</small></em></button>)}</div>
-      <div className="sentinel-detail">
+      <div className={`sentinel-detail${surfaceOpen ? ' is-action' : ''}`}>
+        {surfaceOpen ? <InlineActionPanel open complete={surfaceComplete} title="Surface site capacity" description="Share one aggregate opportunity signal. Sponsor sees capability supply, not a patient." rows={[["Protocol", `${study.id} · ${study.phase}`], ["Sponsor", study.sponsor], ["Coverage", `${study.fit} · ${study.coverage}`], ["Boundary", "PHI-free · no patient-level data"]]} confirmLabel="Surface to sponsor" successTitle="Opportunity surfaced" successDescription={`${study.sponsor} received aggregate site capacity. Signal bound to Replay.`} onClose={() => setSurfaceOpen(false)} onConfirm={() => { setSurfaced(study.id); setSurfaceComplete(true) }} /> : <>
         <div className={settle}>
         <span>SELECTED PROTOCOL · {study.id}</span>
         <h4>{study.title}</h4>
@@ -1230,8 +1231,9 @@ function SentinelWorkbench({ selected, setSelected, surfaced, setSurfaced }) {
         <div className="sentinel-note"><small>COVERAGE NOTE</small><p>{study.gap === 'None material' ? 'No blocking site gap on the coverage graph. Patient data stays inside Site 018.' : `Open site gap: ${study.gap}. Coverage graph only. Patient data stays inside Site 018.`}</p></div>
         </div>
         <div className="agent-action-slot">
-          {surfaceOpen ? <InlineActionPanel open complete={surfaceComplete} title="Surface site capacity" description="Share one aggregate opportunity signal. Sponsor sees capability supply, not a patient." rows={[["Protocol", `${study.id} · ${study.phase}`], ["Sponsor", study.sponsor], ["Coverage", `${study.fit} · ${study.coverage}`], ["Boundary", "PHI-free · no patient-level data"]]} confirmLabel="Surface to sponsor" successTitle="Opportunity surfaced" successDescription={`${study.sponsor} received aggregate site capacity. Signal bound to Replay.`} onClose={() => setSurfaceOpen(false)} onConfirm={() => { setSurfaced(study.id); setSurfaceComplete(true) }} /> : done ? <div className="agent-written"><CheckCircle size={18} weight="fill" /><span><strong>Opportunity surfaced</strong><small>{study.sponsor} · aggregate signal · no PHI</small></span></div> : <button className="trident-primary" type="button" onClick={() => { setSurfaceOpen(true); setSurfaceComplete(false) }}>Surface to sponsor <ArrowRight size={18} weight="bold" /></button>}
+          {done ? <div className="agent-written"><CheckCircle size={18} weight="fill" /><span><strong>Opportunity surfaced</strong><small>{study.sponsor} · aggregate signal · no PHI</small></span></div> : <button className="trident-primary" type="button" onClick={() => { setSurfaceOpen(true); setSurfaceComplete(false) }}>Surface to sponsor <ArrowRight size={18} weight="bold" /></button>}
         </div>
+        </>}
       </div>
     </div>
   </div>

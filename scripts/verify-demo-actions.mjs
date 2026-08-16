@@ -71,6 +71,12 @@ if (!app.includes('When was Replay sealed') || !app.includes('Why is S-1066 stil
 if (!css.includes('.agent-console .agent-sentinel-workbench .sentinel-studies') || !app.includes('SENTINEL_STUDIES') || !app.includes('LUNA_INVESTIGATIONS')) {
   throw new Error('Luna and Sentinel left rails must be compact inventories')
 }
+if ((app.match(/\{ id: 'NCT00000/g) || []).length !== 6) {
+  throw new Error('Sentinel must keep six trial openings in the left rail')
+}
+if (!app.includes("surfaceOpen ? <InlineActionPanel") || !app.includes("routeOpen ? <InlineActionPanel") || !css.includes('.sentinel-detail.is-action') || !css.includes('.quality-detail.is-action')) {
+  throw new Error('Sentinel and Eye actions must replace the inspect pane, not overlay it')
+}
 if (!app.includes('agent-run-rail') || !app.includes('LIVE ACTIVITY') || !app.includes('CONTROL BOUNDARY') || !css.includes('.agent-workspace-body')) {
   throw new Error('Agent workspace must keep source, activity, and authority context beside live work')
 }

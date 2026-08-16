@@ -8645,6 +8645,12 @@ html { scroll-padding-top: 96px; }
   grid-template-rows: minmax(0, 1fr) auto;
 }
 
+.quality-detail.is-action,
+.sentinel-detail.is-action {
+  grid-template-rows: minmax(0, 1fr);
+  align-content: stretch;
+}
+
 .trident-detail > .pane-settle,
 .quality-detail > .pane-settle,
 .sentinel-detail > .pane-settle,
@@ -9494,6 +9500,37 @@ html { scroll-padding-top: 96px; }
 .agent-console :is(.trident-list button strong, .quality-list button strong, .sentinel-studies button strong, .luna-question-list button strong) {
   font-size: 0.74rem;
   line-height: 1.28;
+}
+
+.agent-console :is(.quality-detail, .sentinel-detail).is-action {
+  background: #fff;
+}
+
+.agent-console :is(.quality-detail, .sentinel-detail) > .inline-action-panel {
+  height: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: 2px 4px 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  align-content: start;
+  animation: none;
+}
+
+.agent-console :is(.quality-detail, .sentinel-detail) > .inline-action-panel.is-complete {
+  border: 0;
+  background: transparent;
+}
+
+.agent-console .sentinel-meta > div,
+.agent-console .sentinel-coverage,
+.agent-console .sentinel-note {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
 }
 
 .agent-console .eye-kpis {
