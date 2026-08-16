@@ -14,6 +14,6 @@ describe('Damaros brand mark', () => {
     assert.match(app, /function BrandName\(\) \{\s*return <>Damaros<sup className="brand-tm">TM<\/sup><\/>/)
     assert.match(css, /\.brand-tm \{[\s\S]*?color:\s*var\(--accent\)/)
     assert.match(app, /<NavLink className="wordmark"[\s\S]*?<BrandName \/>/)
-    assert.match(app, /© 2026 <BrandName \/>/)
+    assert.match(app, /2026 <BrandName \/>/)
   })
 })

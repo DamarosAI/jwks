@@ -28,6 +28,9 @@ describe('site type', () => {
     assert.match(css, /#root \.landing-source-demo :is\([\s\S]*?font-size:\s*var\(--type-product-control\);/)
     assert.match(css, /#root :is\([\s\S]*?\.landing-source-demo,[\s\S]*?\.agent-console,[\s\S]*?\.node-security-workspace,[\s\S]*?\.site-control-review/)
     assert.match(css, /#root :is\([\s\S]*?\.agent-console,[\s\S]*?small, em, time, b, dt, span[\s\S]*?font-size:\s*max\(var\(--type-product-floor\),\s*0\.8125rem\)/)
+    assert.match(css, /--font-ui:\s*system-ui/)
+    assert.match(css, /body \{[\s\S]*?font-family:\s*var\(--font-ui\)/)
+    assert.match(css, /\.wordmark,[\s\S]*?font-family:\s*var\(--font-display\)/)
     assert.match(css, /overflow-wrap:\s*break-word/)
     assert.match(css, /\.hero-heading \{[\s\S]*?text-wrap:\s*balance/)
     assert.doesNotMatch(css, /transform-style:\s*preserve-3d/)
@@ -40,6 +43,12 @@ describe('site type', () => {
     const renderedCopy = app.replace("document.title = 'Damaros™'", '')
     const unsupported = [...renderedCopy].filter((character) => character.codePointAt(0) > 127)
     assert.deepEqual(unsupported, [])
+  })
+
+  it('marks evidence cards with a corner dot instead of a status chip', () => {
+    assert.match(app, /className="evidence-status-dot"/)
+    assert.doesNotMatch(app, /<em>\{acted\[item\.code\] \? 'ROUTED' : item\.status\}<\/em>/)
+    assert.match(css, /\.obligation-list \.evidence-status-dot \{[\s\S]*?background:\s*#f5c518/)
   })
 
   it('clears enter transforms so Endless does not stay sheared', () => {
