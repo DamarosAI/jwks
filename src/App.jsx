@@ -779,7 +779,7 @@ function InlineActionPanel({ open, complete = false, eyebrow = 'ACTION REQUIRED'
       <header>{complete ? <CheckCircle size={18} weight="fill" /> : <span aria-hidden="true">!</span>}<div><small>{complete ? 'ACTION COMPLETE' : eyebrow}</small><h5>{panelTitle}</h5></div></header>
       <p>{complete ? successDescription : description}</p>
       <dl>{rows.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
-      <footer>{complete ? <button className="primary" type="button" onClick={onClose}>Close</button> : <><button type="button" onClick={onClose}>Back</button><button className="primary" type="button" onClick={onConfirm}>{confirmLabel}</button></>}</footer>
+      <footer>{complete ? <button className="button button-primary" type="button" onClick={onClose}>Close</button> : <><button className="button button-secondary" type="button" onClick={onClose}>Back</button><button className="button button-primary" type="button" onClick={onConfirm}>{confirmLabel}</button></>}</footer>
     </section>
   )
 }
@@ -1382,16 +1382,18 @@ function AgentOperations() {
 function SiteNodeSection() {
   const root = useRef(null)
   const reduced = useReducedMotion()
-  const [selectedControl, setSelectedControl] = useState(0)
-  const [releaseOpen, setReleaseOpen] = useState(false)
-  const [released, setReleased] = useState(false)
+  const sources = [
+    { name: 'Epic · FHIR R4', read: 'Last read 10:41', icon: Database },
+    { name: 'Lab interface', read: 'Last read 10:41', icon: FileText },
+    { name: 'Imaging archive', read: 'Last read 10:40', icon: Fingerprint },
+    { name: 'eReg · CTMS', read: 'Signer sync 10:42', icon: ShieldCheck },
+  ]
   const controls = [
     { name: 'Evidence visibility', policy: 'Site roles only', scope: 'FHIR resources, documents, and mapped facts', checked: '10:41 · 4 approved sources', record: 'POL-018-EV4' },
     { name: 'Artifact release', policy: 'PI or delegated signer', scope: 'Replay bundles and sponsor-facing artifacts', checked: '10:42 · signer roster current', record: 'POL-018-AR2' },
     { name: 'Network signal', policy: 'Aggregate coverage only', scope: 'Protocol capability and site capacity', checked: '10:42 · 0 patient fields', record: 'POL-018-NS7' },
     { name: 'Model execution', policy: 'Local inference allowed', scope: 'Site node runtime inside institution boundary', checked: '10:43 · runtime attested', record: 'POL-018-ME3' },
   ]
-  const control = controls[selectedControl]
   useGSAP(() => {
     if (reduced || window.innerWidth <= 900) return
     gsap.from('.node-copy > *', {
@@ -1416,24 +1418,22 @@ function SiteNodeSection() {
         <div className="node-product-grid">
           <aside className="node-source-nav">
             <span>APPROVED SOURCES</span>
-            <button type="button" onClick={() => setSelectedControl(0)}><Database size={16} /><span><strong>Epic · FHIR R4</strong><small>Last read 10:41</small></span><i /></button>
-            <button type="button" onClick={() => setSelectedControl(0)}><FileText size={16} /><span><strong>Lab interface</strong><small>Last read 10:41</small></span><i /></button>
-            <button type="button" onClick={() => setSelectedControl(0)}><Fingerprint size={16} /><span><strong>Imaging archive</strong><small>Last read 10:40</small></span><i /></button>
-            <button type="button" onClick={() => setSelectedControl(1)}><ShieldCheck size={16} /><span><strong>eReg · CTMS</strong><small>Signer sync 10:42</small></span><i /></button>
+            {sources.map((source) => {
+              const Icon = source.icon
+              return <div className="node-source-item" key={source.name}><Icon size={16} /><span><strong>{source.name}</strong><small>{source.read}</small></span><i /></div>
+            })}
             <div className="node-boundary-card"><small>INSTITUTION BOUNDARY</small><strong>Site 018 · Northstar Health</strong><span>4 sources · 7 site roles</span></div>
           </aside>
           <div className="node-policy-main">
             <div className="node-policy-header"><span><small>SITE CONTROL PLANE</small><strong>Local sources. Local signatures.</strong></span><em><ShieldCheck size={16} /> All controls healthy</em></div>
             <div className="node-security-workspace">
-              <div className="node-policy-list"><span>ACTIVE CONTROLS</span>{controls.map((item, index) => <button className={selectedControl === index ? 'active' : ''} type="button" aria-pressed={selectedControl === index} onClick={() => { setSelectedControl(index); setReleaseOpen(false) }} key={item.name}><ShieldCheck size={15} /><span><strong>{item.name}</strong><small>{item.policy}</small></span><em>ENFORCED</em></button>)}</div>
+              <div className="node-policy-list"><span>ACTIVE CONTROLS</span>{controls.map((item) => <div className="node-policy-item" key={item.name}><ShieldCheck size={15} /><span><strong>{item.name}</strong><small>{item.policy}</small></span><em>ENFORCED</em></div>)}</div>
               <div className="node-control-detail">
-                {releaseOpen ? <InlineActionPanel open complete={released} eyebrow="SITE RELEASE" title="Release aggregate coverage signal" description="Review exact outbound payload before site signature. No patient facts or identifiers are present." rows={[["Payload", "Protocol capability · Site 018"], ["Patient fields", "0"], ["Recipient", "Meridian Oncology"], ["Authority", "Dr. M. Avdol · delegated signer"]]} confirmLabel="Release aggregate signal" successTitle="Aggregate signal released" successDescription="Site signature recorded. Sponsor received coverage only. Event bound to Replay." onClose={() => setReleaseOpen(false)} onConfirm={() => setReleased(true)} /> : <>
-                  <header><span><small>INSPECTING CONTROL</small><h4>{control.name}</h4></span><em><i /> ENFORCED</em></header>
-                  <p>{control.policy}. Damaros checks this rule before any source read, agent run, or outbound artifact.</p>
-                  <dl><div><dt>SCOPE</dt><dd>{control.scope}</dd></div><div><dt>LAST CHECK</dt><dd>{control.checked}</dd></div><div><dt>POLICY RECORD</dt><dd>{control.record} · signed</dd></div></dl>
-                  <div className="node-event-ledger"><span>RECENT POLICY EVENTS</span><div><time>10:43</time><strong>Local agent run attested</strong><small>ME3 · verified</small></div><div><time>10:42</time><strong>Outbound payload reduced</strong><small>0 patient fields</small></div><div><time>10:42</time><strong>Delegated signer matched</strong><small>AR2 · Dr. M. Avdol</small></div></div>
-                  <div className={`node-release-card ${released ? 'released' : ''}`}><span><small>{released ? 'RELEASE RECORDED' : 'OUTBOUND SIGNAL READY'}</small><strong>{released ? 'Coverage signal · SIG-018-204' : 'Protocol coverage · aggregate only'}</strong><em>{released ? 'Replay-linked · 10:44' : '0 patient fields · site signature required'}</em></span><button type="button" onClick={() => setReleaseOpen(true)}>{released ? 'View receipt' : 'Review release'} <ArrowRight size={15} /></button></div>
-                </>}
+                <header><span><small>OUTBOUND PAYLOAD</small><h4>Release aggregate coverage signal</h4></span><em><i /> ENFORCED</em></header>
+                <p>Review exact outbound payload before site signature. No patient facts or identifiers are present.</p>
+                <dl><div><dt>PAYLOAD</dt><dd>Protocol capability · Site 018</dd></div><div><dt>PATIENT FIELDS</dt><dd>0</dd></div><div><dt>RECIPIENT</dt><dd>Meridian Oncology</dd></div><div><dt>AUTHORITY</dt><dd>Dr. M. Avdol · delegated signer</dd></div></dl>
+                <div className="node-event-ledger"><span>RECENT POLICY EVENTS</span><div><time>10:43</time><strong>Local agent run attested</strong><small>ME3 · verified</small></div><div><time>10:42</time><strong>Outbound payload reduced</strong><small>0 patient fields</small></div><div><time>10:42</time><strong>Delegated signer matched</strong><small>AR2 · Dr. M. Avdol</small></div></div>
+                <div className="node-release-card"><span><small>COVERAGE BOUNDARY</small><strong>Protocol coverage · aggregate only</strong><em>0 patient fields · site signature required</em></span></div>
               </div>
             </div>
           </div>
