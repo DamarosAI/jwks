@@ -359,7 +359,7 @@ function smoothSection(event, selector) {
 function PageSpine({ about = false }) {
   const items = about ? ABOUT_SPINE : HOME_SPINE
   const [active, setActive] = useState(items[0][0])
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(about)
 
   useEffect(() => {
     let frame = 0
@@ -377,7 +377,7 @@ function PageSpine({ about = false }) {
       const next = document.getElementById(about ? 'founder' : 'thesis')
       const nextTop = next?.getBoundingClientRect().top ?? Number.POSITIVE_INFINITY
       const heroBottom = gate?.getBoundingClientRect().bottom ?? 0
-      const nextVisible = nextTop <= window.innerHeight * 0.92 || heroBottom <= window.innerHeight * 0.82
+      const nextVisible = about || nextTop <= window.innerHeight * 0.92 || heroBottom <= window.innerHeight * 0.82
       if (nextActive !== lastActive) {
         lastActive = nextActive
         setActive(nextActive)
