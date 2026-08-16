@@ -10170,3 +10170,274 @@ html { scroll-padding-top: 96px; }
     display: none;
   }
 }
+
+/* Mobile product pass: preserve desktop density without shrinking desktop UI. */
+@media (max-width: 640px) {
+  .hero-workspace-wrap {
+    width: calc(100% + 24px);
+    margin-left: -12px;
+  }
+
+  .hero-workspace {
+    min-height: 0;
+    border-radius: 16px;
+    overflow-anchor: none;
+  }
+
+  .hero-workspace .mac-titlebar {
+    min-height: 46px;
+    padding-inline: 12px;
+  }
+
+  .hero-app-nav {
+    gap: 4px;
+    padding: 6px;
+  }
+
+  .hero-app-nav button {
+    min-height: 46px;
+    padding: 0 3px;
+    border-radius: 9px;
+    font-size: 0.76rem;
+  }
+
+  .hero-state-layer,
+  .landing-source-view,
+  .landing-source-view .workspace-view,
+  .landing-source-demo .pane-settle {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .landing-source-view {
+    padding: 0;
+  }
+
+  .landing-source-demo :is(.source-protocol-view, .source-evidence-view, .source-screening-view, .source-resolve-view, .source-replay-view) {
+    padding: 18px 14px 22px;
+  }
+
+  .landing-source-demo :is(.source-view-intro, .protocol-source-head, .source-resolve-top, .source-replay-head) {
+    line-height: 1.35;
+  }
+
+  .landing-source-demo :is(.source-view-intro > span, .source-resolve-top > span, .source-replay-head b, .protocol-source-head > span) {
+    font-size: 0.74rem;
+  }
+
+  .landing-source-demo :is(button, [role='button']) {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .landing-source-demo :is(.source-primary-action, .source-criteria-head button, .source-replay-head button, .resolve-sign-row button) {
+    min-height: 48px;
+    padding-inline: 16px;
+    border-radius: 10px;
+    font-size: 0.79rem;
+  }
+
+  .landing-source-demo .source-protocol-view > h4 {
+    font-size: 1.48rem;
+  }
+
+  .source-amendment {
+    padding: 12px;
+  }
+
+  .source-protocol-summary > section {
+    min-height: 0;
+    padding: 14px;
+  }
+
+  .source-criteria-head {
+    align-items: flex-end;
+  }
+
+  .source-criteria-head > span {
+    max-width: 20ch;
+    line-height: 1.35;
+  }
+
+  .source-criteria-list > div {
+    min-height: 54px;
+    grid-template-columns: 46px minmax(0, 1fr) auto;
+    gap: 8px;
+    padding: 8px 11px;
+  }
+
+  .source-criteria-list strong {
+    font-size: 0.79rem;
+    line-height: 1.3;
+  }
+
+  .source-criteria-list em {
+    grid-column: auto;
+    justify-self: end;
+    font-size: 0.68rem;
+    text-align: right;
+  }
+
+  .evidence-coverage {
+    padding: 13px;
+  }
+
+  .evidence-coverage strong,
+  .evidence-coverage small,
+  .evidence-coverage footer span {
+    font-size: 0.72rem;
+  }
+
+  .source-evidence-grid,
+  .source-screen-grid,
+  .source-replay-grid {
+    gap: 12px;
+  }
+
+  .obligation-list {
+    gap: 7px;
+  }
+
+  .obligation-list > button {
+    min-height: 62px;
+    padding: 10px 11px;
+  }
+
+  .obligation-list button > div {
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+  }
+
+  .obligation-list button strong {
+    font-size: 0.79rem;
+    line-height: 1.25;
+  }
+
+  .obligation-list button footer,
+  .obligation-list button footer small {
+    font-size: 0.68rem;
+  }
+
+  .obligation-detail,
+  .source-patient-detail,
+  .replay-event-detail {
+    padding: 15px;
+    border-radius: 12px;
+  }
+
+  .obligation-detail h4,
+  .source-patient-detail header h4,
+  .replay-event-detail h4 {
+    font-size: 1.02rem;
+  }
+
+  .obligation-detail dd,
+  .source-patient-detail :is(p, li),
+  .replay-event-detail dd,
+  .evidence-guidance strong,
+  .recommended-action strong {
+    font-size: 0.75rem;
+  }
+
+  .source-patient-list {
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+  }
+
+  .source-patient-list > span {
+    grid-column: 1 / -1;
+  }
+
+  .source-patient-list > button {
+    min-height: 78px;
+    grid-template-columns: 3px minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    align-content: center;
+    gap: 4px 8px;
+    padding: 9px;
+  }
+
+  .source-patient-list button > i {
+    grid-row: 1 / 3;
+    height: 42px;
+  }
+
+  .source-patient-list button > b {
+    grid-column: 2;
+    width: max-content;
+    padding: 2px 5px;
+  }
+
+  .source-patient-list button strong {
+    font-size: 0.76rem;
+  }
+
+  .source-patient-list button strong small {
+    display: block;
+    margin: 2px 0 0;
+  }
+
+  .source-patient-list button em {
+    max-width: 100%;
+    font-size: 0.66rem;
+    line-height: 1.25;
+    overflow: visible;
+    display: -webkit-box;
+    white-space: normal;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .screen-summary-strip > div {
+    min-height: 64px;
+    padding: 10px;
+  }
+
+  .source-decision-list button {
+    min-height: 52px;
+    font-size: 0.78rem;
+  }
+
+  .resolve-person-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+  }
+
+  .resolve-person-tabs button {
+    width: 100%;
+    min-height: 46px;
+  }
+
+  .resolve-sign-row {
+    align-items: center;
+  }
+
+  .replay-ledger > button {
+    min-height: 54px;
+    grid-template-columns: 42px minmax(0, 1fr) 64px;
+    padding: 7px 9px;
+  }
+
+  .replay-ledger button strong {
+    font-size: 0.76rem;
+  }
+
+  .inline-action-panel {
+    gap: 14px;
+    padding: 16px;
+  }
+
+  .inline-action-panel footer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .inline-action-panel footer .button {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .inline-action-panel.is-complete footer {
+    grid-template-columns: 1fr;
+  }
+}
