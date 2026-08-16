@@ -126,7 +126,7 @@ if (!app.includes('shouldPlayAutoplay') || !app.includes('useInView') || !app.in
 if (!app.includes('useDocumentVisible') || !app.includes('useMediaQuery') || !app.includes('shouldRunAmbient') || !app.includes('ignoreMobileResize')) {
   throw new Error('Autoplay and enter motion must respect visibility, narrow viewports, and mobile chrome resize')
 }
-if (!css.includes('html.is-scrolling') || !css.includes('content-visibility: auto') || !css.includes('font-weight: 100 900') || !css.includes('min-height: 100svh') || !css.includes('env(safe-area-inset-top')) {
+if (!css.includes('html.is-scrolling') || !css.includes('content-visibility: auto') || !css.includes("font-family: 'Endless'") || !css.includes('font-weight: 400') || css.includes('font-weight: 100 900') || !css.includes('min-height: 100svh') || !css.includes('env(safe-area-inset-top')) {
   throw new Error('Viewport paint budget, stable hero height, safe areas, and single font face are required')
 }
 if (!app.includes('shouldKeepPreviousStage')) {

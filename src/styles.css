@@ -2,7 +2,7 @@
   font-family: 'Endless';
   src: url('/assets/endless.ttf') format('truetype');
   font-style: normal;
-  font-weight: 100 900;
+  font-weight: 400;
   font-display: swap;
 }
 
@@ -30,6 +30,9 @@
   --shadow-soft: 0 14px 44px rgba(33, 77, 121, 0.09);
   --card-radius: 18px;
   --nav-height: 72px;
+  --type-control: 16px;
+  --type-product-control: 15px;
+  --tracking-control: 0.025em;
   --motion-press-in: 70ms cubic-bezier(0.4, 0, 1, 1);
   --motion-press-out: 220ms cubic-bezier(0.16, 1, 0.3, 1);
   --motion-settle: 180ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -11028,4 +11031,39 @@ html.is-hidden .hero-agent.is-active i,
   .hero-agent.is-active i {
     animation: none;
   }
+}
+
+/* Endless ships as one unhinted Regular face. Compact controls need optical
+   spacing, not synthetic weights or browser kerning. Keep this contract last. */
+#root :is(
+  button,
+  .button,
+  [role='button'],
+  input[type='button'],
+  input[type='submit']
+) {
+  font-weight: 400;
+  font-kerning: none;
+  font-variant-ligatures: none;
+  font-feature-settings: 'kern' 0, 'liga' 0, 'calt' 0;
+  text-rendering: auto;
+  letter-spacing: var(--tracking-control);
+  -webkit-font-smoothing: subpixel-antialiased;
+  -moz-osx-font-smoothing: auto;
+}
+
+#root .button {
+  font-size: var(--type-control);
+}
+
+#root .landing-source-demo :is(
+  .source-criteria-head > button,
+  .source-primary-action,
+  .source-replay-head > button,
+  .resolve-sign-row > button,
+  .trident-primary,
+  .node-review-button,
+  .inline-action-panel footer button
+) {
+  font-size: var(--type-product-control);
 }
