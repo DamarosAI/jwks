@@ -124,6 +124,13 @@ const LUNA_INVESTIGATIONS = [
   { q: 'Which events sit in RPL-1047?', cat: 'Replay', subject: 'RPL-1047', asked: '14:09', answer: 'RPL-1047 holds 9 sealed events from the S-1047 run, ending at the PI signature and Replay seal. Later reads cite that row. They do not rewrite it.', citations: [{ id: 'Replay/RPL-1047', type: 'SEALED RECORD', value: '9 of 9 events - sealed 14:08', source: '14:08 - Replay', hash: 'sha256 - rpl...1047' }, { id: 'Resolve/EVT-1207', type: 'TERMINAL EVENT', value: 'PI signature closed the open item', source: '14:07 - Resolve', hash: 'Ed25519 - verified' }, { id: 'Policy/Seal', type: 'SEAL RULE', value: 'Immutable after seal', source: '14:08 - site policy', hash: 'policy - verified' }] },
 ]
 
+function metricTone(kind, value) {
+  if (kind === 'friction') return value >= 55 ? 'is-bad' : value >= 35 ? 'is-warn' : 'is-good'
+  if (kind === 'fit') return value >= 80 ? 'is-good' : value >= 70 ? 'is-warn' : 'is-bad'
+  if (kind === 'signal') return value === 'Spike' ? 'is-bad' : value === 'Drift' ? 'is-warn' : 'is-good'
+  return 'is-good'
+}
+
 const SENTINEL_STUDIES = [
   { id: 'NCT00000211', title: 'AXL-211 - EGFR+ NSCLC (post-TKI)', phase: 'Ph II', coverage: '9 / 10 capabilities', fit: '94%', status: 'Strong fit', sponsor: 'Cascade Therapeutics', pi: 'Dr. Higashikata', sites: '21 active US sites', window: 'Open through 09-30', scanned: '14:02 - coverage graph', gap: 'None material', concepts: ['EGFR T790M / C797S', 'NSCLC IIIB-IV', 'post-osimertinib', 'ECOG 0-1'] },
   { id: 'NCT00000031', title: 'HEM-31 - second-line DLBCL', phase: 'Ph II', coverage: '8 / 10 capabilities', fit: '82%', status: 'Strong fit', sponsor: 'Northlake Biosciences', pi: 'Dr. Giovanna', sites: '31 active sites', window: 'Open through 10-12', scanned: '14:02 - coverage graph', gap: 'Apheresis slot', concepts: ['DLBCL', 'second line', 'PET-avid', 'CAR-T naive'] },
@@ -1065,13 +1072,13 @@ function TridentWorkbench({ selected, setSelected, stage, setStage }) {
 
   return (
     <div className="trident-workbench" aria-live="polite">
-      <div className="trident-list">{criteria.map((item, index) => <button className={index === selected ? 'active' : ''} type="button" onClick={() => { setSelected(index); setStage(0); setRequestOpen(false); setRequestComplete(false) }} key={item.code}><span><b>{item.code}</b><strong>{item.current}</strong><i><span style={{ width: `${item.friction}%` }} /></i></span><em>{item.friction}%</em></button>)}</div>
+      <div className="trident-list">{criteria.map((item, index) => <button className={index === selected ? 'active' : ''} type="button" onClick={() => { setSelected(index); setStage(0); setRequestOpen(false); setRequestComplete(false) }} key={item.code}><span><b>{item.code}</b><strong>{item.current}</strong><i><span className={`metric-tone ${metricTone('friction', item.friction)}`} style={{ width: `${item.friction}%` }} /></i></span><em className={`metric-tone ${metricTone('friction', item.friction)}`}>{item.friction}%</em></button>)}</div>
       <div className="trident-detail">
         <div className={settle}>
         <div className="trident-detail-head"><span><small>SELECTED CRITERION</small><strong>{criterion.code}</strong></span><em>{requested ? 'REQUESTED' : drafted ? 'DRAFT READY' : drafting ? 'DRAFTING' : 'REVIEW'}</em></div>
         {requestOpen ? <InlineActionPanel open complete={requestComplete} title="Request amendment from sponsor" description="Send Trident's PHI-free case to Meridian Oncology Therapeutics. Sponsor authors and signs the amendment." rows={[["Criterion", criterion.code], ["Projected friction", `${criterion.friction}% to ${criterion.projected}%`], ["Evidence", "FDA guidance - ontology-normalized criteria"], ["Authority", "Sponsor medical monitor"]]} confirmLabel="Send request" successTitle="Request sent to sponsor" successDescription="Meridian received Trident's draft. SLA 5 business days. Request bound to Replay." onClose={() => { setRequestOpen(false); if (!requestComplete) setStage(3) }} onConfirm={() => { setRequestComplete(true); setStage(5) }} /> : drafting ? <div className="agent-processing-state"><span /><strong>{stage === 1 ? 'Reading protocol and FDA guidance...' : 'Mapping ontology concepts...'}</strong><small>Source links remain attached while Trident builds the bounded delta.</small></div> : <>
           <div className="trident-compare"><div><small>CURRENT - {criterion.code}</small><strong>{criterion.current}</strong></div><div><small>PROPOSED</small><strong>{criterion.proposed}</strong></div></div>
-          {drafted && <><div className="trident-impact-pair"><div><small>CURRENT FRICTION</small><strong>{criterion.friction}%</strong><i><span style={{ width: `${criterion.friction}%` }} /></i></div><div><small>PROJECTED - DOWN {criterion.friction - criterion.projected} PTS</small><strong>{criterion.projected}%</strong><i><span style={{ width: `${criterion.projected}%` }} /></i></div></div><div className="trident-draft-sheet"><div><span>THE CASE TRIDENT HANDS THE SPONSOR</span><small>Amendment draft - v2.2</small></div><p><strong>Endpoints unaffected.</strong> Structural eligibility change only. Primary and secondary endpoints stay untouched.</p><p><strong>PHI-free, clinician-led.</strong> Sponsor medical monitor decides and signs.</p><small>Unblocks - {criterion.unblocks}</small></div></>}
+          {drafted && <><div className="trident-impact-pair"><div><small>CURRENT FRICTION</small><strong className={`metric-tone ${metricTone('friction', criterion.friction)}`}>{criterion.friction}%</strong><i><span className={`metric-tone ${metricTone('friction', criterion.friction)}`} style={{ width: `${criterion.friction}%` }} /></i></div><div><small>PROJECTED - DOWN {criterion.friction - criterion.projected} PTS</small><strong className={`metric-tone ${metricTone('friction', criterion.projected)}`}>{criterion.projected}%</strong><i><span className={`metric-tone ${metricTone('friction', criterion.projected)}`} style={{ width: `${criterion.projected}%` }} /></i></div></div><div className="trident-draft-sheet"><div><span>THE CASE TRIDENT HANDS THE SPONSOR</span><small>Amendment draft - v2.2</small></div><p><strong>Endpoints unaffected.</strong> Structural eligibility change only. Primary and secondary endpoints stay untouched.</p><p><strong>PHI-free, clinician-led.</strong> Sponsor medical monitor decides and signs.</p><small>Unblocks - {criterion.unblocks}</small></div></>}
           {!drafted && <div className="trident-rationale"><span>WHY THIS CHANGES</span><p>{criterion.rationale}</p><div><small>UNBLOCKS - STAGED FOR HUMAN DECISION</small><strong>{criterion.unblocks}</strong></div></div>}
           <div className="trident-actions">{!drafted && <button className="trident-primary" type="button" onClick={() => setStage(1)}>Draft amendment - {criterion.code} <ArrowRight size={18} weight="bold" /></button>}{drafted && !requested && <button className="trident-primary" type="button" onClick={() => { setRequestOpen(true); setRequestComplete(false); setStage(4) }}>Request amendment from sponsor <ArrowRight size={18} weight="bold" /></button>}{requested && <div className="trident-complete"><CheckCircle size={19} weight="fill" /><span><strong>Request sent to sponsor</strong><small>Meridian Oncology Therapeutics - SLA 5 business days - replay-linked</small></span></div>}<small>{!drafted ? 'Trident drafts. Sponsor decides.' : !requested ? 'Draft remains editable until request.' : 'No protocol logic changed without sponsor review.'}</small></div>
         </>}
@@ -1094,15 +1101,15 @@ function EyeWorkbench({ selected, setSelected, routed, setRouted }) {
   const signal = signals[selected]
   const done = routed === signal.id || (signal.type === 'Steady')
   return <div className="agent-workbench agent-eye-workbench" aria-live="polite">
-    <div className="eye-kpis"><div><strong>8</strong><small>Signals monitored</small></div><div><strong>7</strong><small>Need attention</small></div><div><strong>6</strong><small>Routed this period</small></div><div><strong>98%</strong><small>Screening throughput</small></div></div>
+    <div className="eye-kpis"><div><strong className="metric-tone is-good">8</strong><small>Signals monitored</small></div><div><strong className="metric-tone is-bad">7</strong><small>Need attention</small></div><div><strong className="metric-tone is-warn">6</strong><small>Routed this period</small></div><div><strong className="metric-tone is-good">98%</strong><small>Screening throughput</small></div></div>
     <div className="quality-signal-grid">
-      <div className="quality-list">{signals.map((item, index) => <button className={selected === index ? 'active' : ''} type="button" aria-pressed={selected === index} onClick={() => { setSelected(index); setRouteOpen(false); setRouteComplete(false) }} key={item.id}><span><b>{item.type}</b><strong>{item.name}</strong><small>{item.delta}</small></span><em>{item.value}</em></button>)}</div>
+      <div className="quality-list">{signals.map((item, index) => <button className={selected === index ? 'active' : ''} type="button" aria-pressed={selected === index} onClick={() => { setSelected(index); setRouteOpen(false); setRouteComplete(false) }} key={item.id}><span><b>{item.type}</b><strong>{item.name}</strong><small>{item.delta}</small></span><em className={`metric-tone ${metricTone('signal', item.type)}`}>{item.value}</em></button>)}</div>
       <div className={`quality-detail${routeOpen ? ' is-action' : ''}`}>
         {routeOpen ? <InlineActionPanel open complete={routeComplete} title={signal.route} description="Create an evidence-bound advisory. Eye does not change screening results or site decisions." rows={[["Signal", signal.name], ["Owner", signal.owner], ["SLA", "24 hours"], ["Record", `${signal.ticket} - replay-linked`]]} confirmLabel={signal.route} successTitle="Quality signal routed" successDescription={`${signal.ticket} reached ${signal.owner}. Source signal stays linked.`} onClose={() => setRouteOpen(false)} onConfirm={() => { setRouted(signal.id); setRouteComplete(true) }} /> : <>
         <div className={settle}>
         <span>{signal.type} - KRI</span>
         <h4>{signal.name}</h4>
-        <div className="eye-metric"><strong>{signal.value}</strong><span>{signal.unit}</span><em>{signal.delta}</em></div>
+        <div className="eye-metric"><strong className={`metric-tone ${metricTone('signal', signal.type)}`}>{signal.value}</strong><span>{signal.unit}</span><em>{signal.delta}</em></div>
         <div className="eye-spark" aria-hidden="true">{[2, 2, 3, 3, 4, 6].map((value, index) => <i style={{ height: `${9 + value * 5}px` }} key={index} />)}</div>
         <div className="eye-explanation"><div><small>WHAT EYE SEES</small><p>{signal.sees}</p></div><div><small>LIKELY CAUSE</small><p>{signal.cause}</p></div><div><small>IF UNADDRESSED</small><p>{signal.impact}</p></div></div>
         <div className="eye-method"><small>METHOD</small><strong>{signal.method}</strong></div>
@@ -1196,15 +1203,15 @@ function SentinelWorkbench({ selected, setSelected, surfaced, setSurfaced }) {
   const study = SENTINEL_STUDIES[selected]
   const done = surfaced === study.id
   return <div className="agent-workbench agent-sentinel-workbench" aria-live="polite">
-    <div className="sentinel-summary"><strong>{SENTINEL_STUDIES.length}</strong><span>of 9 open protocols fit Site 018</span><em>Aggregate only - synthetic</em></div>
+    <div className="sentinel-summary"><strong className="metric-tone is-good">{SENTINEL_STUDIES.length}</strong><span>of 9 open protocols fit Site 018</span><em>Aggregate only - synthetic</em></div>
     <div className="sentinel-grid">
-      <div className="sentinel-studies">{SENTINEL_STUDIES.map((item, index) => <button className={selected === index ? 'active' : ''} type="button" onClick={() => { setSelected(index); setSurfaceOpen(false); setSurfaceComplete(false) }} key={item.id}><span><b>{item.id}</b><strong>{item.title}</strong><small>{item.phase} - {item.coverage}</small></span><em>{item.fit}<small>{item.status}</small></em></button>)}</div>
+      <div className="sentinel-studies">{SENTINEL_STUDIES.map((item, index) => <button className={selected === index ? 'active' : ''} type="button" onClick={() => { setSelected(index); setSurfaceOpen(false); setSurfaceComplete(false) }} key={item.id}><span><b>{item.id}</b><strong>{item.title}</strong><small>{item.phase} - {item.coverage}</small></span><em className={`metric-tone ${metricTone('fit', Number.parseInt(item.fit, 10))}`}>{item.fit}<small>{item.status}</small></em></button>)}</div>
       <div className={`sentinel-detail${surfaceOpen ? ' is-action' : ''}`}>
         {surfaceOpen ? <InlineActionPanel open complete={surfaceComplete} title="Surface site capacity" description="Share one aggregate opportunity signal. Sponsor sees capability supply, not a patient." rows={[["Protocol", `${study.id} - ${study.phase}`], ["Sponsor", study.sponsor], ["Coverage", `${study.fit} - ${study.coverage}`], ["Boundary", "PHI-free - no patient-level data"]]} confirmLabel="Surface to sponsor" successTitle="Opportunity surfaced" successDescription={`${study.sponsor} received aggregate site capacity. Signal bound to Replay.`} onClose={() => setSurfaceOpen(false)} onConfirm={() => { setSurfaced(study.id); setSurfaceComplete(true) }} /> : <>
         <div className={settle}>
         <span>SELECTED PROTOCOL - {study.id}</span>
         <h4>{study.title}</h4>
-        <div className="sentinel-coverage"><strong>{study.fit}</strong><span>{Array.from({ length: 10 }, (_, index) => <i className={index < Number.parseInt(study.coverage, 10) ? 'filled' : ''} key={index} />)}</span></div>
+        <div className="sentinel-coverage"><strong className={`metric-tone ${metricTone('fit', Number.parseInt(study.fit, 10))}`}>{study.fit}</strong><span>{Array.from({ length: 10 }, (_, index) => <i className={index < Number.parseInt(study.coverage, 10) ? 'filled' : ''} key={index} />)}</span></div>
         <div className="sentinel-meta"><div><small>SPONSOR</small><strong>{study.sponsor}</strong></div><div><small>PI</small><strong>{study.pi}</strong></div><div><small>SITES</small><strong>{study.sites}</strong></div><div><small>WINDOW</small><strong>{study.window}</strong></div><div><small>LAST MATCH</small><strong>{study.scanned}</strong></div><div><small>COVERAGE GAP</small><strong>{study.gap}</strong></div></div>
         <div className="sentinel-concepts"><small>EVIDENCE CONCEPTS COVERED</small><div>{study.concepts.map((concept) => <span key={concept}>{concept}</span>)}</div></div>
         <div className="sentinel-note"><small>COVERAGE NOTE</small><p>{study.gap === 'None material' ? 'No blocking site gap on the coverage graph. Patient data stays inside Site 018.' : `Open site gap: ${study.gap}. Coverage graph only. Patient data stays inside Site 018.`}</p></div>
@@ -1307,13 +1314,13 @@ function AgentOperations() {
         <div className="mac-titlebar">
           <div className="traffic-lights" aria-hidden="true"><i /><i /><i /></div>
           <WindowBrand />
-          <span className="window-live" style={{ '--agent-color': agent.color }}><i /> {agent.name} working</span>
+          <span aria-hidden="true" />
         </div>
         <div className="agent-console-grid">
           <aside className="agent-console-nav">
             <span>AGENTS</span>
             {AGENTS.map((item, index) => (
-              <button className={index === active ? 'active' : ''} style={{ '--agent-color': item.color }} type="button" aria-pressed={index === active} aria-label={item.name} onClick={() => { hold(); swap(() => { setActive(index); setTick(0) }, false) }} key={item.name}>
+              <button className={index === active ? 'active' : ''} type="button" aria-pressed={index === active} aria-label={item.name} onClick={() => { hold(); swap(() => { setActive(index); setTick(0) }, false) }} key={item.name}>
                 <i />
                 <AgentGlyph kind={item.icon} size={14} />
                 {item.name}
@@ -1322,14 +1329,14 @@ function AgentOperations() {
             <div className="agent-console-context"><small>CURRENT RUN</small><strong>DMR-204 - v2.1</strong><span>Site 018 - synthetic</span></div>
           </aside>
           <main className="agent-console-main">
-            <div className={`agent-console-state${fading ? ' is-fading' : ''}`} style={{ '--agent-color': agent.color }}>
-              <div className="agent-console-header" style={{ '--agent-color': agent.color }}>
+            <div className={`agent-console-state${fading ? ' is-fading' : ''}`}>
+              <div className="agent-console-header">
                 <div><span>{agent.name}</span><h3>{agent.task}</h3><p>{agent.text}</p></div>
                 {active === 2 ? <em>Read only</em> : ((active === 0 && tridentStage < 5) || (active === 1 && eyeSelected !== 3 && !eyeRouted) || (active === 3 && !sentinelSurfaced)) ? <em className="agent-working-state"><i /> {active === 0 && tridentStage === 0 ? 'Ready' : 'Working'}</em> : <em><CheckCircle size={14} weight="fill" /> {active === 1 && eyeSelected === 3 ? 'No action' : 'Complete'}</em>}
               </div>
               <div className="agent-workspace-body">
                 <div className="agent-workspace-live">
-              {active === 0 ? <TridentWorkbench selected={tridentCriterion} setSelected={setTridentCriterion} stage={tridentStage} setStage={setTridentStage} /> : active === 1 ? <EyeWorkbench selected={eyeSelected} setSelected={setEyeSelected} routed={eyeRouted} setRouted={setEyeRouted} /> : active === 2 ? <LunaWorkbench asked={lunaAsked} setAsked={setLunaAsked} tick={tick} playing={playing} /> : active === 3 ? <SentinelWorkbench selected={sentinelSelected} setSelected={setSentinelSelected} surfaced={sentinelSurfaced} setSurfaced={setSentinelSurfaced} /> : <><div className="agent-quick-demo" style={{ '--agent-color': agent.color }}>
+              {active === 0 ? <TridentWorkbench selected={tridentCriterion} setSelected={setTridentCriterion} stage={tridentStage} setStage={setTridentStage} /> : active === 1 ? <EyeWorkbench selected={eyeSelected} setSelected={setEyeSelected} routed={eyeRouted} setRouted={setEyeRouted} /> : active === 2 ? <LunaWorkbench asked={lunaAsked} setAsked={setLunaAsked} tick={tick} playing={playing} /> : active === 3 ? <SentinelWorkbench selected={sentinelSelected} setSelected={setSentinelSelected} surfaced={sentinelSurfaced} setSurfaced={setSentinelSurfaced} /> : <><div className="agent-quick-demo">
                 <div className="agent-quick-demo-head"><span>{agent.demoLabel}</span><small>{agent.input} <ArrowRight size={12} /> {agent.output}</small></div>
                 <div className="agent-quick-demo-columns">{agent.demoColumns.map((column) => <span key={column}>{column}</span>)}</div>
                 {agent.demoRows.map((row, index) => <div className={index === tick % agent.demoRows.length ? 'active' : ''} key={row[0]}>{row.map((cell) => <span key={cell}>{cell}</span>)}</div>)}

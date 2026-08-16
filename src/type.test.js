@@ -78,4 +78,13 @@ describe('site type', () => {
     assert.match(app, /<span>\{agent\.name\}<\/span><h3>\{agent\.task\}<\/h3>/)
     assert.match(css, /#root \.agent-console-nav button \{\s*display:\s*grid;[\s\S]*?grid-template-columns:\s*7px 14px minmax\(0, 1fr\);/)
   })
+
+  it('keeps the agents console grey and colors only metric numbers', () => {
+    assert.doesNotMatch(app, /\{agent\.name\} working/)
+    assert.match(app, /function metricTone\(/)
+    assert.match(css, /#root \.agent-console \{\s*--agent-color:\s*var\(--muted\);/)
+    assert.match(css, /#root \.agent-console \.metric-tone\.is-bad \{ color: #c23b3b; \}/)
+    assert.match(css, /#root \.agent-console \.metric-tone\.is-warn \{ color: #c9a227; \}/)
+    assert.match(css, /#root \.agent-console \.metric-tone\.is-good \{ color: var\(--success\); \}/)
+  })
 })

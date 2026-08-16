@@ -11919,19 +11919,28 @@ html.is-hidden .hero-agent.is-active i,
   background: var(--border-strong);
 }
 
+#root .agent-console {
+  --agent-color: var(--muted);
+}
+
 #root .agent-console-nav button.active > i {
-  background: var(--agent-color);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--agent-color) 14%, transparent);
+  background: var(--muted);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--muted) 14%, transparent);
 }
 
-#root .agent-console-nav button > svg {
-  color: var(--agent-color);
-}
-
+#root .agent-console-nav button > svg,
 #root .agent-console-header > div > span {
+  color: var(--muted);
   font-family: var(--font-ui);
   font-weight: 400;
 }
+
+#root .agent-console .metric-tone.is-bad { color: #c23b3b; }
+#root .agent-console .metric-tone.is-warn { color: #c9a227; }
+#root .agent-console .metric-tone.is-good { color: var(--success); }
+#root .agent-console i > .metric-tone.is-bad { background: #c23b3b; }
+#root .agent-console i > .metric-tone.is-warn { background: #c9a227; }
+#root .agent-console i > .metric-tone.is-good { background: var(--success); }
 
 #root .node-section {
   width: min(100%, 1500px);
