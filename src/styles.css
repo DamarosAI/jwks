@@ -11341,6 +11341,360 @@ html.is-hidden .hero-agent.is-active i,
   }
 }
 
+/* Luna uses landing-demo density: answer, evidence ledger, source inspector. */
+.agent-console .agent-luna-workbench .luna-answer-panel {
+  padding: 16px;
+}
+
+.luna-answer-body {
+  display: flex;
+  height: 100%;
+  min-height: 0;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.agent-console .agent-luna-workbench .luna-finding-head {
+  flex: 0 0 auto;
+  gap: 10px;
+}
+
+.agent-console .agent-luna-workbench .luna-finding-head > span {
+  gap: 4px;
+}
+
+.agent-console .agent-luna-workbench .luna-finding-head strong {
+  font-size: 0.96rem;
+  line-height: 1.22;
+}
+
+.agent-console .agent-luna-workbench .luna-finding-meta {
+  flex: 0 0 auto;
+  gap: 7px;
+}
+
+.agent-console .agent-luna-workbench .luna-finding-meta > div {
+  min-height: 46px;
+  align-content: center;
+  padding: 8px 10px;
+  border: 1px solid color-mix(in srgb, var(--agent-color) 12%, var(--border));
+  border-radius: 10px;
+  background: white;
+}
+
+.agent-console .agent-luna-workbench .luna-finding-note {
+  display: grid;
+  flex: 0 0 auto;
+  min-height: 0;
+  gap: 5px;
+  padding: 11px 12px;
+  border: 1px solid color-mix(in srgb, var(--agent-color) 12%, var(--border));
+  border-radius: 10px;
+  background: white;
+}
+
+.agent-console .agent-luna-workbench .luna-finding-note p {
+  max-width: none;
+  font-size: 0.73rem;
+  line-height: 1.42;
+}
+
+.luna-evidence-workspace {
+  display: grid;
+  flex: 1 1 auto;
+  min-height: 0;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+  grid-template-rows: minmax(0, 1fr);
+  grid-auto-flow: dense;
+  gap: 8px;
+}
+
+.agent-console .agent-luna-workbench .luna-chain,
+.agent-console .agent-luna-workbench .luna-chain:has(> :nth-child(4)) {
+  display: grid;
+  height: 100%;
+  min-height: 0;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto;
+  grid-auto-rows: minmax(0, 1fr);
+  align-content: stretch;
+  gap: 6px;
+}
+
+.luna-chain > header {
+  display: flex;
+  min-height: 20px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 2px;
+}
+
+.luna-chain > header span {
+  color: var(--agent-color);
+  font-size: 0.56rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+}
+
+.luna-chain > header small {
+  color: var(--muted);
+  font-size: 0.56rem;
+}
+
+.agent-console .agent-luna-workbench .luna-chain button {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  grid-template-columns: 25px minmax(0, 1fr) 16px;
+  gap: 7px;
+  align-content: center;
+  align-items: center;
+  padding: 8px 9px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: white;
+}
+
+.agent-console .agent-luna-workbench .luna-chain button > span:nth-child(2) {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.luna-chain-index {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--agent-color) 8%, white);
+  color: var(--agent-color);
+  font-size: 0.58rem;
+}
+
+.agent-console .agent-luna-workbench .luna-chain button small,
+.agent-console .agent-luna-workbench .luna-chain button strong,
+.agent-console .agent-luna-workbench .luna-chain button em {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.agent-console .agent-luna-workbench .luna-chain button small {
+  color: var(--agent-color);
+  font-size: 0.53rem;
+  letter-spacing: 0.06em;
+}
+
+.agent-console .agent-luna-workbench .luna-chain button strong {
+  font-size: 0.66rem;
+  line-height: 1.25;
+}
+
+.agent-console .agent-luna-workbench .luna-chain button em {
+  color: var(--muted);
+  font-size: 0.56rem;
+}
+
+.agent-console .agent-luna-workbench .luna-chain button > svg {
+  color: var(--success);
+}
+
+.agent-console .agent-luna-workbench .luna-chain button.active {
+  border-color: color-mix(in srgb, var(--agent-color) 50%, var(--border));
+  background: color-mix(in srgb, var(--agent-color) 7%, white);
+  box-shadow: inset 3px 0 0 color-mix(in srgb, var(--agent-color) 70%, transparent);
+}
+
+.luna-source-inspector {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  gap: 9px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--agent-color) 16%, var(--border));
+  border-radius: 10px;
+  background: white;
+}
+
+.luna-source-inspector > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.luna-source-inspector > header small {
+  color: var(--agent-color);
+  font-size: 0.56rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+}
+
+.luna-source-inspector > header em {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--success);
+  font-size: 0.52rem;
+  font-style: normal;
+  font-weight: 750;
+}
+
+.luna-source-inspector > span {
+  width: max-content;
+  max-width: 100%;
+  padding: 4px 7px;
+  overflow: hidden;
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--agent-color) 9%, white);
+  color: var(--agent-color);
+  font-size: 0.54rem;
+  font-weight: 750;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.luna-source-inspector h5 {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 0.78rem;
+  line-height: 1.32;
+}
+
+.luna-source-inspector dl {
+  display: grid;
+  min-height: 0;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: 0;
+  margin: 0;
+}
+
+.luna-source-inspector dl > div {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+  padding: 7px 0;
+  border-top: 1px solid color-mix(in srgb, var(--agent-color) 10%, var(--border));
+}
+
+.luna-source-inspector dt {
+  color: var(--muted);
+  font-size: 0.52rem;
+  letter-spacing: 0.07em;
+}
+
+.luna-source-inspector dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: var(--text-soft);
+  font-size: 0.61rem;
+  line-height: 1.3;
+}
+
+.luna-source-inspector > footer {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  margin-top: auto;
+  padding: 9px;
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--agent-color) 7%, white);
+  color: var(--agent-color);
+}
+
+.luna-source-inspector > footer > span {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.luna-source-inspector > footer strong {
+  color: var(--text-soft);
+  font-size: 0.62rem;
+}
+
+.luna-source-inspector > footer small {
+  color: var(--muted);
+  font-size: 0.54rem;
+  line-height: 1.3;
+}
+
+@media (max-width: 900px) {
+  .luna-answer-body {
+    height: auto;
+    overflow: visible;
+  }
+
+  .agent-console .agent-luna-workbench .luna-question-list {
+    align-content: start;
+    grid-template-rows: auto;
+    grid-auto-rows: auto;
+  }
+
+  .agent-console .agent-luna-workbench .luna-question-list button {
+    min-height: 82px;
+  }
+
+  .agent-console .agent-luna-workbench .luna-finding-meta {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .luna-evidence-workspace {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto;
+  }
+
+  .agent-console .agent-luna-workbench .luna-chain,
+  .agent-console .agent-luna-workbench .luna-chain:has(> :nth-child(4)) {
+    height: auto;
+    grid-auto-rows: auto;
+  }
+
+  .agent-console .agent-luna-workbench .luna-chain button {
+    min-height: 72px;
+  }
+
+  .luna-source-inspector {
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .luna-source-inspector dl {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 12px;
+  }
+}
+
+@media (max-width: 640px) {
+  .agent-console .agent-luna-workbench .luna-answer-panel {
+    min-height: 897px;
+  }
+
+  .agent-console .agent-luna-workbench .luna-finding-note {
+    min-height: 109px;
+  }
+
+  .luna-evidence-workspace {
+    grid-template-rows: minmax(332px, 1fr) auto;
+  }
+
+  .agent-console .agent-luna-workbench .luna-chain,
+  .agent-console .agent-luna-workbench .luna-chain:has(> :nth-child(4)) {
+    height: 100%;
+    grid-auto-rows: minmax(0, 1fr);
+  }
+}
+
 @media (update: slow), (prefers-reduced-data: reduce) {
   .biomarker-rain,
   .ambient-field {

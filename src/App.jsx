@@ -1118,7 +1118,8 @@ function EyeWorkbench({ selected, setSelected, routed, setRouted }) {
 }
 
 function LunaWorkbench({ asked, setAsked, tick, playing }) {
-  const settle = usePaneSettle()
+  const root = useRef(null)
+  const reduced = useReducedMotion()
   const [question, setQuestion] = useState(asked ? 1 : 0)
   const [openedCitation, setOpenedCitation] = useState(null)
   const activeQuestion = LUNA_INVESTIGATIONS[question]
@@ -1137,7 +1138,21 @@ function LunaWorkbench({ asked, setAsked, tick, playing }) {
     setAsked(true)
   }
 
-  return <div className="agent-workbench agent-luna-workbench" aria-live="polite">
+  useGSAP(() => {
+    if (reduced || !root.current) return undefined
+    const targets = root.current.querySelectorAll('.luna-finding-head, .luna-finding-meta, .luna-finding-note, .luna-evidence-workspace')
+    const tween = gsap.fromTo(targets, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.36, stagger: 0.045, ease: 'power2.out', clearProps: 'transform' })
+    return () => tween.kill()
+  }, { scope: root, dependencies: [question, reduced] })
+
+  useGSAP(() => {
+    if (reduced || !root.current) return undefined
+    const targets = root.current.querySelectorAll('.luna-source-inspector > *')
+    const tween = gsap.fromTo(targets, { opacity: 0, x: 6 }, { opacity: 1, x: 0, duration: 0.28, stagger: 0.035, ease: 'power2.out', clearProps: 'transform' })
+    return () => tween.kill()
+  }, { scope: root, dependencies: [openedCitation, question, reduced] })
+
+  return <div className="agent-workbench agent-luna-workbench" aria-live="polite" ref={root}>
     <div className="luna-investigation-grid">
       <div className="luna-question-list">
         <span>OPEN READS · {LUNA_INVESTIGATIONS.length}</span>
@@ -1149,20 +1164,25 @@ function LunaWorkbench({ asked, setAsked, tick, playing }) {
         ))}
       </div>
       <div className="audit-answer luna-answer-panel">
-        <div className={settle}>
+        <div className="luna-answer-body">
         <div className="luna-finding-head"><span><small>FINDING · RECONSTRUCTED FROM CHAIN</small><strong>{activeQuestion.q}</strong></span><em>CHAIN VERIFIED</em></div>
         <div className="luna-finding-meta"><div><small>SUBJECT</small><strong>{activeQuestion.subject}</strong></div><div><small>ASKED</small><strong>{activeQuestion.asked}</strong></div><div><small>CITED</small><strong>{citations.length} chain rows</strong></div></div>
         <div className="luna-finding-note"><small>RECONSTRUCTION</small><p>{activeQuestion.answer}</p></div>
-        <div className="luna-chain">{citations.map((citation, index) => (
-          <button className={openCitation.id === citation.id ? 'active' : ''} type="button" aria-pressed={openCitation.id === citation.id} onClick={() => setOpenedCitation(citation.id)} key={citation.id}>
-            <small>[{index + 1}] {citation.type}</small>
-            <strong>{citation.value}</strong>
-            <em>{citation.source}</em>
-          </button>
-        ))}</div>
-        <div className="luna-citation-record">
-          <div><small>OPEN CITATION</small><strong>{openCitation.id}</strong></div>
-          <div><small>ANCHOR</small><strong>{openCitation.hash}</strong></div>
+        <div className="luna-evidence-workspace">
+          <div className="luna-chain"><header><span>EVIDENCE CHAIN</span><small>{citations.length} rows · sealed</small></header>{citations.map((citation, index) => (
+            <button className={openCitation.id === citation.id ? 'active' : ''} type="button" aria-pressed={openCitation.id === citation.id} onClick={() => setOpenedCitation(citation.id)} key={citation.id}>
+              <span className="luna-chain-index">{String(index + 1).padStart(2, '0')}</span>
+              <span><small>{citation.type}</small><strong>{citation.value}</strong><em>{citation.source}</em></span>
+              <CheckCircle size={16} weight="fill" />
+            </button>
+          ))}</div>
+          <aside className="luna-citation-record luna-source-inspector" aria-live="polite">
+            <header><small>OPEN CITATION</small><em><CheckCircle size={13} weight="fill" /> VERIFIED</em></header>
+            <span>{openCitation.type}</span>
+            <h5>{openCitation.value}</h5>
+            <dl><div><dt>SOURCE ID</dt><dd>{openCitation.id}</dd></div><div><dt>CHAIN ROW</dt><dd>{openCitation.source}</dd></div><div><dt>ANCHOR</dt><dd>{openCitation.hash}</dd></div><div><dt>SUBJECT</dt><dd>{activeQuestion.subject}</dd></div></dl>
+            <footer><ShieldCheck size={16} /><span><strong>Read boundary intact</strong><small>Luna cites this row. Record remains unchanged.</small></span></footer>
+          </aside>
         </div>
         </div>
       </div>
