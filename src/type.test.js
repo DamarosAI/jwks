@@ -70,4 +70,12 @@ describe('site type', () => {
     assert.match(css, /\.page-spine\s*\{[\s\S]*?transform:\s*none;/)
     assert.match(css, /#root \.page-spine :is\(button, span, strong\) \{\s*font-family:\s*var\(--font-ui\);\s*font-weight:\s*400;/)
   })
+
+  it('keeps agent tabs to glyph and name like the landing chips', () => {
+    assert.match(app, /<i \/>\s*<AgentGlyph kind=\{item\.icon\} size=\{14\} \/>\s*\{item\.name\}/)
+    assert.doesNotMatch(app, /<small>\{item\.role\}<\/small>/)
+    assert.doesNotMatch(app, /AgentGlyph kind=\{agent\.icon\} size=\{15\}/)
+    assert.match(app, /<span>\{agent\.name\}<\/span><h3>\{agent\.task\}<\/h3>/)
+    assert.match(css, /#root \.agent-console-nav button \{\s*display:\s*grid;[\s\S]*?grid-template-columns:\s*7px 14px minmax\(0, 1fr\);/)
+  })
 })

@@ -11891,6 +11891,44 @@ html.is-hidden .hero-agent.is-active i,
   font-weight: 400;
 }
 
+#root .agent-console-nav button {
+  display: grid;
+  min-height: 34px;
+  grid-template-columns: 7px 14px minmax(0, 1fr);
+  gap: 6px;
+  align-items: center;
+  padding: 0 10px;
+  color: var(--muted);
+  font-family: var(--font-ui);
+  font-size: 0.7rem;
+  font-weight: 400;
+}
+
+#root .agent-console-nav button.active {
+  color: var(--text-soft);
+}
+
+#root .agent-console-nav button > i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--border-strong);
+}
+
+#root .agent-console-nav button.active > i {
+  background: var(--agent-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--agent-color) 14%, transparent);
+}
+
+#root .agent-console-nav button > svg {
+  color: var(--agent-color);
+}
+
+#root .agent-console-header > div > span {
+  font-family: var(--font-ui);
+  font-weight: 400;
+}
+
 /* Endless contains printable ASCII only. Keep visible copy inside that set and
    never rasterize text through a moving ancestor. */
 .source-criteria-head button,

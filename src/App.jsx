@@ -1313,9 +1313,10 @@ function AgentOperations() {
           <aside className="agent-console-nav">
             <span>AGENTS</span>
             {AGENTS.map((item, index) => (
-              <button className={index === active ? 'active' : ''} style={{ '--agent-color': item.color }} type="button" aria-pressed={index === active} onClick={() => { hold(); swap(() => { setActive(index); setTick(0) }, false) }} key={item.name}>
-                <AgentGlyph kind={item.icon} size={17} />
-                <span><strong>{item.name}</strong><small>{item.role}</small></span>
+              <button className={index === active ? 'active' : ''} style={{ '--agent-color': item.color }} type="button" aria-pressed={index === active} aria-label={item.name} onClick={() => { hold(); swap(() => { setActive(index); setTick(0) }, false) }} key={item.name}>
+                <i />
+                <AgentGlyph kind={item.icon} size={14} />
+                {item.name}
               </button>
             ))}
             <div className="agent-console-context"><small>CURRENT RUN</small><strong>DMR-204 - v2.1</strong><span>Site 018 - synthetic</span></div>
@@ -1323,7 +1324,7 @@ function AgentOperations() {
           <main className="agent-console-main">
             <div className={`agent-console-state${fading ? ' is-fading' : ''}`} style={{ '--agent-color': agent.color }}>
               <div className="agent-console-header" style={{ '--agent-color': agent.color }}>
-                <div><span><AgentGlyph kind={agent.icon} size={15} /> {agent.name} - {agent.role}</span><h3>{agent.task}</h3><p>{agent.text}</p></div>
+                <div><span>{agent.name}</span><h3>{agent.task}</h3><p>{agent.text}</p></div>
                 {active === 2 ? <em>Read only</em> : ((active === 0 && tridentStage < 5) || (active === 1 && eyeSelected !== 3 && !eyeRouted) || (active === 3 && !sentinelSurfaced)) ? <em className="agent-working-state"><i /> {active === 0 && tridentStage === 0 ? 'Ready' : 'Working'}</em> : <em><CheckCircle size={14} weight="fill" /> {active === 1 && eyeSelected === 3 ? 'No action' : 'Complete'}</em>}
               </div>
               <div className="agent-workspace-body">
