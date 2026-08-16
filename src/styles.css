@@ -5481,6 +5481,41 @@ html { scroll-padding-top: 96px; }
 .trident-draft-sheet p { color: var(--text-soft); font-size: 0.68rem; line-height: 1.35; }
 .trident-draft-sheet p strong { color: var(--accent); }
 
+.agent-console .trident-draft-sheet {
+  gap: 10px;
+  padding: 14px 16px;
+  border: 0;
+  border-radius: 16px;
+  background: white;
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--agent-color) 14%, transparent);
+}
+
+.agent-console .trident-draft-sheet span {
+  color: var(--agent-color);
+  font-size: 0.58rem;
+  font-weight: 750;
+}
+
+.agent-console .trident-draft-sheet small {
+  color: var(--muted);
+  font-size: 0.58rem;
+}
+
+.agent-console .trident-draft-sheet p {
+  color: var(--text-soft);
+  font-size: 0.76rem;
+  line-height: 1.45;
+}
+
+.agent-console .trident-draft-sheet p strong {
+  color: var(--text);
+}
+
+.agent-console .trident-draft-sheet > small {
+  color: var(--agent-color);
+  font-weight: 650;
+}
+
 .agent-workbench { display: grid; min-height: 0; align-content: start; gap: 13px; }
 .agent-workbench-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--faint); font-size: 0.56rem; font-weight: 750; letter-spacing: 0.08em; }
 .agent-live-loader { display: inline-flex; align-items: center; gap: 4px; color: var(--agent-color); font-size: 0.59rem; font-weight: 650; letter-spacing: 0; }
@@ -9006,7 +9041,6 @@ html { scroll-padding-top: 96px; }
 
 .agent-console .trident-compare > div,
 .agent-console .trident-impact-pair > div,
-.agent-console .trident-draft-sheet,
 .agent-console .trident-rationale,
 .agent-console .eye-kpis > div,
 .agent-console .luna-finding-meta > div,
