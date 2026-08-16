@@ -1186,21 +1186,19 @@ function LunaWorkbench({ asked, setAsked, tick, playing }) {
       </div>
       <div className="audit-answer luna-answer-panel">
         <div className={settle}>
-        <div className="luna-finding-head"><span>FINDING · RECONSTRUCTED FROM CHAIN</span><em>CHAIN VERIFIED</em></div>
+        <div className="luna-finding-head"><span><small>FINDING · RECONSTRUCTED FROM CHAIN</small><strong>{activeQuestion.q}</strong></span><em>CHAIN VERIFIED</em></div>
         <div className="luna-finding-meta"><div><small>SUBJECT</small><strong>{activeQuestion.subject}</strong></div><div><small>ASKED</small><strong>{activeQuestion.asked}</strong></div><div><small>CITED</small><strong>{citations.length} chain rows</strong></div></div>
-        <p>{activeQuestion.answer}</p>
+        <div className="luna-finding-note"><small>RECONSTRUCTION</small><p>{activeQuestion.answer}</p></div>
         <div className="luna-chain">{citations.map((citation, index) => (
           <button className={openCitation.id === citation.id ? 'active' : ''} type="button" aria-pressed={openCitation.id === citation.id} onClick={() => setOpenedCitation(citation.id)} key={citation.id}>
-            <b>[{index + 1}]</b>
-            <span><small>{citation.type}</small><strong>{citation.value}</strong><em>{citation.source}</em></span>
-            <i>{citation.hash}</i>
+            <small>[{index + 1}] {citation.type}</small>
+            <strong>{citation.value}</strong>
+            <em>{citation.source}</em>
           </button>
         ))}</div>
         <div className="luna-citation-record">
-          <div><small>OPEN CITATION</small><b>{openCitation.id}</b></div>
-          <strong>{openCitation.value}</strong>
-          <p>{openCitation.source}</p>
-          <em>{openCitation.hash}</em>
+          <div><small>OPEN CITATION</small><strong>{openCitation.id}</strong></div>
+          <div><small>ANCHOR</small><strong>{openCitation.hash}</strong></div>
         </div>
         </div>
       </div>
