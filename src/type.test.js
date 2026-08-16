@@ -11,7 +11,7 @@ describe('site type', () => {
     assert.match(css, /\.wordmark \{[\s\S]*?font-size:\s*21px/)
     assert.match(css, /--type-control:\s*16px/)
     assert.match(css, /--type-product-control:\s*15px/)
-    assert.match(css, /--type-product-floor:\s*13px/)
+    assert.match(css, /--type-product-floor:\s*0\.8125rem/)
     assert.doesNotMatch(css, /\.button:hover \{[\s\S]*?translateY\(-1px\)/)
   })
 
@@ -26,12 +26,18 @@ describe('site type', () => {
     assert.match(css, /#root :is\([\s\S]*?button,[\s\S]*?letter-spacing:\s*var\(--tracking-control\);/)
     assert.match(css, /#root \.landing-source-demo :is\([\s\S]*?font-size:\s*var\(--type-product-control\);/)
     assert.match(css, /#root :is\([\s\S]*?\.landing-source-demo,[\s\S]*?\.agent-console,[\s\S]*?\.node-security-workspace,[\s\S]*?\.site-control-review/)
-    assert.match(css, /#root :is\([\s\S]*?\.agent-console,[\s\S]*?small, em, time, b, dt, span[\s\S]*?font-size:\s*max\(var\(--type-product-floor\),\s*13px\)/)
+    assert.match(css, /#root :is\([\s\S]*?\.agent-console,[\s\S]*?small, em, time, b, dt, span[\s\S]*?font-size:\s*max\(var\(--type-product-floor\),\s*0\.8125rem\)/)
+    assert.match(css, /overflow-wrap:\s*break-word/)
+    assert.match(css, /\.hero-heading \{[\s\S]*?text-wrap:\s*balance/)
+    assert.doesNotMatch(css, /transform-style:\s*preserve-3d/)
+    assert.doesNotMatch(css, /skewX|matrix\(/)
     assert.doesNotMatch(css, /-webkit-font-smoothing:\s*subpixel-antialiased/)
     assert.doesNotMatch(css, /text-rendering:\s*optimizeLegibility/)
   })
 
   it('clears enter transforms so Endless does not stay sheared', () => {
+    assert.doesNotMatch(app, /yPercent/)
+    assert.match(app, /\.from\('\.hero-line',\s*\{[^}]*clearProps:\s*'transform'/)
     assert.match(app, /\.from\('\.hero-workspace',\s*\{[^}]*clearProps:\s*'transform'/)
     assert.match(app, /gsap\.from\('\.agent-console',\s*\{[\s\S]*?clearProps:\s*'transform'/)
     assert.match(app, /gsap\.from\('\.node-system > \*',\s*\{[\s\S]*?clearProps:\s*'transform'/)

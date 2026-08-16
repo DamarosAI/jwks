@@ -464,10 +464,10 @@ function usePageScrollFlow(root, reduced) {
       const heading = chapter.querySelector('.founder-signature, .section-heading, .final-cta > h2, .final-cta > .button')
       if (!heading) return null
       return gsap.from(heading, {
-        y: 16,
         opacity: 0,
         duration: 0.65,
         ease: 'power2.out',
+        clearProps: 'transform',
         scrollTrigger: { trigger: chapter, start: 'top 86%', once: true },
       })
     })
@@ -624,9 +624,9 @@ function LandingHero() {
   useEnterMotion(root, reduced, () => {
     const timeline = gsap.timeline({ defaults: { ease: 'power2.out' } })
     timeline
-      .from('.hero-line', { yPercent: 110, duration: 1.2, stagger: 0.14 })
-      .from('.hero-copy > p, .hero-actions', { opacity: 0, y: 18, duration: 0.9, stagger: 0.12 }, '-=0.5')
-      .from('.hero-workspace', { opacity: 0, y: 36, duration: 1.15, clearProps: 'transform' }, '-=0.7')
+      .from('.hero-line', { opacity: 0, duration: 1.2, stagger: 0.14, clearProps: 'transform' })
+      .from('.hero-copy > p, .hero-actions', { opacity: 0, duration: 0.9, stagger: 0.12, clearProps: 'transform' }, '-=0.5')
+      .from('.hero-workspace', { opacity: 0, duration: 1.15, clearProps: 'transform' }, '-=0.7')
     return timeline
   }, '(min-width: 700px)')
 
@@ -657,10 +657,10 @@ function ThesisSection() {
 
   useEnterMotion(root, reduced, () => gsap.from('.thesis-head > *', {
     opacity: 0,
-    y: 24,
     duration: 0.8,
     stagger: 0.1,
     ease: 'power2.out',
+    clearProps: 'transform',
     scrollTrigger: { trigger: root.current, start: 'top 68%', once: true },
   }))
 
@@ -690,18 +690,18 @@ function CapacityBento() {
     return [
       gsap.from('.capacity-bento > *, .systems-banner', {
         opacity: 0,
-        y: 28,
         duration: 0.86,
         stagger: 0.1,
         ease: 'power2.out',
+        clearProps: 'transform',
         scrollTrigger: { trigger: root.current, start: 'top 70%', once: true },
       }),
       record ? gsap.from('.record-event', {
         opacity: 0,
-        y: 8,
         duration: 0.5,
         stagger: 0.16,
         ease: 'power2.out',
+        clearProps: 'transform',
         scrollTrigger: { trigger: record, start: 'top 78%', once: true },
       }) : null,
     ]
@@ -826,9 +826,8 @@ function SiteControlReview({ control, phase, reduced, onBack, onConfirm, onRetur
   useGSAP(() => {
     if (reduced || !root.current) return undefined
     const targets = root.current.querySelectorAll('[data-review-motion]')
-    const tween = gsap.fromTo(targets, { opacity: 0, y: 8 }, {
+    const tween = gsap.fromTo(targets, { opacity: 0 }, {
       opacity: 1,
-      y: 0,
       duration: 0.36,
       stagger: 0.045,
       ease: 'power2.out',
@@ -1141,14 +1140,14 @@ function LunaWorkbench({ asked, setAsked, tick, playing }) {
   useGSAP(() => {
     if (reduced || !root.current) return undefined
     const targets = root.current.querySelectorAll('.luna-finding-head, .luna-finding-meta, .luna-finding-note, .luna-evidence-workspace')
-    const tween = gsap.fromTo(targets, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.36, stagger: 0.045, ease: 'power2.out', clearProps: 'transform' })
+    const tween = gsap.fromTo(targets, { opacity: 0 }, { opacity: 1, duration: 0.36, stagger: 0.045, ease: 'power2.out', clearProps: 'transform' })
     return () => tween.kill()
   }, { scope: root, dependencies: [question, reduced] })
 
   useGSAP(() => {
     if (reduced || !root.current) return undefined
     const targets = root.current.querySelectorAll('.luna-source-inspector > *')
-    const tween = gsap.fromTo(targets, { opacity: 0, x: 6 }, { opacity: 1, x: 0, duration: 0.28, stagger: 0.035, ease: 'power2.out', clearProps: 'transform' })
+    const tween = gsap.fromTo(targets, { opacity: 0 }, { opacity: 1, duration: 0.28, stagger: 0.035, ease: 'power2.out', clearProps: 'transform' })
     return () => tween.kill()
   }, { scope: root, dependencies: [openedCitation, question, reduced] })
 
@@ -1291,7 +1290,6 @@ function AgentOperations() {
 
   useEnterMotion(root, reduced, () => gsap.from('.agent-console', {
     opacity: 0,
-    y: 36,
     duration: 0.95,
     ease: 'power2.out',
     clearProps: 'transform',
@@ -1402,7 +1400,6 @@ function SiteNodeSection() {
   useEnterMotion(root, reduced, () => [
     gsap.from('.node-copy > *', {
       opacity: 0,
-      y: 32,
       duration: 0.8,
       stagger: 0.12,
       clearProps: 'transform',
@@ -1410,7 +1407,6 @@ function SiteNodeSection() {
     }),
     gsap.from('.node-system > *', {
       opacity: 0,
-      y: 18,
       stagger: 0.1,
       clearProps: 'transform',
       scrollTrigger: { trigger: root.current, start: 'top 70%', once: true },
@@ -1500,10 +1496,10 @@ function AboutHero() {
   useEnterMotion(root, reduced, () => {
     const timeline = gsap.timeline({ defaults: { ease: 'power2.out' } })
     timeline
-      .from('.about-hero h1 span', { yPercent: 115, stagger: 0.1, duration: 1 })
-      .from('.about-hero-copy p', { opacity: 0, y: 18, duration: 0.85 }, '-=0.5')
-      .from('.about-network', { opacity: 0, y: 28, duration: 1 }, '-=0.65')
-      .from('.about-drum', { opacity: 0, y: 14, duration: 0.9 }, '-=0.75')
+      .from('.about-hero h1 span', { opacity: 0, stagger: 0.1, duration: 1, clearProps: 'transform' })
+      .from('.about-hero-copy p', { opacity: 0, duration: 0.85, clearProps: 'transform' }, '-=0.5')
+      .from('.about-network', { opacity: 0, duration: 1, clearProps: 'transform' }, '-=0.65')
+      .from('.about-drum', { opacity: 0, duration: 0.9, clearProps: 'transform' }, '-=0.75')
     return timeline
   }, '(min-width: 700px)')
 
@@ -1546,9 +1542,9 @@ function WhyNow() {
   const reduced = useReducedMotion()
   useEnterMotion(root, reduced, () => gsap.from('.why-now-line', {
     opacity: 0,
-    y: 30,
     stagger: 0.16,
     duration: 0.85,
+    clearProps: 'transform',
     scrollTrigger: { trigger: root.current, start: 'top 68%', once: true },
   }))
 
