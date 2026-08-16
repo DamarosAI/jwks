@@ -50,7 +50,8 @@ if (!app.includes('Site-owned execution') || !app.includes('Your site makes the 
   throw new Error('Execution record copy drifted')
 }
 if (app.includes('The execution record stays under site control.')) throw new Error('Old execution record headline remains')
-if (!css.includes('.record-spine') || !css.includes('.record-event.is-signed')) throw new Error('Execution record chain styles missing')
+if (app.includes('record-spine') || css.includes('.record-spine {')) throw new Error('Site-owned execution cards must not keep a left spine')
+if (!css.includes('.record-event') || !app.includes('Replay sealed · Record intact') || !css.includes('background: var(--accent-strong)')) throw new Error('Execution record cards must stay blue and bound')
 if (!app.includes('<h2>Four agents.</h2>') || app.includes('Zero decisions.')) throw new Error('Agent heading drifted')
 if (!css.includes('Agent workspace: one locked frame') || !css.includes('height: 780px') || !css.includes('max-height: 780px') || !css.includes('No nested scroll') || css.includes('grid-template-columns: 180px minmax(0, 1fr) 230px')) {
   throw new Error('Agent workspace must keep a locked frame and must not keep a phantom inspector column')
@@ -131,8 +132,8 @@ if (!css.includes('.landing-source-demo .workspace-view') || !css.includes('anim
 if (!css.includes('font-synthesis: none') || !css.includes('.source-criteria-list > div.is-live')) {
   throw new Error('Demo chrome type must stay unsheared and live-highlighted')
 }
-if (!app.includes('about-scroll-cue') || !app.includes('CaretDown')) {
-  throw new Error('About hero must cue the next section')
+if (!app.includes('about-scroll-cue') || !app.includes('CaretDown') || !app.includes('why-now-chevron')) {
+  throw new Error('About must cue the next section from the first card')
 }
 if (!css.includes('.thesis-section.section-space') || !css.includes('22vh')) {
   throw new Error('Home hero and thesis must share a scroll stop')

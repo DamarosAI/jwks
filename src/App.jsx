@@ -662,10 +662,7 @@ function CapacityBento() {
     if (reduced) return
     const record = root.current?.querySelector('.evidence-record-card')
     if (!record) return
-    const chain = gsap.timeline({ scrollTrigger: { trigger: record, start: 'top 78%' } })
-    chain
-      .from('.record-spine', { scaleY: 0, duration: 0.7, ease: 'power2.out' }, 0)
-      .from('.record-event, .record-seal', { opacity: 0, y: 8, duration: 0.5, stagger: 0.16, ease: 'power2.out' }, 0.08)
+    gsap.from('.record-event', { opacity: 0, y: 8, duration: 0.5, stagger: 0.16, ease: 'power2.out', scrollTrigger: { trigger: record, start: 'top 78%' } })
   }, { scope: root, dependencies: [reduced] })
 
   return (
@@ -702,7 +699,6 @@ function CapacityBento() {
         <article className="bento-card evidence-record-card">
           <div className="record-head"><span className="product-label">Site-owned execution</span></div>
           <div className="record-chain">
-            <i className="record-spine" aria-hidden="true" />
             <ol aria-label="Site execution chain">
               <li className="record-event">
                 <b>LOCKED</b>
@@ -716,13 +712,17 @@ function CapacityBento() {
                 <small>Evidence snapshot · 09:55</small>
                 <em>PHI on-site · no raw egress</em>
               </li>
-              <li className="record-event is-signed">
+              <li className="record-event">
                 <b>SIGNED</b>
                 <strong>PI decision signed</strong>
                 <small>Dr. M. Avdol · 14:07</small>
                 <em>Local authority · attributable</em>
               </li>
-              <li className="record-seal"><b>SEALED</b><strong>Replay sealed · Record intact</strong><small>sha256 · rpl…1047</small></li>
+              <li className="record-event">
+                <b>SEALED</b>
+                <strong>Replay sealed · Record intact</strong>
+                <small>sha256 · rpl…1047</small>
+              </li>
             </ol>
           </div>
           <div className="record-copy">
@@ -1543,8 +1543,11 @@ function WhyNow() {
   return (
     <section className="why-now section-space" id="why-now" ref={root}>
       <div className="why-now-title why-now-line">
-        <h2>Tools scale. Capacity doesn’t.</h2>
-        <p>Research execution remains limited by local infrastructure, not scientific ambition.</p>
+        <div>
+          <h2>Tools scale. Capacity doesn’t.</h2>
+          <p>Research execution remains limited by local infrastructure, not scientific ambition.</p>
+        </div>
+        <CaretDown className="why-now-chevron" size={22} weight="bold" aria-hidden="true" />
       </div>
       <div className="why-now-lines">
         <article className="why-now-line"><span>01</span><div><strong>More protocols</strong><p>Discovery compounds. Site-side execution remains bounded by people, systems, and fragmented evidence.</p></div></article>
