@@ -265,7 +265,7 @@ function PilotDialog({ closing, onClose }) {
       >
         <header className="pilot-head">
           <p>Start a pilot</p>
-          <h2 id={titleId}>Start with one real site workflow.</h2>
+          <h2 id={titleId}>Clinical investigation, rewired: Start with one real site workflow.</h2>
           <button className="pilot-close" type="button" aria-label="Close" onClick={onClose}>
             <X size={16} weight="bold" />
           </button>
