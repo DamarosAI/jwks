@@ -106,7 +106,7 @@ function buildPilotEmail(data) {
     `<p style="margin:6px 0 0;white-space:pre-wrap;">${escapeHtml(data.message)}</p>`;
 
   const html = [
-    '<div style="font-family:Switzer,\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.5;color:#10161d;">',
+    '<div style="font-family:Switzer,sans-serif;font-size:15px;line-height:1.5;color:#10161d;">',
     "<p><strong>New pilot inquiry from damaros.ai</strong></p>",
     "<table style=\"border-collapse:collapse;\">",
     row("Name", data.name),
