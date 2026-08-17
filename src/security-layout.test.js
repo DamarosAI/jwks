@@ -51,4 +51,22 @@ describe('site-control workspace geometry', () => {
     assert.match(css, /\.site-control-review > footer \.button \{[\s\S]*?height:\s*48px;[\s\S]*?border-radius:\s*10px;[\s\S]*?font-size:\s*15px;/)
     assert.match(css, /\.site-review-summary,[\s\S]*?grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/)
   })
+
+  it('pins a steel footer on the evidence inspect card', () => {
+    assert.match(app, /const \[selectedControl, setSelectedControl\] = useState\(0\)/)
+    assert.match(app, /No LLM touches patient data/)
+    assert.match(app, /className="node-control-footer"/)
+    assert.match(css, /\.node-control-footer \{[\s\S]*?flex-shrink:\s*0;[\s\S]*?background:\s*var\(--accent\)/)
+    assert.doesNotMatch(app, /node-release-card/)
+  })
+
+  it('keeps a model-path isolate switch in the landing sidebar', () => {
+    assert.match(app, /function ModelPathSwitch\(/)
+    assert.match(app, /<ModelPathSwitch \/>/)
+    assert.match(app, /role="switch"/)
+    assert.match(app, /Model path isolated\. No LLM or cloud inference\./)
+    assert.match(css, /\.model-path-switch \{[\s\S]*?border-radius:\s*10px;/)
+    assert.match(css, /\.model-path-switch\.is-isolated \.model-path-track > i/)
+    assert.match(app, /playing = !narrow && shouldPlayAutoplay\([^\n]+\) && !isolated/)
+  })
 })

@@ -446,8 +446,13 @@
   }
 
   #root .node-source-nav > span,
-  #root .node-source-nav > .node-boundary-card {
-    display: block;
+  #root .node-source-nav > .node-rail-foot,
+  #root .node-source-nav .node-boundary-card {
+    display: grid;
+  }
+
+  #root .node-source-nav > .node-rail-foot {
+    margin-top: auto;
   }
 
   #root .node-source-item {
@@ -474,10 +479,10 @@
   }
 
   #root .node-security-workspace {
-    display: grid;
+    display: block;
     min-height: 525px;
-    grid-template-columns: 190px minmax(0, 1fr);
-    gap: 16px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
     overflow: visible;
   }
 
@@ -493,7 +498,7 @@
 
   #root .node-policy-item {
     min-height: 64px;
-    grid-template-columns: 18px minmax(0, 1fr) auto;
+    grid-template-columns: 7px 15px minmax(0, 1fr);
     align-content: center;
     gap: 8px;
     padding: 10px 11px;
@@ -513,7 +518,8 @@
   }
 
   #root .node-control-detail h4,
-  #root .node-control-detail > p {
+  #root .node-control-detail > p,
+  #root .node-control-body > p {
     display: block;
     min-height: 0;
     overflow: visible;

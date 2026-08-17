@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom'
 import { AGENT_ROTATE_TICKS, AGENT_TICK_MS, HERO_STAGE_MS, HERO_TICK_MS, NARROW_VIEWPORT, autoplayIndex, nextStageIndex, shouldHoldAutoplayFromClick, shouldKeepPreviousStage, shouldPlayAutoplay, shouldRunAmbient, useAutoplayHold, useDocumentVisible, useInView, useMediaQuery, useScrollIdle, useSoftSwap } from './autoplay'
 import { easeSectionScroll, sectionScrollDuration, sectionScrollTarget, usePaneSettle, viewportHeight } from './motion'
@@ -17,12 +17,49 @@ import {
   FileText,
   Fingerprint,
   List,
+  Power,
   ShieldCheck,
   X,
 } from '@phosphor-icons/react'
 
 gsap.registerPlugin(ScrollTrigger, useGSAP)
 ScrollTrigger.config({ ignoreMobileResize: true })
+
+const ModelPathContext = createContext({ isolated: false, toggle() {} })
+
+function ModelPathProvider({ children }) {
+  const [isolated, setIsolated] = useState(false)
+  const value = useMemo(() => ({
+    isolated,
+    toggle: () => setIsolated((current) => !current),
+  }), [isolated])
+  return <ModelPathContext.Provider value={value}>{children}</ModelPathContext.Provider>
+}
+
+function useModelPath() {
+  return useContext(ModelPathContext)
+}
+
+function ModelPathSwitch() {
+  const { isolated, toggle } = useModelPath()
+  return (
+    <button
+      type="button"
+      className={`model-path-switch${isolated ? ' is-isolated' : ''}`}
+      role="switch"
+      aria-checked={!isolated}
+      aria-label={isolated ? 'Model path isolated. No LLM or cloud inference.' : 'Model path local only. No cloud inference.'}
+      onClick={toggle}
+    >
+      <Power size={15} />
+      <span>
+        <small>MODEL PATH</small>
+        <strong>{isolated ? 'Isolated' : 'Local only'}</strong>
+      </span>
+      <i className="model-path-track" aria-hidden="true"><i /></i>
+    </button>
+  )
+}
 
 function useEnterMotion(root, reduced, setup, query = '(min-width: 901px)') {
   useGSAP(() => {
@@ -563,6 +600,7 @@ function MiniRun() {
   const reduced = useReducedMotion()
   const narrow = useMediaQuery(NARROW_VIEWPORT)
   const inView = useInView(root)
+  const { isolated } = useModelPath()
   const [active, setActive] = useState(0)
   const [tick, setTick] = useState(0)
   const { held, hold } = useAutoplayHold(reduced)
@@ -608,7 +646,8 @@ function MiniRun() {
             </button>
           ))}
           <strong>AGENTS</strong>
-          {AGENTS.map((agent, index) => <span className={`hero-agent${index === tick % AGENTS.length ? ' is-active' : ''}`} style={{ '--agent-color': agent.color }} key={agent.name}><i /> <AgentGlyph kind={agent.icon} size={14} /> {agent.name}</span>)}
+          {AGENTS.map((agent, index) => <span className={`hero-agent${isolated ? ' is-isolated' : index === tick % AGENTS.length ? ' is-active' : ''}`} style={{ '--agent-color': agent.color }} key={agent.name}><i /> <AgentGlyph kind={agent.icon} size={14} /> {agent.name}</span>)}
+          <ModelPathSwitch />
         </aside>
         <div className="hero-app-main">
           <div className={`hero-state-canvas landing-source-demo${fading ? ' is-fading' : ''}`}>
@@ -829,6 +868,22 @@ function InlineActionPanel({ open, complete = false, eyebrow = 'ACTION REQUIRED'
   )
 }
 
+function NodeControlFooter({ control, children, motion = false }) {
+  return (
+    <footer className="node-control-footer" {...(motion ? { 'data-review-motion': true } : {})}>
+      <div className="node-control-boundary">
+        <ShieldCheck size={18} />
+        <span>
+          <small>CONTROL BOUNDARY</small>
+          <strong>No LLM touches patient data</strong>
+          <em>{control.guard}</em>
+        </span>
+      </div>
+      <div className="node-control-actions">{children}</div>
+    </footer>
+  )
+}
+
 function SiteControlReview({ control, phase, reduced, onBack, onConfirm, onReturn }) {
   const root = useRef(null)
   const complete = phase === 'complete'
@@ -849,49 +904,51 @@ function SiteControlReview({ control, phase, reduced, onBack, onConfirm, onRetur
 
   return (
     <section className={`site-control-review is-${phase}`} ref={root} role="region" aria-label={complete ? `${control.success} receipt` : control.action}>
-      <header data-review-motion>
-        <span className="site-review-state-icon" aria-hidden="true">{complete ? <CheckCircle size={20} weight="fill" /> : saving ? <i /> : <ShieldCheck size={20} />}</span>
-        <div><small>{complete ? 'REVIEW RECORDED' : saving ? 'WRITING TO EXECUTION RECORD' : 'SITE REVIEW'}</small><h5>{complete ? control.success : saving ? 'Binding site decision' : control.action}</h5></div>
-      </header>
+      <div className="node-control-body">
+        <header data-review-motion>
+          <span className="site-review-state-icon" aria-hidden="true">{complete ? <CheckCircle size={20} weight="fill" /> : saving ? <i /> : <ShieldCheck size={20} />}</span>
+          <div><small>{complete ? 'REVIEW RECORDED' : saving ? 'WRITING TO EXECUTION RECORD' : 'SITE REVIEW'}</small><h5>{complete ? control.success : saving ? 'Binding site decision' : control.action}</h5></div>
+        </header>
 
-      {saving ? (
-        <div className="site-review-saving" aria-live="polite" aria-busy="true" data-review-motion>
-          <strong>Recording {control.record}</strong>
-          <p>Preserving reviewer authority, boundary result, and source trace.</p>
-          <div className="site-review-progress">
-            <span><CheckCircle size={16} weight="fill" /><b>Policy scope verified</b><small>{control.scope}</small></span>
-            <span><CheckCircle size={16} weight="fill" /><b>Patient boundary verified</b><small>{control.patientFields}</small></span>
-            <span className="is-writing"><i /><b>Signing execution record</b><small>{control.receipt}</small></span>
+        {saving ? (
+          <div className="site-review-saving" aria-live="polite" aria-busy="true" data-review-motion>
+            <strong>Recording {control.record}</strong>
+            <p>Preserving reviewer authority, boundary result, and source trace.</p>
+            <div className="site-review-progress">
+              <span><CheckCircle size={16} weight="fill" /><b>Policy scope verified</b><small>{control.scope}</small></span>
+              <span><CheckCircle size={16} weight="fill" /><b>Patient boundary verified</b><small>{control.patientFields}</small></span>
+              <span className="is-writing"><i /><b>Signing execution record</b><small>{control.receipt}</small></span>
+            </div>
           </div>
-        </div>
-      ) : complete ? (
-        <>
-          <p data-review-motion>{control.outcome}</p>
-          <div className="site-review-receipt" data-review-motion>
-            <span><small>REVIEW ID</small><strong>{control.receipt}</strong></span>
-            <span><small>DECISION</small><strong>{control.decision}</strong></span>
-            <span><small>ACTOR</small><strong>Authenticated site reviewer</strong></span>
-            <span><small>INTEGRITY</small><strong>Ed25519 - verified</strong></span>
-          </div>
-          <div className="site-review-chain" data-review-motion><small>BOUND RECORD</small><span><time>10:42</time><strong>Boundary evaluated</strong><em>{control.patientFields}</em></span><span><time>10:43</time><strong>Authority matched</strong><em>{control.policy}</em></span><span><time>10:44</time><strong>Review signed</strong><em>{control.receipt}</em></span></div>
-          <div className="site-review-confirmation" data-review-motion><CheckCircle size={18} weight="fill" /><span><strong>Execution record updated</strong><small>{control.record} - 10:44 - institution-held</small></span></div>
-        </>
-      ) : (
-        <>
-          <p data-review-motion>{control.description}</p>
-          <dl className="site-review-summary" data-review-motion>
-            <div><dt>SCOPE</dt><dd>{control.scope}</dd></div>
-            <div><dt>RECIPIENT</dt><dd>{control.recipient}</dd></div>
-            <div><dt>PATIENT FIELDS</dt><dd>{control.patientFields}</dd></div>
-            <div><dt>AUTHORITY</dt><dd>{control.policy}</dd></div>
-          </dl>
-          <div className="site-review-decision" data-review-motion><small>DECISION TO RECORD</small><strong>{control.decision}</strong><span>{control.outcome}</span></div>
-        </>
-      )}
+        ) : complete ? (
+          <>
+            <p data-review-motion>{control.outcome}</p>
+            <div className="site-review-receipt" data-review-motion>
+              <span><small>REVIEW ID</small><strong>{control.receipt}</strong></span>
+              <span><small>DECISION</small><strong>{control.decision}</strong></span>
+              <span><small>ACTOR</small><strong>Authenticated site reviewer</strong></span>
+              <span><small>INTEGRITY</small><strong>Ed25519 - verified</strong></span>
+            </div>
+            <div className="site-review-chain" data-review-motion><small>BOUND RECORD</small><span><time>10:42</time><strong>Boundary evaluated</strong><em>{control.patientFields}</em></span><span><time>10:43</time><strong>Authority matched</strong><em>{control.policy}</em></span><span><time>10:44</time><strong>Review signed</strong><em>{control.receipt}</em></span></div>
+            <div className="site-review-confirmation" data-review-motion><CheckCircle size={18} weight="fill" /><span><strong>Execution record updated</strong><small>{control.record} - 10:44 - institution-held</small></span></div>
+          </>
+        ) : (
+          <>
+            <p data-review-motion>{control.description}</p>
+            <dl className="site-review-summary" data-review-motion>
+              <div><dt>SCOPE</dt><dd>{control.scope}</dd></div>
+              <div><dt>RECIPIENT</dt><dd>{control.recipient}</dd></div>
+              <div><dt>PATIENT FIELDS</dt><dd>{control.patientFields}</dd></div>
+              <div><dt>AUTHORITY</dt><dd>{control.policy}</dd></div>
+            </dl>
+            <div className="site-review-decision" data-review-motion><small>DECISION TO RECORD</small><strong>{control.decision}</strong><span>{control.outcome}</span></div>
+          </>
+        )}
+      </div>
 
-      <footer data-review-motion>
+      <NodeControlFooter control={control} motion>
         {complete ? <button className="button button-primary" type="button" onClick={onReturn}>Return to control</button> : saving ? <button className="button button-primary" type="button" disabled>Recording review</button> : <><button className="button button-secondary" type="button" onClick={onBack}>Back</button><button className="button button-primary" type="button" onClick={onConfirm}>Record site review</button></>}
-      </footer>
+      </NodeControlFooter>
     </section>
   )
 }
@@ -1234,6 +1291,7 @@ function AgentOperations() {
   const reduced = useReducedMotion()
   const narrow = useMediaQuery(NARROW_VIEWPORT)
   const inView = useInView(root)
+  const { isolated } = useModelPath()
   const [active, setActive] = useState(0)
   const [tick, setTick] = useState(0)
   const { held, hold } = useAutoplayHold(reduced)
@@ -1247,7 +1305,7 @@ function AgentOperations() {
   const [sentinelSelected, setSentinelSelected] = useState(2)
   const [sentinelSurfaced, setSentinelSurfaced] = useState(false)
   const agent = AGENTS[active]
-  const playing = !narrow && shouldPlayAutoplay({ reduced, held, inView, visible })
+  const playing = !narrow && shouldPlayAutoplay({ reduced, held, inView, visible }) && !isolated
   const runContext = [
     {
       object: `Criterion ${['I-3.4', 'E-5.3', 'I-4.2', 'I-2.1'][tridentCriterion]}`,
@@ -1337,7 +1395,7 @@ function AgentOperations() {
             <div className={`agent-console-state${fading ? ' is-fading' : ''}`}>
               <div className="agent-console-header">
                 <div><span>{agent.name}</span><h3>{agent.task}</h3><p>{agent.text}</p></div>
-                {active === 2 ? <em>Read only</em> : ((active === 0 && tridentStage < 5) || (active === 1 && eyeSelected !== 3 && !eyeRouted) || (active === 3 && !sentinelSurfaced)) ? <em className="agent-working-state"><i /> {active === 0 && tridentStage === 0 ? 'Ready' : 'Working'}</em> : <em><CheckCircle size={14} weight="fill" /> {active === 1 && eyeSelected === 3 ? 'No action' : 'Complete'}</em>}
+                {isolated ? <em>Isolated</em> : active === 2 ? <em>Read only</em> : ((active === 0 && tridentStage < 5) || (active === 1 && eyeSelected !== 3 && !eyeRouted) || (active === 3 && !sentinelSurfaced)) ? <em className="agent-working-state"><i /> {active === 0 && tridentStage === 0 ? 'Ready' : 'Working'}</em> : <em><CheckCircle size={14} weight="fill" /> {active === 1 && eyeSelected === 3 ? 'No action' : 'Complete'}</em>}
               </div>
               <div className="agent-workspace-body">
                 <div className="agent-workspace-live">
@@ -1358,7 +1416,7 @@ function AgentOperations() {
                     <div><dt>AUTHORITY</dt><dd>{runContext.authority}</dd></div>
                   </dl>
                   <div className="agent-run-activity"><span>LIVE ACTIVITY</span>{runContext.events.map((event, index) => <div className={index === tick % runContext.events.length ? 'active' : ''} key={event}><i /><span><strong>{event}</strong><small>{index === tick % runContext.events.length ? 'working now' : 'verified'}</small></span></div>)}</div>
-                  <div className="agent-run-boundary"><ShieldCheck size={17} /><span><small>CONTROL BOUNDARY</small><strong>{agent.guardrail}</strong></span></div>
+                  <div className="agent-run-boundary"><ShieldCheck size={17} /><span><small>CONTROL BOUNDARY</small><strong>{isolated ? 'Model path isolated. No cloud inference.' : agent.guardrail}</strong></span></div>
                 </aside>
               </div>
             </div>
@@ -1373,7 +1431,8 @@ function SiteNodeSection() {
   const root = useRef(null)
   const reviewTimer = useRef(0)
   const reduced = useReducedMotion()
-  const [selectedControl, setSelectedControl] = useState(1)
+  const { isolated } = useModelPath()
+  const [selectedControl, setSelectedControl] = useState(0)
   const [reviewPhase, setReviewPhase] = useState('idle')
   const [reviewedControls, setReviewedControls] = useState({})
   const sources = [
@@ -1383,10 +1442,10 @@ function SiteNodeSection() {
     { name: 'eReg - CTMS', read: 'Signer sync 10:42', icon: ShieldCheck },
   ]
   const controls = [
-    { name: 'Evidence visibility', policy: 'Site roles only', title: 'Inspect evidence access boundary', description: 'Only approved site roles can open source evidence or mapped patient facts.', scope: 'FHIR resources, documents, and mapped facts', checked: '10:41 - 4 approved sources', record: 'POL-018-EV4', receipt: 'REV-018-EV4-1044', recipient: '7 approved site roles', patientFields: 'Site-held', action: 'Review access boundary', decision: 'Confirm current access boundary', outcome: 'Access remains limited to 7 approved site roles. No external principal receives patient evidence.', success: 'Access review recorded' },
-    { name: 'Artifact release', policy: 'PI or delegated signer', title: 'Review sponsor artifact release', description: 'Replay bundles remain at the site until a PI or delegated signer releases the exact artifact.', scope: 'Replay bundle - RPL-1047', checked: '10:42 - signer roster current', record: 'POL-018-AR2', receipt: 'REV-018-AR2-1044', recipient: 'Meridian Oncology', patientFields: '0 in sponsor artifact', action: 'Review artifact release', decision: 'Confirm delegated release authority', outcome: 'Replay remains site-held until a PI or delegated signer releases this exact artifact.', success: 'Artifact review recorded' },
-    { name: 'Network signal', policy: 'Aggregate coverage only', title: 'Release aggregate coverage signal', description: 'Review the exact outbound payload. Sponsor receives site capability, never patient facts.', scope: 'Protocol capability - Site 018', checked: '10:42 - payload reduced', record: 'POL-018-NS7', receipt: 'REV-018-NS7-1044', recipient: 'Meridian Oncology', patientFields: '0 patient fields', action: 'Review signal release', decision: 'Approve aggregate-only payload', outcome: 'Coverage signal contains 0 patient fields. Site capability is the only outbound payload.', success: 'Signal review recorded' },
-    { name: 'Model execution', policy: 'Local inference allowed', title: 'Inspect local model attestation', description: 'Model execution stays inside the institution boundary and writes only source-linked work products.', scope: 'Site node runtime - Run 018-017', checked: '10:43 - runtime attested', record: 'POL-018-ME3', receipt: 'REV-018-ME3-1044', recipient: 'Site execution record', patientFields: 'No raw egress', action: 'Review run attestation', decision: 'Accept local runtime attestation', outcome: 'Run remains site-bound. Only source-linked work products enter the execution record.', success: 'Attestation review recorded' },
+    { name: 'Evidence visibility', policy: 'Site roles only', title: 'Inspect evidence access boundary', description: 'Only approved site roles can open source evidence or mapped patient facts.', scope: 'FHIR resources, documents, and mapped facts', checked: '10:41 - 4 approved sources', record: 'POL-018-EV4', receipt: 'REV-018-EV4-1044', recipient: '7 approved site roles', patientFields: 'Site-held', action: 'Review access boundary', decision: 'Confirm current access boundary', outcome: 'Access remains limited to 7 approved site roles. No external principal receives patient evidence.', success: 'Access review recorded', guard: 'Patient evidence stays site-held. Approved roles only.' },
+    { name: 'Artifact release', policy: 'PI or delegated signer', title: 'Review sponsor artifact release', description: 'Replay bundles remain at the site until a PI or delegated signer releases the exact artifact.', scope: 'Replay bundle - RPL-1047', checked: '10:42 - signer roster current', record: 'POL-018-AR2', receipt: 'REV-018-AR2-1044', recipient: 'Meridian Oncology', patientFields: '0 in sponsor artifact', action: 'Review artifact release', decision: 'Confirm delegated release authority', outcome: 'Replay remains site-held until a PI or delegated signer releases this exact artifact.', success: 'Artifact review recorded', guard: 'Replay stays site-held until a PI signs the exact artifact.' },
+    { name: 'Network signal', policy: 'Aggregate coverage only', title: 'Release aggregate coverage signal', description: 'Review the exact outbound payload. Sponsor receives site capability, never patient facts.', scope: 'Protocol capability - Site 018', checked: '10:42 - payload reduced', record: 'POL-018-NS7', receipt: 'REV-018-NS7-1044', recipient: 'Meridian Oncology', patientFields: '0 patient fields', action: 'Review signal release', decision: 'Approve aggregate-only payload', outcome: 'Coverage signal contains 0 patient fields. Site capability is the only outbound payload.', success: 'Signal review recorded', guard: 'Coverage signal carries 0 patient fields.' },
+    { name: 'Model execution', policy: isolated ? 'Isolated - no inference' : 'Local inference allowed', title: 'Inspect local model attestation', description: isolated ? 'Model path is isolated. No local inference and no cloud connection until a site reviewer restores the path.' : 'Model execution stays inside the institution boundary and writes only source-linked work products.', scope: 'Site node runtime - Run 018-017', checked: isolated ? 'Isolated - no model path' : '10:43 - runtime attested', record: 'POL-018-ME3', receipt: 'REV-018-ME3-1044', recipient: 'Site execution record', patientFields: 'No raw egress', action: 'Review run attestation', decision: isolated ? 'Keep model path isolated' : 'Accept local runtime attestation', outcome: isolated ? 'No model path is open. Patient evidence never entered an LLM.' : 'Run remains site-bound. Only source-linked work products enter the execution record.', success: 'Attestation review recorded', guard: isolated ? 'No LLM path. No cloud inference.' : 'Inference stays inside the institution boundary.' },
   ]
   const control = controls[selectedControl]
   const completedReview = reviewedControls[control.record]
@@ -1429,28 +1488,52 @@ function SiteNodeSection() {
   return (
     <section className="node-section section-space" id="site-control" ref={root}>
       <div className="node-system" aria-label="Damaros site node control model">
-        <div className="mac-titlebar"><div className="traffic-lights" aria-hidden="true"><i /><i /><i /></div><WindowBrand /><span className="window-live"><i /> Institution-held</span></div>
+        <div className="mac-titlebar"><div className="traffic-lights" aria-hidden="true"><i /><i /><i /></div><WindowBrand /><span className="window-live"><i /> {isolated ? 'Models isolated' : 'Institution-held'}</span></div>
         <div className="node-product-grid">
           <aside className="node-source-nav">
-            <span>APPROVED SOURCES</span>
-            {sources.map((source) => {
-              const Icon = source.icon
-              return <div className="node-source-item" key={source.name}><Icon size={16} /><span><span>{source.name}</span><small>{source.read}</small></span><i /></div>
-            })}
-            <div className="node-boundary-card"><small>INSTITUTION BOUNDARY</small><strong>Site 018 - Damaros Health</strong><span>4 sources - 7 site roles</span></div>
+            <div className="node-policy-list">
+              <span>ACTIVE CONTROLS</span>
+              {controls.map((item, index) => (
+                <button className={`node-policy-item${selectedControl === index ? ' active' : ''}${reviewedControls[item.record] ? ' is-reviewed' : ''}`} type="button" aria-pressed={selectedControl === index} onClick={() => selectControl(index)} key={item.name}>
+                  <i />
+                  <ShieldCheck size={15} />
+                  <span><strong>{item.name}</strong><small>{item.policy}</small></span>
+                </button>
+              ))}
+            </div>
+            <div className="node-rail-foot">
+              <div className="node-boundary-card"><small>INSTITUTION BOUNDARY</small><strong>Site 018 - Damaros Health</strong><span>4 sources - 7 site roles</span></div>
+              <ModelPathSwitch />
+            </div>
           </aside>
           <div className="node-policy-main">
             <div className="node-policy-header"><span><small>SITE CONTROL PLANE</small><strong>Local sources. Local signatures.</strong></span><em><ShieldCheck size={16} /> All controls healthy</em></div>
             <div className="node-security-workspace">
-              <div className="node-policy-list"><span>ACTIVE CONTROLS</span>{controls.map((item, index) => <button className={`node-policy-item${selectedControl === index ? ' active' : ''}${reviewedControls[item.record] ? ' is-reviewed' : ''}`} type="button" aria-pressed={selectedControl === index} onClick={() => selectControl(index)} key={item.name}><ShieldCheck size={15} /><span><strong>{item.name}</strong><small>{item.policy}</small></span><em>{reviewedControls[item.record] ? 'REVIEWED' : 'ENFORCED'}</em></button>)}</div>
               <div className="node-control-detail">
-                <header><span><small>SELECTED CONTROL - {control.record}</small><h4>{control.title}</h4></span><em><i /> {completedReview ? 'REVIEWED' : 'ENFORCED'}</em></header>
                 {reviewPhase !== 'idle' ? <SiteControlReview control={control} phase={reviewPhase} reduced={reduced} onBack={() => setReviewPhase('idle')} onConfirm={confirmControlReview} onReturn={() => setReviewPhase('idle')} /> : <>
-                  <p>{control.description}</p>
-                  <dl><div><dt>SCOPE</dt><dd>{control.scope}</dd></div><div><dt>PATIENT FIELDS</dt><dd>{control.patientFields}</dd></div><div><dt>RECIPIENT</dt><dd>{control.recipient}</dd></div><div><dt>AUTHORITY</dt><dd>{control.policy}</dd></div></dl>
-                  <div className="node-event-ledger"><span>RECENT POLICY EVENTS</span><div className={completedReview ? 'is-reviewed' : 'is-pending'}><time>{completedReview ? '10:44' : '--:--'}</time><strong>{completedReview ? 'Site review recorded' : 'Site review pending'}</strong><small>{completedReview ? `${control.receipt} - signed` : 'Awaiting reviewer'}</small></div><div><time>10:43</time><strong>{control.name} checked</strong><small>{control.record} - verified</small></div><div><time>10:42</time><strong>Outbound boundary evaluated</strong><small>{control.patientFields}</small></div></div>
-                  <div className={`node-release-card${completedReview ? ' released' : ''}`}><span><small>{completedReview ? 'LAST SITE REVIEW' : 'CONTROL BOUNDARY'}</small><strong>{completedReview ? control.decision : control.scope}</strong><em>{completedReview ? `${control.receipt} - signed 10:44` : `${control.checked} - site review required`}</em></span></div>
-                  <button className="node-review-button" type="button" onClick={openControlReview}>{completedReview ? 'Open review receipt' : control.action} <ArrowRight size={17} weight="bold" /></button>
+                  <div className="node-control-body">
+                    <header><span><small>SELECTED CONTROL - {control.record}</small><h4>{control.title}</h4></span><em className={completedReview ? 'is-reviewed' : 'is-pending'}><i /> {completedReview ? 'REVIEWED' : 'ENFORCED'}</em></header>
+                    <p>{control.description}</p>
+                    <dl>
+                      <div><dt>SCOPE</dt><dd>{control.scope}</dd></div>
+                      <div><dt>BOUNDARY</dt><dd>{control.patientFields}</dd></div>
+                      <div><dt>AUTHORITY</dt><dd>{control.policy}</dd></div>
+                    </dl>
+                    <div className="node-event-ledger">
+                      <span>RECENT POLICY EVENTS</span>
+                      <div className={completedReview ? 'is-reviewed' : 'is-pending'}><time>{completedReview ? '10:44' : '--:--'}</time><strong>{completedReview ? 'Site review recorded' : 'Site review pending'}</strong><small>{completedReview ? `${control.receipt} - signed` : 'Awaiting reviewer'}</small></div>
+                      <div><time>10:43</time><strong>{control.name} checked</strong><small>{control.record} - verified</small></div>
+                    </div>
+                    <div className="node-source-strip" aria-label="Approved sources">
+                      {sources.map((source) => {
+                        const Icon = source.icon
+                        return <div className="node-source-item" key={source.name}><Icon size={15} /><span><span>{source.name}</span><small>{source.read}</small></span><i /></div>
+                      })}
+                    </div>
+                  </div>
+                  <NodeControlFooter control={control}>
+                    <button className="node-review-button" type="button" onClick={openControlReview}>{completedReview ? 'Open review receipt' : control.action} <ArrowRight size={17} weight="bold" /></button>
+                  </NodeControlFooter>
                 </>}
               </div>
             </div>
@@ -1630,6 +1713,7 @@ export default function App() {
 
   return (
     <PilotProvider>
+      <ModelPathProvider>
       <div className="app-root">
         <PageReset />
         <SiteNav />
@@ -1642,6 +1726,7 @@ export default function App() {
         </Routes>
         <Footer />
       </div>
+      </ModelPathProvider>
     </PilotProvider>
   )
 }
