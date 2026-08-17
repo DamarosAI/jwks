@@ -8,8 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint .",
-    "test": "node --test api/lib/pilot-inquiry.test.js src/pilot-triggers.test.js src/autoplay.test.js src/motion.test.js src/type.test.js src/security-layout.test.js src/integration-motion.test.js src/luna-layout.test.js && node scripts/verify-demo-actions.mjs && node scripts/verify-pilot-wiring.mjs",
-    "smoke": "node --test api/lib/pilot-inquiry.test.js src/pilot-triggers.test.js src/autoplay.test.js src/motion.test.js src/type.test.js src/security-layout.test.js src/integration-motion.test.js src/luna-layout.test.js && node scripts/verify-demo-actions.mjs && node scripts/verify-pilot-wiring.mjs",
+    "test": "node --test api/lib/pilot-inquiry.test.js src/pilot-triggers.test.js src/autoplay.test.js src/motion.test.js src/type.test.js src/security-layout.test.js src/integration-motion.test.js src/luna-layout.test.js src/mobile-layout.test.js && node scripts/verify-demo-actions.mjs && node scripts/verify-pilot-wiring.mjs",
+    "smoke": "node --test api/lib/pilot-inquiry.test.js src/pilot-triggers.test.js src/autoplay.test.js src/motion.test.js src/type.test.js src/security-layout.test.js src/integration-motion.test.js src/luna-layout.test.js src/mobile-layout.test.js && node scripts/verify-demo-actions.mjs && node scripts/verify-pilot-wiring.mjs",
     "test:demo": "node scripts/verify-demo-actions.mjs"
   },
   "engines": {

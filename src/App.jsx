@@ -653,7 +653,10 @@ function LandingHero() {
           <a className="button button-secondary" href="#agents" onClick={(event) => smoothSection(event, '#agents')}>See agents work <ArrowRight size={17} weight="bold" /></a>
         </div>
       </div>
-      <div className="hero-workspace-wrap"><MiniRun /></div>
+      <div className="hero-workspace-wrap">
+        <p className="mobile-workspace-hint"><span>Live execution chain</span><small>Tap a stage to inspect the workflow.</small></p>
+        <MiniRun />
+      </div>
     </section>
   )
 }
