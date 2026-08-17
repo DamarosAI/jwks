@@ -632,12 +632,12 @@ function MiniRun() {
 
   return (
     <div className="hero-workspace" ref={root} aria-label="Live synthetic Damaros workspace preview" onClickCapture={(event) => { if (shouldHoldAutoplayFromClick(event.target)) hold() }}>
-      <div className="mac-titlebar">
-        <div className="traffic-lights" aria-hidden="true"><i /><i /><i /></div>
-        <WindowBrand />
-        <span aria-hidden="true" />
-      </div>
-      <div className="hero-app-grid">
+        <div className="mac-titlebar">
+          <div className="traffic-lights" aria-hidden="true"><i /><i /><i /></div>
+          <WindowBrand />
+          <span className="window-live"><i /> {isolated ? 'Models isolated' : 'Institution-held'}</span>
+        </div>
+        <div className="hero-app-grid">
         <aside className="hero-app-nav">
           <strong>SPINE</strong>
           {steps.map((step, index) => (
@@ -1377,7 +1377,7 @@ function AgentOperations() {
         <div className="mac-titlebar">
           <div className="traffic-lights" aria-hidden="true"><i /><i /><i /></div>
           <WindowBrand />
-          <span aria-hidden="true" />
+          <span className="window-live"><i /> {isolated ? 'Models isolated' : 'Institution-held'}</span>
         </div>
         <div className="agent-console-grid">
           <aside className="agent-console-nav">
@@ -1395,7 +1395,10 @@ function AgentOperations() {
             <div className={`agent-console-state${fading ? ' is-fading' : ''}`}>
               <div className="agent-console-header">
                 <div><span>{agent.name}</span><h3>{agent.task}</h3><p>{agent.text}</p></div>
-                {isolated ? <em>Isolated</em> : active === 2 ? <em>Read only</em> : ((active === 0 && tridentStage < 5) || (active === 1 && eyeSelected !== 3 && !eyeRouted) || (active === 3 && !sentinelSurfaced)) ? <em className="agent-working-state"><i /> {active === 0 && tridentStage === 0 ? 'Ready' : 'Working'}</em> : <em><CheckCircle size={14} weight="fill" /> {active === 1 && eyeSelected === 3 ? 'No action' : 'Complete'}</em>}
+                <div className="agent-console-tools">
+                  <ModelPathSwitch />
+                  {isolated ? null : active === 2 ? <em>Read only</em> : ((active === 0 && tridentStage < 5) || (active === 1 && eyeSelected !== 3 && !eyeRouted) || (active === 3 && !sentinelSurfaced)) ? <em className="agent-working-state"><i /> {active === 0 && tridentStage === 0 ? 'Ready' : 'Working'}</em> : <em><CheckCircle size={14} weight="fill" /> {active === 1 && eyeSelected === 3 ? 'No action' : 'Complete'}</em>}
+                </div>
               </div>
               <div className="agent-workspace-body">
                 <div className="agent-workspace-live">
@@ -1410,7 +1413,7 @@ function AgentOperations() {
                 </div>
                 <aside className="agent-run-rail" aria-label={`${agent.name} run context`}>
                   <div className="agent-run-object"><span>CURRENT OBJECT</span><strong>{runContext.object}</strong><small>DMR-204 - Site 018</small></div>
-                  <dl>
+                  <dl className="agent-run-path">
                     <div><dt>SOURCE</dt><dd>{runContext.source}</dd></div>
                     <div><dt>BOUNDARY</dt><dd>{runContext.boundary}</dd></div>
                     <div><dt>AUTHORITY</dt><dd>{runContext.authority}</dd></div>
