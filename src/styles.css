@@ -221,6 +221,7 @@ h4 {
 .hero-heading,
 .hero-line,
 .about-hero-copy h1,
+.founder-section blockquote,
 .footer-mark > span,
 .final-cta h2,
 h1,
@@ -2258,6 +2259,7 @@ h2 {
 .about-hero-copy h1 {
   overflow: visible;
   font-size: clamp(3.3rem, 5vw, 6.2rem);
+  font-weight: 800;
   letter-spacing: -0.01em;
   line-height: 1.08;
   text-wrap: balance;
@@ -2396,6 +2398,7 @@ h2 {
 .founder-signature strong {
   margin-top: 17px;
   font-size: 1.2rem;
+  font-weight: 600;
 }
 
 .founder-signature small {
@@ -2426,7 +2429,7 @@ h2 {
 .founder-section blockquote {
   max-width: 880px;
   font-size: clamp(2.3rem, 4.4vw, 5.2rem);
-  font-weight: 700;
+  font-weight: 400;
   letter-spacing: -0.008em;
   line-height: 1.06;
 }
@@ -3751,7 +3754,7 @@ html { scroll-padding-top: 96px; }
 .outcome-panel.active { flex: 2.15; background: var(--surface-solid); }
 .outcome-panel > span { color: var(--accent); font-size: 0.72rem; font-weight: 750; letter-spacing: 0.08em; }
 .outcome-panel > div { align-self: end; display: grid; gap: 16px; }
-.outcome-panel strong { font-size: clamp(1.3rem, 1.7vw, 1.65rem); letter-spacing: -0.025em; }
+.outcome-panel strong { font-size: clamp(1.3rem, 1.7vw, 1.65rem); font-weight: 600; letter-spacing: -0.025em; }
 .outcome-panel p { max-width: 480px; margin: 0; color: var(--muted); font-size: 0.93rem; line-height: 1.48; opacity: 0; transform: none; transition: opacity 350ms ease 120ms; }
 .outcome-panel.active p { opacity: 1; transform: none; }
 .outcome-panel > svg { align-self: end; color: var(--accent); transition: transform 350ms ease; }.outcome-panel.active > svg { transform: translateX(5px); }
@@ -6879,7 +6882,7 @@ html { scroll-padding-top: 96px; }
 .why-now-lines .why-now-line > span { color: var(--accent); font-size: 0.74rem; font-weight: 750; letter-spacing: 0.06em; }
 .why-now-lines .why-now-line > div { display: grid; gap: 9px; }
 .why-now-lines .why-now-line > strong,
-.why-now-lines .why-now-line strong { font-size: clamp(1.2rem, 1.55vw, 1.55rem); letter-spacing: -0.02em; }
+.why-now-lines .why-now-line strong { font-size: clamp(1.2rem, 1.55vw, 1.55rem); font-weight: 600; letter-spacing: -0.02em; }
 .why-now-lines .why-now-line > p,
 .why-now-lines .why-now-line p { max-width: 475px; margin: 0; color: var(--muted); font-size: 0.9rem; line-height: 1.45; }
 
@@ -11867,6 +11870,8 @@ html.is-hidden .hero-agent.is-active i,
   .hero-line,
   .about-hero-copy h1,
   .about-hero-copy h1 span,
+  .founder-section blockquote,
+  .founder-section blockquote span,
   .footer-mark > span,
   .final-cta h2,
   h1,
