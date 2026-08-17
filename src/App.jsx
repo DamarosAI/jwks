@@ -296,8 +296,9 @@ function useReducedMotion() {
 function measureSectionInsets(height = viewportHeight()) {
   const nav = document.querySelector('.site-nav-wrap')
   const spine = document.querySelector('.page-spine.is-visible')
-  const insetTop = Math.max(0, Math.round(nav?.getBoundingClientRect().bottom ?? 0))
   const spineBox = spine?.getBoundingClientRect()
+  const spineTop = spineBox && spineBox.bottom < height * 0.4 ? spineBox.bottom + 8 : 0
+  const insetTop = Math.max(0, Math.round(nav?.getBoundingClientRect().bottom ?? 0), Math.round(spineTop))
   const insetBottom = spineBox && spineBox.top > height * 0.6
     ? Math.max(0, Math.round(height - spineBox.top + 8))
     : 0
@@ -307,7 +308,8 @@ function measureSectionInsets(height = viewportHeight()) {
 function sectionVisual(selector) {
   const target = document.querySelector(selector)
   if (!target) return null
-  return selector === '#agents' ? target.querySelector('.agent-console') || target : target
+  const narrow = window.matchMedia(NARROW_VIEWPORT).matches
+  return selector === '#agents' && !narrow ? target.querySelector('.agent-console') || target : target
 }
 
 function sectionScrollEnd(selector) {
@@ -403,8 +405,9 @@ function smoothSection(event, selector) {
 
 function PageSpine({ about = false }) {
   const items = about ? ABOUT_SPINE : HOME_SPINE
+  const narrow = useMediaQuery(NARROW_VIEWPORT)
   const [active, setActive] = useState(items[0][0])
-  const [visible, setVisible] = useState(about)
+  const [visible, setVisible] = useState(about || narrow)
 
   useEffect(() => {
     let frame = 0
@@ -423,7 +426,7 @@ function PageSpine({ about = false }) {
       const next = document.getElementById(about ? 'founder' : 'thesis')
       const nextTop = next?.getBoundingClientRect().top ?? Number.POSITIVE_INFINITY
       const heroBottom = gate?.getBoundingClientRect().bottom ?? 0
-      const nextVisible = about || nextTop <= height * 0.92 || heroBottom <= height * 0.82
+      const nextVisible = narrow || about || nextTop <= height * 0.92 || heroBottom <= height * 0.82
       if (nextActive !== lastActive) {
         lastActive = nextActive
         setActive(nextActive)
@@ -452,10 +455,10 @@ function PageSpine({ about = false }) {
       window.visualViewport?.removeEventListener('resize', onScroll)
       window.visualViewport?.removeEventListener('scroll', onScroll)
     }
-  }, [about, items])
+  }, [about, items, narrow])
 
   return (
-    <nav className={`page-spine${visible ? ' is-visible' : ''}`} aria-label="On this page" aria-hidden={!visible} inert={!visible}>
+    <nav className={`page-spine${about ? ' page-spine-about' : ''}${visible ? ' is-visible' : ''}`} aria-label="On this page" aria-hidden={!visible} inert={!visible}>
       {items.map(([id, label], index) => (
         <button className={active === id ? 'active' : ''} type="button" aria-current={active === id ? 'true' : undefined} aria-label={label} onClick={() => { setActive(id); smoothSection(null, `#${id}`) }} key={id}>
           <span>{String(index + 1).padStart(2, '0')}</span><strong>{label}</strong>
@@ -558,6 +561,7 @@ function Footer() {
 function MiniRun() {
   const root = useRef(null)
   const reduced = useReducedMotion()
+  const narrow = useMediaQuery(NARROW_VIEWPORT)
   const inView = useInView(root)
   const [active, setActive] = useState(0)
   const [tick, setTick] = useState(0)
@@ -565,7 +569,7 @@ function MiniRun() {
   const visible = useDocumentVisible()
   const { fading, swap } = useSoftSwap(reduced)
   const steps = ['Protocol', 'Evidence', 'Screening', 'Resolve', 'Replay']
-  const playing = shouldPlayAutoplay({ reduced, held, inView, visible })
+  const playing = !narrow && shouldPlayAutoplay({ reduced, held, inView, visible })
 
   useEffect(() => {
     if (!playing) return undefined
@@ -653,10 +657,7 @@ function LandingHero() {
           <a className="button button-secondary" href="#agents" onClick={(event) => smoothSection(event, '#agents')}>See agents work <ArrowRight size={17} weight="bold" /></a>
         </div>
       </div>
-      <div className="hero-workspace-wrap">
-        <p className="mobile-workspace-hint"><span>Live execution chain</span><small>Tap a stage to inspect the workflow.</small></p>
-        <MiniRun />
-      </div>
+      <div className="hero-workspace-wrap"><MiniRun /></div>
     </section>
   )
 }
@@ -1231,6 +1232,7 @@ function SentinelWorkbench({ selected, setSelected, surfaced, setSurfaced }) {
 function AgentOperations() {
   const root = useRef(null)
   const reduced = useReducedMotion()
+  const narrow = useMediaQuery(NARROW_VIEWPORT)
   const inView = useInView(root)
   const [active, setActive] = useState(0)
   const [tick, setTick] = useState(0)
@@ -1245,7 +1247,7 @@ function AgentOperations() {
   const [sentinelSelected, setSentinelSelected] = useState(2)
   const [sentinelSurfaced, setSentinelSurfaced] = useState(false)
   const agent = AGENTS[active]
-  const playing = shouldPlayAutoplay({ reduced, held, inView, visible })
+  const playing = !narrow && shouldPlayAutoplay({ reduced, held, inView, visible })
   const runContext = [
     {
       object: `Criterion ${['I-3.4', 'E-5.3', 'I-4.2', 'I-2.1'][tridentCriterion]}`,

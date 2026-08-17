@@ -1,0 +1,617 @@
+/* Mobile miniature correction. Preserve desktop product composition and scale it. */
+@media (max-width: 640px) {
+  html,
+  body,
+  #root,
+  #root .page-shell {
+    width: 100%;
+    min-width: 0;
+    overflow-x: clip;
+  }
+
+  html {
+    scroll-padding-top: 124px;
+  }
+
+  body {
+    background: var(--bg);
+  }
+
+  #root .site-nav-wrap {
+    z-index: 30;
+    top: max(8px, env(safe-area-inset-top, 0px));
+    width: calc(100% - 20px);
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+
+  #root .site-nav {
+    min-height: 58px;
+    padding: 7px 8px 7px 17px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 12px 34px rgba(33, 77, 121, 0.11);
+  }
+
+  #root .wordmark {
+    font-family: var(--font-display);
+    font-size: 18px;
+  }
+
+  #root .menu-button {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--bg-soft);
+  }
+
+  #root .mobile-menu {
+    width: 100%;
+    margin-top: 7px;
+    border-radius: 18px;
+  }
+
+  #root .mobile-menu.is-open {
+    padding: 9px;
+    border-width: 1px;
+  }
+
+  #root .page-spine,
+  #root .page-spine.is-visible {
+    position: fixed;
+    z-index: 20;
+    top: calc(max(8px, env(safe-area-inset-top, 0px)) + 70px);
+    right: 12px;
+    bottom: auto;
+    left: 12px;
+    display: grid;
+    width: auto;
+    min-height: 39px;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    align-content: center;
+    gap: 0;
+    padding: 0 5px;
+    border: 0;
+    border-top: 1px solid color-mix(in srgb, var(--accent) 14%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--accent) 14%, transparent);
+    border-radius: 0;
+    background: rgba(248, 250, 252, 0.94);
+    box-shadow: none;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  #root .page-spine button {
+    min-width: 0;
+    min-height: 37px;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    align-content: center;
+    gap: 1px;
+    padding: 0 2px;
+  }
+
+  #root .page-spine.page-spine-about {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  #root .page-spine button > span {
+    font-size: 0.55rem;
+    line-height: 1;
+  }
+
+  #root .page-spine button > strong {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    font-size: 0.46rem;
+    line-height: 1.1;
+    opacity: 0.58;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  #root .page-spine button.active > strong {
+    opacity: 1;
+  }
+
+  #root .landing-hero {
+    min-height: 0;
+    padding: calc(env(safe-area-inset-top, 0px) + 148px) 16px 66px;
+  }
+
+  #root .hero-copy {
+    width: 100%;
+    text-align: left;
+  }
+
+  #root .hero-heading,
+  #root .hero-heading .hero-line {
+    font-family: var(--font-display);
+  }
+
+  #root .hero-heading {
+    width: 100%;
+    margin: 0;
+    font-size: clamp(2.08rem, 9.3vw, 2.62rem);
+    letter-spacing: -0.012em;
+    line-height: 1.05;
+  }
+
+  #root .hero-heading .hero-line:first-child {
+    white-space: nowrap;
+  }
+
+  #root .hero-copy > p {
+    max-width: 34ch;
+    margin: 18px 0 0;
+    font-size: 0.96rem;
+    line-height: 1.48;
+  }
+
+  #root .hero-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 21px;
+  }
+
+  #root .hero-actions .button,
+  #root .hero-actions .button-secondary {
+    width: 100%;
+    min-width: 0;
+    min-height: 46px;
+    padding-inline: 9px;
+    border-radius: 999px;
+    font-size: 0.76rem;
+  }
+
+  #root .hero-workspace-wrap {
+    width: 100%;
+    max-width: none;
+    min-height: 0;
+    margin: 38px 0 0;
+    zoom: 0.42;
+  }
+
+  #root .hero-workspace {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    overflow: hidden;
+    border-radius: 18px;
+    box-shadow: 0 22px 58px rgba(33, 77, 121, 0.13);
+  }
+
+  #root .hero-workspace .mac-titlebar {
+    min-height: 46px;
+    padding-inline: 14px;
+  }
+
+  #root .hero-workspace .hero-app-grid {
+    display: grid;
+    height: auto;
+    min-height: 744px;
+    grid-template-columns: 150px minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+    overflow: visible;
+  }
+
+  #root .hero-workspace .hero-app-nav {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 5px;
+    overflow: visible;
+    padding: 17px 12px;
+    border-right: 1px solid var(--border);
+    border-bottom: 0;
+  }
+
+  #root .hero-workspace .hero-app-nav > strong,
+  #root .hero-workspace .hero-agent {
+    display: flex;
+  }
+
+  #root .hero-workspace .hero-app-nav button {
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+    justify-content: flex-start;
+    padding-inline: 11px;
+    border-radius: 8px;
+    font-size: 0.72rem;
+    text-align: left;
+    white-space: normal;
+  }
+
+  #root .hero-workspace .hero-app-nav button > span {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+  }
+
+  #root .hero-workspace :is(.hero-app-main, .hero-state-canvas, .hero-state-layer, .landing-source-view, .landing-source-view .workspace-view, .landing-source-demo .pane-settle) {
+    height: auto;
+    min-height: 0;
+    max-height: none;
+  }
+
+  #root .hero-workspace :is(.hero-app-main, .hero-state-canvas, .landing-source-view, .landing-source-view .workspace-view) {
+    overflow: visible;
+  }
+
+  #root .hero-workspace .landing-source-view {
+    min-height: 744px;
+    padding: 12px;
+  }
+
+  #root .hero-workspace .landing-source-view .workspace-view {
+    min-height: 720px;
+  }
+
+  #root .hero-workspace .landing-source-demo :is(.source-protocol-view, .source-evidence-view, .source-screening-view, .source-resolve-view, .source-replay-view) {
+    min-height: 650px;
+    padding: 24px 26px 28px;
+  }
+
+  #root .section-space {
+    padding: 76px 16px;
+  }
+
+  #root .thesis-section.section-space {
+    min-height: 0;
+    padding-block: 82px;
+  }
+
+  #root :is(.thesis-head, .capacity-section .section-heading, .agent-story-heading, .node-copy) {
+    text-align: left;
+  }
+
+  #root :is(.thesis-head h2, .capacity-section .section-heading h2, .agent-story-heading h2, .node-copy h2) {
+    font-family: var(--font-display);
+    font-size: clamp(2.08rem, 9vw, 2.72rem);
+    letter-spacing: -0.018em;
+    line-height: 1.04;
+  }
+
+  #root .capacity-title-line {
+    display: inline;
+  }
+
+  #root .capacity-bento {
+    gap: 10px;
+  }
+
+  #root .capacity-bento > .bento-card,
+  #root .systems-banner {
+    border-radius: var(--card-radius);
+    box-shadow: none;
+  }
+
+  #root .agent-operations-section,
+  #root .node-section {
+    padding-inline: 16px;
+  }
+
+  #root .agent-story-heading {
+    padding-inline: 0;
+  }
+
+  #root .agent-story-heading .section-kicker {
+    display: block;
+  }
+
+  #root .agent-console {
+    width: 100%;
+    margin-top: 34px;
+    border-radius: 18px;
+    overflow: hidden;
+    zoom: 0.42;
+  }
+
+  #root .agent-console-grid {
+    display: grid;
+    height: auto;
+    min-height: 780px;
+    grid-template-columns: 170px minmax(0, 1fr);
+  }
+
+  #root .agent-console-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    overflow: visible;
+    padding: 15px 11px;
+    border-right: 1px solid var(--border);
+    border-bottom: 0;
+  }
+
+  #root .agent-console-nav > span,
+  #root .agent-console-context,
+  #root .agent-console-nav button > i,
+  #root .agent-run-activity {
+    display: grid;
+  }
+
+  #root .agent-console-nav button {
+    min-width: 0;
+    min-height: 68px;
+    grid-template-columns: 7px 14px minmax(0, 1fr);
+    justify-items: stretch;
+    gap: 6px;
+    padding: 9px 10px;
+    border-radius: 9px;
+    font-size: 0.7rem;
+    text-align: left;
+  }
+
+  #root .agent-console-main {
+    height: auto;
+    min-height: 780px;
+    overflow: visible;
+    padding: 26px 24px 28px;
+  }
+
+  #root .agent-console-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 16px;
+  }
+
+  #root .agent-console-header h3 {
+    font-family: var(--font-display);
+    font-size: 2rem;
+  }
+
+  #root .agent-console-header .agent-working-state {
+    display: inline-flex;
+  }
+
+  #root .agent-header-action {
+    display: none;
+  }
+
+  #root .agent-workspace-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 190px;
+    gap: 14px;
+    overflow: visible;
+  }
+
+  #root .agent-workspace-live,
+  #root .agent-run-rail,
+  #root .agent-console-inspector,
+  #root .agent-console-state {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  #root .agent-run-rail {
+    display: flex;
+    grid-template-columns: none;
+  }
+
+  #root .agent-workspace-live :is(.trident-workbench, .quality-signal-grid, .sentinel-grid),
+  #root .agent-workspace-live .agent-luna-workbench .luna-investigation-grid {
+    grid-template-columns: minmax(170px, 0.72fr) minmax(0, 1.28fr);
+  }
+
+  #root .node-section {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    gap: 42px;
+  }
+
+  #root .node-system {
+    order: 2;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    overflow: hidden;
+    border-radius: 18px;
+    zoom: 0.42;
+  }
+
+  #root .node-copy {
+    order: 1;
+    padding-inline: 0;
+  }
+
+  #root .node-product-grid {
+    display: grid;
+    height: auto;
+    min-height: 660px;
+    grid-template-columns: 165px minmax(0, 1fr);
+    overflow: visible;
+  }
+
+  #root .node-source-nav {
+    display: flex;
+    height: auto;
+    min-height: 660px;
+    flex-direction: column;
+    gap: 8px;
+    overflow: visible;
+    padding: 18px 12px 16px;
+    border-right: 1px solid var(--border);
+    border-bottom: 0;
+  }
+
+  #root .node-source-nav > span,
+  #root .node-source-nav > .node-boundary-card {
+    display: block;
+  }
+
+  #root .node-source-item {
+    min-height: 58px;
+    grid-template-columns: 18px minmax(0, 1fr) 6px;
+    padding: 10px;
+    border-radius: 12px;
+  }
+
+  #root .node-policy-main {
+    display: flex;
+    height: auto;
+    min-height: 660px;
+    overflow: visible;
+    padding: 22px 20px 24px;
+  }
+
+  #root .node-policy-header {
+    align-items: center;
+  }
+
+  #root .node-policy-header > em {
+    display: inline-flex;
+  }
+
+  #root .node-security-workspace {
+    display: grid;
+    min-height: 525px;
+    grid-template-columns: 190px minmax(0, 1fr);
+    gap: 16px;
+    overflow: visible;
+  }
+
+  #root .node-policy-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  #root .node-policy-list > span {
+    grid-column: 1;
+  }
+
+  #root .node-policy-item {
+    min-height: 64px;
+    grid-template-columns: 18px minmax(0, 1fr) auto;
+    align-content: center;
+    gap: 8px;
+    padding: 10px 11px;
+  }
+
+  #root .node-policy-item > svg,
+  #root .node-policy-item > em {
+    display: block;
+  }
+
+  #root .node-control-detail,
+  #root .site-control-review {
+    height: auto;
+    min-height: 525px;
+    max-height: none;
+    overflow: visible;
+  }
+
+  #root .node-control-detail h4,
+  #root .node-control-detail > p {
+    display: block;
+    min-height: 0;
+    overflow: visible;
+    -webkit-line-clamp: initial;
+  }
+
+  #root .final-cta {
+    width: calc(100% - 24px);
+    min-height: 440px;
+    padding: 62px 22px;
+    border-radius: var(--card-radius);
+  }
+
+  #root .final-cta h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2.35rem, 10vw, 3rem);
+  }
+
+  #root .site-footer {
+    width: calc(100% - 24px);
+    margin-top: 12px;
+    padding: 40px 20px calc(30px + env(safe-area-inset-bottom, 0px));
+    border-radius: var(--card-radius) var(--card-radius) 0 0;
+  }
+
+  #root .about-hero {
+    gap: 38px;
+    padding: calc(env(safe-area-inset-top, 0px) + 148px) 16px 68px;
+  }
+
+  #root .about-hero-copy {
+    text-align: left;
+  }
+
+  #root .about-hero-copy h1 {
+    max-width: 11ch;
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2.55rem, 11vw, 3.25rem);
+    line-height: 1;
+  }
+
+  #root .about-hero-copy > p {
+    margin-inline: 0;
+  }
+
+  #root .about-system-quote,
+  #root .founder-section blockquote,
+  #root .outcome-copy p {
+    font-family: var(--font-display);
+  }
+
+  #root .about-system-quote {
+    min-height: 220px;
+    padding: 24px 20px;
+    font-size: clamp(1.8rem, 8vw, 2.3rem);
+  }
+
+  #root .why-now-line {
+    min-height: 210px;
+    padding: 22px;
+    border-radius: var(--card-radius);
+  }
+
+  #root .privacy-page {
+    padding: calc(env(safe-area-inset-top, 0px) + 116px) 16px 68px;
+  }
+
+  #root :is(.hero-workspace, .agent-console, .node-system) *,
+  #root :is(.hero-workspace, .agent-console, .node-system) *::before,
+  #root :is(.hero-workspace, .agent-console, .node-system) *::after {
+    animation: none !important;
+    transition-duration: 0s !important;
+  }
+
+  #root :is(.window-live i, .agent-run-activity > div.active i, .node-source-item.active > i) {
+    animation: live-pulse 1.8s ease-in-out infinite !important;
+  }
+}
+
+@media (max-width: 400px) {
+  #root .hero-workspace-wrap,
+  #root .agent-console,
+  #root .node-system {
+    width: 100%;
+    zoom: 0.4;
+  }
+}
+
+@media (max-width: 350px) {
+  #root .hero-workspace-wrap,
+  #root .agent-console,
+  #root .node-system {
+    width: 100%;
+    zoom: 0.35;
+  }
+
+  #root .hero-actions .button {
+    font-size: 0.7rem;
+  }
+}
