@@ -717,8 +717,8 @@ function ThesisSection() {
   return (
     <section className="thesis-section section-space" id="thesis" ref={root}>
       <div className="thesis-head">
-        <h2><span className="accent-text">The next generation of medicine</span> cannot run on the last generation of research infrastructure.</h2>
-        <p className="thesis-closer"><BrandName /> is building that infrastructure.</p>
+        <h2><span className="accent-text">The future of medicine</span> cannot run on yesterday's research infrastructure.</h2>
+        <p className="thesis-closer"><BrandName /> is building what comes next.</p>
       </div>
     </section>
   )
