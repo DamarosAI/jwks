@@ -48,13 +48,13 @@ function ModelPathSwitch() {
       className={`model-path-switch${isolated ? ' is-isolated' : ''}`}
       role="switch"
       aria-checked={!isolated}
-      aria-label={isolated ? 'Model path isolated. No LLM or cloud inference.' : 'Model path local only. No cloud inference.'}
+      aria-label={isolated ? 'Isolated. No LLM or cloud inference.' : 'Connected. No cloud inference.'}
       onClick={toggle}
     >
       <Power size={15} />
       <span>
-        <small>MODEL PATH</small>
-        <strong>{isolated ? 'Isolated' : 'Local only'}</strong>
+        <small>CONNECTION</small>
+        <strong>{isolated ? 'Isolated' : 'Connected'}</strong>
       </span>
       <i className="model-path-track" aria-hidden="true"><i /></i>
     </button>
@@ -873,7 +873,7 @@ function NodeControlFooter({ control, children, motion = false }) {
     <footer className="node-control-footer" {...(motion ? { 'data-review-motion': true } : {})}>
       <div className="node-control-boundary">
         <ShieldCheck size={18} />
-        <span>
+        <span className="node-control-copy">
           <small>CONTROL BOUNDARY</small>
           <strong>No LLM touches patient data</strong>
           <em>{control.guard}</em>
@@ -1514,7 +1514,7 @@ function SiteNodeSection() {
                   <div className="node-control-body">
                     <header><span><small>SELECTED CONTROL - {control.record}</small><h4>{control.title}</h4></span><em className={completedReview ? 'is-reviewed' : 'is-pending'}><i /> {completedReview ? 'REVIEWED' : 'ENFORCED'}</em></header>
                     <p>{control.description}</p>
-                    <dl>
+                    <dl className="node-control-facts">
                       <div><dt>SCOPE</dt><dd>{control.scope}</dd></div>
                       <div><dt>BOUNDARY</dt><dd>{control.patientFields}</dd></div>
                       <div><dt>AUTHORITY</dt><dd>{control.policy}</dd></div>
