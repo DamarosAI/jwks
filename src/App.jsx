@@ -48,12 +48,12 @@ function ModelPathSwitch() {
       className={`model-path-switch${isolated ? ' is-isolated' : ''}`}
       role="switch"
       aria-checked={!isolated}
-      aria-label={isolated ? 'Isolated. No LLM or cloud inference.' : 'Connected. No cloud inference.'}
+      aria-label={isolated ? 'AI isolated. No LLM or cloud inference.' : 'AI connected. No cloud inference.'}
       onClick={toggle}
     >
       <Power size={15} />
       <span>
-        <small>CONNECTION</small>
+        <small>AI CONNECTION</small>
         <strong>{isolated ? 'Isolated' : 'Connected'}</strong>
       </span>
       <i className="model-path-track" aria-hidden="true"><i /></i>
