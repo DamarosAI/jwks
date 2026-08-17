@@ -17,7 +17,7 @@ describe('mobile miniature layout', () => {
     assert.match(css, /#root \.hero-workspace-wrap \{[\s\S]*?zoom:\s*0\.42;/)
     assert.match(css, /#root \.hero-workspace \.hero-app-grid \{[\s\S]*?grid-template-columns:\s*150px minmax\(0, 1fr\);/)
     assert.match(css, /#root \.agent-console-grid \{[\s\S]*?grid-template-columns:\s*170px minmax\(0, 1fr\);/)
-    assert.match(css, /#root \.node-product-grid \{[\s\S]*?grid-template-columns:\s*165px minmax\(0, 1fr\);/)
+    assert.match(css, /#root \.node-product-grid \{[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\);/)
   })
 
   it('removes fixed clipping and pauses product autoplay on narrow screens', () => {

@@ -19,7 +19,7 @@ describe('site-control workspace geometry', () => {
     const inlineFooter = css.match(/\.inline-action-panel footer \{([^}]*)\}/)?.[1] ?? ''
     const inlineButton = css.match(/\.inline-action-panel footer \.button \{([^}]*)\}/)?.[1] ?? ''
     const securityAction = css.match(/\.node-control-detail \.inline-action-panel \{([^}]*)\}/)?.[1] ?? ''
-    assert.match(css, /\.node-policy-item \{[\s\S]*?min-height:\s*64px;[\s\S]*?border-radius:\s*10px;/)
+    assert.match(css, /\.node-policy-item \{[\s\S]*?min-height:\s*40px;[\s\S]*?border-radius:\s*10px;/)
     assert.match(css, /\.node-review-button \{[\s\S]*?min-height:\s*48px;[\s\S]*?border-radius:\s*10px;[\s\S]*?font-size:\s*15px;/)
     assert.match(inlineFooter, /align-items:\s*center;/)
     assert.match(inlineButton, /height:\s*48px;/)
@@ -40,7 +40,7 @@ describe('site-control workspace geometry', () => {
 
   it('aligns the site-control rail with the agents console', () => {
     assert.match(css, /#root \.node-section \{\s*width:\s*min\(100%, 1500px\);/)
-    assert.match(css, /#root \.node-product-grid \{[\s\S]*?grid-template-columns:\s*220px minmax\(0, 1fr\);/)
+    assert.match(css, /#root \.node-product-grid \{[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\);/)
     assert.match(app, /Site 018 - Damaros Health/)
     assert.doesNotMatch(app, /Northstar/)
     assert.doesNotMatch(app, /node-source-item[\s\S]*?<strong>\{source\.name\}<\/strong>/)
@@ -78,11 +78,17 @@ describe('site-control workspace geometry', () => {
     assert.doesNotMatch(app, /className="node-control-facts"/)
     assert.doesNotMatch(app, /SITE CONTROL PLANE/)
     assert.doesNotMatch(app, /SELECTED CONTROL/)
+    assert.doesNotMatch(app, /ACTIVE CONTROLS/)
     assert.match(app, /Local sources\. Local signatures\./)
+    assert.match(app, /className="node-custody-path"/)
+    assert.match(app, /SHA-256 hash-linked/)
+    assert.match(app, /Ed25519 verified/)
+    assert.match(app, /No LLM on patient data/)
     assert.doesNotMatch(app, /boundaryNote/)
     assert.match(app, /className="node-control-fill"/)
     assert.match(app, /className="node-control-copy"/)
     assert.match(css, /\.node-control-copy,[\s\S]*?display:\s*grid;[\s\S]*?gap:\s*5px;/)
+    assert.match(css, /\.node-custody-path \{[\s\S]*?grid-template-columns:\s*repeat\(4, minmax\(0, 1fr\)\)/)
     assert.match(css, /\.node-control-fill \{[\s\S]*?flex:\s*1 1 auto;[\s\S]*?grid-template-columns:\s*minmax\(0, 1\.15fr\) minmax\(220px, 0\.85fr\);/)
     assert.match(css, /#root \.node-control-copy :is\(small, strong, em\)[\s\S]*?display:\s*block;/)
   })

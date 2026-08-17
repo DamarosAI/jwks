@@ -436,20 +436,21 @@
     display: grid;
     height: auto;
     min-height: 560px;
-    grid-template-columns: 165px minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
     overflow: visible;
   }
 
   #root .node-source-nav {
     display: flex;
     height: auto;
-    min-height: 560px;
+    min-height: 0;
     flex-direction: column;
     gap: 8px;
     overflow: visible;
-    padding: 18px 12px 16px;
-    border-right: 1px solid var(--border);
-    border-bottom: 0;
+    padding: 12px 12px 10px;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
   }
 
   #root .node-source-nav > span,
@@ -495,20 +496,20 @@
 
   #root .node-policy-list {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 8px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
   }
 
   #root .node-policy-list > span {
-    grid-column: 1;
+    display: none;
   }
 
   #root .node-policy-item {
-    min-height: 64px;
-    grid-template-columns: 7px 15px minmax(0, 1fr);
+    min-height: 40px;
+    grid-template-columns: 6px 15px minmax(0, 1fr);
     align-content: center;
-    gap: 8px;
-    padding: 10px 11px;
+    gap: 7px;
+    padding: 7px 8px;
   }
 
   #root .node-policy-item > svg,
