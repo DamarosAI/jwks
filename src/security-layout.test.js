@@ -7,9 +7,9 @@ const app = await readFile(new URL('./App.jsx', import.meta.url), 'utf8')
 
 describe('site-control workspace geometry', () => {
   it('holds one desktop height across every control and review state', () => {
-    assert.match(css, /--node-detail-min-height:\s*647px/)
+    assert.match(css, /--node-detail-min-height:\s*520px/)
     assert.match(css, /\.node-control-detail \{[\s\S]*?min-height:\s*var\(--node-detail-min-height\)/)
-    assert.match(css, /#root \.node-system \{[\s\S]*?height:\s*780px;[\s\S]*?min-height:\s*780px;[\s\S]*?max-height:\s*780px;[\s\S]*?overflow:\s*hidden;/)
+    assert.match(css, /#root \.node-system \{[\s\S]*?height:\s*640px;[\s\S]*?min-height:\s*640px;[\s\S]*?max-height:\s*640px;[\s\S]*?overflow:\s*hidden;/)
     assert.match(css, /#root \.node-control-detail \{[\s\S]*?height:\s*100%;[\s\S]*?max-height:\s*100%;[\s\S]*?overflow:\s*hidden;/)
     assert.match(app, /className=\{completedReview \? 'is-reviewed' : 'is-pending'\}/)
     assert.doesNotMatch(app, /completedReview && <div className="is-reviewed">/)
@@ -74,15 +74,16 @@ describe('site-control workspace geometry', () => {
     assert.match(app, /playing = !narrow && shouldPlayAutoplay\([^\n]+\) && !isolated/)
   })
 
-  it('keeps control facts and the steel footer from colliding', () => {
-    assert.match(app, /className="node-control-facts"/)
+  it('keeps the inspect card dense without a fact slab', () => {
+    assert.doesNotMatch(app, /className="node-control-facts"/)
+    assert.doesNotMatch(app, /SITE CONTROL PLANE/)
+    assert.doesNotMatch(app, /SELECTED CONTROL/)
+    assert.match(app, /Local sources\. Local signatures\./)
+    assert.doesNotMatch(app, /boundaryNote/)
     assert.match(app, /className="node-control-fill"/)
     assert.match(app, /className="node-control-copy"/)
-    assert.match(app, /boundaryNote: 'Never leaves Site 018'/)
     assert.match(css, /\.node-control-copy,[\s\S]*?display:\s*grid;[\s\S]*?gap:\s*5px;/)
-    assert.match(css, /\.node-control-facts \{[\s\S]*?grid-auto-flow:\s*dense;[\s\S]*?grid-template-columns:\s*1\.2fr 0\.9fr 0\.9fr;[\s\S]*?gap:\s*0;/)
     assert.match(css, /\.node-control-fill \{[\s\S]*?flex:\s*1 1 auto;[\s\S]*?grid-template-columns:\s*minmax\(0, 1\.15fr\) minmax\(220px, 0\.85fr\);/)
-    assert.doesNotMatch(css, /\.node-control-facts > div[\s\S]{0,180}min-height:\s*84px;/)
     assert.match(css, /#root \.node-control-copy :is\(small, strong, em\)[\s\S]*?display:\s*block;/)
   })
 })

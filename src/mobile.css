@@ -435,7 +435,7 @@
   #root .node-product-grid {
     display: grid;
     height: auto;
-    min-height: 660px;
+    min-height: 560px;
     grid-template-columns: 165px minmax(0, 1fr);
     overflow: visible;
   }
@@ -443,7 +443,7 @@
   #root .node-source-nav {
     display: flex;
     height: auto;
-    min-height: 660px;
+    min-height: 560px;
     flex-direction: column;
     gap: 8px;
     overflow: visible;
@@ -472,9 +472,9 @@
   #root .node-policy-main {
     display: flex;
     height: auto;
-    min-height: 660px;
+    min-height: 560px;
     overflow: visible;
-    padding: 22px 20px 24px;
+    padding: 14px 16px 16px;
   }
 
   #root .node-policy-header {
@@ -487,7 +487,7 @@
 
   #root .node-security-workspace {
     display: block;
-    min-height: 525px;
+    min-height: 480px;
     grid-template-columns: minmax(0, 1fr);
     gap: 0;
     overflow: visible;
@@ -519,7 +519,7 @@
   #root .node-control-detail,
   #root .site-control-review {
     height: auto;
-    min-height: 525px;
+    min-height: 480px;
     max-height: none;
     overflow: visible;
   }

@@ -1442,10 +1442,10 @@ function SiteNodeSection() {
     { name: 'eReg - CTMS', read: 'Signer sync 10:42', icon: ShieldCheck },
   ]
   const controls = [
-    { name: 'Evidence visibility', policy: 'Site roles only', title: 'Inspect evidence access boundary', description: 'Only approved site roles can open source evidence or mapped patient facts.', scope: 'FHIR resources, documents, and mapped facts', checked: '10:41 - 4 approved sources', record: 'POL-018-EV4', receipt: 'REV-018-EV4-1044', recipient: '7 approved site roles', patientFields: 'Site-held', boundaryNote: 'Never leaves Site 018', action: 'Review access boundary', decision: 'Confirm current access boundary', outcome: 'Access remains limited to 7 approved site roles. No external principal receives patient evidence.', success: 'Access review recorded', guard: 'Patient evidence stays site-held. Approved roles only.' },
-    { name: 'Artifact release', policy: 'PI or delegated signer', title: 'Review sponsor artifact release', description: 'Replay bundles remain at the site until a PI or delegated signer releases the exact artifact.', scope: 'Replay bundle - RPL-1047', checked: '10:42 - signer roster current', record: 'POL-018-AR2', receipt: 'REV-018-AR2-1044', recipient: 'Meridian Oncology', patientFields: '0 in sponsor artifact', boundaryNote: 'Held until PI signs', action: 'Review artifact release', decision: 'Confirm delegated release authority', outcome: 'Replay remains site-held until a PI or delegated signer releases this exact artifact.', success: 'Artifact review recorded', guard: 'Replay stays site-held until a PI signs the exact artifact.' },
-    { name: 'Network signal', policy: 'Aggregate coverage only', title: 'Release aggregate coverage signal', description: 'Review the exact outbound payload. Sponsor receives site capability, never patient facts.', scope: 'Protocol capability - Site 018', checked: '10:42 - payload reduced', record: 'POL-018-NS7', receipt: 'REV-018-NS7-1044', recipient: 'Meridian Oncology', patientFields: '0 patient fields', boundaryNote: 'Aggregate payload only', action: 'Review signal release', decision: 'Approve aggregate-only payload', outcome: 'Coverage signal contains 0 patient fields. Site capability is the only outbound payload.', success: 'Signal review recorded', guard: 'Coverage signal carries 0 patient fields.' },
-    { name: 'Model execution', policy: isolated ? 'Isolated - no inference' : 'Local inference allowed', title: 'Inspect local model attestation', description: isolated ? 'Model path is isolated. No local inference and no cloud connection until a site reviewer restores the path.' : 'Model execution stays inside the institution boundary and writes only source-linked work products.', scope: 'Site node runtime - Run 018-017', checked: isolated ? 'Isolated - no model path' : '10:43 - runtime attested', record: 'POL-018-ME3', receipt: 'REV-018-ME3-1044', recipient: 'Site execution record', patientFields: 'No raw egress', boundaryNote: isolated ? 'No model path open' : 'Runtime stays on-site', action: 'Review run attestation', decision: isolated ? 'Keep model path isolated' : 'Accept local runtime attestation', outcome: isolated ? 'No model path is open. Patient evidence never entered an LLM.' : 'Run remains site-bound. Only source-linked work products enter the execution record.', success: 'Attestation review recorded', guard: isolated ? 'No LLM path. No cloud inference.' : 'Inference stays inside the institution boundary.' },
+    { name: 'Evidence visibility', policy: 'Site roles only', title: 'Inspect evidence access boundary', description: 'Only approved site roles can open source evidence or mapped patient facts.', scope: 'FHIR resources, documents, and mapped facts', record: 'POL-018-EV4', receipt: 'REV-018-EV4-1044', recipient: '7 approved site roles', patientFields: 'Site-held', action: 'Review access boundary', decision: 'Confirm current access boundary', outcome: 'Access remains limited to 7 approved site roles. No external principal receives patient evidence.', success: 'Access review recorded', guard: 'Patient evidence stays site-held. Approved roles only.' },
+    { name: 'Artifact release', policy: 'PI or delegated signer', title: 'Review sponsor artifact release', description: 'Replay bundles remain at the site until a PI or delegated signer releases the exact artifact.', scope: 'Replay bundle - RPL-1047', record: 'POL-018-AR2', receipt: 'REV-018-AR2-1044', recipient: 'Meridian Oncology', patientFields: '0 in sponsor artifact', action: 'Review artifact release', decision: 'Confirm delegated release authority', outcome: 'Replay remains site-held until a PI or delegated signer releases this exact artifact.', success: 'Artifact review recorded', guard: 'Replay stays site-held until a PI signs the exact artifact.' },
+    { name: 'Network signal', policy: 'Aggregate coverage only', title: 'Release aggregate coverage signal', description: 'Review the exact outbound payload. Sponsor receives site capability, never patient facts.', scope: 'Protocol capability - Site 018', record: 'POL-018-NS7', receipt: 'REV-018-NS7-1044', recipient: 'Meridian Oncology', patientFields: '0 patient fields', action: 'Review signal release', decision: 'Approve aggregate-only payload', outcome: 'Coverage signal contains 0 patient fields. Site capability is the only outbound payload.', success: 'Signal review recorded', guard: 'Coverage signal carries 0 patient fields.' },
+    { name: 'Model execution', policy: isolated ? 'Isolated - no inference' : 'Local inference allowed', title: 'Inspect local model attestation', description: isolated ? 'Model path is isolated. No local inference and no cloud connection until a site reviewer restores the path.' : 'Model execution stays inside the institution boundary and writes only source-linked work products.', scope: 'Site node runtime - Run 018-017', record: 'POL-018-ME3', receipt: 'REV-018-ME3-1044', recipient: 'Site execution record', patientFields: 'No raw egress', action: 'Review run attestation', decision: isolated ? 'Keep model path isolated' : 'Accept local runtime attestation', outcome: isolated ? 'No model path is open. Patient evidence never entered an LLM.' : 'Run remains site-bound. Only source-linked work products enter the execution record.', success: 'Attestation review recorded', guard: isolated ? 'No LLM path. No cloud inference.' : 'Inference stays inside the institution boundary.' },
   ]
   const control = controls[selectedControl]
   const completedReview = reviewedControls[control.record]
@@ -1507,39 +1507,13 @@ function SiteNodeSection() {
             </div>
           </aside>
           <div className="node-policy-main">
-            <div className="node-policy-header"><span><small>SITE CONTROL PLANE</small><strong>Local sources. Local signatures.</strong></span><em><ShieldCheck size={16} /> All controls healthy</em></div>
+            <p className="node-policy-kicker">Local sources. Local signatures.</p>
             <div className="node-security-workspace">
               <div className="node-control-detail">
                 {reviewPhase !== 'idle' ? <SiteControlReview control={control} phase={reviewPhase} reduced={reduced} onBack={() => setReviewPhase('idle')} onConfirm={confirmControlReview} onReturn={() => setReviewPhase('idle')} /> : <>
                   <div className="node-control-body">
-                    <header><span><small>SELECTED CONTROL - {control.record}</small><h4>{control.title}</h4></span><em className={completedReview ? 'is-reviewed' : 'is-pending'}><i /> {completedReview ? 'REVIEWED' : 'ENFORCED'}</em></header>
+                    <header><span><small>{control.record}</small><h4>{control.title}</h4></span><em className={completedReview ? 'is-reviewed' : 'is-pending'}><i /> {completedReview ? 'REVIEWED' : 'ENFORCED'}</em></header>
                     <p>{control.description}</p>
-                    <dl className="node-control-facts">
-                      <div>
-                        <Database size={16} />
-                        <span>
-                          <dt>SCOPE</dt>
-                          <dd>{control.scope}</dd>
-                          <small>{control.checked}</small>
-                        </span>
-                      </div>
-                      <div>
-                        <ShieldCheck size={16} />
-                        <span>
-                          <dt>BOUNDARY</dt>
-                          <dd>{control.patientFields}</dd>
-                          <small>{control.boundaryNote}</small>
-                        </span>
-                      </div>
-                      <div>
-                        <Fingerprint size={16} />
-                        <span>
-                          <dt>AUTHORITY</dt>
-                          <dd>{control.policy}</dd>
-                          <small>{control.recipient}</small>
-                        </span>
-                      </div>
-                    </dl>
                     <div className="node-control-fill">
                       <div className="node-event-ledger">
                         <span>RECENT POLICY EVENTS</span>
