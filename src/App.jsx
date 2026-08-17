@@ -697,6 +697,9 @@ function LandingHero() {
         </div>
       </div>
       <div className="hero-workspace-wrap"><MiniRun /></div>
+      <a className="hero-scroll-cue" href="#thesis" aria-label="Continue to the thesis" onClick={(event) => smoothSection(event, '#thesis')}>
+        <CaretDown size={22} weight="bold" />
+      </a>
     </section>
   )
 }

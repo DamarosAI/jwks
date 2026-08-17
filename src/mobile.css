@@ -120,7 +120,7 @@
 
   #root .landing-hero {
     min-height: 0;
-    padding: calc(env(safe-area-inset-top, 0px) + 148px) 16px 66px;
+    padding: calc(env(safe-area-inset-top, 0px) + 148px) 16px 76px;
   }
 
   #root .hero-copy {

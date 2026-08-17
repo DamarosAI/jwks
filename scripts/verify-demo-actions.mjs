@@ -153,7 +153,7 @@ if (!css.includes('.landing-source-demo .workspace-view') || !css.includes('anim
 if (!css.includes('font-synthesis: none') || !css.includes('.source-criteria-list > div.is-live')) {
   throw new Error('Demo chrome type must stay unsheared and live-highlighted')
 }
-if (!app.includes('about-scroll-cue') || !app.includes('CaretDown') || !app.includes('why-now-chevron')) {
+if (!app.includes('about-scroll-cue') || !app.includes('hero-scroll-cue') || !app.includes('CaretDown') || !app.includes('why-now-chevron')) {
   throw new Error('About must cue the next section from the first card')
 }
 if (!css.includes('.thesis-section.section-space') || !css.includes('22vh')) {

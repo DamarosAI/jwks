@@ -21,6 +21,8 @@ describe('Damaros brand mark', () => {
     assert.match(app, /className="accent-text">The future of medicine<\/span> cannot run on yesterday's research infrastructure\./)
     assert.match(app, /className="thesis-closer"><BrandName \/> is building what comes next\./)
     assert.match(css, /\.thesis-section\.section-space \{[\s\S]*?padding-block:\s*112px;/)
+    assert.match(css, /\.landing-hero \{[\s\S]*?padding:\s*clamp\(196px, 22vh, 248px\) max\(28px, 4vw\) 112px;/)
+    assert.match(app, /className="hero-scroll-cue"/)
     assert.doesNotMatch(css, /\.thesis-section\.section-space \{[\s\S]*?padding-top:\s*64px;/)
   })
 })
