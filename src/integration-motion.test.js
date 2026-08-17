@@ -11,6 +11,15 @@ describe('connector logo motion', () => {
     assert.doesNotMatch(css, /html\.is-scrolling \.integration-track/)
   })
 
+  it('keeps biomarker trails falling during scroll on every viewport', () => {
+    assert.match(app, /const animate = shouldRunAmbient\(\{ reduced, inView \}\)/)
+    assert.doesNotMatch(app, /shouldRunAmbient\(\{ reduced, inView, narrow \}\)/)
+    assert.doesNotMatch(css, /html\.is-scrolling \.biomarker-rain/)
+    assert.doesNotMatch(css, /#root \.biomarker-rain \{\s*display:\s*none;/)
+    assert.match(css, /\.biomarker-rain span \{[\s\S]*?animation:\s*biomarker-fall/)
+    assert.match(css, /@media \(prefers-reduced-motion:\s*reduce\)[\s\S]*?\.biomarker-rain \{\s*display:\s*none;/)
+  })
+
   it('only disables the marquee for reduced-motion users', () => {
     const disabledRules = css.match(/\.integration-track\s*\{\s*animation:\s*none;/g) ?? []
     assert.equal(disabledRules.length, 1)

@@ -252,7 +252,7 @@ function BiomarkerRain() {
   const reduced = useReducedMotion()
   const narrow = useMediaQuery(NARROW_VIEWPORT)
   const inView = useInView(root, { threshold: 0 })
-  const animate = shouldRunAmbient({ reduced, inView, narrow })
+  const animate = shouldRunAmbient({ reduced, inView })
   const marks = narrow ? BIOMARKERS.filter((_, index) => index % 2 === 0) : BIOMARKERS
   return (
     <div className={`biomarker-rain${animate ? '' : ' is-paused'}`} ref={root} aria-hidden="true">
