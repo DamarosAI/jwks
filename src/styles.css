@@ -8548,7 +8548,8 @@ html { scroll-padding-top: 96px; }
 .landing-source-demo,
 .hero-workspace,
 .agent-console,
-.live-workspace {
+.live-workspace,
+.node-system {
   font-synthesis: none;
   text-rendering: auto;
   font-kerning: none;
@@ -8561,14 +8562,16 @@ html { scroll-padding-top: 96px; }
 .landing-source-demo :is(em, i),
 .hero-workspace :is(em, i),
 .agent-console :is(em, i),
-.live-workspace :is(em, i) {
+.live-workspace :is(em, i),
+.node-system :is(em, i) {
   font-style: normal;
 }
 
 .landing-source-demo :is(b, strong),
 .hero-workspace :is(b, strong),
 .agent-console :is(b, strong),
-.live-workspace :is(b, strong) {
+.live-workspace :is(b, strong),
+.node-system :is(b, strong) {
   font-weight: 400;
 }
 
@@ -9868,7 +9871,7 @@ html { scroll-padding-top: 96px; }
   padding: 0;
   color: var(--faint);
   font-size: 0.5rem;
-  font-weight: 750;
+  font-weight: 400;
   letter-spacing: 0.12em;
 }
 
@@ -10058,7 +10061,8 @@ html { scroll-padding-top: 96px; }
 .node-policy-item strong {
   overflow: hidden;
   color: #2d3d48;
-  font-size: 0.68rem;
+  font-size: 0.76rem;
+  font-weight: 400;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -10120,8 +10124,8 @@ html { scroll-padding-top: 96px; }
 }
 
 .node-control-view.source-protocol-view > h4 {
-  margin: 6px 0 2px;
-  font-size: 1.32rem;
+  margin: 10px 0 2px;
+  font-size: 1.48rem;
   line-height: 1.12;
   letter-spacing: -0.02em;
 }
@@ -10135,6 +10139,7 @@ html { scroll-padding-top: 96px; }
   min-height: 42px;
   gap: 12px;
   padding: 9px 12px;
+  border-radius: var(--control-radius);
 }
 
 .node-control-view .source-protocol-summary,
@@ -10147,6 +10152,7 @@ html { scroll-padding-top: 96px; }
 .site-control-review .source-protocol-summary > section {
   min-height: 0;
   padding: 12px 14px;
+  border-radius: var(--control-radius);
 }
 
 .node-control-view .source-arm,
@@ -10170,6 +10176,7 @@ html { scroll-padding-top: 96px; }
   grid-template-columns: 46px minmax(0, 1fr) max-content;
   gap: 10px;
   padding: 0 12px;
+  border-radius: var(--control-radius);
 }
 
 .node-control-view .source-protocol-summary > section,
@@ -10212,8 +10219,9 @@ html { scroll-padding-top: 96px; }
   background: #fff;
   color: var(--text-soft);
   font-family: inherit;
-  font-size: 0.9rem;
-  font-weight: 650;
+  font-size: var(--type-product-control);
+  font-weight: 400;
+  letter-spacing: var(--tracking-control);
   cursor: pointer;
 }
 
@@ -11594,9 +11602,9 @@ html { scroll-padding-top: 96px; }
   background: var(--accent);
   color: white;
   font-family: inherit;
-  font-size: 0.9rem;
-  font-weight: 650;
-  letter-spacing: 0.015em;
+  font-size: var(--type-product-control);
+  font-weight: 400;
+  letter-spacing: var(--tracking-control);
   cursor: pointer;
   box-shadow: none;
   transition: filter 160ms ease;
@@ -12399,14 +12407,23 @@ html.is-hidden .hero-agent.is-active i,
   .source-criteria-head > button,
   .node-review-button,
   .node-ghost-button
+),
+#root .site-control-review :is(
+  .source-criteria-head > button,
+  .node-review-button,
+  .node-ghost-button
 ) {
+  border-radius: 8px;
   font-size: var(--type-product-control);
+  font-weight: 400;
+  letter-spacing: var(--tracking-control);
 }
 
 #root :is(
   .landing-source-demo,
   .hero-workspace,
   .agent-console,
+  .node-system,
   .node-security-workspace,
   .site-control-review,
   .live-workspace
@@ -12423,6 +12440,7 @@ html.is-hidden .hero-agent.is-active i,
 #root :is(
   .landing-source-demo,
   .agent-console,
+  .node-system,
   .node-security-workspace,
   .site-control-review
 ) :is(small, em, time, b, dt, span) {

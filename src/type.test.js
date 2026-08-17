@@ -26,7 +26,7 @@ describe('site type', () => {
     assert.match(css, /#root :is\([\s\S]*?\.wordmark,[\s\S]*?\.desktop-nav-links a,[\s\S]*?\.footer-mark p/)
     assert.match(css, /#root :is\([\s\S]*?button,[\s\S]*?letter-spacing:\s*var\(--tracking-control\);/)
     assert.match(css, /#root \.landing-source-demo :is\([\s\S]*?font-size:\s*var\(--type-product-control\);/)
-    assert.match(css, /#root :is\([\s\S]*?\.landing-source-demo,[\s\S]*?\.agent-console,[\s\S]*?\.node-security-workspace,[\s\S]*?\.site-control-review/)
+    assert.match(css, /#root :is\([\s\S]*?\.landing-source-demo,[\s\S]*?\.agent-console,[\s\S]*?\.node-system,[\s\S]*?\.node-security-workspace,[\s\S]*?\.site-control-review/)
     assert.match(css, /#root :is\([\s\S]*?\.agent-console,[\s\S]*?small, em, time, b, dt, span[\s\S]*?font-size:\s*max\(var\(--type-product-floor\),\s*0\.8125rem\)/)
     assert.match(css, /--font-ui:\s*'Switzer', sans-serif/)
     assert.match(css, /@font-face\s*\{[\s\S]*?font-family:\s*'Switzer';[\s\S]*?switzer-400\.woff2/)

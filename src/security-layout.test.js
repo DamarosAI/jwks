@@ -28,6 +28,10 @@ describe('site-control workspace geometry', () => {
     assert.match(css, /#root \.node-control-view\.workspace-view,[\s\S]*?#root \.site-control-review\.workspace-view \{[\s\S]*?border:\s*0;[\s\S]*?box-shadow:\s*none;/)
     assert.match(css, /\.node-review-button \{[\s\S]*?min-height:\s*44px;[\s\S]*?border-radius:\s*8px;/)
     assert.match(css, /\.node-ghost-button \{[\s\S]*?min-height:\s*44px;[\s\S]*?border-radius:\s*8px;/)
+    assert.match(css, /\.landing-source-demo,[\s\S]*?\.node-system \{[\s\S]*?font-synthesis:\s*none;/)
+    assert.match(css, /\.node-system :is\(b, strong\) \{[\s\S]*?font-weight:\s*400;/)
+    assert.match(css, /#root \.node-control-view :is\([\s\S]*?\.node-review-button,[\s\S]*?border-radius:\s*8px;[\s\S]*?font-size:\s*var\(--type-product-control\);[\s\S]*?font-weight:\s*400;/)
+    assert.match(css, /\.node-control-view\.source-protocol-view > h4 \{[\s\S]*?font-size:\s*1\.48rem;/)
   })
 
   it('runs a complete, persistent site-review workflow', () => {
