@@ -63,7 +63,7 @@ describe('site-control workspace geometry', () => {
   it('keeps a model-path isolate switch in the landing sidebar', () => {
     assert.match(app, /function ModelPathSwitch\(/)
     assert.match(app, /<ModelPathSwitch \/>/)
-    assert.match(app, /className="agent-console-tools"/)
+    assert.doesNotMatch(app.slice(app.indexOf('function AgentOperations'), app.indexOf('function SiteNodeSection')), /<ModelPathSwitch/)
     assert.match(app, /className="agent-run-path"/)
     assert.match(app, /role="switch"/)
     assert.match(app, /AI isolated\. No LLM or cloud inference\./)

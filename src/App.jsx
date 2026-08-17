@@ -1395,10 +1395,7 @@ function AgentOperations() {
             <div className={`agent-console-state${fading ? ' is-fading' : ''}`}>
               <div className="agent-console-header">
                 <div><span>{agent.name}</span><h3>{agent.task}</h3><p>{agent.text}</p></div>
-                <div className="agent-console-tools">
-                  <ModelPathSwitch />
-                  {isolated ? null : active === 2 ? <em>Read only</em> : ((active === 0 && tridentStage < 5) || (active === 1 && eyeSelected !== 3 && !eyeRouted) || (active === 3 && !sentinelSurfaced)) ? <em className="agent-working-state"><i /> {active === 0 && tridentStage === 0 ? 'Ready' : 'Working'}</em> : <em><CheckCircle size={14} weight="fill" /> {active === 1 && eyeSelected === 3 ? 'No action' : 'Complete'}</em>}
-                </div>
+                {isolated ? <em>Isolated</em> : active === 2 ? <em>Read only</em> : ((active === 0 && tridentStage < 5) || (active === 1 && eyeSelected !== 3 && !eyeRouted) || (active === 3 && !sentinelSurfaced)) ? <em className="agent-working-state"><i /> {active === 0 && tridentStage === 0 ? 'Ready' : 'Working'}</em> : <em><CheckCircle size={14} weight="fill" /> {active === 1 && eyeSelected === 3 ? 'No action' : 'Complete'}</em>}
               </div>
               <div className="agent-workspace-body">
                 <div className="agent-workspace-live">

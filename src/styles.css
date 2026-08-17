@@ -3996,8 +3996,7 @@ html { scroll-padding-top: 96px; }
 }
 
 .hero-app-nav .model-path-switch,
-.node-source-nav .model-path-switch,
-.agent-console-tools .model-path-switch {
+.node-source-nav .model-path-switch {
   display: grid;
   min-height: 40px;
   margin-top: 0;
@@ -4008,8 +4007,7 @@ html { scroll-padding-top: 96px; }
   margin-top: auto;
 }
 
-.node-source-nav .model-path-switch,
-.agent-console-tools .model-path-switch {
+.node-source-nav .model-path-switch {
   width: 196px;
 }
 
@@ -4039,8 +4037,7 @@ html { scroll-padding-top: 96px; }
 
 .model-path-track,
 .node-source-nav .model-path-track,
-.hero-app-nav .model-path-track,
-.agent-console-tools .model-path-track {
+.hero-app-nav .model-path-track {
   position: relative;
   display: block;
   width: 36px;
@@ -4052,8 +4049,7 @@ html { scroll-padding-top: 96px; }
 
 .model-path-track > i,
 .node-source-nav .model-path-track > i,
-.hero-app-nav .model-path-track > i,
-.agent-console-tools .model-path-track > i {
+.hero-app-nav .model-path-track > i {
   position: absolute;
   top: 2px;
   left: 16px;
@@ -9392,31 +9388,33 @@ html { scroll-padding-top: 96px; }
 }
 
 .agent-console-grid {
-  height: 760px;
-  min-height: 760px;
-  max-height: 760px;
-  grid-template-columns: 190px minmax(0, 1fr);
+  height: 780px;
+  min-height: 780px;
+  max-height: 780px;
+  grid-template-columns: 228px minmax(0, 1fr);
 }
 
 .agent-console-nav {
-  gap: 6px;
-  padding: 18px 12px 14px;
-  background: #fff;
+  gap: 3px;
+  padding: 16px 12px;
+  background: #edf2f5;
 }
 
 .agent-console-nav > span {
-  padding: 4px 10px 7px;
-  font-size: 0.61rem;
-  letter-spacing: 0.11em;
+  margin: 10px 9px 5px;
+  padding: 0;
+  color: var(--faint);
+  font-size: 0.5rem;
+  letter-spacing: 0.12em;
 }
 
 .agent-console-nav button,
 .agent-console-nav button.active {
-  min-height: 40px;
-  grid-template-columns: 6px 15px minmax(0, 1fr);
-  padding: 8px 10px;
-  border-radius: 10px;
-  transition: background-color 180ms ease, box-shadow 180ms ease, transform var(--motion-press-in) ease;
+  min-height: 38px;
+  grid-template-columns: 7px 14px minmax(0, 1fr);
+  padding: 0 10px;
+  border-radius: 8px;
+  transition: background-color 180ms cubic-bezier(0.32, 0.72, 0, 1), box-shadow 180ms cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 .agent-console-nav button:hover {
@@ -9432,32 +9430,32 @@ html { scroll-padding-top: 96px; }
 }
 
 .agent-console-nav button strong {
-  font-size: 0.78rem;
+  font-size: 0.61rem;
 }
 
 .agent-console-nav button small {
-  font-size: 0.61rem;
+  font-size: 0.5rem;
   line-height: 1.25;
 }
 
 .agent-console-context {
   gap: 4px;
-  padding: 15px 10px 2px;
-  border-top: 1px solid #d9e1e6;
+  padding: 14px 10px 4px;
+  border-top: 1px solid var(--border);
 }
 
 .agent-console-context small,
 .agent-console-context span {
-  font-size: 0.61rem;
+  font-size: 0.5rem;
 }
 
 .agent-console-context strong {
-  font-size: 0.73rem;
+  font-size: 0.61rem;
 }
 
 .agent-console-main {
-  padding: 22px 22px 24px;
-  background: #fff;
+  padding: 22px 24px 24px;
+  background: #fbfcfd;
 }
 
 .agent-console-state {
@@ -9465,53 +9463,47 @@ html { scroll-padding-top: 96px; }
 }
 
 .agent-console-header {
-  display: grid;
-  min-height: 88px;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: start;
+  display: flex;
+  min-height: 0;
+  align-items: flex-start;
+  justify-content: space-between;
   gap: 20px;
-  padding: 1px 2px 13px;
+  padding: 2px 2px 14px;
   border-bottom: 1px solid #e0e6ea;
 }
 
-.agent-console-tools {
-  display: grid;
-  gap: 8px;
-  justify-items: end;
-  align-content: start;
-}
-
-.agent-console-tools em {
-  width: max-content;
-}
-
 .agent-console-header > div > span {
-  font-size: 0.66rem;
-  letter-spacing: 0.035em;
+  color: var(--accent);
+  font-size: 0.49rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
 }
 
 .agent-console-header h3 {
   min-height: 0;
   max-width: 760px;
-  margin-top: 5px;
-  font-size: clamp(1.52rem, 1.8vw, 1.92rem);
-  letter-spacing: -0.028em;
-  line-height: 1.04;
+  margin-top: 4px;
+  font-size: clamp(1.18rem, 1.45vw, 1.38rem);
+  letter-spacing: -0.025em;
+  line-height: 1.15;
 }
 
 .agent-console-header p {
   min-height: 0;
-  max-width: 720px;
+  max-width: 640px;
   margin-top: 6px;
-  color: #687987;
+  color: #5f6f7a;
   font-size: 0.76rem;
   line-height: 1.4;
 }
 
 .agent-console-header em {
-  min-height: 32px;
-  padding: 7px 10px;
-  font-size: 0.64rem;
+  min-height: 36px;
+  padding: 8px 11px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 0.63rem;
 }
 
 .agent-workspace-body {
@@ -9667,8 +9659,9 @@ html { scroll-padding-top: 96px; }
   align-items: start;
   margin-top: auto;
   padding: 12px 13px;
-  background: var(--accent);
-  color: #f8fbfd;
+  border-top: 1px solid color-mix(in srgb, var(--accent) 10%, #e2e8ec);
+  background: #f4f7f9;
+  color: var(--accent);
 }
 
 .agent-run-boundary > span {
@@ -9679,14 +9672,14 @@ html { scroll-padding-top: 96px; }
 .agent-run-boundary small {
   display: block;
   width: max-content;
-  padding: 2px 7px;
-  border-radius: 6px;
-  background: color-mix(in srgb, #fff 18%, transparent);
-  color: #d4e4f2;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--accent);
 }
 
 .agent-run-boundary strong {
-  color: #f8fbfd;
+  color: #24343e;
   font-size: 0.68rem;
   line-height: 1.35;
 }
@@ -11425,9 +11418,9 @@ html { scroll-padding-top: 96px; }
     min-height: 64px;
     margin: 0;
     padding: 13px;
-    border: 0;
+    border: 1px solid var(--border);
     border-radius: 12px;
-    background: var(--accent);
+    background: #f4f7f9;
   }
 
   .agent-run-boundary strong {
@@ -11535,8 +11528,7 @@ html { scroll-padding-top: 96px; }
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .node-source-nav .model-path-switch,
-  .agent-console-tools .model-path-switch {
+  .node-source-nav .model-path-switch {
     width: 100%;
   }
 
@@ -12420,11 +12412,14 @@ html.is-hidden .hero-agent.is-active i,
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--muted) 14%, transparent);
 }
 
-#root .agent-console-nav button > svg,
-#root .agent-console-header > div > span {
+#root .agent-console-nav button > svg {
   color: var(--muted);
+}
+
+#root .agent-console-header > div > span {
+  color: var(--accent);
   font-family: var(--font-ui);
-  font-weight: 400;
+  font-weight: 700;
 }
 
 #root .agent-console .metric-tone.is-bad { color: #c23b3b; }
@@ -12491,8 +12486,7 @@ html.is-hidden .hero-agent.is-active i,
   overflow: hidden;
 }
 
-#root .node-source-nav .model-path-switch,
-#root .agent-console-tools .model-path-switch {
+#root .node-source-nav .model-path-switch {
   width: 196px;
   min-height: 40px;
   margin-top: 0;
