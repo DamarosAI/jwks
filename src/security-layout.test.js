@@ -76,9 +76,13 @@ describe('site-control workspace geometry', () => {
 
   it('keeps control facts and the steel footer from colliding', () => {
     assert.match(app, /className="node-control-facts"/)
+    assert.match(app, /className="node-control-fill"/)
     assert.match(app, /className="node-control-copy"/)
+    assert.match(app, /boundaryNote: 'Never leaves Site 018'/)
     assert.match(css, /\.node-control-copy,[\s\S]*?display:\s*grid;[\s\S]*?gap:\s*5px;/)
-    assert.match(css, /\.node-control-facts > div,[\s\S]*?min-height:\s*84px;[\s\S]*?border-radius:\s*10px;/)
+    assert.match(css, /\.node-control-facts \{[\s\S]*?grid-auto-flow:\s*dense;[\s\S]*?grid-template-columns:\s*1\.2fr 0\.9fr 0\.9fr;[\s\S]*?gap:\s*0;/)
+    assert.match(css, /\.node-control-fill \{[\s\S]*?flex:\s*1 1 auto;[\s\S]*?grid-template-columns:\s*minmax\(0, 1\.15fr\) minmax\(220px, 0\.85fr\);/)
+    assert.doesNotMatch(css, /\.node-control-facts > div[\s\S]{0,180}min-height:\s*84px;/)
     assert.match(css, /#root \.node-control-copy :is\(small, strong, em\)[\s\S]*?display:\s*block;/)
   })
 })

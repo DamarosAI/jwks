@@ -422,7 +422,14 @@
 
   #root .node-copy {
     order: 1;
+    min-height: 0;
+    align-self: start;
     padding-inline: 0;
+  }
+
+  #root .node-copy .node-facts {
+    flex: 0 0 auto;
+    grid-template-rows: none;
   }
 
   #root .node-product-grid {
