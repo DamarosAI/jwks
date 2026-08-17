@@ -1460,6 +1460,7 @@ function SiteNodeSection() {
   const [selectedControl, setSelectedControl] = useState(0)
   const [reviewPhase, setReviewPhase] = useState('idle')
   const [reviewedControls, setReviewedControls] = useState({})
+  const { fading, swap } = useSoftSwap(reduced)
   const modelStop = isolated
     ? { label: 'MODEL', value: 'Isolated', state: 'cut' }
     : { label: 'MODEL', value: 'Protocol text only', state: 'limited' }
@@ -1476,8 +1477,11 @@ function SiteNodeSection() {
 
   const selectControl = (index) => {
     window.clearTimeout(reviewTimer.current)
-    setSelectedControl(index)
-    setReviewPhase('idle')
+    if (index === selectedControl && reviewPhase === 'idle') return
+    swap(() => {
+      setSelectedControl(index)
+      setReviewPhase('idle')
+    })
   }
 
   const openControlReview = () => setReviewPhase(completedReview ? 'complete' : 'review')
@@ -1534,9 +1538,9 @@ function SiteNodeSection() {
           </aside>
           <div className="node-policy-main">
             <div className="node-security-workspace">
-              <div className="node-control-detail">
+              <div className={`node-control-detail${fading ? ' is-fading' : ''}`}>
                 {reviewPhase !== 'idle' ? <SiteControlReview control={control} phase={reviewPhase} reduced={reduced} onBack={() => setReviewPhase('idle')} onConfirm={confirmControlReview} onReturn={() => setReviewPhase('idle')} /> : (
-                  <div className="workspace-view source-protocol-view node-control-view">
+                  <div className="workspace-view source-protocol-view node-control-view" key={control.record}>
                     <div className="protocol-source-head">
                       <span>CONTROL</span>
                       <em className={completedReview ? 'is-reviewed' : 'is-pending'}><i /> {completedReview ? 'REVIEWED' : 'ENFORCED'}</em>

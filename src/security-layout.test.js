@@ -24,6 +24,8 @@ describe('site-control workspace geometry', () => {
     assert.match(app, /className="source-criteria-head"/)
     assert.match(app, /className="source-criteria-list"/)
     assert.match(css, /\.node-control-detail \{[\s\S]*?border:\s*0;[\s\S]*?background:\s*transparent;/)
+    assert.match(css, /\.node-control-view\.workspace-view,[\s\S]*?\.site-control-review\.workspace-view \{[\s\S]*?border:\s*0;[\s\S]*?box-shadow:\s*none;/)
+    assert.match(css, /#root \.node-control-view\.workspace-view,[\s\S]*?#root \.site-control-review\.workspace-view \{[\s\S]*?border:\s*0;[\s\S]*?box-shadow:\s*none;/)
     assert.match(css, /\.node-review-button \{[\s\S]*?min-height:\s*44px;[\s\S]*?border-radius:\s*8px;/)
     assert.match(css, /\.node-ghost-button \{[\s\S]*?min-height:\s*44px;[\s\S]*?border-radius:\s*8px;/)
   })
@@ -51,6 +53,10 @@ describe('site-control workspace geometry', () => {
     assert.match(css, /\.site-control-review \{[\s\S]*?flex:\s*1;[\s\S]*?overflow:\s*hidden;/)
     assert.match(css, /\.node-control-view \{[\s\S]*?flex:\s*1 1 auto;[\s\S]*?overflow:\s*hidden;/)
     assert.match(css, /\.node-review-actions \{[\s\S]*?display:\s*flex;/)
+    const site = app.slice(app.indexOf('function SiteNodeSection'))
+    assert.match(site, /useSoftSwap\(reduced\)/)
+    assert.match(site, /node-control-detail\$\{fading \? ' is-fading' : ''\}/)
+    assert.match(css, /\.node-control-detail\.is-fading \{[\s\S]*?opacity:\s*0;/)
   })
 
   it('keeps the control boundary in the protocol amendment band', () => {
