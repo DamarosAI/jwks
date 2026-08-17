@@ -40,7 +40,7 @@ describe('site-control workspace geometry', () => {
 
   it('aligns the site-control rail with the agents console', () => {
     assert.match(css, /#root \.node-section \{\s*width:\s*min\(100%, 1500px\);/)
-    assert.match(css, /#root \.node-product-grid \{[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\);/)
+    assert.match(css, /#root \.node-product-grid \{[\s\S]*?grid-template-columns:\s*228px minmax\(0, 1fr\);/)
     assert.match(app, /Site 018 - Damaros Health/)
     assert.doesNotMatch(app, /Northstar/)
     assert.doesNotMatch(app, /node-source-item[\s\S]*?<strong>\{source\.name\}<\/strong>/)
