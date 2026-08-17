@@ -16,4 +16,10 @@ describe('Damaros brand mark', () => {
     assert.match(app, /<NavLink className="wordmark"[\s\S]*?<BrandName \/>/)
     assert.match(app, /2026 <BrandName \/>/)
   })
+
+  it('answers the thesis with the brand mark and even section padding', () => {
+    assert.match(app, /className="thesis-closer"><BrandName \/> is building that infrastructure\./)
+    assert.match(css, /\.thesis-section\.section-space \{[\s\S]*?padding-block:\s*112px;/)
+    assert.doesNotMatch(css, /\.thesis-section\.section-space \{[\s\S]*?padding-top:\s*64px;/)
+  })
 })

@@ -877,7 +877,7 @@ h2 {
 }
 
 .thesis-section.section-space {
-  padding-top: 64px;
+  padding-block: 112px;
 }
 
 .thesis-head {
@@ -911,13 +911,17 @@ h2 {
 }
 
 .thesis-closer {
-  max-width: 920px;
+  max-width: 1280px;
   margin-top: 28px;
   color: var(--accent);
-  font-size: clamp(1.4rem, 2.1vw, 1.95rem);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.08;
+  font-size: clamp(1.2rem, 1.7vw, 1.65rem);
+  font-weight: 400;
+  letter-spacing: -0.018em;
+  line-height: 1.2;
+}
+
+.thesis-closer .brand-tm {
+  font-size: 0.42em;
 }
 
 .integration-viewport {

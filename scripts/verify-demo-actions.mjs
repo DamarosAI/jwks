@@ -159,8 +159,8 @@ if (!app.includes('about-scroll-cue') || !app.includes('CaretDown') || !app.incl
 if (!css.includes('.thesis-section.section-space') || !css.includes('22vh')) {
   throw new Error('Home hero and thesis must share a scroll stop')
 }
-if (!app.includes('The next generation of medicine') || app.includes('Most clinics cannot budget') || app.includes('whether a site runs one trial or a hundred') || app.includes('building that infrastructure')) {
-  throw new Error('Thesis must keep the headline and drop the bottleneck panel')
+if (!app.includes('The next generation of medicine') || app.includes('Most clinics cannot budget') || app.includes('whether a site runs one trial or a hundred') || !app.includes('className="thesis-closer"><BrandName /> is building that infrastructure.')) {
+  throw new Error('Thesis must keep the headline, drop the bottleneck panel, and close with the brand mark')
 }
 if (app.includes('—') || css.includes('—')) {
   throw new Error('Public copy and styles must not use em dashes')
