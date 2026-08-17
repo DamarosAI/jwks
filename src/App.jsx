@@ -868,26 +868,13 @@ function InlineActionPanel({ open, complete = false, eyebrow = 'ACTION REQUIRED'
   )
 }
 
-function NodeControlFooter({ control, children, motion = false }) {
-  return (
-    <footer className="node-control-footer" {...(motion ? { 'data-review-motion': true } : {})}>
-      <div className="node-control-boundary">
-        <ShieldCheck size={18} />
-        <span className="node-control-copy">
-          <small>CONTROL BOUNDARY</small>
-          <strong>No LLM touches patient data</strong>
-          <em>{control.guard}</em>
-        </span>
-      </div>
-      <div className="node-control-actions">{children}</div>
-    </footer>
-  )
-}
-
 function SiteControlReview({ control, phase, reduced, onBack, onConfirm, onReturn }) {
   const root = useRef(null)
   const complete = phase === 'complete'
   const saving = phase === 'saving'
+  const status = complete ? 'RECORDED' : saving ? 'WRITING' : 'PENDING'
+  const title = complete ? control.success : saving ? 'Binding site decision' : control.action
+  const summary = complete ? control.outcome : saving ? 'Preserving reviewer authority, boundary result, and source trace.' : control.description
 
   useGSAP(() => {
     if (reduced || !root.current) return undefined
@@ -903,52 +890,90 @@ function SiteControlReview({ control, phase, reduced, onBack, onConfirm, onRetur
   }, { scope: root, dependencies: [phase, control.record, reduced] })
 
   return (
-    <section className={`site-control-review is-${phase}`} ref={root} role="region" aria-label={complete ? `${control.success} receipt` : control.action}>
-      <div className="node-control-body">
-        <header data-review-motion>
-          <span className="site-review-state-icon" aria-hidden="true">{complete ? <CheckCircle size={20} weight="fill" /> : saving ? <i /> : <ShieldCheck size={20} />}</span>
-          <div><small>{complete ? 'REVIEW RECORDED' : saving ? 'WRITING TO EXECUTION RECORD' : 'SITE REVIEW'}</small><h5>{complete ? control.success : saving ? 'Binding site decision' : control.action}</h5></div>
-        </header>
+    <section className={`workspace-view source-protocol-view node-control-view site-control-review is-${phase}`} ref={root} role="region" aria-label={complete ? `${control.success} receipt` : control.action}>
+      <div className="protocol-source-head" data-review-motion>
+        <span>{complete ? 'REVIEW RECORDED' : saving ? 'WRITING TO EXECUTION RECORD' : 'SITE REVIEW'}</span>
+        <em><i /> {status}</em>
+        <small>{control.record} - {complete ? control.receipt : 'institution-held'}</small>
+      </div>
+      <h4 data-review-motion>{title}</h4>
+      <p data-review-motion>{summary}</p>
 
-        {saving ? (
-          <div className="site-review-saving" aria-live="polite" aria-busy="true" data-review-motion>
+      {saving ? (
+        <>
+          <div className="source-amendment" data-review-motion>
+            <span>EXECUTION RECORD</span>
             <strong>Recording {control.record}</strong>
-            <p>Preserving reviewer authority, boundary result, and source trace.</p>
-            <div className="site-review-progress">
-              <span><CheckCircle size={16} weight="fill" /><b>Policy scope verified</b><small>{control.scope}</small></span>
-              <span><CheckCircle size={16} weight="fill" /><b>Patient boundary verified</b><small>{control.patientFields}</small></span>
-              <span className="is-writing"><i /><b>Signing execution record</b><small>{control.receipt}</small></span>
+            <small>{control.receipt}</small>
+          </div>
+          <div className="source-criteria-head" data-review-motion>
+            <span>WRITE PATH</span>
+            <button type="button" disabled>Recording review</button>
+          </div>
+          <div className="source-criteria-list" data-review-motion>
+            <div><span>01</span><strong>Policy scope verified</strong><em>{control.scope}</em></div>
+            <div><span>02</span><strong>Patient boundary verified</strong><em>{control.patientFields}</em></div>
+            <div className="is-live"><span>03</span><strong>Signing execution record</strong><em>{control.receipt}</em></div>
+          </div>
+        </>
+      ) : complete ? (
+        <>
+          <div className="source-protocol-summary" data-review-motion>
+            <section>
+              <span>REVIEW ID</span>
+              <h5>{control.receipt}</h5>
+              <p>Authenticated site reviewer - Ed25519 verified</p>
+              <div>
+                <i>RV</i><span><strong>{control.decision}</strong><small>Decision</small></span>
+                <i>ID</i><span><strong>{control.record}</strong><small>Policy</small></span>
+              </div>
+            </section>
+            <section>
+              <span>BOUND RECORD</span>
+              <div className="source-arm"><b>10:42</b><span><strong>Boundary evaluated</strong><small>{control.patientFields}</small></span></div>
+              <div className="source-arm"><b>10:43</b><span><strong>Authority matched</strong><small>{control.policy}</small></span></div>
+              <p>Execution record updated - {control.record} - 10:44 - institution-held</p>
+            </section>
+          </div>
+          <div className="source-criteria-head" data-review-motion>
+            <span>REVIEW SIGNED</span>
+            <button type="button" onClick={onReturn}>Return to control <ArrowRight size={14} weight="bold" /></button>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="source-amendment" data-review-motion>
+            <span>DECISION TO RECORD</span>
+            <strong>{control.decision}</strong>
+            <small>{control.outcome}</small>
+          </div>
+          <div className="source-protocol-summary" data-review-motion>
+            <section>
+              <span>SCOPE</span>
+              <h5>{control.scope}</h5>
+              <p>{control.recipient}</p>
+              <div>
+                <i>PH</i><span><strong>{control.patientFields}</strong><small>Patient fields</small></span>
+                <i>AU</i><span><strong>{control.policy}</strong><small>Authority</small></span>
+              </div>
+            </section>
+            <section>
+              <span>CONTROL BOUNDARY</span>
+              <h5>No LLM touches patient data</h5>
+              <p>{control.guard}</p>
+              <div className="source-arm"><b>HOLD</b><span><strong>{control.path[0].value}</strong><small>{control.path[0].label}</small></span></div>
+              <div className="source-arm"><b>STOP</b><span><strong>{control.path[2].value}</strong><small>{control.path[2].label}</small></span></div>
+            </section>
+          </div>
+          <div className="source-criteria-head" data-review-motion>
+            <span>SITE REVIEW</span>
+            <div className="node-review-actions">
+              <button className="node-ghost-button" type="button" onClick={onBack}>Back</button>
+              <button type="button" onClick={onConfirm}>Record site review <ArrowRight size={14} weight="bold" /></button>
             </div>
           </div>
-        ) : complete ? (
-          <>
-            <p data-review-motion>{control.outcome}</p>
-            <div className="site-review-receipt" data-review-motion>
-              <span><small>REVIEW ID</small><strong>{control.receipt}</strong></span>
-              <span><small>DECISION</small><strong>{control.decision}</strong></span>
-              <span><small>ACTOR</small><strong>Authenticated site reviewer</strong></span>
-              <span><small>INTEGRITY</small><strong>Ed25519 - verified</strong></span>
-            </div>
-            <div className="site-review-chain" data-review-motion><small>BOUND RECORD</small><span><time>10:42</time><strong>Boundary evaluated</strong><em>{control.patientFields}</em></span><span><time>10:43</time><strong>Authority matched</strong><em>{control.policy}</em></span><span><time>10:44</time><strong>Review signed</strong><em>{control.receipt}</em></span></div>
-            <div className="site-review-confirmation" data-review-motion><CheckCircle size={18} weight="fill" /><span><strong>Execution record updated</strong><small>{control.record} - 10:44 - institution-held</small></span></div>
-          </>
-        ) : (
-          <>
-            <p data-review-motion>{control.description}</p>
-            <dl className="site-review-summary" data-review-motion>
-              <div><dt>SCOPE</dt><dd>{control.scope}</dd></div>
-              <div><dt>RECIPIENT</dt><dd>{control.recipient}</dd></div>
-              <div><dt>PATIENT FIELDS</dt><dd>{control.patientFields}</dd></div>
-              <div><dt>AUTHORITY</dt><dd>{control.policy}</dd></div>
-            </dl>
-            <div className="site-review-decision" data-review-motion><small>DECISION TO RECORD</small><strong>{control.decision}</strong><span>{control.outcome}</span></div>
-          </>
-        )}
-      </div>
-
-      <NodeControlFooter control={control} motion>
-        {complete ? <button className="button button-primary" type="button" onClick={onReturn}>Return to control</button> : saving ? <button className="button button-primary" type="button" disabled>Recording review</button> : <><button className="button button-secondary" type="button" onClick={onBack}>Back</button><button className="button button-primary" type="button" onClick={onConfirm}>Record site review</button></>}
-      </NodeControlFooter>
+        </>
+      )}
     </section>
   )
 }
@@ -1439,10 +1464,10 @@ function SiteNodeSection() {
     ? { label: 'MODEL', value: 'Isolated', state: 'cut' }
     : { label: 'MODEL', value: 'Protocol text only', state: 'limited' }
   const controls = [
-    { name: 'Evidence visibility', icon: ShieldCheck, policy: 'Site roles only', title: 'Inspect evidence access boundary', description: 'Only approved site roles can open source evidence or mapped patient facts.', scope: 'FHIR resources, documents, and mapped facts', record: 'POL-018-EV4', receipt: 'REV-018-EV4-1044', recipient: '7 approved site roles', patientFields: 'Site-held', action: 'Review access boundary', decision: 'Confirm current access boundary', outcome: 'Access remains limited to 7 approved site roles. No external principal receives patient evidence.', success: 'Access review recorded', guard: 'Patient evidence stays site-held. Approved roles only.', path: [{ label: 'HOLD', value: '4 site sources', state: 'held' }, { label: 'ENGINE', value: 'Deterministic', state: 'held' }, modelStop, { label: 'ACCESS', value: '7 site roles', state: 'held' }], holdLabel: 'OPEN TO', holdings: [{ name: 'Site coordinator', hold: 'Evidence and mapped facts', icon: ShieldCheck }, { name: 'PI / sub-I', hold: 'Evidence and mapped facts', icon: Fingerprint }, { name: 'CRC lead', hold: 'Mapped facts only', icon: FileText }, { name: 'Sponsor monitor', hold: 'No patient evidence', icon: Database }] },
-    { name: 'Artifact release', icon: FileText, policy: 'PI or delegated signer', title: 'Review sponsor artifact release', description: 'Replay bundles remain at the site until a PI or delegated signer releases the exact artifact.', scope: 'Replay bundle - RPL-1047', record: 'POL-018-AR2', receipt: 'REV-018-AR2-1044', recipient: 'Meridian Oncology', patientFields: '0 in sponsor artifact', action: 'Review artifact release', decision: 'Confirm delegated release authority', outcome: 'Replay remains site-held until a PI or delegated signer releases this exact artifact.', success: 'Artifact review recorded', guard: 'Replay stays site-held until a PI signs the exact artifact.', path: [{ label: 'HOLD', value: 'Replay RPL-1047', state: 'held' }, { label: 'SIGN', value: 'PI or delegate', state: 'held' }, modelStop, { label: 'EGRESS', value: '0 patient fields', state: 'held' }], holdLabel: 'HELD ARTIFACT', holdings: [{ name: 'Replay RPL-1047', hold: 'Site-held bundle', icon: FileText }, { name: 'PI roster', hold: 'Signer authority', icon: Fingerprint }, { name: 'Sponsor packet', hold: '0 patient fields', icon: Database }, { name: 'Export manifest', hold: 'Ed25519 pending', icon: ShieldCheck }] },
-    { name: 'Network signal', icon: Database, policy: 'Aggregate coverage only', title: 'Release aggregate coverage signal', description: 'Review the exact outbound payload. Sponsor receives site capability, never patient facts.', scope: 'Protocol capability - Site 018', record: 'POL-018-NS7', receipt: 'REV-018-NS7-1044', recipient: 'Meridian Oncology', patientFields: '0 patient fields', action: 'Review signal release', decision: 'Approve aggregate-only payload', outcome: 'Coverage signal contains 0 patient fields. Site capability is the only outbound payload.', success: 'Signal review recorded', guard: 'Coverage signal carries 0 patient fields.', path: [{ label: 'HOLD', value: 'Site 018 coverage', state: 'held' }, { label: 'REDUCE', value: 'Aggregate only', state: 'held' }, modelStop, { label: 'EGRESS', value: '0 patient fields', state: 'held' }], holdLabel: 'OUTBOUND', holdings: [{ name: 'Protocol capability', hold: 'Site 018 only', icon: Database }, { name: 'Open slots', hold: 'Aggregate count', icon: FileText }, { name: 'Inclusion fit', hold: 'No patient rows', icon: ShieldCheck }, { name: 'Meridian Oncology', hold: 'Recipient', icon: Fingerprint }] },
-    { name: 'Model execution', icon: Power, policy: isolated ? 'Isolated - no inference' : 'Local inference allowed', title: 'Inspect local model attestation', description: isolated ? 'Model path is isolated. No local inference and no cloud connection until a site reviewer restores the path.' : 'Model execution stays inside the institution boundary and writes only source-linked work products.', scope: 'Site node runtime - Run 018-017', record: 'POL-018-ME3', receipt: 'REV-018-ME3-1044', recipient: 'Site execution record', patientFields: 'No raw egress', action: 'Review run attestation', decision: isolated ? 'Keep model path isolated' : 'Accept local runtime attestation', outcome: isolated ? 'No model path is open. Patient evidence never entered an LLM.' : 'Run remains site-bound. Only source-linked work products enter the execution record.', success: 'Attestation review recorded', guard: isolated ? 'No LLM path. No cloud inference.' : 'Inference stays inside the institution boundary.', path: [{ label: 'HOLD', value: 'Site runtime', state: 'held' }, { label: 'ENGINE', value: 'Deterministic', state: 'held' }, modelStop, { label: 'EGRESS', value: 'No raw egress', state: 'held' }], holdLabel: 'RUNTIME', holdings: [{ name: 'Run 018-017', hold: isolated ? 'Path closed' : 'Local inference', icon: Power }, { name: 'Protocol text', hold: isolated ? 'Not sent' : 'Allowed input', icon: FileText }, { name: 'Patient evidence', hold: 'Never an LLM input', icon: ShieldCheck }, { name: 'Work product', hold: 'Source-linked only', icon: Database }] },
+    { name: 'Evidence visibility', icon: ShieldCheck, policy: 'Site roles only', title: 'Evidence access boundary', meta: 'POL-018-EV4 - 7 site roles - hash-linked', description: 'Only approved site roles can open source evidence or mapped patient facts.', scope: 'FHIR resources, documents, and mapped facts', record: 'POL-018-EV4', receipt: 'REV-018-EV4-1044', recipient: '7 approved site roles', patientFields: 'Site-held', action: 'Review access boundary', decision: 'Confirm current access boundary', outcome: 'Access remains limited to 7 approved site roles. No external principal receives patient evidence.', success: 'Access review recorded', guard: 'Patient evidence stays site-held. Approved roles only.', path: [{ label: 'HOLD', value: '4 site sources', state: 'held' }, { label: 'ENGINE', value: 'Deterministic', state: 'held' }, modelStop, { label: 'ACCESS', value: '7 site roles', state: 'held' }], holdLabel: 'OPEN TO', holdings: [{ code: 'CO', name: 'Site coordinator', hold: 'Evidence and mapped facts' }, { code: 'PI', name: 'PI / sub-I', hold: 'Evidence and mapped facts' }, { code: 'CR', name: 'CRC lead', hold: 'Mapped facts only' }, { code: 'SM', name: 'Sponsor monitor', hold: 'No patient evidence' }], events: [['10:41', 'As-of ingest sealed', 'Synthetic FHIR'], ['10:43', 'Evidence visibility checked', 'POL-018-EV4']] },
+    { name: 'Artifact release', icon: FileText, policy: 'PI or delegated signer', title: 'Sponsor artifact release', meta: 'POL-018-AR2 - Replay RPL-1047 - 0 patient fields', description: 'Replay bundles remain at the site until a PI or delegated signer releases the exact artifact.', scope: 'Replay bundle - RPL-1047', record: 'POL-018-AR2', receipt: 'REV-018-AR2-1044', recipient: 'Meridian Oncology', patientFields: '0 in sponsor artifact', action: 'Review artifact release', decision: 'Confirm delegated release authority', outcome: 'Replay remains site-held until a PI or delegated signer releases this exact artifact.', success: 'Artifact review recorded', guard: 'Replay stays site-held until a PI signs the exact artifact.', path: [{ label: 'HOLD', value: 'Replay RPL-1047', state: 'held' }, { label: 'SIGN', value: 'PI or delegate', state: 'held' }, modelStop, { label: 'EGRESS', value: '0 patient fields', state: 'held' }], holdLabel: 'HELD ARTIFACT', holdings: [{ code: 'RP', name: 'Replay RPL-1047', hold: 'Site-held bundle' }, { code: 'PI', name: 'PI roster', hold: 'Signer authority' }, { code: 'SP', name: 'Sponsor packet', hold: '0 patient fields' }, { code: 'EX', name: 'Export manifest', hold: 'Ed25519 pending' }], events: [['10:41', 'Replay bundle sealed', 'RPL-1047'], ['10:43', 'Artifact hold checked', 'POL-018-AR2']] },
+    { name: 'Network signal', icon: Database, policy: 'Aggregate coverage only', title: 'Release aggregate coverage signal', meta: 'POL-018-NS7 - Site 018 coverage - 0 patient fields', description: 'Review the exact outbound payload. Sponsor receives site capability, never patient facts.', scope: 'Protocol capability - Site 018', record: 'POL-018-NS7', receipt: 'REV-018-NS7-1044', recipient: 'Meridian Oncology', patientFields: '0 patient fields', action: 'Review signal release', decision: 'Approve aggregate-only payload', outcome: 'Coverage signal contains 0 patient fields. Site capability is the only outbound payload.', success: 'Signal review recorded', guard: 'Coverage signal carries 0 patient fields.', path: [{ label: 'HOLD', value: 'Site 018 coverage', state: 'held' }, { label: 'REDUCE', value: 'Aggregate only', state: 'held' }, modelStop, { label: 'EGRESS', value: '0 patient fields', state: 'held' }], holdLabel: 'OUTBOUND', holdings: [{ code: 'CP', name: 'Protocol capability', hold: 'Site 018 only' }, { code: 'OP', name: 'Open slots', hold: 'Aggregate count' }, { code: 'FT', name: 'Inclusion fit', hold: 'No patient rows' }, { code: 'RC', name: 'Meridian Oncology', hold: 'Recipient' }], events: [['10:41', 'Coverage graph read', 'Site 018'], ['10:43', 'Payload checked', '0 patient fields']] },
+    { name: 'Model execution', icon: Power, policy: isolated ? 'Isolated - no inference' : 'Local inference allowed', title: 'Local model attestation', meta: isolated ? 'POL-018-ME3 - Run 018-017 - path closed' : 'POL-018-ME3 - Run 018-017 - no raw egress', description: isolated ? 'Model path is isolated. No local inference and no cloud connection until a site reviewer restores the path.' : 'Model execution stays inside the institution boundary and writes only source-linked work products.', scope: 'Site node runtime - Run 018-017', record: 'POL-018-ME3', receipt: 'REV-018-ME3-1044', recipient: 'Site execution record', patientFields: 'No raw egress', action: 'Review run attestation', decision: isolated ? 'Keep model path isolated' : 'Accept local runtime attestation', outcome: isolated ? 'No model path is open. Patient evidence never entered an LLM.' : 'Run remains site-bound. Only source-linked work products enter the execution record.', success: 'Attestation review recorded', guard: isolated ? 'No LLM path. No cloud inference.' : 'Inference stays inside the institution boundary.', path: [{ label: 'HOLD', value: 'Site runtime', state: 'held' }, { label: 'ENGINE', value: 'Deterministic', state: 'held' }, modelStop, { label: 'EGRESS', value: 'No raw egress', state: 'held' }], holdLabel: 'RUNTIME', holdings: [{ code: 'RN', name: 'Run 018-017', hold: isolated ? 'Path closed' : 'Local inference' }, { code: 'TX', name: 'Protocol text', hold: isolated ? 'Not sent' : 'Allowed input' }, { code: 'PH', name: 'Patient evidence', hold: 'Never an LLM input' }, { code: 'WP', name: 'Work product', hold: 'Source-linked only' }], events: [['10:41', 'Runtime attested', 'Run 018-017'], ['10:43', 'Model boundary checked', 'POL-018-ME3']] },
   ]
   const control = controls[selectedControl]
   const completedReview = reviewedControls[control.record]
@@ -1510,43 +1535,49 @@ function SiteNodeSection() {
           <div className="node-policy-main">
             <div className="node-security-workspace">
               <div className="node-control-detail">
-                {reviewPhase !== 'idle' ? <SiteControlReview control={control} phase={reviewPhase} reduced={reduced} onBack={() => setReviewPhase('idle')} onConfirm={confirmControlReview} onReturn={() => setReviewPhase('idle')} /> : <>
-                  <div className="node-control-body">
-                    <header><span><small>{control.record}</small><h4>{control.title}</h4></span><em className={completedReview ? 'is-reviewed' : 'is-pending'}><i /> {completedReview ? 'REVIEWED' : 'ENFORCED'}</em></header>
-                    <p>{control.description}</p>
-                    <ol className="node-custody-path" aria-label="Data custody">
-                      {control.path.map((stop) => (
-                        <li className={stop.state} key={stop.label}>
-                          <small>{stop.label}</small>
-                          <strong>{stop.value}</strong>
-                        </li>
-                      ))}
-                    </ol>
-                    <ul className="node-integrity">
-                      <li><small>CHAIN</small><strong>SHA-256 hash-linked</strong></li>
-                      <li><small>EXPORT</small><strong>Ed25519 verified</strong></li>
-                      <li><small>PHI PATH</small><strong>No LLM on patient data</strong></li>
-                    </ul>
-                    <div className="node-control-fill">
-                      <div className="node-event-ledger">
-                        <span>LEDGER</span>
-                        <div><time>10:41</time><strong>As-of ingest sealed</strong><small>Synthetic FHIR - 4 sources</small></div>
-                        <div className={completedReview ? 'is-reviewed' : 'is-pending'}><time>{completedReview ? '10:44' : '--:--'}</time><strong>{completedReview ? 'Site review recorded' : 'Site review pending'}</strong><small>{completedReview ? `${control.receipt} - signed` : 'Awaiting reviewer'}</small></div>
-                        <div><time>10:43</time><strong>{control.name} checked</strong><small>{control.record} - SHA-256</small></div>
-                      </div>
-                      <div className="node-source-strip" aria-label={control.holdLabel}>
+                {reviewPhase !== 'idle' ? <SiteControlReview control={control} phase={reviewPhase} reduced={reduced} onBack={() => setReviewPhase('idle')} onConfirm={confirmControlReview} onReturn={() => setReviewPhase('idle')} /> : (
+                  <div className="workspace-view source-protocol-view node-control-view">
+                    <div className="protocol-source-head">
+                      <span>CONTROL</span>
+                      <em className={completedReview ? 'is-reviewed' : 'is-pending'}><i /> {completedReview ? 'REVIEWED' : 'ENFORCED'}</em>
+                      <small>{control.record} - SHA-256 - 10:43Z</small>
+                    </div>
+                    <h4>{control.title}</h4>
+                    <p>{control.meta}</p>
+                    <div className="source-amendment">
+                      <span>CONTROL BOUNDARY</span>
+                      <strong>No LLM on patient data</strong>
+                      <small>{control.guard}</small>
+                    </div>
+                    <div className="source-protocol-summary">
+                      <section>
+                        <span>AUTHORITY</span>
+                        <h5>{control.policy}</h5>
+                        <p>{control.scope}</p>
+                        <div>
+                          <i>CH</i><span><strong>SHA-256</strong><small>Hash-linked</small></span>
+                          <i>EX</i><span><strong>Ed25519</strong><small>Verified export</small></span>
+                        </div>
+                      </section>
+                      <section aria-label={control.holdLabel}>
                         <span>{control.holdLabel}</span>
-                        {control.holdings.map((source) => {
-                          const Icon = source.icon
-                          return <div className="node-source-item" key={source.name}><Icon size={15} /><span><span>{source.name}</span><small>{source.hold}</small></span><i /></div>
-                        })}
-                      </div>
+                        {control.holdings.slice(0, 2).map((source) => (
+                          <div className="source-arm" key={source.name}><b>{source.code}</b><span><strong>{source.name}</strong><small>{source.hold}</small></span></div>
+                        ))}
+                        <p>{control.holdings.slice(2).map((source) => source.name).join(' - ')}</p>
+                      </section>
+                    </div>
+                    <div className="source-criteria-head">
+                      <span>LEDGER - 3 EVENTS - SITE 018</span>
+                      <button className="node-review-button" type="button" onClick={openControlReview}>{completedReview ? 'Open review receipt' : control.action} <ArrowRight size={14} weight="bold" /></button>
+                    </div>
+                    <div className="source-criteria-list">
+                      <div><span>{control.events[0][0]}</span><strong>{control.events[0][1]}</strong><em>{control.events[0][2]}</em></div>
+                      <div className={completedReview ? 'is-reviewed' : 'is-pending'}><span>{completedReview ? '10:44' : '--:--'}</span><strong>{completedReview ? 'Site review recorded' : 'Site review pending'}</strong><em>{completedReview ? `${control.receipt} - signed` : 'Awaiting reviewer'}</em></div>
+                      <div><span>{control.events[1][0]}</span><strong>{control.events[1][1]}</strong><em>{control.events[1][2]}</em></div>
                     </div>
                   </div>
-                  <NodeControlFooter control={control}>
-                    <button className="node-review-button" type="button" onClick={openControlReview}>{completedReview ? 'Open review receipt' : control.action} <ArrowRight size={17} weight="bold" /></button>
-                  </NodeControlFooter>
-                </>}
+                )}
               </div>
             </div>
           </div>

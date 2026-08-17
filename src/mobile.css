@@ -518,7 +518,8 @@
   }
 
   #root .node-control-detail,
-  #root .site-control-review {
+  #root .site-control-review,
+  #root .node-control-view {
     height: auto;
     min-height: 480px;
     max-height: none;
@@ -526,12 +527,28 @@
   }
 
   #root .node-control-detail h4,
-  #root .node-control-detail > p,
-  #root .node-control-body > p {
+  #root .node-control-view > h4,
+  #root .node-control-view > p {
     display: block;
     min-height: 0;
     overflow: visible;
-    -webkit-line-clamp: initial;
+  }
+
+  #root .node-control-view .source-protocol-summary,
+  #root .node-control-view .source-criteria-list > div {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #root .node-review-actions,
+  #root .node-control-view .source-criteria-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #root .node-review-button,
+  #root .node-ghost-button,
+  #root .node-control-view .source-criteria-head button {
+    width: 100%;
   }
 
   #root .final-cta {
