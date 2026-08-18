@@ -27,8 +27,11 @@ describe('Damaros brand mark', () => {
     assert.doesNotMatch(mobile, /section-eyebrow[^{]*\{[^}]*font-size:\s*0\.72rem/)
     assert.match(css, /\.page-spine \{[\s\S]*?width:\s*34px;/)
     assert.match(css, /\.site-nav-wrap \{[\s\S]*?z-index:\s*50;[\s\S]*?isolation:\s*isolate;/)
-    assert.match(css, /\.thesis-section \{[\s\S]*?align-items:\s*center;[\s\S]*?text-align:\s*center;/)
+    assert.match(css, /\.thesis-section \{[\s\S]*?align-items:\s*stretch;[\s\S]*?text-align:\s*center;/)
     assert.match(css, /\.thesis-head \{[\s\S]*?align-items:\s*center;[\s\S]*?text-align:\s*center;/)
+    assert.match(css, /#root \.thesis-section \.section-eyebrow,[\s\S]*?left:\s*max\(28px, 4vw\);/)
+    assert.match(css, /\.thesis-section > \.section-eyebrow,[\s\S]*?align-self:\s*flex-start;[\s\S]*?left:\s*max\(28px, 4vw\);/)
+    assert.match(mobile, /#root \.thesis-section \.section-eyebrow,[\s\S]*?left:\s*16px;/)
   })
 
   it('renders Damaros through BrandName with a contrast TM', () => {

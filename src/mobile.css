@@ -108,11 +108,15 @@
 
   #root .section-eyebrow,
   #root .landing-hero .section-eyebrow,
+  #root .thesis-section .section-eyebrow,
   #root .final-cta .section-eyebrow {
     top: 18px;
     left: 16px;
+    right: auto;
+    width: max-content;
     font-size: var(--type-eyebrow);
     letter-spacing: 0.16em;
+    text-align: left;
   }
 
   #root .landing-hero .section-eyebrow {

@@ -753,11 +753,14 @@ h2 {
 .section-eyebrow,
 #root .section-eyebrow,
 #root .landing-hero .section-eyebrow,
+#root .thesis-section .section-eyebrow,
 #root .final-cta .section-eyebrow {
   position: absolute;
   z-index: 3;
   top: 36px;
   left: max(28px, 4vw);
+  right: auto;
+  width: max-content;
   margin: 0;
   color: var(--accent);
   font-family: 'Endless', sans-serif;
@@ -920,11 +923,20 @@ h2 {
 .thesis-section {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   width: 100%;
   margin: 0 auto;
   scroll-margin-top: 82px;
   text-align: center;
+}
+
+.thesis-section > .section-eyebrow,
+#root .thesis-section > .section-eyebrow {
+  align-self: flex-start;
+  left: max(28px, 4vw);
+  right: auto;
+  width: max-content;
+  text-align: left;
 }
 
 .thesis-section.section-space {
