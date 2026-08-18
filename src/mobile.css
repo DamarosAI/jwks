@@ -77,11 +77,15 @@
     border-top: 1px solid color-mix(in srgb, var(--accent) 14%, transparent);
     border-bottom: 1px solid color-mix(in srgb, var(--accent) 14%, transparent);
     border-radius: 0;
-    background: rgba(248, 250, 252, 0.94);
+    background: var(--bg);
     box-shadow: none;
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
+  }
+
+  #root .biomarker-rain {
+    top: 168px;
   }
 
   #root .page-spine button {
@@ -148,7 +152,7 @@
   }
 
   #root .hero-heading .hero-line:first-child {
-    white-space: nowrap;
+    white-space: normal;
   }
 
   #root .hero-copy > p {
@@ -160,7 +164,7 @@
 
   #root .hero-actions {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr;
     gap: 8px;
     margin-top: 21px;
   }
@@ -203,59 +207,74 @@
     height: 753px;
     min-height: 753px;
     max-height: 753px;
-    grid-template-columns: 150px minmax(0, 1fr);
-    grid-template-rows: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 52px minmax(0, 1fr);
     overflow: hidden;
   }
 
   #root .hero-workspace .hero-app-nav {
-    display: flex;
+    display: grid;
     min-width: 0;
-    flex-direction: column;
-    gap: 5px;
-    overflow: visible;
-    padding: 17px 12px;
-    border-right: 1px solid var(--border);
-    border-bottom: 0;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(88px, 1fr);
+    grid-template-columns: none;
+    gap: 4px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 5px 6px;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+
+  #root .hero-workspace .hero-app-nav::-webkit-scrollbar {
+    display: none;
   }
 
   #root .hero-workspace .hero-app-nav > strong,
-  #root .hero-workspace .hero-agent {
-    display: flex;
+  #root .hero-workspace .hero-agent,
+  #root .hero-workspace .hero-app-nav .model-path-switch {
+    display: none;
   }
 
   #root .hero-workspace .hero-app-nav button {
     width: 100%;
-    min-width: 0;
-    min-height: 42px;
-    justify-content: flex-start;
-    padding-inline: 11px;
-    border-radius: 8px;
-    font-size: 0.72rem;
-    text-align: left;
-    white-space: normal;
+    min-width: 88px;
+    min-height: 40px;
+    justify-content: center;
+    padding-inline: 5px;
+    border-radius: 9px;
+    font-size: 0.74rem;
+    text-align: center;
+    white-space: nowrap;
+    scroll-snap-align: start;
+  }
+
+  #root .hero-workspace .hero-app-nav button > svg,
+  #root .hero-workspace .hero-app-nav button small {
+    display: none;
   }
 
   #root .hero-workspace .hero-app-nav button > span {
+    margin-right: 0;
+    margin-left: 0;
     overflow: visible;
     text-overflow: clip;
-    white-space: normal;
+    white-space: nowrap;
   }
 
   #root .hero-workspace :is(.hero-app-main, .hero-state-canvas, .hero-state-layer, .landing-source-view, .landing-source-view .workspace-view, .landing-source-demo .pane-settle) {
-    height: auto;
+    height: 100%;
     min-height: 0;
     max-height: none;
-  }
-
-  #root .hero-workspace :is(.hero-app-main, .hero-state-canvas, .landing-source-view, .landing-source-view .workspace-view) {
-    overflow: visible;
+    overflow: hidden;
   }
 
   #root .hero-workspace .landing-source-view {
-    height: 753px;
-    min-height: 753px;
-    max-height: 753px;
+    height: 100%;
+    min-height: 0;
+    max-height: 100%;
     padding: 12px 12px 21px;
     overflow: hidden;
   }
@@ -273,6 +292,34 @@
     max-height: 100%;
     overflow: hidden;
     padding: 24px 26px 37px;
+  }
+
+  #root .hero-workspace .source-protocol-summary,
+  #root .hero-workspace .source-criteria-list,
+  #root .hero-workspace .source-amendment,
+  #root .hero-workspace .obligation-list,
+  #root .hero-workspace .evidence-coverage,
+  #root .hero-workspace .source-patient-list,
+  #root .hero-workspace .resolve-compare-bar,
+  #root .hero-workspace .replay-ledger {
+    display: none;
+  }
+
+  #root .hero-workspace .source-criteria-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    position: static;
+  }
+
+  #root .hero-workspace .source-criteria-head button {
+    width: 100%;
+  }
+
+  #root .hero-workspace .source-patient-detail ul,
+  #root .hero-workspace .source-records,
+  #root .hero-workspace .screen-result-pair,
+  #root .hero-workspace .recommended-action {
+    display: none;
   }
 
   #root .section-space {
@@ -296,7 +343,7 @@
   }
 
   #root .capacity-title-line {
-    display: inline;
+    display: block;
   }
 
   #root .capacity-bento {
@@ -335,37 +382,44 @@
     height: 780px;
     min-height: 780px;
     max-height: 780px;
-    grid-template-columns: 170px minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
     overflow: hidden;
   }
 
   #root .agent-console-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    overflow: visible;
-    padding: 15px 11px;
-    border-right: 1px solid var(--border);
-    border-bottom: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(76px, 1fr));
+    gap: 4px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 7px;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+    scrollbar-width: none;
+  }
+
+  #root .agent-console-nav::-webkit-scrollbar {
+    display: none;
   }
 
   #root .agent-console-nav > span,
   #root .agent-console-context,
-  #root .agent-console-nav button > i,
-  #root .agent-run-activity {
-    display: grid;
+  #root .agent-console-nav button > i {
+    display: none;
   }
 
   #root .agent-console-nav button {
-    min-width: 0;
-    min-height: 68px;
-    grid-template-columns: 7px 14px minmax(0, 1fr);
-    justify-items: stretch;
+    min-width: 76px;
+    min-height: 44px;
+    grid-template-columns: 12px minmax(0, 1fr);
+    justify-content: center;
+    justify-items: center;
     gap: 6px;
-    padding: 9px 10px;
+    padding: 0 8px;
     border-radius: 9px;
-    font-size: 0.7rem;
-    text-align: left;
+    font-size: 0.72rem;
+    text-align: center;
   }
 
   #root .agent-console-main {
@@ -384,7 +438,7 @@
 
   #root .agent-console-header h3 {
     font-family: var(--font-display);
-    font-size: 2rem;
+    font-size: 1.36rem;
   }
 
   #root .agent-console-header .agent-working-state {
@@ -397,28 +451,37 @@
 
   #root .agent-workspace-body {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 190px;
+    grid-template-columns: minmax(0, 1fr);
     gap: 14px;
-    overflow: visible;
+    overflow: hidden;
   }
 
   #root .agent-workspace-live,
-  #root .agent-run-rail,
   #root .agent-console-inspector,
   #root .agent-console-state {
     height: auto;
     min-height: 0;
-    overflow: visible;
+    overflow: hidden;
   }
 
   #root .agent-run-rail {
-    display: flex;
-    grid-template-columns: none;
+    display: none;
   }
 
   #root .agent-workspace-live :is(.trident-workbench, .quality-signal-grid, .sentinel-grid),
   #root .agent-workspace-live .agent-luna-workbench .luna-investigation-grid {
-    grid-template-columns: minmax(170px, 0.72fr) minmax(0, 1.28fr);
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #root .agent-console .trident-list,
+  #root .agent-console .quality-list,
+  #root .agent-console .luna-evidence-workspace,
+  #root .agent-console .sentinel-studies,
+  #root .agent-console .trident-rationale,
+  #root .agent-console .eye-explanation,
+  #root .agent-console .sentinel-concepts,
+  #root .agent-console .sentinel-note {
+    display: none;
   }
 
   #root .node-section {
@@ -476,11 +539,7 @@
   #root .node-source-nav > span,
   #root .node-source-nav > .node-rail-foot,
   #root .node-source-nav .node-boundary-card {
-    display: grid;
-  }
-
-  #root .node-source-nav > .node-rail-foot {
-    margin-top: auto;
+    display: none;
   }
 
   #root .node-source-item {
@@ -526,7 +585,7 @@
 
   #root .node-policy-item {
     min-height: 40px;
-    grid-template-columns: 6px 15px minmax(0, 1fr);
+    grid-template-columns: 6px minmax(0, 1fr);
     align-content: center;
     gap: 7px;
     padding: 7px 8px;
@@ -534,7 +593,18 @@
 
   #root .node-policy-item > svg,
   #root .node-policy-item > em {
-    display: block;
+    display: none;
+  }
+
+  #root .node-policy-item > strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  #root .node-system .source-protocol-summary,
+  #root .node-system .source-criteria-list {
+    display: none;
   }
 
   #root .node-control-detail,
@@ -581,6 +651,11 @@
   #root .final-cta .section-eyebrow {
     top: 22px;
     left: 22px;
+  }
+
+  #root .page-shell:has(.about-hero) .final-cta > p:not(.section-eyebrow) {
+    font-size: 0.75rem;
+    line-height: 1.4;
   }
 
   #root .final-cta h2 {
