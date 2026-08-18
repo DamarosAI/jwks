@@ -529,6 +529,15 @@ function SectionEyebrow({ children }) {
   return <p className="section-eyebrow">{children}</p>
 }
 
+function MobilePreviewFrame({ children }) {
+  return (
+    <div className="mobile-preview-frame">
+      <p className="mobile-preview-eyebrow">Mobile preview</p>
+      {children}
+    </div>
+  )
+}
+
 function WindowBrand() {
   return (
     <span className="window-title window-brand">
@@ -700,7 +709,9 @@ function LandingHero() {
           <a className="button button-secondary" href="#agents" onClick={(event) => smoothSection(event, '#agents')}>See agents work <ArrowRight size={17} weight="bold" /></a>
         </div>
       </div>
-      <div className="hero-workspace-wrap"><MiniRun /></div>
+      <MobilePreviewFrame>
+        <div className="hero-workspace-wrap"><MiniRun /></div>
+      </MobilePreviewFrame>
       <a className="hero-scroll-cue" href="#thesis" aria-label="Continue to the thesis" onClick={(event) => smoothSection(event, '#thesis')}>
         <CaretDown size={22} weight="bold" />
       </a>
@@ -1408,6 +1419,7 @@ function AgentOperations() {
         <h2>Four agents.</h2>
         <p>Find, draft, flag, cite. Never decide.</p>
       </div>
+      <MobilePreviewFrame>
       <div className="agent-console" onClickCapture={(event) => { if (shouldHoldAutoplayFromClick(event.target)) hold() }}>
         <div className="mac-titlebar">
           <div className="traffic-lights" aria-hidden="true"><i /><i /><i /></div>
@@ -1458,6 +1470,7 @@ function AgentOperations() {
           </main>
         </div>
       </div>
+      </MobilePreviewFrame>
     </section>
   )
 }
@@ -1524,6 +1537,7 @@ function SiteNodeSection() {
   return (
     <section className="node-section section-space" id="site-control" ref={root}>
       <SectionEyebrow>Control</SectionEyebrow>
+      <MobilePreviewFrame>
       <div className="node-system" aria-label="Damaros site node control model">
         <div className="mac-titlebar"><div className="traffic-lights" aria-hidden="true"><i /><i /><i /></div><WindowBrand /><span className="window-live"><i /> {isolated ? 'Models isolated' : 'Institution-held'}</span></div>
         <div className="node-product-grid">
@@ -1598,6 +1612,7 @@ function SiteNodeSection() {
           </div>
         </div>
       </div>
+      </MobilePreviewFrame>
       <div className="node-copy">
         <h2><span>Evidence stays</span><span>with the site.</span></h2>
         <p>Patient data, evidence, signatures, and execution records remain under site governance. Only aggregate, patient-free coverage signals can leave.</p>

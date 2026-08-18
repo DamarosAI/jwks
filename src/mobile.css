@@ -129,6 +129,10 @@
     left: 16px;
   }
 
+  #root .landing-hero .mobile-preview-frame {
+    margin-top: 28px;
+  }
+
   #root .landing-hero {
     min-height: 0;
     padding: calc(env(safe-area-inset-top, 0px) + 148px) 16px 76px;
@@ -180,11 +184,29 @@
     font-size: 0.76rem;
   }
 
+  #root .mobile-preview-frame {
+    display: block;
+    width: 100%;
+  }
+
+  #root .mobile-preview-eyebrow {
+    display: block;
+    width: max-content;
+    margin: 0 0 10px;
+    color: var(--accent);
+    font-family: var(--font-ui);
+    font-size: var(--type-eyebrow);
+    font-weight: 400;
+    letter-spacing: 0.16em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
   #root .hero-workspace-wrap {
     width: 100%;
     max-width: none;
     min-height: 0;
-    margin: 38px 0 0;
+    margin: 8px 0 0;
     zoom: 0.42;
   }
 
@@ -372,10 +394,14 @@
 
   #root .agent-console {
     width: 100%;
-    margin-top: 34px;
+    margin-top: 0;
     border-radius: 18px;
     overflow: hidden;
     zoom: 0.42;
+  }
+
+  #root .agent-operations-section .mobile-preview-frame {
+    margin-top: 24px;
   }
 
   #root .agent-console-grid {
@@ -492,8 +518,11 @@
     gap: 42px;
   }
 
-  #root .node-system {
+  #root .node-section > .mobile-preview-frame {
     order: 2;
+  }
+
+  #root .node-system {
     width: 100%;
     height: 680px;
     min-height: 680px;

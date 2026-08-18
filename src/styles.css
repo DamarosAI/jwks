@@ -774,6 +774,14 @@ h2 {
   pointer-events: none;
 }
 
+.mobile-preview-frame {
+  display: contents;
+}
+
+.mobile-preview-eyebrow {
+  display: none;
+}
+
 .landing-hero .section-eyebrow {
   top: calc(var(--nav-height) + 28px);
 }
