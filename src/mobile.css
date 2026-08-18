@@ -106,11 +106,13 @@
     line-height: 1;
   }
 
-  #root .section-eyebrow {
+  #root .section-eyebrow,
+  #root .landing-hero .section-eyebrow,
+  #root .final-cta .section-eyebrow {
     top: 18px;
     left: 16px;
-    font-size: 0.72rem;
-    letter-spacing: 0.14em;
+    font-size: var(--type-eyebrow);
+    letter-spacing: 0.16em;
   }
 
   #root .landing-hero .section-eyebrow {

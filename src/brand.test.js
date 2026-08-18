@@ -4,6 +4,7 @@ import assert from 'node:assert/strict'
 
 const app = await readFile(new URL('./App.jsx', import.meta.url), 'utf8')
 const css = await readFile(new URL('./styles.css', import.meta.url), 'utf8')
+const mobile = await readFile(new URL('./mobile.css', import.meta.url), 'utf8')
 
 describe('Damaros brand mark', () => {
   it('moves spine titles into home eyebrows and keeps the spine numeric', () => {
@@ -20,7 +21,10 @@ describe('Damaros brand mark', () => {
     assert.doesNotMatch(app, /<SectionEyebrow>Why now<\/SectionEyebrow>/)
     assert.doesNotMatch(app, /<SectionEyebrow>People<\/SectionEyebrow>/)
     assert.doesNotMatch(app, /section-kicker">The agents/)
-    assert.match(css, /\.section-eyebrow \{[\s\S]*?font-family:\s*'Endless', sans-serif;[\s\S]*?text-transform:\s*uppercase;/)
+    assert.match(css, /--type-eyebrow:\s*0\.92rem;/)
+    assert.match(css, /\.section-eyebrow,[\s\S]*?font-size:\s*var\(--type-eyebrow\);[\s\S]*?letter-spacing:\s*0\.16em;[\s\S]*?text-transform:\s*uppercase;/)
+    assert.match(mobile, /#root \.section-eyebrow,[\s\S]*?font-size:\s*var\(--type-eyebrow\);[\s\S]*?letter-spacing:\s*0\.16em;/)
+    assert.doesNotMatch(mobile, /section-eyebrow[^{]*\{[^}]*font-size:\s*0\.72rem/)
     assert.match(css, /\.page-spine \{[\s\S]*?width:\s*34px;/)
     assert.match(css, /\.site-nav-wrap \{[\s\S]*?z-index:\s*50;[\s\S]*?isolation:\s*isolate;/)
     assert.match(css, /\.thesis-section \{[\s\S]*?align-items:\s*center;[\s\S]*?text-align:\s*center;/)
