@@ -3473,13 +3473,13 @@ html { scroll-padding-top: 96px; }
 .agent-operations-section { scroll-margin-top: 96px; }
 
 .hero-workspace {
-  height: 790px;
+  height: 799px;
   border-radius: 16px;
 }
 
 .hero-app-grid {
-  height: 744px;
-  min-height: 744px;
+  height: 753px;
+  min-height: 753px;
 }
 
 .hero-app-nav {
@@ -3507,13 +3507,13 @@ html { scroll-padding-top: 96px; }
 }
 
 .landing-source-view {
-  height: 744px;
-  padding: 12px;
+  height: 753px;
+  padding: 12px 12px 21px;
 }
 
 .landing-source-view .workspace-view {
   height: auto;
-  min-height: 720px;
+  min-height: 729px;
   overflow: visible;
 }
 
@@ -6654,14 +6654,14 @@ html { scroll-padding-top: 96px; }
 
 .hero-state-canvas.landing-source-demo {
   position: relative;
-  min-height: 650px;
+  min-height: 659px;
   overflow: hidden;
   background: #fff;
 }
 
 .hero-state-layer {
   width: 100%;
-  min-height: 650px;
+  min-height: 659px;
 }
 
 .hero-state-layer.is-exiting {
@@ -6692,7 +6692,7 @@ html { scroll-padding-top: 96px; }
 }
 
 .landing-source-demo :is(.source-protocol-view, .source-evidence-view, .source-screening-view, .source-resolve-view, .source-replay-view) {
-  min-height: 650px;
+  min-height: 659px;
 }
 
 .landing-source-demo :is(button, [role='button']),
@@ -7126,24 +7126,45 @@ html { scroll-padding-top: 96px; }
     margin-right: auto;
     margin-left: auto;
   }
+
+  .hero-workspace {
+    min-height: 799px;
+  }
+
+  .hero-app-grid,
+  .landing-source-view {
+    min-height: 753px;
+  }
+
+  .landing-source-view .workspace-view {
+    min-height: 789px;
+  }
+
+  .landing-source-demo .source-protocol-view {
+    min-height: 659px;
+    padding-bottom: 37px;
+  }
 }
 
 .hero-workspace {
   height: auto;
+  min-height: 799px;
 }
 
 .hero-app-grid {
   height: auto;
-  min-height: 744px;
+  min-height: 753px;
 }
 
 .landing-source-view {
   height: auto;
+  min-height: 753px;
+  padding-bottom: 21px;
 }
 
 .landing-source-view .workspace-view {
   height: auto;
-  min-height: 780px;
+  min-height: 789px;
   overflow: visible;
   overscroll-behavior: auto;
   scrollbar-width: auto;
@@ -7605,15 +7626,15 @@ html { scroll-padding-top: 96px; }
 /* Source-native landing demo. Ported from C:\repos\jwks\platform.html. */
 .landing-source-demo :is(.source-protocol-view, .source-evidence-view, .source-screening-view, .source-resolve-view, .source-replay-view) {
   min-height: 0;
-  padding: 24px 26px 28px;
+  padding: 24px 26px 37px;
   color: var(--text-soft);
 }
 
-.landing-source-demo .source-protocol-view { min-height: 650px; }
-.landing-source-demo .source-evidence-view { min-height: 650px; }
-.landing-source-demo .source-screening-view { min-height: 665px; }
-.landing-source-demo .source-resolve-view { min-height: 590px; }
-.landing-source-demo .source-replay-view { min-height: 650px; }
+.landing-source-demo .source-protocol-view { min-height: 659px; }
+.landing-source-demo .source-evidence-view { min-height: 659px; }
+.landing-source-demo .source-screening-view { min-height: 674px; }
+.landing-source-demo .source-resolve-view { min-height: 599px; }
+.landing-source-demo .source-replay-view { min-height: 659px; }
 
 .source-view-intro { display: grid; gap: 6px; margin-bottom: 14px; }
 .source-view-intro > span,
@@ -7795,7 +7816,7 @@ html { scroll-padding-top: 96px; }
 .replay-event-detail > .pane-settle > footer { display: grid; gap: 5px; margin-top: auto; }.replay-event-detail footer span { color: var(--muted); font-size: 0.6rem; font-weight: 730; letter-spacing: .07em; }.replay-event-detail footer small { color: var(--muted); font-size: 0.65rem; }
 
 @media (max-width: 640px) {
-  .landing-source-demo :is(.source-protocol-view, .source-evidence-view, .source-screening-view, .source-resolve-view, .source-replay-view) { min-height: 0; padding: 18px 12px 22px; }
+  .landing-source-demo :is(.source-protocol-view, .source-evidence-view, .source-screening-view, .source-resolve-view, .source-replay-view) { min-height: 0; padding: 18px 12px 31px; }
   .protocol-source-head > small { width: 100%; margin-left: 0; line-height: 1.4; }
   .source-amendment { display: grid; gap: 6px; }
   .source-protocol-summary,
@@ -11242,7 +11263,7 @@ html { scroll-padding-top: 96px; }
   }
 
   .landing-source-demo :is(.source-protocol-view, .source-evidence-view, .source-screening-view, .source-resolve-view, .source-replay-view) {
-    padding: 18px 14px 22px;
+    padding: 18px 14px 31px;
   }
 
   .landing-source-demo :is(.source-view-intro, .protocol-source-head, .source-resolve-top, .source-replay-head) {
@@ -13202,7 +13223,7 @@ html.is-hidden .hero-agent.is-active i,
 
   #root .hero-workspace .landing-source-demo :is(.source-protocol-view, .source-evidence-view, .source-screening-view, .source-resolve-view, .source-replay-view) {
     min-height: 100%;
-    padding: 17px 12px 24px;
+    padding: 17px 12px 33px;
   }
 
   #root .section-space {

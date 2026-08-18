@@ -197,7 +197,7 @@
   #root .hero-workspace .hero-app-grid {
     display: grid;
     height: auto;
-    min-height: 744px;
+    min-height: 753px;
     grid-template-columns: 150px minmax(0, 1fr);
     grid-template-rows: minmax(0, 1fr);
     overflow: visible;
@@ -248,17 +248,17 @@
   }
 
   #root .hero-workspace .landing-source-view {
-    min-height: 744px;
-    padding: 12px;
+    min-height: 753px;
+    padding: 12px 12px 21px;
   }
 
   #root .hero-workspace .landing-source-view .workspace-view {
-    min-height: 720px;
+    min-height: 729px;
   }
 
   #root .hero-workspace .landing-source-demo :is(.source-protocol-view, .source-evidence-view, .source-screening-view, .source-resolve-view, .source-replay-view) {
-    min-height: 650px;
-    padding: 24px 26px 28px;
+    min-height: 659px;
+    padding: 24px 26px 37px;
   }
 
   #root .section-space {
