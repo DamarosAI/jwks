@@ -686,7 +686,6 @@ function LandingHero() {
 
   return (
     <section className="landing-hero" id="home" ref={root}>
-      <SectionEyebrow>Home</SectionEyebrow>
       <div className="ambient-field" aria-hidden="true" />
       <BiomarkerRain />
       <img className="hero-drum-motif" src="/assets/damaros-monogram-blue.svg" alt="" aria-hidden="true" decoding="async" />

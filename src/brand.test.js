@@ -10,7 +10,7 @@ describe('Damaros brand mark', () => {
   it('moves spine titles into home eyebrows and keeps the spine numeric', () => {
     assert.match(app, /<span>\{String\(index \+ 1\)\.padStart\(2, '0'\)\}<\/span>/)
     assert.doesNotMatch(app, /<strong>\{label\}<\/strong>/)
-    assert.match(app, /<SectionEyebrow>Home<\/SectionEyebrow>/)
+    assert.doesNotMatch(app, /<SectionEyebrow>Home<\/SectionEyebrow>/)
     assert.match(app, /<SectionEyebrow>Thesis<\/SectionEyebrow>/)
     assert.match(app, /<SectionEyebrow>Capacity<\/SectionEyebrow>/)
     assert.match(app, /<SectionEyebrow>Agents<\/SectionEyebrow>/)
