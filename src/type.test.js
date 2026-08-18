@@ -12,6 +12,12 @@ describe('site type', () => {
     assert.match(css, /--type-control:\s*16px/)
     assert.match(css, /--type-product-control:\s*15px/)
     assert.match(css, /--type-product-floor:\s*0\.8125rem/)
+    assert.match(css, /--type-product-kicker:\s*11px/)
+    assert.match(css, /--type-product-kicker-weight:\s*700/)
+    assert.match(css, /--type-product-kicker-tracking:\s*0\.04em/)
+    assert.match(css, /--type-product-rail:\s*0\.5rem/)
+    assert.match(css, /--type-product-title:\s*1\.48rem/)
+    assert.match(css, /--type-product-strong:\s*0\.76rem/)
     assert.doesNotMatch(css, /\.button:hover \{[\s\S]*?translateY\(-1px\)/)
   })
 
@@ -81,6 +87,14 @@ describe('site type', () => {
     assert.doesNotMatch(app, /AgentGlyph kind=\{agent\.icon\} size=\{15\}/)
     assert.match(app, /<span>\{agent\.name\}<\/span><h3>\{agent\.task\}<\/h3>/)
     assert.match(css, /#root \.agent-console-nav button \{\s*display:\s*grid;[\s\S]*?grid-template-columns:\s*7px 14px minmax\(0, 1fr\);/)
+  })
+
+  it('uses landing product labels as the type source for agents and security', () => {
+    assert.match(css, /\.protocol-source-head > span,[\s\S]*?font-size:\s*var\(--type-product-kicker\);[\s\S]*?font-weight:\s*var\(--type-product-kicker-weight\);/)
+    assert.match(css, /#root \.hero-app-nav > strong,[\s\S]*?#root \.agent-console-nav > span,[\s\S]*?#root \.node-source-nav > span \{[\s\S]*?font-size:\s*var\(--type-product-rail\);[\s\S]*?font-weight:\s*400;/)
+    assert.match(css, /#root :is\(\.landing-source-demo, \.agent-console, \.node-system[\s\S]*?\.agent-console-header > div > span,[\s\S]*?\.agent-run-object > span,[\s\S]*?\.node-custody-path small,[\s\S]*?font-size:\s*var\(--type-product-kicker\);/)
+    assert.match(css, /#root \.agent-console-header h3 \{[\s\S]*?font-size:\s*var\(--type-product-title\);[\s\S]*?font-weight:\s*400;/)
+    assert.match(css, /#root :is\(\.landing-source-demo, \.agent-console, \.node-system\) :is\([\s\S]*?\.trident-list button strong,[\s\S]*?font-size:\s*var\(--type-product-strong\);[\s\S]*?font-weight:\s*400;/)
   })
 
   it('keeps the agents console grey and colors only metric numbers', () => {

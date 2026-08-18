@@ -66,6 +66,15 @@
   --type-control: 16px;
   --type-product-control: 15px;
   --type-product-floor: 0.8125rem;
+  --type-product-kicker: 11px;
+  --type-product-kicker-weight: 700;
+  --type-product-kicker-tracking: 0.04em;
+  --type-product-rail: 0.5rem;
+  --type-product-rail-tracking: 0.12em;
+  --type-product-meta: 12px;
+  --type-product-meta-weight: 600;
+  --type-product-title: 1.48rem;
+  --type-product-strong: 0.76rem;
   --type-eyebrow: 0.92rem;
   --tracking-control: 0.025em;
   --node-detail-min-height: 520px;
@@ -8711,9 +8720,9 @@ html { scroll-padding-top: 96px; }
 .source-replay-head b,
 .source-criteria-head > span,
 .source-amendment > span {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  font-size: var(--type-product-kicker);
+  font-weight: var(--type-product-kicker-weight);
+  letter-spacing: var(--type-product-kicker-tracking);
 }
 
 .protocol-source-head em,
@@ -8722,8 +8731,8 @@ html { scroll-padding-top: 96px; }
 .source-protocol-view > p,
 .source-amendment > small,
 .source-amendment > strong {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: var(--type-product-meta);
+  font-weight: var(--type-product-meta-weight);
   letter-spacing: 0.01em;
 }
 
@@ -12909,6 +12918,89 @@ html.is-hidden .hero-agent.is-active i,
 #root .node-source-item,
 #root .node-source-item :is(span, small) {
   font-family: var(--font-ui);
+  font-weight: 400;
+}
+
+/* Landing product chrome is the type source. Agents and security inherit it. */
+#root .hero-app-nav > strong,
+#root .agent-console-nav > span,
+#root .node-source-nav > span {
+  color: var(--faint);
+  font-size: var(--type-product-rail);
+  font-weight: 400;
+  letter-spacing: var(--type-product-rail-tracking);
+}
+
+#root :is(.landing-source-demo, .agent-console, .node-system, .node-security-workspace, .site-control-review) :is(
+  .protocol-source-head > span,
+  .source-view-intro > span,
+  .source-resolve-top > span,
+  .source-replay-head b,
+  .source-criteria-head > span,
+  .source-amendment > span,
+  .agent-console-header > div > span,
+  .agent-workbench-head,
+  .agent-quick-demo-head span,
+  .agent-console-trace-head span,
+  .agent-run-object > span,
+  .agent-run-activity > span,
+  .agent-run-boundary small,
+  .agent-run-path dt,
+  .luna-question-list > span,
+  .trident-list > div > span,
+  .trident-rationale > span,
+  .quality-detail > span,
+  .quality-detail > .pane-settle > span,
+  .sentinel-detail > span,
+  .sentinel-detail > .pane-settle > span,
+  .audit-question > span,
+  .node-event-ledger > span,
+  .node-source-strip > span:first-child,
+  .node-policy-header small,
+  .node-custody-path small,
+  .node-integrity small,
+  .node-control-detail header small
+) {
+  font-size: var(--type-product-kicker);
+  font-weight: var(--type-product-kicker-weight);
+  letter-spacing: var(--type-product-kicker-tracking);
+}
+
+#root :is(.landing-source-demo, .agent-console, .node-system, .node-security-workspace, .site-control-review) :is(
+  .protocol-source-head em,
+  .protocol-source-head > small,
+  .source-view-intro small,
+  .source-protocol-view > p,
+  .source-amendment > small,
+  .agent-console-header em,
+  .agent-console-context small,
+  .agent-run-object small,
+  .agent-run-path dd
+) {
+  font-size: var(--type-product-meta);
+  font-weight: var(--type-product-meta-weight);
+  letter-spacing: 0.01em;
+}
+
+#root .landing-source-demo .source-protocol-view > h4,
+#root .node-control-view.source-protocol-view > h4,
+#root .agent-console-header h3 {
+  font-size: var(--type-product-title);
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+}
+
+#root :is(.landing-source-demo, .agent-console, .node-system) :is(
+  .source-criteria-list strong,
+  .obligation-list button strong,
+  .trident-list button strong,
+  .quality-list button strong,
+  .sentinel-studies button strong,
+  .luna-question-list button strong,
+  .node-policy-item strong
+) {
+  font-size: var(--type-product-strong);
   font-weight: 400;
 }
 
