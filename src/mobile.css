@@ -118,6 +118,7 @@
     left: 16px;
     right: auto;
     width: max-content;
+    font-family: var(--font-ui);
     font-size: var(--type-eyebrow);
     letter-spacing: 0.16em;
     text-align: left;

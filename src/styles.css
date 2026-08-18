@@ -763,7 +763,7 @@ h2 {
   width: max-content;
   margin: 0;
   color: var(--accent);
-  font-family: 'Endless', sans-serif;
+  font-family: var(--font-ui);
   font-size: var(--type-eyebrow);
   font-weight: 400;
   font-synthesis: none;
@@ -933,7 +933,7 @@ h2 {
 .thesis-section > .section-eyebrow,
 #root .thesis-section > .section-eyebrow {
   align-self: flex-start;
-  left: max(28px, 4vw);
+  left: calc((100% - min(100%, 1480px)) / 2 + max(28px, 4vw));
   right: auto;
   width: max-content;
   text-align: left;
@@ -12715,7 +12715,6 @@ html.is-hidden .hero-agent.is-active i,
   .bento-copy h3 *,
   .record-copy h3,
   .record-copy h3 *,
-  .section-eyebrow,
   .page-spine button > span,
   .why-now-lines .why-now-line > span,
   .outcome-panel > span,
