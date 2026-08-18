@@ -33,7 +33,7 @@ describe('site type', () => {
     assert.match(css, /#root,\s*#root :is\(\*\) \{\s*font-family:\s*var\(--font-ui\)/)
     assert.match(css, /\.agent-story-heading p \{[\s\S]*?font-weight:\s*400/)
     assert.match(css, /\.hero-copy > p \{[\s\S]*?font-weight:\s*400/)
-    assert.match(css, /\.about-hero-copy h1 \{[\s\S]*?font-weight:\s*800/)
+    assert.match(css, /\.about-hero-copy h1 \{[\s\S]*?font-weight:\s*400/)
     assert.match(css, /\.founder-section blockquote \{[\s\S]*?font-weight:\s*400/)
     assert.match(css, /\.why-now-lines \.why-now-line strong \{[\s\S]*?font-weight:\s*600/)
     assert.match(css, /\.outcome-panel strong \{[\s\S]*?font-weight:\s*600/)
@@ -72,7 +72,7 @@ describe('site type', () => {
     assert.match(css, /@keyframes workspace-enter\s*\{\s*from\s*\{\s*opacity:\s*0;\s*\}\s*\}/)
     assert.match(css, /@keyframes inline-action-in\s*\{[\s\S]*?from\s*\{\s*opacity:\s*0;\s*\}[\s\S]*?to\s*\{\s*opacity:\s*1;\s*\}/)
     assert.match(css, /\.page-spine\s*\{[\s\S]*?transform:\s*none;/)
-    assert.match(css, /#root \.page-spine :is\(button, span, strong\) \{\s*font-family:\s*var\(--font-ui\);\s*font-weight:\s*400;/)
+    assert.match(css, /#root \.page-spine :is\(button, span\) \{\s*font-family:\s*'Endless', sans-serif;\s*font-weight:\s*400;/)
   })
 
   it('keeps agent tabs to glyph and name like the landing chips', () => {

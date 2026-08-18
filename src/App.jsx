@@ -498,7 +498,7 @@ function PageSpine({ about = false }) {
     <nav className={`page-spine${about ? ' page-spine-about' : ''}${visible ? ' is-visible' : ''}`} aria-label="On this page" aria-hidden={!visible} inert={!visible}>
       {items.map(([id, label], index) => (
         <button className={active === id ? 'active' : ''} type="button" aria-current={active === id ? 'true' : undefined} aria-label={label} onClick={() => { setActive(id); smoothSection(null, `#${id}`) }} key={id}>
-          <span>{String(index + 1).padStart(2, '0')}</span><strong>{label}</strong>
+          <span>{String(index + 1).padStart(2, '0')}</span>
         </button>
       ))}
     </nav>
@@ -523,6 +523,10 @@ function usePageScrollFlow(root, reduced) {
 
 function BrandName() {
   return <>Damaros<sup className="brand-tm">TM</sup></>
+}
+
+function SectionEyebrow({ children }) {
+  return <p className="section-eyebrow">{children}</p>
 }
 
 function WindowBrand() {
@@ -682,6 +686,7 @@ function LandingHero() {
 
   return (
     <section className="landing-hero" id="home" ref={root}>
+      <SectionEyebrow>Home</SectionEyebrow>
       <div className="ambient-field" aria-hidden="true" />
       <BiomarkerRain />
       <img className="hero-drum-motif" src="/assets/damaros-monogram-blue.svg" alt="" aria-hidden="true" decoding="async" />
@@ -719,6 +724,7 @@ function ThesisSection() {
 
   return (
     <section className="thesis-section section-space" id="thesis" ref={root}>
+      <SectionEyebrow>Thesis</SectionEyebrow>
       <div className="thesis-head">
         <h2><span className="accent-text">The future of medicine</span> cannot run on yesterday's research infrastructure.</h2>
         <p className="thesis-closer"><BrandName /> is building what comes next.</p>
@@ -763,6 +769,7 @@ function CapacityBento() {
 
   return (
     <section className="capacity-section section-space" id="capacity" ref={root}>
+      <SectionEyebrow>Capacity</SectionEyebrow>
       <div className="section-heading centered-heading">
         <h2><span className="capacity-title-line">A research department,</span><span className="capacity-title-line">deployed like software.</span></h2>
         <p>Disease-agnostic by design. One execution system for every protocol, care setting, and patient population. Each protocol adds reusable coverage. Every decision keeps human accountability and local control.</p>
@@ -1397,8 +1404,8 @@ function AgentOperations() {
 
   return (
     <section className="agent-operations-section section-space" id="agents" ref={root}>
+      <SectionEyebrow>Agents</SectionEyebrow>
       <div className="agent-story-heading">
-        <span className="section-kicker">The agents</span>
         <h2>Four agents.</h2>
         <p>Find, draft, flag, cite. Never decide.</p>
       </div>
@@ -1517,6 +1524,7 @@ function SiteNodeSection() {
 
   return (
     <section className="node-section section-space" id="site-control" ref={root}>
+      <SectionEyebrow>Control</SectionEyebrow>
       <div className="node-system" aria-label="Damaros site node control model">
         <div className="mac-titlebar"><div className="traffic-lights" aria-hidden="true"><i /><i /><i /></div><WindowBrand /><span className="window-live"><i /> {isolated ? 'Models isolated' : 'Institution-held'}</span></div>
         <div className="node-product-grid">
@@ -1607,6 +1615,7 @@ function SiteNodeSection() {
 function FinalCta({ about = false }) {
   return (
     <section className="final-cta section-space" id="pilot">
+      {!about && <SectionEyebrow>Pilot</SectionEyebrow>}
       <img className="final-cta-mark" src="/assets/damaros-monogram.svg" alt="" aria-hidden="true" loading="lazy" decoding="async" />
       <p>{about ? 'Build capacity where care already happens.' : 'Bring one protocol. Leave with a replayable run.'}</p>
       <h2>{about ? 'Make research capacity buildable.' : 'Start with a real site workflow.'}</h2>

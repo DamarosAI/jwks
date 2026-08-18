@@ -6,8 +6,25 @@ const app = await readFile(new URL('./App.jsx', import.meta.url), 'utf8')
 const css = await readFile(new URL('./styles.css', import.meta.url), 'utf8')
 
 describe('Damaros brand mark', () => {
-  it('removes the thesis eyebrow', () => {
-    assert.doesNotMatch(app, /section-kicker">Thesis/)
+  it('moves spine titles into home eyebrows and keeps the spine numeric', () => {
+    assert.match(app, /<span>\{String\(index \+ 1\)\.padStart\(2, '0'\)\}<\/span>/)
+    assert.doesNotMatch(app, /<strong>\{label\}<\/strong>/)
+    assert.match(app, /<SectionEyebrow>Home<\/SectionEyebrow>/)
+    assert.match(app, /<SectionEyebrow>Thesis<\/SectionEyebrow>/)
+    assert.match(app, /<SectionEyebrow>Capacity<\/SectionEyebrow>/)
+    assert.match(app, /<SectionEyebrow>Agents<\/SectionEyebrow>/)
+    assert.match(app, /<SectionEyebrow>Control<\/SectionEyebrow>/)
+    assert.match(app, /\{!about && <SectionEyebrow>Pilot<\/SectionEyebrow>\}/)
+    assert.doesNotMatch(app, /<SectionEyebrow>About<\/SectionEyebrow>/)
+    assert.doesNotMatch(app, /<SectionEyebrow>Founder<\/SectionEyebrow>/)
+    assert.doesNotMatch(app, /<SectionEyebrow>Why now<\/SectionEyebrow>/)
+    assert.doesNotMatch(app, /<SectionEyebrow>People<\/SectionEyebrow>/)
+    assert.doesNotMatch(app, /section-kicker">The agents/)
+    assert.match(css, /\.section-eyebrow \{[\s\S]*?font-family:\s*'Endless', sans-serif;[\s\S]*?text-transform:\s*uppercase;/)
+    assert.match(css, /\.page-spine \{[\s\S]*?width:\s*34px;/)
+    assert.match(css, /\.site-nav-wrap \{[\s\S]*?z-index:\s*50;[\s\S]*?isolation:\s*isolate;/)
+    assert.match(css, /\.thesis-section \{[\s\S]*?align-items:\s*center;[\s\S]*?text-align:\s*center;/)
+    assert.match(css, /\.thesis-head \{[\s\S]*?align-items:\s*center;[\s\S]*?text-align:\s*center;/)
   })
 
   it('renders Damaros through BrandName with a contrast TM', () => {
