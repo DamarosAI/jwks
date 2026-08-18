@@ -38,19 +38,20 @@ describe('Damaros brand mark', () => {
     assert.match(app, /2026 <BrandName \/>/)
   })
 
-  it('stretches the landing protocol stage by 9px so the last criteria row is not clipped', () => {
-    assert.match(css, /\.hero-workspace \{[\s\S]*?min-height:\s*799px;/)
-    assert.match(css, /\.hero-app-grid \{[\s\S]*?min-height:\s*753px;/)
-    assert.match(css, /\.landing-source-view \.workspace-view \{[\s\S]*?min-height:\s*789px;/)
-    assert.match(css, /\.landing-source-demo \.source-protocol-view \{ min-height: 659px; \}/)
+  it('locks landing, agents, and control frames to one static size', () => {
+    assert.match(css, /#root \.hero-workspace \{[\s\S]*?height:\s*799px;[\s\S]*?min-height:\s*799px;[\s\S]*?max-height:\s*799px;[\s\S]*?overflow:\s*hidden;/)
+    assert.match(css, /#root \.hero-app-grid,[\s\S]*?height:\s*753px;[\s\S]*?min-height:\s*753px;[\s\S]*?max-height:\s*753px;/)
+    assert.match(css, /#root \.agent-console-grid \{[\s\S]*?height:\s*780px;[\s\S]*?min-height:\s*780px;[\s\S]*?max-height:\s*780px;/)
+    assert.match(css, /#root \.node-system \{[\s\S]*?height:\s*680px;[\s\S]*?min-height:\s*680px;[\s\S]*?max-height:\s*680px;/)
     assert.match(css, /\.landing-source-demo :is\([^)]+\) \{[\s\S]*?padding:\s*24px 26px 37px;/)
-    assert.match(css, /@media \(min-width: 901px\) \{[\s\S]*?\.landing-source-demo \.source-protocol-view \{[\s\S]*?min-height:\s*659px;[\s\S]*?padding-bottom:\s*37px;/)
-    assert.match(mobile, /#root \.hero-workspace \.hero-app-grid \{[\s\S]*?min-height:\s*753px;/)
-    assert.match(mobile, /#root \.hero-workspace \.landing-source-view \{[\s\S]*?min-height:\s*753px;[\s\S]*?padding:\s*12px 12px 21px;/)
-    assert.match(mobile, /#root \.hero-workspace \.landing-source-view \.workspace-view \{[\s\S]*?min-height:\s*729px;/)
-    assert.match(mobile, /#root \.hero-workspace \.landing-source-demo :is\([^)]+\) \{[\s\S]*?min-height:\s*659px;[\s\S]*?padding:\s*24px 26px 37px;/)
+    assert.match(css, /@media \(min-width: 901px\) \{[\s\S]*?\.landing-source-demo \.source-protocol-view \{[\s\S]*?padding-bottom:\s*37px;/)
+    assert.match(mobile, /#root \.hero-workspace \{[\s\S]*?height:\s*799px;[\s\S]*?max-height:\s*799px;/)
+    assert.match(mobile, /#root \.hero-workspace \.hero-app-grid \{[\s\S]*?height:\s*753px;[\s\S]*?max-height:\s*753px;/)
+    assert.match(mobile, /#root \.agent-console-grid \{[\s\S]*?height:\s*780px;[\s\S]*?max-height:\s*780px;/)
+    assert.match(mobile, /#root \.node-system \{[\s\S]*?height:\s*680px;[\s\S]*?max-height:\s*680px;/)
     assert.doesNotMatch(css, /height:\s*790px/)
     assert.doesNotMatch(css, /min-height:\s*744px/)
+    assert.doesNotMatch(css, /\.landing-source-view \.workspace-view \{[\s\S]*?min-height:\s*789px/)
   })
 
   it('answers the thesis with the brand mark and even section padding', () => {

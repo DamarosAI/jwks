@@ -181,9 +181,9 @@
 
   #root .hero-workspace {
     width: 100%;
-    height: auto;
-    min-height: 0;
-    max-height: none;
+    height: 799px;
+    min-height: 799px;
+    max-height: 799px;
     overflow: hidden;
     border-radius: 18px;
     box-shadow: 0 22px 58px rgba(33, 77, 121, 0.13);
@@ -196,11 +196,12 @@
 
   #root .hero-workspace .hero-app-grid {
     display: grid;
-    height: auto;
+    height: 753px;
     min-height: 753px;
+    max-height: 753px;
     grid-template-columns: 150px minmax(0, 1fr);
     grid-template-rows: minmax(0, 1fr);
-    overflow: visible;
+    overflow: hidden;
   }
 
   #root .hero-workspace .hero-app-nav {
@@ -248,16 +249,25 @@
   }
 
   #root .hero-workspace .landing-source-view {
+    height: 753px;
     min-height: 753px;
+    max-height: 753px;
     padding: 12px 12px 21px;
+    overflow: hidden;
   }
 
   #root .hero-workspace .landing-source-view .workspace-view {
-    min-height: 729px;
+    height: 100%;
+    min-height: 0;
+    max-height: 100%;
+    overflow: hidden;
   }
 
   #root .hero-workspace .landing-source-demo :is(.source-protocol-view, .source-evidence-view, .source-screening-view, .source-resolve-view, .source-replay-view) {
-    min-height: 659px;
+    height: 100%;
+    min-height: 0;
+    max-height: 100%;
+    overflow: hidden;
     padding: 24px 26px 37px;
   }
 
@@ -318,9 +328,11 @@
 
   #root .agent-console-grid {
     display: grid;
-    height: auto;
+    height: 780px;
     min-height: 780px;
+    max-height: 780px;
     grid-template-columns: 170px minmax(0, 1fr);
+    overflow: hidden;
   }
 
   #root .agent-console-nav {
@@ -353,9 +365,10 @@
   }
 
   #root .agent-console-main {
-    height: auto;
-    min-height: 780px;
-    overflow: visible;
+    height: 100%;
+    min-height: 0;
+    max-height: 100%;
+    overflow: hidden;
     padding: 26px 24px 28px;
   }
 
@@ -414,9 +427,9 @@
   #root .node-system {
     order: 2;
     width: 100%;
-    height: auto;
-    min-height: 0;
-    max-height: none;
+    height: 680px;
+    min-height: 680px;
+    max-height: 680px;
     overflow: hidden;
     border-radius: 18px;
     zoom: 0.42;
@@ -436,11 +449,12 @@
 
   #root .node-product-grid {
     display: grid;
-    height: auto;
-    min-height: 560px;
+    height: 100%;
+    min-height: 0;
+    max-height: 100%;
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto minmax(0, 1fr);
-    overflow: visible;
+    overflow: hidden;
   }
 
   #root .node-source-nav {
@@ -522,10 +536,10 @@
   #root .node-control-detail,
   #root .site-control-review,
   #root .node-control-view {
-    height: auto;
-    min-height: 480px;
-    max-height: none;
-    overflow: visible;
+    height: 100%;
+    min-height: 0;
+    max-height: 100%;
+    overflow: hidden;
   }
 
   #root .node-control-detail h4,

@@ -20,8 +20,11 @@ describe('mobile miniature layout', () => {
     assert.match(css, /#root \.node-product-grid \{[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\);/)
   })
 
-  it('removes fixed clipping and pauses product autoplay on narrow screens', () => {
-    assert.match(css, /#root \.node-control-detail,[\s\S]*?max-height:\s*none;[\s\S]*?overflow:\s*visible;/)
+  it('keeps product frames static and pauses autoplay on narrow screens', () => {
+    assert.match(css, /#root \.hero-workspace \{[\s\S]*?height:\s*799px;[\s\S]*?max-height:\s*799px;[\s\S]*?overflow:\s*hidden;/)
+    assert.match(css, /#root \.agent-console-grid \{[\s\S]*?height:\s*780px;[\s\S]*?max-height:\s*780px;/)
+    assert.match(css, /#root \.node-system \{[\s\S]*?height:\s*680px;[\s\S]*?max-height:\s*680px;[\s\S]*?overflow:\s*hidden;/)
+    assert.match(css, /#root \.node-control-detail,[\s\S]*?max-height:\s*100%;[\s\S]*?overflow:\s*hidden;/)
     assert.match(css, /overflow-x:\s*clip;/)
     assert.equal((app.match(/const playing = !narrow && shouldPlayAutoplay/g) || []).length, 2)
     assert.doesNotMatch(app, /mobile-workspace-hint/)

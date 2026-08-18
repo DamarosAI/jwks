@@ -3474,12 +3474,16 @@ html { scroll-padding-top: 96px; }
 
 .hero-workspace {
   height: 799px;
+  min-height: 799px;
+  max-height: 799px;
+  overflow: hidden;
   border-radius: 16px;
 }
 
 .hero-app-grid {
   height: 753px;
   min-height: 753px;
+  max-height: 753px;
 }
 
 .hero-app-nav {
@@ -3508,13 +3512,17 @@ html { scroll-padding-top: 96px; }
 
 .landing-source-view {
   height: 753px;
+  min-height: 753px;
+  max-height: 753px;
+  overflow: hidden;
   padding: 12px 12px 21px;
 }
 
 .landing-source-view .workspace-view {
-  height: auto;
-  min-height: 729px;
-  overflow: visible;
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+  overflow: hidden;
 }
 
 .landing-source-demo .workspace-view-header {
@@ -7128,46 +7136,83 @@ html { scroll-padding-top: 96px; }
   }
 
   .hero-workspace {
+    height: 799px;
     min-height: 799px;
+    max-height: 799px;
+    overflow: hidden;
   }
 
   .hero-app-grid,
   .landing-source-view {
+    height: 753px;
     min-height: 753px;
+    max-height: 753px;
+    overflow: hidden;
   }
 
-  .landing-source-view .workspace-view {
-    min-height: 789px;
+  .landing-source-view .workspace-view,
+  .landing-source-demo .source-protocol-view,
+  .landing-source-demo .source-evidence-view,
+  .landing-source-demo .source-screening-view,
+  .landing-source-demo .source-resolve-view,
+  .landing-source-demo .source-replay-view {
+    height: 100%;
+    min-height: 0;
+    max-height: 100%;
+    overflow: hidden;
   }
 
   .landing-source-demo .source-protocol-view {
-    min-height: 659px;
     padding-bottom: 37px;
+  }
+
+  .agent-console {
+    overflow: hidden;
+  }
+
+  .agent-console-grid {
+    height: 780px;
+    min-height: 780px;
+    max-height: 780px;
+  }
+
+  .node-system {
+    height: 680px;
+    min-height: 680px;
+    max-height: 680px;
+    overflow: hidden;
   }
 }
 
 .hero-workspace {
-  height: auto;
+  height: 799px;
   min-height: 799px;
+  max-height: 799px;
+  overflow: hidden;
 }
 
 .hero-app-grid {
-  height: auto;
+  height: 753px;
   min-height: 753px;
+  max-height: 753px;
+  overflow: hidden;
 }
 
 .landing-source-view {
-  height: auto;
+  height: 753px;
   min-height: 753px;
+  max-height: 753px;
+  overflow: hidden;
   padding-bottom: 21px;
 }
 
 .landing-source-view .workspace-view {
-  height: auto;
-  min-height: 789px;
-  overflow: visible;
-  overscroll-behavior: auto;
-  scrollbar-width: auto;
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+  overflow: hidden;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
 }
 
 .landing-source-demo .resolve-workspace {
@@ -7630,11 +7675,15 @@ html { scroll-padding-top: 96px; }
   color: var(--text-soft);
 }
 
-.landing-source-demo .source-protocol-view { min-height: 659px; }
-.landing-source-demo .source-evidence-view { min-height: 659px; }
-.landing-source-demo .source-screening-view { min-height: 674px; }
-.landing-source-demo .source-resolve-view { min-height: 599px; }
-.landing-source-demo .source-replay-view { min-height: 659px; }
+.landing-source-demo .source-protocol-view,
+.landing-source-demo .source-evidence-view,
+.landing-source-demo .source-screening-view,
+.landing-source-demo .source-resolve-view,
+.landing-source-demo .source-replay-view {
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+}
 
 .source-view-intro { display: grid; gap: 6px; margin-bottom: 14px; }
 .source-view-intro > span,
@@ -12909,7 +12958,7 @@ html.is-hidden .hero-agent.is-active i,
   white-space: normal;
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 900px) {
   #root .node-copy {
     min-height: 0;
     align-self: start;
@@ -12937,6 +12986,56 @@ html.is-hidden .hero-agent.is-active i,
     min-height: 0;
     max-height: none;
     overflow: visible;
+  }
+}
+
+@media (min-width: 901px) {
+  #root .hero-workspace {
+    height: 799px;
+    min-height: 799px;
+    max-height: 799px;
+    overflow: hidden;
+  }
+
+  #root .hero-app-grid,
+  #root .hero-workspace .landing-source-view {
+    height: 753px;
+    min-height: 753px;
+    max-height: 753px;
+    overflow: hidden;
+  }
+
+  #root .hero-workspace :is(.hero-app-main, .hero-state-canvas, .hero-state-layer, .landing-source-view .workspace-view),
+  #root .hero-workspace .landing-source-demo :is(.source-protocol-view, .source-evidence-view, .source-screening-view, .source-resolve-view, .source-replay-view) {
+    height: 100%;
+    min-height: 0;
+    max-height: 100%;
+    overflow: hidden;
+  }
+
+  #root .agent-console {
+    overflow: hidden;
+  }
+
+  #root .agent-console-grid {
+    height: 780px;
+    min-height: 780px;
+    max-height: 780px;
+  }
+
+  #root .agent-console-main,
+  #root .agent-console-state {
+    height: 100%;
+    min-height: 0;
+    max-height: 100%;
+    overflow: hidden;
+  }
+
+  #root .node-system {
+    height: 680px;
+    min-height: 680px;
+    max-height: 680px;
+    overflow: hidden;
   }
 }
 
