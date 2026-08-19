@@ -7240,7 +7240,7 @@ html { scroll-padding-top: 96px; }
   min-height: 0;
   max-height: 100%;
   overflow: hidden;
-  overscroll-behavior: contain;
+  overscroll-behavior: auto;
   scrollbar-width: none;
 }
 
@@ -13947,5 +13947,55 @@ html.is-hidden .hero-agent.is-active i,
 
   #root .privacy-body article {
     padding-block: 28px;
+  }
+}
+
+/* Clip product chrome. Do not create a scrollport that eats page wheel. */
+#root :is(
+  .hero-workspace,
+  .hero-app-grid,
+  .landing-source-view,
+  .landing-source-view .workspace-view,
+  .landing-source-demo,
+  .landing-source-demo .workspace-view,
+  .agent-console,
+  .agent-console-grid,
+  .agent-console-main,
+  .node-system,
+  .node-product-grid,
+  .node-control-detail,
+  .site-control-review,
+  .demo-product,
+  .live-workspace
+) {
+  overflow: clip;
+  overscroll-behavior: auto;
+}
+
+#root .hero-workspace,
+#root .hero-workspace .hero-app-grid,
+#root .hero-workspace .landing-source-view,
+#root .hero-workspace .landing-source-view .workspace-view,
+#root .hero-workspace :is(.hero-app-main, .hero-state-canvas, .hero-state-layer, .landing-source-demo .pane-settle),
+#root .hero-workspace .landing-source-demo :is(.source-protocol-view, .source-evidence-view, .source-screening-view, .source-resolve-view, .source-replay-view),
+#root .agent-console,
+#root .agent-console-grid,
+#root .agent-console-main,
+#root .agent-console-state,
+#root .node-system,
+#root .node-product-grid,
+#root .node-source-nav,
+#root .node-policy-main,
+#root .node-security-workspace,
+#root .node-control-detail,
+#root .site-control-review {
+  overflow: clip;
+  overscroll-behavior: auto;
+}
+
+@media (max-width: 900px) {
+  #root .node-control-detail,
+  #root .node-control-view {
+    overflow: visible;
   }
 }

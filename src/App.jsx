@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useRef, useState } from 
 import { Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom'
 import { AGENT_ROTATE_TICKS, AGENT_TICK_MS, HERO_STAGE_MS, HERO_TICK_MS, NARROW_VIEWPORT, autoplayIndex, nextStageIndex, shouldHoldAutoplayFromClick, shouldKeepPreviousStage, shouldPlayAutoplay, shouldRunAmbient, useAutoplayHold, useDocumentVisible, useInView, useMediaQuery, useScrollIdle, useSoftSwap } from './autoplay'
 import { easeSectionScroll, sectionScrollDuration, sectionScrollTarget, usePaneSettle, viewportHeight } from './motion'
+import { useDemoPageWheel } from './page-scroll'
 import { PilotButton, PilotProvider } from './PilotInquiry'
 import PrivacyPage from './PrivacyPage'
 import { useGSAP } from '@gsap/react'
@@ -1784,6 +1785,7 @@ function AboutPage() {
 export default function App() {
   useScrollIdle()
   useDocumentVisible()
+  useDemoPageWheel()
 
   return (
     <PilotProvider>
