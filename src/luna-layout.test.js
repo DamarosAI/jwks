@@ -30,4 +30,16 @@ describe('Luna workspace', () => {
     assert.match(app, /querySelectorAll\('\.luna-finding-head, \.luna-finding-meta, \.luna-finding-note, \.luna-evidence-workspace'\)/)
     assert.match(app, /querySelectorAll\('\.luna-source-inspector > \*'\)/)
   })
+
+  it('keeps Sentinel and Luna inventories to five studies and three chain rows', () => {
+    assert.equal((app.match(/\{ id: 'NCT00000/g) || []).length, 5)
+    assert.match(app, /coverage: '9\/10'/)
+    assert.doesNotMatch(app, /coverage: '[^']*capabilities/)
+    assert.doesNotMatch(app, /END-155/)
+    assert.doesNotMatch(app, /type: 'WORKLIST WRITE'/)
+    assert.match(app, /source: '10:02 - signed'/)
+    assert.match(css, /#root \.agent-console \.agent-sentinel-workbench \.sentinel-studies button \{[\s\S]*?flex:\s*0 0 auto;[\s\S]*?min-height:\s*70px;/)
+    assert.match(css, /#root \.agent-console \.agent-sentinel-workbench \.sentinel-studies button small \{[\s\S]*?white-space:\s*nowrap;/)
+    assert.match(css, /#root \.agent-console \.agent-luna-workbench \.luna-chain button \{[\s\S]*?min-height:\s*68px;/)
+  })
 })

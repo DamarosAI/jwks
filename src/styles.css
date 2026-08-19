@@ -13950,6 +13950,72 @@ html.is-hidden .hero-agent.is-active i,
   }
 }
 
+/* Sentinel and Luna inventories stay compact. No crushed wrap. */
+#root .agent-console .agent-sentinel-workbench .sentinel-studies {
+  justify-content: flex-start;
+  gap: 7px;
+}
+
+#root .agent-console .agent-sentinel-workbench .sentinel-studies button {
+  display: grid;
+  flex: 0 0 auto;
+  min-height: 70px;
+  height: auto;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: white;
+}
+
+#root .agent-console .agent-sentinel-workbench .sentinel-studies button.active {
+  border-color: color-mix(in srgb, var(--accent) 48%, var(--border));
+  background: color-mix(in srgb, var(--accent-soft) 28%, white);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+#root .agent-console .agent-sentinel-workbench .sentinel-studies button span {
+  gap: 2px;
+}
+
+#root .agent-console .agent-sentinel-workbench .sentinel-studies button strong {
+  overflow: hidden;
+  font-size: 0.74rem;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#root .agent-console .agent-sentinel-workbench .sentinel-studies button small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#root .agent-console .agent-luna-workbench .luna-chain {
+  gap: 8px;
+}
+
+#root .agent-console .agent-luna-workbench .luna-chain button {
+  min-height: 68px;
+  padding: 10px 11px;
+  overflow: hidden;
+}
+
+#root .agent-console .agent-luna-workbench .luna-chain button > span:nth-child(2) {
+  gap: 3px;
+}
+
+#root .agent-console .agent-luna-workbench .luna-chain button small,
+#root .agent-console .agent-luna-workbench .luna-chain button strong,
+#root .agent-console .agent-luna-workbench .luna-chain button em {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* Clip product chrome. Do not create a scrollport that eats page wheel. */
 #root :is(
   .hero-workspace,

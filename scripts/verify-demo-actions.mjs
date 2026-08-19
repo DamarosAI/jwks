@@ -65,14 +65,14 @@ if (css.includes('max-height: 124px') || css.includes('min-height: 2.08em') || c
 if (!css.includes('Luna fills leftover frame') || !css.includes('.agent-workbench.agent-luna-workbench') || !css.includes('minmax(248px, 0.7fr)') || !app.includes('luna-chain') || !css.includes('.luna-chain')) {
   throw new Error('Luna must keep a two-column rail and a cited finding')
 }
-if (!app.includes('When was Replay sealed') || !app.includes('Why is S-1066 still REVIEW') || !app.includes('CARD-184') || !app.includes('END-155') || !app.includes('luna-finding-meta') || !css.includes('.luna-finding-meta') || !app.includes('luna-citation-record') || app.includes('<strong>3</strong><span>of 9 open')) {
+if (!app.includes('When was Replay sealed') || !app.includes('Why is S-1066 still REVIEW') || !app.includes('CARD-184') || !app.includes('IMM-77') || !app.includes('luna-finding-meta') || !css.includes('.luna-finding-meta') || !app.includes('luna-citation-record') || app.includes('<strong>3</strong><span>of 9 open')) {
   throw new Error('Luna and Sentinel must keep a protocol inventory, not three stretched tiles')
 }
 if (!css.includes('.agent-console .agent-sentinel-workbench .sentinel-studies') || !app.includes('SENTINEL_STUDIES') || !app.includes('LUNA_INVESTIGATIONS')) {
   throw new Error('Luna and Sentinel left rails must be compact inventories')
 }
-if ((app.match(/\{ id: 'NCT00000/g) || []).length !== 6) {
-  throw new Error('Sentinel must keep six trial openings in the left rail')
+if ((app.match(/\{ id: 'NCT00000/g) || []).length !== 5) {
+  throw new Error('Sentinel must keep five trial openings in the left rail')
 }
 if (!app.includes("surfaceOpen ? <InlineActionPanel") || !app.includes("routeOpen ? <InlineActionPanel") || !css.includes('.sentinel-detail.is-action') || !css.includes('.quality-detail.is-action')) {
   throw new Error('Sentinel and Eye actions must replace the inspect pane, not overlay it')
