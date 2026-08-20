@@ -42,7 +42,10 @@ export function canElementScroll({
 
 export function shouldPassPageWheel(chain, deltaX, deltaY) {
   if (!chain?.length || !chain.some((node) => node.surface)) return false
-  return !chain.some((node) => canElementScroll(node, deltaX, deltaY))
+  if (chain.some((node) => canElementScroll(node, deltaX, deltaY))) return false
+  // Clip/hidden product chrome is not a scrollport. Hijacking the wheel with
+  // preventDefault + scrollBy kills trackpad momentum and feels choppy.
+  return false
 }
 
 export function pageWheelDelta(event, pageHeight = 800) {

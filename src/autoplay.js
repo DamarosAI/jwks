@@ -29,6 +29,14 @@ export function shouldPlayAutoplay({
   return !reduced && !held && inView && visible
 }
 
+export function shouldFollowDemoSelection({
+  playing = false,
+  locked = false,
+  busy = false,
+} = {}) {
+  return Boolean(playing) && !locked && !busy
+}
+
 export function nextStageIndex(current, length) {
   if (!Number.isFinite(current) || length <= 0) return 0
   return ((current + 1) % length + length) % length

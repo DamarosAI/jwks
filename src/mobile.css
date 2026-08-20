@@ -294,6 +294,10 @@
     overflow: hidden;
   }
 
+  #root .hero-workspace .obligation-detail > .pane-settle {
+    overflow: visible;
+  }
+
   #root .hero-workspace .landing-source-view {
     height: 100%;
     min-height: 0;
@@ -819,5 +823,9 @@
   #root .site-control-review {
     overflow: clip;
     overscroll-behavior: auto;
+  }
+
+  #root .hero-workspace .obligation-detail > .pane-settle {
+    overflow: visible;
   }
 }

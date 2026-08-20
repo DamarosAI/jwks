@@ -16,6 +16,7 @@ import {
   scrollingDocumentClass,
   shouldHoldAutoplayFromClick,
   shouldKeepPreviousStage,
+  shouldFollowDemoSelection,
   shouldPlayAutoplay,
   shouldRunAmbient,
 } from './autoplay.js'
@@ -76,5 +77,13 @@ describe('autoplay hold', () => {
     assert.equal(shouldKeepPreviousStage('auto', 2), true)
     assert.equal(shouldKeepPreviousStage('manual', 2), false)
     assert.equal(shouldKeepPreviousStage('auto', null), false)
+  })
+
+  it('holds a user-picked evidence obligation instead of snapping back', () => {
+    assert.equal(shouldFollowDemoSelection({ playing: true }), true)
+    assert.equal(shouldFollowDemoSelection({ playing: true, locked: true }), false)
+    assert.equal(shouldFollowDemoSelection({ playing: false }), false)
+    assert.equal(shouldFollowDemoSelection({ playing: true, busy: true }), false)
+    assert.equal(shouldFollowDemoSelection({}), false)
   })
 })

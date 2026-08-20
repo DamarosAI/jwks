@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom'
-import { AGENT_ROTATE_TICKS, AGENT_TICK_MS, HERO_STAGE_MS, HERO_TICK_MS, NARROW_VIEWPORT, autoplayIndex, nextStageIndex, shouldHoldAutoplayFromClick, shouldKeepPreviousStage, shouldPlayAutoplay, shouldRunAmbient, useAutoplayHold, useDocumentVisible, useInView, useMediaQuery, useScrollIdle, useSoftSwap } from './autoplay'
+import { AGENT_ROTATE_TICKS, AGENT_TICK_MS, HERO_STAGE_MS, HERO_TICK_MS, NARROW_VIEWPORT, autoplayIndex, nextStageIndex, shouldFollowDemoSelection, shouldHoldAutoplayFromClick, shouldKeepPreviousStage, shouldPlayAutoplay, shouldRunAmbient, useAutoplayHold, useDocumentVisible, useInView, useMediaQuery, useScrollIdle, useSoftSwap } from './autoplay'
 import { easeSectionScroll, sectionScrollDuration, sectionScrollTarget, usePaneSettle, viewportHeight } from './motion'
 import { useDemoPageWheel } from './page-scroll'
 import { PilotButton, PilotProvider } from './PilotInquiry'
@@ -616,6 +616,9 @@ function MiniRun() {
   const { isolated } = useModelPath()
   const [active, setActive] = useState(0)
   const [tick, setTick] = useState(0)
+  const [evidenceSelected, setEvidenceSelected] = useState(0)
+  const [evidenceLocked, setEvidenceLocked] = useState(false)
+  const [evidenceActed, setEvidenceActed] = useState({})
   const { held, hold } = useAutoplayHold(reduced)
   const visible = useDocumentVisible()
   const { fading, swap } = useSoftSwap(reduced)
@@ -667,7 +670,7 @@ function MiniRun() {
             <div className="hero-state-layer">
               <div className="landing-source-view">
                 {active === 0 && <ProtocolView tick={tick} onAdvance={() => selectStage(1)} />}
-                {active === 1 && <EvidenceView refreshing={false} tick={tick} onAdvance={() => selectStage(2)} />}
+                {active === 1 && <EvidenceView refreshing={false} tick={tick} playing={playing} selected={evidenceSelected} setSelected={setEvidenceSelected} locked={evidenceLocked} setLocked={setEvidenceLocked} acted={evidenceActed} setActed={setEvidenceActed} onAdvance={() => selectStage(2)} />}
                 {active === 2 && <ScreeningView tick={tick} onAdvance={() => selectStage(3)} />}
                 {active === 3 && <ResolveView tick={tick} />}
                 {active === 4 && <ReplayView tick={tick} />}
@@ -1020,16 +1023,14 @@ function ProtocolView({ tick = 0, onAdvance }) {
   )
 }
 
-function EvidenceView({ refreshing, onAdvance, tick = 0 }) {
-  const [selected, setSelected] = useState(1)
-  const [acted, setActed] = useState({})
+function EvidenceView({ refreshing, onAdvance, tick = 0, playing = false, selected, setSelected, locked, setLocked, acted, setActed }) {
   const [pendingAction, setPendingAction] = useState(null)
   const [actionComplete, setActionComplete] = useState(false)
   const settle = usePaneSettle()
   useEffect(() => {
-    if (refreshing || pendingAction) return
+    if (!shouldFollowDemoSelection({ playing, locked, busy: refreshing || Boolean(pendingAction) })) return
     setSelected(autoplayIndex(tick, 5))
-  }, [tick, refreshing, pendingAction])
+  }, [tick, playing, locked, refreshing, pendingAction, setSelected])
   if (refreshing) {
     return <div className="workspace-view workspace-loading" aria-live="polite" aria-busy="true"><span>Refreshing site evidence</span>{[1, 2, 3, 4, 5].map((item) => <i key={item} />)}</div>
   }
@@ -1040,11 +1041,21 @@ function EvidenceView({ refreshing, onAdvance, tick = 0 }) {
     { code: 'E-5.3', fact: 'At least 21-day prior-therapy washout', status: 'AMBIGUOUS', cls: 'Temporal', action: 'Open chart review', current: 'Last dose differs across two records', sources: 'MedicationAdministration - discharge summary', checked: 'Infusion 09:42 - Documents 09:43', note: 'Coordinator reconciliation required before screening can clear.' },
     { code: 'I-1.1', fact: 'Histologically confirmed NSCLC', status: 'CONFIRM', cls: 'Computable', action: 'Confirm eligibility', current: 'NSCLC confirmed by final pathology', sources: 'Pathology DiagnosticReport', checked: 'Pathology 09:43', note: 'No judgment required. Source maps directly to the rule.' },
   ]
-  const detail = obligations[selected]
+  const detail = obligations[selected] || obligations[0]
   const isActed = Boolean(acted[detail.code])
-  const actionOwner = detail.code === 'E-4.2' ? 'PI / Sub-I - Dr. M. Avdol' : detail.status === 'CONFIRM' ? 'Site coordinator - G. Freecss' : 'Site coordinator - G. Freecss'
+  const actionOwner = detail.code === 'E-4.2' ? 'PI / Sub-I - Dr. M. Avdol' : 'Site coordinator - G. Freecss'
   const actionTicket = `TASK-${detail.code.replace(/[^0-9]/g, '')}-1047`
-  const openEvidenceAction = () => { setPendingAction(detail); setActionComplete(false) }
+  const pickObligation = (index) => {
+    setLocked(true)
+    setSelected(index)
+    setPendingAction(null)
+    setActionComplete(false)
+  }
+  const openEvidenceAction = () => {
+    setLocked(true)
+    setPendingAction(detail)
+    setActionComplete(false)
+  }
   const confirmEvidenceAction = () => {
     setActed((current) => ({ ...current, [pendingAction.code]: true }))
     setActionComplete(true)
@@ -1053,7 +1064,50 @@ function EvidenceView({ refreshing, onAdvance, tick = 0 }) {
     <div className="workspace-view source-evidence-view">
       <div className="source-view-intro"><span>EVIDENCE</span><small>How <BrandName /> maps the sponsor packet onto site evidence - PHI-bounded - 09:43</small></div>
       <div className="evidence-coverage"><div><strong>Sponsor packet to evidence coverage</strong><small>Mapped 25 of 36 criteria - Protocol v2.1</small></div><div className="coverage-track"><i /><i /><i /><i /></div><footer><span className="mapped">Mapped - 25</span><span className="missing">Missing - 4</span><span className="conflict">Conflict - 3</span><span className="stale">Stale - 4</span></footer></div>
-      <div className="source-evidence-grid"><div className="obligation-list"><span>PROTOCOL OBLIGATIONS - SOURCE MAPPING</span>{obligations.map((item, index) => <button type="button" className={`${selected === index ? 'active ' : ''}${item.status.toLowerCase()}`} aria-label={`${item.code}. ${item.fact}. ${acted[item.code] ? 'ROUTED' : item.status}`} onClick={() => { setSelected(index); setPendingAction(null); setActionComplete(false) }} key={item.code}><i className="evidence-status-dot" aria-hidden="true" /><div><b>{item.code}</b><strong>{item.fact}</strong></div><footer><span>{item.cls}</span><small>{acted[item.code] ? 'Action recorded' : item.action} <ArrowRight size={12} weight="bold" /></small></footer></button>)}</div><div className="obligation-detail"><div className={settle}><header><span>{detail.code}</span><em className={detail.status.toLowerCase()}>{isActed ? 'ROUTED' : detail.status}</em><small>{detail.cls}</small></header><h4>{detail.fact}</h4><p>Maps to protocol {detail.code} - Inclusion - governs screening</p>{pendingAction?.code === detail.code ? <InlineActionPanel open complete={actionComplete} eyebrow="ACTION REQUIRED" title={detail.action} description={detail.note} rows={[["Criterion", detail.code], ["Owner", actionOwner], ["SLA", 'Review within 24 hours'], ["Record", `${actionTicket} - replay-linked`]]} confirmLabel={detail.action} successTitle="Work item created" successDescription={`${detail.action} now sits in the site worklist. Nothing left the site.`} onClose={() => setPendingAction(null)} onConfirm={confirmEvidenceAction} /> : <><dl><div><dt>CURRENT</dt><dd>{detail.current}</dd></div><div><dt>SOURCE PLANE</dt><dd>{detail.sources}</dd></div><div><dt>CHECKED</dt><dd>{detail.checked}</dd></div><div><dt>PROVENANCE</dt><dd>Human decision - source trace available</dd></div></dl><div className={`evidence-guidance ${detail.status === 'CONFIRM' ? 'computable' : ''}`}><span>{detail.status === 'CONFIRM' ? 'NO JUDGMENT REQUIRED' : 'NEXT STEP'}</span><strong>{detail.note}</strong></div>{isActed ? <div className="evidence-action-receipt"><header><span> ACTION RECORDED</span><strong>{actionTicket}</strong></header><dl><div><dt>OWNER</dt><dd>{actionOwner}</dd></div><div><dt>SLA</dt><dd>Review within 24 hours</dd></div><div><dt>REPLAY</dt><dd>Linked to {detail.code} evidence node</dd></div></dl><button type="button" onClick={onAdvance}>Continue to Screening <ArrowRight size={14} weight="bold" /></button></div> : <button className="source-primary-action" type="button" onClick={openEvidenceAction}>{detail.action}</button>}</>}</div></div></div>
+      <div className="source-evidence-grid">
+        <div className="obligation-list">
+          <span>PROTOCOL OBLIGATIONS - SOURCE MAPPING</span>
+          {obligations.map((item, index) => (
+            <button type="button" className={`${selected === index ? 'active ' : ''}${item.status.toLowerCase()}`} aria-label={`${item.code}. ${item.fact}. ${acted[item.code] ? 'ROUTED' : item.status}`} onClick={() => pickObligation(index)} key={item.code}>
+              <i className="evidence-status-dot" aria-hidden="true" />
+              <div><b>{item.code}</b><strong>{item.fact}</strong></div>
+              <footer><span>{item.cls}</span><small>{acted[item.code] ? 'Action recorded' : item.action} <ArrowRight size={12} weight="bold" /></small></footer>
+            </button>
+          ))}
+        </div>
+        <div className="obligation-detail">
+          <div className={settle}>
+            <header><span>{detail.code}</span><em className={detail.status.toLowerCase()}>{isActed ? 'ROUTED' : detail.status}</em><small>{detail.cls}</small></header>
+            <h4>{detail.fact}</h4>
+            <p>Maps to protocol {detail.code} - Inclusion - governs screening</p>
+            {pendingAction?.code === detail.code ? (
+              <InlineActionPanel open complete={actionComplete} eyebrow="ACTION REQUIRED" title={detail.action} description={detail.note} rows={[['Criterion', detail.code], ['Owner', actionOwner], ['Record', `${actionTicket} - replay-linked`]]} confirmLabel={detail.action} successTitle="Work item created" successDescription={`${detail.action} now sits in the site worklist. Nothing left the site.`} onClose={() => setPendingAction(null)} onConfirm={confirmEvidenceAction} />
+            ) : (
+              <>
+                <dl>
+                  <div><dt>CURRENT</dt><dd>{detail.current}</dd></div>
+                  <div><dt>SOURCE PLANE</dt><dd>{detail.sources}</dd></div>
+                  <div><dt>CHECKED</dt><dd>{detail.checked}</dd></div>
+                  <div><dt>PROVENANCE</dt><dd>Human decision - source trace available</dd></div>
+                </dl>
+                <div className={`evidence-guidance ${detail.status === 'CONFIRM' ? 'computable' : ''}`}><span>{detail.status === 'CONFIRM' ? 'NO JUDGMENT REQUIRED' : 'NEXT STEP'}</span><strong>{detail.note}</strong></div>
+                {isActed ? (
+                  <div className="evidence-action-receipt">
+                    <header><span>ACTION RECORDED</span><strong>{actionTicket}</strong></header>
+                    <dl>
+                      <div><dt>OWNER</dt><dd>{actionOwner}</dd></div>
+                      <div><dt>REPLAY</dt><dd>Linked to {detail.code} evidence node</dd></div>
+                    </dl>
+                    <button type="button" onClick={onAdvance}>Continue to Screening <ArrowRight size={14} weight="bold" /></button>
+                  </div>
+                ) : (
+                  <button className="source-primary-action" type="button" onClick={openEvidenceAction}>{detail.action}</button>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

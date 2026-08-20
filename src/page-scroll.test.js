@@ -39,7 +39,7 @@ describe('demo page scroll', () => {
     assert.equal(remainingScroll(800, 400, 120, -40), 120)
   })
 
-  it('lets the page take the wheel over clipped demo chrome', () => {
+  it('lets native page scroll take the wheel over clipped demo chrome', () => {
     const clip = {
       surface: true,
       overflowX: 'clip',
@@ -57,7 +57,7 @@ describe('demo page scroll', () => {
     }
     assert.equal(canElementScroll(clip, 0, 80), false)
     assert.equal(canElementScroll(hidden, 0, 80), false)
-    assert.equal(shouldPassPageWheel([hidden, clip], 0, 80), true)
+    assert.equal(shouldPassPageWheel([hidden, clip], 0, 80), false)
     assert.equal(shouldPassPageWheel([{ overflowY: 'visible' }], 0, 80), false)
   })
 
@@ -72,7 +72,7 @@ describe('demo page scroll', () => {
     const surface = { surface: true, overflowY: 'clip' }
     assert.equal(canElementScroll(pane, 0, 40), true)
     assert.equal(shouldPassPageWheel([pane, surface], 0, 40), false)
-    assert.equal(shouldPassPageWheel([{ ...pane, scrollTop: 500 }, surface], 0, 40), true)
+    assert.equal(shouldPassPageWheel([{ ...pane, scrollTop: 500 }, surface], 0, 40), false)
   })
 
   it('forwards wheel deltas to the document and skips pinch zoom', () => {
