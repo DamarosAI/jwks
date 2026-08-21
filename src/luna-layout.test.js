@@ -3,7 +3,7 @@ import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 
 const css = await readFile(new URL('./styles.css', import.meta.url), 'utf8')
-const app = await readFile(new URL('./App.jsx', import.meta.url), 'utf8')
+const app = await readFile(new URL('./templates/agents/landing-agents.jsx', import.meta.url), 'utf8')
 
 describe('Luna workspace', () => {
   it('replaces the stretched answer card with a dense evidence workspace', () => {

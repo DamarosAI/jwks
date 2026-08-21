@@ -4,6 +4,7 @@ import assert from 'node:assert/strict'
 
 const css = await readFile(new URL('./styles.css', import.meta.url), 'utf8')
 const app = await readFile(new URL('./App.jsx', import.meta.url), 'utf8')
+const agents = await readFile(new URL('./templates/agents/landing-agents.jsx', import.meta.url), 'utf8')
 
 describe('site type', () => {
   it('renders chrome at a legible control size without movement', () => {
@@ -72,7 +73,7 @@ describe('site type', () => {
     assert.doesNotMatch(app, /yPercent/)
     assert.match(app, /\.from\('\.hero-line',\s*\{[^}]*clearProps:\s*'transform'/)
     assert.match(app, /\.from\('\.hero-workspace',\s*\{[^}]*clearProps:\s*'transform'/)
-    assert.match(app, /gsap\.from\('\.agent-console',\s*\{[\s\S]*?clearProps:\s*'transform'/)
+    assert.match(agents, /gsap\.from\('\.agent-console',\s*\{[\s\S]*?clearProps:\s*'transform'/)
     assert.match(app, /gsap\.from\('\.node-system > \*',\s*\{[\s\S]*?clearProps:\s*'transform'/)
     assert.match(css, /@keyframes view-in\s*\{\s*from\s*\{\s*opacity:\s*0;\s*\}\s*\}/)
     assert.match(css, /@keyframes workspace-enter\s*\{\s*from\s*\{\s*opacity:\s*0;\s*\}\s*\}/)
@@ -82,10 +83,10 @@ describe('site type', () => {
   })
 
   it('keeps agent tabs to glyph and name like the landing chips', () => {
-    assert.match(app, /<i \/>\s*<AgentGlyph kind=\{item\.icon\} size=\{14\} \/>\s*\{item\.name\}/)
-    assert.doesNotMatch(app, /<small>\{item\.role\}<\/small>/)
-    assert.doesNotMatch(app, /AgentGlyph kind=\{agent\.icon\} size=\{15\}/)
-    assert.match(app, /<span>\{agent\.name\}<\/span><h3>\{agent\.task\}<\/h3>/)
+    assert.match(agents, /<i \/>\s*<AgentGlyph kind=\{item\.icon\} size=\{14\} \/>\s*\{item\.name\}/)
+    assert.doesNotMatch(agents, /<small>\{item\.role\}<\/small>/)
+    assert.doesNotMatch(agents, /AgentGlyph kind=\{agent\.icon\} size=\{15\}/)
+    assert.match(agents, /<span>\{agent\.name\}<\/span><h3>\{agent\.task\}<\/h3>/)
     assert.match(css, /#root \.agent-console-nav button \{\s*display:\s*grid;[\s\S]*?grid-template-columns:\s*7px 14px minmax\(0, 1fr\);/)
   })
 
@@ -98,8 +99,8 @@ describe('site type', () => {
   })
 
   it('keeps the agents console grey and colors only metric numbers', () => {
-    assert.doesNotMatch(app, /\{agent\.name\} working/)
-    assert.match(app, /function metricTone\(/)
+    assert.doesNotMatch(agents, /\{agent\.name\} working/)
+    assert.match(agents, /function metricTone\(/)
     assert.match(css, /#root \.agent-console \{\s*--agent-color:\s*var\(--muted\);/)
     assert.match(css, /#root \.agent-console \.metric-tone\.is-bad \{ color: #c23b3b; \}/)
     assert.match(css, /#root \.agent-console \.metric-tone\.is-warn \{ color: #c9a227; \}/)

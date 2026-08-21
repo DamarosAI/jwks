@@ -441,7 +441,7 @@ h2 {
     display: grid;
     width: auto;
     min-height: 46px;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     align-items: center;
     gap: 4px;
     padding: 5px 9px;
@@ -13164,7 +13164,7 @@ html.is-hidden .hero-agent.is-active i,
 @media (max-width: 900px) {
   .page-spine {
     display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 
   .page-spine button {

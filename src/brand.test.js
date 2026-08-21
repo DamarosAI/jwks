@@ -3,6 +3,7 @@ import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 
 const app = await readFile(new URL('./App.jsx', import.meta.url), 'utf8')
+const agents = await readFile(new URL('./templates/agents/landing-agents.jsx', import.meta.url), 'utf8')
 const css = await readFile(new URL('./styles.css', import.meta.url), 'utf8')
 const mobile = await readFile(new URL('./mobile.css', import.meta.url), 'utf8')
 
@@ -13,7 +14,11 @@ describe('Damaros brand mark', () => {
     assert.doesNotMatch(app, /<SectionEyebrow>Home<\/SectionEyebrow>/)
     assert.match(app, /<SectionEyebrow>Thesis<\/SectionEyebrow>/)
     assert.match(app, /<SectionEyebrow>Capacity<\/SectionEyebrow>/)
-    assert.match(app, /<SectionEyebrow>Agents<\/SectionEyebrow>/)
+    assert.doesNotMatch(app, /<SectionEyebrow>Agents<\/SectionEyebrow>/)
+    assert.doesNotMatch(app, /<AgentOperations/)
+    assert.doesNotMatch(app, /See agents work/)
+    assert.match(agents, /<SectionEyebrow>Agents<\/SectionEyebrow>/)
+    assert.match(agents, /function AgentOperations/)
     assert.match(app, /<SectionEyebrow>Control<\/SectionEyebrow>/)
     assert.match(app, /\{!about && <SectionEyebrow>Pilot<\/SectionEyebrow>\}/)
     assert.doesNotMatch(app, /<SectionEyebrow>About<\/SectionEyebrow>/)

@@ -4,6 +4,7 @@ import assert from 'node:assert/strict'
 
 const css = await readFile(new URL('./styles.css', import.meta.url), 'utf8')
 const app = await readFile(new URL('./App.jsx', import.meta.url), 'utf8')
+const agents = await readFile(new URL('./templates/agents/landing-agents.jsx', import.meta.url), 'utf8')
 
 describe('site-control workspace geometry', () => {
   it('holds one desktop height across every control and review state', () => {
@@ -74,8 +75,8 @@ describe('site-control workspace geometry', () => {
   it('keeps a model-path isolate switch in the landing sidebar', () => {
     assert.match(app, /function ModelPathSwitch\(/)
     assert.match(app, /<ModelPathSwitch \/>/)
-    assert.doesNotMatch(app.slice(app.indexOf('function AgentOperations'), app.indexOf('function SiteNodeSection')), /<ModelPathSwitch/)
-    assert.match(app, /className="agent-run-path"/)
+    assert.doesNotMatch(agents.slice(agents.indexOf('function AgentOperations')), /<ModelPathSwitch/)
+    assert.match(agents, /className="agent-run-path"/)
     assert.match(app, /role="switch"/)
     assert.match(app, /AI isolated\. No LLM or cloud inference\./)
     assert.match(app, /<small>AI CONNECTION<\/small>/)
@@ -88,7 +89,7 @@ describe('site-control workspace geometry', () => {
     assert.match(css, /#root \.model-path-switch strong,[\s\S]*?font-size:\s*0\.72rem;[\s\S]*?font-weight:\s*650;/)
     assert.doesNotMatch(css, /\.node-source-nav \.model-path-switch \{[\s\S]*?width:\s*196px/)
     assert.match(css, /\.model-path-switch\.is-isolated \.model-path-track > i/)
-    assert.match(app, /playing = !narrow && shouldPlayAutoplay\([^\n]+\) && !isolated/)
+    assert.match(agents, /playing = !narrow && shouldPlayAutoplay\([^\n]+\) && !isolated/)
   })
 
   it('keeps the inspect card on protocol rhythm without a fact slab', () => {

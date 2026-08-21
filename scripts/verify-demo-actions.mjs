@@ -3,6 +3,8 @@ import { fileURLToPath } from 'node:url'
 
 const root = fileURLToPath(new URL('../', import.meta.url))
 const app = await readFile(`${root}src/App.jsx`, 'utf8')
+const agents = await readFile(`${root}src/templates/agents/landing-agents.jsx`, 'utf8')
+const catalog = `${app}\n${agents}`
 const css = await readFile(`${root}src/styles.css`, 'utf8')
 const html = await readFile(`${root}index.html`, 'utf8')
 const vercel = await readFile(`${root}vercel.json`, 'utf8')
@@ -24,7 +26,7 @@ const requiredActions = [
 ]
 
 for (const label of requiredActions) {
-  if (!app.includes(label)) throw new Error(`Missing demo action: ${label}`)
+  if (!catalog.includes(label)) throw new Error(`Missing demo action: ${label}`)
 }
 
 for (const selector of ['source-criteria-head', 'obligation-detail', 'source-patient-detail', 'source-decision-list', 'replay-ledger']) {
@@ -35,7 +37,7 @@ if (!app.includes('setSignedDecisions') || !app.includes('resolve-signed-receipt
 if (!app.includes('InlineActionPanel') || !app.includes('Prepare sponsor-safe replay') || !app.includes('Nothing downloaded to this device')) throw new Error('Replay export must use an inline action panel')
 if (app.includes('URL.createObjectURL') || app.includes('.download =')) throw new Error('Replay preview must never download a file')
 if (app.includes('<WorkflowDialog') || app.includes('role="dialog"')) throw new Error('Workflow actions must stay inline and never open modal dialogs')
-if ((app.match(/<InlineActionPanel/g) || []).length < 5) throw new Error('Routing and request actions must use contextual inline action panels')
+if ((catalog.match(/<InlineActionPanel/g) || []).length < 5) throw new Error('Routing and request actions must use contextual inline action panels')
 
 for (const marker of ['Troponin', 'HbA1c', 'eGFR', 'FEV1', 'p-tau217']) {
   if (!app.includes(marker)) throw new Error(`Missing therapeutic-area-agnostic marker: ${marker}`)
@@ -52,7 +54,10 @@ if (!app.includes('Site-owned execution') || !app.includes('Your site makes the 
 if (app.includes('The execution record stays under site control.')) throw new Error('Old execution record headline remains')
 if (app.includes('record-spine') || css.includes('.record-spine {')) throw new Error('Site-owned execution cards must not keep a left spine')
 if (!css.includes('.record-event') || !app.includes('Replay sealed - Record intact') || !css.includes('background: var(--accent-strong)')) throw new Error('Execution record cards must stay blue and bound')
-if (!app.includes('<h2>Four agents.</h2>') || app.includes('Zero decisions.')) throw new Error('Agent heading drifted')
+if (app.includes('<AgentOperations') || app.includes('<h2>Four agents.</h2>') || app.includes('See agents work') || app.includes("['agents', 'Agents'")) {
+  throw new Error('Live landing must keep named agents parked in templates')
+}
+if (!agents.includes('<h2>Four agents.</h2>') || agents.includes('Zero decisions.')) throw new Error('Parked agent heading drifted')
 if (!css.includes('Agent workspace: one locked frame') || !css.includes('height: 780px') || !css.includes('max-height: 780px') || !css.includes('No nested scroll') || css.includes('grid-template-columns: 180px minmax(0, 1fr) 230px')) {
   throw new Error('Agent workspace must keep a locked frame and must not keep a phantom inspector column')
 }
@@ -62,22 +67,22 @@ if (css.includes('.agent-console-state { grid-template-rows: 100px') || css.incl
 if (css.includes('max-height: 124px') || css.includes('min-height: 2.08em') || css.includes('grid-template-rows: 124px minmax(0, 1fr)')) {
   throw new Error('Agent header must size to copy. A 124px lock chops Luna.')
 }
-if (!css.includes('Luna fills leftover frame') || !css.includes('.agent-workbench.agent-luna-workbench') || !css.includes('minmax(248px, 0.7fr)') || !app.includes('luna-chain') || !css.includes('.luna-chain')) {
+if (!css.includes('Luna fills leftover frame') || !css.includes('.agent-workbench.agent-luna-workbench') || !css.includes('minmax(248px, 0.7fr)') || !agents.includes('luna-chain') || !css.includes('.luna-chain')) {
   throw new Error('Luna must keep a two-column rail and a cited finding')
 }
-if (!app.includes('When was Replay sealed') || !app.includes('Why is S-1066 still REVIEW') || !app.includes('CARD-184') || !app.includes('IMM-77') || !app.includes('luna-finding-meta') || !css.includes('.luna-finding-meta') || !app.includes('luna-citation-record') || app.includes('<strong>3</strong><span>of 9 open')) {
+if (!agents.includes('When was Replay sealed') || !agents.includes('Why is S-1066 still REVIEW') || !agents.includes('CARD-184') || !agents.includes('IMM-77') || !agents.includes('luna-finding-meta') || !css.includes('.luna-finding-meta') || !agents.includes('luna-citation-record') || agents.includes('<strong>3</strong><span>of 9 open')) {
   throw new Error('Luna and Sentinel must keep a protocol inventory, not three stretched tiles')
 }
-if (!css.includes('.agent-console .agent-sentinel-workbench .sentinel-studies') || !app.includes('SENTINEL_STUDIES') || !app.includes('LUNA_INVESTIGATIONS')) {
+if (!css.includes('.agent-console .agent-sentinel-workbench .sentinel-studies') || !agents.includes('SENTINEL_STUDIES') || !agents.includes('LUNA_INVESTIGATIONS')) {
   throw new Error('Luna and Sentinel left rails must be compact inventories')
 }
-if ((app.match(/\{ id: 'NCT00000/g) || []).length !== 5) {
+if ((agents.match(/\{ id: 'NCT00000/g) || []).length !== 5) {
   throw new Error('Sentinel must keep five trial openings in the left rail')
 }
-if (!app.includes("surfaceOpen ? <InlineActionPanel") || !app.includes("routeOpen ? <InlineActionPanel") || !css.includes('.sentinel-detail.is-action') || !css.includes('.quality-detail.is-action')) {
+if (!agents.includes("surfaceOpen ? <InlineActionPanel") || !agents.includes("routeOpen ? <InlineActionPanel") || !css.includes('.sentinel-detail.is-action') || !css.includes('.quality-detail.is-action')) {
   throw new Error('Sentinel and Eye actions must replace the inspect pane, not overlay it')
 }
-if (!app.includes('agent-run-rail') || !app.includes('LIVE ACTIVITY') || !app.includes('CONTROL BOUNDARY') || !css.includes('.agent-workspace-body')) {
+if (!agents.includes('agent-run-rail') || !agents.includes('LIVE ACTIVITY') || !agents.includes('CONTROL BOUNDARY') || !css.includes('.agent-workspace-body')) {
   throw new Error('Agent workspace must keep source, activity, and authority context beside live work')
 }
 if (!app.includes('node-security-workspace') || !app.includes('Release aggregate coverage signal') || !app.includes('0 patient fields') || !css.includes('.node-control-detail')) {
@@ -93,7 +98,7 @@ if (app.includes('key={`evidence-') || app.includes('key={`screen-')) throw new 
 if (!app.includes('useAutoplayHold')) throw new Error('Demo click must hold autoplay')
 if (app.includes('TRIAL FINDER') || app.includes('HIGH-FRICTION CRITERIA')) throw new Error('Agent workspace labels must stay out of the header copy')
 
-if (!app.includes('usePaneSettle') || (app.match(/className=\{settle\}/g) || []).length < 7) {
+if (!app.includes('usePaneSettle') || (catalog.match(/className=\{settle\}/g) || []).length < 7) {
   throw new Error('Selection panes must settle inner copy on change')
 }
 if (!css.includes('@keyframes pane-settle') || !css.includes('--motion-press-in') || !css.includes('--motion-settle')) {
@@ -117,7 +122,7 @@ if (!app.includes('data-active={active}') || !css.includes('grid-template-column
 if (app.includes('<b>LLM</b>') || app.includes('LLM fetched')) {
   throw new Error('Protocol status line must not bold a single token')
 }
-if (!app.includes('autoplayIndex') || !app.includes('HERO_STAGE_MS') || !app.includes('AGENT_ROTATE_TICKS')) {
+if (!app.includes('autoplayIndex') || !app.includes('HERO_STAGE_MS') || !agents.includes('AGENT_ROTATE_TICKS')) {
   throw new Error('Landing and agent autoplay must share living clocks')
 }
 if (!app.includes('shouldPlayAutoplay') || !app.includes('useInView') || !app.includes('useScrollIdle')) {
