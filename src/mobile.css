@@ -1,9 +1,9 @@
-﻿/* Mobile miniature correction. Preserve desktop product composition and scale it. */
+/* Mobile miniature correction. Preserve desktop product composition and scale it. */
 @media (max-width: 640px) {
   html,
-  body,
-  #root,
-  #root .page-shell {
+body,
+#root,
+#root .page-shell {
     width: 100%;
     min-width: 0;
     overflow-x: clip;
@@ -59,7 +59,7 @@
   }
 
   #root .page-spine,
-  #root .page-spine.is-visible {
+#root .page-spine.is-visible {
     position: fixed;
     z-index: 20;
     top: calc(max(8px, env(safe-area-inset-top, 0px)) + 70px);
@@ -111,9 +111,9 @@
   }
 
   #root .section-eyebrow,
-  #root .landing-hero .section-eyebrow,
-  #root .thesis-section .section-eyebrow,
-  #root .final-cta .section-eyebrow {
+#root .landing-hero .section-eyebrow,
+#root .thesis-section .section-eyebrow,
+#root .final-cta .section-eyebrow {
     top: 18px;
     left: 16px;
     right: auto;
@@ -144,7 +144,7 @@
   }
 
   #root .hero-heading,
-  #root .hero-heading .hero-line {
+#root .hero-heading .hero-line {
     font-family: var(--font-display);
   }
 
@@ -175,7 +175,7 @@
   }
 
   #root .hero-actions .button,
-  #root .hero-actions .button-secondary {
+#root .hero-actions .button-secondary {
     width: 100%;
     min-width: 0;
     min-height: 46px;
@@ -256,8 +256,7 @@
   }
 
   #root .hero-workspace .hero-app-nav > strong,
-  #root .hero-workspace .hero-agent,
-  #root .hero-workspace .hero-app-nav .model-path-switch {
+#root .hero-workspace .hero-app-nav .trident-status-switch {
     display: none;
   }
 
@@ -275,7 +274,7 @@
   }
 
   #root .hero-workspace .hero-app-nav button > svg,
-  #root .hero-workspace .hero-app-nav button small {
+#root .hero-workspace .hero-app-nav button small {
     display: none;
   }
 
@@ -322,13 +321,13 @@
   }
 
   #root .hero-workspace .source-protocol-summary,
-  #root .hero-workspace .source-criteria-list,
-  #root .hero-workspace .source-amendment,
-  #root .hero-workspace .obligation-list,
-  #root .hero-workspace .evidence-coverage,
-  #root .hero-workspace .source-patient-list,
-  #root .hero-workspace .resolve-compare-bar,
-  #root .hero-workspace .replay-ledger {
+#root .hero-workspace .source-criteria-list,
+#root .hero-workspace .source-amendment,
+#root .hero-workspace .obligation-list,
+#root .hero-workspace .evidence-coverage,
+#root .hero-workspace .source-patient-list,
+#root .hero-workspace .resolve-compare-bar,
+#root .hero-workspace .replay-ledger {
     display: none;
   }
 
@@ -343,9 +342,9 @@
   }
 
   #root .hero-workspace .source-patient-detail ul,
-  #root .hero-workspace .source-records,
-  #root .hero-workspace .screen-result-pair,
-  #root .hero-workspace .recommended-action {
+#root .hero-workspace .source-records,
+#root .hero-workspace .screen-result-pair,
+#root .hero-workspace .recommended-action {
     display: none;
   }
 
@@ -358,11 +357,11 @@
     padding-block: 82px;
   }
 
-  #root :is(.thesis-head, .capacity-section .section-heading, .agent-story-heading, .node-copy) {
+  #root :is(.thesis-head, .capacity-section .section-heading, .control-copy) {
     text-align: left;
   }
 
-  #root :is(.thesis-head h2, .capacity-section .section-heading h2, .agent-story-heading h2, .node-copy h2) {
+  #root :is(.thesis-head h2, .capacity-section .section-heading h2, .control-copy h2) {
     font-family: var(--font-display);
     font-size: clamp(2.08rem, 9vw, 2.72rem);
     letter-spacing: -0.018em;
@@ -378,155 +377,27 @@
   }
 
   #root .capacity-bento > .bento-card,
-  #root .systems-banner {
+#root .systems-banner {
     border-radius: var(--card-radius);
     box-shadow: none;
   }
 
-  #root .agent-operations-section,
-  #root .node-section {
+  #root .control-section {
     padding-inline: 16px;
   }
 
-  #root .agent-story-heading {
-    padding-inline: 0;
-  }
-
-  #root .agent-story-heading .section-kicker {
-    display: block;
-  }
-
-  #root .agent-console {
-    width: 100%;
-    margin-top: 0;
-    border-radius: 18px;
-    overflow: hidden;
-    zoom: 0.42;
-  }
-
-  #root .agent-operations-section .mobile-preview-frame {
-    margin-top: 24px;
-  }
-
-  #root .agent-console-grid {
-    display: grid;
-    height: 780px;
-    min-height: 780px;
-    max-height: 780px;
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto minmax(0, 1fr);
-    overflow: hidden;
-  }
-
-  #root .agent-console-nav {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(76px, 1fr));
-    gap: 4px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding: 7px;
-    border-right: 0;
-    border-bottom: 1px solid var(--border);
-    scrollbar-width: none;
-  }
-
-  #root .agent-console-nav::-webkit-scrollbar {
-    display: none;
-  }
-
-  #root .agent-console-nav > span,
-  #root .agent-console-context,
-  #root .agent-console-nav button > i {
-    display: none;
-  }
-
-  #root .agent-console-nav button {
-    min-width: 76px;
-    min-height: 44px;
-    grid-template-columns: 12px minmax(0, 1fr);
-    justify-content: center;
-    justify-items: center;
-    gap: 6px;
-    padding: 0 8px;
-    border-radius: 9px;
-    font-size: 0.72rem;
-    text-align: center;
-  }
-
-  #root .agent-console-main {
-    height: 100%;
-    min-height: 0;
-    max-height: 100%;
-    overflow: hidden;
-    padding: 26px 24px 28px;
-  }
-
-  #root .agent-console-header {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 16px;
-  }
-
-  #root .agent-console-header h3 {
-    font-family: var(--font-display);
-    font-size: 1.36rem;
-  }
-
-  #root .agent-console-header .agent-working-state {
-    display: inline-flex;
-  }
-
-  #root .agent-header-action {
-    display: none;
-  }
-
-  #root .agent-workspace-body {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 14px;
-    overflow: hidden;
-  }
-
-  #root .agent-workspace-live,
-  #root .agent-console-inspector,
-  #root .agent-console-state {
-    height: auto;
-    min-height: 0;
-    overflow: hidden;
-  }
-
-  #root .agent-run-rail {
-    display: none;
-  }
-
-  #root .agent-workspace-live :is(.trident-workbench, .quality-signal-grid, .sentinel-grid),
-  #root .agent-workspace-live .agent-luna-workbench .luna-investigation-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  #root .agent-console .trident-list,
-  #root .agent-console .quality-list,
-  #root .agent-console .luna-evidence-workspace,
-  #root .agent-console .sentinel-studies,
-  #root .agent-console .trident-rationale,
-  #root .agent-console .eye-explanation,
-  #root .agent-console .sentinel-concepts,
-  #root .agent-console .sentinel-note {
-    display: none;
-  }
-
-  #root .node-section {
+  #root .control-section {
     display: flex;
     width: 100%;
     flex-direction: column;
     gap: 42px;
   }
 
-  #root .node-section > .mobile-preview-frame {
+  #root .control-section > .mobile-preview-frame {
     order: 2;
   }
 
-  #root .node-system {
+  #root .control-system {
     width: 100%;
     height: 680px;
     min-height: 680px;
@@ -536,19 +407,19 @@
     zoom: 0.42;
   }
 
-  #root .node-copy {
+  #root .control-copy {
     order: 1;
     min-height: 0;
     align-self: start;
     padding-inline: 0;
   }
 
-  #root .node-copy .node-facts {
+  #root .control-copy .control-facts {
     flex: 0 0 auto;
     grid-template-rows: none;
   }
 
-  #root .node-product-grid {
+  #root .control-product-grid {
     display: grid;
     height: 100%;
     min-height: 0;
@@ -558,7 +429,7 @@
     overflow: hidden;
   }
 
-  #root .node-source-nav {
+  #root .control-source-nav {
     display: flex;
     height: auto;
     min-height: 0;
@@ -570,20 +441,20 @@
     border-bottom: 1px solid var(--border);
   }
 
-  #root .node-source-nav > span,
-  #root .node-source-nav > .node-rail-foot,
-  #root .node-source-nav .node-boundary-card {
+  #root .control-source-nav > span,
+#root .control-source-nav > .control-rail-foot,
+#root .control-source-nav .control-boundary-card {
     display: none;
   }
 
-  #root .node-source-item {
+  #root .control-source-item {
     min-height: 58px;
     grid-template-columns: 18px minmax(0, 1fr) 6px;
     padding: 10px;
     border-radius: 12px;
   }
 
-  #root .node-policy-main {
+  #root .control-policy-main {
     display: flex;
     height: auto;
     min-height: 560px;
@@ -591,15 +462,15 @@
     padding: 14px 16px 16px;
   }
 
-  #root .node-policy-header {
+  #root .control-policy-header {
     align-items: center;
   }
 
-  #root .node-policy-header > em {
+  #root .control-policy-header > em {
     display: inline-flex;
   }
 
-  #root .node-security-workspace {
+  #root .control-security-workspace {
     display: block;
     min-height: 480px;
     grid-template-columns: minmax(0, 1fr);
@@ -607,17 +478,17 @@
     overflow: visible;
   }
 
-  #root .node-policy-list {
+  #root .control-policy-list {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 6px;
   }
 
-  #root .node-policy-list > span {
+  #root .control-policy-list > span {
     display: none;
   }
 
-  #root .node-policy-item {
+  #root .control-policy-item {
     min-height: 40px;
     grid-template-columns: 6px minmax(0, 1fr);
     align-content: center;
@@ -625,53 +496,53 @@
     padding: 7px 8px;
   }
 
-  #root .node-policy-item > svg,
-  #root .node-policy-item > em {
+  #root .control-policy-item > svg,
+#root .control-policy-item > em {
     display: none;
   }
 
-  #root .node-policy-item > strong {
+  #root .control-policy-item > strong {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  #root .node-system .source-protocol-summary,
-  #root .node-system .source-criteria-list {
+  #root .control-system .source-protocol-summary,
+#root .control-system .source-criteria-list {
     display: none;
   }
 
-  #root .node-control-detail,
-  #root .site-control-review,
-  #root .node-control-view {
+  #root .control-control-detail,
+#root .site-control-review,
+#root .control-control-view {
     height: 100%;
     min-height: 0;
     max-height: 100%;
     overflow: hidden;
   }
 
-  #root .node-control-detail h4,
-  #root .node-control-view > h4,
-  #root .node-control-view > p {
+  #root .control-control-detail h4,
+#root .control-control-view > h4,
+#root .control-control-view > p {
     display: block;
     min-height: 0;
     overflow: visible;
   }
 
-  #root .node-control-view .source-protocol-summary,
-  #root .node-control-view .source-criteria-list > div {
+  #root .control-control-view .source-protocol-summary,
+#root .control-control-view .source-criteria-list > div {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  #root .node-review-actions,
-  #root .node-control-view .source-criteria-head {
+  #root .control-review-actions,
+#root .control-control-view .source-criteria-head {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
   }
 
-  #root .node-review-button,
-  #root .node-ghost-button,
-  #root .node-control-view .source-criteria-head button {
+  #root .control-review-button,
+#root .control-ghost-button,
+#root .control-control-view .source-criteria-head button {
     width: 100%;
   }
 
@@ -726,8 +597,8 @@
   }
 
   #root .about-system-quote,
-  #root .founder-section blockquote,
-  #root .outcome-copy p {
+#root .founder-section blockquote,
+#root .outcome-copy p {
     font-family: var(--font-display);
   }
 
@@ -747,22 +618,21 @@
     padding: calc(env(safe-area-inset-top, 0px) + 116px) 16px 68px;
   }
 
-  #root :is(.hero-workspace, .agent-console, .node-system) *,
-  #root :is(.hero-workspace, .agent-console, .node-system) *::before,
-  #root :is(.hero-workspace, .agent-console, .node-system) *::after {
+  #root :is(.hero-workspace, .control-system) *,
+#root :is(.hero-workspace, .control-system) *::before,
+#root :is(.hero-workspace, .control-system) *::after {
     animation: none !important;
     transition-duration: 0s !important;
   }
 
-  #root :is(.window-live i, .agent-run-activity > div.active i, .node-source-item.active > i) {
+  #root :is(.window-live i, .control-source-item.active > i) {
     animation: live-pulse 1.8s ease-in-out infinite !important;
   }
 }
 
 @media (max-width: 400px) {
   #root .hero-workspace-wrap,
-  #root .agent-console,
-  #root .node-system {
+#root .control-system {
     width: 100%;
     zoom: 0.4;
   }
@@ -770,8 +640,7 @@
 
 @media (max-width: 350px) {
   #root .hero-workspace-wrap,
-  #root .agent-console,
-  #root .node-system {
+#root .control-system {
     width: 100%;
     zoom: 0.35;
   }
@@ -783,44 +652,24 @@
 
 @media (max-width: 640px) {
   /* Clip product chrome. Do not create a scrollport that eats page wheel. */
-  #root :is(
-    .hero-workspace,
-    .hero-app-grid,
-    .landing-source-view,
-    .landing-source-view .workspace-view,
-    .landing-source-demo,
-    .landing-source-demo .workspace-view,
-    .agent-console,
-    .agent-console-grid,
-    .agent-console-main,
-    .node-system,
-    .node-product-grid,
-    .node-control-detail,
-    .site-control-review,
-    .demo-product,
-    .live-workspace
-  ) {
+  #root :is(.hero-workspace, .hero-app-grid, .landing-source-view, .landing-source-view .workspace-view, .landing-source-demo, .landing-source-demo .workspace-view, .control-system, .control-product-grid, .control-control-detail, .site-control-review, .demo-product, .live-workspace) {
     overflow: clip;
     overscroll-behavior: auto;
   }
 
   #root .hero-workspace,
-  #root .hero-workspace .hero-app-grid,
-  #root .hero-workspace .landing-source-view,
-  #root .hero-workspace .landing-source-view .workspace-view,
-  #root .hero-workspace :is(.hero-app-main, .hero-state-canvas, .hero-state-layer, .landing-source-demo .pane-settle),
-  #root .hero-workspace .landing-source-demo :is(.source-protocol-view, .source-evidence-view, .source-screening-view, .source-resolve-view, .source-replay-view),
-  #root .agent-console,
-  #root .agent-console-grid,
-  #root .agent-console-main,
-  #root .agent-console-state,
-  #root .node-system,
-  #root .node-product-grid,
-  #root .node-source-nav,
-  #root .node-policy-main,
-  #root .node-security-workspace,
-  #root .node-control-detail,
-  #root .site-control-review {
+#root .hero-workspace .hero-app-grid,
+#root .hero-workspace .landing-source-view,
+#root .hero-workspace .landing-source-view .workspace-view,
+#root .hero-workspace :is(.hero-app-main, .hero-state-canvas, .hero-state-layer, .landing-source-demo .pane-settle),
+#root .hero-workspace .landing-source-demo :is(.source-protocol-view, .source-evidence-view, .source-screening-view, .source-resolve-view, .source-replay-view),
+#root .control-system,
+#root .control-product-grid,
+#root .control-source-nav,
+#root .control-policy-main,
+#root .control-security-workspace,
+#root .control-control-detail,
+#root .site-control-review {
     overflow: clip;
     overscroll-behavior: auto;
   }

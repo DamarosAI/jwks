@@ -1,4 +1,4 @@
-/* @ds-bundle: {"format":3,"namespace":"FieldDamarosDesignSystem_4f31ac","components":[{"name":"Button","sourcePath":"components/core/Button.jsx"},{"name":"Card","sourcePath":"components/core/Card.jsx"},{"name":"Eyebrow","sourcePath":"components/core/Eyebrow.jsx"},{"name":"Kbd","sourcePath":"components/core/Kbd.jsx"},{"name":"Input","sourcePath":"components/forms/Input.jsx"},{"name":"Textarea","sourcePath":"components/forms/Input.jsx"},{"name":"Select","sourcePath":"components/forms/Input.jsx"},{"name":"ReviewChip","sourcePath":"components/status/ReviewChip.jsx"},{"name":"StatusBadge","sourcePath":"components/status/StatusBadge.jsx"},{"name":"TrustPill","sourcePath":"components/status/TrustPill.jsx"},{"name":"Stepper","sourcePath":"components/workflow/Stepper.jsx"}],"sourceHashes":{"components/core/Button.jsx":"ac54e0707751","components/core/Card.jsx":"34b9d6fae95e","components/core/Eyebrow.jsx":"c23655fd3aae","components/core/Kbd.jsx":"794aa626e38e","components/forms/Input.jsx":"7c3ddd4fff6f","components/status/ReviewChip.jsx":"b2da32c7ef8d","components/status/StatusBadge.jsx":"76b3051a651b","components/status/TrustPill.jsx":"f387618fbb42","components/workflow/Stepper.jsx":"c5f845ce4ce3","ui_kits/node/NodeApp.jsx":"610d62ffb7db","ui_kits/node/NodeKit.jsx":"64bbe9aa3e4a","ui_kits/node/NodeResolve.jsx":"cdc95e8d87b3","ui_kits/node/NodeScreening.jsx":"f6065ac3a2ad"},"inlinedExternals":[],"unexposedExports":[]} */
+/* @ds-bundle: {"format":3,"namespace":"FieldDamarosDesignSystem_4f31ac","components":[{"name":"Button","sourcePath":"components/core/Button.jsx"},{"name":"Card","sourcePath":"components/core/Card.jsx"},{"name":"Eyebrow","sourcePath":"components/core/Eyebrow.jsx"},{"name":"Kbd","sourcePath":"components/core/Kbd.jsx"},{"name":"Input","sourcePath":"components/forms/Input.jsx"},{"name":"Textarea","sourcePath":"components/forms/Input.jsx"},{"name":"Select","sourcePath":"components/forms/Input.jsx"},{"name":"ReviewChip","sourcePath":"components/status/ReviewChip.jsx"},{"name":"StatusBadge","sourcePath":"components/status/StatusBadge.jsx"},{"name":"TrustPill","sourcePath":"components/status/TrustPill.jsx"},{"name":"Stepper","sourcePath":"components/workflow/Stepper.jsx"}],"sourceHashes":{"components/core/Button.jsx":"ac54e0707751","components/core/Card.jsx":"34b9d6fae95e","components/core/Eyebrow.jsx":"c23655fd3aae","components/core/Kbd.jsx":"794aa626e38e","components/forms/Input.jsx":"7c3ddd4fff6f","components/status/ReviewChip.jsx":"b2da32c7ef8d","components/status/StatusBadge.jsx":"76b3051a651b","components/status/TrustPill.jsx":"f387618fbb42","components/workflow/Stepper.jsx":"c5f845ce4ce3","ui_kits/workflow/WorkflowApp.jsx":"610d62ffb7db","ui_kits/workflow/WorkflowKit.jsx":"64bbe9aa3e4a","ui_kits/workflow/WorkflowResolve.jsx":"cdc95e8d87b3","ui_kits/workflow/WorkflowScreening.jsx":"f6065ac3a2ad"},"inlinedExternals":[],"unexposedExports":[]} */
 
 (() => {
 
@@ -740,9 +740,9 @@ function Stepper({
 Object.assign(__ds_scope, { Stepper });
 })(); } catch (e) { __ds_ns.__errors.push({ path: "components/workflow/Stepper.jsx", error: String((e && e.message) || e) }); }
 
-// ui_kits/node/NodeApp.jsx
+// ui_kits/workflow/WorkflowApp.jsx
 try { (() => {
-/* Field UI Kit - Node · the site execution room
+/* Field UI Kit - Workflow · the site execution room
  * Left spine nav (Protocol · Evidence · Screening · Resolve · Replay) - the
  * only chrome. Each step is a full-bleed operating surface:
  *   Protocol   executable criterion board
@@ -751,7 +751,7 @@ try { (() => {
  *   Resolve    coordinator cockpit
  *   Replay     audit reconstruction
  */
-const K = window.NodeKit;
+const K = window.WorkflowKit;
 const {
   ACCENT,
   PASS,
@@ -972,7 +972,7 @@ function ExecHeader({
       fontSize: 16,
       letterSpacing: "-0.01em"
     }
-  }, "Node")), /*#__PURE__*/React.createElement("div", {
+  }, "Workflow")), /*#__PURE__*/React.createElement("div", {
     style: {
       paddingLeft: 16,
       borderLeft: `1px solid ${HAIR}`,
@@ -1446,7 +1446,7 @@ function ProtocolRail({
       textTransform: "uppercase",
       color: "var(--ink-dim)"
     }
-  }, "Engine ingestion"), /*#__PURE__*/React.createElement("div", {
+  }, "Protocol ingestion"), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
       alignItems: "baseline",
@@ -2422,7 +2422,7 @@ function EvidenceModule({
   })())));
 }
 
-/* Screening lives in NodeScreening.jsx (window.NodeScreening) */
+/* Screening lives in WorkflowScreening.jsx (window.WorkflowScreening) */
 
 /* ============ REPLAY - audit reconstruction ============ */
 function ReplayModule() {
@@ -2749,7 +2749,7 @@ function ReplayModule() {
 }
 
 /* ============ app ============ */
-function NodeApp() {
+function WorkflowApp() {
   const [step, setStep] = React.useState(0);
   const [sel, setSel] = React.useState({
     criterion: "I-4.2",
@@ -2757,8 +2757,8 @@ function NodeApp() {
   });
   const [resolvedCases, setResolvedCases] = React.useState(() => new Set());
   const openStates = 13 - resolvedCases.size;
-  const Resolve = window.NodeResolve;
-  const Screening = window.NodeScreening;
+  const Resolve = window.WorkflowResolve;
+  const Screening = window.WorkflowScreening;
   let body;
   if (step === 0) body = /*#__PURE__*/React.createElement(ProtocolModule, {
     sel: sel,
@@ -2800,14 +2800,14 @@ function NodeApp() {
     openStates: openStates
   }), body));
 }
-window.NodeApp = NodeApp;
-})(); } catch (e) { __ds_ns.__errors.push({ path: "ui_kits/node/NodeApp.jsx", error: String((e && e.message) || e) }); }
+window.WorkflowApp = WorkflowApp;
+})(); } catch (e) { __ds_ns.__errors.push({ path: "ui_kits/workflow/WorkflowApp.jsx", error: String((e && e.message) || e) }); }
 
-// ui_kits/node/NodeKit.jsx
+// ui_kits/workflow/WorkflowKit.jsx
 try { (() => {
-/* Field UI Kit - Node · shared kit
+/* Field UI Kit - Workflow · shared kit
  * Constants, atoms, and the synthetic execution dataset shared by every
- * Node module. Exposed on window.NodeKit so each Babel script can read it.
+ * Workflow module. Exposed on window.WorkflowKit so each Babel script can read it.
  */
 (function () {
   const ACCENT = "#a9c0d6";
@@ -3415,7 +3415,7 @@ try { (() => {
     x: 75,
     y: 67
   }];
-  window.NodeKit = {
+  window.WorkflowKit = {
     ACCENT,
     PASS,
     REVIEW,
@@ -3442,17 +3442,17 @@ try { (() => {
     patientOf
   };
 })();
-})(); } catch (e) { __ds_ns.__errors.push({ path: "ui_kits/node/NodeKit.jsx", error: String((e && e.message) || e) }); }
+})(); } catch (e) { __ds_ns.__errors.push({ path: "ui_kits/workflow/WorkflowKit.jsx", error: String((e && e.message) || e) }); }
 
-// ui_kits/node/NodeResolve.jsx
+// ui_kits/workflow/WorkflowResolve.jsx
 try { (() => {
-/* Field UI Kit - Node · Resolve (the patient adjudication workspace)
+/* Field UI Kit - Workflow · Resolve (the patient adjudication workspace)
  * Patient-first, mirroring how a coordinator/PI actually works a screening list:
  * one candidate at a time, walk to their blocking criterion, render a verdict, commit it.
  *   LEFT   · candidate queue - stalled patients awaiting judgment (by urgency)
  *   CENTER · the selected patient - their conflict (zone 1) → the call (zone 2) → commit (zone 3)
  *   RIGHT  · this candidate's path · who else is blocked here · required role · replay impact
- * Verdicts bind to the patient, not the cluster. window.NodeResolve.
+ * Verdicts bind to the patient, not the cluster. window.WorkflowResolve.
  */
 (function () {
   // Per-candidate adjudication - what THIS patient is blocked on and what the human decides.
@@ -3693,7 +3693,7 @@ try { (() => {
     resolvedCases,
     onLock
   }) {
-    const K = window.NodeKit;
+    const K = window.WorkflowKit;
     const {
       ACCENT,
       PASS,
@@ -4666,18 +4666,18 @@ try { (() => {
       }
     }, title), children);
   }
-  window.NodeResolve = Resolve;
+  window.WorkflowResolve = Resolve;
 })();
-})(); } catch (e) { __ds_ns.__errors.push({ path: "ui_kits/node/NodeResolve.jsx", error: String((e && e.message) || e) }); }
+})(); } catch (e) { __ds_ns.__errors.push({ path: "ui_kits/workflow/WorkflowResolve.jsx", error: String((e && e.message) || e) }); }
 
-// ui_kits/node/NodeScreening.jsx
+// ui_kits/workflow/WorkflowScreening.jsx
 try { (() => {
-/* Field UI Kit - Node · Screening (gate flowchart)
+/* Field UI Kit - Workflow · Screening (gate flowchart)
  * Simple and clean: the protocol gates as nodes on one line, each showing its
  * pass · review · fail in real patient counts. The candidates a gate holds for
  * review appear as interactive dots above it - hover for the conflict, click to
  * resolve. No flow fills, no decorative dots. Deterministic engine; never a verdict.
- * window.NodeScreening.
+ * window.WorkflowScreening.
  */
 (function () {
   const GATES = [{
@@ -4714,7 +4714,7 @@ try { (() => {
     setSel,
     setStep
   }) {
-    const K = window.NodeKit;
+    const K = window.WorkflowKit;
     const {
       ACCENT,
       PASS,
@@ -5158,9 +5158,9 @@ try { (() => {
       }
     }, "Click a gate to focus \xB7 the engine renders the split, never the verdict"))));
   }
-  window.NodeScreening = Screening;
+  window.WorkflowScreening = Screening;
 })();
-})(); } catch (e) { __ds_ns.__errors.push({ path: "ui_kits/node/NodeScreening.jsx", error: String((e && e.message) || e) }); }
+})(); } catch (e) { __ds_ns.__errors.push({ path: "ui_kits/workflow/WorkflowScreening.jsx", error: String((e && e.message) || e) }); }
 
 __ds_ns.Button = __ds_scope.Button;
 

@@ -7,7 +7,7 @@
  *
  * Two real surfaces share this palette:
  *   · damaros.ai (the public field)  - jet backgrounds, Archivo
- *   · Node / Console (operator)      - near-black, denser, mono
+ *   · Damaros workflow (operator)   - near-black, denser, mono
  * Both are expressed here. Base values first, semantic aliases
  * second. The webapp-compatible aliases (--bg-base, --accent,
  * --status-*) let UI-kit recreations consume the real product
@@ -39,7 +39,7 @@
   --state-pass: #5bb98c;        /* resolution / readiness - green */
   --state-review: #d9a23e;      /* restrained amber - REVIEW */
   --state-fail: #f2566e;        /* rare red - breach / FAIL only */
-  --state-governed: #8c7cf0;    /* ultraviolet - Luna / AI provenance / ceremony */
+  --state-governed: #8c7cf0;    /* governed provenance */
   /* Operator-console brighter variants (denser instrument surfaces) */
   --state-pass-bright: #4ade80;
   --state-review-bright: #facc15;

@@ -15,13 +15,12 @@ const app = await readFile(new URL('./App.jsx', import.meta.url), 'utf8')
 const css = await readFile(new URL('./styles.css', import.meta.url), 'utf8')
 const mobile = await readFile(new URL('./mobile.css', import.meta.url), 'utf8')
 
-const CLIP_SURFACES = /#root :is\(\s*\.hero-workspace,\s*\.hero-app-grid,\s*\.landing-source-view,\s*\.landing-source-view \.workspace-view,\s*\.landing-source-demo,\s*\.landing-source-demo \.workspace-view,\s*\.agent-console,\s*\.agent-console-grid,\s*\.agent-console-main,\s*\.node-system,[\s\S]*?overflow:\s*clip;[\s\S]*?overscroll-behavior:\s*auto;/
+const CLIP_SURFACES = /#root :is\(\s*\.hero-workspace,\s*\.hero-app-grid,\s*\.landing-source-view,\s*\.landing-source-view \.workspace-view,\s*\.landing-source-demo,\s*\.landing-source-demo \.workspace-view,\s*\.control-system,[\s\S]*?overflow:\s*clip;[\s\S]*?overscroll-behavior:\s*auto;/
 
 describe('demo page scroll', () => {
   it('covers every live product surface', () => {
     assert.match(DEMO_PAGE_WHEEL_SURFACES, /\.hero-workspace/)
-    assert.match(DEMO_PAGE_WHEEL_SURFACES, /\.agent-console/)
-    assert.match(DEMO_PAGE_WHEEL_SURFACES, /\.node-system/)
+    assert.match(DEMO_PAGE_WHEEL_SURFACES, /\.control-system/)
     assert.match(DEMO_PAGE_WHEEL_SURFACES, /\.landing-source-demo/)
     assert.match(DEMO_PAGE_WHEEL_SURFACES, /\.demo-product/)
     assert.match(DEMO_PAGE_WHEEL_SURFACES, /\.live-workspace/)

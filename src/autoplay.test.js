@@ -1,8 +1,6 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 import {
-  AGENT_ROTATE_TICKS,
-  AGENT_TICK_MS,
   AUTOPLAY_RESUME_MS,
   HERO_STAGE_MS,
   HERO_TICK_MS,
@@ -32,10 +30,9 @@ describe('autoplay hold', () => {
     assert.equal(shouldHoldAutoplayFromClick(node('button')), true)
   })
 
-  it('keeps hero and agent clocks slow and even', () => {
+  it('keeps demo clocks slow and even', () => {
     assert.ok(HERO_STAGE_MS >= 14000 && HERO_STAGE_MS <= 18000 && HERO_TICK_MS >= 3200 && HERO_TICK_MS <= 4000)
     assert.ok(LIVE_STAGE_MS >= 8000 && LIVE_STAGE_MS <= 10000 && LIVE_TICK_MS <= 2200)
-    assert.ok(AGENT_TICK_MS >= 2400 && AGENT_TICK_MS <= 3200 && AGENT_ROTATE_TICKS >= 6)
     assert.ok(STAGE_FADE_MS >= 200 && STAGE_FADE_MS <= 320)
     assert.equal(nextStageIndex(4, 5), 0)
     assert.equal(nextStageIndex(0, 4), 1)

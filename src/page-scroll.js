@@ -3,8 +3,7 @@ import { useEffect } from 'react'
 /** Live product chrome. Clip-only — never a page-scroll trap. */
 export const DEMO_PAGE_WHEEL_SURFACES = [
   '.hero-workspace',
-  '.agent-console',
-  '.node-system',
+  '.control-system',
   '.landing-source-demo',
   '.demo-product',
   '.live-workspace',

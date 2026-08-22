@@ -3,7 +3,6 @@ import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 
 const app = await readFile(new URL('./App.jsx', import.meta.url), 'utf8')
-const agents = await readFile(new URL('./templates/agents/landing-agents.jsx', import.meta.url), 'utf8')
 const css = await readFile(new URL('./styles.css', import.meta.url), 'utf8')
 const mobile = await readFile(new URL('./mobile.css', import.meta.url), 'utf8')
 
@@ -14,18 +13,12 @@ describe('Damaros brand mark', () => {
     assert.doesNotMatch(app, /<SectionEyebrow>Home<\/SectionEyebrow>/)
     assert.match(app, /<SectionEyebrow>Thesis<\/SectionEyebrow>/)
     assert.match(app, /<SectionEyebrow>Capacity<\/SectionEyebrow>/)
-    assert.doesNotMatch(app, /<SectionEyebrow>Agents<\/SectionEyebrow>/)
-    assert.doesNotMatch(app, /<AgentOperations/)
-    assert.doesNotMatch(app, /See agents work/)
-    assert.match(agents, /<SectionEyebrow>Agents<\/SectionEyebrow>/)
-    assert.match(agents, /function AgentOperations/)
     assert.match(app, /<SectionEyebrow>Control<\/SectionEyebrow>/)
     assert.match(app, /\{!about && <SectionEyebrow>Pilot<\/SectionEyebrow>\}/)
     assert.doesNotMatch(app, /<SectionEyebrow>About<\/SectionEyebrow>/)
     assert.doesNotMatch(app, /<SectionEyebrow>Founder<\/SectionEyebrow>/)
     assert.doesNotMatch(app, /<SectionEyebrow>Why now<\/SectionEyebrow>/)
     assert.doesNotMatch(app, /<SectionEyebrow>People<\/SectionEyebrow>/)
-    assert.doesNotMatch(app, /section-kicker">The agents/)
     assert.match(css, /--type-eyebrow:\s*0\.92rem;/)
     assert.match(css, /\.section-eyebrow,[\s\S]*?font-family:\s*var\(--font-ui\);[\s\S]*?font-size:\s*var\(--type-eyebrow\);[\s\S]*?letter-spacing:\s*0\.16em;[\s\S]*?text-transform:\s*uppercase;/)
     assert.match(mobile, /#root \.section-eyebrow,[\s\S]*?font-family:\s*var\(--font-ui\);[\s\S]*?font-size:\s*var\(--type-eyebrow\);[\s\S]*?letter-spacing:\s*0\.16em;/)
@@ -46,17 +39,15 @@ describe('Damaros brand mark', () => {
     assert.match(app, /2026 <BrandName \/>/)
   })
 
-  it('locks landing, agents, and control frames to one static size', () => {
+  it('locks landing and control frames to one static size', () => {
     assert.match(css, /#root \.hero-workspace \{[\s\S]*?height:\s*799px;[\s\S]*?min-height:\s*799px;[\s\S]*?max-height:\s*799px;[\s\S]*?overflow:\s*hidden;/)
     assert.match(css, /#root \.hero-app-grid,[\s\S]*?height:\s*753px;[\s\S]*?min-height:\s*753px;[\s\S]*?max-height:\s*753px;/)
-    assert.match(css, /#root \.agent-console-grid \{[\s\S]*?height:\s*780px;[\s\S]*?min-height:\s*780px;[\s\S]*?max-height:\s*780px;/)
-    assert.match(css, /#root \.node-system \{[\s\S]*?height:\s*680px;[\s\S]*?min-height:\s*680px;[\s\S]*?max-height:\s*680px;/)
+    assert.match(css, /#root \.control-system \{[\s\S]*?height:\s*680px;[\s\S]*?min-height:\s*680px;[\s\S]*?max-height:\s*680px;/)
     assert.match(css, /\.landing-source-demo :is\([^)]+\) \{[\s\S]*?padding:\s*24px 26px 37px;/)
     assert.match(css, /@media \(min-width: 901px\) \{[\s\S]*?\.landing-source-demo \.source-protocol-view \{[\s\S]*?padding-bottom:\s*37px;/)
     assert.match(mobile, /#root \.hero-workspace \{[\s\S]*?height:\s*799px;[\s\S]*?max-height:\s*799px;/)
     assert.match(mobile, /#root \.hero-workspace \.hero-app-grid \{[\s\S]*?height:\s*753px;[\s\S]*?max-height:\s*753px;/)
-    assert.match(mobile, /#root \.agent-console-grid \{[\s\S]*?height:\s*780px;[\s\S]*?max-height:\s*780px;/)
-    assert.match(mobile, /#root \.node-system \{[\s\S]*?height:\s*680px;[\s\S]*?max-height:\s*680px;/)
+    assert.match(mobile, /#root \.control-system \{[\s\S]*?height:\s*680px;[\s\S]*?max-height:\s*680px;/)
     assert.doesNotMatch(css, /height:\s*790px/)
     assert.doesNotMatch(css, /min-height:\s*744px/)
     assert.doesNotMatch(css, /\.landing-source-view \.workspace-view \{[\s\S]*?min-height:\s*789px/)

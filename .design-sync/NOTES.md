@@ -42,6 +42,5 @@ which live only remotely, so pushing the bind's copies downgrades compiled outpu
     _ds_bundle.js  _ds_manifest.json  _adherence.oxlintrc.json
 
 `readme.md` is the actively-edited one (11 commits vs 3 for the rest). As of
-2026-08-04 the local copy had diverged ahead of the project's: local retires
-Console as a surface and documents the shipped Sentinel/Luna/Trident/Eye order,
-while the remote still presented Console as a co-equal surface.
+2026-08-22 local copy reflects one Damaros product language: five workflow steps and Trident as sole
+AI identity. Remote design snapshots may contain retired identity and must not override repository.

@@ -12,8 +12,7 @@ const VIEWPORTS = [
 ]
 const STATE_CONTROLS = [
   { name: 'landing-stage', selector: '.hero-app-nav button' },
-  { name: 'agent', selector: '.agent-console-nav button' },
-  { name: 'site-control', selector: '.node-policy-item' },
+  { name: 'site-control', selector: '.control-policy-item' },
 ]
 
 async function getPageTarget() {

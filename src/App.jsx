@@ -26,38 +26,38 @@ import {
 gsap.registerPlugin(ScrollTrigger, useGSAP)
 ScrollTrigger.config({ ignoreMobileResize: true })
 
-const ModelPathContext = createContext({ isolated: false, toggle() {} })
+const TridentStatusContext = createContext({ available: true, toggle() {} })
 
-function ModelPathProvider({ children }) {
-  const [isolated, setIsolated] = useState(false)
+function TridentStatusProvider({ children }) {
+  const [available, setAvailable] = useState(true)
   const value = useMemo(() => ({
-    isolated,
-    toggle: () => setIsolated((current) => !current),
-  }), [isolated])
-  return <ModelPathContext.Provider value={value}>{children}</ModelPathContext.Provider>
+    available,
+    toggle: () => setAvailable((current) => !current),
+  }), [available])
+  return <TridentStatusContext.Provider value={value}>{children}</TridentStatusContext.Provider>
 }
 
-function useModelPath() {
-  return useContext(ModelPathContext)
+function useTridentStatus() {
+  return useContext(TridentStatusContext)
 }
 
-function ModelPathSwitch() {
-  const { isolated, toggle } = useModelPath()
+function TridentStatusSwitch() {
+  const { available, toggle } = useTridentStatus()
   return (
     <button
       type="button"
-      className={`model-path-switch${isolated ? ' is-isolated' : ''}`}
+      className={`trident-status-switch${available ? '' : ' is-isolated'}`}
       role="switch"
-      aria-checked={!isolated}
-      aria-label={isolated ? 'AI isolated. No LLM or cloud inference.' : 'AI connected. No cloud inference.'}
+      aria-checked={available}
+      aria-label={available ? 'Trident available on site.' : 'Trident unavailable. New cognition blocked.'}
       onClick={toggle}
     >
       <Power size={15} />
       <span>
-        <small>AI CONNECTION</small>
-        <strong>{isolated ? 'Isolated' : 'Connected'}</strong>
+        <small>TRIDENT</small>
+        <strong>{available ? 'Available on site' : 'Unavailable'}</strong>
       </span>
-      <i className="model-path-track" aria-hidden="true"><i /></i>
+      <i className="trident-status-track" aria-hidden="true"><i /></i>
     </button>
   )
 }
@@ -176,8 +176,6 @@ const INTEGRATIONS = [
   ['Medidata', '/assets/vendor/medidata-live.png'],
   ['Cerner', '/assets/vendor/cerner.png'],
   ['REDCap', '/assets/vendor/redcap.png'],
-  ['OpenAI', '/assets/vendor/openai.png'],
-  ['Anthropic', '/assets/vendor/anthropic.png'],
 ]
 
 const HOME_SPINE = [['home', 'Home', 'Damaros'], ['thesis', 'Thesis', 'Why now'], ['capacity', 'Capacity', 'Deployment'], ['site-control', 'Control', 'Site-owned'], ['pilot', 'Pilot', 'Start here']]
@@ -479,7 +477,7 @@ function Footer() {
     <footer className="site-footer">
       <div className="footer-mark">
         <span><BrandName /></span>
-        <p>Clinical research execution infrastructure. Agents assemble. People decide.</p>
+        <p>Clinical research execution infrastructure. Trident prepares. People decide.</p>
       </div>
       <div className="footer-links">
         <NavLink to="/">Home</NavLink>
@@ -501,7 +499,7 @@ function MiniRun() {
   const reduced = useReducedMotion()
   const narrow = useMediaQuery(NARROW_VIEWPORT)
   const inView = useInView(root)
-  const { isolated } = useModelPath()
+  const { available } = useTridentStatus()
   const [active, setActive] = useState(0)
   const [tick, setTick] = useState(0)
   const [evidenceSelected, setEvidenceSelected] = useState(0)
@@ -539,7 +537,7 @@ function MiniRun() {
         <div className="mac-titlebar">
           <div className="traffic-lights" aria-hidden="true"><i /><i /><i /></div>
           <WindowBrand />
-          <span className="window-live"><i /> {isolated ? 'Models isolated' : 'Institution-held'}</span>
+          <span className="window-live"><i /> {available ? 'Trident on site' : 'New cognition blocked'}</span>
         </div>
         <div className="hero-app-grid">
         <aside className="hero-app-nav">
@@ -549,7 +547,7 @@ function MiniRun() {
               <SpineGlyph kind={step} /><span>{step}</span>
             </button>
           ))}
-          <ModelPathSwitch />
+          <TridentStatusSwitch />
         </aside>
         <div className="hero-app-main">
           <div className={`hero-state-canvas landing-source-demo${fading ? ' is-fading' : ''}`}>
@@ -740,8 +738,8 @@ function CapacityBento() {
           <cite>SCRS Site Landscape Survey 2023</cite>
         </div>
         <div className="connector-closeup">
-          <div className="connector-head"><span>Connectors</span><small>Site-controlled</small></div>
-          <div className={`integration-viewport${integrationsPlay ? '' : ' is-paused'}`} ref={integrations} aria-label="Damaros connectors">
+          <div className="connector-head"><span>Target inputs</span><small>Synthetic walkthrough</small></div>
+          <div className={`integration-viewport${integrationsPlay ? '' : ' is-paused'}`} ref={integrations} aria-label="Target source-system examples">
             <div className="integration-track">
               {[0, 1].map((group) => (
                 <div className="integration-group" aria-hidden={group === 1} key={group}>
@@ -800,7 +798,7 @@ function SiteControlReview({ control, phase, reduced, onBack, onConfirm, onRetur
   }, { scope: root, dependencies: [phase, control.record, reduced] })
 
   return (
-    <section className={`workspace-view source-protocol-view node-control-view site-control-review is-${phase}`} ref={root} role="region" aria-label={complete ? `${control.success} receipt` : control.action}>
+    <section className={`workspace-view source-protocol-view control-control-view site-control-review is-${phase}`} ref={root} role="region" aria-label={complete ? `${control.success} receipt` : control.action}>
       <div className="protocol-source-head" data-review-motion>
         <span>{complete ? 'REVIEW RECORDED' : saving ? 'WRITING TO EXECUTION RECORD' : 'SITE REVIEW'}</span>
         <em><i /> {status}</em>
@@ -869,7 +867,7 @@ function SiteControlReview({ control, phase, reduced, onBack, onConfirm, onRetur
             </section>
             <section>
               <span>CONTROL BOUNDARY</span>
-              <h5>No LLM touches patient data</h5>
+              <h5>Trident runs inside site boundary</h5>
               <p>{control.guard}</p>
               <div className="source-arm"><b>HOLD</b><span><strong>{control.path[0].value}</strong><small>{control.path[0].label}</small></span></div>
               <div className="source-arm"><b>STOP</b><span><strong>{control.path[2].value}</strong><small>{control.path[2].label}</small></span></div>
@@ -877,8 +875,8 @@ function SiteControlReview({ control, phase, reduced, onBack, onConfirm, onRetur
           </div>
           <div className="source-criteria-head" data-review-motion>
             <span>SITE REVIEW</span>
-            <div className="node-review-actions">
-              <button className="node-ghost-button" type="button" onClick={onBack}>Back</button>
+            <div className="control-review-actions">
+              <button className="control-ghost-button" type="button" onClick={onBack}>Back</button>
               <button type="button" onClick={onConfirm}>Record site review <ArrowRight size={14} weight="bold" /></button>
             </div>
           </div>
@@ -903,7 +901,7 @@ function ProtocolView({ tick = 0, onAdvance }) {
       <h4>DMR-204 - EGFR-mutant NSCLC</h4><p>NCT00000204 - Phase II - randomized 1:1 - hash aead45cf</p>
       <div className="source-amendment"><span>AMENDMENT CASCADE</span><strong>v2.0 - 04-12 <ArrowRight size={14} /> v2.1 - 06-21</strong><small>Narrowed prior-lines criterion - re-screen triggered</small></div>
       <div className="source-protocol-summary"><section><span>SPONSOR</span><h5>Meridian Oncology Therapeutics</h5><p>NCT00000204 - DMR-204 - v2.1 - Phase II</p><div><i>IN</i><span><strong>Dr. I. Netero</strong><small>Medical Monitor</small></span><i>JK</i><span><strong>J. Kujo</strong><small>Lead CRA</small></span></div></section><section><span>STUDY ARMS - LLM-PARSED FROM PACKET</span><div className="source-arm"><b>ARM A</b><span><strong>Velartinib - 80 mg PO daily</strong><small>Investigational - oral 3rd-gen EGFR-TKI</small></span></div><div className="source-arm"><b>ARM B</b><span><strong>Platinum doublet</strong><small>Comparator - standard of care</small></span></div><p>Randomized 1:1 - target n=140 - stratified by ECOG and prior lines</p></section></div>
-      <div className="source-criteria-head"><span>ELIGIBILITY - 36 CRITERIA - 25 ENGINE-MAPPED</span><button type="button" onClick={onAdvance}>Open Evidence <ArrowRight size={14} weight="bold" /></button></div>
+      <div className="source-criteria-head"><span>ELIGIBILITY - 36 CRITERIA - 25 SOURCE-MAPPED</span><button type="button" onClick={onAdvance}>Open Evidence <ArrowRight size={14} weight="bold" /></button></div>
       <div className="source-criteria-list">{criteria.map(([id, name, type], index) => <div className={index === focus ? 'is-live' : ''} key={id}><span>{id}</span><strong>{name}</strong><em>{type}</em></div>)}</div>
     </div>
   )
@@ -1075,7 +1073,7 @@ function ReplayView({ tick = 0 }) {
     { event: 'Evidence ingested', detail: 'Observation/ECOG-8841', time: '09:42', actor: 'system', id: 'EVT-1041', rows: [['Source', 'Epic FHIR R4'], ['Object', 'Observation/ECOG-8841'], ['Integrity', 'Verified - record intact']] },
     { event: 'Document indexed', detail: 'Oncology note - DocumentReference', time: '09:43', actor: 'system', id: 'EVT-1042', rows: [['Source', 'Oncology note'], ['Object', 'DocumentReference/note-2207'], ['Integrity', 'Verified - record intact']] },
     { event: 'Evidence snapshot frozen', detail: 'pop-2026-06-22 - 1,284 resources', time: '09:55', actor: 'system', id: 'EVT-1088', rows: [['Snapshot', 'pop-2026-06-22'], ['Resources', '1,284 - 25/36 mapped'], ['Cutoff', '06-22 09:54']] },
-    { event: 'Criterion evaluated', detail: 'I-4.2 ECOG - Protocol v2.1', time: '10:02', actor: 'evaluator', id: 'EVT-1108', flag: 'CONFLICT', rows: [['Engine', 'deterministic - no model'], ['Criterion', 'I-4.2 ECOG 0-1'], ['Facts used', 'structured ECOG 1 (06-18); note ECOG 2 (06-20)'], ['Result', 'REVIEW'], ['Exception', 'CONFLICTING_SOURCE'], ['Integrity', 'Verified - record intact']] },
+    { event: 'Criterion evaluated', detail: 'I-4.2 ECOG - Protocol v2.1', time: '10:02', actor: 'evaluator', id: 'EVT-1108', flag: 'CONFLICT', rows: [['Screening', 'deterministic - no model'], ['Criterion', 'I-4.2 ECOG 0-1'], ['Facts used', 'structured ECOG 1 (06-18); note ECOG 2 (06-20)'], ['Result', 'REVIEW'], ['Exception', 'CONFLICTING_SOURCE'], ['Integrity', 'Verified - record intact']] },
     { event: 'Screening evaluated', detail: '1 eligible - 4 review - 3 fail', time: '10:03', actor: 'evaluator', id: 'EVT-1110', rows: [['Protocol', 'v2.1'], ['Cohort', '8 subjects'], ['Result', '1 pass - 4 review - 3 fail']] },
     { event: 'Review opened', detail: 'Review R-884 - Screening', time: '10:04', actor: 'system', id: 'EVT-1111', rows: [['Work item', 'Review R-884'], ['Owner', 'PI / Sub-I'], ['State', 'Awaiting site judgment']] },
     { event: 'Resolve committed', detail: 'Review R-884 - PI signature', time: '14:07', actor: 'You', id: 'EVT-1207', rows: [['Decision', 'Accept note - ECOG 2'], ['Signer', 'Dr. M. Avdol - PI / Sub-I'], ['Signature', 'Ed25519 verified']] },
@@ -1096,23 +1094,22 @@ function ReplayView({ tick = 0 }) {
   )
 }
 
-function SiteNodeSection() {
+function SiteControlSection() {
   const root = useRef(null)
   const reviewTimer = useRef(0)
   const reduced = useReducedMotion()
-  const { isolated } = useModelPath()
+  const { available } = useTridentStatus()
   const [selectedControl, setSelectedControl] = useState(0)
   const [reviewPhase, setReviewPhase] = useState('idle')
   const [reviewedControls, setReviewedControls] = useState({})
   const { fading, swap } = useSoftSwap(reduced)
-  const modelStop = isolated
-    ? { label: 'MODEL', value: 'Isolated', state: 'cut' }
-    : { label: 'MODEL', value: 'Protocol text only', state: 'limited' }
+  const modelStop = available
+    ? { label: 'TRIDENT', value: 'On site', state: 'held' }
+    : { label: 'TRIDENT', value: 'Unavailable', state: 'cut' }
   const controls = [
-    { name: 'Evidence visibility', icon: ShieldCheck, policy: 'Site roles only', title: 'Evidence access boundary', meta: 'POL-018-EV4 - 7 site roles - hash-linked', description: 'Only approved site roles can open source evidence or mapped patient facts.', scope: 'FHIR resources, documents, and mapped facts', record: 'POL-018-EV4', receipt: 'REV-018-EV4-1044', recipient: '7 approved site roles', patientFields: 'Site-held', action: 'Review access boundary', decision: 'Confirm current access boundary', outcome: 'Access remains limited to 7 approved site roles. No external principal receives patient evidence.', success: 'Access review recorded', guard: 'Patient evidence stays site-held. Approved roles only.', path: [{ label: 'HOLD', value: '4 site sources', state: 'held' }, { label: 'ENGINE', value: 'Deterministic', state: 'held' }, modelStop, { label: 'ACCESS', value: '7 site roles', state: 'held' }], holdLabel: 'OPEN TO', holdings: [{ code: 'CO', name: 'Site coordinator', hold: 'Evidence and mapped facts' }, { code: 'PI', name: 'PI / sub-I', hold: 'Evidence and mapped facts' }, { code: 'CR', name: 'CRC lead', hold: 'Mapped facts only' }, { code: 'SM', name: 'Sponsor monitor', hold: 'No patient evidence' }], events: [['10:41', 'As-of ingest sealed', 'Synthetic FHIR'], ['10:43', 'Evidence visibility checked', 'POL-018-EV4']] },
+    { name: 'Evidence visibility', icon: ShieldCheck, policy: 'Site roles only', title: 'Evidence access boundary', meta: 'POL-018-EV4 - 7 site roles - hash-linked', description: 'Only approved site roles can open source evidence or mapped patient facts.', scope: 'FHIR resources, documents, and mapped facts', record: 'POL-018-EV4', receipt: 'REV-018-EV4-1044', recipient: '7 approved site roles', patientFields: 'Site-held', action: 'Review access boundary', decision: 'Confirm current access boundary', outcome: 'Access remains limited to 7 approved site roles. No external principal receives patient evidence.', success: 'Access review recorded', guard: 'Patient evidence stays site-held. Approved roles only.', path: [{ label: 'HOLD', value: '4 site sources', state: 'held' }, { label: 'SCREENING', value: 'Deterministic', state: 'held' }, modelStop, { label: 'ACCESS', value: '7 site roles', state: 'held' }], holdLabel: 'OPEN TO', holdings: [{ code: 'CO', name: 'Site coordinator', hold: 'Evidence and mapped facts' }, { code: 'PI', name: 'PI / sub-I', hold: 'Evidence and mapped facts' }, { code: 'CR', name: 'CRC lead', hold: 'Mapped facts only' }, { code: 'SM', name: 'Sponsor monitor', hold: 'No patient evidence' }], events: [['10:41', 'As-of ingest sealed', 'Synthetic FHIR'], ['10:43', 'Evidence visibility checked', 'POL-018-EV4']] },
     { name: 'Artifact release', icon: FileText, policy: 'PI or delegated signer', title: 'Sponsor artifact release', meta: 'POL-018-AR2 - Replay RPL-1047 - 0 patient fields', description: 'Replay bundles remain at the site until a PI or delegated signer releases the exact artifact.', scope: 'Replay bundle - RPL-1047', record: 'POL-018-AR2', receipt: 'REV-018-AR2-1044', recipient: 'Meridian Oncology', patientFields: '0 in sponsor artifact', action: 'Review artifact release', decision: 'Confirm delegated release authority', outcome: 'Replay remains site-held until a PI or delegated signer releases this exact artifact.', success: 'Artifact review recorded', guard: 'Replay stays site-held until a PI signs the exact artifact.', path: [{ label: 'HOLD', value: 'Replay RPL-1047', state: 'held' }, { label: 'SIGN', value: 'PI or delegate', state: 'held' }, modelStop, { label: 'EGRESS', value: '0 patient fields', state: 'held' }], holdLabel: 'HELD ARTIFACT', holdings: [{ code: 'RP', name: 'Replay RPL-1047', hold: 'Site-held bundle' }, { code: 'PI', name: 'PI roster', hold: 'Signer authority' }, { code: 'SP', name: 'Sponsor packet', hold: '0 patient fields' }, { code: 'EX', name: 'Export manifest', hold: 'Ed25519 pending' }], events: [['10:41', 'Replay bundle sealed', 'RPL-1047'], ['10:43', 'Artifact hold checked', 'POL-018-AR2']] },
-    { name: 'Network signal', icon: Database, policy: 'Aggregate coverage only', title: 'Release aggregate coverage signal', meta: 'POL-018-NS7 - Site 018 coverage - 0 patient fields', description: 'Review the exact outbound payload. Sponsor receives site capability, never patient facts.', scope: 'Protocol capability - Site 018', record: 'POL-018-NS7', receipt: 'REV-018-NS7-1044', recipient: 'Meridian Oncology', patientFields: '0 patient fields', action: 'Review signal release', decision: 'Approve aggregate-only payload', outcome: 'Coverage signal contains 0 patient fields. Site capability is the only outbound payload.', success: 'Signal review recorded', guard: 'Coverage signal carries 0 patient fields.', path: [{ label: 'HOLD', value: 'Site 018 coverage', state: 'held' }, { label: 'REDUCE', value: 'Aggregate only', state: 'held' }, modelStop, { label: 'EGRESS', value: '0 patient fields', state: 'held' }], holdLabel: 'OUTBOUND', holdings: [{ code: 'CP', name: 'Protocol capability', hold: 'Site 018 only' }, { code: 'OP', name: 'Open slots', hold: 'Aggregate count' }, { code: 'FT', name: 'Inclusion fit', hold: 'No patient rows' }, { code: 'RC', name: 'Meridian Oncology', hold: 'Recipient' }], events: [['10:41', 'Coverage graph read', 'Site 018'], ['10:43', 'Payload checked', '0 patient fields']] },
-    { name: 'Model execution', icon: Power, policy: isolated ? 'Isolated - no inference' : 'Local inference allowed', title: 'Local model attestation', meta: isolated ? 'POL-018-ME3 - Run 018-017 - path closed' : 'POL-018-ME3 - Run 018-017 - no raw egress', description: isolated ? 'Model path is isolated. No local inference and no cloud connection until a site reviewer restores the path.' : 'Model execution stays inside the institution boundary and writes only source-linked work products.', scope: 'Site node runtime - Run 018-017', record: 'POL-018-ME3', receipt: 'REV-018-ME3-1044', recipient: 'Site execution record', patientFields: 'No raw egress', action: 'Review run attestation', decision: isolated ? 'Keep model path isolated' : 'Accept local runtime attestation', outcome: isolated ? 'No model path is open. Patient evidence never entered an LLM.' : 'Run remains site-bound. Only source-linked work products enter the execution record.', success: 'Attestation review recorded', guard: isolated ? 'No LLM path. No cloud inference.' : 'Inference stays inside the institution boundary.', path: [{ label: 'HOLD', value: 'Site runtime', state: 'held' }, { label: 'ENGINE', value: 'Deterministic', state: 'held' }, modelStop, { label: 'EGRESS', value: 'No raw egress', state: 'held' }], holdLabel: 'RUNTIME', holdings: [{ code: 'RN', name: 'Run 018-017', hold: isolated ? 'Path closed' : 'Local inference' }, { code: 'TX', name: 'Protocol text', hold: isolated ? 'Not sent' : 'Allowed input' }, { code: 'PH', name: 'Patient evidence', hold: 'Never an LLM input' }, { code: 'WP', name: 'Work product', hold: 'Source-linked only' }], events: [['10:41', 'Runtime attested', 'Run 018-017'], ['10:43', 'Model boundary checked', 'POL-018-ME3']] },
+    { name: 'Trident execution', icon: Power, policy: available ? 'Required local cognition' : 'New cognition blocked', title: 'Trident attestation', meta: available ? 'POL-018-TR3 - Run 018-017 - site-local' : 'POL-018-TR3 - Run 018-017 - unavailable', description: available ? 'Trident processes authorized protocol and patient context inside institution boundary and writes source-linked work products.' : 'Trident is unavailable. New cognition-dependent work is blocked. Committed records remain readable and Replay-verifiable.', scope: 'Site runtime - Run 018-017', record: 'POL-018-TR3', receipt: 'REV-018-TR3-1044', recipient: 'Site execution record', patientFields: 'Authorized local context', action: 'Review Trident attestation', decision: available ? 'Accept local runtime attestation' : 'Acknowledge fail-closed state', outcome: available ? 'Run remains site-bound. Source-linked work products enter execution record.' : 'No fallback path activated. Existing record remains verifiable.', success: 'Attestation review recorded', guard: available ? 'Protocol and patient context remain inside institution boundary.' : 'New cognition blocked. Historical proof remains available.', path: [{ label: 'HOLD', value: 'Site runtime', state: 'held' }, { label: 'SCREENING', value: 'Deterministic', state: 'held' }, modelStop, { label: 'EGRESS', value: 'No PHI egress', state: 'held' }], holdLabel: 'RUNTIME', holdings: [{ code: 'RN', name: 'Run 018-017', hold: available ? 'Local Trident' : 'New cognition blocked' }, { code: 'TX', name: 'Protocol context', hold: available ? 'Authorized local input' : 'Queued' }, { code: 'PH', name: 'Patient context', hold: available ? 'Authorized local input' : 'Queued' }, { code: 'WP', name: 'Work product', hold: 'Source-linked only' }], events: [['10:41', 'Trident attested', 'Run 018-017'], ['10:43', 'Local boundary checked', 'POL-018-TR3']] },
   ]
   const control = controls[selectedControl]
   const completedReview = reviewedControls[control.record]
@@ -1140,14 +1137,14 @@ function SiteNodeSection() {
     }, reduced ? 120 : 900)
   }
   useEnterMotion(root, reduced, () => [
-    gsap.from('.node-copy > *', {
+    gsap.from('.control-copy > *', {
       opacity: 0,
       duration: 0.8,
       stagger: 0.12,
       clearProps: 'transform',
       scrollTrigger: { trigger: root.current, start: 'top 70%', once: true },
     }),
-    gsap.from('.node-system > *', {
+    gsap.from('.control-system > *', {
       opacity: 0,
       stagger: 0.1,
       clearProps: 'transform',
@@ -1156,19 +1153,19 @@ function SiteNodeSection() {
   ])
 
   return (
-    <section className="node-section section-space" id="site-control" ref={root}>
+    <section className="control-section section-space" id="site-control" ref={root}>
       <SectionEyebrow>Control</SectionEyebrow>
       <MobilePreviewFrame>
-      <div className="node-system" aria-label="Damaros site node control model">
-        <div className="mac-titlebar"><div className="traffic-lights" aria-hidden="true"><i /><i /><i /></div><WindowBrand /><span className="window-live"><i /> {isolated ? 'Models isolated' : 'Institution-held'}</span></div>
-        <div className="node-product-grid">
-          <aside className="node-source-nav">
+      <div className="control-system" aria-label="Damaros site control">
+        <div className="mac-titlebar"><div className="traffic-lights" aria-hidden="true"><i /><i /><i /></div><WindowBrand /><span className="window-live"><i /> {available ? 'Trident on site' : 'New cognition blocked'}</span></div>
+        <div className="control-product-grid">
+          <aside className="control-source-nav">
             <span>CONTROLS</span>
-            <div className="node-policy-list" role="tablist" aria-label="Site controls">
+            <div className="control-policy-list" role="tablist" aria-label="Site controls">
               {controls.map((item, index) => {
                 const Icon = item.icon
                 return (
-                  <button className={`node-policy-item${selectedControl === index ? ' active' : ''}${reviewedControls[item.record] ? ' is-reviewed' : ''}`} type="button" role="tab" aria-selected={selectedControl === index} aria-pressed={selectedControl === index} onClick={() => selectControl(index)} key={item.name}>
+                  <button className={`control-policy-item${selectedControl === index ? ' active' : ''}${reviewedControls[item.record] ? ' is-reviewed' : ''}`} type="button" role="tab" aria-selected={selectedControl === index} aria-pressed={selectedControl === index} onClick={() => selectControl(index)} key={item.name}>
                     <i />
                     <Icon size={14} />
                     <strong>{item.name}</strong>
@@ -1176,17 +1173,17 @@ function SiteNodeSection() {
                 )
               })}
             </div>
-            <div className="node-rail-foot">
-              <p className="node-policy-kicker">Local sources. Local signatures.</p>
-              <div className="node-boundary-card"><small>SITE 018</small><strong>Site 018 - Damaros Health</strong></div>
-              <ModelPathSwitch />
+            <div className="control-rail-foot">
+              <p className="control-policy-kicker">Local sources. Local signatures.</p>
+              <div className="control-boundary-card"><small>SITE 018</small><strong>Site 018 - Damaros Health</strong></div>
+              <TridentStatusSwitch />
             </div>
           </aside>
-          <div className="node-policy-main">
-            <div className="node-security-workspace">
-              <div className={`node-control-detail${fading ? ' is-fading' : ''}`}>
+          <div className="control-policy-main">
+            <div className="control-security-workspace">
+              <div className={`control-control-detail${fading ? ' is-fading' : ''}`}>
                 {reviewPhase !== 'idle' ? <SiteControlReview control={control} phase={reviewPhase} reduced={reduced} onBack={() => setReviewPhase('idle')} onConfirm={confirmControlReview} onReturn={() => setReviewPhase('idle')} /> : (
-                  <div className="workspace-view source-protocol-view node-control-view" key={control.record}>
+                  <div className="workspace-view source-protocol-view control-control-view" key={control.record}>
                     <div className="protocol-source-head">
                       <span>CONTROL</span>
                       <em className={completedReview ? 'is-reviewed' : 'is-pending'}><i /> {completedReview ? 'REVIEWED' : 'ENFORCED'}</em>
@@ -1196,7 +1193,7 @@ function SiteNodeSection() {
                     <p>{control.meta}</p>
                     <div className="source-amendment">
                       <span>CONTROL BOUNDARY</span>
-                      <strong>No LLM on patient data</strong>
+                      <strong>Site-local Trident. No PHI egress.</strong>
                       <small>{control.guard}</small>
                     </div>
                     <div className="source-protocol-summary">
@@ -1219,7 +1216,7 @@ function SiteNodeSection() {
                     </div>
                     <div className="source-criteria-head">
                       <span>LEDGER - 3 EVENTS - SITE 018</span>
-                      <button className="node-review-button" type="button" onClick={openControlReview}>{completedReview ? 'Open review receipt' : control.action} <ArrowRight size={14} weight="bold" /></button>
+                      <button className="control-review-button" type="button" onClick={openControlReview}>{completedReview ? 'Open review receipt' : control.action} <ArrowRight size={14} weight="bold" /></button>
                     </div>
                     <div className="source-criteria-list">
                       <div><span>{control.events[0][0]}</span><strong>{control.events[0][1]}</strong><em>{control.events[0][2]}</em></div>
@@ -1234,10 +1231,10 @@ function SiteNodeSection() {
         </div>
       </div>
       </MobilePreviewFrame>
-      <div className="node-copy">
+      <div className="control-copy">
         <h2><span>Evidence stays</span><span>with the site.</span></h2>
-        <p>Patient data, evidence, signatures, and execution records remain under site governance. Only aggregate, patient-free coverage signals can leave.</p>
-        <div className="node-facts">
+        <p>Patient data, Trident context, evidence, signatures, and execution records remain under site governance. Site release controls every outbound artifact.</p>
+        <div className="control-facts">
           <span><ShieldCheck size={18} /> Replayable proof</span>
           <span><Database size={18} /> Site-approved sources</span>
           <span><Fingerprint size={18} /> Attributable actions</span>
@@ -1274,7 +1271,7 @@ function HomePage() {
       <PageSpine />
       <ThesisSection />
       <CapacityBento />
-      <SiteNodeSection />
+      <SiteControlSection />
       <FinalCta />
     </main>
   )
@@ -1408,7 +1405,7 @@ export default function App() {
 
   return (
     <PilotProvider>
-      <ModelPathProvider>
+      <TridentStatusProvider>
       <div className="app-root">
         <PageReset />
         <SiteNav />
@@ -1421,7 +1418,7 @@ export default function App() {
         </Routes>
         <Footer />
       </div>
-      </ModelPathProvider>
+      </TridentStatusProvider>
     </PilotProvider>
   )
 }

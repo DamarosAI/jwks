@@ -4,7 +4,6 @@ import assert from 'node:assert/strict'
 
 const css = await readFile(new URL('./styles.css', import.meta.url), 'utf8')
 const app = await readFile(new URL('./App.jsx', import.meta.url), 'utf8')
-const agents = await readFile(new URL('./templates/agents/landing-agents.jsx', import.meta.url), 'utf8')
 
 describe('site type', () => {
   it('renders chrome at a legible control size without movement', () => {
@@ -33,12 +32,9 @@ describe('site type', () => {
     assert.match(css, /#root :is\([\s\S]*?\.wordmark,[\s\S]*?\.desktop-nav-links a,[\s\S]*?\.footer-mark p/)
     assert.match(css, /#root :is\([\s\S]*?button,[\s\S]*?letter-spacing:\s*var\(--tracking-control\);/)
     assert.match(css, /#root \.landing-source-demo :is\([\s\S]*?font-size:\s*var\(--type-product-control\);/)
-    assert.match(css, /#root :is\([\s\S]*?\.landing-source-demo,[\s\S]*?\.agent-console,[\s\S]*?\.node-system,[\s\S]*?\.node-security-workspace,[\s\S]*?\.site-control-review/)
-    assert.match(css, /#root :is\([\s\S]*?\.agent-console,[\s\S]*?small, em, time, b, dt, span[\s\S]*?font-size:\s*max\(var\(--type-product-floor\),\s*0\.8125rem\)/)
     assert.match(css, /--font-ui:\s*'Switzer', sans-serif/)
     assert.match(css, /@font-face\s*\{[\s\S]*?font-family:\s*'Switzer';[\s\S]*?switzer-400\.woff2/)
     assert.match(css, /#root,\s*#root :is\(\*\) \{\s*font-family:\s*var\(--font-ui\)/)
-    assert.match(css, /\.agent-story-heading p \{[\s\S]*?font-weight:\s*400/)
     assert.match(css, /\.hero-copy > p \{[\s\S]*?font-weight:\s*400/)
     assert.match(css, /\.about-hero-copy h1 \{[\s\S]*?font-weight:\s*400/)
     assert.match(css, /\.founder-section blockquote \{[\s\S]*?font-weight:\s*400/)
@@ -73,8 +69,7 @@ describe('site type', () => {
     assert.doesNotMatch(app, /yPercent/)
     assert.match(app, /\.from\('\.hero-line',\s*\{[^}]*clearProps:\s*'transform'/)
     assert.match(app, /\.from\('\.hero-workspace',\s*\{[^}]*clearProps:\s*'transform'/)
-    assert.match(agents, /gsap\.from\('\.agent-console',\s*\{[\s\S]*?clearProps:\s*'transform'/)
-    assert.match(app, /gsap\.from\('\.node-system > \*',\s*\{[\s\S]*?clearProps:\s*'transform'/)
+    assert.match(app, /gsap\.from\('\.control-system > \*',\s*\{[\s\S]*?clearProps:\s*'transform'/)
     assert.match(css, /@keyframes view-in\s*\{\s*from\s*\{\s*opacity:\s*0;\s*\}\s*\}/)
     assert.match(css, /@keyframes workspace-enter\s*\{\s*from\s*\{\s*opacity:\s*0;\s*\}\s*\}/)
     assert.match(css, /@keyframes inline-action-in\s*\{[\s\S]*?from\s*\{\s*opacity:\s*0;\s*\}[\s\S]*?to\s*\{\s*opacity:\s*1;\s*\}/)
@@ -82,28 +77,8 @@ describe('site type', () => {
     assert.match(css, /#root \.page-spine :is\(button, span\) \{\s*font-family:\s*'Endless', sans-serif;\s*font-weight:\s*400;/)
   })
 
-  it('keeps agent tabs to glyph and name like the landing chips', () => {
-    assert.match(agents, /<i \/>\s*<AgentGlyph kind=\{item\.icon\} size=\{14\} \/>\s*\{item\.name\}/)
-    assert.doesNotMatch(agents, /<small>\{item\.role\}<\/small>/)
-    assert.doesNotMatch(agents, /AgentGlyph kind=\{agent\.icon\} size=\{15\}/)
-    assert.match(agents, /<span>\{agent\.name\}<\/span><h3>\{agent\.task\}<\/h3>/)
-    assert.match(css, /#root \.agent-console-nav button \{\s*display:\s*grid;[\s\S]*?grid-template-columns:\s*7px 14px minmax\(0, 1fr\);/)
-  })
-
-  it('uses landing product labels as the type source for agents and security', () => {
+  it('uses landing product labels as the type source for site control', () => {
     assert.match(css, /\.protocol-source-head > span,[\s\S]*?font-size:\s*var\(--type-product-kicker\);[\s\S]*?font-weight:\s*var\(--type-product-kicker-weight\);/)
-    assert.match(css, /#root \.hero-app-nav > strong,[\s\S]*?#root \.agent-console-nav > span,[\s\S]*?#root \.node-source-nav > span \{[\s\S]*?font-size:\s*var\(--type-product-rail\);[\s\S]*?font-weight:\s*400;/)
-    assert.match(css, /#root :is\(\.landing-source-demo, \.agent-console, \.node-system[\s\S]*?\.agent-console-header > div > span,[\s\S]*?\.agent-run-object > span,[\s\S]*?\.node-custody-path small,[\s\S]*?font-size:\s*var\(--type-product-kicker\);/)
-    assert.match(css, /#root \.agent-console-header h3 \{[\s\S]*?font-size:\s*var\(--type-product-title\);[\s\S]*?font-weight:\s*400;/)
-    assert.match(css, /#root :is\(\.landing-source-demo, \.agent-console, \.node-system\) :is\([\s\S]*?\.trident-list button strong,[\s\S]*?font-size:\s*var\(--type-product-strong\);[\s\S]*?font-weight:\s*400;/)
-  })
-
-  it('keeps the agents console grey and colors only metric numbers', () => {
-    assert.doesNotMatch(agents, /\{agent\.name\} working/)
-    assert.match(agents, /function metricTone\(/)
-    assert.match(css, /#root \.agent-console \{\s*--agent-color:\s*var\(--muted\);/)
-    assert.match(css, /#root \.agent-console \.metric-tone\.is-bad \{ color: #c23b3b; \}/)
-    assert.match(css, /#root \.agent-console \.metric-tone\.is-warn \{ color: #c9a227; \}/)
-    assert.match(css, /#root \.agent-console \.metric-tone\.is-good \{ color: var\(--success\); \}/)
+    assert.match(css, /#root \.hero-app-nav > strong,[\s\S]*?#root \.control-source-nav > span \{[\s\S]*?font-size:\s*var\(--type-product-rail\);[\s\S]*?font-weight:\s*400;/)
   })
 })

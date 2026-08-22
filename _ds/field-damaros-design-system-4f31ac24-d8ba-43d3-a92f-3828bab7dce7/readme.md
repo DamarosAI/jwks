@@ -1,166 +1,66 @@
-# Field - the Damaros Design System
+# Damaros design system
 
-> **Field is the Damaros design language for live trial operations.** It treats every protocol, site, candidate, evidence gap, and human decision as part of one operational field - calm, dark, spatial, replayable, and built for trust.
+Design source for Damaros public and operator surfaces.
 
-**One field. One surface. Five steps. Every decision replayable.**
+## Product truth
 
-This project is the brand + product design system for **Damaros**. It exists so design agents can produce on-brand Damaros interfaces, decks, and assets - for production or for throwaway mocks - without re-deriving the look from scratch.
+Damaros is clinical research execution infrastructure.
 
----
+    Protocol -> Evidence -> Screening -> Resolve -> Replay
 
-## What Damaros is
+Only these five workflow steps appear as public capability names. Trident is sole AI identity.
+Nectar remains internal and must not appear in public copy.
 
-**Damaros makes trial execution visible.** Today, clinical trials run through PDFs, spreadsheets, inboxes, EHR fragments, and delayed status reports. Damaros turns that chaos into a live execution field: protocols become operable, evidence becomes traceable, screening becomes deterministic, human judgment becomes accountable, and every decision can be replayed.
+Trident is proprietary site-local model. It perceives, structures, reasons, investigates, verifies,
+explains, plans, and proposes across workflow. Authorized local patient context may enter Trident.
+No PHI leaves site boundary or enters external inference or telemetry. Trident never publishes
+Protocol, casts Screening verdict, chooses Resolve action, signs, or releases site data.
 
-Positioning line (canonical, per damaros.ai, 2026-07-27): *Clinical trial infrastructure, provable by design.* Hero and `og:description` carry this exact line. **AI-native where operations scale, deterministic where trust requires.** No model ever casts an eligibility verdict; PHI never enters an LLM path. (Prior heroes retired: *the agentic execution platform for clinical trials*; *the execution platform that makes sites trial-capable, then provable*.)
+Screening remains deterministic over verified inputs. Resolve remains human-authorized. Replay
+remains independently verifiable without model availability. Trident outage blocks new
+cognition-dependent work. It does not activate duplicate manual product path.
 
-**Protocol-first, not patient-first (2026-07-27).** Damaros answers *"does this subject provably meet this protocol, and can we defend that decision later?"* It does **not** answer *"which trials fit this patient?"* Patient-to-trial matching is conceded out loud in site copy, and Damaros is positioned as the execution and audit platform underneath whatever narrows the funnel, never an alternative to it. The lead value is **trial capability, not trial throughput**: a site becomes able to run a protocol and to prove it ran clean. Academic depth (monitoring exposure, protocol load) runs underneath that lead, not instead of it.
+## Product language
 
-Two scoping rules that go with it. **"Underneath" is integration language only** - it belongs next to Epic and Veeva, never in a hero, because underneath is a good place to sit in an integration diagram and a bad place to sit on a first screen. And **hosting posture is never claimed ahead of the artifacts**: copy reads "institution-hosted or air-gapped, managed option on request" until a managed tier has a SOC 2 report, a BAA, an incident response plan, and a subprocessor list behind it. Our own security copy says SOC 2-*aligned*; write to that, not past it.
+- Category: clinical research execution infrastructure.
+- Buyer: clinics and research sites that execute protocols and stand behind final signature.
+- Promise: protocol to proof, owned by site.
+- Vision: Any clinic. Any trial. Any patient.
+- Product nouns: Damaros, Trident, Protocol, Evidence, Screening, Resolve, Replay.
+- Internal noun: Nectar. Do not use publicly yet.
+- Use site-local, source-grounded, deterministic Screening, human-authorized Resolve, replayable
+  proof, evidence-bound, requires review, and governed.
+- Do not introduce named assistants, agents, engines, nodes, consoles, copilots, or other product
+  primitives.
+- Do not claim autonomous eligibility, patient matching, clinical efficacy, regulatory approval,
+  compliance certification, production connector maturity, or vendor partnership.
+- Public demonstrations use synthetic data and must say so.
 
-### One surface - the product grammar
+## Voice
 
-| Surface | What it is |
-|---|---|
-| **Node** | The **site platform**. Where execution happens - a care site runs the trial under local control with replayable proof. Executes the one workflow: **Protocol → Evidence → Screening → Resolve → Replay**. (Helper label: *Clinic Node*.) |
+Short, calm, declarative. Operator language over engineering language. Sentence case for headlines
+and body. Uppercase only for compact labels and PASS, REVIEW, FAIL. No emoji. Avoid em dashes.
 
-Node is the one operator surface (Console was retired as a surface; the site never names it). The live demo on damaros.ai is a single-site Node platform.
+## Visual system
 
-### The one workflow (five steps)
+- Public display: Archivo.
+- Public body: Hanken Grotesk.
+- Data register: IBM Plex Mono.
+- Ground: near-black mineral surfaces.
+- Accent: stone blue.
+- Semantic state: PASS green, REVIEW amber, FAIL red.
+- Motion shows state change, provenance, and continuity. It never decorates authority.
+- Every status color pairs with text.
+- Product screenshots use structured workspaces, fields, diffs, queues, citations, and actions.
+  Never use chatbot chrome.
 
-**Protocol** (import & lock versioned logic) → **Evidence** (site-controlled ingest, PHI trust boundary) → **Screening** (deterministic PASS / REVIEW / FAIL) → **Resolve** (the human trust boundary - commit / defer / escalate / supersede / reject) → **Replay** (reconstruct & prove what happened).
+## Components
 
-### The four agents (operator-facing, per damaros.ai)
+Button, Card, Input, Textarea, Select, StatusBadge, TrustPill, ReviewChip, Stepper, and Kbd. Stepper
+always follows five-step workflow. Components do not create product nouns.
 
-**Four agents. Zero verdicts.** *Sentinel surfaces runnable protocols. Luna reconstructs any run. Trident tunes protocols. Eye guards quality.* Each is a visible agent panel the operator works with inside Node - never a verdict-caster.
+## Capability claims
 
-Shipped order on damaros.ai is **Sentinel, Luna, Trident, Eye**: capability first (protocols the site did not know it could run), proof second (the record a sponsor reads during site selection). Keep that sequence in new copy.
-
-- **Sentinel** - *Opportunity radar.* Surfaces open protocols this site can actually run — protocols to sites, never patients to protocols. Site capacity only, no patient data.
-- **Luna** - *Audit chain.* Reconstructs any run from the chain, every row cited. Read-only on the record; PHI provably never enters it.
-- **Trident** - *At protocol.* Compiles criteria into locked logic and drafts amendments. Never commits an amendment.
-- **Eye** - *Quality signals.* Flags drift and deviations early, site-scoped, so the team can act before they harden into findings. Watches process, not people.
-
-The hard guardrails are unchanged and orthogonal to the framing: no model casts an eligibility verdict, PHI never enters a model, screening is deterministic.
-
-### Substrate (powers the product behind the surfaces)
-
-- **Operations Mesh** - governed worker substrate (Forge = evidence assembly, Router = review triage). Workers add priority/proof, never authority.
-
-### CTAs (canon, per damaros.ai)
-The primary CTA is **"Start a pilot"** (mailto). The demo link is **"See the live demo"** (it scrolls to the live platform demo on synthetic FHIR). **Do not** use "Field" anywhere in public or product copy: "Field" is the internal name of this design system only, never a product noun, label, or CTA. Never "Explore platform." Product nouns for Damaros itself are **platform** or **system** only — never "runtime" or "layer".
-
----
-
-## Sources (for whoever builds on this)
-
-This system was reverse-engineered from the real Damaros codebases. If you have access, read them to do an even better job:
-
-- **Product app + API** - `DamarosAI/damaros` (private). The Next.js operator console lives at `damaros/webapp/`; design tokens in `app/globals.css` (`:root`), component primitives in `components/design-system/`, polish styles in `app/common.css`. Canonical product language: `damaros/docs/product/PRODUCT_LANGUAGE.md` and `IDENTITY.md`.
-  → https://github.com/DamarosAI/damaros
-- **Public marketing site (damaros.ai)** - `DamarosAI/damaros-jwks` (the visual canon). Brand palette + type live in `shared/journey.css`; the hero/landing experience is `index.html`; brand assets (logos, monogram, fonts) in `assets/`.
-  → https://github.com/DamarosAI/damaros-jwks
-
-Logos and the monogram in `assets/` were copied directly from the marketing repo. Color and type tokens in `tokens/` are lifted verbatim from these two sources and unified.
-
-> Two real surfaces, two font stacks. The **public brand** (damaros.ai) uses **Archivo + Hanken Grotesk**; the **operator console** historically uses **Chakra Petch + Plus Jakarta Sans + IBM Plex Mono**. Field standardizes on the public brand canon (Archivo / Hanken / IBM Plex Mono) as the default and documents the operator alternate. All are Google Fonts - see Font note in CAVEATS.
-
----
-
-## CONTENT FUNDAMENTALS - how Damaros writes
-
-The voice is **declarative, mineral, and disciplined.** It sounds like an instrument's manual written by someone with strong convictions, not a SaaS landing page. Copy earns trust by being precise about boundaries, not by hyping.
-
-**Tone & vibe**
-- **Calm, precise, expensive.** Short declarative sentences. One idea per line. The copy *is* the product.
-- **Convictions stated flatly**, often as two-beat oppositions: *"Engine accelerates. **Humans decide.**"* · *"A verdict, **not a guess.**"* · *"Judgment, then **signature.**"* · *"Records become **evidence.**"*
-- **Honest about limits.** Damaros names what it does NOT do as confidently as what it does. *"Replay proves what happened - not clinical correctness."* *"The site becomes sponsor-legible without becoming sponsor-controlled."*
-
-**Casing & mechanics**
-- **Sentence case** for headlines and body. **UPPERCASE** reserved for: tracked eyebrows/labels, status chips, and the verdict words **PASS / REVIEW / FAIL** (always all-caps when naming the deterministic state).
-- Product nouns are **Capitalized**: Node, Protocol, Evidence, Screening, Resolve, Replay, Sentinel, Trident, Eye, Luna. (Console is retired; do not introduce it in new copy.)
-- The accent device: in a headline, the **emphasized clause is set in steel (stone-blue)**, not bold or italic. Example: "Care happens everywhere. *The trials that save lives do not.*"
-- **No emoji. Ever.** No exclamation marks. Numbers are tabular; stats cite a source in a tiny uppercase tag (e.g. "Community Oncology Alliance").
-- **No em dashes in body copy.** Use periods and commas, and let short sentences carry the rhythm. House convention: the live site copy is em-dash-free.
-
-**Person**
-- Speaks about the system in third person ("Node admits site-approved evidence…") and to the operator in second person for actions ("Commit Resolution", "Open Signal"). Avoids "we/our" marketing-speak.
-
-**Words to USE:** clinical trial infrastructure · provable by design · trial-capable · protocol-first screening · reproducible · reconstructable · Luna-governed agents (stage · assemble · accelerate · draft, never decide) · deterministic patient-path screening · permissioned execution truth · replayable proof · evidence-bound · requires review · human committed · governed · PHI-free · as-of the latest evidence ingest.
-**Words to AVOID:** "AI found this patient" · "the model decides" · "the model determines eligibility" · real-time/live screening · "regulatory-grade / FDA-ready / HIPAA compliant" (full stop) · CTMS replacement · trial matching · patient-to-trial matching · "AI trial matching" · "find eligible patients" · AI-powered · "explainable AI" · explainable · transparent · any accuracy percentage · enrollment lift · dashboard. (Full quarantine list lives in the repo's `PRODUCT_LANGUAGE.md`.)
-
-**On capability claims (the backend is the authority):** the implementation repo carries its own honest-claims contract at `damaros/docs/product/CLAIMS_BOUNDARY.md`, plus `CURRENT_STATE.md` and `KNOWN_LIMITATIONS.md`. Read it before writing anything that describes what the product *does*. The site is canon for **positioning**; the backend is canon for **capability**. Standing translations, all conformed on the site 2026-07-27 (ADR-0002 claims-conformance section): screening is **as-of the latest ingest**, never "live" or "real-time"; the shipped demo is a **walkthrough on synthetic FHIR**, not a live connected system; Sentinel surfaces **aggregate evidence-concept coverage**, never protocols a site "can run" and never anything patient-level; the engine evaluates **every compiled criterion**, not every criterion; determinism requires a pinned **as-of**; the audit chain is **SHA-256 hash-linked** and **Ed25519 signs the export**, not each row; a human commit carries a **Part 11 signature manifestation**; controls are **audit-oriented, not SOC 2 certified**; **HIPAA-aligned by design**, never "HIPAA compliant" or "HIPAA-ready"; Epic and Cerner are **SMART on FHIR sandbox-validated with no production tenant**, and no vendor partnership may be implied. FedRAMP is not claimable at all.
-
-**On mission language (any page, About included):** never frame the mission as shortening *the distance between patient and trial* or putting *the right therapeutic option within reach*. Neither trips the banned-phrase list, and both are patient-matching mission statements that contradict the homepage concession. The gap Damaros closes is between **the patients a site already treats and a protocol it can provably run**: execution should never be the reason a trial stays out of reach.
-
-**On claimed track record:** with no completed pilot, nothing on the site may imply one. The capability outcomes sit under **"built to prove"**, not "measured on", and the sponsor line reads *"a record a sponsor can verify"*, never *"accepted"*. Past tense is earned after a real sponsor interaction, same rule that keeps enrollment-lift numbers off the page.
-
-**On the PHI invariant:** *"No LLM touches patient data"* is the load-bearing architectural claim, not a security feature. Rank it above the other controls visually, never at parity with RBAC or SSO chips.
-
-**On repeated taglines:** one idea gets one wording per surface. *"Before it hardens into a finding"* belongs to Eye's agent card; the demo panel and the capability metric say the same thing differently (*"while a correction is still cheap"*, *"drift flagged while it's still fixable"*). Three identical phrasings read as boilerplate.
-
-**On "explainable" and "transparent":** both are retired. They describe a model apologizing for itself, and they concede that the decision was probabilistic. Damaros claims **reproducibility** and **reconstruction** instead: same protocol, same evidence, same verdict, and the whole chain rebuildable months later. A signed record of a probabilistic decision is not proof.
-
-**On "agentic":** the word is approved for the operations system and product copy, and it **no longer leads the hero** (ADR-0002). It was blessed when the reader was an academic center with an innovation budget; to a twelve-provider practice it is the word that closes the tab. The canonical hero is *Clinical trial infrastructure, provable by design.* "Agentic" names the operations system: Luna-governed agents stage, assemble, accelerate, and draft. It never names the verdict. The hard line holds regardless of the word: no model casts an eligibility verdict, PHI never enters a model, screening is deterministic. Use "agentic" for the platform; never say a model found a patient or decided eligibility.
-
----
-
-## VISUAL FOUNDATIONS - the look of the field
-
-> **Theme scope (2026-07-04, site-is-canon).** The shipped marketing site (damaros.ai) runs a **light cold-paper theme**: paper ground `#f8fafb`, cold ink `#10161d`, one steel signal `#2f6193`, with the demo instrument floating on it as light chrome. Per ADR-0001, the site wins where they disagree, so the dark-mineral foundations below are scoped to **operator/product surfaces** (and dark brand artifacts such as decks). Read "never a light theme" in that scope, not as a claim about damaros.ai.
-
-**Overall feeling:** a dark, mineral instrument. Geological black grounds, cold-white text, a single stone-blue signal carrying all structure. "Light is never decoration here." Spatial and quiet; nothing glows unless it means something.
-
-**Color**
-- **Backgrounds** are near-black mineral: jet `#06080b` (page ground), lifted `#0c1118`, surface `#121820`. The operator console goes fully to `#000`. Never a light theme on operator surfaces (the marketing site ships light; see the theme-scope note above).
-- **One accent:** stone-blue **steel `#A9C0D6`** (with `#7b96b2` muted operator variant). It is the signal - borders, active states, links, structure all derive from it. Deep blue `#2F5F8C` marks boundaries.
-- **Semantic color is rationed** and reserved for trial state: PASS green `#5BB98C`, REVIEW amber `#D9A23E`, FAIL red `#F2566E` ("rare red - breach only"), and governance ultraviolet `#8C7CF0` (Luna / AI provenance / ceremony). Operator surfaces use brighter variants (`#4ade80 / #facc15 / #fb7185`).
-- **Imagery vibe:** cool, dark, blue-grey. WebGL terrain and topology in the marketing site; no warm tones, no stock photography. When real imagery is needed it should read cold and structural.
-
-**Type** - Archivo (display, tight −0.03em tracking, structural), Hanken Grotesk (body, humanist, calm), IBM Plex Mono (the data register). Headlines are big and tight; body is generous (1.5–1.6 line-height); anything machine-generated is mono. Four registers: Command / Narrative / Data / Annotation.
-
-**Backgrounds & texture:** radial mineral washes (`radial-gradient(ellipse at 50% 46%, #080b10, #04060a)`), occasional 1px scanline texture at very low opacity, faint monogram watermark behind hero/closer. No busy patterns. No bright gradients - ever avoid bluish-purple SaaS gradients.
-
-**Cards & panels:** the signature is **glass** - a faint stone-blue inset ring (`inset 0 0 0 1px rgba(169,192,214,0.2)`), 4px backdrop-blur, over a near-black gradient `linear-gradient(180deg, rgba(169,192,214,0.07), rgba(169,192,214,0.02)), rgba(8,11,17,0.55)`. Brand panels round at **14–16px**; operator instrument chrome is much tighter (**2–3px**, 8px for panels). Hover lifts the card 2px and adds a deep, quiet shadow + a brighter ring - never a glow-burst.
-
-**Borders & shadows:** borders are stone-blue at low alpha (hairline `.1`, default `.18`, strong `.32`) - never pure grey or white. Shadows are deep and dark (`0 14px 40px rgba(5,7,11,0.5)`), used for elevation, not decoration. There are no soft drop-shadows on a light background - on operator surfaces there is no light background.
-
-**Motion:** fast and restrained. **Max 300ms.** Signature ease is `cubic-bezier(0.16, 1, 0.3, 1)` (a settle, no overshoot/bounce). Entrances fade + translateY(14px)→0. Hover transitions 120–140ms. The one decorative motion is a slow monogram drift (22s) and a scramble-resolve headline effect on the marketing hero. Everything respects `prefers-reduced-motion`.
-
-**Hover / press states:** hover = brighter steel border + 2px lift + quiet shadow (or a faint steel-tinted background wash `rgba(169,192,214,0.05)`). Press = no shrink; the instrument feel is firm. Links/key words get a steel underline that wipes in left-to-right with a tiny diamond "lock-in" tick.
-
-**Transparency & blur:** used deliberately - glass panels, modal scrims `rgba(2,6,12,0.72)`, sticky header washes. Blur is always small (3–8px); it signals "a surface floating over the field," not frosted-glass-everywhere.
-
-**Layout rules:** dense, grid-driven, instrument-like in the product; full-bleed and centered/spatial in the marketing site. Fixed top nav, fixed section dots, fixed progress bar on the brand site. Generous page gutters that scale fluidly. Tabular numerals everywhere numbers appear.
-
----
-
-## ICONOGRAPHY
-
-Damaros uses **thin-stroke geometric line icons drawn as inline SVG** - there is **no icon font and no emoji**. Both surfaces hand-roll small SVGs with `stroke="currentColor"`, `fill="none"`, round caps/joins, on a 16–24 viewBox:
-- Product disposition icons (PASS check, FAIL ×, REVIEW i, BLOCKED lock) use **stroke-width 1.25** on a `0 0 16 16` box.
-- Marketing CTA / nav icons (e.g. the paper-plane "Get in Touch") use **stroke-width ~1.85** on a `0 0 24 24` box.
-- Icons inherit text color (steel or cold-white) and are sized to the type beside them. Status icons always pair with a text label - **never color-only**.
-- The brand glyph is the **monogram**: two stacked rounded trapezoids forming an eye/hourglass - "the live field, mirrored." Provided in `assets/` as white PNGs and as a recolorable `currentColor` SVG.
-
-**For new work:** prefer **[Lucide](https://lucide.dev)** (CDN) - it matches the brand's thin, geometric, round-cap line style almost exactly. Set `stroke-width: 1.5–1.75` and `color` to a Field token. This is a documented *substitution* (the real product hand-draws its few icons); flag if pixel-exact fidelity to a specific product glyph is required. Never substitute filled/duotone icon sets or emoji.
-
----
-
-## CONTENT INDEX - what's in this system
-
-- **`styles.css`** - global entry point (imports only). Consumers link this.
-- **`tokens/`** - `colors.css`, `typography.css`, `spacing.css`, `effects.css`, `fonts.css`.
-- **`assets/`** - Damaros logos + monogram (white PNGs, brand SVG, recolorable `currentColor` SVG), favicon.
-- **`guidelines/`** - foundation specimen cards (Colors, Type, Spacing, Brand) shown in the Design System tab.
-- **`components/`** - reusable React primitives (see below).
-- **`ui_kits/`** - full-screen product recreations: `node/` (site platform). (The retired Console kit exists upstream as reference-only; see the UI kits note below.)
-- **`SKILL.md`** - Agent-Skills wrapper so this system works in Claude Code.
-
-**Components:** Button · StatusBadge (PASS/REVIEW/FAIL/governed disposition chip) · Card (glass) · Input / Textarea / Select · Eyebrow · Stepper (the five-step spine) · TrustPill · ReviewChip · Kbd. See `components/<group>/` and each `.prompt.md`.
-
-**UI kits:** Node (Resolve workspace + Replay) - an interactive click-through where present. (The upstream Field system also carried a Console kit; Console is retired and its kit is reference-only, not a pattern for new work. Kit sources are not in this snapshot; the compiled `_ds_bundle.js` carries the Node kit only, the retired Console kit having been removed from it on 2026-07-04.)
-
----
-
-*Generated by reverse-engineering the Damaros codebases. The compiler builds `_ds_bundle.js` from `components/`; never edit that file by hand.*
+Public site owns positioning. Damaros implementation repository owns shipped capability. Describe
+unimplemented Trident behavior as direction or synthetic walkthrough until exact code and proof land.
+Never turn roadmap into shipped claim.
