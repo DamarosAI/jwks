@@ -10242,473 +10242,209 @@ html.is-hidden .clinic-node i,
   line-height: 1.45;
 }
 
-/* -- Product consoles: Trident and Nectar --
-   Not a lookalike of the workspace - the same surface. The chrome, the left
-   rail, the row rhythm, the kickers and the monogram are the landing demo's
-   own, so a reader arriving from the hero recognises the product rather than
-   an illustration of it. State advances with the scroll, never on a timer. */
+/* -- Trident and Nectar schematics --
+   Technical drawings, not product panels: orthogonal routing, hairline plot
+   grid, monospace annotation, hatched gates. Nothing here introduces a value
+   of its own - every colour, radius, weight and face is a site token, so the
+   figures sit in the same field as the bento cards and the workspace. */
 
-.pconsole {
+.dgm {
   display: flex;
   overflow: hidden;
   width: 100%;
-  height: 100%;
   flex-direction: column;
-  border-radius: 15px;
-  background: var(--surface-solid);
-}
-
-.pconsole .mac-titlebar { min-height: 40px; }
-.pconsole .window-live.is-parked i { animation: none; }
-
-.pconsole-body {
-  display: grid;
-  min-height: 0;
-  flex: 1;
-  gap: 14px;
-}
-
-.pconsole-kicker {
   margin: 0;
-  color: var(--text-soft);
-  font-size: 0.56rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
 }
 
-/* Trident */
-
-.tc-body { grid-template-columns: 196px minmax(0, 1fr); gap: 0; }
-
-.tc-rail {
+.dgm-head {
   display: flex;
-  flex-direction: column;
-  gap: 1px;
-  padding: 14px 10px;
-  border-right: 1px solid var(--border);
-  background: var(--bg);
-}
-
-.tc-rail > strong {
-  margin: 2px 10px 8px;
-  color: var(--text-soft);
-  font-size: 0.56rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-}
-
-.tc-provider {
-  position: relative;
-  display: flex;
-  min-height: 40px;
+  min-height: 52px;
   align-items: center;
-  gap: 9px;
-  padding: 0 10px;
-  border-radius: 8px;
-  color: var(--muted);
+  justify-content: space-between;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-soft);
   font-size: 0.7rem;
-  font-weight: 500;
-}
-
-.tc-provider > svg {
-  flex: 0 0 auto;
-  color: var(--faint);
-}
-
-.tc-provider > span {
-  display: grid;
-  min-width: 0;
-  gap: 1px;
-}
-
-.tc-provider small {
-  color: var(--faint);
-  font-size: 0.56rem;
-  font-weight: 500;
-}
-
-.tc-provider > em {
-  margin-left: auto;
-  color: var(--accent);
-  font-size: 0.5rem;
-  font-style: normal;
   font-weight: 700;
-  letter-spacing: 0.06em;
 }
 
-.tc-provider.active {
-  background: color-mix(in srgb, var(--accent) 8%, var(--surface-solid));
-  color: var(--text);
-  font-weight: 600;
-}
+.dgm-head small { color: var(--muted); font-size: 0.58rem; font-weight: 500; }
 
-.tc-provider.active::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 7px;
-  bottom: 7px;
-  width: 3px;
-  border-radius: 0 2px 2px 0;
-  background: var(--accent);
-}
+.dgm-frame { min-width: 0; }
 
-.tc-provider.active > svg { color: var(--accent); }
-.tc-provider.is-authority > svg { color: var(--muted); }
-.tc-provider.is-authority { color: var(--text-soft); }
-
-.tc-rail-split { margin-top: 14px !important; }
-
-.tc-rail-note {
-  margin: auto 10px 2px;
-  color: var(--faint);
-  font-size: 0.58rem;
-  line-height: 1.5;
-}
-
-.tc-main {
-  display: grid;
-  align-content: start;
-  min-width: 0;
-  gap: 13px;
-  padding: 15px 16px 16px;
-}
-
-.tc-head { display: flex; gap: 10px; align-items: flex-start; justify-content: space-between; }
-.tc-head span { display: grid; gap: 3px; min-width: 0; }
-.tc-head strong { font-size: 0.86rem; font-weight: 600; letter-spacing: -0.01em; }
-.tc-head small { color: var(--muted); font-size: 0.64rem; }
-
-.tc-status {
-  flex: none;
-  padding: 4px 9px;
-  border-radius: 6px;
-  background: var(--bg-soft);
-  color: var(--muted);
-  font-size: 0.55rem;
-  font-style: normal;
-  font-weight: 700;
-  letter-spacing: 0.07em;
-  transition: background 240ms ease, color 240ms ease;
-}
-
-.tc-status.is-valid { background: var(--success-soft); color: var(--success); }
-.tc-status.is-hold { background: var(--warning-soft); color: var(--warning); }
-.tc-status.is-signed { background: var(--success-soft); color: var(--success); }
-
-.tc-steps {
-  display: grid;
-  margin: 0;
-  padding: 0;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
-  list-style: none;
-}
-
-.tc-steps li {
-  display: grid;
-  gap: 4px;
-  padding: 7px 8px 8px;
-  border-top: 2px solid var(--border);
-  color: var(--faint);
-  font-size: 0.62rem;
-  transition: border-color 260ms ease, color 260ms ease;
-}
-
-.tc-steps b { color: var(--faint); font-size: 0.5rem; font-weight: 700; letter-spacing: 0.08em; }
-.tc-steps li.is-done { border-top-color: var(--accent); color: var(--muted); }
-.tc-steps li.is-done b { color: var(--accent); }
-.tc-steps li.is-now { border-top-color: var(--accent); color: var(--text); font-weight: 600; }
-.tc-steps li.is-now b { color: var(--accent); }
-
-.tc-checkpoint {
-  padding: 12px 14px 13px;
-  border: 1px solid var(--border);
-  border-left: 2px solid var(--border-strong);
-  border-radius: 10px;
-  background: var(--bg);
-  transition: border-color 260ms ease, background 260ms ease;
-}
-
-.tc-checkpoint.is-hold { border-left-color: var(--warning); background: color-mix(in srgb, var(--warning-soft) 42%, white); }
-.tc-checkpoint.is-signed { border-left-color: var(--success); background: color-mix(in srgb, var(--success-soft) 46%, white); }
-.tc-checkpoint.is-valid { border-left-color: var(--accent); }
-
-.tc-checkpoint dl { margin: 0; }
-
-.tc-checkpoint dl > div {
-  display: grid;
-  grid-template-columns: 78px minmax(0, 1fr);
-  gap: 12px;
-  padding: 6px 0;
-}
-
-.tc-checkpoint dl > div + div { border-top: 1px solid var(--border); }
-.tc-checkpoint dt { color: var(--muted); font-size: 0.55rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
-.tc-checkpoint dd { margin: 0; color: var(--text-soft); font-size: 0.66rem; }
-
-.tc-verdict { display: grid; gap: 3px; margin: 10px 0 0; padding-top: 10px; border-top: 1px solid var(--border); }
-.tc-verdict strong { font-size: 0.76rem; font-weight: 600; }
-.tc-verdict small { color: var(--muted); font-size: 0.62rem; line-height: 1.45; }
-.tc-checkpoint.is-hold .tc-verdict strong { color: var(--warning); }
-.tc-checkpoint.is-signed .tc-verdict strong { color: var(--success); }
-
-.tc-ledger { display: grid; gap: 3px; }
-.tc-ledger header,
-.tc-ledger > div { display: grid; grid-template-columns: minmax(0, 1fr) 64px 60px 36px; gap: 10px; align-items: center; }
-.tc-ledger header { padding: 4px 9px 0; }
-.tc-ledger header small { color: var(--faint); font-size: 0.5rem; font-weight: 700; letter-spacing: 0.08em; }
-
-.tc-ledger > div {
-  min-height: 30px;
-  padding: 0 9px;
-  border: 1px solid transparent;
-  border-radius: 8px;
-  background: var(--bg);
-  transition: border-color 260ms ease, background 260ms ease;
-}
-
-.tc-ledger > div.is-new {
-  border-color: color-mix(in srgb, var(--success) 40%, var(--border));
-  background: color-mix(in srgb, var(--success-soft) 55%, white);
-}
-
-.tc-ledger code { color: var(--text); font-family: var(--font-mono); font-size: 0.6rem; }
-.tc-ledger b { color: var(--success); font-size: 0.58rem; font-weight: 600; }
-.tc-ledger span { color: var(--muted); font-size: 0.58rem; }
-.tc-ledger time { color: var(--muted); font-family: var(--font-mono); font-size: 0.58rem; text-align: right; }
-
-/* Nectar */
-
-.nc-body { align-content: start; grid-template-rows: repeat(4, auto); padding: 15px 16px 16px; }
-
-.nc-coverage {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 4px 12px;
-  align-items: baseline;
-}
-
-.nc-coverage span { display: grid; gap: 3px; min-width: 0; }
-.nc-coverage strong { font-size: 0.86rem; font-weight: 600; letter-spacing: -0.01em; }
-.nc-coverage small { color: var(--muted); font-size: 0.64rem; }
-.nc-coverage em { color: var(--accent); font-family: var(--font-mono); font-size: 1rem; font-style: normal; font-weight: 600; }
-
-.nc-meter {
-  overflow: hidden;
-  grid-column: 1 / -1;
-  height: 4px;
-  margin-top: 9px;
-  border-radius: 2px;
-  background: var(--bg-soft);
-}
-
-.nc-meter i { display: block; height: 100%; border-radius: 2px; background: var(--accent); transition: width 620ms cubic-bezier(0.16, 1, 0.3, 1); }
-
-.nc-sites { display: grid; gap: 3px; }
-.nc-sites header,
-.nc-sites > div { display: grid; grid-template-columns: minmax(0, 1fr) 62px 74px; gap: 10px; align-items: center; }
-.nc-sites header { padding: 0 9px; }
-.nc-sites header small { color: var(--faint); font-size: 0.5rem; font-weight: 700; letter-spacing: 0.08em; }
-
-.nc-sites > div {
-  position: relative;
-  min-height: 34px;
-  padding: 0 9px;
-  border-radius: 8px;
-  transition: background 240ms ease;
-}
-
-.nc-sites > div.is-active {
-  background: color-mix(in srgb, var(--accent) 8%, var(--surface-solid));
-}
-
-.nc-sites > div.is-active::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 6px;
-  bottom: 6px;
-  width: 3px;
-  border-radius: 0 2px 2px 0;
-  background: var(--accent);
-}
-
-.nc-sites span {
-  display: grid;
-  min-width: 0;
-  gap: 0 8px;
-  grid-template-columns: 14px minmax(0, 1fr);
-  align-items: center;
-}
-
-.nc-sites span > svg { grid-row: span 2; color: var(--faint); }
-.nc-sites > div.is-active span > svg { color: var(--accent); }
-.nc-sites strong { color: var(--text-soft); font-size: 0.7rem; font-weight: 600; }
-.nc-sites small { color: var(--faint); font-size: 0.56rem; }
-.nc-sites b { color: var(--muted); font-family: var(--font-mono); font-size: 0.62rem; font-weight: 500; }
-.nc-sites em { color: var(--accent); font-family: var(--font-mono); font-size: 0.62rem; font-style: normal; font-weight: 600; }
-
-.nc-boundary {
-  display: grid;
-  align-content: start;
-  gap: 8px;
-  padding: 12px 13px 13px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--bg);
-}
-
-/* The boundary is drawn with the mark. The monogram is two masses with a gap
-   between them, so it sits in the gap here: site above the rule, network
-   below it. */
-
-.nc-gate {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto minmax(0, 1fr) auto;
-  gap: 9px;
-  align-items: center;
-  padding: 1px 2px;
-}
-
-.nc-gate > i {
-  height: 1px;
-  border-radius: 1px;
-  background: var(--border-strong);
-  transition: background 300ms ease;
-}
-
-.nc-gate-side {
-  color: var(--faint);
-  font-size: 0.48rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.nc-gate-mark {
-  display: inline-flex;
-  gap: 6px;
-  align-items: center;
-  color: var(--muted);
-  font-size: 0.48rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  transition: color 300ms ease;
-}
-
-.nc-gate-mark img {
+.dgm-svg {
   display: block;
-  width: 11px;
-  height: 13px;
-  opacity: 0.75;
-  object-fit: contain;
-  transition: opacity 300ms ease;
+  width: 100%;
+  height: auto;
+  font-family: var(--font-ui);
+  font-synthesis: none;
 }
 
-.nc-gate.is-pass > i { background: var(--accent); }
-.nc-gate.is-pass .nc-gate-mark { color: var(--accent); }
-.nc-gate.is-pass .nc-gate-mark img { opacity: 1; }
+/* Ground */
 
-.nc-gate.is-check > i { background: color-mix(in srgb, var(--warning) 45%, var(--border-strong)); }
-.nc-gate.is-check .nc-gate-mark { color: var(--warning); }
+.dgm-grid { fill: none; stroke: var(--border); stroke-width: 1; }
+.dgm-hatch { stroke: var(--muted); stroke-width: 1.1; }
+.dgm-ground { opacity: 0.85; }
+.dgm-rule { stroke: var(--border); stroke-width: 1; }
 
-.nc-gate.is-stop > i { background: color-mix(in srgb, var(--danger) 55%, var(--border-strong)); }
-.nc-gate.is-stop .nc-gate-mark { color: var(--danger); }
+/* Structure */
 
-.nc-lane {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  min-height: 42px;
-  padding: 0 11px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--surface-solid);
-  transition: border-color 280ms ease, background 280ms ease;
+.dgm-node {
+  fill: var(--surface-solid);
+  stroke: var(--border-strong);
+  stroke-width: 1;
 }
 
-.nc-lane > svg { flex: 0 0 auto; color: var(--faint); transition: color 280ms ease; }
-.nc-lane span { display: grid; gap: 2px; min-width: 0; }
-.nc-lane strong { font-size: 0.72rem; font-weight: 600; }
-.nc-lane small { color: var(--muted); font-size: 0.58rem; }
+.dgm-node.is-key { fill: color-mix(in srgb, var(--accent) 5%, var(--surface-solid)); }
+.dgm-node.is-pending { fill: var(--bg); stroke-dasharray: 4 3; }
 
-.nc-lane em {
-  margin-left: auto;
-  padding: 3px 8px;
-  border-radius: 5px;
-  background: var(--bg-soft);
-  color: var(--muted);
-  font-size: 0.52rem;
-  font-style: normal;
+.dgm-edge {
+  fill: none;
+  stroke: var(--border-strong);
+  stroke-width: 1.25;
+  stroke-linecap: square;
+}
+
+.dgm-tick { fill: none; stroke: var(--border-strong); stroke-width: 1.25; }
+
+/* Type. Three registers only: a name, a monospace fact, a tracked micro-label. */
+
+.dgm-title { fill: var(--text); font-size: 13px; font-weight: 600; letter-spacing: -0.01em; }
+.dgm-title.is-sm { font-size: 11.5px; }
+.dgm-mono { fill: var(--faint); font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.02em; }
+.dgm-mono.is-id { fill: var(--muted); font-size: 10px; }
+.dgm-micro { fill: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: 0.12em; }
+.dgm-side { fill: var(--faint); font-size: 8px; font-weight: 700; letter-spacing: 0.14em; }
+.dgm-read { fill: var(--text-soft); font-size: 11px; font-weight: 500; }
+
+.dgm-stamp {
+  fill: var(--faint);
+  font-size: 8.5px;
   font-weight: 700;
-  letter-spacing: 0.07em;
-  transition: background 280ms ease, color 280ms ease;
+  letter-spacing: 0.12em;
+  transition: fill 260ms ease;
 }
 
-.nc-lane.is-out.is-on {
-  border-color: color-mix(in srgb, var(--accent) 44%, var(--border));
-  background: color-mix(in srgb, var(--accent) 5%, white);
+/* Chips */
+
+.dgm-chip { fill: var(--bg-soft); stroke: none; }
+.dgm-chiptext { fill: var(--muted); font-size: 8px; font-weight: 700; letter-spacing: 0.1em; }
+.dgm-chip.is-seal { fill: var(--surface-strong); }
+.dgm-chiptext.is-seal { fill: var(--text-soft); }
+
+/* Source tines */
+
+.dgm-dot { fill: var(--border-strong); transition: fill 260ms ease; }
+.dgm-source.is-active .dgm-dot { fill: var(--accent); }
+.dgm-source.is-active .dgm-node { stroke: color-mix(in srgb, var(--accent) 52%, var(--border-strong)); }
+
+/* Stage state. The stamp carries the colour, never the fill alone. */
+
+.dgm-stage .dgm-node { transition: stroke 260ms ease, fill 260ms ease; }
+.dgm-stage.is-valid .dgm-node { stroke: color-mix(in srgb, var(--success) 46%, var(--border-strong)); }
+.dgm-stage.is-valid .dgm-stamp { fill: var(--success); }
+.dgm-stage.is-run .dgm-stamp { fill: var(--accent); }
+.dgm-stage.is-hold .dgm-node { stroke: color-mix(in srgb, var(--warning) 52%, var(--border-strong)); fill: color-mix(in srgb, var(--warning-soft) 46%, var(--surface-solid)); }
+.dgm-stage.is-hold .dgm-stamp { fill: var(--warning); }
+.dgm-stage.is-signed .dgm-node { stroke: color-mix(in srgb, var(--success) 46%, var(--border-strong)); fill: color-mix(in srgb, var(--success-soft) 50%, var(--surface-solid)); }
+.dgm-stage.is-signed .dgm-stamp { fill: var(--success); }
+
+/* The boundary. Both figures draw it the same way, because it is the same
+   boundary: a double rule, a hatched gate, and the mark sitting on the line. */
+
+.dgm-boundary { stroke: var(--text); stroke-width: 1.5; transition: stroke 300ms ease; }
+.dgm-boundary-under { stroke: var(--border-strong); stroke-width: 1; transition: stroke 300ms ease; }
+.dgm-plaque { fill: var(--bg); stroke: var(--border); stroke-width: 1; }
+.dgm-micro.is-plaque { fill: var(--text-soft); transition: fill 300ms ease; }
+.dgm-mark { opacity: 0.8; transition: opacity 300ms ease; }
+.dgm-hatchgate { opacity: 0.75; }
+
+.dgm-gate.is-hold .dgm-boundary { stroke: var(--warning); }
+.dgm-gate.is-hold .dgm-micro.is-plaque { fill: var(--warning); }
+.dgm-gate.is-signed .dgm-boundary { stroke: var(--success); }
+.dgm-gate.is-signed .dgm-micro.is-plaque { fill: var(--success); }
+.dgm-gate.is-pass .dgm-boundary { stroke: var(--accent); }
+.dgm-gate.is-pass .dgm-micro.is-plaque { fill: var(--accent); }
+.dgm-gate.is-pass .dgm-mark { opacity: 1; }
+.dgm-gate.is-check .dgm-boundary { stroke: var(--warning); }
+.dgm-gate.is-check .dgm-micro.is-plaque { fill: var(--warning); }
+.dgm-gate.is-stop .dgm-boundary { stroke: var(--danger); }
+.dgm-gate.is-stop .dgm-micro.is-plaque { fill: var(--danger); }
+
+.dgm-port { stroke: none; transition: fill 300ms ease; }
+.dgm-jamb { fill: none; stroke: var(--text); stroke-width: 1.5; stroke-linecap: square; transition: stroke 300ms ease; }
+.dgm-gateway.is-open .dgm-jamb { stroke: var(--accent); }
+.dgm-gateway.is-shut .dgm-jamb { stroke: var(--danger); }
+.dgm-gateway.is-hold .dgm-jamb { stroke: var(--warning); }
+.dgm-gateway.is-signed .dgm-jamb { stroke: var(--success); }
+
+.dgm-edgelabel {
+  fill: var(--faint);
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.1em;
 }
 
-.nc-lane.is-out.is-on > svg { color: var(--accent); }
-.nc-lane.is-out.is-on em { background: var(--accent-soft); color: var(--accent-strong); }
+/* The governed path, revealed by the reader's scroll. */
 
-.nc-lane.is-blocked.is-on {
-  border-color: color-mix(in srgb, var(--danger) 42%, var(--border));
-  background: color-mix(in srgb, var(--danger) 5%, white);
+.dgm-route {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2.25;
+  stroke-linecap: square;
+  stroke-dasharray: 100;
+  transition: stroke 300ms ease;
 }
 
-.nc-lane.is-blocked.is-on > svg,
-.nc-lane.is-blocked.is-on strong { color: var(--danger); }
-.nc-lane.is-blocked.is-on em { background: color-mix(in srgb, var(--danger) 11%, white); color: var(--danger); }
+.dgm-svg.is-live .dgm-route { transition: stroke-dashoffset 640ms cubic-bezier(0.16, 1, 0.3, 1), stroke 300ms ease; }
 
-.nc-caption {
-  margin: 2px 0 0;
-  color: var(--text-soft);
-  font-size: 0.66rem;
-  font-weight: 500;
-}
+.dgm-route.is-back { stroke: var(--danger); }
+.dgm-svg.is-hold .dgm-route.is-back { stroke: var(--warning); }
 
-/* Same ledger as Trident's receipts, so the two consoles read as one product
-   and not as two drawings of one. */
+.dgm-cross { fill: none; stroke: var(--danger); stroke-width: 2.5; stroke-linecap: round; }
+.dgm-refused { fill: var(--danger); font-size: 8.5px; font-weight: 700; letter-spacing: 0.12em; }
 
-.nc-log { display: grid; gap: 3px; }
-.nc-log header,
-.nc-log > div { display: grid; grid-template-columns: minmax(0, 1fr) 74px 40px; gap: 10px; align-items: center; }
-.nc-log header { padding: 4px 9px 0; }
-.nc-log header small { color: var(--faint); font-size: 0.5rem; font-weight: 700; letter-spacing: 0.08em; }
+/* Step axis */
 
-.nc-log > div {
-  min-height: 30px;
-  padding: 0 9px;
-  border: 1px solid transparent;
-  border-radius: 8px;
-  background: var(--bg);
-  transition: border-color 280ms ease, background 280ms ease;
-}
+.dgm-step .dgm-micro { fill: var(--faint); transition: fill 260ms ease; }
+.dgm-step .dgm-tick { stroke: var(--border); transition: stroke 260ms ease; }
+.dgm-step.is-done .dgm-micro { fill: var(--muted); }
+.dgm-step.is-done .dgm-tick { stroke: var(--accent); }
+.dgm-step.is-now .dgm-micro { fill: var(--text); }
+.dgm-step.is-now .dgm-tick { stroke: var(--accent); }
 
-.nc-log code { color: var(--text); font-family: var(--font-mono); font-size: 0.6rem; }
-.nc-log b { color: var(--accent); font-size: 0.58rem; font-weight: 600; }
-.nc-log time { color: var(--muted); font-family: var(--font-mono); font-size: 0.58rem; text-align: right; }
+/* Site record stack. Heavy, and it never moves. */
 
-.nc-log > div.is-new {
-  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
-  background: color-mix(in srgb, var(--accent) 5%, white);
-}
+.dgm-bar { fill: color-mix(in srgb, var(--text) 26%, transparent); }
 
-.nc-log > div.is-refused b { color: var(--danger); }
+/* Library */
 
-.nc-log > div.is-refused.is-new {
-  border-color: color-mix(in srgb, var(--danger) 40%, var(--border));
-  background: color-mix(in srgb, var(--danger) 5%, white);
-}
+.dgm-meter { fill: var(--bg-soft); }
+.dgm-meterfill { fill: var(--accent); }
+.dgm-svg.is-live .dgm-meterfill { transition: width 640ms cubic-bezier(0.16, 1, 0.3, 1); }
+.dgm-parcel .dgm-chip { transition: fill 300ms ease; }
+.dgm-parcel.is-new .dgm-chip { fill: var(--accent-soft); }
+.dgm-parcel.is-new .dgm-chiptext { fill: var(--accent-strong); }
+
+/* Readout */
+
+.dgm-status { fill: var(--bg-soft); transition: fill 300ms ease; }
+.dgm-statustext { fill: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: 0.12em; transition: fill 300ms ease; }
+
+.dgm-svg.is-valid .dgm-status,
+.dgm-svg.is-signed .dgm-status { fill: var(--success-soft); }
+.dgm-svg.is-valid .dgm-statustext,
+.dgm-svg.is-signed .dgm-statustext { fill: var(--success); }
+.dgm-svg.is-hold .dgm-status { fill: var(--warning-soft); }
+.dgm-svg.is-hold .dgm-statustext { fill: var(--warning); }
+.dgm-svg.is-pass .dgm-status { fill: var(--accent-soft); }
+.dgm-svg.is-pass .dgm-statustext { fill: var(--accent-strong); }
+.dgm-svg.is-stop .dgm-status { fill: color-mix(in srgb, var(--danger) 10%, white); }
+.dgm-svg.is-stop .dgm-statustext { fill: var(--danger); }
 
 @media (prefers-reduced-motion: reduce) {
-  .pconsole .window-live i { animation: none; }
-  .pconsole :is(.tc-status, .tc-steps li, .tc-checkpoint, .tc-ledger > div, .nc-sites > div, .nc-log > div, .nc-lane, .nc-lane em, .nc-gate > i, .nc-gate-mark, .nc-meter i) { transition: none; }
+  .dgm-svg :is(.dgm-route, .dgm-meterfill, .dgm-node, .dgm-stamp, .dgm-boundary, .dgm-boundary-under, .dgm-micro, .dgm-tick, .dgm-chip, .dgm-status, .dgm-statustext, .dgm-mark, .dgm-dot, .dgm-port, .dgm-jamb) { transition: none; }
 }
 
 /* Stack Trident and Nectar below 900px. The mobile sheet only opens at 640px,

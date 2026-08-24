@@ -5,8 +5,8 @@ import { easeSectionScroll, sectionScrollDuration, sectionScrollTarget, usePaneS
 import { useDemoPageWheel } from './page-scroll'
 import { PilotButton, PilotProvider } from './PilotInquiry'
 const PrivacyPage = lazy(() => import('./PrivacyPage'))
-import TridentConsole from './diagrams/TridentConsole'
-import NectarConsole from './diagrams/NectarConsole'
+import TridentSchematic from './diagrams/TridentSchematic'
+import NectarSchematic from './diagrams/NectarSchematic'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -1089,7 +1089,7 @@ function TridentSection() {
         <p className="trident-boundary">Trident prepares source-grounded work. It never publishes a protocol, casts a Screening verdict, chooses a Resolve action, signs, or releases site data.</p>
       </div>
       <div className="trident-diagram">
-        <TridentConsole animate={animate} reduced={reduced} section={root} />
+        <TridentSchematic animate={animate} reduced={reduced} section={root} />
       </div>
     </section>
   )
@@ -1120,7 +1120,7 @@ function NectarSection() {
     <section className="nectar-section section-space" id="nectar" ref={root}>
       <SectionEyebrow>Nectar</SectionEyebrow>
       <div className="nectar-network">
-        <NectarConsole animate={animate} reduced={reduced} section={root} />
+        <NectarSchematic animate={animate} reduced={reduced} section={root} />
       </div>
       <div className="nectar-copy">
         <h2><span>Execution intelligence that crosses site boundaries.</span><span>Patient data that never does.</span></h2>

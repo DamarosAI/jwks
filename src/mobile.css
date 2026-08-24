@@ -445,10 +445,8 @@ body,
     white-space: normal;
   }
 
-  /* The consoles carry real rows and labels, so on a phone they stop being a
-     fixed-ratio card and size to their own content instead of clipping it.
-     The provider rail turns from a side rail into a row of three, which is
-     what the three prongs look like when there is no room beside the task. */
+  /* The schematics scale with their viewBox, so on a phone they only need the
+     full column width. */
 
   #root .trident-diagram,
   #root .nectar-network {
@@ -458,49 +456,19 @@ body,
     margin: 0 auto;
   }
 
-  #root .tc-body {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+  #root .dgm-head { min-height: 44px; padding: 0 14px; }
+
+  /* A schematic does not simplify well. Rather than shrink the annotation to
+     an unreadable size, hold the drawing at a legible scale and let it pan
+     inside its own frame, the way a real drawing sheet does. */
+
+  #root .dgm-frame {
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
   }
 
-  #root .tc-rail {
-    display: grid;
-    grid-column: 1 / -1;
-    grid-template-columns: subgrid;
-    gap: 4px;
-    padding: 11px 11px 12px;
-    border-right: 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  #root .tc-rail > strong,
-  #root .tc-rail-note {
-    grid-column: 1 / -1;
-    margin: 0;
-  }
-
-  #root .tc-provider {
-    min-height: 34px;
-    gap: 7px;
-    padding: 0 8px;
-    font-size: 0.66rem;
-  }
-
-  #root .tc-provider small,
-  #root .tc-provider > em { display: none; }
-  #root .tc-provider.active::before { top: 5px; bottom: 5px; }
-  #root .tc-provider.is-authority { grid-column: 1 / -1; }
-
-  #root .tc-main { grid-column: 1 / -1; padding: 12px 12px 13px; gap: 11px; }
-  #root .nc-body { padding: 12px 12px 13px; gap: 11px; }
-  #root .tc-checkpoint dl > div { grid-template-columns: 66px minmax(0, 1fr); gap: 8px; }
-  #root .tc-ledger header,
-  #root .tc-ledger > div { grid-template-columns: minmax(0, 1fr) 54px 48px 32px; gap: 6px; }
-  #root .nc-sites header,
-  #root .nc-sites > div { grid-template-columns: minmax(0, 1fr) 52px 56px; gap: 6px; }
-  #root .nc-log header,
-  #root .nc-log > div { grid-template-columns: minmax(0, 1fr) 66px 38px; gap: 6px; }
-  #root .nc-gate { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 8px; }
-  #root .nc-gate-side { display: none; }
+  #root .dgm-svg { min-width: 500px; }
 
   #root .nectar-facts {
     order: 3;
