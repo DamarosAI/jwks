@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 /**
@@ -50,4 +50,51 @@ export function useScrollPhase(phases, { reduced, target, start = 'top 82%', end
   }, [end, phases, reduced, rest, start, target])
 
   return reduced ? rest : phase
+}
+
+const ease = (t) => t * t * (3 - 2 * t)
+
+/**
+ * The same scroll, read continuously instead of in phases.
+ *
+ * Returns a ref for the figure itself, which is also what drives the scrub. It
+ * writes a 0-to-1 `--spread` custom property on that element as the figure
+ * climbs into view, which the stylesheet
+ * uses to open the drawing out: Trident's decks separate from a closed slab,
+ * Nectar's tethers draw from the shared deck to each site. Setting a custom
+ * property does not re-render React, so this scrubs on the compositor rather
+ * than through the component tree.
+ *
+ * With reduced motion the figure is simply parked fully open.
+ */
+export function useScrollSpread({ reduced, start = 'top 88%', end = 'top 44%' }) {
+  const figure = useRef(null)
+
+  useEffect(() => {
+    const node = figure.current
+    if (!node) return undefined
+
+    if (reduced) {
+      node.style.setProperty('--spread', '1')
+      return undefined
+    }
+
+    const apply = (progress) => {
+      node.style.setProperty('--spread', ease(Math.min(1, Math.max(0, progress))).toFixed(4))
+    }
+
+    apply(0)
+    const trigger = ScrollTrigger.create({
+      trigger: node,
+      start,
+      end,
+      onUpdate: (self) => apply(self.progress),
+      onRefresh: (self) => apply(self.progress),
+    })
+    apply(trigger.progress)
+
+    return () => trigger.kill()
+  }, [end, reduced, start])
+
+  return figure
 }

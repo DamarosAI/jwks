@@ -7,10 +7,11 @@ const css = await readFile(new URL('./styles.css', import.meta.url), 'utf8')
 const mobile = await readFile(new URL('./mobile.css', import.meta.url), 'utf8')
 const driver = await readFile(new URL('./diagrams/useScrollPhase.js', import.meta.url), 'utf8')
 const pan = await readFile(new URL('./diagrams/useCenterOnOverflow.js', import.meta.url), 'utf8')
+const iso = await readFile(new URL('./diagrams/iso.js', import.meta.url), 'utf8')
 const trident = await readFile(new URL('./diagrams/TridentSchematic.jsx', import.meta.url), 'utf8')
 const nectar = await readFile(new URL('./diagrams/NectarSchematic.jsx', import.meta.url), 'utf8')
 
-const sources = [driver, pan, trident, nectar]
+const sources = [driver, pan, iso, trident, nectar]
 const figures = [trident, nectar]
 
 // Every literal colour, radius and face in the schematic layer has to come from
@@ -21,11 +22,14 @@ const DGM_BLOCK = css.slice(
 )
 
 describe('Trident and Nectar schematics', () => {
-  it('draws technical figures, not product panels', () => {
+  it('draws axonometric technical figures, not product panels', () => {
     for (const source of figures) {
       assert.match(source, /<svg/)
       assert.match(source, /viewBox="0 0 620 \d{3}"/)
       assert.match(source, /className="dgm-head"/)
+      // Real projected solids, not stacked divs pretending to be depth.
+      assert.match(source, /from '\.\/iso'/)
+      assert.match(source, /className="dgm-face-top"/)
       // No window chrome, no app furniture, no per-frame canvas work.
       assert.doesNotMatch(source, /mac-titlebar|traffic-lights|window-breadcrumb|window-live/)
       assert.doesNotMatch(source, /getContext|requestAnimationFrame|<canvas/)
@@ -34,12 +38,34 @@ describe('Trident and Nectar schematics', () => {
     assert.doesNotMatch(css, /\.pconsole|\.tc-provider|\.nc-lane/)
   })
 
+  it('projects from plan coordinates instead of faking depth', () => {
+    assert.match(iso, /export const ISO_X = 0\.866/)
+    assert.match(iso, /export function project\(cx, cy\)/)
+    assert.match(iso, /export function box\(/)
+    for (const source of figures) {
+      assert.doesNotMatch(source, /skew[XY]\(|perspective\(|rotate3d/)
+    }
+  })
+
+  it('never names a vendor inside the figures', () => {
+    // These are Damaros drawings. The sources are kinds of proposer, not
+    // products, because the claim is about authority and not about whose
+    // model happened to draft the proposal.
+    for (const source of figures) {
+      assert.doesNotMatch(source, /anthropic|openai|gemini|\bclaude\b|\bgpt\b|llama|mistral|palantir/i)
+    }
+    assert.match(trident, /const SOURCES = \[\s*\n\s*\{ key: 'MODEL'/)
+    assert.match(trident, /\{ key: 'AGENT'/)
+    assert.match(trident, /\{ key: 'AUTOMATION'/)
+  })
+
   it('borrows every value from the site token set', () => {
-    // Only tokens, white, and transparent may appear as colours.
+    // Only tokens and token mixes may appear as colours.
     const colours = DGM_BLOCK.match(/#[0-9a-f]{3,8}\b|\brgba?\(/gi) || []
     assert.deepEqual(colours, [])
     assert.match(DGM_BLOCK, /font-family: var\(--font-ui\)/)
     assert.match(DGM_BLOCK, /font-family: var\(--font-mono\)/)
+    assert.match(DGM_BLOCK, /\.dgm-field \{ fill: color-mix\(in srgb, var\(--accent-soft\)/)
     for (const source of [css, ...sources]) {
       assert.doesNotMatch(source, /#0a0f18/i)
     }
@@ -62,31 +88,38 @@ describe('Trident and Nectar schematics', () => {
     assert.doesNotMatch(css, /\.trident-section > \.section-eyebrow/)
   })
 
-  it('draws the trident as topology, not as ornament', () => {
-    // Three tines, one crossbar, one shaft: the figure is the system.
-    assert.equal(PROVIDER_COUNT(trident), 3)
-    assert.match(trident, /const ROUTE = 'M 129 118 V 152 H 310 V 442'/)
-    assert.match(trident, /d="M 129 152 H 491"/)
+  it('draws Trident as one site in section: three sources, four decks, one axis', () => {
+    assert.equal((trident.match(/\{ key: '(surface|contract|authority|receipt)'/g) || []).length, 4)
+    assert.equal((trident.match(/land: \[/g) || []).length, 3)
+    assert.match(trident, /const SPINE = `M \$\{RUN\[0\]\} \$\{RUN\[1\]\} V \$\{RECEIPT\.cy\}`/)
+    assert.match(trident, /dgm-rail/)
+  })
+
+  it('draws Nectar as many sites in plan, so the two figures are not one drawing', () => {
+    assert.equal((nectar.match(/\{ id: 'SITE /g) || []).length, 3)
+    assert.match(nectar, /const LIBRARY = deck\(/)
+    // The same wall answers two leaders differently - that is the whole claim.
+    assert.match(nectar, /const OUT_FROM = SITE_018\.shape\.left/)
+    assert.match(nectar, /const BACK_TO = SITE_018\.shape\.right/)
+    // Neither figure borrows the other's signature move.
+    assert.doesNotMatch(nectar, /const SPINE|dgm-rail/)
+    assert.doesNotMatch(trident, /const LIBRARY|dgm-tagbody/)
   })
 
   it('shuts the gate rather than colouring a status light', () => {
-    for (const source of figures) {
-      assert.match(source, /className="dgm-jamb"/)
-      assert.match(source, /url\(#\w+-hatch\)/)
-    }
+    assert.match(trident, /url\(#tr-hatch\)/)
     assert.match(trident, /fill=\{open \? 'var\(--surface-solid\)' : 'url\(#tr-hatch\)'\}/)
-    // Nectar has two gates on one wall: one opens, one never does.
-    assert.equal((nectar.match(/className="dgm-port"/g) || []).length, 2)
-    assert.match(nectar, /<rect className="dgm-port" x="416"[^>]*fill="url\(#nc-hatch\)"/)
-    assert.match(css, /\.dgm-gateway\.is-open \.dgm-jamb \{ stroke: var\(--accent\); \}/)
-    assert.match(css, /\.dgm-gateway\.is-shut \.dgm-jamb \{ stroke: var\(--danger\); \}/)
+    // Nectar's boundary is the skirt of every site deck, hatched the same way.
+    assert.match(nectar, /className="dgm-seal dgm-boundary" points=\{site\.shape\.faceLeft\} fill="url\(#nc-hatch\)"/)
+    assert.match(DGM_BLOCK, /\.dgm-gatering\.is-hold \{ stroke: var\(--warning\); \}/)
+    assert.match(DGM_BLOCK, /\.dgm-gatering\.is-signed \{ stroke: var\(--success\); \}/)
   })
 
   it('puts the mark on the boundary in both figures', () => {
     for (const source of figures) {
       assert.match(source, /className="dgm-mark" href="\/assets\/damaros-monogram-blue\.svg"/)
-      assert.match(source, /className="dgm-boundary"/)
     }
+    assert.match(nectar, /dgm-boundary/)
   })
 
   it('runs on the reader scroll, not on a timer', () => {
@@ -103,20 +136,24 @@ describe('Trident and Nectar schematics', () => {
     assert.match(app, /<NectarSchematic animate=\{animate\} reduced=\{reduced\} section=\{root\} \/>/)
   })
 
+  it('will not draw a governed path through a stack that has not assembled', () => {
+    assert.match(DGM_BLOCK, /\.dgm-route \{[\s\S]*?opacity: clamp\(0, calc\(\(var\(--spread, 1\) - 0\.7\) \* 3\.4\), 1\);/)
+  })
+
   it('gives the beat that carries the claim the widest stretch of scroll', () => {
-    assert.match(trident, /span: 2\.2, reveal: 72, step: 2, schema: 'valid', gate: 'hold'/)
-    assert.match(nectar, /span: 2\.2, out: 100, back: 100, gate: 'stop'/)
+    assert.match(trident, /span: 3\.2, reveal: 60, bound: 19, gate: 'hold'/)
+    assert.match(nectar, /span: 3, out: 100, back: 100, gate: 'stop'/)
   })
 
   it('leaves the claim readable in the resting state', () => {
     assert.match(trident, /status: 'RECEIPTED'/)
-    assert.match(nectar, /status: 'STEADY', tone: 'stop', read: 'Structure crosses\. Records do not\.'/)
-    assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{\s*\n\s*\.dgm-svg :is\(/)
+    assert.match(nectar, /status: 'STEADY', read: 'Structure crosses\. Records do not\.'/)
+    assert.match(DGM_BLOCK, /@media \(prefers-reduced-motion: reduce\) \{\s*\n\s*\.dgm-svg :is\(/)
     // Nothing eases unless the figure is live and on screen.
-    assert.match(css, /\.dgm-svg\.is-live \.dgm-route \{ transition:/)
+    assert.match(DGM_BLOCK, /\.dgm-svg\.is-live \.dgm-route \{ transition:/)
   })
 
-  it('holds a legible scale on a phone and opens on the boundary', () => {
+  it('holds a legible scale on a phone and opens on the middle of the sheet', () => {
     assert.match(mobile, /#root \.dgm-frame \{[\s\S]*?overflow-x:\s*auto;/)
     assert.match(mobile, /#root \.dgm-svg \{ min-width: 500px; \}/)
     assert.match(pan, /frame\.scrollTo\(\{ left: slack \/ 2 \}\)/)
@@ -139,8 +176,3 @@ describe('Trident and Nectar schematics', () => {
     }
   })
 })
-
-function PROVIDER_COUNT(source) {
-  const block = source.slice(source.indexOf('const PROVIDERS = ['), source.indexOf(']', source.indexOf('const PROVIDERS = [')))
-  return (block.match(/\{ x:/g) || []).length
-}
