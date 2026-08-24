@@ -1,4 +1,4 @@
-import { createContext, lazy, Suspense, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom'
 import { HERO_STAGE_MS, HERO_TICK_MS, NARROW_VIEWPORT, autoplayIndex, nextStageIndex, shouldFollowDemoSelection, shouldHoldAutoplayFromClick, shouldKeepPreviousStage, shouldPlayAutoplay, shouldRunAmbient, useAutoplayHold, useDocumentVisible, useInView, useMediaQuery, useScrollIdle, useSoftSwap } from './autoplay'
 import { easeSectionScroll, sectionScrollDuration, sectionScrollTarget, usePaneSettle, viewportHeight } from './motion'
@@ -28,41 +28,6 @@ import {
 gsap.registerPlugin(ScrollTrigger, useGSAP)
 ScrollTrigger.config({ ignoreMobileResize: true })
 
-const TridentStatusContext = createContext({ available: true, toggle() {} })
-
-function TridentStatusProvider({ children }) {
-  const [available, setAvailable] = useState(true)
-  const value = useMemo(() => ({
-    available,
-    toggle: () => setAvailable((current) => !current),
-  }), [available])
-  return <TridentStatusContext.Provider value={value}>{children}</TridentStatusContext.Provider>
-}
-
-function useTridentStatus() {
-  return useContext(TridentStatusContext)
-}
-
-function TridentStatusSwitch() {
-  const { available, toggle } = useTridentStatus()
-  return (
-    <button
-      type="button"
-      className={`trident-status-switch${available ? '' : ' is-isolated'}`}
-      role="switch"
-      aria-checked={available}
-      aria-label={available ? 'Trident available on site.' : 'Trident unavailable. New cognition blocked.'}
-      onClick={toggle}
-    >
-      <Power size={15} />
-      <span>
-        <small>TRIDENT</small>
-        <strong>{available ? 'Available on site' : 'Unavailable'}</strong>
-      </span>
-      <i className="trident-status-track" aria-hidden="true"><i /></i>
-    </button>
-  )
-}
 
 function useEnterMotion(root, reduced, setup, query = '(min-width: 901px)') {
   useGSAP(() => {
@@ -500,7 +465,6 @@ function MiniRun() {
   const reduced = useReducedMotion()
   const narrow = useMediaQuery(NARROW_VIEWPORT)
   const inView = useInView(root)
-  const { available } = useTridentStatus()
   const [active, setActive] = useState(0)
   const [tick, setTick] = useState(0)
   const [evidenceSelected, setEvidenceSelected] = useState(0)
@@ -538,7 +502,7 @@ function MiniRun() {
         <div className="mac-titlebar">
           <div className="traffic-lights" aria-hidden="true"><i /><i /><i /></div>
           <span className="window-breadcrumb"><WindowBrand /><span>DMR-204</span><span>Site 018</span></span>
-          <span className="window-live"><i /> {available ? 'Trident on site' : 'New cognition blocked'}</span>
+          <span className="window-live"><i /> Trident on site</span>
         </div>
         <div className="hero-app-grid">
         <aside className="hero-app-nav">
@@ -548,7 +512,6 @@ function MiniRun() {
               <SpineGlyph kind={step} /><span>{step}</span>{index < active && <small className="spine-state">Done</small>}
             </button>
           ))}
-          <TridentStatusSwitch />
         </aside>
         <div className="hero-app-main">
           <div className={`hero-state-canvas landing-source-demo${fading ? ' is-fading' : ''}`}>
@@ -1183,18 +1146,15 @@ function SiteControlSection() {
   const root = useRef(null)
   const reviewTimer = useRef(0)
   const reduced = useReducedMotion()
-  const { available } = useTridentStatus()
   const [selectedControl, setSelectedControl] = useState(0)
   const [reviewPhase, setReviewPhase] = useState('idle')
   const [reviewedControls, setReviewedControls] = useState({})
   const { fading, swap } = useSoftSwap(reduced)
-  const modelStop = available
-    ? { label: 'TRIDENT', value: 'On site', state: 'held' }
-    : { label: 'TRIDENT', value: 'Unavailable', state: 'cut' }
+  const modelStop = { label: 'TRIDENT', value: 'On site', state: 'held' }
   const controls = [
     { name: 'Evidence visibility', icon: ShieldCheck, policy: 'Site roles only', title: 'Evidence access boundary', meta: 'POL-018-EV4 - 7 site roles - hash-linked', description: 'Only approved site roles can open source evidence or mapped patient facts.', scope: 'FHIR resources, documents, and mapped facts', record: 'POL-018-EV4', receipt: 'REV-018-EV4-1044', recipient: '7 approved site roles', patientFields: 'Site-held', action: 'Review access boundary', decision: 'Confirm current access boundary', outcome: 'Access remains limited to 7 approved site roles. No external principal receives patient evidence.', success: 'Access review recorded', guard: 'Patient evidence stays site-held. Approved roles only.', path: [{ label: 'HOLD', value: '4 site sources', state: 'held' }, { label: 'SCREENING', value: 'Deterministic', state: 'held' }, modelStop, { label: 'ACCESS', value: '7 site roles', state: 'held' }], holdLabel: 'OPEN TO', holdings: [{ code: 'CO', name: 'Site coordinator', hold: 'Evidence and mapped facts' }, { code: 'PI', name: 'PI / sub-I', hold: 'Evidence and mapped facts' }, { code: 'CR', name: 'CRC lead', hold: 'Mapped facts only' }, { code: 'SM', name: 'Sponsor monitor', hold: 'No patient evidence' }], events: [['10:41', 'As-of ingest sealed', 'Synthetic FHIR'], ['10:43', 'Evidence visibility checked', 'POL-018-EV4']] },
     { name: 'Artifact release', icon: FileText, policy: 'PI or delegated signer', title: 'Sponsor artifact release', meta: 'POL-018-AR2 - Replay RPL-1047 - 0 patient fields', description: 'Replay bundles remain at the site until a PI or delegated signer releases the exact artifact.', scope: 'Replay bundle - RPL-1047', record: 'POL-018-AR2', receipt: 'REV-018-AR2-1044', recipient: 'Meridian Oncology', patientFields: '0 in sponsor artifact', action: 'Review artifact release', decision: 'Confirm delegated release authority', outcome: 'Replay remains site-held until a PI or delegated signer releases this exact artifact.', success: 'Artifact review recorded', guard: 'Replay stays site-held until a PI signs the exact artifact.', path: [{ label: 'HOLD', value: 'Replay RPL-1047', state: 'held' }, { label: 'SIGN', value: 'PI or delegate', state: 'held' }, modelStop, { label: 'EGRESS', value: '0 patient fields', state: 'held' }], holdLabel: 'HELD ARTIFACT', holdings: [{ code: 'RP', name: 'Replay RPL-1047', hold: 'Site-held bundle' }, { code: 'PI', name: 'PI roster', hold: 'Signer authority' }, { code: 'SP', name: 'Sponsor packet', hold: '0 patient fields' }, { code: 'EX', name: 'Export manifest', hold: 'Ed25519 pending' }], events: [['10:41', 'Replay bundle sealed', 'RPL-1047'], ['10:43', 'Artifact hold checked', 'POL-018-AR2']] },
-    { name: 'Trident execution', icon: Power, policy: available ? 'Required local cognition' : 'New cognition blocked', title: 'Trident attestation', meta: available ? 'POL-018-TR3 - Run 018-017 - governed' : 'POL-018-TR3 - Run 018-017 - unavailable', description: available ? 'Trident processes authorized protocol and patient context inside institution boundary and writes source-linked work products.' : 'Trident is unavailable. New cognition-dependent work is blocked. Committed records remain readable and Replay-verifiable.', scope: 'Site runtime - Run 018-017', record: 'POL-018-TR3', receipt: 'REV-018-TR3-1044', recipient: 'Site execution record', patientFields: 'Authorized local context', action: 'Review Trident attestation', decision: available ? 'Accept governed runtime attestation' : 'Acknowledge fail-closed state', outcome: available ? 'Run remains site-bound. Source-linked work products enter execution record.' : 'No fallback path activated. Existing record remains verifiable.', success: 'Attestation review recorded', guard: available ? 'Protocol and patient context remain inside institution boundary.' : 'New cognition blocked. Historical proof remains available.', path: [{ label: 'HOLD', value: 'Site runtime', state: 'held' }, { label: 'SCREENING', value: 'Deterministic', state: 'held' }, modelStop, { label: 'EGRESS', value: 'No PHI egress', state: 'held' }], holdLabel: 'RUNTIME', holdings: [{ code: 'RN', name: 'Run 018-017', hold: available ? 'Governed Trident' : 'New cognition blocked' }, { code: 'TX', name: 'Protocol context', hold: available ? 'Authorized local input' : 'Queued' }, { code: 'PH', name: 'Patient context', hold: available ? 'Authorized local input' : 'Queued' }, { code: 'WP', name: 'Work product', hold: 'Source-linked only' }], events: [['10:41', 'Trident attested', 'Run 018-017'], ['10:43', 'Local boundary checked', 'POL-018-TR3']] },
+    { name: 'Trident execution', icon: Power, policy: 'Required local cognition', title: 'Trident attestation', meta: 'POL-018-TR3 - Run 018-017 - governed', description: 'Trident processes authorized protocol and patient context inside institution boundary and writes source-linked work products.', scope: 'Site runtime - Run 018-017', record: 'POL-018-TR3', receipt: 'REV-018-TR3-1044', recipient: 'Site execution record', patientFields: 'Authorized local context', action: 'Review Trident attestation', decision: 'Accept governed runtime attestation', outcome: 'Run remains site-bound. Source-linked work products enter execution record.', success: 'Attestation review recorded', guard: 'Protocol and patient context remain inside institution boundary.', path: [{ label: 'HOLD', value: 'Site runtime', state: 'held' }, { label: 'SCREENING', value: 'Deterministic', state: 'held' }, modelStop, { label: 'EGRESS', value: 'No PHI egress', state: 'held' }], holdLabel: 'RUNTIME', holdings: [{ code: 'RN', name: 'Run 018-017', hold: 'Governed Trident' }, { code: 'TX', name: 'Protocol context', hold: 'Authorized local input' }, { code: 'PH', name: 'Patient context', hold: 'Authorized local input' }, { code: 'WP', name: 'Work product', hold: 'Source-linked only' }], events: [['10:41', 'Trident attested', 'Run 018-017'], ['10:43', 'Local boundary checked', 'POL-018-TR3']] },
   ]
   const control = controls[selectedControl]
   const completedReview = reviewedControls[control.record]
@@ -1242,7 +1202,7 @@ function SiteControlSection() {
       <SectionEyebrow>Control</SectionEyebrow>
       <MobilePreviewFrame>
       <div className="control-system" aria-label="Damaros site control">
-        <div className="mac-titlebar"><div className="traffic-lights" aria-hidden="true"><i /><i /><i /></div><WindowBrand /><span className="window-live"><i /> {available ? 'Trident on site' : 'New cognition blocked'}</span></div>
+        <div className="mac-titlebar"><div className="traffic-lights" aria-hidden="true"><i /><i /><i /></div><WindowBrand /><span className="window-live"><i /> Trident on site</span></div>
         <div className="control-product-grid">
           <aside className="control-source-nav">
             <span>CONTROLS</span>
@@ -1261,7 +1221,6 @@ function SiteControlSection() {
             <div className="control-rail-foot">
               <p className="control-policy-kicker">Local sources. Local signatures.</p>
               <div className="control-boundary-card"><small>SITE 018</small><strong>Site 018 - Damaros Health</strong></div>
-              <TridentStatusSwitch />
             </div>
           </aside>
           <div className="control-policy-main">
@@ -1491,7 +1450,6 @@ export default function App() {
 
   return (
     <PilotProvider>
-      <TridentStatusProvider>
       <div className="app-root">
         <PageReset />
         <SiteNav />
@@ -1504,7 +1462,6 @@ export default function App() {
         </Routes>
         <Footer />
       </div>
-      </TridentStatusProvider>
     </PilotProvider>
   )
 }

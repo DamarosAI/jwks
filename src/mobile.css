@@ -255,8 +255,7 @@ body,
     display: none;
   }
 
-  #root .hero-workspace .hero-app-nav > strong,
-#root .hero-workspace .hero-app-nav .trident-status-switch {
+  #root .hero-workspace .hero-app-nav > strong {
     display: none;
   }
 

@@ -71,20 +71,10 @@ describe('site-control workspace geometry', () => {
     assert.doesNotMatch(app, /control-release-card/)
   })
 
-  it('shows governed Trident availability and fail-closed outage', () => {
-    assert.match(app, /function TridentStatusSwitch\(/)
-    assert.match(app, /<TridentStatusSwitch \/>/)
-    assert.match(app, /role="switch"/)
-    assert.match(app, /Trident unavailable\. New cognition blocked\./)
-    assert.match(app, /<small>TRIDENT<\/small>/)
-    assert.match(app, /available \? 'Available on site' : 'Unavailable'/)
-    assert.match(app, /No fallback path activated\. Existing record remains verifiable\./)
-    assert.match(css, /\.trident-status-switch \{[\s\S]*?border-radius:\s*10px;/)
-    assert.match(css, /\.hero-app-nav \.trident-status-switch,[\s\S]*?\.control-source-nav \.trident-status-switch \{[\s\S]*?min-height:\s*40px;[\s\S]*?padding:\s*6px 8px 6px 10px;/)
-    assert.match(css, /#root \.trident-status-switch small,[\s\S]*?font-size:\s*0\.5rem;[\s\S]*?font-weight:\s*750;/)
-    assert.match(css, /#root \.trident-status-switch strong,[\s\S]*?font-size:\s*0\.72rem;[\s\S]*?font-weight:\s*650;/)
-    assert.doesNotMatch(css, /\.control-source-nav \.trident-status-switch \{[\s\S]*?width:\s*196px/)
-    assert.match(css, /\.trident-status-switch\.is-isolated \.trident-status-track > i/)
+  it('shows Trident status as static label (no toggle switch)', () => {
+    assert.doesNotMatch(app, /function TridentStatusSwitch\(/)
+    assert.doesNotMatch(app, /role="switch"/)
+    assert.match(app, /Trident on site/)
   })
 
   it('keeps the inspect card on protocol rhythm without a fact slab', () => {
