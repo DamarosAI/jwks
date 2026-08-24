@@ -6830,8 +6830,8 @@ html { scroll-padding-top: 96px; }
 .pane-settle.is-settling > *:nth-child(6) { animation-delay: 100ms; }
 
 @keyframes pane-settle {
-  from { opacity: 0.4; transform: translateY(3px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0.4; }
+  to { opacity: 1; }
 }
 
 .button,
