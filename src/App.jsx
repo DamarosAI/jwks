@@ -1,10 +1,12 @@
-import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { createContext, lazy, Suspense, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom'
 import { HERO_STAGE_MS, HERO_TICK_MS, NARROW_VIEWPORT, autoplayIndex, nextStageIndex, shouldFollowDemoSelection, shouldHoldAutoplayFromClick, shouldKeepPreviousStage, shouldPlayAutoplay, shouldRunAmbient, useAutoplayHold, useDocumentVisible, useInView, useMediaQuery, useScrollIdle, useSoftSwap } from './autoplay'
 import { easeSectionScroll, sectionScrollDuration, sectionScrollTarget, usePaneSettle, viewportHeight } from './motion'
 import { useDemoPageWheel } from './page-scroll'
 import { PilotButton, PilotProvider } from './PilotInquiry'
-import PrivacyPage from './PrivacyPage'
+const PrivacyPage = lazy(() => import('./PrivacyPage'))
+import TridentCanvas from './TridentCanvas'
+import NectarCanvas from './NectarCanvas'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -960,7 +962,7 @@ function EvidenceView({ refreshing, onAdvance, tick = 0, playing = false, select
         </div>
         <div className="obligation-detail">
           <div className={settle}>
-            <header><span>{detail.code}</span><em className={detail.status.toLowerCase()}>{isActed ? 'ROUTED' : detail.status}</em><small>{detail.cls}</small></header>
+            <header><span>{detail.code}</span><em className={isActed ? 'routed' : detail.status.toLowerCase()}>{isActed ? 'ROUTED' : detail.status}</em><small>{detail.cls}</small></header>
             <h4>{detail.fact}</h4>
             <p>Maps to protocol {detail.code} - Inclusion - governs screening</p>
             {pendingAction?.code === detail.code ? (
@@ -1109,11 +1111,6 @@ function TridentSection() {
     }),
   ])
 
-  const steps = ['Protocol', 'Evidence', 'Screening', 'Resolve', 'Replay']
-  const cx = 240
-  const cy = 200
-  const rings = [42, 78, 118, 155]
-
   return (
     <section className="trident-section section-space" id="trident" ref={root}>
       <SectionEyebrow>Trident</SectionEyebrow>
@@ -1127,70 +1124,8 @@ function TridentSection() {
         </div>
         <p className="trident-boundary">Trident prepares source-grounded work. It never publishes a protocol, casts a Screening verdict, chooses a Resolve action, signs, or releases site data.</p>
       </div>
-      <div className={`trident-diagram${animate ? '' : ' is-paused'}`} aria-hidden="true">
-        <svg viewBox="0 0 480 400" fill="none">
-          <defs>
-            <radialGradient id="tg" cx="50%" cy="50%" r="50%">
-              <stop offset="0" stopColor="var(--accent)" stopOpacity="0.1" />
-              <stop offset="0.6" stopColor="var(--accent)" stopOpacity="0.03" />
-              <stop offset="1" stopColor="var(--accent)" stopOpacity="0" />
-            </radialGradient>
-            <radialGradient id="tSweep" cx="50%" cy="50%" r="50%">
-              <stop offset="0" stopColor="var(--accent)" stopOpacity="0.18" />
-              <stop offset="0.5" stopColor="var(--accent)" stopOpacity="0.06" />
-              <stop offset="1" stopColor="var(--accent)" stopOpacity="0" />
-            </radialGradient>
-            <filter id="tGlow">
-              <feGaussianBlur stdDeviation="4" result="blur" />
-              <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-            </filter>
-            <filter id="tGlowSoft">
-              <feGaussianBlur stdDeviation="8" result="blur" />
-              <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-            </filter>
-          </defs>
-          <circle cx={cx} cy={cy} r="190" fill="url(#tg)" />
-          <line x1={cx} y1={cy - 170} x2={cx} y2={cy + 170} stroke="var(--accent)" strokeWidth="0.3" strokeOpacity="0.06" />
-          <line x1={cx - 170} y1={cy} x2={cx + 170} y2={cy} stroke="var(--accent)" strokeWidth="0.3" strokeOpacity="0.06" />
-          <line x1={cx - 120} y1={cy - 120} x2={cx + 120} y2={cy + 120} stroke="var(--accent)" strokeWidth="0.2" strokeOpacity="0.04" />
-          <line x1={cx + 120} y1={cy - 120} x2={cx - 120} y2={cy + 120} stroke="var(--accent)" strokeWidth="0.2" strokeOpacity="0.04" />
-          {rings.map((r, i) => (
-            <circle key={`r${i}`} cx={cx} cy={cy} r={r} fill="none" stroke="var(--accent)" strokeWidth={i === 0 ? 0.8 : i === 1 ? 0.5 : 0.3} strokeOpacity={[0.25, 0.15, 0.08, 0.05][i]} strokeDasharray={i > 1 ? `${2 + i} ${4 + i * 2}` : 'none'} />
-          ))}
-          <path d={`M${cx},${cy} L${cx},${cy - 155} A155,155 0 0,1 ${cx + 155 * Math.sin(Math.PI / 6)},${cy - 155 * Math.cos(Math.PI / 6)} Z`} fill="url(#tSweep)" className="trident-sweep" style={{ transformOrigin: `${cx}px ${cy}px` }} />
-          {steps.map((step, i) => {
-            const angle = (i * 72 - 90) * (Math.PI / 180)
-            const nx = cx + 118 * Math.cos(angle)
-            const ny = cy + 118 * Math.sin(angle)
-            const ix = cx + 42 * Math.cos(angle)
-            const iy = cy + 42 * Math.sin(angle)
-            const labelX = cx + 145 * Math.cos(angle)
-            const labelY = cy + 145 * Math.sin(angle)
-            return (
-              <g key={step}>
-                <line x1={ix} y1={iy} x2={nx} y2={ny} stroke="var(--accent)" strokeWidth="0.4" strokeOpacity="0.12" strokeDasharray="2 4" />
-                <circle cx={nx} cy={ny} r="18" fill="var(--accent)" fillOpacity="0.03" className="trident-node-halo" style={{ animationDelay: `${i * 1.1}s` }} />
-                <circle cx={nx} cy={ny} r="10" fill="var(--accent)" fillOpacity="0.06" stroke="var(--accent)" strokeWidth="0.6" strokeOpacity="0.2" />
-                <circle cx={nx} cy={ny} r="3.5" fill="var(--accent)" fillOpacity="0.85" filter="url(#tGlow)" className="trident-node" />
-                <text x={labelX} y={labelY + 4} textAnchor="middle" fill="var(--muted)" fontSize="7" fontFamily="var(--font-ui)" fontWeight="600" letterSpacing="0.08em">{step.toUpperCase()}</text>
-                <circle r="1.5" fill="var(--accent)" className="trident-packet" style={{ offsetPath: `path('M${ix},${iy} L${nx},${ny}')`, animationDelay: `${i * 1.4}s` }} />
-              </g>
-            )
-          })}
-          <circle cx={cx} cy={cy} r="42" fill="var(--accent)" fillOpacity="0.04" />
-          <circle cx={cx} cy={cy} r="28" fill="var(--accent)" fillOpacity="0.05" stroke="var(--accent)" strokeWidth="0.5" strokeOpacity="0.15" />
-          <circle cx={cx} cy={cy} r="8" fill="var(--accent)" fillOpacity="0.9" filter="url(#tGlowSoft)" className="trident-core" />
-          <circle cx={cx} cy={cy} r="20" fill="none" stroke="var(--accent)" strokeWidth="0.4" strokeOpacity="0.1" strokeDasharray="1.5 3" className="trident-core-ring" />
-          {[0, 1, 2, 3, 4, 5].map((i) => {
-            const a = (i * 60) * (Math.PI / 180)
-            const d = 78
-            return <circle key={`t${i}`} cx={cx + d * Math.cos(a)} cy={cy + d * Math.sin(a)} r="1.2" fill="var(--accent)" fillOpacity="0.35" className="trident-tick" style={{ animationDelay: `${i * 0.6}s` }} />
-          })}
-          {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => {
-            const a = (i * 45) * (Math.PI / 180)
-            return <circle key={`o${i}`} cx={cx + 155 * Math.cos(a)} cy={cy + 155 * Math.sin(a)} r="0.8" fill="var(--accent)" fillOpacity="0.2" />
-          })}
-        </svg>
+      <div className="trident-diagram" aria-hidden="true">
+        <TridentCanvas animate={animate} />
       </div>
     </section>
   )
@@ -1216,87 +1151,11 @@ function NectarSection() {
     }),
   ])
 
-  const sites = [
-    { x: 240, y: 200, r: 10, label: 'ONTOLOGY', core: true },
-    { x: 110, y: 105, r: 6, label: 'SITE A' },
-    { x: 370, y: 115, r: 6, label: 'SITE B' },
-    { x: 90, y: 290, r: 6, label: 'SITE C' },
-    { x: 385, y: 300, r: 6, label: 'SITE D' },
-    { x: 240, y: 60, r: 5 },
-    { x: 240, y: 345, r: 5 },
-  ]
-  const dust = [
-    [160, 140], [320, 150], [155, 250], [330, 260], [200, 100],
-    [280, 100], [195, 310], [290, 310], [130, 195], [350, 200],
-    [210, 155], [270, 155], [210, 245], [270, 245],
-    [175, 170], [305, 170], [175, 230], [305, 230],
-    [140, 150], [340, 150], [140, 260], [340, 260],
-    [220, 130], [260, 130], [220, 275], [260, 275],
-  ]
-  const edges = [
-    [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [0, 6],
-    [1, 5], [2, 5], [3, 6], [4, 6],
-    [1, 3], [2, 4],
-  ]
-
   return (
     <section className="nectar-section section-space" id="nectar" ref={root}>
       <SectionEyebrow>Nectar</SectionEyebrow>
-      <div className={`nectar-network${animate ? '' : ' is-paused'}`} aria-hidden="true">
-        <svg viewBox="0 0 480 400" fill="none">
-          <defs>
-            <radialGradient id="ng" cx="50%" cy="50%" r="50%">
-              <stop offset="0" stopColor="var(--accent)" stopOpacity="0.12" />
-              <stop offset="0.4" stopColor="var(--accent)" stopOpacity="0.04" />
-              <stop offset="1" stopColor="var(--accent)" stopOpacity="0" />
-            </radialGradient>
-            <radialGradient id="nAurora" cx="50%" cy="40%" r="55%">
-              <stop offset="0" stopColor="var(--accent)" stopOpacity="0.08" />
-              <stop offset="0.5" stopColor="var(--governed)" stopOpacity="0.03" />
-              <stop offset="1" stopColor="var(--accent)" stopOpacity="0" />
-            </radialGradient>
-            <filter id="nGlow">
-              <feGaussianBlur stdDeviation="4" result="blur" />
-              <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-            </filter>
-            <filter id="nGlowWide">
-              <feGaussianBlur stdDeviation="10" result="blur" />
-              <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-            </filter>
-          </defs>
-          <ellipse cx="240" cy="200" rx="220" ry="185" fill="url(#nAurora)" className="nectar-aurora" />
-          <circle cx="240" cy="200" r="180" fill="url(#ng)" />
-          {edges.map(([from, to], i) => {
-            const s = sites[from]
-            const e = sites[to]
-            const mx = (s.x + e.x) / 2 + (Math.sin(i * 2.1) * 24)
-            const my = (s.y + e.y) / 2 + (Math.cos(i * 1.7) * 24)
-            const path = `M${s.x},${s.y} Q${mx},${my} ${e.x},${e.y}`
-            return (
-              <g key={`e${i}`}>
-                <path d={path} stroke="var(--accent)" strokeWidth="0.5" strokeOpacity="0.1" fill="none" />
-                <circle r="1.6" fill="var(--accent)" className="nectar-link" style={{ offsetPath: `path('${path}')`, animationDelay: `${i * 0.7}s` }} />
-                {i < 6 && <circle r="1" fill="var(--accent)" className="nectar-link nectar-link-slow" style={{ offsetPath: `path('${path}')`, animationDelay: `${i * 0.7 + 2.5}s` }} />}
-              </g>
-            )
-          })}
-          {dust.map(([x, y], i) => (
-            <circle key={`d${i}`} cx={x} cy={y} r={0.5 + (i % 3) * 0.3} fill="var(--accent)" fillOpacity={0.08 + (i % 4) * 0.04} className="nectar-dust" style={{ animationDelay: `${i * 0.3}s` }} />
-          ))}
-          {sites.map((site, i) => {
-            const isCore = site.core
-            return (
-              <g key={`s${i}`} className="nectar-node-g">
-                {isCore && <circle cx={site.x} cy={site.y} r="45" fill="var(--accent)" fillOpacity="0.02" stroke="var(--accent)" strokeWidth="0.3" strokeOpacity="0.06" strokeDasharray="2 4" className="nectar-field" />}
-                <circle cx={site.x} cy={site.y} r={site.r + (isCore ? 16 : 10)} fill="var(--accent)" fillOpacity="0.02" className="nectar-halo" style={{ animationDelay: `${i * 0.5}s` }} />
-                <circle cx={site.x} cy={site.y} r={site.r} fill="var(--accent)" fillOpacity={isCore ? 0.08 : 0.05} stroke="var(--accent)" strokeWidth={isCore ? 0.8 : 0.5} strokeOpacity={isCore ? 0.3 : 0.15} />
-                <circle cx={site.x} cy={site.y} r={isCore ? 4 : 2.2} fill="var(--accent)" fillOpacity={isCore ? 0.9 : 0.65} filter={isCore ? 'url(#nGlowWide)' : 'url(#nGlow)'} className="nectar-core-dot" style={{ animationDelay: `${i * 0.8}s` }} />
-                {site.label && <text x={site.x} y={site.y + site.r + 14} textAnchor="middle" fill="var(--muted)" fontSize="6.5" fontFamily="var(--font-ui)" fontWeight="600" letterSpacing="0.08em">{site.label}</text>}
-              </g>
-            )
-          })}
-          <circle cx="240" cy="200" r="140" fill="none" stroke="var(--accent)" strokeWidth="0.2" strokeOpacity="0.04" strokeDasharray="1 6" className="nectar-boundary" />
-        </svg>
+      <div className="nectar-network" aria-hidden="true">
+        <NectarCanvas animate={animate} />
       </div>
       <div className="nectar-copy">
         <h2><span>Execution intelligence that crosses site boundaries.</span><span>Patient data that never does.</span></h2>
@@ -1639,7 +1498,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
-          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/privacy" element={<Suspense fallback={null}><PrivacyPage /></Suspense>} />
           <Route path="/platform" element={<Navigate to="/" replace />} />
           <Route path="*" element={<HomePage />} />
         </Routes>

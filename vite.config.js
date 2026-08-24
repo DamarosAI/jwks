@@ -11,5 +11,13 @@ export default defineConfig({
     cssMinify: true,
     modulePreload: { polyfill: false },
     target: 'es2022',
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules/react-dom') || id.includes('node_modules/react/') || id.includes('node_modules/react-router')) return 'vendor'
+          if (id.includes('node_modules/gsap') || id.includes('node_modules/@gsap')) return 'gsap'
+        },
+      },
+    },
   },
 })

@@ -458,10 +458,6 @@ body,
     margin: 0 auto;
   }
 
-  #root .nectar-network .nectar-link {
-    animation: none;
-  }
-
   #root .nectar-facts {
     order: 3;
     grid-column: auto;

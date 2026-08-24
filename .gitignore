@@ -29,3 +29,8 @@ node_modules/
 
 # local design exploration
 .superpowers/
+
+# retired assets (fonts replaced by Endless + Switzer, uploads orphaned, _ds extracted)
+assets/fonts/
+uploads/
+_ds/

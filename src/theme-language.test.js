@@ -38,8 +38,7 @@ describe('theme and product language', () => {
 
   it('keeps Nectar pulses off-screen and reduced-motion safe', () => {
     assert.match(app, /const animate = shouldRunAmbient\(\{ reduced, inView \}\)/)
-    assert.match(css, /@media \(prefers-reduced-motion: no-preference\)/)
-    assert.match(css, /\.nectar-network:not\(\.is-paused\) \.nectar-link/)
-    assert.match(css, /@keyframes nectar-pulse/)
+    assert.match(app, /<NectarCanvas animate=\{animate\} \/>/)
+    assert.match(css, /@media.*prefers-reduced-motion/)
   })
 })
