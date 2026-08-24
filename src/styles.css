@@ -10184,13 +10184,20 @@ html.is-hidden .clinic-node i,
   }
 }
 
+/* ── Trident: left-copy / right-diagram ── */
+
 .trident-section {
   display: grid;
   width: min(100%, 1500px);
   margin: 0 auto;
-  grid-template-columns: minmax(320px, 0.52fr) minmax(0, 1.48fr);
-  gap: clamp(24px, 2.6vw, 36px);
+  grid-template-columns: minmax(320px, 0.48fr) minmax(0, 0.52fr);
+  gap: clamp(36px, 4vw, 72px);
   align-items: center;
+}
+
+.trident-section > .section-eyebrow,
+.nectar-section > .section-eyebrow {
+  grid-column: 1 / -1;
 }
 
 .trident-copy {
@@ -10234,157 +10241,68 @@ html.is-hidden .clinic-node i,
   line-height: 1.5;
 }
 
-.trident-system {
-  overflow: hidden;
-  border: 1px solid var(--border-strong);
-  border-radius: 18px;
-  background: var(--surface-solid);
-  box-shadow: var(--shadow);
-}
-
-.trident-receipt {
-  display: grid;
-  gap: 18px;
-  padding: 22px 24px 24px;
-}
-
-.trident-receipt-head {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 12px 18px;
-  align-items: start;
-}
-
-.trident-receipt-head small {
-  color: var(--faint);
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.trident-receipt-head strong {
-  display: block;
-  margin-top: 4px;
-  font-size: 1.15rem;
-  letter-spacing: -0.02em;
-}
-
-.trident-guard {
-  justify-self: end;
-  padding: 6px 10px;
-  border: 1px solid color-mix(in srgb, var(--warning) 40%, var(--border));
-  border-radius: 8px;
-  background: var(--warning-soft);
-  color: var(--warning);
-  font-size: 0.62rem;
-  font-style: normal;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-}
-
-.trident-receipt-meta {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.trident-receipt-meta div {
-  min-height: 72px;
-  padding: 12px 14px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--bg-soft);
-}
-
-.trident-receipt-meta span {
-  display: block;
-  color: var(--faint);
-  font-size: 0.58rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.trident-receipt-meta b {
-  display: block;
-  margin-top: 8px;
-  color: var(--text-soft);
-  font-size: 0.78rem;
-  font-weight: 500;
-  line-height: 1.35;
-}
-
-.trident-coverage {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.trident-coverage div {
-  min-height: 86px;
-  padding: 12px 10px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--surface-solid) 80%, var(--bg-soft));
-}
-
-.trident-coverage span {
-  display: block;
-  color: var(--faint);
-  font-size: 0.56rem;
-  font-weight: 700;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-}
-
-.trident-coverage strong {
-  display: block;
-  margin-top: 8px;
-  color: var(--text);
-  font-size: 0.68rem;
-  font-weight: 500;
-  line-height: 1.3;
-}
-
-.trident-coverage .is-active {
-  border-color: color-mix(in srgb, var(--accent) 42%, var(--border));
-  background: color-mix(in srgb, var(--accent-soft) 70%, var(--surface-solid));
-}
-
-.trident-providers {
+.trident-diagram {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.trident-providers span {
-  display: inline-flex;
-  min-height: 34px;
+  justify-content: center;
   align-items: center;
-  padding: 0 12px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  color: var(--muted);
-  font-size: 0.72rem;
 }
 
-.trident-providers .is-active {
-  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
-  background: var(--accent-soft);
-  color: var(--accent-strong);
+.trident-diagram svg {
+  display: block;
+  width: min(100%, 420px);
+  height: auto;
 }
+
+@media (prefers-reduced-motion: no-preference) {
+  .trident-diagram:not(.is-paused) .trident-orbit {
+    animation: trident-orbit-spin 28s linear infinite;
+    transform-origin: 200px 160px;
+  }
+  .trident-diagram:not(.is-paused) .trident-node {
+    animation: trident-node-breathe 3.8s ease-in-out infinite;
+  }
+  .trident-diagram:not(.is-paused) .trident-pulse-dot {
+    animation: trident-dot-pulse 4s ease-in-out infinite;
+  }
+  .trident-diagram:not(.is-paused) .trident-spoke {
+    animation: trident-spoke-fade 6s ease-in-out infinite;
+  }
+}
+
+@keyframes trident-orbit-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes trident-node-breathe {
+  0%, 100% { opacity: 0.7; r: 2.4; }
+  50% { opacity: 1; r: 3.2; }
+}
+
+@keyframes trident-dot-pulse {
+  0%, 100% { opacity: 0; r: 1; }
+  30% { opacity: 0.8; r: 2.8; }
+  70% { opacity: 0.4; r: 2; }
+}
+
+@keyframes trident-spoke-fade {
+  0%, 100% { stroke-opacity: 0.2; }
+  50% { stroke-opacity: 0.4; }
+}
+
+/* ── Nectar: left-diagram / right-copy (alternating) ── */
 
 .nectar-section {
   display: grid;
-  width: min(100%, 1100px);
+  width: min(100%, 1500px);
   margin: 0 auto;
-  justify-items: center;
-  text-align: center;
+  grid-template-columns: minmax(0, 0.52fr) minmax(320px, 0.48fr);
+  gap: clamp(36px, 4vw, 72px);
+  align-items: center;
 }
 
 .nectar-copy {
-  max-width: 36rem;
+  max-width: 38rem;
+  text-align: left;
 }
 
 .nectar-copy h2 {
@@ -10399,54 +10317,72 @@ html.is-hidden .clinic-node i,
 }
 
 .nectar-copy p {
-  max-width: 58ch;
-  margin: 18px auto 0;
+  max-width: 42ch;
+  margin-top: 18px;
   color: var(--text-soft);
   font-size: 1.02rem;
   line-height: 1.5;
 }
 
 .nectar-network {
-  width: min(100%, 420px);
-  margin: 42px auto 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .nectar-network svg {
   display: block;
-  width: 100%;
+  width: min(100%, 420px);
   height: auto;
 }
 
 .nectar-link {
-  stroke: color-mix(in srgb, var(--accent) 42%, var(--border));
-  stroke-width: 0.45;
-  stroke-dasharray: 1.6 3.2;
-}
-
-.nectar-node {
   fill: var(--accent);
+  opacity: 0;
 }
 
-.nectar-node.is-core {
-  fill: var(--accent-strong);
+.nectar-halo {
+  fill: var(--accent);
+  opacity: 0.04;
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .nectar-network:not(.is-paused) .nectar-link {
-    animation: nectar-pulse 5.5s linear infinite;
+    animation: nectar-pulse 5.5s ease-in-out infinite;
+    offset-distance: 0%;
+  }
+  .nectar-network:not(.is-paused) .nectar-halo {
+    animation: nectar-halo-breathe 5s ease-in-out infinite;
+  }
+  .nectar-network:not(.is-paused) .nectar-node-g circle:nth-child(2) {
+    animation: nectar-ring-breathe 6s ease-in-out infinite;
   }
 }
 
 @keyframes nectar-pulse {
-  to { stroke-dashoffset: -24; }
+  0% { offset-distance: 0%; opacity: 0; }
+  15% { opacity: 0.7; }
+  85% { opacity: 0.5; }
+  100% { offset-distance: 100%; opacity: 0; }
+}
+
+@keyframes nectar-halo-breathe {
+  0%, 100% { opacity: 0.03; transform: scale(1); }
+  50% { opacity: 0.08; transform: scale(1.15); }
+}
+
+@keyframes nectar-ring-breathe {
+  0%, 100% { stroke-opacity: 0.2; }
+  50% { stroke-opacity: 0.4; }
 }
 
 .nectar-facts {
   display: grid;
   width: 100%;
-  grid-template-columns: 1.15fr 1fr 1fr;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(3, 1fr);
   gap: clamp(20px, 3vw, 40px);
-  margin-top: 48px;
+  margin-top: 16px;
   padding-top: 28px;
   border-top: 1px solid var(--border);
   text-align: left;
@@ -10466,6 +10402,8 @@ html.is-hidden .clinic-node i,
   line-height: 1.45;
 }
 
+/* ── Section backgrounds ── */
+
 #root .control-section {
   background:
     radial-gradient(ellipse at 8% 48%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 46%);
@@ -10479,6 +10417,8 @@ html.is-hidden .clinic-node i,
 #root .final-cta .button-primary {
   color: #214d79;
 }
+
+/* ── Dark mode fixes ── */
 
 @media (prefers-color-scheme: dark) {
   .site-nav,
@@ -10499,14 +10439,13 @@ html.is-hidden .clinic-node i,
 
   .hero-workspace,
   .live-workspace,
-  .control-system,
-  .trident-system {
+  .control-system {
     border-color: var(--border-strong);
     box-shadow: 0 24px 70px rgba(0, 0, 0, 0.46), 0 2px 8px rgba(0, 0, 0, 0.28);
   }
 
   .integration-logo img {
-    filter: brightness(1.18) contrast(1.04);
+    filter: brightness(1.35) contrast(1.08) saturate(0.9);
   }
 
   .connector-medidata {
@@ -10524,5 +10463,63 @@ html.is-hidden .clinic-node i,
 
   .outcome-panel.active {
     background: var(--surface-solid);
+  }
+
+  .section-eyebrow {
+    color: var(--accent);
+  }
+
+  .control-facts span {
+    color: var(--text-soft);
+  }
+
+  .bento-card,
+  .capacity-card {
+    background: var(--surface-solid);
+    border-color: var(--border);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+
+  .thesis-section h2,
+  .trident-copy h2,
+  .nectar-copy h2 {
+    color: var(--text);
+  }
+
+  #root .final-cta {
+    background: linear-gradient(145deg, rgba(169, 192, 214, 0.12), rgba(169, 192, 214, 0.06));
+    color: var(--text);
+  }
+
+  #root .final-cta .button-primary {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  .button-primary {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .pilot-modal {
+    background: var(--surface-solid);
+    border-color: var(--border-strong);
+    box-shadow: 0 32px 100px rgba(0, 0, 0, 0.6);
+  }
+
+  .pilot-modal input,
+  .pilot-modal select,
+  .pilot-modal textarea {
+    background: var(--bg-soft);
+    border-color: var(--border);
+    color: var(--text);
+  }
+
+  .about-hero h1,
+  .founder-name {
+    color: var(--text);
+  }
+
+  .about-section {
+    color: var(--text-soft);
   }
 }

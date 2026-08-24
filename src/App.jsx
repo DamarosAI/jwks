@@ -1096,21 +1096,20 @@ function ReplayView({ tick = 0 }) {
 function TridentSection() {
   const root = useRef(null)
   const reduced = useReducedMotion()
+  const inView = useInView(root)
+  const animate = shouldRunAmbient({ reduced, inView })
   useEnterMotion(root, reduced, () => [
     gsap.from('.trident-copy > *', {
-      opacity: 0,
-      duration: 0.8,
-      stagger: 0.12,
-      clearProps: 'transform',
+      opacity: 0, duration: 0.8, stagger: 0.12, clearProps: 'transform',
       scrollTrigger: { trigger: root.current, start: 'top 70%', once: true },
     }),
-    gsap.from('.trident-system > *', {
-      opacity: 0,
-      stagger: 0.1,
-      clearProps: 'transform',
-      scrollTrigger: { trigger: root.current, start: 'top 70%', once: true },
+    gsap.from('.trident-diagram', {
+      opacity: 0, duration: 0.9, clearProps: 'transform',
+      scrollTrigger: { trigger: root.current, start: 'top 65%', once: true },
     }),
   ])
+
+  const steps = ['Protocol', 'Evidence', 'Screening', 'Resolve', 'Replay']
 
   return (
     <section className="trident-section section-space" id="trident" ref={root}>
@@ -1125,37 +1124,44 @@ function TridentSection() {
         </div>
         <p className="trident-boundary">Trident prepares source-grounded work. It never publishes a protocol, casts a Screening verdict, chooses a Resolve action, signs, or releases site data.</p>
       </div>
-      <MobilePreviewFrame>
-        <div className="trident-system" aria-label="Synthetic Trident receipt">
-          <div className="mac-titlebar"><div className="traffic-lights" aria-hidden="true"><i /><i /><i /></div><WindowBrand /><span className="window-live"><i /> Receipted harness</span></div>
-          <div className="trident-receipt">
-            <div className="trident-receipt-head">
-              <div>
-                <small>Task</small>
-                <strong>resolve.prepare.v1</strong>
-              </div>
-              <em className="trident-guard">PROPOSAL ONLY</em>
-            </div>
-            <div className="trident-receipt-meta">
-              <div><span>Provider</span><b>anthropic / claude-sonnet-4 / external</b></div>
-              <div><span>Schema</span><b>input verified - output verified</b></div>
-              <div><span>Receipt</span><b>sha256:7c2a91e0d4b8f31a</b></div>
-            </div>
-            <div className="trident-coverage" aria-label="Workflow task coverage">
-              <div><span>Protocol</span><strong>compile.protocol.v1</strong></div>
-              <div><span>Evidence</span><strong>bind.evidence.v1</strong></div>
-              <div><span>Screening</span><strong>screen.evaluate.v1</strong></div>
-              <div className="is-active"><span>Resolve</span><strong>resolve.prepare.v1</strong></div>
-              <div><span>Replay</span><strong>replay.seal.v1</strong></div>
-            </div>
-            <div className="trident-providers">
-              <span className="is-active">Anthropic</span>
-              <span>OpenAI</span>
-              <span>On-site</span>
-            </div>
-          </div>
-        </div>
-      </MobilePreviewFrame>
+      <div className={`trident-diagram${animate ? '' : ' is-paused'}`} aria-hidden="true">
+        <svg viewBox="0 0 400 320" fill="none">
+          <defs>
+            <linearGradient id="tg" x1="0" y1="0" x2="400" y2="320" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stopColor="var(--accent)" stopOpacity="0.06" />
+              <stop offset="1" stopColor="var(--accent)" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+          <rect width="400" height="320" rx="18" fill="url(#tg)" />
+          <circle cx="200" cy="160" r="54" stroke="var(--accent)" strokeWidth="0.6" strokeOpacity="0.3" fill="none" className="trident-orbit" />
+          <circle cx="200" cy="160" r="100" stroke="var(--accent)" strokeWidth="0.4" strokeOpacity="0.15" fill="none" className="trident-orbit" />
+          <circle cx="200" cy="160" r="140" stroke="var(--accent)" strokeWidth="0.3" strokeOpacity="0.08" fill="none" />
+          {steps.map((step, i) => {
+            const angle = (i * 72 - 90) * (Math.PI / 180)
+            const x = 200 + 100 * Math.cos(angle)
+            const y = 160 + 100 * Math.sin(angle)
+            const ix = 200 + 54 * Math.cos(angle)
+            const iy = 160 + 54 * Math.sin(angle)
+            return (
+              <g key={step}>
+                <line x1={ix} y1={iy} x2={x} y2={y} stroke="var(--accent)" strokeWidth="0.5" strokeOpacity="0.2" className="trident-spoke" />
+                <circle cx={x} cy={y} r="6" fill="var(--accent)" fillOpacity="0.12" stroke="var(--accent)" strokeWidth="0.6" strokeOpacity="0.35" />
+                <circle cx={x} cy={y} r="2.4" fill="var(--accent)" fillOpacity="0.7" className="trident-node" />
+                <text x={x} y={y + 18} textAnchor="middle" fill="var(--muted)" fontSize="8" fontFamily="var(--font-ui)" fontWeight="600" letterSpacing="0.06em">{step.toUpperCase()}</text>
+              </g>
+            )
+          })}
+          <circle cx="200" cy="160" r="16" fill="var(--accent)" fillOpacity="0.08" stroke="var(--accent)" strokeWidth="0.8" strokeOpacity="0.4" />
+          <circle cx="200" cy="160" r="5" fill="var(--accent)" fillOpacity="0.9" />
+          <text x="200" y="200" textAnchor="middle" fill="var(--accent)" fontSize="7.5" fontFamily="var(--font-ui)" fontWeight="700" letterSpacing="0.1em" opacity="0.7">HARNESS</text>
+          {steps.map((_, i) => {
+            const angle = (i * 72 - 90) * (Math.PI / 180)
+            const x = 200 + 100 * Math.cos(angle)
+            const y = 160 + 100 * Math.sin(angle)
+            return <circle cx={x} cy={y} r="2" fill="var(--accent)" className="trident-pulse-dot" style={{ animationDelay: `${i * 0.7}s` }} key={`p${i}`} />
+          })}
+        </svg>
+      </div>
     </section>
   )
 }
@@ -1164,40 +1170,77 @@ function NectarSection() {
   const root = useRef(null)
   const reduced = useReducedMotion()
   const inView = useInView(root)
-  const narrow = useMediaQuery(NARROW_VIEWPORT)
   const animate = shouldRunAmbient({ reduced, inView })
-  useEnterMotion(root, reduced, () => gsap.from('.nectar-copy > *, .nectar-facts > *', {
-    opacity: 0,
-    duration: 0.8,
-    stagger: 0.1,
-    ease: 'power2.out',
-    clearProps: 'transform',
-    scrollTrigger: { trigger: root.current, start: 'top 70%', once: true },
-  }))
+  useEnterMotion(root, reduced, () => [
+    gsap.from('.nectar-copy > *', {
+      opacity: 0, duration: 0.8, stagger: 0.12, ease: 'power2.out', clearProps: 'transform',
+      scrollTrigger: { trigger: root.current, start: 'top 70%', once: true },
+    }),
+    gsap.from('.nectar-network', {
+      opacity: 0, scale: 0.92, duration: 1.1, ease: 'power3.out', clearProps: 'transform',
+      scrollTrigger: { trigger: root.current, start: 'top 65%', once: true },
+    }),
+    gsap.from('.nectar-facts > *', {
+      opacity: 0, y: 12, duration: 0.7, stagger: 0.08, ease: 'power2.out', clearProps: 'all',
+      scrollTrigger: { trigger: root.current, start: 'top 55%', once: true },
+    }),
+  ])
 
-  const nodes = narrow
-    ? [[50, 22], [22, 72], [78, 72]]
-    : [[18, 34], [50, 16], [82, 34], [28, 76], [72, 76]]
-  const links = narrow
-    ? [[0, 1], [0, 2], [1, 2]]
-    : [[0, 1], [1, 2], [0, 3], [2, 4], [3, 4], [0, 2], [1, 3], [1, 4]]
+  const nodes = [
+    [200, 55], [340, 95], [370, 220], [290, 330],
+    [145, 330], [75, 220], [105, 95], [200, 160],
+    [200, 250],
+  ]
+  const links = [
+    [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 0],
+    [0, 7], [1, 7], [2, 7], [5, 7], [6, 7],
+    [3, 8], [4, 8], [7, 8],
+  ]
 
   return (
     <section className="nectar-section section-space" id="nectar" ref={root}>
       <SectionEyebrow>Nectar</SectionEyebrow>
+      <div className={`nectar-network${animate ? '' : ' is-paused'}`} aria-hidden="true">
+        <svg viewBox="0 0 400 400" fill="none">
+          <defs>
+            <radialGradient id="ng" cx="50%" cy="50%" r="50%">
+              <stop offset="0" stopColor="var(--accent)" stopOpacity="0.06" />
+              <stop offset="1" stopColor="var(--accent)" stopOpacity="0" />
+            </radialGradient>
+            <filter id="nGlow">
+              <feGaussianBlur stdDeviation="3" result="blur" />
+              <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+            </filter>
+          </defs>
+          <circle cx="200" cy="200" r="190" fill="url(#ng)" />
+          {links.map(([from, to], i) => {
+            const [x1, y1] = nodes[from]
+            const [x2, y2] = nodes[to]
+            const mx = (x1 + x2) / 2 + (Math.sin(i * 1.3) * 18)
+            const my = (y1 + y2) / 2 + (Math.cos(i * 0.9) * 18)
+            return (
+              <g key={`l${i}`}>
+                <path d={`M${x1},${y1} Q${mx},${my} ${x2},${y2}`} stroke="var(--accent)" strokeWidth="0.6" strokeOpacity="0.12" fill="none" />
+                <circle r="1.8" fill="var(--accent)" fillOpacity="0.6" className="nectar-link" style={{ offsetPath: `path('M${x1},${y1} Q${mx},${my} ${x2},${y2}')`, animationDelay: `${i * 0.55}s` }} />
+              </g>
+            )
+          })}
+          {nodes.map(([x, y], i) => {
+            const isCore = i === 7 || i === 8
+            const r = isCore ? 8 : 5
+            return (
+              <g key={`n${i}`} className="nectar-node-g">
+                <circle cx={x} cy={y} r={r + 8} fill="var(--accent)" fillOpacity="0.03" className="nectar-halo" style={{ animationDelay: `${i * 0.4}s` }} />
+                <circle cx={x} cy={y} r={r} fill="var(--accent)" fillOpacity={isCore ? 0.12 : 0.06} stroke="var(--accent)" strokeWidth={isCore ? 0.8 : 0.5} strokeOpacity={isCore ? 0.4 : 0.2} />
+                <circle cx={x} cy={y} r={isCore ? 3 : 1.8} fill="var(--accent)" fillOpacity={isCore ? 0.9 : 0.6} filter={isCore ? 'url(#nGlow)' : undefined} />
+              </g>
+            )
+          })}
+        </svg>
+      </div>
       <div className="nectar-copy">
         <h2><span>Execution intelligence that crosses site boundaries.</span><span>Patient data that never does.</span></h2>
         <p>Nectar is a shared execution ontology. Sites contribute structure, not records. Coverage compounds. Patient data stays at the site that collected it.</p>
-      </div>
-      <div className={`nectar-network${animate ? '' : ' is-paused'}`} aria-hidden="true">
-        <svg viewBox="0 0 100 100">
-          {links.map(([from, to]) => (
-            <line className="nectar-link" x1={nodes[from][0]} y1={nodes[from][1]} x2={nodes[to][0]} y2={nodes[to][1]} key={`${from}-${to}`} />
-          ))}
-          {nodes.map(([x, y], index) => (
-            <circle className={`nectar-node${index === (narrow ? 0 : 1) ? ' is-core' : ''}`} cx={x} cy={y} r={index === (narrow ? 0 : 1) ? 3.2 : 2.2} key={`${x}-${y}`} />
-          ))}
-        </svg>
       </div>
       <div className="nectar-facts">
         <div>

@@ -38,7 +38,7 @@ describe('mobile miniature layout', () => {
     assert.match(css, /overflow-x:\s*clip;/)
     assert.equal((app.match(/const playing = !narrow && shouldPlayAutoplay/g) || []).length, 1)
     assert.doesNotMatch(app, /mobile-workspace-hint/)
-    assert.equal((app.match(/<MobilePreviewFrame>/g) || []).length, 3)
+    assert.equal((app.match(/<MobilePreviewFrame>/g) || []).length, 2)
     assert.match(app, /className="mobile-preview-eyebrow">Mobile preview<\/p>/)
     assert.match(css, /#root \.mobile-preview-eyebrow \{[\s\S]*?display:\s*block;/)
     assert.match(css, /#root \.mobile-preview-frame \{\s*display:\s*block;/)
