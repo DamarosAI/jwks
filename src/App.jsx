@@ -540,16 +540,12 @@ function MiniRun() {
         </div>
         <div className="hero-app-grid">
         <aside className="hero-app-nav">
-          <strong>RUN</strong>
-          <div className="nav-step-list">
-            <div className="nav-step-rail" aria-hidden="true"><i style={{ height: `${(active / (steps.length - 1)) * 100}%` }} /></div>
-            {steps.map((step, index) => (
-              <button key={step} type="button" className={`${index === active ? 'active' : ''}${index < active ? ' complete' : ''}`} onClick={() => selectStage(index)}>
-                <span className="step-marker">{index < active ? <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M2 5.2 4.2 7.4 8 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg> : <em>{index + 1}</em>}</span>
-                <span>{step}</span>
-              </button>
-            ))}
-          </div>
+          <strong>DMR-204</strong>
+          {steps.map((step, index) => (
+            <button key={step} type="button" className={`${index === active ? 'active' : ''}${index < active ? ' visited' : ''}`} onClick={() => selectStage(index)}>
+              <SpineGlyph kind={step} /><span>{step}</span>{index < active && <small className="spine-state">Done</small>}
+            </button>
+          ))}
           <TridentStatusSwitch />
         </aside>
         <div className="hero-app-main">

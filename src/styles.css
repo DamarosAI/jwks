@@ -3608,42 +3608,42 @@ html { scroll-padding-top: 96px; }
 .live-workspace {
   position: relative;
   overflow: hidden;
-  border: 1px solid var(--border-strong);
-  border-radius: 20px;
+  border: 1px solid color-mix(in srgb, var(--accent) 12%, var(--border));
+  border-radius: 16px;
   background: var(--surface-solid);
   box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--accent) 6%, transparent),
-    0 4px 12px rgba(33, 77, 121, 0.06),
-    0 20px 48px rgba(33, 77, 121, 0.1),
-    0 48px 120px rgba(33, 77, 121, 0.14);
+    0 0 0 1px color-mix(in srgb, var(--accent) 4%, transparent),
+    0 1px 3px rgba(33, 77, 121, 0.04),
+    0 8px 24px rgba(33, 77, 121, 0.08),
+    0 32px 80px rgba(33, 77, 121, 0.12);
 }
 
 .mac-titlebar {
   display: grid;
-  min-height: 46px;
+  min-height: 42px;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  padding: 0 16px;
+  padding: 0 14px;
   border-bottom: 1px solid var(--border);
-  background: linear-gradient(180deg, var(--surface-solid), color-mix(in srgb, var(--bg-soft) 60%, var(--surface-solid)));
+  background: var(--bg);
   color: var(--muted);
-  font-size: 0.62rem;
+  font-size: 0.6rem;
 }
 
 .traffic-lights {
   display: flex;
-  gap: 6px;
+  gap: 7px;
   justify-self: start;
 }
 
 .traffic-lights i {
-  width: 11px;
-  height: 11px;
-  border: 1px solid rgba(15, 23, 32, 0.08);
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  background: #ff5f57;
+  background: #e2e6ea;
 }
 
+.traffic-lights i:first-child { background: #ff5f57; }
 .traffic-lights i:nth-child(2) { background: #febc2e; }
 .traffic-lights i:nth-child(3) { background: #28c840; }
 
@@ -3659,24 +3659,25 @@ html { scroll-padding-top: 96px; }
   gap: 0;
   justify-self: center;
   color: var(--muted);
-  font-weight: 600;
+  font-weight: 550;
 }
 
 .window-breadcrumb > span:not(.window-brand) {
   color: var(--text-soft);
-  font-weight: 650;
+  font-weight: 600;
 }
 
 .window-breadcrumb > span:not(.window-brand)::before {
   content: '/';
-  margin: 0 6px;
-  color: var(--border-strong);
+  margin: 0 5px;
+  color: var(--faint);
   font-weight: 400;
+  opacity: 0.5;
 }
 
 .window-breadcrumb > span:last-child {
-  color: var(--muted);
-  font-weight: 550;
+  color: var(--faint);
+  font-weight: 500;
 }
 
 .hero-window-brand,
@@ -3705,24 +3706,20 @@ html { scroll-padding-top: 96px; }
 .window-live {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   justify-self: end;
-  padding: 3px 10px 3px 8px;
-  border: 1px solid color-mix(in srgb, var(--success) 20%, var(--border));
-  border-radius: 999px;
-  color: var(--muted);
-  font-weight: 650;
+  color: var(--faint);
+  font-weight: 550;
 }
 
 .window-live i,
 .live-trace i,
 .operations-roster i,
 .operations-header em i {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: var(--success);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--success) 13%, transparent);
 }
 
 .window-live i,
@@ -3737,124 +3734,105 @@ html { scroll-padding-top: 96px; }
 .hero-app-grid {
   display: grid;
   min-height: 692px;
-  grid-template-columns: 228px minmax(0, 1fr);
+  grid-template-columns: 200px minmax(0, 1fr);
 }
 
 .hero-app-nav,
 .workspace-sidebar,
 .operations-roster {
   border-right: 1px solid var(--border);
-  background: color-mix(in srgb, var(--bg-soft) 70%, var(--surface-solid));
+  background: var(--bg);
 }
 
 .hero-app-nav {
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  padding: 18px 14px;
+  gap: 1px;
+  padding: 16px 10px;
 }
 
 .hero-app-nav > strong,
 .sidebar-group > span,
 .operations-roster > span {
-  margin: 6px 9px 8px;
-  color: var(--accent);
-  font-size: 0.5rem;
-  letter-spacing: 0.14em;
-}
-
-.nav-step-list {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.nav-step-rail {
-  position: absolute;
-  top: 20px;
-  left: 21px;
-  width: 1.5px;
-  height: calc(100% - 40px);
-  background: var(--border);
-  border-radius: 1px;
-}
-
-.nav-step-rail > i {
-  display: block;
-  width: 100%;
-  background: var(--accent);
-  border-radius: 1px;
-  transition: height 400ms cubic-bezier(0.32, 0.72, 0, 1);
-}
-
-.step-marker {
-  display: grid;
-  width: 22px;
-  height: 22px;
-  flex-shrink: 0;
-  place-items: center;
-  border-radius: 50%;
-  border: 1.5px solid var(--border);
-  background: var(--surface-solid);
-  color: var(--muted);
-  font-size: 0.54rem;
+  margin: 4px 10px 10px;
+  color: var(--text-soft);
+  font-size: 0.56rem;
   font-weight: 700;
-  transition: border-color 180ms ease, background 180ms ease, color 180ms ease;
-}
-
-.step-marker > em {
-  font-style: normal;
+  letter-spacing: 0.06em;
 }
 
 .hero-app-nav button {
+  position: relative;
   display: flex;
-  min-height: 40px;
+  min-height: 36px;
   align-items: center;
-  gap: 10px;
-  padding: 0 11px;
-  border: 1px solid transparent;
-  border-radius: 9px;
+  gap: 9px;
+  padding: 0 10px;
+  border: none;
+  border-radius: 8px;
   background: transparent;
   color: var(--muted);
-  font-size: 0.62rem;
-  font-weight: 550;
+  font-size: 0.68rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: background 180ms ease, color 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+  transition: background 140ms ease, color 140ms ease;
 }
 
-.hero-app-nav button > span:last-child {
-  margin-right: auto;
+.hero-app-nav button > svg:first-child {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  color: var(--faint);
+  transition: color 140ms ease;
+}
+
+.hero-app-nav button > span {
+  flex: 1;
+}
+
+.hero-app-nav button > small {
+  color: var(--success);
+  font-size: 0.5rem;
+  font-weight: 650;
+  letter-spacing: 0.04em;
 }
 
 .hero-app-nav button.active {
-  border-color: var(--border);
-  background: var(--surface-solid);
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface-solid));
   color: var(--text);
-  font-weight: 650;
-  box-shadow: 0 2px 8px rgba(33, 77, 121, 0.06), 0 8px 24px rgba(33, 77, 121, 0.06);
+  font-weight: 600;
 }
 
-.hero-app-nav button.active .step-marker {
-  border-color: var(--accent);
+.hero-app-nav button.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  border-radius: 0 2px 2px 0;
   background: var(--accent);
-  color: #fff;
 }
 
-.hero-app-nav button.complete .step-marker {
-  border-color: var(--success);
-  background: color-mix(in srgb, var(--success) 10%, var(--surface-solid));
-  color: var(--success);
+.hero-app-nav button.active > svg:first-child {
+  color: var(--accent);
 }
 
-.hero-app-nav button:not(.active):hover {
-  background: color-mix(in srgb, var(--surface-solid) 50%, transparent);
+.hero-app-nav button.visited {
   color: var(--text-soft);
 }
 
-.hero-app-nav button small {
-  color: var(--faint);
-  font-size: 0.48rem;
+.hero-app-nav button.visited > svg:first-child {
+  color: var(--muted);
+}
+
+.hero-app-nav button:not(.active):hover {
+  background: color-mix(in srgb, var(--surface-solid) 70%, transparent);
+  color: var(--text-soft);
+}
+
+.hero-app-nav button:not(.active):hover > svg:first-child {
+  color: var(--muted);
 }
 
 .hero-app-nav button .spine-state { color: var(--success); }
@@ -3957,7 +3935,7 @@ html { scroll-padding-top: 96px; }
 
 .hero-app-main {
   min-width: 0;
-  background: var(--bg);
+  background: var(--surface-solid);
 }
 
 .hero-state-canvas {
