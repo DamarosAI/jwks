@@ -36,9 +36,10 @@ describe('theme and product language', () => {
     assert.match(app, /Any model can propose\. Your site decides\./)
   })
 
-  it('keeps Nectar pulses off-screen and reduced-motion safe', () => {
-    assert.match(app, /const animate = shouldRunAmbient\(\{ reduced, inView \}\)/)
-    assert.match(app, /<NectarCanvas animate=\{animate\} \/>/)
+  it('keeps the diagrams off-screen, narrow and reduced-motion safe', () => {
+    assert.match(app, /const animate = shouldRunAmbient\(\{ reduced, inView, narrow \}\)/)
+    assert.match(app, /<NectarConsole animate=\{animate\} \/>/)
+    assert.match(app, /<TridentConsole animate=\{animate\} \/>/)
     assert.match(css, /@media.*prefers-reduced-motion/)
   })
 })

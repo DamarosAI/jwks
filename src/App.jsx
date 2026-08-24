@@ -5,8 +5,8 @@ import { easeSectionScroll, sectionScrollDuration, sectionScrollTarget, usePaneS
 import { useDemoPageWheel } from './page-scroll'
 import { PilotButton, PilotProvider } from './PilotInquiry'
 const PrivacyPage = lazy(() => import('./PrivacyPage'))
-import TridentCanvas from './TridentCanvas'
-import NectarCanvas from './NectarCanvas'
+import TridentConsole from './diagrams/TridentConsole'
+import NectarConsole from './diagrams/NectarConsole'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -1061,8 +1061,9 @@ function ReplayView({ tick = 0 }) {
 function TridentSection() {
   const root = useRef(null)
   const reduced = useReducedMotion()
+  const narrow = useMediaQuery(NARROW_VIEWPORT)
   const inView = useInView(root)
-  const animate = shouldRunAmbient({ reduced, inView })
+  const animate = shouldRunAmbient({ reduced, inView, narrow })
   useEnterMotion(root, reduced, () => [
     gsap.from('.trident-copy > *', {
       opacity: 0, duration: 0.8, stagger: 0.12, clearProps: 'transform',
@@ -1087,8 +1088,8 @@ function TridentSection() {
         </div>
         <p className="trident-boundary">Trident prepares source-grounded work. It never publishes a protocol, casts a Screening verdict, chooses a Resolve action, signs, or releases site data.</p>
       </div>
-      <div className="trident-diagram" aria-hidden="true">
-        <TridentCanvas animate={animate} />
+      <div className="trident-diagram">
+        <TridentConsole animate={animate} />
       </div>
     </section>
   )
@@ -1097,8 +1098,9 @@ function TridentSection() {
 function NectarSection() {
   const root = useRef(null)
   const reduced = useReducedMotion()
+  const narrow = useMediaQuery(NARROW_VIEWPORT)
   const inView = useInView(root)
-  const animate = shouldRunAmbient({ reduced, inView })
+  const animate = shouldRunAmbient({ reduced, inView, narrow })
   useEnterMotion(root, reduced, () => [
     gsap.from('.nectar-copy > *', {
       opacity: 0, duration: 0.8, stagger: 0.12, ease: 'power2.out', clearProps: 'transform',
@@ -1117,12 +1119,12 @@ function NectarSection() {
   return (
     <section className="nectar-section section-space" id="nectar" ref={root}>
       <SectionEyebrow>Nectar</SectionEyebrow>
-      <div className="nectar-network" aria-hidden="true">
-        <NectarCanvas animate={animate} />
+      <div className="nectar-network">
+        <NectarConsole animate={animate} />
       </div>
       <div className="nectar-copy">
         <h2><span>Execution intelligence that crosses site boundaries.</span><span>Patient data that never does.</span></h2>
-        <p>Nectar is a shared execution ontology. Sites contribute structure, not records. Coverage compounds. Patient data stays at the site that collected it.</p>
+        <p>Nectar is a shared execution library. Sites contribute structure, not records. Coverage compounds. Patient data stays at the site that collected it.</p>
       </div>
       <div className="nectar-facts">
         <div>

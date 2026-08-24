@@ -13,7 +13,7 @@ Public product has five workflow steps:
 Trident is sole AI identity. It is a governed AI harness with provider selection
 (Anthropic, OpenAI, on-site). No named assistant, agent, engine, node, console,
 copilot, or other product primitive may compete with workflow. Nectar has a
-controlled public presence: high-level only. No ontology internals.
+controlled public presence: high-level only. No internals.
 
 ## Consequences
 

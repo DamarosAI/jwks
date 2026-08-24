@@ -445,17 +445,55 @@ body,
     white-space: normal;
   }
 
-  #root .trident-diagram {
+  /* The consoles carry real rows and labels, so on a phone they stop being a
+     fixed-ratio card and size to their own content instead of clipping it. */
+
+  #root .trident-diagram,
+  #root .nectar-network {
     order: 2;
-    width: min(100%, 320px);
+    width: 100%;
+    aspect-ratio: auto;
     margin: 0 auto;
   }
 
-  #root .nectar-network {
-    order: 2;
-    width: min(100%, 320px);
-    margin: 0 auto;
+  #root .pconsole-body {
+    padding: 11px;
+    gap: 10px;
   }
+
+  #root .tc-body {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  #root .tc-rail {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+    gap: 5px;
+    padding: 0 0 10px;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  #root .tc-rail .pconsole-kicker,
+  #root .tc-rail-note {
+    grid-column: 1 / -1;
+    margin: 0;
+  }
+
+  #root .tc-provider {
+    grid-template-columns: 6px minmax(0, 1fr);
+    gap: 6px;
+    padding: 6px 7px;
+  }
+
+  #root .tc-provider small { display: none; }
+  #root .tc-main { grid-column: 1 / -1; }
+  #root .tc-checkpoint dl > div { grid-template-columns: 62px minmax(0, 1fr); gap: 8px; }
+  #root .tc-ledger header,
+  #root .tc-ledger > div { grid-template-columns: minmax(0, 1fr) 54px 48px 32px; gap: 6px; }
+  #root .nc-sites header,
+  #root .nc-sites > div { grid-template-columns: minmax(0, 1fr) 52px 56px; gap: 6px; }
 
   #root .nectar-facts {
     order: 3;

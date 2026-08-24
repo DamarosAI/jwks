@@ -12,8 +12,13 @@ describe('connector logo motion', () => {
   })
 
   it('keeps biomarker trails falling during scroll on every viewport', () => {
-    assert.match(app, /const animate = shouldRunAmbient\(\{ reduced, inView \}\)/)
-    assert.doesNotMatch(app, /shouldRunAmbient\(\{ reduced, inView, narrow \}\)/)
+    // Scoped to BiomarkerRain: the Trident and Nectar diagrams are deliberately
+    // narrow-gated, so a file-wide assertion would forbid the wrong thing.
+    const start = app.indexOf('function BiomarkerRain(')
+    const rain = app.slice(start, app.indexOf('\nfunction ', start + 1))
+    assert.match(rain, /const animate = shouldRunAmbient\(\{ reduced, inView \}\)/)
+    assert.doesNotMatch(rain, /shouldRunAmbient\(\{ reduced, inView, narrow \}\)/)
+    assert.match(rain, /const narrow = useMediaQuery\(NARROW_VIEWPORT\)/)
     assert.doesNotMatch(css, /html\.is-scrolling \.biomarker-rain/)
     assert.doesNotMatch(css, /#root \.biomarker-rain \{\s*display:\s*none;/)
     assert.match(css, /\.biomarker-rain span \{[\s\S]*?animation:\s*biomarker-fall/)
