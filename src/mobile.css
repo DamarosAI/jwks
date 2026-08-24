@@ -446,7 +446,9 @@ body,
   }
 
   /* The consoles carry real rows and labels, so on a phone they stop being a
-     fixed-ratio card and size to their own content instead of clipping it. */
+     fixed-ratio card and size to their own content instead of clipping it.
+     The provider rail turns from a side rail into a row of three, which is
+     what the three prongs look like when there is no room beside the task. */
 
   #root .trident-diagram,
   #root .nectar-network {
@@ -454,11 +456,6 @@ body,
     width: 100%;
     aspect-ratio: auto;
     margin: 0 auto;
-  }
-
-  #root .pconsole-body {
-    padding: 11px;
-    gap: 10px;
   }
 
   #root .tc-body {
@@ -469,31 +466,41 @@ body,
     display: grid;
     grid-column: 1 / -1;
     grid-template-columns: subgrid;
-    gap: 5px;
-    padding: 0 0 10px;
+    gap: 4px;
+    padding: 11px 11px 12px;
     border-right: 0;
     border-bottom: 1px solid var(--border);
   }
 
-  #root .tc-rail .pconsole-kicker,
+  #root .tc-rail > strong,
   #root .tc-rail-note {
     grid-column: 1 / -1;
     margin: 0;
   }
 
   #root .tc-provider {
-    grid-template-columns: 6px minmax(0, 1fr);
-    gap: 6px;
-    padding: 6px 7px;
+    min-height: 34px;
+    gap: 7px;
+    padding: 0 8px;
+    font-size: 0.66rem;
   }
 
-  #root .tc-provider small { display: none; }
-  #root .tc-main { grid-column: 1 / -1; }
-  #root .tc-checkpoint dl > div { grid-template-columns: 62px minmax(0, 1fr); gap: 8px; }
+  #root .tc-provider small,
+  #root .tc-provider > em { display: none; }
+  #root .tc-provider.active::before { top: 5px; bottom: 5px; }
+  #root .tc-provider.is-authority { grid-column: 1 / -1; }
+
+  #root .tc-main { grid-column: 1 / -1; padding: 12px 12px 13px; gap: 11px; }
+  #root .nc-body { padding: 12px 12px 13px; gap: 11px; }
+  #root .tc-checkpoint dl > div { grid-template-columns: 66px minmax(0, 1fr); gap: 8px; }
   #root .tc-ledger header,
   #root .tc-ledger > div { grid-template-columns: minmax(0, 1fr) 54px 48px 32px; gap: 6px; }
   #root .nc-sites header,
   #root .nc-sites > div { grid-template-columns: minmax(0, 1fr) 52px 56px; gap: 6px; }
+  #root .nc-log header,
+  #root .nc-log > div { grid-template-columns: minmax(0, 1fr) 66px 38px; gap: 6px; }
+  #root .nc-gate { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 8px; }
+  #root .nc-gate-side { display: none; }
 
   #root .nectar-facts {
     order: 3;

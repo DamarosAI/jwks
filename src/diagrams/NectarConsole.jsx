@@ -1,12 +1,15 @@
-import { usePhaseCycle } from './usePhaseCycle'
+import { ConsoleChrome, ConsoleGlyph } from './ConsoleChrome'
+import { useScrollPhase } from './useScrollPhase'
 
 /**
- * Nectar - one boundary, two opposite outcomes, shown as a release queue.
+ * Nectar - one boundary, two opposite outcomes.
  *
- * Same product register as the landing workspace. A site table on top, then the
- * boundary itself: what was released, and what was refused. The refusal is the
- * point, so it stays on screen in the rest state - structure crosses, records
- * do not. Boundary level only, no internals (ADR-0001).
+ * The monogram sits in the gap between its own two halves, so the boundary in
+ * this console is drawn with the mark itself: the site above the line, the
+ * network below it. Structure crosses downward and coverage rises. Patient
+ * records reach the same line and are turned back. Scrolling the section is
+ * what runs it, and the refusal owns the widest stretch of scroll, because the
+ * refusal is the claim. Boundary level only, no internals (ADR-0001).
  */
 
 const SITES = [
@@ -16,76 +19,80 @@ const SITES = [
   { id: 'Site 103', org: 'Bay Cohort Group', records: '614', shared: 27 },
 ]
 
-const PARCELS = [
-  { label: 'CRITERION I-4.2', detail: 'ECOG 0-1 - structured definition' },
-  { label: 'UNIT mg/m2', detail: 'Dose unit normalisation' },
-  { label: 'MAP LOINC 718-7', detail: 'Haemoglobin - source mapping' },
-  { label: 'SCHEMA v2.1', detail: 'Protocol shape - no values' },
-]
-
 const PHASES = [
-  { hold: 900, step: 0, released: false, refused: false, status: 'QUEUED', caption: 'Structure queued for release' },
-  { hold: 1000, step: 1, released: true, refused: false, status: 'RELEASED', caption: 'Structure crossed the boundary' },
-  { hold: 900, step: 2, released: true, refused: 'pending', status: 'CHECKING', caption: 'Record requested by the network' },
-  { hold: 1700, step: 3, released: true, refused: true, status: 'REFUSED', caption: 'Patient records refused at the boundary' },
-  { hold: 1700, step: 3, released: true, refused: true, status: 'STEADY', caption: 'Structure crosses. Records do not.' },
+  { span: 1, released: false, refused: false, gate: 'open', coverage: 77, status: 'QUEUED', caption: 'Structure queued at the site boundary' },
+  { span: 1.6, released: true, refused: false, gate: 'pass', coverage: 78, status: 'RELEASED', caption: 'Structure crossed. Coverage rose for every site.' },
+  { span: 1, released: true, refused: 'pending', gate: 'check', coverage: 78, status: 'CHECKING', caption: 'The network requests the underlying records' },
+  { span: 2.2, released: true, refused: true, gate: 'stop', coverage: 78, status: 'REFUSED', caption: 'Patient records refused at the boundary' },
+  { span: 2, released: true, refused: true, gate: 'stop', coverage: 78, status: 'STEADY', caption: 'Structure crosses. Records do not.' },
 ]
 
 const REST = PHASES.length - 1
+const SITE = SITES[0]
 
-export default function NectarConsole({ animate = true }) {
-  const { phase, cycle } = usePhaseCycle(PHASES, { animate, restPhase: REST })
-  const state = PHASES[phase]
-  const active = cycle % SITES.length
-  const site = SITES[active]
-  const parcel = PARCELS[cycle % PARCELS.length]
-
-  const coverage = 74 + (cycle % 6) + (state.released ? 1 : 0)
+export default function NectarConsole({ animate = true, reduced = false, section }) {
+  const phase = useScrollPhase(PHASES, { reduced, target: section })
+  const state = PHASES[phase] ?? PHASES[REST]
 
   return (
     <div className="pconsole">
-      <div className="pconsole-bar">
-        <div className="pconsole-lights" aria-hidden="true"><i /><i /><i /></div>
-        <span className="pconsole-name">Nectar</span>
-        <span className={`pconsole-live${animate ? ' is-live' : ''}`}><i /> 4 sites connected</span>
-      </div>
+      <ConsoleChrome name="Nectar" scope="4 sites" live="Boundary enforced" pulse={animate} />
 
       <div className="pconsole-body nc-body">
         <div className="nc-coverage">
-          <span><strong>Shared execution library</strong><small>Coverage compounds as sites contribute structure</small></span>
-          <em>{coverage}%</em>
+          <span><strong>Protocol coverage</strong><small>Shared execution library - DMR-204</small></span>
+          <em>{state.coverage}%</em>
           <div className="nc-meter" role="presentation">
-            <i style={{ width: `${coverage}%` }} />
+            <i style={{ width: `${state.coverage}%` }} />
           </div>
         </div>
 
         <div className="nc-sites">
           <header><small>SITE</small><small>RECORDS</small><small>SHARED</small></header>
           {SITES.map((item, i) => (
-            <div className={i === active ? 'is-active' : ''} key={item.id}>
-              <span><strong>{item.id}</strong><small>{item.org}</small></span>
+            <div className={i === 0 ? 'is-active' : ''} key={item.id}>
+              <span><ConsoleGlyph kind="site" size={14} /><strong>{item.id}</strong><small>{item.org}</small></span>
               <b>{item.records}</b>
-              <em>{item.shared + (i === active && state.released ? 1 : 0)}</em>
+              <em>{item.shared + (i === 0 && state.released ? 1 : 0)}</em>
             </div>
           ))}
         </div>
 
         <div className="nc-boundary">
-          <p className="pconsole-kicker">Site boundary - {site.id}</p>
-
-          <div className={`nc-lane is-out${state.released ? ' is-on' : ''}`}>
-            <i aria-hidden="true" />
-            <span><strong>{parcel.label}</strong><small>{parcel.detail}</small></span>
-            <em>{state.released ? 'RELEASED' : 'QUEUED'}</em>
-          </div>
-
           <div className={`nc-lane is-blocked${state.refused === true ? ' is-on' : ''}`}>
-            <i aria-hidden="true" />
-            <span><strong>{site.records} patient records</strong><small>Requested by network - never leaves the site</small></span>
+            <ConsoleGlyph kind="record" />
+            <span><strong>{SITE.records} patient records</strong><small>Requested by the network</small></span>
             <em>{state.refused === true ? 'REFUSED' : state.refused === 'pending' ? 'CHECKING' : 'AT REST'}</em>
           </div>
 
+          <div className={`nc-gate is-${state.gate}`}>
+            <span className="nc-gate-side">{SITE.id}</span>
+            <i aria-hidden="true" />
+            <span className="nc-gate-mark">
+              <img src="/assets/damaros-monogram-blue.svg" alt="" aria-hidden="true" decoding="async" />
+              Boundary
+            </span>
+            <i aria-hidden="true" />
+            <span className="nc-gate-side">Network</span>
+          </div>
+
+          <div className={`nc-lane is-out${state.released ? ' is-on' : ''}`}>
+            <ConsoleGlyph kind="structure" />
+            <span><strong>Criterion I-4.2</strong><small>ECOG 0-1 - structure only, no values</small></span>
+            <em>{state.released ? 'RELEASED' : 'QUEUED'}</em>
+          </div>
+
           <p className="nc-caption">{state.caption}</p>
+        </div>
+
+        {/* The log keeps both outcomes on the record. A refusal is an entry,
+            not an absence. */}
+        <div className="nc-log">
+          <p className="pconsole-kicker">Boundary log</p>
+          <header><small>PARCEL</small><small>OUTCOME</small><small>TIME</small></header>
+          <div className={`is-refused${state.refused === true ? ' is-new' : ''}`}><code>PATIENT RECORD</code><b>Refused</b><time>14:09</time></div>
+          <div className={state.released ? 'is-new' : ''}><code>CRITERION I-4.2</code><b>Released</b><time>14:07</time></div>
+          <div><code>UNIT mg/m2</code><b>Released</b><time>11:52</time></div>
         </div>
       </div>
     </div>
