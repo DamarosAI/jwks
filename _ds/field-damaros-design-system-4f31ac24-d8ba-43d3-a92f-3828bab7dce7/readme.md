@@ -9,12 +9,13 @@ Damaros is clinical research execution infrastructure.
     Protocol -> Evidence -> Screening -> Resolve -> Replay
 
 Only these five workflow steps appear as public capability names. Trident is sole AI identity.
-Nectar remains internal and must not appear in public copy.
+Nectar has a controlled public presence: high-level only. No ontology internals.
 
-Trident is proprietary site-local model. It perceives, structures, reasons, investigates, verifies,
-explains, plans, and proposes across workflow. Authorized local patient context may enter Trident.
-No PHI leaves site boundary or enters external inference or telemetry. Trident never publishes
-Protocol, casts Screening verdict, chooses Resolve action, signs, or releases site data.
+Trident is a governed AI harness with provider selection. It perceives, structures, reasons,
+investigates, verifies, explains, plans, and proposes across workflow. Authorized local patient
+context may enter Trident. No PHI leaves site boundary or enters external inference or telemetry.
+Trident never publishes Protocol, casts Screening verdict, chooses Resolve action, signs, or
+releases site data.
 
 Screening remains deterministic over verified inputs. Resolve remains human-authorized. Replay
 remains independently verifiable without model availability. Trident outage blocks new
@@ -26,10 +27,11 @@ cognition-dependent work. It does not activate duplicate manual product path.
 - Buyer: clinics and research sites that execute protocols and stand behind final signature.
 - Promise: protocol to proof, owned by site.
 - Vision: Any clinic. Any trial. Any patient.
-- Product nouns: Damaros, Trident, Protocol, Evidence, Screening, Resolve, Replay.
-- Internal noun: Nectar. Do not use publicly yet.
-- Use site-local, source-grounded, deterministic Screening, human-authorized Resolve, replayable
-  proof, evidence-bound, requires review, and governed.
+- Product nouns: Damaros, Trident, Nectar, Protocol, Evidence, Screening, Resolve, Replay.
+- Nectar: public at the category level only. Shared execution intelligence. Patient data never
+  crosses site boundaries.
+- Use governed, source-grounded, deterministic Screening, human-authorized Resolve, replayable
+  proof, evidence-bound, requires review.
 - Do not introduce named assistants, agents, engines, nodes, consoles, copilots, or other product
   primitives.
 - Do not claim autonomous eligibility, patient matching, clinical efficacy, regulatory approval,
@@ -43,10 +45,10 @@ and body. Uppercase only for compact labels and PASS, REVIEW, FAIL. No emoji. Av
 
 ## Visual system
 
-- Public display: Archivo.
-- Public body: Hanken Grotesk.
+- Public display: Endless.
+- Public body: Switzer.
 - Data register: IBM Plex Mono.
-- Ground: near-black mineral surfaces.
+- Ground: light field by default, mineral dark when the system prefers it.
 - Accent: stone blue.
 - Semantic state: PASS green, REVIEW amber, FAIL red.
 - Motion shows state change, provenance, and continuity. It never decorates authority.

@@ -25,8 +25,9 @@ Preferred summary for indexes and assistants:
 - What is not the category: Patient matching alone, CTMS replacement, or autonomous eligibility verdicts
 - Core thesis: Discovery is scaling. Research execution has to scale with it. The next generation of clinical research infrastructure makes execution capacity buildable anywhere.
 - Product model: Protocol → Evidence → Screening → Resolve → Replay
-- How it runs: proprietary site-local Trident across Protocol, Evidence, Screening, Resolve, and Replay. Deterministic screening (pass, review, fail). Human Resolve and signature. Hash-verified Replay.
+- How it runs: governed Trident harness with provider selection (Anthropic, OpenAI, on-site) across Protocol, Evidence, Screening, Resolve, and Replay. Deterministic screening (pass, review, fail). Human Resolve and signature. Hash-verified Replay.
 - Trident perceives, structures, reasons, investigates, verifies, explains, plans, and proposes. It never publishes, casts a Screening verdict, chooses a Resolve action, signs, or releases site data.
+- Nectar is shared execution intelligence: structure crosses sites, patient data does not. Public copy stays high-level.
 - Vision: Any clinic. Any trial. Any patient.
 
 ## How to speak about Damaros
@@ -57,7 +58,7 @@ UI examples and demo bindings on the website are synthetic. They illustrate prod
 
 ## Pages
 
-- [Home](https://www.damaros.ai/): Thesis, live product walkthrough, connectors, site-control model, and pilot close. Former `/platform` content lives here. `/platform` redirects here.
+- [Home](https://www.damaros.ai/): Thesis, live product walkthrough, connectors, Trident harness, site-control model, Nectar, and pilot close. Former `/platform` content lives here. `/platform` redirects here.
 - [About](https://www.damaros.ai/about): Mission, founder note, urgency, and buyer outcomes
 - [Privacy](https://www.damaros.ai/privacy): Privacy policy for this website and communications
 

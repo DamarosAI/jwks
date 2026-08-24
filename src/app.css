@@ -1,0 +1,22 @@
+@import "tailwindcss/theme" layer(theme);
+@import "tailwindcss/utilities" layer(utilities);
+
+@theme {
+  --color-ground: var(--bg);
+  --color-surface: var(--surface-solid);
+  --color-ink: var(--text);
+  --color-ink-soft: var(--text-soft);
+  --color-ink-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-soft: var(--accent-soft);
+  --color-border: var(--border);
+  --color-pass: var(--success);
+  --color-review: var(--warning);
+  --color-fail: var(--danger, #cc3344);
+  --color-governed: var(--governed, #8c7cf0);
+  --font-display: 'Endless', 'Switzer', sans-serif;
+  --font-body: 'Switzer', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --radius-card: var(--card-radius);
+}

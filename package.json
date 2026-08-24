@@ -8,8 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint .",
-    "test": "node --test api/lib/pilot-inquiry.test.js src/pilot-triggers.test.js src/autoplay.test.js src/motion.test.js src/type.test.js src/brand.test.js src/security-layout.test.js src/integration-motion.test.js src/mobile-layout.test.js src/page-scroll.test.js src/evidence-layout.test.js && node scripts/verify-demo-actions.mjs && node scripts/verify-pilot-wiring.mjs",
-    "smoke": "node --test api/lib/pilot-inquiry.test.js src/pilot-triggers.test.js src/autoplay.test.js src/motion.test.js src/type.test.js src/brand.test.js src/security-layout.test.js src/integration-motion.test.js src/mobile-layout.test.js src/page-scroll.test.js src/evidence-layout.test.js && node scripts/verify-demo-actions.mjs && node scripts/verify-pilot-wiring.mjs",
+    "test": "node --test api/lib/pilot-inquiry.test.js src/pilot-triggers.test.js src/autoplay.test.js src/motion.test.js src/type.test.js src/brand.test.js src/security-layout.test.js src/integration-motion.test.js src/mobile-layout.test.js src/page-scroll.test.js src/evidence-layout.test.js src/theme-language.test.js && node scripts/verify-demo-actions.mjs && node scripts/verify-pilot-wiring.mjs",
+    "smoke": "node --test api/lib/pilot-inquiry.test.js src/pilot-triggers.test.js src/autoplay.test.js src/motion.test.js src/type.test.js src/brand.test.js src/security-layout.test.js src/integration-motion.test.js src/mobile-layout.test.js src/page-scroll.test.js src/evidence-layout.test.js src/theme-language.test.js && node scripts/verify-demo-actions.mjs && node scripts/verify-pilot-wiring.mjs",
     "test:demo": "node scripts/verify-demo-actions.mjs"
   },
   "engines": {
@@ -18,11 +18,13 @@
   "dependencies": {
     "@gsap/react": "^2.1.2",
     "@phosphor-icons/react": "^2.1.10",
+    "@tailwindcss/vite": "^4.3.3",
     "gsap": "^3.15.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-router-dom": "^7.18.2",
-    "resend": "^6.18.0"
+    "resend": "^6.18.0",
+    "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

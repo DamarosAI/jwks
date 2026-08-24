@@ -1,7 +1,6 @@
 /* ============================================================
  * FIELD · Typography tokens
- * Display = Archivo (grotesque, tight, structural). Body =
- * Hanken Grotesk (humanist, calm, legible at small sizes).
+ * Display = Endless (public field). Body = Switzer.
  * Mono = IBM Plex Mono (the "data register" - anything machine-
  * generated, hashed, timestamped, or identity-bearing).
  *
@@ -15,7 +14,7 @@
 
 :root {
   /* ---- Families ---- */
-  --font-display: "Archivo", "Switzer", sans-serif;
+  --font-display: "Endless", "Switzer", sans-serif;
   --font-body: "Switzer", sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
   /* Webapp-compatible aliases */
@@ -34,7 +33,7 @@
   --weight-bold: 700;
   --weight-display: 750;
 
-  /* ---- Display scale (Archivo) - tight tracking, balanced ---- */
+  /* ---- Display scale (Endless) - tight tracking, balanced ---- */
   --type-hero: 700 clamp(2.6rem, 7vw, 6rem) / 0.9 var(--font-display);
   --type-display: 700 clamp(2.2rem, 5vw, 3.7rem) / 0.95 var(--font-display);
   --type-title: 700 clamp(1.5rem, 2.2vw, 2.1rem) / 1.05 var(--font-display);
@@ -52,7 +51,7 @@
   --type-mono-sm: 400 0.69rem / 1.4 var(--font-mono);
 
   /* ---- Letter-spacing ---- */
-  --tracking-display: -0.03em;   /* Archivo headlines run tight */
+  --tracking-display: -0.03em;   /* Endless headlines run tight */
   --tracking-tight: -0.015em;
   --tracking-normal: 0;
   --tracking-label: 0.16em;      /* uppercase eyebrows / chips */

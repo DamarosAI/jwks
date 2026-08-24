@@ -71,7 +71,7 @@ describe('site-control workspace geometry', () => {
     assert.doesNotMatch(app, /control-release-card/)
   })
 
-  it('shows site-local Trident availability and fail-closed outage', () => {
+  it('shows governed Trident availability and fail-closed outage', () => {
     assert.match(app, /function TridentStatusSwitch\(/)
     assert.match(app, /<TridentStatusSwitch \/>/)
     assert.match(app, /role="switch"/)
@@ -97,7 +97,7 @@ describe('site-control workspace geometry', () => {
     assert.doesNotMatch(app, /className="control-control-fill"/)
     assert.match(app, /SHA-256/)
     assert.match(app, /Ed25519/)
-    assert.match(app, /Site-local Trident\. No PHI egress\./)
+    assert.match(app, /Governed Trident harness\. No PHI egress\./)
     assert.doesNotMatch(app, /boundaryNote/)
     assert.match(app, /className="source-arm"/)
     assert.match(app, /LEDGER - 3 EVENTS - SITE 018/)

@@ -87,7 +87,6 @@ const BIOMARKERS = [
   ['FHIR', '91%', '-7s', '21s', '-38px'],
 ]
 
-// Canonical landing-demo queue, ported from C:\repos\jwks\platform.html.
 const PLATFORM_SCREENING_QUEUE = [
   { id: 'S-1066', name: 'M. Hughes', status: 'REVIEW', criterion: 'I-2.1 - biomarker missing', blocker: 'EGFR / ALK molecular status', rule: 'EGFR / ALK status required before randomization.', facts: ['No molecular DiagnosticReport found', 'Order placed 06-19 - no result'], sources: ['Awaiting DiagnosticReport', 'DocumentReference - none'], result: 'REVIEW', reason: 'Required source not yet received' },
   { id: 'S-1051', name: 'E. Morn', status: 'REVIEW', criterion: 'I-3.4 - CMP stale', blocker: 'Serum chemistry within 7-day window', rule: 'CMP must be drawn within 7 days of C1D1.', facts: ['K+ 5.0 mmol/L drawn 06-09', '11 days old at evaluation'], sources: ['Observation/chem-5521'], result: 'REVIEW', reason: 'Evidence outside freshness window' },
@@ -178,7 +177,7 @@ const INTEGRATIONS = [
   ['REDCap', '/assets/vendor/redcap.png'],
 ]
 
-const HOME_SPINE = [['home', 'Home', 'Damaros'], ['thesis', 'Thesis', 'Why now'], ['capacity', 'Capacity', 'Deployment'], ['site-control', 'Control', 'Site-owned'], ['pilot', 'Pilot', 'Start here']]
+const HOME_SPINE = [['home', 'Home', 'Damaros'], ['thesis', 'Thesis', 'Why now'], ['capacity', 'Capacity', 'Deployment'], ['trident', 'Trident', 'Harness'], ['site-control', 'Control', 'Site-owned'], ['nectar', 'Nectar', 'Intelligence'], ['pilot', 'Pilot', 'Start here']]
 const ABOUT_SPINE = [['about-top', 'About', 'Damaros'], ['founder', 'Founder', 'Origin'], ['why-now', 'Why now', 'Constraint'], ['people', 'People', 'Ownership'], ['pilot', 'Pilot', 'Start here']]
 
 function BiomarkerRain() {
@@ -477,7 +476,7 @@ function Footer() {
     <footer className="site-footer">
       <div className="footer-mark">
         <span><BrandName /></span>
-        <p>Clinical research execution infrastructure. Trident prepares. People decide.</p>
+        <p>Clinical research execution infrastructure. Any model can propose. Your site decides.</p>
       </div>
       <div className="footer-links">
         <NavLink to="/">Home</NavLink>
@@ -623,7 +622,7 @@ function ThesisSection() {
     <section className="thesis-section section-space" id="thesis" ref={root}>
       <SectionEyebrow>Thesis</SectionEyebrow>
       <div className="thesis-head">
-        <h2><span className="accent-text">The future of medicine</span> cannot run on yesterday's research infrastructure.</h2>
+        <h2><span className="accent-text">The next generation of medicine</span> cannot run on yesterday's research infrastructure.</h2>
         <p className="thesis-closer"><BrandName /> is building what comes next.</p>
       </div>
     </section>
@@ -1094,6 +1093,130 @@ function ReplayView({ tick = 0 }) {
   )
 }
 
+function TridentSection() {
+  const root = useRef(null)
+  const reduced = useReducedMotion()
+  useEnterMotion(root, reduced, () => [
+    gsap.from('.trident-copy > *', {
+      opacity: 0,
+      duration: 0.8,
+      stagger: 0.12,
+      clearProps: 'transform',
+      scrollTrigger: { trigger: root.current, start: 'top 70%', once: true },
+    }),
+    gsap.from('.trident-system > *', {
+      opacity: 0,
+      stagger: 0.1,
+      clearProps: 'transform',
+      scrollTrigger: { trigger: root.current, start: 'top 70%', once: true },
+    }),
+  ])
+
+  return (
+    <section className="trident-section section-space" id="trident" ref={root}>
+      <SectionEyebrow>Trident</SectionEyebrow>
+      <div className="trident-copy">
+        <h2><span>Any model can propose.</span><span>None can decide.</span></h2>
+        <p>Trident is a governed AI harness. Operators choose the provider. Every task is versioned, schema-validated, and receipted. Checkpoints keep authority with the site.</p>
+        <div className="control-facts">
+          <span><CheckCircle size={18} /> Schema-validated</span>
+          <span><Fingerprint size={18} /> Provider identity</span>
+          <span><FileText size={18} /> 19 versioned tasks</span>
+        </div>
+        <p className="trident-boundary">Trident prepares source-grounded work. It never publishes a protocol, casts a Screening verdict, chooses a Resolve action, signs, or releases site data.</p>
+      </div>
+      <MobilePreviewFrame>
+        <div className="trident-system" aria-label="Synthetic Trident receipt">
+          <div className="mac-titlebar"><div className="traffic-lights" aria-hidden="true"><i /><i /><i /></div><WindowBrand /><span className="window-live"><i /> Receipted harness</span></div>
+          <div className="trident-receipt">
+            <div className="trident-receipt-head">
+              <div>
+                <small>Task</small>
+                <strong>resolve.prepare.v1</strong>
+              </div>
+              <em className="trident-guard">PROPOSAL ONLY</em>
+            </div>
+            <div className="trident-receipt-meta">
+              <div><span>Provider</span><b>anthropic / claude-sonnet-4 / external</b></div>
+              <div><span>Schema</span><b>input verified - output verified</b></div>
+              <div><span>Receipt</span><b>sha256:7c2a91e0d4b8f31a</b></div>
+            </div>
+            <div className="trident-coverage" aria-label="Workflow task coverage">
+              <div><span>Protocol</span><strong>compile.protocol.v1</strong></div>
+              <div><span>Evidence</span><strong>bind.evidence.v1</strong></div>
+              <div><span>Screening</span><strong>screen.evaluate.v1</strong></div>
+              <div className="is-active"><span>Resolve</span><strong>resolve.prepare.v1</strong></div>
+              <div><span>Replay</span><strong>replay.seal.v1</strong></div>
+            </div>
+            <div className="trident-providers">
+              <span className="is-active">Anthropic</span>
+              <span>OpenAI</span>
+              <span>On-site</span>
+            </div>
+          </div>
+        </div>
+      </MobilePreviewFrame>
+    </section>
+  )
+}
+
+function NectarSection() {
+  const root = useRef(null)
+  const reduced = useReducedMotion()
+  const inView = useInView(root)
+  const narrow = useMediaQuery(NARROW_VIEWPORT)
+  const animate = shouldRunAmbient({ reduced, inView })
+  useEnterMotion(root, reduced, () => gsap.from('.nectar-copy > *, .nectar-facts > *', {
+    opacity: 0,
+    duration: 0.8,
+    stagger: 0.1,
+    ease: 'power2.out',
+    clearProps: 'transform',
+    scrollTrigger: { trigger: root.current, start: 'top 70%', once: true },
+  }))
+
+  const nodes = narrow
+    ? [[50, 22], [22, 72], [78, 72]]
+    : [[18, 34], [50, 16], [82, 34], [28, 76], [72, 76]]
+  const links = narrow
+    ? [[0, 1], [0, 2], [1, 2]]
+    : [[0, 1], [1, 2], [0, 3], [2, 4], [3, 4], [0, 2], [1, 3], [1, 4]]
+
+  return (
+    <section className="nectar-section section-space" id="nectar" ref={root}>
+      <SectionEyebrow>Nectar</SectionEyebrow>
+      <div className="nectar-copy">
+        <h2><span>Execution intelligence that crosses site boundaries.</span><span>Patient data that never does.</span></h2>
+        <p>Nectar is a shared execution ontology. Sites contribute structure, not records. Coverage compounds. Patient data stays at the site that collected it.</p>
+      </div>
+      <div className={`nectar-network${animate ? '' : ' is-paused'}`} aria-hidden="true">
+        <svg viewBox="0 0 100 100">
+          {links.map(([from, to]) => (
+            <line className="nectar-link" x1={nodes[from][0]} y1={nodes[from][1]} x2={nodes[to][0]} y2={nodes[to][1]} key={`${from}-${to}`} />
+          ))}
+          {nodes.map(([x, y], index) => (
+            <circle className={`nectar-node${index === (narrow ? 0 : 1) ? ' is-core' : ''}`} cx={x} cy={y} r={index === (narrow ? 0 : 1) ? 3.2 : 2.2} key={`${x}-${y}`} />
+          ))}
+        </svg>
+      </div>
+      <div className="nectar-facts">
+        <div>
+          <strong>PHI-free by construction</strong>
+          <p>Only execution structure moves across sites. Patient records do not.</p>
+        </div>
+        <div>
+          <strong>Network effect</strong>
+          <p>Each governed run improves protocol coverage for the next site.</p>
+        </div>
+        <div>
+          <strong>Data gravity</strong>
+          <p>Records remain at the collecting site. Intelligence compounds elsewhere.</p>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function SiteControlSection() {
   const root = useRef(null)
   const reviewTimer = useRef(0)
@@ -1109,7 +1232,7 @@ function SiteControlSection() {
   const controls = [
     { name: 'Evidence visibility', icon: ShieldCheck, policy: 'Site roles only', title: 'Evidence access boundary', meta: 'POL-018-EV4 - 7 site roles - hash-linked', description: 'Only approved site roles can open source evidence or mapped patient facts.', scope: 'FHIR resources, documents, and mapped facts', record: 'POL-018-EV4', receipt: 'REV-018-EV4-1044', recipient: '7 approved site roles', patientFields: 'Site-held', action: 'Review access boundary', decision: 'Confirm current access boundary', outcome: 'Access remains limited to 7 approved site roles. No external principal receives patient evidence.', success: 'Access review recorded', guard: 'Patient evidence stays site-held. Approved roles only.', path: [{ label: 'HOLD', value: '4 site sources', state: 'held' }, { label: 'SCREENING', value: 'Deterministic', state: 'held' }, modelStop, { label: 'ACCESS', value: '7 site roles', state: 'held' }], holdLabel: 'OPEN TO', holdings: [{ code: 'CO', name: 'Site coordinator', hold: 'Evidence and mapped facts' }, { code: 'PI', name: 'PI / sub-I', hold: 'Evidence and mapped facts' }, { code: 'CR', name: 'CRC lead', hold: 'Mapped facts only' }, { code: 'SM', name: 'Sponsor monitor', hold: 'No patient evidence' }], events: [['10:41', 'As-of ingest sealed', 'Synthetic FHIR'], ['10:43', 'Evidence visibility checked', 'POL-018-EV4']] },
     { name: 'Artifact release', icon: FileText, policy: 'PI or delegated signer', title: 'Sponsor artifact release', meta: 'POL-018-AR2 - Replay RPL-1047 - 0 patient fields', description: 'Replay bundles remain at the site until a PI or delegated signer releases the exact artifact.', scope: 'Replay bundle - RPL-1047', record: 'POL-018-AR2', receipt: 'REV-018-AR2-1044', recipient: 'Meridian Oncology', patientFields: '0 in sponsor artifact', action: 'Review artifact release', decision: 'Confirm delegated release authority', outcome: 'Replay remains site-held until a PI or delegated signer releases this exact artifact.', success: 'Artifact review recorded', guard: 'Replay stays site-held until a PI signs the exact artifact.', path: [{ label: 'HOLD', value: 'Replay RPL-1047', state: 'held' }, { label: 'SIGN', value: 'PI or delegate', state: 'held' }, modelStop, { label: 'EGRESS', value: '0 patient fields', state: 'held' }], holdLabel: 'HELD ARTIFACT', holdings: [{ code: 'RP', name: 'Replay RPL-1047', hold: 'Site-held bundle' }, { code: 'PI', name: 'PI roster', hold: 'Signer authority' }, { code: 'SP', name: 'Sponsor packet', hold: '0 patient fields' }, { code: 'EX', name: 'Export manifest', hold: 'Ed25519 pending' }], events: [['10:41', 'Replay bundle sealed', 'RPL-1047'], ['10:43', 'Artifact hold checked', 'POL-018-AR2']] },
-    { name: 'Trident execution', icon: Power, policy: available ? 'Required local cognition' : 'New cognition blocked', title: 'Trident attestation', meta: available ? 'POL-018-TR3 - Run 018-017 - site-local' : 'POL-018-TR3 - Run 018-017 - unavailable', description: available ? 'Trident processes authorized protocol and patient context inside institution boundary and writes source-linked work products.' : 'Trident is unavailable. New cognition-dependent work is blocked. Committed records remain readable and Replay-verifiable.', scope: 'Site runtime - Run 018-017', record: 'POL-018-TR3', receipt: 'REV-018-TR3-1044', recipient: 'Site execution record', patientFields: 'Authorized local context', action: 'Review Trident attestation', decision: available ? 'Accept local runtime attestation' : 'Acknowledge fail-closed state', outcome: available ? 'Run remains site-bound. Source-linked work products enter execution record.' : 'No fallback path activated. Existing record remains verifiable.', success: 'Attestation review recorded', guard: available ? 'Protocol and patient context remain inside institution boundary.' : 'New cognition blocked. Historical proof remains available.', path: [{ label: 'HOLD', value: 'Site runtime', state: 'held' }, { label: 'SCREENING', value: 'Deterministic', state: 'held' }, modelStop, { label: 'EGRESS', value: 'No PHI egress', state: 'held' }], holdLabel: 'RUNTIME', holdings: [{ code: 'RN', name: 'Run 018-017', hold: available ? 'Local Trident' : 'New cognition blocked' }, { code: 'TX', name: 'Protocol context', hold: available ? 'Authorized local input' : 'Queued' }, { code: 'PH', name: 'Patient context', hold: available ? 'Authorized local input' : 'Queued' }, { code: 'WP', name: 'Work product', hold: 'Source-linked only' }], events: [['10:41', 'Trident attested', 'Run 018-017'], ['10:43', 'Local boundary checked', 'POL-018-TR3']] },
+    { name: 'Trident execution', icon: Power, policy: available ? 'Required local cognition' : 'New cognition blocked', title: 'Trident attestation', meta: available ? 'POL-018-TR3 - Run 018-017 - governed' : 'POL-018-TR3 - Run 018-017 - unavailable', description: available ? 'Trident processes authorized protocol and patient context inside institution boundary and writes source-linked work products.' : 'Trident is unavailable. New cognition-dependent work is blocked. Committed records remain readable and Replay-verifiable.', scope: 'Site runtime - Run 018-017', record: 'POL-018-TR3', receipt: 'REV-018-TR3-1044', recipient: 'Site execution record', patientFields: 'Authorized local context', action: 'Review Trident attestation', decision: available ? 'Accept governed runtime attestation' : 'Acknowledge fail-closed state', outcome: available ? 'Run remains site-bound. Source-linked work products enter execution record.' : 'No fallback path activated. Existing record remains verifiable.', success: 'Attestation review recorded', guard: available ? 'Protocol and patient context remain inside institution boundary.' : 'New cognition blocked. Historical proof remains available.', path: [{ label: 'HOLD', value: 'Site runtime', state: 'held' }, { label: 'SCREENING', value: 'Deterministic', state: 'held' }, modelStop, { label: 'EGRESS', value: 'No PHI egress', state: 'held' }], holdLabel: 'RUNTIME', holdings: [{ code: 'RN', name: 'Run 018-017', hold: available ? 'Governed Trident' : 'New cognition blocked' }, { code: 'TX', name: 'Protocol context', hold: available ? 'Authorized local input' : 'Queued' }, { code: 'PH', name: 'Patient context', hold: available ? 'Authorized local input' : 'Queued' }, { code: 'WP', name: 'Work product', hold: 'Source-linked only' }], events: [['10:41', 'Trident attested', 'Run 018-017'], ['10:43', 'Local boundary checked', 'POL-018-TR3']] },
   ]
   const control = controls[selectedControl]
   const completedReview = reviewedControls[control.record]
@@ -1193,7 +1316,7 @@ function SiteControlSection() {
                     <p>{control.meta}</p>
                     <div className="source-amendment">
                       <span>CONTROL BOUNDARY</span>
-                      <strong>Site-local Trident. No PHI egress.</strong>
+                      <strong>Governed Trident harness. No PHI egress.</strong>
                       <small>{control.guard}</small>
                     </div>
                     <div className="source-protocol-summary">
@@ -1233,7 +1356,7 @@ function SiteControlSection() {
       </MobilePreviewFrame>
       <div className="control-copy">
         <h2><span>Evidence stays</span><span>with the site.</span></h2>
-        <p>Patient data, Trident context, evidence, signatures, and execution records remain under site governance. Site release controls every outbound artifact.</p>
+        <p>Patient data, harness context, evidence, signatures, and execution records remain under site governance. Site release controls every outbound artifact.</p>
         <div className="control-facts">
           <span><ShieldCheck size={18} /> Replayable proof</span>
           <span><Database size={18} /> Site-approved sources</span>
@@ -1271,7 +1394,9 @@ function HomePage() {
       <PageSpine />
       <ThesisSection />
       <CapacityBento />
+      <TridentSection />
       <SiteControlSection />
+      <NectarSection />
       <FinalCta />
     </main>
   )

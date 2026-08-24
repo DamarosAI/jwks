@@ -6,7 +6,7 @@
  * reserved for trial state (PASS / REVIEW / FAIL) and governance.
  *
  * Two real surfaces share this palette:
- *   · damaros.ai (the public field)  - jet backgrounds, Archivo
+ *   · damaros.ai (the public field)  - light field, mineral dark, Endless
  *   · Damaros workflow (operator)   - near-black, denser, mono
  * Both are expressed here. Base values first, semantic aliases
  * second. The webapp-compatible aliases (--bg-base, --accent,

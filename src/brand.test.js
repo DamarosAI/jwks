@@ -13,7 +13,9 @@ describe('Damaros brand mark', () => {
     assert.doesNotMatch(app, /<SectionEyebrow>Home<\/SectionEyebrow>/)
     assert.match(app, /<SectionEyebrow>Thesis<\/SectionEyebrow>/)
     assert.match(app, /<SectionEyebrow>Capacity<\/SectionEyebrow>/)
+    assert.match(app, /<SectionEyebrow>Trident<\/SectionEyebrow>/)
     assert.match(app, /<SectionEyebrow>Control<\/SectionEyebrow>/)
+    assert.match(app, /<SectionEyebrow>Nectar<\/SectionEyebrow>/)
     assert.match(app, /\{!about && <SectionEyebrow>Pilot<\/SectionEyebrow>\}/)
     assert.doesNotMatch(app, /<SectionEyebrow>About<\/SectionEyebrow>/)
     assert.doesNotMatch(app, /<SectionEyebrow>Founder<\/SectionEyebrow>/)
@@ -54,7 +56,7 @@ describe('Damaros brand mark', () => {
   })
 
   it('answers the thesis with the brand mark and even section padding', () => {
-    assert.match(app, /className="accent-text">The future of medicine<\/span> cannot run on yesterday's research infrastructure\./)
+    assert.match(app, /className="accent-text">The next generation of medicine<\/span> cannot run on yesterday's research infrastructure\./)
     assert.match(app, /className="thesis-closer"><BrandName \/> is building what comes next\./)
     assert.match(css, /\.thesis-section\.section-space \{[\s\S]*?padding-block:\s*112px;/)
     assert.match(css, /\.landing-hero \{[\s\S]*?padding:\s*clamp\(196px, 22vh, 248px\) max\(28px, 4vw\) 112px;/)

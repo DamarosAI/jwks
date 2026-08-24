@@ -10,15 +10,17 @@ Public product has five workflow steps:
 
     Protocol -> Evidence -> Screening -> Resolve -> Replay
 
-Trident is sole AI identity. It is proprietary site-local model. No named assistant, agent, engine,
-node, console, copilot, or other product primitive may compete with workflow. Nectar remains internal
-and absent from public copy.
+Trident is sole AI identity. It is a governed AI harness with provider selection
+(Anthropic, OpenAI, on-site). No named assistant, agent, engine, node, console,
+copilot, or other product primitive may compete with workflow. Nectar has a
+controlled public presence: high-level only. No ontology internals.
 
 ## Consequences
 
-Public copy describes what operator accomplishes in five steps. Trident appears only where local
-cognition matters. Deterministic Screening, human Resolve, signatures, site release, and independent
-Replay remain explicit. Historical product names and parked implementations are deleted.
+Public copy describes what an operator accomplishes in five steps. Trident appears
+where governed cognition matters. Deterministic Screening, human Resolve,
+signatures, site release, and independent Replay remain explicit. Historical
+product names and parked implementations are deleted.
 
 ## Supersession
 

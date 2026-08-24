@@ -9,7 +9,8 @@ const main = await readFile(new URL('./main.jsx', import.meta.url), 'utf8')
 describe('mobile miniature layout', () => {
   it('loads correction last and keeps section spine below navigation', () => {
     assert.match(main, /import '\.\/styles\.css'[\s\S]*import '\.\/mobile\.css'/)
-    assert.match(css, /#root \.page-spine,[\s\S]*?top:\s*calc\(max\(8px,[\s\S]*?grid-template-columns:\s*repeat\(5,/)
+    assert.match(css, /#root \.page-spine,[\s\S]*?top:\s*calc\(max\(8px,[\s\S]*?grid-template-columns:\s*repeat\(7,/)
+    assert.match(css, /#root \.page-spine\.page-spine-about \{[\s\S]*?grid-template-columns:\s*repeat\(5,/)
     assert.match(app, /const narrow = useMediaQuery\(NARROW_VIEWPORT\)[\s\S]*?const \[visible, setVisible\] = useState\(about \|\| narrow\)/)
   })
 
@@ -37,7 +38,7 @@ describe('mobile miniature layout', () => {
     assert.match(css, /overflow-x:\s*clip;/)
     assert.equal((app.match(/const playing = !narrow && shouldPlayAutoplay/g) || []).length, 1)
     assert.doesNotMatch(app, /mobile-workspace-hint/)
-    assert.equal((app.match(/<MobilePreviewFrame>/g) || []).length, 2)
+    assert.equal((app.match(/<MobilePreviewFrame>/g) || []).length, 3)
     assert.match(app, /className="mobile-preview-eyebrow">Mobile preview<\/p>/)
     assert.match(css, /#root \.mobile-preview-eyebrow \{[\s\S]*?display:\s*block;/)
     assert.match(css, /#root \.mobile-preview-frame \{\s*display:\s*block;/)
