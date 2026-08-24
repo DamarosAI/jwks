@@ -17,11 +17,9 @@ describe('theme and product language', () => {
     assert.match(theme, /--font-display:\s*'Endless'/)
   })
 
-  it('switches the public field through CSS custom properties', () => {
-    assert.match(css, /color-scheme:\s*light dark/)
-    assert.match(css, /@media \(prefers-color-scheme: dark\) \{[\s\S]*?--bg:\s*#06080b/)
-    assert.match(css, /@media \(prefers-color-scheme: dark\) \{[\s\S]*?--text:\s*#e8ecf0/)
-    assert.match(css, /@media \(prefers-color-scheme: dark\) \{[\s\S]*?--accent:\s*#a9c0d6/)
+  it('locks the public field to light mode', () => {
+    assert.match(css, /color-scheme:\s*light/)
+    assert.doesNotMatch(css, /@media \(prefers-color-scheme: dark\)/)
   })
 
   it('places Trident and Nectar on the home spine', () => {

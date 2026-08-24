@@ -535,17 +535,21 @@ function MiniRun() {
     <div className="hero-workspace" ref={root} aria-label="Live synthetic Damaros workspace preview" onClickCapture={(event) => { if (shouldHoldAutoplayFromClick(event.target)) hold() }}>
         <div className="mac-titlebar">
           <div className="traffic-lights" aria-hidden="true"><i /><i /><i /></div>
-          <WindowBrand />
+          <span className="window-breadcrumb"><WindowBrand /><span>DMR-204</span><span>Site 018</span></span>
           <span className="window-live"><i /> {available ? 'Trident on site' : 'New cognition blocked'}</span>
         </div>
         <div className="hero-app-grid">
         <aside className="hero-app-nav">
-          <strong>SPINE</strong>
-          {steps.map((step, index) => (
-            <button key={step} type="button" className={index === active ? 'active' : ''} onClick={() => selectStage(index)}>
-              <SpineGlyph kind={step} /><span>{step}</span>
-            </button>
-          ))}
+          <strong>RUN</strong>
+          <div className="nav-step-list">
+            <div className="nav-step-rail" aria-hidden="true"><i style={{ height: `${(active / (steps.length - 1)) * 100}%` }} /></div>
+            {steps.map((step, index) => (
+              <button key={step} type="button" className={`${index === active ? 'active' : ''}${index < active ? ' complete' : ''}`} onClick={() => selectStage(index)}>
+                <span className="step-marker">{index < active ? <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M2 5.2 4.2 7.4 8 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg> : <em>{index + 1}</em>}</span>
+                <span>{step}</span>
+              </button>
+            ))}
+          </div>
           <TridentStatusSwitch />
         </aside>
         <div className="hero-app-main">
