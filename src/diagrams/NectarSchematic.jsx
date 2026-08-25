@@ -35,22 +35,39 @@ import { useScrollRun } from './useScrollPhase'
  * its roof.
  *
  * The network effect is drawn, not asserted: each site carries a reach, and as
- * coverage compounds those reaches grow until they overlap. They are clipped to
- * the ground the three sites share, because a reach that runs off the edge of
- * the federation is not reach.
+ * coverage compounds those reaches grow until they overlap. Every site stands on
+ * the ground plane at the middle of its own reach - one number sets the ground
+ * and the solids are built up from it - because a site sunk through the field it
+ * covers is a picture of nothing. They are clipped to the ground the three sites
+ * share, because a reach that runs off the edge of the federation is not reach.
  *
- * The library is never idle. Criteria pulse, traffic runs the mesh, a bound
- * definition throws a ring through its neighbours, and each site keeps sweeping
- * its own records - all on timings scattered by `jitter`, so the drawing is
- * alive without anybody touching it and never falls into a loop a reader can
- * catch. None of it starts until the figure has power: every ambient clock is
- * held at zero opacity until `--charge` comes up.
+ * The library is never idle, and it is never nailed down. The whole upper panel
+ * drifts on one slow clock, so it reads as a plane held above the ground rather
+ * than printed on the same sheet. On it: criteria that are already held keep
+ * ringing out through their neighbours, traffic keeps running the mesh, and a
+ * definition that binds throws its own ring - all on timings scattered by
+ * `jitter`, so the drawing never falls into a loop a reader can catch. Below,
+ * each site keeps sweeping its own records inside its own wall.
+ *
+ * The panel takes a pointer as a panel, over a target the size of the plane: a
+ * two-pixel node is not something to aim at. Leaning on it makes the library
+ * resolve harder - a second mark on every run, the bound subgraph in the strong
+ * accent - rather than revealing anything that was hidden. None of it starts
+ * until the figure has power: every ambient clock is held at zero opacity until
+ * `--charge` comes up.
  *
  * Boundary behaviour only, no internals (ADR-0001).
  */
 
 const MESH = project(310, 200)
-const GROUND = project(310, 462)
+
+// One number for the ground, used by the plane and by everything standing on it,
+// so the two can never drift apart. They had: the plane was drawn at 468 and the
+// sites were projected from 462, which put every base below the plane it was
+// supposed to be standing on and left each solid sunk through the middle of its
+// own reach instead of centred in it.
+const GROUND_Y = 468
+const GROUND = project(310, GROUND_Y)
 
 const GROUND_HALF = 172
 
@@ -100,6 +117,14 @@ for (let a = 0; a < NODES.length; a += 1) {
 // stable seed, never by position, so the same ones run every time.
 const TRAFFIC = LINKS.filter((link) => link.life > 0.88).slice(0, 14)
 
+// The library resolves against itself, not only when a site has just published.
+// A handful of criteria it already holds ring out through their neighbours on
+// long clocks, so the upper plane is a panel that is thinking rather than a
+// lattice waiting for the next phase to light part of it. They are taken from
+// the first thirty ranks, which are bound in every phase of the run, and picked
+// by a stable seed so the same ones ring on every render.
+const PULSE = ORDER.slice(0, 30).filter((node) => node.life > 0.72).slice(0, 4)
+
 // Three peers on one ground, set well apart so no site sits behind another,
 // none of them is the centre, and each one owns a side of the sheet: the two
 // outliers take the left and right margins and the near one takes the space
@@ -112,7 +137,12 @@ const SITES = [
   { id: 'SITE 103', plan: [-124, 46], records: '614', half: 40, wall: 15, bands: 3, grew: 0.82, stagger: 0.16, place: 'left' },
   { id: 'SITE 018', plan: [100, 100], records: '1,204', half: 55, wall: 22, bands: 5, grew: 1.08, stagger: 0.26, place: 'below' },
 ].map((site, index) => {
-  const [cx, cy] = GROUND(...site.plan)
+  // Where this site's plan origin meets the ground the three of them share. The
+  // solid is drawn one wall above that, because `roundedDeck` builds a roof and
+  // extrudes downwards - so the base lands on the plane and the site stands
+  // centred inside its own reach rather than sunk through it.
+  const [cx, base] = GROUND(...site.plan)
+  const cy = base - site.wall
   // The corner radius is a fixed share of the plan size, so a small site and a
   // large one are visibly the same object at two scales rather than two shapes.
   const solid = roundedDeck(cx, cy, site.half, site.wall, Math.round(site.half * 0.34))
@@ -204,6 +234,7 @@ const READS = {
   'SITE 042': { tone: 'pass', pill: 'PUBLISHER', read: 'Site 042 published the unit it measures in - the scale, not one reading taken on it.' },
   'SITE 103': { tone: 'pass', pill: 'MAPPER', read: 'Site 103 sent a mapping between two vocabularies. No patient is in a mapping.' },
   'SITE 018': { tone: 'valid', pill: 'ORIGIN', read: 'Site 018 wrote the definition the other two picked up, and sent nothing else to do it.' },
+  library: { tone: 'valid', pill: 'LIBRARY', read: 'Every criterion here came up from a site. None of it is a record.' },
 }
 
 /**
@@ -250,7 +281,7 @@ function Ident({ site, lit, probe }) {
 
 export default function NectarSchematic({ animate = true, reduced = false }) {
   const frame = useCenterOnOverflow()
-  const [figure, phase] = useScrollRun(PHASES, { reduced })
+  const [figure, phase, booted] = useScrollRun(PHASES, { reduced })
   const [hot, setHot] = useState(null)
   const state = PHASES[phase] ?? PHASES[PHASES.length - 1]
 
@@ -271,7 +302,7 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
     <figure className="dgm">
       <div className="dgm-frame" ref={frame}>
         <svg
-          className={`dgm-svg is-${tone}${animate ? ' is-live' : ''}`}
+          className={`dgm-svg is-${tone}${animate ? ' is-live' : ''}${booted ? ' is-booted' : ''}`}
           ref={figure}
           viewBox="0 0 620 700"
           role="img"
@@ -299,69 +330,89 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
             <text className="dgm-countkey" x="504" y="41">CRITERIA BOUND</text>
           </g>
 
-          {/* The upper plane, then the mesh that lives on it. */}
-          <g transform={planSpace(310, 200)}>
-            <rect className="dgm-plane" x="-160" y="-160" width="320" height="320" rx="28" vectorEffect="non-scaling-stroke" />
-            <rect className="dgm-planefill" x="-160" y="-160" width="320" height="320" rx="28" fill="url(#nc-grain)" />
-          </g>
+          {/* The upper plane and the mesh that lives on it, drawn as one panel.
+              It drifts as one, so it reads as a plane held above the ground
+              rather than printed on the same sheet; and it answers a pointer as
+              one, over a target the size of the whole plane, because a
+              two-pixel node is not something a reader can aim at. */}
+          <g className={`dgm-library${lit('library')}`} {...probe('library')}>
+            <g transform={planSpace(310, 200)}>
+              <rect className="dgm-plane" x="-160" y="-160" width="320" height="320" rx="28" vectorEffect="non-scaling-stroke" />
+              <rect className="dgm-planefill" x="-160" y="-160" width="320" height="320" rx="28" fill="url(#nc-grain)" />
+              <rect className="dgm-hit" x="-160" y="-160" width="320" height="320" rx="28" />
+            </g>
 
-          <text className="dgm-edge" x="146" y="144" transform={`rotate(${-EDGE_ANGLE} 146 144)`}>DEFINITIONS</text>
+            <text className="dgm-edge" x="146" y="144" transform={`rotate(${-EDGE_ANGLE} 146 144)`}>DEFINITIONS</text>
 
-          <g className="dgm-mesh">
-            {LINKS.map((link) => (
-              <line
-                className={`dgm-link${link.rank < state.bound ? ' is-bound' : ''}${state.joined && JOINED.has(link.key) ? ' is-new' : ''}`}
-                key={link.key}
-                style={{ '--stagger': link.stagger }}
-                pathLength="100"
-                x1={link.from[0]}
-                y1={link.from[1]}
-                x2={link.to[0]}
-                y2={link.to[1]}
-              />
-            ))}
-            {/* Traffic. Marks running their own links on their own clocks, so
-                the library is busy whether or not the reader is doing anything
-                to it. */}
-            {TRAFFIC.map((link) => (
-              <line
-                className={`dgm-traffic${link.rank < state.bound ? ' is-bound' : ''}`}
-                key={`t-${link.key}`}
-                style={{ '--life': link.life }}
-                pathLength="100"
-                x1={link.from[0]}
-                y1={link.from[1]}
-                x2={link.to[0]}
-                y2={link.to[1]}
-              />
-            ))}
-            {NODES.map((node) => (
-              <circle
-                className={`dgm-node${node.rank < state.bound ? ' is-bound' : ''}${node.rank === JOIN.rank && state.joined ? ' is-new' : ''}`}
-                key={node.index}
-                style={{ '--stagger': Math.round((node.rank / TOTAL) * 100) / 100, '--life': node.life }}
-                cx={node.at[0]}
-                cy={node.at[1]}
-                r={node.rank < state.bound ? 4.4 : 2.8}
-              />
-            ))}
-            {/* A definition that binds does not just light up - it propagates.
-                The ring is the library resolving against what it already held,
-                which is the one thing in this figure that has to look like
-                thinking rather than like storage. */}
-            {state.joined ? (
-              <g className="dgm-resolve">
-                <circle className="dgm-ring" cx={JOIN.at[0]} cy={JOIN.at[1]} r="10" />
-                <circle className="dgm-ring is-late" cx={JOIN.at[0]} cy={JOIN.at[1]} r="10" />
-              </g>
-            ) : null}
+            <g className="dgm-mesh">
+              {LINKS.map((link) => (
+                <line
+                  className={`dgm-link${link.rank < state.bound ? ' is-bound' : ''}${state.joined && JOINED.has(link.key) ? ' is-new' : ''}`}
+                  key={link.key}
+                  style={{ '--stagger': link.stagger }}
+                  pathLength="100"
+                  x1={link.from[0]}
+                  y1={link.from[1]}
+                  x2={link.to[0]}
+                  y2={link.to[1]}
+                />
+              ))}
+              {/* Traffic. Marks running their own links on their own clocks, so
+                  the library is busy whether or not the reader is doing anything
+                  to it. Leaning on the panel puts a second mark on every run. */}
+              {TRAFFIC.map((link) => (
+                <line
+                  className={`dgm-traffic${link.rank < state.bound ? ' is-bound' : ''}`}
+                  key={`t-${link.key}`}
+                  style={{ '--life': link.life }}
+                  pathLength="100"
+                  x1={link.from[0]}
+                  y1={link.from[1]}
+                  x2={link.to[0]}
+                  y2={link.to[1]}
+                />
+              ))}
+              {NODES.map((node) => (
+                <circle
+                  className={`dgm-node${node.rank < state.bound ? ' is-bound' : ''}${node.rank === JOIN.rank && state.joined ? ' is-new' : ''}`}
+                  key={node.index}
+                  style={{ '--stagger': Math.round((node.rank / TOTAL) * 100) / 100, '--life': node.life }}
+                  cx={node.at[0]}
+                  cy={node.at[1]}
+                  r={node.rank < state.bound ? 4.4 : 2.8}
+                />
+              ))}
+              {/* The library settling on its own. Criteria it already holds keep
+                  resolving against their neighbours, so the panel is thinking
+                  between phases rather than only when a site arrives. */}
+              {PULSE.map((node) => (
+                <circle
+                  className="dgm-pulse"
+                  key={`p-${node.index}`}
+                  style={{ '--life': node.life }}
+                  cx={node.at[0]}
+                  cy={node.at[1]}
+                  r="9"
+                />
+              ))}
+              {/* A definition that binds does not just light up - it propagates.
+                  The ring is the library resolving against what it already held,
+                  which is the one thing in this figure that has to look like
+                  thinking rather than like storage. */}
+              {state.joined ? (
+                <g className="dgm-resolve">
+                  <circle className="dgm-ring" cx={JOIN.at[0]} cy={JOIN.at[1]} r="10" />
+                  <circle className="dgm-ring is-late" cx={JOIN.at[0]} cy={JOIN.at[1]} r="10" />
+                </g>
+              ) : null}
+            </g>
           </g>
 
           {/* The ground the three peers share, and the reach each one carries.
               The reaches grow with coverage until they overlap - that overlap is
               the network effect, drawn rather than claimed - and they are three
               sizes, because the site that has contributed most reaches furthest. */}
-          <g transform={planSpace(310, 468)}>
+          <g transform={planSpace(310, GROUND_Y)}>
             <rect className="dgm-plane" x={-GROUND_HALF} y={-GROUND_HALF} width={GROUND_HALF * 2} height={GROUND_HALF * 2} rx="30" vectorEffect="non-scaling-stroke" />
             <rect className="dgm-planefill" x={-GROUND_HALF} y={-GROUND_HALF} width={GROUND_HALF * 2} height={GROUND_HALF * 2} rx="30" fill="url(#nc-grain)" />
             <g clipPath="url(#nc-ground)">

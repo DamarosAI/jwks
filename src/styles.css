@@ -9403,27 +9403,48 @@ html.is-hidden .clinic-node i,
 
 .dgm-deck.is-live > .dgm-solid > .dgm-face-top { stroke: color-mix(in srgb, var(--accent) 60%, var(--text)); }
 
-/* Assembly, then power. Both figures arrive closed and open as the figure
-   enters, scrubbed off one `--spread` value written straight onto the element,
-   so the reader's scroll drives it without a single React render.
+/* Boot. Two numbers run the whole entrance, and both are registered, so the
+   browser can interpolate them: adding one class to the sheet eases every
+   calc() downstream of them at once - the solids settle out of their closed
+   stack, the ink gains, the footprint climbs out of the ground, and every
+   ambient clock starts.
 
-   `--charge` is the beat after that, and it is what makes the figure read as
-   switching on rather than as sliding in. Everything that moves on its own -
-   every travelling mark, every sweep, every ring - is held at nothing until
-   power arrives, so the stack lands quiet and then the system starts. All of it
-   ran from the first frame before, which meant the drawing was already busy
-   while it was still assembling, and a machine that is busy before it is built
-   never reads as turning on. */
+   `--spread` is the geometry arriving and `--charge` is the power behind it,
+   deliberately overlapping: the last deck is still settling when the system
+   comes on, the way a machine does it rather than the way a slideshow does.
+   It used to be scrubbed frame by frame off the reader's scroll, which meant
+   the machine powered up at whatever rate they turned the wheel, stalled when
+   they stopped, and ran backwards when they scrolled up. Booting is not
+   something a reader should be able to scrub. */
+
+@property --spread {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --charge {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
 
 .dgm-slide { transform: translateY(calc(var(--lift, 0px) * (1 - var(--spread, 1)))); }
 
-/* The whole sheet gains as power comes up: the ink is thin while the figure is
-   arriving and full by the time anything in it is running. `--run-in` is the
-   later, harder gate the travelling marks hang off, so motion starts after the
-   gain rather than with it - two events, in the order a machine does them. */
+/* `--run-in` is the later, harder gate the travelling marks hang off, so motion
+   starts after the gain rather than with it - two events, in the order a
+   machine does them. */
 .dgm-svg {
+  --spread: 0;
+  --charge: 0;
   --run-in: clamp(0, calc((var(--charge, 1) - 0.42) * 2.4), 1);
   opacity: calc(0.62 + 0.38 * var(--charge, 1));
+  transition: --spread 1150ms cubic-bezier(0.16, 1, 0.3, 1), --charge 1450ms 200ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.dgm-svg.is-booted {
+  --spread: 1;
+  --charge: 1;
 }
 
 .dgm-site {
@@ -9470,33 +9491,75 @@ html.is-hidden .clinic-node i,
   stroke-width: 1;
   stroke-dasharray: 4 5;
   stroke-linecap: round;
+  pointer-events: none;
+  transition: stroke 260ms ease;
 }
 
 .dgm-queue {
   fill: color-mix(in srgb, var(--accent) 13%, var(--surface-solid));
   stroke: color-mix(in srgb, var(--accent) 44%, transparent);
   stroke-width: 1;
-  cursor: pointer;
-  transition: transform 560ms cubic-bezier(0.16, 1, 0.3, 1), fill 300ms ease, stroke 300ms ease;
+  pointer-events: none;
 }
 
-/* Point at a waiting proposal and the intake takes it in: the chip leaves the
-   queue and runs to the throat, which is the one route off this deck. It is
-   drawn in plan, so the run follows the deck's own geometry rather than a
-   screen diagonal that happens to look right. */
+/* The intake never stops pulling. Every proposal waiting on the apron has a run
+   to the throat with a mark travelling it, so the deck is seen doing the one
+   thing it is for whether or not a cursor ever finds it. It used to take a
+   proposal only when the reader pointed at a ten-pixel chip, which is not a
+   mechanism, it is a tooltip with a transform on it.
 
-.dgm-queued { cursor: pointer; }
+   Leaning on the deck does not start the intake, it loads it: a second mark
+   joins every run. That is a change of dash pattern and not of rate, so the
+   marks already in flight stay exactly where they are and the deck simply
+   carries more - where speeding the clock up would have teleported every mark
+   down its own line the moment the pointer arrived. */
 
-.dgm-queued.is-taken > .dgm-queue {
-  transform: translate(calc(var(--qx, 0) * -0.78px), calc(var(--qy, 0) * -0.78px));
-  fill: var(--accent);
-  stroke: var(--accent-strong);
+.dgm-intakepath {
+  fill: none;
+  stroke: color-mix(in srgb, var(--accent) 22%, transparent);
+  stroke-width: 1;
+  stroke-linecap: round;
+  pointer-events: none;
+  transition: stroke 260ms ease;
 }
 
-.dgm-catch.is-live { stroke: color-mix(in srgb, var(--accent) 64%, transparent); stroke-dasharray: none; }
-.dgm-port.is-hot { stroke: var(--accent-strong); stroke-width: 2.2; }
-.dgm-throat { transition: fill 300ms ease, r 300ms ease; }
-.dgm-throat.is-hot { r: 7; }
+.dgm-intake {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 7 193;
+  opacity: calc(0.72 * var(--run-in, 1));
+  pointer-events: none;
+}
+
+.dgm-deck.is-hot .dgm-intakepath { stroke: color-mix(in srgb, var(--accent) 46%, transparent); }
+
+.dgm-svg.is-live .dgm-intake {
+  animation: dgm-travel calc(3.6s + var(--life, 0) * 2.4s) linear infinite;
+  animation-delay: calc(var(--life, 0) * -5.3s);
+}
+
+.dgm-deck.is-hot .dgm-intake { stroke-dasharray: 7 93; opacity: var(--run-in, 1); }
+
+/* The catchment draws what is inside it towards the throat, and the throat takes
+   it. Both run on the deck's own clock: -18 is two whole dash periods, so the
+   crawl closes on itself and never shows a seam. */
+
+@keyframes dgm-crawl {
+  to { stroke-dashoffset: -18; }
+}
+
+@keyframes dgm-swallow {
+  0%, 100% { r: 5; }
+  58% { r: 6.8; }
+}
+
+.dgm-svg.is-live .dgm-catch { animation: dgm-crawl 2.6s linear infinite; }
+.dgm-svg.is-live .dgm-throat { animation: dgm-swallow 1.9s ease-in-out infinite; }
+.dgm-deck.is-hot .dgm-catch { stroke: color-mix(in srgb, var(--accent) 58%, transparent); }
+.dgm-svg.is-live .dgm-deck.is-hot .dgm-catch { animation-duration: 1.3s; }
+.dgm-svg.is-live .dgm-deck.is-hot .dgm-throat { animation-duration: 1.05s; }
 
 /* Trident: the three proposal surfaces. They are drawn identically on purpose.
    The reader picks which one is proposing, and the aperture holds all the same
@@ -9508,6 +9571,28 @@ html.is-hidden .clinic-node i,
 .dgm-plate:focus-visible > .dgm-solid > .dgm-face-top {
   stroke: var(--accent-strong);
   stroke-width: 2;
+}
+
+/* The plates ride. Nothing bolts a proposal surface to the deck under it, so the
+   three of them drift a couple of pixels on three clocks that never fall into
+   step - which is most of what makes the top of this figure read as running
+   rather than printed.
+
+   Their leaders run a few pixels up into the underside of each plate, so a plate
+   that has risen still has its leader hidden beneath it. That inset is why the
+   float is possible at all: an endpoint parked exactly on the silhouette parts
+   from it the moment either end moves. It is also why pointing at a plate does
+   not lift it the way pointing at a deck does - a plate that is already moving
+   cannot also be transitioned, so hover lights it instead. */
+
+@keyframes dgm-ride {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2.6px); }
+}
+
+.dgm-svg.is-live .dgm-plate {
+  animation: dgm-ride calc(6.8s + var(--life, 0) * 3.4s) ease-in-out infinite;
+  animation-delay: calc(var(--life, 0) * -9.2s);
 }
 
 .dgm-motif {
@@ -9647,14 +9732,36 @@ html.is-hidden .clinic-node i,
   pointer-events: none;
 }
 
-@keyframes dgm-tick {
-  0%, 86%, 100% { stroke-width: 1; }
-  91% { stroke-width: 1.9; }
+/* The contract walks its own fields, in the order it checks them. `--seq` is a
+   field's place in that pass, so the check crosses the grid as one band -
+   nineteen tiles on nineteen unrelated clocks is a twinkle, and this is a pass.
+   The delay is positive on purpose: the first sweep starts after the figure has
+   taken power rather than being caught halfway through.
+
+   Leaning on the deck runs the pass again, harder. Swapping the keyframe name
+   restarts it, which is the point - the contract is seen re-checking from the
+   first field rather than getting brighter in place. */
+
+@keyframes dgm-pass {
+  0%, 9%, 100% { stroke-width: 1; }
+  4% { stroke-width: 2.4; }
+}
+
+@keyframes dgm-passhard {
+  0%, 9%, 100% { stroke-width: 1; }
+  4% { stroke-width: 3.2; stroke: var(--accent-strong); }
 }
 
 .dgm-svg.is-live .dgm-fieldtile:not(.is-named) {
-  animation: dgm-tick calc(7.4s + var(--life, 0) * 5.6s) ease-in-out infinite;
-  animation-delay: calc(var(--life, 0) * -11s);
+  animation: dgm-pass 5.6s ease-in-out infinite;
+  animation-delay: calc(var(--seq, 0) * 1.4s);
+}
+
+.dgm-svg.is-live .dgm-deck.is-hot .dgm-fieldtile:not(.is-named) { animation-name: dgm-passhard; }
+
+@keyframes dgm-tick {
+  0%, 86%, 100% { stroke-width: 1; }
+  91% { stroke-width: 1.9; }
 }
 
 .dgm-svg.is-live .dgm-queue {
@@ -9722,20 +9829,38 @@ html.is-hidden .clinic-node i,
 
 .dgm-bolt.is-clear { transform: translateY(calc(var(--end, 1) * 26px)); }
 
+/* Something keeps trying the shutter, and it keeps holding. Two soft breaths
+   and then one real attempt per cycle: the blades give a hair at the seam and
+   the bolts take it, on one shared clock so the give and the load are the same
+   event rather than two things that happen to be moving.
+
+   Both live in a single keyframe each because a CSS animation does not compose
+   transforms - a second animation on the same property replaces the first
+   outright, so the breathing and the attempt have to be written as one run. */
+
 @keyframes dgm-load {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(calc(var(--end, 1) * -0.9px)); }
+  20% { transform: translateY(calc(var(--end, 1) * -0.9px)); }
+  40% { transform: translateY(0); }
+  60% { transform: translateY(calc(var(--end, 1) * -0.9px)); }
+  84% { transform: translateY(0); }
+  90% { transform: translateY(calc(var(--end, 1) * -2.4px)); }
+  96% { transform: translateY(0); }
 }
 
-.dgm-svg.is-live .dgm-bolt:not(.is-clear) { animation: dgm-load 3.8s ease-in-out infinite; }
+@keyframes dgm-strain {
+  0%, 84%, 100% { transform: translateX(0); }
+  90% { transform: translateX(calc(var(--blade, 1) * 2.4px)); }
+}
 
-/* Push on the shutter and it answers as the mechanism would. The blades give a
-   hair against their own bolts and come straight back, and the bolts colour up
-   under the load while they do it. A held run is the one moment in this figure
-   where nothing happens on purpose, and a reader who is told that and shown
-   nothing has only been told it. */
+.dgm-svg.is-live .dgm-bolt:not(.is-clear) { animation: dgm-load 7.6s ease-in-out infinite; }
+.dgm-svg.is-live .dgm-leaf:not(.is-open) { animation: dgm-strain 7.6s ease-in-out infinite; }
 
-.dgm-shutter { cursor: pointer; }
+/* Lean on the approval deck and the same thing happens on demand, harder: the
+   blades give against their own bolts and come straight back, and the bolts
+   colour up under the load while they do. A held run is the one moment in this
+   figure where nothing happens on purpose, and a reader who is told that and
+   shown nothing has only been told it. */
 
 @keyframes dgm-give {
   0%, 100% { transform: translateX(0); }
@@ -9796,7 +9921,12 @@ html.is-hidden .clinic-node i,
   stroke-linecap: round;
 }
 
-.dgm-ledgerseal { fill: color-mix(in srgb, var(--text) 16%, transparent); transition: fill 320ms ease; }
+.dgm-ledgerseal {
+  fill: color-mix(in srgb, var(--text) 16%, transparent);
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  transition: fill 320ms ease;
+}
 
 /* A written row is ruled in the accent, not filled with it. Four solid blue
    bars read as an illustration of a ledger; a thin accent edge round a row that
@@ -9807,27 +9937,57 @@ html.is-hidden .clinic-node i,
 .dgm-ledgerrow.is-written .dgm-ledgerhash { fill: color-mix(in srgb, var(--accent) 22%, var(--surface-solid)); stroke: var(--accent); }
 .dgm-ledgerrow.is-written .dgm-ledgerseal { fill: var(--success); }
 
-/* Point at a row and the chain is what lights: this row's hash, the link that
-   carries it, and the hash of the row it came from. That is the whole of what
-   makes a ledger a ledger, and until now it was a dotted line in the margin
-   nobody had a reason to look at. */
+/* The ledger posts, and posting is the thing worth watching: a row is committed
+   by the hash of the row above it landing on it, so the hash is drawn travelling
+   the link and the row it reaches takes its seal a beat later. `--seq` is the
+   row's place in the chain, so the pass walks the ledger top to bottom in order.
 
-.dgm-ledgerrow { cursor: pointer; }
-.dgm-ledgerchain { transition: stroke 260ms ease, stroke-width 260ms ease; }
+   This used to be a hover: point at a four-pixel row and its hash lit. Nobody
+   has a reason to aim at a four-pixel row, so the one mechanism that makes a
+   ledger a ledger was the one mechanism nobody ever saw. */
 
-.dgm-ledgerchain.is-hot {
+.dgm-ledgerchain { transition: stroke 260ms ease; }
+
+.dgm-ledgerflow {
+  fill: none;
   stroke: var(--accent-strong);
-  stroke-width: 1.9;
-  stroke-dasharray: none;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-dasharray: 6 194;
+  opacity: 0;
+  pointer-events: none;
 }
 
-.dgm-ledgerrow.is-hot .dgm-ledgerbar { stroke: var(--accent-strong); stroke-width: 1.7; }
-
-.dgm-ledgerrow.is-hot .dgm-ledgerhash,
-.dgm-ledgerrow.is-parent .dgm-ledgerhash {
-  fill: var(--accent-strong);
-  stroke: var(--accent-strong);
+@keyframes dgm-post {
+  0% { stroke-dashoffset: 0; opacity: 0; }
+  4% { opacity: var(--run-in, 1); }
+  16% { stroke-dashoffset: -105; opacity: var(--run-in, 1); }
+  17%, 100% { stroke-dashoffset: -105; opacity: 0; }
 }
+
+@keyframes dgm-stamp {
+  0%, 14%, 100% { transform: scale(1); }
+  19% { transform: scale(1.55); }
+}
+
+.dgm-svg.is-live .dgm-ledgerflow {
+  animation: dgm-post 6.4s linear infinite;
+  animation-delay: calc((var(--seq, 0) - 0.25) * 2s);
+}
+
+.dgm-svg.is-live .dgm-ledgerrow.is-written .dgm-ledgerseal {
+  animation: dgm-stamp 6.4s ease-out infinite;
+  animation-delay: calc(var(--seq, 0) * 2s - 0.5s);
+}
+
+/* Lean on the deck and the chain is what lights - every hash, and every link
+   carrying one down. That is the whole of what makes a ledger a ledger, and it
+   is the honest answer to a pointer: the record is not revealed, the chain
+   holding it together is. */
+
+.dgm-deck.is-hot .dgm-ledgerchain { stroke: var(--accent); stroke-dasharray: none; }
+.dgm-deck.is-hot .dgm-ledgerhash { fill: var(--accent-strong); stroke: var(--accent-strong); }
+.dgm-deck.is-hot .dgm-ledgerbar { stroke: color-mix(in srgb, var(--accent) 62%, transparent); }
 
 /* The descent. One short drop per deck, down the free left edge, lit one at a
    time - and the drop out of the site deck has no path at all until somebody
@@ -9911,6 +10071,33 @@ html.is-hidden .clinic-node i,
 /* Nectar: the library, drawn as a mesh. Coverage is the part of it that has lit
    up, so compounding is something a reader watches rather than reads. */
 
+/* The library is a plane held above the ground, not printed on the same sheet as
+   it, so the whole of it drifts - its grain, its edge, the mesh on it and the
+   chips that land there. One clock, shared and unjittered, because a chip has to
+   arrive exactly where its node is: the lift arcs underneath stay put, and a
+   chip is wide enough to keep the end of its arc hidden through the whole
+   travel. */
+
+@keyframes dgm-drift {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.dgm-svg.is-live .dgm-library,
+.dgm-svg.is-live .dgm-liftchip { animation: dgm-drift 11s ease-in-out infinite; }
+
+/* Lean on the plane and the library resolves: traffic doubles on every bound
+   link, what it already holds rings harder, and the criteria that are bound take
+   the strong accent. Nothing is revealed that was hidden - the panel works
+   harder while it is being looked at, which is the only honest thing a library
+   can do for a pointer. Doubling is a dash pattern and not a rate, so no mark in
+   flight jumps when the cursor arrives. */
+
+.dgm-library.is-hot .dgm-traffic { stroke-dasharray: 8 92; }
+.dgm-library.is-hot .dgm-link.is-bound { stroke: var(--accent); }
+.dgm-library.is-hot .dgm-node.is-bound { fill: var(--accent-strong); }
+.dgm-library.is-hot .dgm-pulse { stroke: var(--accent-strong); stroke-width: 1.8; }
+
 .dgm-link {
   --in: clamp(0, calc((var(--spread, 1) - var(--stagger, 0)) * 2.6), 1);
   fill: none;
@@ -9974,6 +10161,12 @@ html.is-hidden .clinic-node i,
 
 /* Structure rising. Every path in Nectar points the same way, because there is
    no reason for the library to ask a site for anything. */
+
+/* Nothing on a rising arc is a target. Its tag is a filled pill that crosses the
+   library's own plane, and a pointer sliding over one would otherwise drop the
+   panel's hover on the way past. What lights an arc is pointing at the site that
+   sent it. */
+.dgm-lift { pointer-events: none; }
 
 .dgm-liftpath {
   fill: none;
@@ -10073,6 +10266,34 @@ html.is-hidden .clinic-node i,
 }
 
 .dgm-svg.is-live .dgm-ring.is-late { animation-delay: 1.7s; }
+
+/* The library keeps settling whether or not a site has just published. A handful
+   of criteria it already holds ring out through their neighbours, on clocks long
+   enough and far enough apart that no two ever coincide - so the upper plane is
+   a panel that is thinking rather than a lattice waiting for the next phase to
+   light part of it. */
+
+.dgm-pulse {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.2;
+  opacity: 0;
+  pointer-events: none;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: stroke 260ms ease, stroke-width 260ms ease;
+}
+
+@keyframes dgm-settle {
+  0% { opacity: 0; transform: scale(0.35); }
+  6% { opacity: calc(0.44 * var(--run-in, 1)); }
+  34%, 100% { opacity: 0; transform: scale(2.6); }
+}
+
+.dgm-svg.is-live .dgm-pulse {
+  animation: dgm-settle calc(7.2s + var(--life, 0) * 5.4s) cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
+  animation-delay: calc(var(--life, 0) * -12.6s);
+}
 
 /* A site is the same solid Trident stands its decks on, at another scale. The
    three are deliberately not one size: the plan size, the wall height and the
@@ -10185,13 +10406,14 @@ html.is-hidden .clinic-node i,
    tied to it. Hover only re-weights what is already drawn: no part of either
    figure is hidden behind a cursor, so a touch reader loses nothing. */
 
+/* The plates are not in this list: they are already riding, and a transform an
+   animation owns cannot also be transitioned. Pointing at one lights it. */
+
 .dgm-deck,
-.dgm-plate,
 .dgm-site,
 .dgm-ident { transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1); }
 
 .dgm-deck.is-hot,
-.dgm-plate.is-hot,
 .dgm-site.is-hot { transform: translateY(-4px); }
 
 .dgm-deck.is-hot > .dgm-solid > .dgm-face-top,
@@ -10220,7 +10442,9 @@ html.is-hidden .clinic-node i,
 .dgm-svg.is-pass .dgm-statustext { fill: var(--accent-strong); }
 
 @media (prefers-reduced-motion: reduce) {
-  .dgm-svg :is(.dgm-droppath, .dgm-dropflow, .dgm-dropnode, .dgm-approach, .dgm-spark, .dgm-traffic, .dgm-fieldtile, .dgm-queue, .dgm-face-top, .dgm-holerim, .dgm-bolt, .dgm-leaf, .dgm-ring, .dgm-loopflow, .dgm-side, .dgm-sidefact, .dgm-read, .dgm-tagbody, .dgm-node, .dgm-link, .dgm-liftpath, .dgm-liftchip, .dgm-carry, .dgm-reachfill, .dgm-reachrim, .dgm-sweep, .dgm-wallmark, .dgm-status, .dgm-statustext, .dgm-deck, .dgm-plate, .dgm-site, .dgm-ident, .dgm-catch, .dgm-throat, .dgm-ledgerchain, .dgm-ledgerbar, .dgm-ledgerhash) {
+  .dgm-svg { transition: none; }
+
+  .dgm-svg :is(.dgm-droppath, .dgm-dropflow, .dgm-dropnode, .dgm-approach, .dgm-spark, .dgm-traffic, .dgm-fieldtile, .dgm-queue, .dgm-face-top, .dgm-holerim, .dgm-bolt, .dgm-leaf, .dgm-ring, .dgm-loopflow, .dgm-side, .dgm-sidefact, .dgm-read, .dgm-tagbody, .dgm-node, .dgm-link, .dgm-liftpath, .dgm-liftchip, .dgm-carry, .dgm-reachfill, .dgm-reachrim, .dgm-sweep, .dgm-wallmark, .dgm-status, .dgm-statustext, .dgm-deck, .dgm-plate, .dgm-site, .dgm-ident, .dgm-catch, .dgm-throat, .dgm-ledgerchain, .dgm-ledgerbar, .dgm-ledgerhash, .dgm-intakepath, .dgm-intake, .dgm-ledgerflow, .dgm-ledgerseal, .dgm-library, .dgm-pulse) {
     transition: none;
     animation: none;
   }

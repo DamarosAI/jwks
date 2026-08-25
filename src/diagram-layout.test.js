@@ -147,11 +147,37 @@ describe('Trident and Nectar schematics', () => {
     // place and nothing ever read as switching on. Motion now waits on a gate
     // that opens after the gain, which is what makes the run a power-on rather
     // than an entrance.
-    assert.match(driver, /node\.style\.setProperty\('--charge', ease\(Math\.min\(1, Math\.max\(0, \(p - wake\) \/ surge\)\)\)\.toFixed\(4\)\)/)
-    assert.match(driver, /const wake = lead \* 0\.6/)
-    assert.match(driver, /const surge = lead \* 1\.4/)
-    // Reduced motion parks the figure charged, not dark.
-    assert.match(driver, /node\.style\.setProperty\('--charge', '1'\)/)
+    //
+    // And booting is not a scrub. It used to be: the opening slice of the
+    // scroll range assembled the drawing a frame at a time, so the machine came
+    // on at whatever rate the reader turned the wheel, stalled when they
+    // stopped and ran backwards when they scrolled up. It boots once now, on
+    // arrival, and the stylesheet does the easing - two registered properties,
+    // one class, and every calc() downstream of them interpolates.
+    assert.match(DGM_BLOCK, /@property --spread \{\s*\n\s*syntax: '<number>';/)
+    assert.match(DGM_BLOCK, /@property --charge \{\s*\n\s*syntax: '<number>';/)
+    assert.match(DGM_BLOCK, /\.dgm-svg\.is-booted \{\s*\n\s*--spread: 1;\s*\n\s*--charge: 1;\s*\n\}/)
+    assert.match(DGM_BLOCK, /transition: --spread \d+ms [^;]+, --charge \d+ms \d+ms [^;]+;/)
+    // Booted is state, not a class put on the node. The figure re-renders on
+    // every phase and React rewrites `class` from what it last rendered, so an
+    // imperatively added class survives until the first tone change and is then
+    // silently wiped - which is exactly the frame the reader is looking at.
+    assert.match(driver, /const boot = \(\) => setBooted\(true\)/)
+    assert.doesNotMatch(driver, /classList\.add\('is-booted'\)/)
+    for (const source of figures) {
+      assert.match(source, /\$\{booted \? ' is-booted' : ''\}/)
+    }
+    // Any progress at all means the reader has arrived. Booting off the crossing
+    // callbacks alone misses a jump - a hash link, a restored scroll position, a
+    // flick straight past the end.
+    assert.match(driver, /if \(progress > 0\) boot\(\)/)
+    // Reduced motion parks the figure booted, not dark, and never builds a
+    // trigger at all. A figure already on screen at mount has no entry to wait
+    // for, so it boots too.
+    assert.match(driver, /if \(reduced \|\| node\.getBoundingClientRect\(\)\.top < window\.innerHeight\) boot\(\)/)
+    assert.match(driver, /if \(reduced\) return undefined/)
+    // Nothing writes the power level per frame any more.
+    assert.doesNotMatch(driver, /setProperty\('--charge'/)
     assert.match(DGM_BLOCK, /--run-in: clamp\(0, calc\(\(var\(--charge, 1\) - 0\.42\) \* 2\.4\), 1\);/)
     assert.match(DGM_BLOCK, /opacity: calc\(0\.62 \+ 0\.38 \* var\(--charge, 1\)\);/)
     for (const mark of ['.dgm-spark', '.dgm-drop.is-done .dgm-dropflow', '.dgm-resolve']) {
@@ -326,9 +352,11 @@ describe('Trident and Nectar schematics', () => {
     for (const key of ['MODEL', 'AGENT', 'AUTOMATION', 'surface', 'contract', 'authority', 'receipt']) {
       assert.match(trident, new RegExp(`^  ${key}: \\{ tone: '\\w+', pill: '[A-Z]+', read: '`, 'm'))
     }
-    // A part of a deck answers for itself, ahead of the deck it sits on.
-    assert.match(trident, /const cue = partCue\(part, state\) \?\? READS\[hot\]/)
-    assert.match(trident, /function partCue\(part, state\) \{/)
+    // A field answers for itself, ahead of the deck it sits on. It is the one
+    // part of the stack small enough to need naming and numerous enough to be
+    // worth pointing at; every other mechanism runs on its own.
+    assert.match(trident, /const cue = fieldCue\(field, state\) \?\? READS\[hot\]/)
+    assert.match(trident, /function fieldCue\(index, state\) \{/)
     // No Trident phase carries prose any more - the phases carry state.
     assert.doesNotMatch(trident, /status: 'PROPOSING', read:/)
     // Nectar does the same, and what it says about a site is what that site did
@@ -337,6 +365,7 @@ describe('Trident and Nectar schematics', () => {
       assert.match(nectar, new RegExp(`'${key}': \\{ tone: '\\w+', pill: '[A-Z]+', read: '`))
     }
     assert.match(nectar, /const cue = READS\[hot\]/)
+    assert.match(nectar, /library: \{ tone: '\w+', pill: '[A-Z]+', read: '/)
     assert.match(nectar, /<text className="dgm-read" x="164" y="677">\{read\}<\/text>/)
     assert.doesNotMatch(nectar, /Site \d+ holds [\d,]+ records/)
     // Every tone the readout can take has a rule that colours the pill.
@@ -345,32 +374,74 @@ describe('Trident and Nectar schematics', () => {
     }
   })
 
-  it('answers a pointer with the mechanism rather than with a caption', () => {
-    // Every deck has parts, and pointing at one makes that part do the thing it
-    // is for. A waiting proposal is taken up into the throat. A field ticks or
-    // visibly does not. The shutter gives a hair against its own bolts and comes
-    // straight back. A ledger row lights the link that seals it to the row
-    // above. The line beside the pill is what is left over once the drawing has
-    // shown it - an identifier, a count, a consequence - never a caption for
-    // something the reader has just watched happen.
-    for (const kind of ['queue', 'field', 'shutter', 'row']) {
-      assert.match(trident, new RegExp(`part\\.kind === '${kind}'`))
-      assert.match(trident, new RegExp(`touch\\('${kind}'`))
+  it('runs each deck as its own mechanism rather than waiting for a cursor', () => {
+    // Every deck works unattended, because a mechanism that only moves when a
+    // cursor finds it is not a mechanism, it is a tooltip. The plates ride over
+    // the intake; the intake draws its queue down to the throat and the throat
+    // swallows; the contract walks its nineteen fields in the order it checks
+    // them; something keeps trying the shutter and the bolts keep taking it;
+    // and the ledger posts, each hash travelling the link to the row it commits.
+    // The library above Nectar does the same: it drifts, and what it already
+    // holds keeps resolving against its neighbours.
+    for (const rule of [
+      '.dgm-svg.is-live .dgm-plate',
+      '.dgm-svg.is-live .dgm-intake',
+      '.dgm-svg.is-live .dgm-catch',
+      '.dgm-svg.is-live .dgm-throat',
+      '.dgm-svg.is-live .dgm-fieldtile:not(.is-named)',
+      '.dgm-svg.is-live .dgm-leaf:not(.is-open)',
+      '.dgm-svg.is-live .dgm-ledgerflow',
+      '.dgm-svg.is-live .dgm-library',
+      '.dgm-svg.is-live .dgm-pulse',
+    ]) {
+      const escaped = rule.replace(/[.()*:]/g, (c) => `\\${c}`)
+      assert.match(DGM_BLOCK, new RegExp(`${escaped}[,\\s][^{]*\\{[^}]*animation:`))
     }
-    // The chip travels in plan; its target stays where the queue is. Hanging the
-    // target on the chip moves it out from under the pointer the moment it is
-    // taken, and then the two chatter.
-    assert.match(DGM_BLOCK, /\.dgm-queued\.is-taken > \.dgm-queue \{[\s\S]*?transform: translate\(calc\(var\(--qx/)
-    assert.match(trident, /<rect className="dgm-hit" x=\{chip\.x - 10\}/)
-    assert.match(DGM_BLOCK, /\.dgm-fieldcheck \{/)
-    assert.match(DGM_BLOCK, /@keyframes dgm-give/)
+    // The contract's pass is ordered, not scattered: `--seq` is a field's place
+    // in the run, so the check crosses the grid as one band. Nineteen tiles on
+    // nineteen unrelated clocks is a twinkle, and this is a pass.
+    assert.match(trident, /seq: Math\.round\(\(cursor \/ 19\) \* 100\) \/ 100/)
+    assert.match(DGM_BLOCK, /animation-delay: calc\(var\(--seq, 0\) \* 1\.4s\);/)
+    // The ledger's chain carries the hash down in chain order, and the row it
+    // reaches takes its seal a beat later.
+    assert.match(trident, /seq: Math\.round\(\(index \/ all\.length\) \* 100\) \/ 100/)
+    assert.match(trident, /className="dgm-ledgerflow"/)
+    assert.match(DGM_BLOCK, /@keyframes dgm-post \{/)
+    assert.match(DGM_BLOCK, /@keyframes dgm-stamp \{/)
+  })
+
+  it('answers a pointer by loading a mechanism, not by starting one', () => {
+    // Pointing at a deck leans on what it is already doing. The intake carries a
+    // second mark on every run - a change of dash pattern and not of rate, so
+    // nothing in flight teleports the moment the pointer arrives. The contract
+    // re-checks from the first field. The ledger lights the chain that holds it
+    // together. The shutter gives against its own bolts and comes straight back.
+    assert.match(DGM_BLOCK, /\.dgm-deck\.is-hot \.dgm-intake \{ stroke-dasharray: 7 93;/)
+    assert.match(DGM_BLOCK, /\.dgm-svg\.is-live \.dgm-deck\.is-hot \.dgm-fieldtile:not\(\.is-named\) \{ animation-name: dgm-passhard; \}/)
+    assert.match(DGM_BLOCK, /\.dgm-deck\.is-hot \.dgm-ledgerchain \{ stroke: var\(--accent\); stroke-dasharray: none; \}/)
     assert.match(DGM_BLOCK, /\.dgm-shutter\.is-tried \.dgm-leaf:not\(\.is-open\)/)
     assert.match(DGM_BLOCK, /\.dgm-shutter\.is-tried \.dgm-bolt:not\(\.is-clear\)/)
-    // The chain is drawn a link at a time so one of them can light.
-    assert.match(trident, /\{LEDGER\.slice\(1\)\.map\(\(row\) => \(/)
-    assert.match(DGM_BLOCK, /\.dgm-ledgerrow\.is-parent \.dgm-ledgerhash/)
-    // And a Nectar site shows the local run crossing its own records.
+    assert.match(DGM_BLOCK, /@keyframes dgm-give/)
+    assert.match(trident, /const tried = hot === 'authority' && !open/)
+    // A field is the one part small enough to need naming, so it keeps its own
+    // target and answers in the tile: a tick if the contract has checked it.
+    assert.match(DGM_BLOCK, /\.dgm-fieldcheck \{/)
+    // The four-pixel targets are gone. Nobody has a reason to aim at a queue
+    // chip or a ledger row, which is why the mechanisms that used to hide behind
+    // them now run on their own.
+    assert.doesNotMatch(trident, /touch\('queue'|touch\('shutter'|touch\('row'|part\.kind/)
+    for (const rule of ['.dgm-queued', '.dgm-ledgerrow.is-parent', '.dgm-ledgerrow.is-hot', '.dgm-catch.is-live', '.dgm-throat.is-hot']) {
+      assert.doesNotMatch(DGM_BLOCK, new RegExp(`\\${rule}[\\s,{]`))
+    }
+    // A Nectar site shows the local run crossing its own records, and the
+    // library takes a pointer as one panel over a target the size of the plane.
     assert.match(DGM_BLOCK, /\.dgm-svg\.is-live \.dgm-site\.is-hot \.dgm-sweep/)
+    assert.match(nectar, /className=\{`dgm-library\$\{lit\('library'\)\}`\} \{\.\.\.probe\('library'\)\}/)
+    assert.match(nectar, /<rect className="dgm-hit" x="-160" y="-160" width="320" height="320" rx="28" \/>/)
+    assert.match(DGM_BLOCK, /\.dgm-library\.is-hot \.dgm-traffic \{ stroke-dasharray: 8 92; \}/)
+    // Nothing on a rising arc is a target: its tag crosses the library's own
+    // plane, and a pointer sliding over one would drop the panel on the way.
+    assert.match(DGM_BLOCK, /\.dgm-lift \{ pointer-events: none; \}/)
   })
 
   it('letters each site on its own wall instead of in the margin', () => {
@@ -455,7 +526,7 @@ describe('Trident and Nectar schematics', () => {
     assert.match(trident, /;\[5, 5, 5, 4\]\.forEach\(\(count, row\) => \{/)
     assert.match(trident, /const x = \(col - \(count - 1\) \/ 2\) \* 28/)
     assert.doesNotMatch(trident, /planSpace\(CX, CONTRACT\.cy\)[\s\S]{0,900}dgm-port/)
-    assert.match(trident, /\{\.\.\.touch\('field', index\)\}/)
+    assert.match(trident, /\{\.\.\.touch\(index\)\}/)
     assert.match(DGM_BLOCK, /\.dgm-fieldtile\.is-named \{/)
   })
 
@@ -547,17 +618,21 @@ describe('Trident and Nectar schematics', () => {
     // crosses the middle of the screen. At `top 84%` over 0.92 of the figure's
     // height the opening beats were spent while it was still below the fold, so
     // a reader met it already halfway through its own run.
-    assert.match(driver, /export function useScrollRun\(phases, \{ reduced, lead = 0\.16, start = 'top 90%', travel = 1\.25 \}\)/)
+    //
+    // Scroll is left doing the one job it is good at: walking the run. Booting
+    // is not part of it any more - no `lead` slice off the front of the range,
+    // no per-frame custom property, nothing a wheel can scrub backwards.
+    assert.match(driver, /export function useScrollRun\(phases, \{ reduced, start = 'top 88%', travel = 1\.15 \}\)/)
     assert.match(driver, /end: \(\) => `\+=\$\{Math\.round\(node\.getBoundingClientRect\(\)\.height \* travel\)\}`/)
-    assert.match(driver, /node\.style\.setProperty\('--spread', ease\(Math\.min\(1, p \/ lead\)\)\.toFixed\(4\)\)/)
-    assert.match(driver, /const along = Math\.max\(0, \(p - lead\) \/ \(1 - lead\)\)/)
-    assert.match(driver, /return \[figure, reduced \? rest : phase\]/)
+    assert.doesNotMatch(driver, /lead/)
+    assert.match(driver, /const along = ease\(Math\.min\(1, Math\.max\(0, progress\)\)\)/)
+    assert.match(driver, /return \[figure, reduced \? rest : phase, reduced \|\| booted\]/)
     assert.doesNotMatch(driver, /export function useScrollPhase/)
     for (const source of sources) {
       assert.doesNotMatch(source, /setTimeout|setInterval/)
     }
     for (const source of figures) {
-      assert.match(source, /const \[figure, phase\] = useScrollRun\(PHASES, \{ reduced \}\)/)
+      assert.match(source, /const \[figure, phase, booted\] = useScrollRun\(PHASES, \{ reduced \}\)/)
       assert.match(source, /export default function \w+Schematic\(\{ animate = true, reduced = false \}\)/)
       assert.match(source, /ref=\{figure\}/)
     }
@@ -589,7 +664,8 @@ describe('Trident and Nectar schematics', () => {
   it('leaves the claim readable in the resting state', () => {
     assert.match(trident, /status: 'RECEIPTED'/)
     assert.match(nectar, /status: 'STEADY', read: 'Structure crosses\. Records do not\.'/)
-    assert.match(DGM_BLOCK, /@media \(prefers-reduced-motion: reduce\) \{\s*\n\s*\.dgm-svg :is\(/)
+    // The boot transition is killed first, then every ambient clock behind it.
+    assert.match(DGM_BLOCK, /@media \(prefers-reduced-motion: reduce\) \{\s*\n\s*\.dgm-svg \{ transition: none; \}\s*\n\s*\n\s*\.dgm-svg :is\(/)
     for (const name of ['dgm-droppath', 'dgm-approach', 'dgm-spark', 'dgm-traffic', 'dgm-reachrim', 'dgm-sweep']) {
       assert.match(DGM_BLOCK, new RegExp(`prefers-reduced-motion[\\s\\S]*?\\.${name}[,)]`))
     }

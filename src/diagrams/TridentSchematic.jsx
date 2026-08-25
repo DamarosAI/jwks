@@ -25,14 +25,23 @@ import { useScrollRun } from './useScrollPhase'
  * blades are across the hole, and when a named person at the site signs, the
  * bolts withdraw and the blades run back into the frame.
  *
- * The drawing is never still once it has power. Proposals keep arriving on all
- * three tines, the agent's tool loop keeps going round, the contract keeps
- * checking its fields and the shut bolts keep taking the load - on timings
- * scattered by `jitter` so nothing falls into step. None of it runs while the
- * figure is still assembling: every ambient clock is held at zero opacity until
- * `--charge` comes up, so the stack lands and then the system starts, rather
- * than arriving already busy. Scroll advances the run; the pointer reads it;
- * neither is needed for it to be alive.
+ * Every deck runs its own mechanism, and runs it unattended. The plates ride
+ * over the intake and keep proposing; the intake keeps drawing the queue down
+ * its runs and swallowing them; the contract keeps walking its nineteen fields
+ * in the order it checks them; something keeps trying the shutter and the bolts
+ * keep taking it; and the ledger keeps posting, each hash travelling the link to
+ * the row it commits. That is the difference between a machine and a diagram of
+ * one, and it is the whole reason the pointer is no longer load-bearing: what a
+ * reader does with the cursor is lean on a mechanism that is already running -
+ * the intake carries a second mark, the contract re-checks from the first field,
+ * the ledger lights its chain, the shutter gives and holds. Nothing is hidden
+ * behind a hover, because nothing was ever worth hiding behind a four-pixel
+ * target.
+ *
+ * None of it runs while the figure is still assembling: every ambient clock is
+ * held at zero opacity until `--charge` comes up, so the stack lands and then
+ * the system starts, rather than arriving already busy. Scroll advances the run;
+ * the pointer reads it; neither is needed for it to be alive.
  *
  * Nothing here names a vendor. The three sources are kinds of proposer, not
  * products, because the claim is about authority and not about whose model it
@@ -111,7 +120,7 @@ let cursor = 0
   for (let col = 0; col < count; col += 1) {
     const x = (col - (count - 1) / 2) * 28
     const y = -42 + row * 28
-    FIELDS.push({ name: NAMES[cursor], x, y, at: CONTRACT.p(x, y), life: jitter(cursor, 6) })
+    FIELDS.push({ name: NAMES[cursor], x, y, at: CONTRACT.p(x, y), seq: Math.round((cursor / 19) * 100) / 100 })
     cursor += 1
   }
 })
@@ -144,7 +153,12 @@ const BOLTS = [-1, 1]
 // The ledger writes one row per committed run, each chained to the row above it
 // by its hash, front row last. Each row carries the revision it is a record of,
 // so pointing at one can show which run it belongs to rather than say so.
-const LEDGER = [-33, -11, 11, 33].map((y, index) => ({ y, index, rev: `REV-018-TR3-104${index + 1}` }))
+const LEDGER = [-33, -11, 11, 33].map((y, index, all) => ({
+  y,
+  index,
+  seq: Math.round((index / all.length) * 100) / 100,
+  rev: `REV-018-TR3-104${index + 1}`,
+}))
 
 // The descent. One short drop per deck, and it belongs to the deck it lands on
 // - drawn inside that deck's group, so it travels with the solid it is bolted
@@ -190,43 +204,21 @@ const READS = {
 }
 
 /**
- * Every deck has parts, and pointing at one makes it do the thing it is for
- * rather than describe it. A waiting proposal is taken up into the throat. A
- * field either ticks or does not. Pushing on the shutter moves it a hair and
- * the bolts take the load. A ledger row lights the hash it is sealed by and
- * the row that hash came from.
+ * A field answers for itself. It is the one part of the stack small enough to
+ * need naming and numerous enough to be worth pointing at - nineteen of them in
+ * a grid a reader sweeps across without aiming.
  *
- * The line beside the pill is what is left over after the drawing has already
- * shown it - the identifier, the count, the consequence - never a caption for
- * something the reader just watched happen.
+ * Everything else a deck does, it does on its own: the intake keeps drawing
+ * proposals off the queue, the contract keeps walking its fields, the ledger
+ * keeps posting rows, and the shutter keeps taking the load. None of that was
+ * ever worth hiding behind a four-pixel target, and a mechanism that only moves
+ * when a cursor finds it is not a machine, it is a tooltip.
  */
-function partCue(part, state) {
-  if (!part) return null
-  if (part.kind === 'queue') {
-    return {
-      tone: 'run',
-      pill: 'QUEUED',
-      read: `Proposal ${part.index + 1} of four waiting on the intake. Being taken in is not being agreed to.`,
-    }
-  }
-  if (part.kind === 'field') {
-    const bound = part.index < state.bound
-    return bound
-      ? { tone: 'valid', pill: 'CHECKED', read: `${FIELDS[part.index].name} checked against task contract T-07 v3.` }
-      : { tone: 'run', pill: 'UNCHECKED', read: `${FIELDS[part.index].name} has not been checked yet, so nothing below this deck has moved.` }
-  }
-  if (part.kind === 'shutter') {
-    return state.gate === 'open'
-      ? { tone: 'signed', pill: 'OPEN', read: 'Somebody at the site signed. The bolts withdrew and the blades ran back.' }
-      : { tone: 'hold', pill: 'HELD', read: 'Push on it and nothing gives. It runs back for a signature, and nothing else.' }
-  }
-  if (part.kind === 'row') {
-    const written = state.receipt || part.index < LEDGER.length - 1
-    return written
-      ? { tone: 'signed', pill: 'ROW', read: `${LEDGER[part.index].rev}, sealed by the hash of the row above it.` }
-      : { tone: 'hold', pill: 'UNWRITTEN', read: 'Nothing is written here until the shutter opens.' }
-  }
-  return null
+function fieldCue(index, state) {
+  if (index === null) return null
+  return index < state.bound
+    ? { tone: 'valid', pill: 'CHECKED', read: `${FIELDS[index].name} checked against task contract T-07 v3.` }
+    : { tone: 'run', pill: 'UNCHECKED', read: `${FIELDS[index].name} has not been checked, so nothing below has moved.` }
 }
 
 const LOOP = 'M -6 -13 H 6 A 13 13 0 0 1 6 13 H -6 A 13 13 0 0 1 -6 -13 Z'
@@ -317,10 +309,10 @@ function Rail({ layer, live, hot, fact, probe }) {
 
 export default function TridentSchematic({ animate = true, reduced = false }) {
   const frame = useCenterOnOverflow()
-  const [figure, phase] = useScrollRun(PHASES, { reduced })
+  const [figure, phase, booted] = useScrollRun(PHASES, { reduced })
   const [hot, setHot] = useState(null)
   const [source, setSource] = useState(null)
-  const [part, setPart] = useState(null)
+  const [field, setField] = useState(null)
   const state = PHASES[phase] ?? PHASES[PHASES.length - 1]
   const open = state.gate === 'open'
 
@@ -333,21 +325,21 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
   })
   const lit = (key) => (hot === key ? ' is-hot' : '')
 
-  // Every deck carries parts, and each one answers for itself. Pointing at a
-  // part never hides the deck it is in - the deck stays lifted underneath,
-  // because a part is a detail of the thing it sits on and not a replacement
-  // for it.
-  const touch = (kind, index = 0) => ({
-    onMouseEnter: () => setPart({ kind, index }),
-    onMouseLeave: () => setPart((current) => (
-      current && current.kind === kind && current.index === index ? null : current
-    )),
+  const touch = (index) => ({
+    onMouseEnter: () => setField(index),
+    onMouseLeave: () => setField((current) => (current === index ? null : current)),
   })
-  const at = (kind) => (part && part.kind === kind ? part.index : null)
-  const fieldAt = at('field')
-  const queueAt = at('queue')
-  const rowAt = at('row')
-  const tried = part?.kind === 'shutter' && !open
+
+  // Every deck runs on its own. Pointing at one leans on the mechanism it is
+  // already running rather than opening a panel about it: the intake pulls a
+  // second mark down every run, the contract re-checks its fields from the
+  // first, the ledger lights the chain that holds it together, and the shutter
+  // gives a hair against its bolts and comes straight back to shut. The deck is
+  // the target because the deck is the size of a thing a reader can point at -
+  // a queue chip and a ledger row are four pixels of nothing anybody would aim
+  // for, which is why the mechanisms that used to hide behind them now run
+  // whether or not a cursor ever arrives.
+  const tried = hot === 'authority' && !open
 
   // Picking a source is the interaction that carries the claim: the reader
   // chooses who proposes, and the aperture holds all the same.
@@ -371,7 +363,7 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
     receipt: state.receipt ? LEDGER[LEDGER.length - 1].rev : 'NOT YET WRITTEN',
   }
 
-  const cue = partCue(part, state) ?? READS[hot]
+  const cue = fieldCue(field, state) ?? READS[hot]
   const tone = cue?.tone ?? state.tone
   const pill = cue?.pill ?? state.status
   const read = cue?.read ?? RESTING
@@ -380,7 +372,7 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
     <figure className="dgm">
       <div className="dgm-frame" ref={frame}>
         <svg
-          className={`dgm-svg is-${tone}${animate ? ' is-live' : ''}`}
+          className={`dgm-svg is-${tone}${animate ? ' is-live' : ''}${booted ? ' is-booted' : ''}`}
           ref={figure}
           viewBox="0 0 620 700"
           role="img"
@@ -441,31 +433,40 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
                   vectorEffect="non-scaling-stroke"
                 />
                 {/* The chain is drawn a link at a time rather than as one rule
-                    down the margin, so pointing at a row can light the single
-                    link that seals it to the row above. A ledger is a ledger
-                    because of that link, and it was the one thing in the deck
-                    a reader could not see happen. */}
+                    down the margin, and each link carries the hash down to the
+                    row below it on the ledger's own clock. A ledger is a ledger
+                    because of that link, and it was the one thing in the deck a
+                    reader could not see happen. */}
                 {LEDGER.slice(1).map((row) => (
-                  <line
-                    className={`dgm-ledgerchain${rowAt === row.index ? ' is-hot' : ''}`}
-                    key={row.y}
-                    x1="-54"
-                    y1={LEDGER[row.index - 1].y}
-                    x2="-54"
-                    y2={row.y}
-                    vectorEffect="non-scaling-stroke"
-                  />
+                  <g key={row.y} style={{ '--seq': row.seq }}>
+                    <line
+                      className="dgm-ledgerchain"
+                      x1="-54"
+                      y1={LEDGER[row.index - 1].y}
+                      x2="-54"
+                      y2={row.y}
+                      vectorEffect="non-scaling-stroke"
+                    />
+                    <line
+                      className="dgm-ledgerflow"
+                      pathLength="100"
+                      x1="-54"
+                      y1={LEDGER[row.index - 1].y}
+                      x2="-54"
+                      y2={row.y}
+                      vectorEffect="non-scaling-stroke"
+                    />
+                  </g>
                 ))}
                 {LEDGER.map((row) => {
                   const last = row.index === LEDGER.length - 1
                   const written = state.receipt || !last
                   return (
                     <g
-                      className={`dgm-ledgerrow${written ? ' is-written' : ''}${rowAt === row.index ? ' is-hot' : ''}${rowAt !== null && rowAt - 1 === row.index ? ' is-parent' : ''}`}
+                      className={`dgm-ledgerrow${written ? ' is-written' : ''}`}
                       key={row.y}
-                      {...touch('row', row.index)}
+                      style={{ '--seq': row.seq }}
                     >
-                      <rect className="dgm-hit" x="-62" y={row.y - 9} width="114" height="18" />
                       <rect className="dgm-ledgerbar" x="-44" y={row.y - 5.5} width="96" height="11" rx="3" vectorEffect="non-scaling-stroke" />
                       <rect className="dgm-ledgerhash" x="-59" y={row.y - 4.5} width="9" height="9" rx="2" vectorEffect="non-scaling-stroke" />
                       <rect className="dgm-ledgertick" x="-37" y={row.y - 1.5} width="30" height="3" rx="1.5" />
@@ -500,7 +501,7 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
                     removed. Push on it with the pointer and it answers the way
                     the mechanism would: the blades give a hair, the bolts take
                     the load, and it comes straight back. */}
-                <g className={`dgm-shutter${tried ? ' is-tried' : ''}`} {...touch('shutter')}>
+                <g className={`dgm-shutter${tried ? ' is-tried' : ''}`}>
                   <rect className="dgm-housing" x={-SHUT_FRAME} y={-SHUT_FRAME} width={SHUT_FRAME * 2} height={SHUT_FRAME * 2} rx="13" vectorEffect="non-scaling-stroke" />
                   <rect className="dgm-aperture" x={-SHUT_HOLE} y={-SHUT_HOLE} width={SHUT_HOLE * 2} height={SHUT_HOLE * 2} rx="8" fill="url(#tr-hatch)" />
                   <g clipPath="url(#tr-hole)">
@@ -538,53 +539,63 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
               <Faces shape={CONTRACT} className="dgm-solid" />
               <Drop leg={DROPS[0]} drops={state.drops} />
               <g transform={planSpace(CX, CONTRACT.cy)}>
+                {/* The contract walks its own fields. `--seq` is the field's
+                    place in the run, so the check travels the grid in the order
+                    the contract checks it rather than nineteen tiles blinking
+                    independently, which is a decoration and not a pass. */}
                 {FIELDS.map((cell, index) => (
                   <rect
-                    className={`dgm-fieldtile${index < state.bound ? ' is-bound' : ''}${fieldAt === index ? ' is-named' : ''}`}
+                    className={`dgm-fieldtile${index < state.bound ? ' is-bound' : ''}${field === index ? ' is-named' : ''}`}
                     key={cell.name}
-                    style={{ '--life': cell.life }}
+                    style={{ '--seq': cell.seq }}
                     x={cell.x - 9}
                     y={cell.y - 9}
                     width="18"
                     height="18"
                     rx="5"
                     vectorEffect="non-scaling-stroke"
-                    {...touch('field', index)}
+                    {...touch(index)}
                   />
                 ))}
                 {/* The field answers in the tile, not in the margin: a tick if
                     the contract has checked it, an open bar if it has not. The
                     name in the tag is only there to say which one it was. */}
-                {fieldAt === null ? null : (
+                {field === null ? null : (
                   <path
                     className="dgm-fieldcheck"
-                    d={fieldAt < state.bound
-                      ? `M ${FIELDS[fieldAt].x - 4.4} ${FIELDS[fieldAt].y + 0.4} l 3.1 3.3 l 5.9 -6.8`
-                      : `M ${FIELDS[fieldAt].x - 4.4} ${FIELDS[fieldAt].y} h 8.8`}
+                    d={field < state.bound
+                      ? `M ${FIELDS[field].x - 4.4} ${FIELDS[field].y + 0.4} l 3.1 3.3 l 5.9 -6.8`
+                      : `M ${FIELDS[field].x - 4.4} ${FIELDS[field].y} h 8.8`}
                     vectorEffect="non-scaling-stroke"
                   />
                 )}
               </g>
             </g>
             <Rail layer={CONTRACT} live={state.bound > 0} hot={hot === 'contract'} fact={facts.contract} probe={probe('contract')} />
-            {fieldAt === null ? null : (
+            {field === null ? null : (
               <g className="dgm-tag is-named">
-                <line className="dgm-leader" x1="118" y1={FIELDS[fieldAt].at[1]} x2={FIELDS[fieldAt].at[0] - 10} y2={FIELDS[fieldAt].at[1]} />
-                <rect className="dgm-tagbody" x="20" y={FIELDS[fieldAt].at[1] - 11} width="98" height="22" rx="11" />
-                <text className="dgm-tagtext" x="69" y={FIELDS[fieldAt].at[1] + 4} textAnchor="middle">{FIELDS[fieldAt].name}</text>
+                <line className="dgm-leader" x1="118" y1={FIELDS[field].at[1]} x2={FIELDS[field].at[0] - 10} y2={FIELDS[field].at[1]} />
+                <rect className="dgm-tagbody" x="20" y={FIELDS[field].at[1] - 11} width="98" height="22" rx="11" />
+                <text className="dgm-tagtext" x="69" y={FIELDS[field].at[1] + 4} textAnchor="middle">{FIELDS[field].name}</text>
               </g>
             )}
           </g>
 
           {/* The proposal surface travels with its plates and their leaders, so
-              nothing detaches while the stack is still opening. */}
+              nothing detaches while the stack is still opening.
+
+              Each leader starts five pixels up inside the skirt of the plate it
+              hangs from rather than on its bottom tip, and the plates are drawn
+              last, so the head is always hidden under the solid. That is what
+              lets a plate ride: an endpoint parked exactly on a silhouette parts
+              from it the moment either end moves. */}
           <g className="dgm-slide" style={{ '--lift': `${SURFACE.lift}px` }}>
             {SOURCES.map((item) => (
               <line
                 className={`dgm-leader${lit(item.key)}`}
                 key={`lead-${item.key}`}
                 x1={item.plate.front[0]}
-                y1={item.plate.front[1] + item.plate.height}
+                y1={item.plate.front[1] + item.plate.height - 5}
                 x2={item.pad[0]}
                 y2={item.pad[1]}
               />
@@ -597,32 +608,34 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
                 {/* Everything that lands on this deck lands inside one
                     catchment, and everything in the catchment goes to one
                     throat. */}
-                <rect className={`dgm-catch${queueAt === null ? '' : ' is-live'}`} x="-56" y="-56" width="112" height="112" rx="20" vectorEffect="non-scaling-stroke" />
-                {/* Point at one and the intake takes it: the chip leaves the
-                    queue and runs to the throat every proposal has to pass
-                    through. Being taken in is the whole of what this deck
-                    does, so it is the thing the deck should be seen doing. */}
-                {QUEUE.map((chip, index) => (
-                  <g
-                    className={`dgm-queued${queueAt === index ? ' is-taken' : ''}`}
-                    key={chip.step}
-                    style={{ '--life': chip.life, '--qx': chip.x, '--qy': chip.y }}
-                    {...touch('queue', index)}
-                  >
-                    {/* The target stays where the queue is. Hanging it on the
-                        chip itself would move it out from under the pointer the
-                        moment it was taken, and the two would chatter. */}
-                    <rect className="dgm-hit" x={chip.x - 10} y={chip.y - 10} width="20" height="20" />
-                    <rect
-                      className="dgm-queue"
-                      x={chip.x - 5}
-                      y={chip.y - 5}
-                      width="10"
-                      height="10"
-                      rx="3"
-                      vectorEffect="non-scaling-stroke"
-                    />
+                <rect className="dgm-catch" x="-56" y="-56" width="112" height="112" rx="20" vectorEffect="non-scaling-stroke" />
+                {/* The intake never stops pulling. Each waiting proposal has a
+                    run to the throat, and a mark keeps travelling it - so the
+                    deck is seen doing the one thing it is for, whether or not
+                    anybody is pointing at it.
+
+                    The run is drawn twice, the way a drop is: a hairline that is
+                    always there, and the mark that travels it. With only the
+                    mark, four chips sat in a corner unattached to anything for
+                    most of every cycle. */}
+                {QUEUE.map((chip) => (
+                  <g key={`in-${chip.step}`} style={{ '--life': chip.life }}>
+                    <line className="dgm-intakepath" x1={chip.x} y1={chip.y} x2="0" y2="0" vectorEffect="non-scaling-stroke" />
+                    <line className="dgm-intake" pathLength="100" x1={chip.x} y1={chip.y} x2="0" y2="0" vectorEffect="non-scaling-stroke" />
                   </g>
+                ))}
+                {QUEUE.map((chip) => (
+                  <rect
+                    className="dgm-queue"
+                    key={chip.step}
+                    style={{ '--life': chip.life }}
+                    x={chip.x - 5}
+                    y={chip.y - 5}
+                    width="10"
+                    height="10"
+                    rx="3"
+                    vectorEffect="non-scaling-stroke"
+                  />
                 ))}
               </g>
               {SOURCES.map((item) => (
@@ -660,8 +673,8 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
                 />
               ))}
               <g transform={planSpace(CX, SURFACE.cy)}>
-                <circle className={`dgm-port is-hub${queueAt === null ? '' : ' is-hot'}`} cx="0" cy="0" r="14" vectorEffect="non-scaling-stroke" />
-                <circle className={`dgm-throat${queueAt === null ? '' : ' is-hot'}`} cx="0" cy="0" r="5" />
+                <circle className="dgm-port is-hub" cx="0" cy="0" r="14" vectorEffect="non-scaling-stroke" />
+                <circle className="dgm-throat" cx="0" cy="0" r="5" />
               </g>
             </g>
 

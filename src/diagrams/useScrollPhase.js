@@ -17,43 +17,44 @@ const ease = (t) => t * t * (3 - 2 * t)
  * figure rather than to the viewport, so the same run plays in the same order
  * and at the same pace on a 390px phone and a 1920px desktop.
  *
- * The first `lead` of the range assembles the drawing and the rest walks the
- * phases, which is why nothing is ever drawn through a stack that has not
- * finished arriving. `--spread` is written straight onto the node, so assembly
- * scrubs on the compositor and only a phase change costs a React render.
+ * Booting is not a scrub. It used to be: the first slice of the scroll range
+ * assembled the drawing a frame at a time, which meant the machine came on at
+ * whatever rate the reader happened to be turning the wheel, stalled if they
+ * stopped, and ran backwards if they scrolled up. A machine powers up at its
+ * own pace. So the figure boots once, when the reader arrives, and the
+ * stylesheet does the easing: `--spread` and `--charge` are registered custom
+ * properties, so adding one class transitions every calc() that reads them -
+ * the solids settle, the ink gains, the footprint climbs out of the ground and
+ * every ambient clock starts, on one timeline nobody can scrub.
  *
- * `--charge` is the second half of that: the drawing arrives dark and comes up
- * a beat behind the solids landing. Assembly moves the geometry; charge is the
- * system finding power - the ink gains, the footprint hairlines climb out of
- * the ground, and every ambient clock in the figure starts at once. It used to
- * be that all of it ran from the first frame, so the figure was already busy
- * while it was still sliding into place and nothing ever read as switching on.
- * The two ramps overlap deliberately: power arrives while the last deck is
- * still settling, the way a machine does rather than the way a slideshow does.
+ * That leaves scroll doing the one job it is good at: walking the run. Each
+ * phase carries a `span` weight, so the beat that matters - the hold at the
+ * shut shutter, the steady state after coverage compounds - owns the widest
+ * stretch and is what a reader parked mid-section sees.
  *
- * Each phase carries a `span` weight, so the beat that matters - the hold at
- * the shut aperture, the steady state after coverage compounds - owns the
- * widest stretch of scroll and is what a reader parked mid-section sees. The
- * range is anchored so the stack lands early and the phases play while the
- * figure crosses the middle of the screen, rather than being spent while it is
- * still below the fold. With reduced motion no trigger is created at all: the
- * figure is parked open, charged, on its resting phase, which states the whole
- * claim on its own.
+ * With reduced motion no trigger is created at all: the figure is parked open,
+ * charged and booted on its resting phase, which states the whole claim on its
+ * own.
  */
-export function useScrollRun(phases, { reduced, lead = 0.16, start = 'top 90%', travel = 1.25 }) {
+export function useScrollRun(phases, { reduced, start = 'top 88%', travel = 1.15 }) {
   const figure = useRef(null)
   const rest = phases.length - 1
   const [phase, setPhase] = useState(rest)
+  const [booted, setBooted] = useState(false)
 
   useEffect(() => {
     const node = figure.current
     if (!node) return undefined
 
-    if (reduced) {
-      node.style.setProperty('--spread', '1')
-      node.style.setProperty('--charge', '1')
-      return undefined
-    }
+    // Booted is state and not a class added to the node, because the figure
+    // re-renders on every phase and React rewrites `class` from what it last
+    // rendered - an imperatively added class survives until the first tone
+    // change and is then silently wiped, which is exactly the frame the reader
+    // is looking at.
+    const boot = () => setBooted(true)
+    // A figure already on screen at mount has no entry to wait for.
+    if (reduced || node.getBoundingClientRect().top < window.innerHeight) boot()
+    if (reduced) return undefined
 
     const total = phases.reduce((sum, item) => sum + (item.span ?? 1), 0)
     let run = 0
@@ -62,17 +63,13 @@ export function useScrollRun(phases, { reduced, lead = 0.16, start = 'top 90%', 
       return run / total
     })
 
-    // Power comes up behind the geometry: it starts while the stack is still
-    // landing and settles just after it does.
-    const wake = lead * 0.6
-    const surge = lead * 1.4
-
     let last = -1
     const apply = (progress) => {
-      const p = Math.min(1, Math.max(0, progress))
-      node.style.setProperty('--spread', ease(Math.min(1, p / lead)).toFixed(4))
-      node.style.setProperty('--charge', ease(Math.min(1, Math.max(0, (p - wake) / surge))).toFixed(4))
-      const along = Math.max(0, (p - lead) / (1 - lead))
+      // Any progress at all means the reader has reached the figure. Booting off
+      // the crossing callbacks alone misses the reader who arrives by a jump -
+      // a hash link, a restored scroll position, a fast flick past the end.
+      if (progress > 0) boot()
+      const along = ease(Math.min(1, Math.max(0, progress)))
       let next = stops.findIndex((stop) => along < stop)
       if (next < 0) next = rest
       if (next === last) return
@@ -85,15 +82,18 @@ export function useScrollRun(phases, { reduced, lead = 0.16, start = 'top 90%', 
       trigger: node,
       start,
       end: () => `+=${Math.round(node.getBoundingClientRect().height * travel)}`,
+      onEnter: boot,
+      onEnterBack: boot,
+      onLeave: boot,
       onUpdate: (self) => apply(self.progress),
       onRefresh: (self) => apply(self.progress),
     })
     apply(trigger.progress)
 
     return () => trigger.kill()
-  }, [lead, phases, reduced, rest, start, travel])
+  }, [phases, reduced, rest, start, travel])
 
-  return [figure, reduced ? rest : phase]
+  return [figure, reduced ? rest : phase, reduced || booted]
 }
 
 /**
