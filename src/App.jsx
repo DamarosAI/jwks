@@ -7,6 +7,7 @@ import { PilotButton, PilotProvider } from './PilotInquiry'
 const PrivacyPage = lazy(() => import('./PrivacyPage'))
 import TridentSchematic from './diagrams/TridentSchematic'
 import NectarSchematic from './diagrams/NectarSchematic'
+import { useScrollSpread } from './diagrams/useScrollPhase'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -19,6 +20,7 @@ import {
   EnvelopeSimple,
   FileText,
   Fingerprint,
+  Graph,
   List,
   Power,
   ShieldCheck,
@@ -1052,6 +1054,7 @@ function TridentSection() {
   const narrow = useMediaQuery(NARROW_VIEWPORT)
   const inView = useInView(root)
   const animate = shouldRunAmbient({ reduced, inView, narrow })
+  const field = useScrollSpread({ reduced, start: 'top bottom', end: 'top 40%' })
   useEnterMotion(root, reduced, () => [
     gsap.from('.trident-copy > *', {
       opacity: 0, duration: 0.8, stagger: 0.12, clearProps: 'transform',
@@ -1065,6 +1068,7 @@ function TridentSection() {
 
   return (
     <section className="trident-section section-space" id="trident" ref={root}>
+      <div className="section-field" ref={field} aria-hidden="true" />
       <SectionEyebrow>Trident</SectionEyebrow>
       <div className="trident-copy">
         <h2><span>Any model can propose.</span><span>None can decide.</span></h2>
@@ -1089,6 +1093,7 @@ function NectarSection() {
   const narrow = useMediaQuery(NARROW_VIEWPORT)
   const inView = useInView(root)
   const animate = shouldRunAmbient({ reduced, inView, narrow })
+  const field = useScrollSpread({ reduced, start: 'top bottom', end: 'top 40%' })
   useEnterMotion(root, reduced, () => [
     gsap.from('.nectar-copy > *', {
       opacity: 0, duration: 0.8, stagger: 0.12, ease: 'power2.out', clearProps: 'transform',
@@ -1098,14 +1103,11 @@ function NectarSection() {
       opacity: 0, duration: 1.2, ease: 'power3.out', clearProps: 'transform',
       scrollTrigger: { trigger: root.current, start: 'top 65%', once: true },
     }),
-    gsap.from('.nectar-facts > *', {
-      opacity: 0, y: 12, duration: 0.7, stagger: 0.08, ease: 'power2.out', clearProps: 'all',
-      scrollTrigger: { trigger: root.current, start: 'top 55%', once: true },
-    }),
   ])
 
   return (
     <section className="nectar-section section-space" id="nectar" ref={root}>
+      <div className="section-field" ref={field} aria-hidden="true" />
       <SectionEyebrow>Nectar</SectionEyebrow>
       <div className="nectar-network">
         <NectarSchematic animate={animate} reduced={reduced} section={root} />
@@ -1113,19 +1115,10 @@ function NectarSection() {
       <div className="nectar-copy">
         <h2><span>Execution intelligence that crosses site boundaries.</span><span>Patient data that never does.</span></h2>
         <p>Nectar is a shared execution library. Sites contribute structure, not records. Coverage compounds. Patient data stays at the site that collected it.</p>
-      </div>
-      <div className="nectar-facts">
-        <div>
-          <strong>PHI-free by construction</strong>
-          <p>Only execution structure moves across sites. Patient records do not.</p>
-        </div>
-        <div>
-          <strong>Network effect</strong>
-          <p>Each governed run improves protocol coverage for the next site.</p>
-        </div>
-        <div>
-          <strong>Data gravity</strong>
-          <p>Records remain at the collecting site. Intelligence compounds elsewhere.</p>
+        <div className="control-facts">
+          <span><ShieldCheck size={18} /> PHI-free by construction</span>
+          <span><Graph size={18} /> Coverage compounds</span>
+          <span><Database size={18} /> Records stay at the site</span>
         </div>
       </div>
     </section>

@@ -288,7 +288,8 @@ body,
     margin: 0 auto;
   }
 
-  #root .dgm-head { min-height: 44px; padding: 0 14px; }
+  #root .dgm-head { padding: 0 0 14px; }
+  #root .dgm-head strong { font-size: 0.96rem; }
 
   /* A schematic does not simplify well. Rather than shrink the annotation to
      an unreadable size, hold the drawing at a legible scale and let it pan
@@ -302,14 +303,6 @@ body,
 
   #root .dgm-svg { min-width: 500px; }
 
-  #root .nectar-facts {
-    order: 3;
-    grid-column: auto;
-    grid-template-columns: 1fr;
-    gap: 22px;
-    margin-top: 8px;
-    text-align: left;
-  }
 
   #root .final-cta {
     width: calc(100% - 24px);

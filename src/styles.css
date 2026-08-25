@@ -9437,12 +9437,14 @@ html.is-hidden .clinic-node i,
 /* ── Trident: left-copy / right-diagram ── */
 
 .trident-section {
+  position: relative;
   display: grid;
   width: min(100%, 1500px);
   margin: 0 auto;
   grid-template-columns: minmax(320px, 0.48fr) minmax(0, 0.52fr);
   gap: clamp(36px, 4vw, 72px);
   align-items: center;
+  isolation: isolate;
 }
 
 .trident-copy {
@@ -9486,27 +9488,58 @@ html.is-hidden .clinic-node i,
   line-height: 1.5;
 }
 
+/* The figures are not cards. They sit directly on the page field, which is why
+   the lattice behind them belongs to the section and not to the drawing. */
+
 .trident-diagram,
 .nectar-network {
   display: block;
   min-width: 0;
   width: min(100%, 620px);
-  overflow: hidden;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  background: var(--surface-solid);
-  box-shadow: var(--shadow-soft);
+}
+
+/* The ground both sections stand on: one continuous lattice, bled to the full
+   width of the page and faded only at the outer edges of the pair, so Trident
+   and Nectar read as two drawings on one sheet rather than two panels. It
+   drifts and gains against the reader's scroll off the same `--spread` value
+   the figures use, so the field is part of the same motion, not a backdrop. */
+
+.section-field {
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100vw;
+  margin-left: -50vw;
+  background-image: radial-gradient(circle at center, color-mix(in srgb, var(--accent) 38%, transparent) 1.1px, transparent 1.4px);
+  background-position: center calc(var(--spread, 1) * -34px);
+  background-size: 26px 26px;
+  opacity: calc(0.34 + 0.66 * var(--spread, 1));
+  pointer-events: none;
+}
+
+.trident-section .section-field {
+  -webkit-mask-image: linear-gradient(to bottom, transparent, var(--text) 17%, var(--text));
+  mask-image: linear-gradient(to bottom, transparent, var(--text) 17%, var(--text));
+}
+
+.nectar-section .section-field {
+  -webkit-mask-image: linear-gradient(to bottom, var(--text), var(--text) 83%, transparent);
+  mask-image: linear-gradient(to bottom, var(--text), var(--text) 83%, transparent);
 }
 
 /* ── Nectar: left-diagram / right-copy (alternating) ── */
 
 .nectar-section {
+  position: relative;
   display: grid;
   width: min(100%, 1500px);
   margin: 0 auto;
   grid-template-columns: minmax(0, 0.52fr) minmax(320px, 0.48fr);
   gap: clamp(36px, 4vw, 72px);
   align-items: center;
+  isolation: isolate;
 }
 
 .nectar-copy {
@@ -9534,65 +9567,74 @@ html.is-hidden .clinic-node i,
   line-height: 1.5;
 }
 
-.nectar-facts {
-  min-width: 0;
-}
-
-.nectar-facts {
-  display: grid;
-  width: 100%;
-  grid-column: 1 / -1;
-  grid-template-columns: repeat(3, 1fr);
-  gap: clamp(20px, 3vw, 40px);
-  margin-top: 16px;
-  padding-top: 28px;
-  border-top: 1px solid var(--border);
-  text-align: left;
-}
-
-.nectar-facts strong {
-  display: block;
-  font-size: 0.98rem;
-  font-weight: 600;
-  letter-spacing: -0.015em;
-}
-
-.nectar-facts p {
-  margin-top: 8px;
-  color: var(--muted);
-  font-size: 0.86rem;
-  line-height: 1.45;
+.nectar-copy .control-facts {
+  margin-top: 28px;
 }
 
 /* -- Trident and Nectar schematics --
-   Axonometric technical figures. Faces, leaders, plan grids and mono callouts,
-   drawn in one squashed isometric so a deck reads as a deck. Nothing here
-   introduces a value of its own - every colour, radius, weight and face is
-   derived from a site token, so the figures sit in the same field as the bento
-   cards and the workspace. */
+   Two axonometric figures drawn in one language: plan-projected solids, rounded
+   where a Damaros edge is rounded, labelled in Switzer and reserving the mono
+   face for machine values only. Nothing here introduces a value of its own -
+   every colour, radius and weight comes from a site token, and the figures sit
+   directly on the page lattice rather than inside a panel of their own. */
 
 .dgm {
   display: flex;
-  overflow: hidden;
   width: 100%;
   flex-direction: column;
   margin: 0;
 }
 
+/* A figure title, not a window chrome bar. It names what the drawing answers. */
+
 .dgm-head {
   display: flex;
-  min-height: 52px;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg);
-  color: var(--text-soft);
-  font-size: 0.7rem;
-  font-weight: 700;
+  flex-direction: column;
+  gap: 5px;
+  padding: 0 2px 20px;
 }
 
-.dgm-head small { color: var(--muted); font-size: 0.58rem; font-weight: 500; }
+.dgm-head strong {
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 1.04rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.dgm-head p {
+  max-width: 52ch;
+  color: var(--text-soft);
+  font-size: 0.85rem;
+  font-weight: 400;
+  line-height: 1.45;
+}
+
+.dgm-head small {
+  color: var(--faint);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+/* The harness bracket. What is inside it is the part that does not change when
+   the model does - which is the whole of what Trident sells. */
+
+.dgm-bracket {
+  fill: none;
+  stroke: color-mix(in srgb, var(--accent) 46%, transparent);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+}
+
+.dgm-brackettext {
+  fill: var(--accent-strong);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
 
 .dgm-frame { min-width: 0; }
 
@@ -9604,265 +9646,459 @@ html.is-hidden .clinic-node i,
   font-synthesis: none;
 }
 
-/* Ground. A soft field of the site accent, ruled with the drawing's own
-   projection so the lattice and the decks agree about where the plan is. */
+/* Ground. The plane a figure is measured against, and the hairlines that carry
+   one footprint through every height of the stack. */
 
-.dgm-field { fill: color-mix(in srgb, var(--accent-soft) 56%, var(--surface-solid)); }
-.dgm-lattice { stroke: color-mix(in srgb, var(--accent) 15%, transparent); stroke-width: 1; }
-.dgm-dotgrid { fill: color-mix(in srgb, var(--accent) 26%, transparent); }
-.dgm-lattice-wash { pointer-events: none; }
-.dgm-hatch { stroke: color-mix(in srgb, var(--text) 34%, transparent); stroke-width: 1.1; }
+.dgm-grain { fill: color-mix(in srgb, var(--accent) 30%, transparent); }
+.dgm-grain.is-fine { fill: color-mix(in srgb, var(--accent) 44%, transparent); }
+.dgm-planefill { stroke: none; opacity: 0.55; pointer-events: none; }
+
+/* Plane edges name their own ground, lying along the edge the way a plan does
+   it rather than floating in a corner. */
+
+.dgm-edge {
+  fill: var(--faint);
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+
+.dgm-edge.is-caption { fill: var(--muted); letter-spacing: 0.16em; }
+
+.dgm-plane {
+  fill: color-mix(in srgb, var(--accent-soft) 34%, transparent);
+  stroke: color-mix(in srgb, var(--accent) 22%, transparent);
+  stroke-width: 1;
+}
+
+.dgm-axis {
+  stroke: color-mix(in srgb, var(--accent) 26%, transparent);
+  stroke-width: 1;
+  stroke-dasharray: 2 5;
+  stroke-linecap: round;
+}
+
+.dgm-hatch { stroke: color-mix(in srgb, var(--text) 28%, transparent); stroke-width: 1.1; }
 .dgm-rule { stroke: var(--border); stroke-width: 1; }
 
-/* Solids. Three faces, three weights of the same ink - no second palette. */
+/* Solids. Three faces, three weights of one ink, and no second palette. */
 
 .dgm-face-top {
   fill: var(--surface-solid);
-  stroke: color-mix(in srgb, var(--text) 40%, transparent);
+  stroke: color-mix(in srgb, var(--text) 34%, transparent);
   stroke-width: 1;
   stroke-linejoin: round;
   transition: stroke 300ms ease;
 }
 
 .dgm-face-left {
-  fill: color-mix(in srgb, var(--text) 4%, var(--surface-solid));
-  stroke: color-mix(in srgb, var(--text) 40%, transparent);
+  fill: color-mix(in srgb, var(--text) 5%, var(--surface-solid));
+  stroke: color-mix(in srgb, var(--text) 34%, transparent);
   stroke-width: 1;
   stroke-linejoin: round;
 }
 
 .dgm-face-right {
-  fill: color-mix(in srgb, var(--text) 9%, var(--surface-solid));
-  stroke: color-mix(in srgb, var(--text) 40%, transparent);
+  fill: color-mix(in srgb, var(--text) 11%, var(--surface-solid));
+  stroke: color-mix(in srgb, var(--text) 34%, transparent);
   stroke-width: 1;
   stroke-linejoin: round;
 }
 
-/* Skirts are hatched, the way the cut edge of a section is hatched. */
+.dgm-deck.is-live > .dgm-solid > .dgm-face-top { stroke: color-mix(in srgb, var(--accent) 60%, var(--text)); }
 
-.dgm-skirt { stroke: none; }
-.dgm-skirtline { stroke: color-mix(in srgb, var(--text) 24%, transparent); stroke-width: 0.9; }
-
-/* Assembly. The figure arrives closed and opens as the section enters: Trident
-   separates its decks, Nectar draws its tethers out to each site. Both scrub
+/* Assembly. Both figures arrive closed and open as the section enters, scrubbed
    off one `--spread` value written straight onto the element, so the reader's
    scroll drives it without a single React render. */
 
 .dgm-slide { transform: translateY(calc(var(--lift, 0px) * (1 - var(--spread, 1)))); }
 
-.dgm-tether {
-  --in: clamp(0, calc((var(--spread, 1) - var(--stagger, 0)) * 2.6), 1);
-  fill: none;
-  stroke: color-mix(in srgb, var(--text) 28%, transparent);
-  stroke-width: 1;
-  stroke-dasharray: 100;
-  stroke-dashoffset: calc(100 * (1 - var(--in)));
+.dgm-site {
+  --in: clamp(0, calc((var(--spread, 1) - var(--stagger, 0)) * 3.4), 1);
+  opacity: var(--in);
 }
 
-.dgm-tether.is-hot { stroke: var(--accent); stroke-width: 1.4; }
-
-.dgm-site { --in: clamp(0, calc((var(--spread, 1) - var(--stagger, 0)) * 3.4), 1); opacity: var(--in); }
-
-.dgm-deck.is-live > .dgm-solid > .dgm-face-top { stroke: color-mix(in srgb, var(--accent) 62%, var(--text)); }
-
-/* Leaders. Every label and every card is tied to a real edge. */
+/* Leaders. Every label in either figure is tied to a real edge. */
 
 .dgm-leader {
-  stroke: color-mix(in srgb, var(--text) 28%, transparent);
+  stroke: color-mix(in srgb, var(--text) 24%, transparent);
   stroke-width: 1;
+  stroke-linecap: round;
+  transition: stroke 260ms ease;
 }
 
-/* Trident: the proposal surface. */
+.dgm-railnode { fill: color-mix(in srgb, var(--text) 24%, transparent); transition: fill 260ms ease; }
+.dgm-rail.is-live .dgm-railnode { fill: var(--accent); }
+.dgm-rail.is-live .dgm-leader { stroke: color-mix(in srgb, var(--accent) 56%, transparent); }
 
-.dgm-tine {
-  stroke: color-mix(in srgb, var(--text) 46%, transparent);
-  stroke-width: 1.25;
-  stroke-dasharray: 4 3;
+/* Ports. Where the axis meets a deck, and where structure leaves a site. */
+
+.dgm-port {
+  fill: var(--surface-solid);
+  stroke: color-mix(in srgb, var(--accent) 68%, transparent);
+  stroke-width: 1.4;
+  transition: stroke 300ms ease;
 }
 
-.dgm-tine.is-live { stroke: var(--accent); stroke-dasharray: none; }
+.dgm-port.is-hub { stroke: var(--accent-strong); stroke-width: 1.8; }
 
-.dgm-pad {
+/* Trident: the three proposal surfaces. They are drawn identically on purpose.
+   The reader picks which one is proposing, and the aperture holds all the same
+   - that choice is the claim, so it is an interaction and not a caption. */
+
+.dgm-plate { cursor: pointer; }
+.dgm-plate:focus { outline: none; }
+
+.dgm-plate:focus-visible > .dgm-solid > .dgm-face-top {
+  stroke: var(--accent-strong);
+  stroke-width: 2;
+}
+
+.dgm-motif {
   fill: var(--bg-soft);
-  stroke: color-mix(in srgb, var(--text) 34%, transparent);
+  stroke: color-mix(in srgb, var(--text) 32%, transparent);
   stroke-width: 1;
+  stroke-linejoin: round;
+  transition: fill 260ms ease, stroke 260ms ease;
 }
 
-.dgm-pad.is-live { fill: var(--accent-soft); stroke: var(--accent); }
-.dgm-pad.is-run { fill: var(--surface-solid); stroke: var(--accent-strong); stroke-width: 1.6; }
-
-/* Trident: the floating source plates. */
-
-.dgm-plate .dgm-face-top { fill: var(--surface-solid); }
-.dgm-motif { fill: none; stroke: color-mix(in srgb, var(--text) 34%, transparent); stroke-width: 1; }
-.dgm-motif ellipse, .dgm-motif polygon { fill: var(--bg-soft); }
-.dgm-plate.is-live .dgm-motif { stroke: var(--accent); }
-.dgm-plate.is-live .dgm-motif ellipse, .dgm-plate.is-live .dgm-motif polygon { fill: var(--accent-soft); }
+.dgm-motif line { stroke-linecap: round; }
+.dgm-plate.is-live .dgm-motif { fill: var(--accent-soft); stroke: var(--accent); }
 
 .dgm-platelabel {
   fill: var(--text-soft);
-  font-size: 8.5px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  transition: fill 260ms ease;
 }
 
+.dgm-platenote {
+  fill: var(--faint);
+  font-size: 8.5px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.dgm-plate.is-live .dgm-platelabel { fill: var(--accent-strong); }
+
+.dgm-tine {
+  stroke: color-mix(in srgb, var(--text) 34%, transparent);
+  stroke-width: 1.2;
+  stroke-dasharray: 3 4;
+  stroke-linecap: round;
+  transition: stroke 260ms ease;
+}
+
+.dgm-tine.is-live { stroke: var(--accent); stroke-dasharray: none; stroke-width: 1.8; }
+
+.dgm-pad {
+  fill: var(--bg-soft);
+  stroke: color-mix(in srgb, var(--text) 30%, transparent);
+  stroke-width: 1;
+  transition: fill 260ms ease, stroke 260ms ease;
+}
+
+.dgm-pad.is-live { fill: var(--accent-soft); stroke: var(--accent); }
+
 /* Plan grids. A field of tiles is a count, not a decoration: what is bound is
-   filled, what is not is empty, and both are countable at a glance. */
+   filled, what is not is visibly not, and every one of them names itself. */
 
 .dgm-fieldtile {
   fill: var(--surface-solid);
-  stroke: color-mix(in srgb, var(--text) 26%, transparent);
+  stroke: color-mix(in srgb, var(--text) 22%, transparent);
   stroke-width: 1;
+  cursor: pointer;
   transition: fill 320ms ease, stroke 320ms ease;
 }
 
 .dgm-fieldtile.is-bound {
-  fill: color-mix(in srgb, var(--accent) 26%, var(--surface-solid));
-  stroke: color-mix(in srgb, var(--accent) 68%, transparent);
+  fill: color-mix(in srgb, var(--accent) 24%, var(--surface-solid));
+  stroke: color-mix(in srgb, var(--accent) 64%, transparent);
 }
 
-.dgm-fieldtile.is-new { fill: var(--accent); stroke: var(--accent-strong); }
+.dgm-fieldtile.is-named { fill: var(--accent); stroke: var(--accent-strong); stroke-width: 1.6; }
 
-/* The gate on the site authority deck. It is shut because it is hatched over,
-   not because something turned red. The claim survives in greyscale. */
+/* The aperture on the site authority deck. Shut is drawn shut - two leaves over
+   a hole - so the claim survives with every colour removed, and signing slides
+   them apart rather than turning a light green. */
 
-.dgm-gatefill { transition: fill 320ms ease; }
+.dgm-aperture { stroke: none; opacity: 0.75; }
+
+.dgm-leaf {
+  fill: color-mix(in srgb, var(--text) 14%, var(--surface-solid));
+  stroke: color-mix(in srgb, var(--text) 46%, transparent);
+  stroke-width: 1.2;
+  stroke-linejoin: round;
+  transition: transform 560ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dgm-leaf.is-left.is-open { transform: translateX(-19px); }
+.dgm-leaf.is-right.is-open { transform: translateX(19px); }
 
 .dgm-gatering {
   fill: none;
-  stroke: color-mix(in srgb, var(--text) 62%, transparent);
+  stroke: color-mix(in srgb, var(--text) 54%, transparent);
   stroke-width: 1.6;
   stroke-linejoin: round;
   transition: stroke 300ms ease;
 }
 
-.dgm-gatering.is-hold { stroke: var(--warning); }
-.dgm-gatering.is-signed { stroke: var(--success); }
+.dgm-gatering.is-open { stroke: var(--success); }
 
-/* Ledger blocks and record vaults. Heavy, discrete, countable. */
+.dgm-sigbar {
+  fill: var(--surface-solid);
+  stroke: color-mix(in srgb, var(--text) 24%, transparent);
+  stroke-width: 1;
+}
 
-.dgm-block .dgm-face-top { fill: var(--bg-soft); }
-.dgm-block.is-written .dgm-face-top { fill: var(--accent-soft); stroke: var(--accent); }
-.dgm-block.is-written .dgm-face-left { fill: color-mix(in srgb, var(--accent) 22%, var(--surface-solid)); }
-.dgm-block.is-written .dgm-face-right { fill: color-mix(in srgb, var(--accent) 34%, var(--surface-solid)); }
+.dgm-sigfill {
+  fill: color-mix(in srgb, var(--text) 14%, transparent);
+  transition: fill 380ms ease;
+}
 
-.dgm-vault .dgm-face-top { fill: color-mix(in srgb, var(--text) 16%, var(--surface-solid)); }
-.dgm-vault .dgm-face-left { fill: color-mix(in srgb, var(--text) 26%, var(--surface-solid)); }
-.dgm-vault .dgm-face-right { fill: color-mix(in srgb, var(--text) 36%, var(--surface-solid)); }
+.dgm-sigfill.is-signed { fill: var(--success); }
 
-/* The site wall. In Nectar the boundary is the skirt of the site deck: solid,
-   hatched, and drawn identically at every site. */
+/* The ledger. Rows, written one per committed run, front row last. */
 
-.dgm-seal { stroke: none; opacity: 0.9; }
-.dgm-boundary { pointer-events: none; }
-.dgm-site.is-focus > .dgm-solid > .dgm-face-top { stroke: color-mix(in srgb, var(--text) 66%, transparent); stroke-width: 1.4; }
+.dgm-ledgerbar {
+  fill: var(--surface-solid);
+  stroke: color-mix(in srgb, var(--text) 20%, transparent);
+  stroke-width: 1;
+  transition: fill 320ms ease, stroke 320ms ease;
+}
 
-/* The governed path, revealed by the reader's scroll. */
+.dgm-ledgertick { fill: color-mix(in srgb, var(--text) 18%, transparent); transition: fill 320ms ease; }
+.dgm-ledgerrow.is-written .dgm-ledgerbar { fill: var(--accent-soft); stroke: var(--accent); }
+.dgm-ledgerrow.is-written .dgm-ledgertick { fill: var(--accent-strong); }
 
-.dgm-route {
+/* The seal. It is the one place the mark belongs in this figure: it appears
+   when the receipt is written, and it stamps rather than fades in. */
+
+.dgm-seal { opacity: 0; transform-origin: 482px 544px; transform: scale(1.24); }
+.dgm-seal.is-struck { opacity: 1; transform: scale(1); }
+.dgm-svg.is-live .dgm-seal { transition: opacity 260ms ease, transform 420ms cubic-bezier(0.2, 1.5, 0.4, 1); }
+
+.dgm-sealbody {
+  fill: color-mix(in srgb, var(--success-soft) 70%, var(--surface-solid));
+  stroke: color-mix(in srgb, var(--success) 44%, transparent);
+  stroke-width: 1;
+}
+
+.dgm-sealtext { fill: var(--success); font-size: 9px; font-weight: 700; letter-spacing: 0.12em; }
+.dgm-mark { opacity: 1; }
+
+/* The axis. One line down one stack, drawn the way a drawing draws an axis:
+   solid where it runs in the open, dashed where it passes through a solid. That
+   is what makes four decks read as four heights of one plan instead of four
+   rectangles with a line laid over them. */
+
+.dgm-run {
   fill: none;
   stroke: var(--accent);
-  stroke-width: 2.5;
+  stroke-width: 2.6;
   stroke-linecap: round;
   stroke-dasharray: 100;
-  /* A path cannot run through a stack that has not finished assembling. */
-  opacity: clamp(0, calc((var(--spread, 1) - 0.7) * 3.4), 1);
+  /* An axis cannot run through a stack that has not finished assembling. */
+  opacity: clamp(0, calc((var(--spread, 1) - 0.82) * 5.6), 1);
   transition: stroke 300ms ease;
 }
 
-.dgm-svg.is-live .dgm-route { transition: stroke-dashoffset 620ms cubic-bezier(0.16, 1, 0.3, 1), stroke 300ms ease; }
+.dgm-run.is-hidden {
+  stroke: color-mix(in srgb, var(--accent) 52%, transparent);
+  stroke-width: 1.6;
+  stroke-dasharray: 4 4;
+  opacity: calc(var(--cut, 0) * clamp(0, calc((var(--spread, 1) - 0.82) * 5.6), 1));
+}
 
-.dgm-route.is-back { stroke: var(--muted); }
-.dgm-route.is-back.is-stop { stroke: var(--danger); }
+.dgm-svg.is-live .dgm-run { transition: stroke-dashoffset 620ms cubic-bezier(0.16, 1, 0.3, 1), stroke 300ms ease; }
+.dgm-svg.is-live .dgm-run.is-hidden { transition: opacity 420ms ease, stroke 300ms ease; }
 
-.dgm-cross { fill: none; stroke: var(--danger); stroke-width: 2.6; stroke-linecap: round; }
-.dgm-refused { fill: var(--danger); font-size: 8.5px; font-weight: 700; letter-spacing: 0.12em; }
+/* Nectar: the library, drawn as a mesh. Coverage is the part of it that has lit
+   up, so compounding is something a reader watches rather than reads. */
 
-/* Edge tags: what a leader is carrying. */
+.dgm-link {
+  --in: clamp(0, calc((var(--spread, 1) - var(--stagger, 0)) * 2.6), 1);
+  fill: none;
+  stroke: color-mix(in srgb, var(--text) 16%, transparent);
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: calc(100 * (1 - var(--in)));
+  transition: stroke 420ms ease, stroke-width 420ms ease;
+}
+
+.dgm-link.is-bound { stroke: color-mix(in srgb, var(--accent) 46%, transparent); }
+.dgm-link.is-new { stroke: var(--accent); stroke-width: 1.8; }
+
+.dgm-node {
+  --in: clamp(0, calc((var(--spread, 1) - var(--stagger, 0) * 0.8) * 3.2), 1);
+  fill: color-mix(in srgb, var(--text) 22%, transparent);
+  opacity: var(--in);
+  transition: fill 420ms ease, r 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dgm-node.is-bound { fill: var(--accent); }
+.dgm-node.is-new { fill: var(--accent-strong); }
+
+@keyframes dgm-beat {
+  0%, 100% { fill-opacity: 1; }
+  50% { fill-opacity: 0.42; }
+}
+
+.dgm-svg.is-live .dgm-node.is-bound {
+  animation: dgm-beat 4.4s ease-in-out infinite;
+  animation-delay: calc(var(--beat, 0) * -620ms);
+}
+
+.dgm-countbody {
+  fill: var(--surface-solid);
+  stroke: color-mix(in srgb, var(--accent) 32%, transparent);
+  stroke-width: 1;
+}
+
+.dgm-countval { fill: var(--accent-strong); font-family: var(--font-mono); font-size: 12px; font-weight: 700; }
+.dgm-countkey { fill: var(--muted); font-size: 9px; font-weight: 600; letter-spacing: 0.1em; }
+
+/* Structure rising. Every path in Nectar points the same way, because there is
+   no reason for the library to ask a site for anything. */
+
+.dgm-liftpath {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  opacity: clamp(0, calc((var(--spread, 1) - 0.7) * 3.4), 1);
+}
+
+.dgm-lift.is-up .dgm-liftpath { stroke-dashoffset: 0; }
+.dgm-svg.is-live .dgm-liftpath { transition: stroke-dashoffset 880ms cubic-bezier(0.16, 1, 0.3, 1); }
+
+.dgm-liftchip { fill: var(--accent-strong); opacity: 0; }
+.dgm-lift.is-up .dgm-liftchip { opacity: 1; }
+.dgm-svg.is-live .dgm-liftchip { transition: opacity 300ms ease 520ms; }
+
+.dgm-carry { opacity: 0; transform: translateY(10px); }
+.dgm-lift.is-up .dgm-carry { opacity: 1; transform: translateY(0); }
+.dgm-svg.is-live .dgm-carry { transition: opacity 320ms ease 420ms, transform 520ms cubic-bezier(0.16, 1, 0.3, 1) 420ms; }
+
+/* Reach. What a site's coverage touches. Three of them, growing with the
+   library, until they overlap - which is the whole of the network effect and
+   the only place in either figure where a claim is made by geometry alone. */
+
+.dgm-reach {
+  --in: clamp(0, calc((var(--spread, 1) - var(--stagger, 0)) * 3), 1);
+  opacity: calc(var(--in) * 0.9);
+  pointer-events: none;
+}
+
+.dgm-reachfill { stroke: none; opacity: 0.85; transition: r 620ms cubic-bezier(0.16, 1, 0.3, 1); }
+
+.dgm-reachrim {
+  fill: color-mix(in srgb, var(--accent) 5%, transparent);
+  stroke: color-mix(in srgb, var(--accent) 52%, transparent);
+  stroke-width: 1.1;
+  transition: r 620ms cubic-bezier(0.16, 1, 0.3, 1), stroke 300ms ease;
+}
+
+.dgm-reach.is-hot .dgm-reachrim { stroke: var(--accent-strong); stroke-width: 1.4; }
+
+/* The site wall. It is a double rule along the skirt, the way a plan draws a
+   wall - not a hatch, and never a status colour. Records sit under a sealed lid
+   inside it, and the local run sweeps across them without leaving. */
+
+.dgm-wall {
+  fill: none;
+  stroke: color-mix(in srgb, var(--text) 44%, transparent);
+  stroke-width: 1.2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.dgm-record { fill: color-mix(in srgb, var(--text) 30%, var(--surface-solid)); }
+
+.dgm-lid {
+  fill: color-mix(in srgb, var(--surface-strong) 60%, transparent);
+  stroke: color-mix(in srgb, var(--text) 30%, transparent);
+  stroke-width: 1;
+}
+
+.dgm-sweep { fill: color-mix(in srgb, var(--accent) 34%, transparent); opacity: 0; }
+
+@keyframes dgm-sweep {
+  0% { opacity: 0; transform: translateX(0); }
+  14% { opacity: 1; }
+  86% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(69px); }
+}
+
+.dgm-svg.is-live .dgm-sweep {
+  animation: dgm-sweep 3.4s ease-in-out infinite;
+  animation-delay: calc(var(--stagger, 0) * -6s);
+}
+
+/* Edge tags: what a leader is carrying, and what a tile is called. */
 
 .dgm-tagbody {
   fill: var(--surface-solid);
-  stroke: color-mix(in srgb, var(--text) 30%, transparent);
-  stroke-width: 1;
-  transition: fill 300ms ease, stroke 300ms ease;
-}
-
-.dgm-tagtext {
-  fill: var(--muted);
-  font-size: 8px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  transition: fill 300ms ease;
-}
-
-.dgm-tag.is-pass .dgm-tagbody { fill: var(--accent-soft); stroke: var(--accent); }
-.dgm-tag.is-pass .dgm-tagtext { fill: var(--accent-strong); }
-.dgm-tag.is-stop .dgm-tagbody { fill: color-mix(in srgb, var(--danger) 10%, var(--surface-solid)); stroke: var(--danger); }
-.dgm-tag.is-stop .dgm-tagtext { fill: var(--danger); }
-
-/* The record card. One object, its live properties, tied to the figure by a
-   leader - the same move the workspace makes when it opens a run. */
-
-.dgm-cardbody {
-  fill: var(--surface-solid);
-  stroke: color-mix(in srgb, var(--text) 34%, transparent);
+  stroke: color-mix(in srgb, var(--accent) 40%, transparent);
   stroke-width: 1;
 }
 
-.dgm-cardtitle { fill: var(--text); font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; }
-.dgm-cardrule { stroke: var(--border); stroke-width: 1; }
-.dgm-cardkey { fill: var(--muted); font-family: var(--font-mono); font-size: 8.5px; letter-spacing: 0.04em; }
-.dgm-cardval { fill: var(--text-soft); font-family: var(--font-mono); font-size: 8.5px; letter-spacing: 0.02em; transition: fill 300ms ease; }
-.dgm-carddot { fill: color-mix(in srgb, var(--text) 18%, transparent); transition: fill 300ms ease; }
-.dgm-cardrow.is-good .dgm-cardval { fill: var(--text); }
-.dgm-cardrow.is-good .dgm-carddot { fill: var(--success); }
+.dgm-tagtext { fill: var(--accent-strong); font-size: 9px; font-weight: 600; letter-spacing: 0.08em; }
 
-/* Type. A tracked micro-label, a monospace fact, a rail label. */
+/* Type. Switzer carries every label; the mono face is reserved for values a
+   machine produced - counts, identifiers, record totals. */
 
 .dgm-micro { fill: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: 0.12em; }
 .dgm-micro.is-quiet { fill: var(--faint); }
-.dgm-mono { fill: var(--muted); font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.02em; }
-.dgm-read { fill: var(--text-soft); font-size: 11px; font-weight: 500; }
-.dgm-mark { opacity: 1; }
+.dgm-read { fill: var(--text-soft); font-size: 11.5px; font-weight: 500; }
 
 .dgm-side {
-  fill: var(--faint);
+  fill: var(--text-soft);
   font-size: 10.5px;
-  font-weight: 700;
-  letter-spacing: 0.09em;
+  font-weight: 600;
+  letter-spacing: 0.06em;
   transition: fill 260ms ease;
 }
 
-.dgm-side.is-focus { fill: var(--text-soft); }
-.dgm-rail.is-live .dgm-side { fill: var(--text-soft); }
-.dgm-rail.is-live .dgm-leader { stroke: color-mix(in srgb, var(--accent) 62%, transparent); }
+.dgm-sidefact {
+  fill: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.02em;
+  transition: fill 260ms ease;
+}
 
-/* Pointer. Hovering a solid lifts it off the sheet and lights everything tied
-   to it - a source plate brings its leader, its landing pad and its tine with
-   it. Hover only re-weights what is already drawn: no part of the figure is
-   hidden behind a cursor, so a touch reader loses nothing. */
+.dgm-sidefact.is-quiet { fill: var(--faint); }
+.dgm-rail.is-live .dgm-side { fill: var(--text); }
+.dgm-rail.is-live .dgm-sidefact { fill: var(--accent-strong); }
+
+/* Pointer. Pointing at a solid lifts it off the sheet and lights everything
+   tied to it. Hover only re-weights what is already drawn: no part of either
+   figure is hidden behind a cursor, so a touch reader loses nothing. */
 
 .dgm-deck,
 .dgm-plate,
 .dgm-site,
-.dgm-card { transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1); }
+.dgm-ident { transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1); }
 
 .dgm-deck.is-hot,
 .dgm-plate.is-hot,
-.dgm-site.is-hot,
-.dgm-card.is-hot { transform: translateY(-3px); }
+.dgm-site.is-hot { transform: translateY(-4px); }
 
 .dgm-deck.is-hot > .dgm-solid > .dgm-face-top,
 .dgm-site.is-hot > .dgm-solid > .dgm-face-top,
-.dgm-plate.is-hot > .dgm-solid > .dgm-face-top { stroke: var(--accent-strong); stroke-width: 1.4; }
+.dgm-plate.is-hot > .dgm-solid > .dgm-face-top { stroke: var(--accent-strong); stroke-width: 1.5; }
 
-.dgm-plate.is-hot .dgm-platelabel { fill: var(--accent-strong); }
-.dgm-plate.is-hot .dgm-motif { stroke: var(--accent-strong); }
 .dgm-leader.is-hot { stroke: var(--accent); stroke-width: 1.4; }
 .dgm-tine.is-hot { stroke: var(--accent-strong); stroke-dasharray: none; }
 .dgm-pad.is-hot { fill: var(--accent-soft); stroke: var(--accent-strong); }
 .dgm-rail.is-hot .dgm-side { fill: var(--text); }
-.dgm-card.is-hot .dgm-cardbody { stroke: var(--accent); }
+.dgm-ident.is-hot .dgm-side { fill: var(--accent-strong); }
+.dgm-lift.is-hot .dgm-liftpath { stroke: var(--accent-strong); stroke-width: 2.8; }
 
 /* Readout */
 
@@ -9877,11 +10113,12 @@ html.is-hidden .clinic-node i,
 .dgm-svg.is-hold .dgm-statustext { fill: var(--warning); }
 .dgm-svg.is-pass .dgm-status { fill: var(--accent-soft); }
 .dgm-svg.is-pass .dgm-statustext { fill: var(--accent-strong); }
-.dgm-svg.is-stop .dgm-status { fill: color-mix(in srgb, var(--danger) 10%, var(--surface-solid)); }
-.dgm-svg.is-stop .dgm-statustext { fill: var(--danger); }
 
 @media (prefers-reduced-motion: reduce) {
-  .dgm-svg :is(.dgm-route, .dgm-fieldtile, .dgm-face-top, .dgm-gatering, .dgm-gatefill, .dgm-side, .dgm-tagbody, .dgm-tagtext, .dgm-cardval, .dgm-carddot, .dgm-status, .dgm-statustext, .dgm-deck, .dgm-plate, .dgm-site, .dgm-card) { transition: none; }
+  .dgm-svg :is(.dgm-run, .dgm-fieldtile, .dgm-face-top, .dgm-gatering, .dgm-leaf, .dgm-sigfill, .dgm-side, .dgm-sidefact, .dgm-tagbody, .dgm-node, .dgm-link, .dgm-liftpath, .dgm-liftchip, .dgm-carry, .dgm-seal, .dgm-status, .dgm-statustext, .dgm-deck, .dgm-plate, .dgm-site, .dgm-ident) {
+    transition: none;
+    animation: none;
+  }
 }
 
 /* Stack Trident and Nectar below 900px. The mobile sheet only opens at 640px,
@@ -9910,11 +10147,6 @@ html.is-hidden .clinic-node i,
     margin: 0 auto;
   }
 
-  .nectar-facts {
-    order: 3;
-    grid-template-columns: 1fr;
-    gap: 22px;
-  }
 }
 
 /* ── Section backgrounds ── */

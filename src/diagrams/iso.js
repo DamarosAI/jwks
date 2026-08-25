@@ -70,3 +70,36 @@ export function alongFront(shape, side, t) {
 
 /** The screen angle of a plan x-axis edge, for labels that run with the deck. */
 export const EDGE_ANGLE = round((Math.atan2(ISO_Y, ISO_X) * 180) / Math.PI)
+
+/**
+ * The projection as an SVG transform, so ordinary primitives can be drawn in
+ * plan coordinates and land correctly on a deck. This is what lets the figures
+ * carry rounded corners and true circles: a `<rect rx>` drawn inside this
+ * group is a rounded plan square seen in projection, not a fudged diamond.
+ *
+ * The matrix scales anisotropically, so anything stroked inside it needs
+ * `vector-effect="non-scaling-stroke"` to keep an even hairline.
+ */
+export function planSpace(cx, cy) {
+  return `matrix(${ISO_X}, ${ISO_Y}, ${-ISO_X}, ${ISO_Y}, ${cx}, ${cy})`
+}
+
+/** How far a deck's front corner falls below its centre, in screen pixels. */
+export function frontDrop(half) {
+  return round(2 * half * ISO_Y)
+}
+
+/** Straight-line interpolation between two projected points. */
+export function between(from, to, t) {
+  return [round(from[0] + (to[0] - from[0]) * t), round(from[1] + (to[1] - from[1]) * t)]
+}
+
+/**
+ * A stable value in [0, 1) for an index. The figures need scatter that reads
+ * as organic but has to be identical on every render and in every test, so
+ * this stands in for a random source rather than calling one.
+ */
+export function jitter(index, salt) {
+  const value = Math.sin(index * 12.9898 + salt * 78.233) * 43758.5453
+  return round(value - Math.floor(value))
+}

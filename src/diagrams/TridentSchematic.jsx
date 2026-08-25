@@ -1,133 +1,150 @@
 import { useState } from 'react'
 
-import { box, deck, depthSort, EDGE_ANGLE, tile } from './iso'
+import { deck, EDGE_ANGLE, frontDrop, planSpace } from './iso'
 import { useCenterOnOverflow } from './useCenterOnOverflow'
 import { useScrollPhase, useScrollSpread } from './useScrollPhase'
 
 /**
- * Trident - the governed execution stack, drawn axonometrically.
+ * Trident - where a proposal stops.
  *
- * Three proposal surfaces float above one site. Whatever they emit lands on a
- * single deck and descends one axis: contract, then site authority, then the
- * receipt ledger. The authority deck carries a gate, the gate is hatched shut,
- * and the descent halts on it until a named person at the site signs.
+ * Three proposal surfaces sit above one site. None of them is privileged: the
+ * figure draws all three the same way and lets the reader pick which one is
+ * proposing, because that is the claim. Whatever they emit lands on a single
+ * run node and descends one axis - contract, then site authority, then the
+ * receipt - and the axis is drawn the way a drawing draws an axis: solid where
+ * it is in the open, dashed where it passes through a solid. That is what makes
+ * the stack read as a stack instead of a line laid over four rectangles.
  *
- * The stack arrives closed and opens as the section enters, so a reader watches
- * the assembly come apart before anything runs through it. Then the run itself
- * is theirs to advance: scroll is the only clock in the figure.
+ * The authority deck carries an aperture. It is shut, and the descent halts on
+ * it. Nothing about it is a status light: the leaves are closed, and when a
+ * named person at the site signs, they slide apart and the axis continues.
  *
  * Nothing here names a vendor. The three sources are kinds of proposer, not
  * products, because the claim is about authority and not about whose model it
  * is: any of them can propose, none of them can decide.
  */
 
-const CX = 310
-const HALF = 106
+const CX = 258
+const HALF = 76
 const THICK = 11
-const MIDDLE = 376
+const DROP = frontDrop(HALF)
+const SEP = 104
+const TOP = 196
+const MIDDLE = TOP + SEP * 1.5
 
 const LAYERS = [
-  { key: 'surface', cy: 244, label: ['PROPOSAL', 'SURFACE'] },
-  { key: 'contract', cy: 332, label: ['SCHEMA', 'CONTRACT'] },
-  { key: 'authority', cy: 420, label: ['SITE', 'AUTHORITY'] },
-  { key: 'receipt', cy: 508, label: ['RECEIPT', 'LEDGER'] },
-].map((layer) => ({
-  ...layer,
-  ...deck(CX, layer.cy, HALF, THICK),
-  // Where this deck sits while the stack is still closed.
-  lift: Math.round((MIDDLE - layer.cy) * 0.44),
-}))
+  { key: 'surface', label: 'PROPOSAL SURFACE' },
+  { key: 'contract', label: 'SCHEMA CONTRACT' },
+  { key: 'authority', label: 'SITE AUTHORITY' },
+  { key: 'receipt', label: 'RECEIPT LEDGER' },
+].map((layer, index) => {
+  const cy = TOP + index * SEP
+  return {
+    ...layer,
+    cy,
+    ...deck(CX, cy, HALF, THICK),
+    // Where this deck rests while the stack is still closed.
+    lift: Math.round((MIDDLE - cy) * 0.44),
+  }
+})
 
 const [SURFACE, CONTRACT, AUTHORITY, RECEIPT] = LAYERS
 
-// Three sources, three kinds. Each plate carries a small plan motif so the
-// figure reads at a glance without a legend.
+// Three sources, three kinds, drawn identically. Each plate carries a plan
+// motif so the figure reads without a legend, and a landing pad on the surface
+// deck directly under it, so no leader has to cross another.
 const SOURCES = [
-  { key: 'MODEL', cx: 126, cy: 116, land: [-80, 0] },
-  { key: 'AGENT', cx: 310, cy: 78, land: [-56, -56] },
-  { key: 'AUTOMATION', cx: 494, cy: 116, land: [0, -80] },
+  { key: 'MODEL', cx: 126, land: [-42, 42], note: 'any provider' },
+  { key: 'AGENT', cx: 258, land: [-42, -42], note: 'tool loop' },
+  { key: 'AUTOMATION', cx: 390, land: [42, -42], note: 'scheduled' },
 ].map((source) => ({
   ...source,
-  plate: deck(source.cx, source.cy, 40, 6),
+  plate: deck(source.cx, 118, 34, 7),
   pad: SURFACE.p(...source.land),
 }))
 
-const RUN = SURFACE.p(0, 0)
+const HUB = SURFACE.p(0, 0)
 
-// 19 contract fields, laid out as a plan grid on the validation deck. They
-// bind in reading order, so "11 of 19" is a thing a reader can count.
-const FIELD_CELLS = []
-for (let row = 0; row < 4; row += 1) {
-  for (let col = 0; col < 5; col += 1) FIELD_CELLS.push([-60 + col * 30, -45 + row * 30])
-}
-const FIELDS = FIELD_CELLS.slice(0, 19).map(([x, y]) => tile(CONTRACT.p, x, y, 11))
+// 19 contract fields as a plan grid. They bind in reading order, so "11 of 19"
+// is a thing a reader can count, and each one names itself when pointed at.
+const FIELDS = [
+  'SUBJECT', 'SITE', 'PROTOCOL', 'ARM', 'CYCLE',
+  'DAY', 'DOSE', 'UNIT', 'ROUTE', 'LOINC',
+  'VALUE', 'RANGE', 'GRADE', 'CTCAE', 'ONSET',
+  'ACTION', 'SOURCE', 'PAGE', 'HASH',
+].map((name, index) => {
+  const x = -56 + (index % 5) * 28
+  const y = -42 + Math.floor(index / 5) * 28
+  return { name, x, y, at: CONTRACT.p(x, y) }
+})
 
-const GATE = tile(AUTHORITY.p, 0, 0, 26)
-const MARK = AUTHORITY.p(-84, 4)
+// The ledger writes one row per committed run, front row last.
+const LEDGER = [-28, 0, 28]
 
-// The ledger: one block per committed run, oldest at the back of the deck.
-const BLOCK_CELLS = []
-for (let row = 0; row < 2; row += 1) {
-  for (let col = 0; col < 4; col += 1) BLOCK_CELLS.push([-54 + col * 36, -20 + row * 40])
-}
-const BLOCKS = depthSort(BLOCK_CELLS).map(([x, y]) => ({
-  key: `${x}:${y}`,
-  ...box(RECEIPT.p, x, y, 11, 11, 10),
-}))
+// The descent. Screen stations down the one axis at x = CX, and the reveal
+// scale that maps a phase onto them.
+const STATIONS = LAYERS.map((layer) => layer.cy)
+const SPAN = RECEIPT.cy - SURFACE.cy
+const at = (y) => Math.round(((y - SURFACE.cy) / SPAN) * 10000) / 100
 
-// The single descent axis. Reveal is in pathLength units from the run node;
-// 60 is the lip of the gate, which is where it stops when the site holds it.
-const SPINE = `M ${RUN[0]} ${RUN[1]} V ${RECEIPT.cy}`
+// Six segments: through each deck body, then across each open gap. Hidden runs
+// are drawn dashed on top of the solid they pass through, which is how a
+// drawing says "this continues behind here" without breaking the line.
+const RUN = STATIONS.slice(0, 3).flatMap((cy) => {
+  const under = cy + DROP + THICK
+  const next = cy + SEP
+  return [
+    { key: `in${cy}`, hidden: true, y1: cy, y2: under, from: at(cy), to: at(under) },
+    { key: `out${cy}`, hidden: false, y1: under, y2: next, from: at(under), to: at(next) },
+  ]
+})
+
+const GATE_AT = at(AUTHORITY.cy)
 
 const PHASES = [
-  { span: 2.4, reveal: 0, bound: 0, gate: 'idle', receipt: false, tone: 'run', status: 'PROPOSING', read: 'A model proposes - a proposal carries no authority' },
-  { span: 1, reveal: 33, bound: 11, gate: 'idle', receipt: false, tone: 'run', status: 'VALIDATING', read: 'Checking the proposal against task contract T-07 v3' },
-  { span: 1, reveal: 45, bound: 19, gate: 'idle', receipt: false, tone: 'valid', status: 'BOUND', read: '19 of 19 fields bound - contract satisfied' },
-  { span: 3.2, reveal: 60, bound: 19, gate: 'hold', receipt: false, tone: 'hold', status: 'HELD', read: 'Stopped at the site deck - the gate needs a signature' },
-  { span: 1.2, reveal: 74, bound: 19, gate: 'signed', receipt: false, tone: 'signed', status: 'SIGNED', read: 'M. Avdol - PI, Site 018 - 14:07 - authority stayed local' },
-  { span: 2, reveal: 100, bound: 19, gate: 'signed', receipt: true, tone: 'signed', status: 'RECEIPTED', read: 'REV-018-TR3-1044 - replayable without the model' },
+  { span: 2.4, reveal: 0, bound: 0, gate: 'shut', receipt: false, tone: 'run', status: 'PROPOSING', read: 'Any of the three surfaces can propose. A proposal carries no authority.' },
+  { span: 1.2, reveal: at(CONTRACT.cy), bound: 11, gate: 'shut', receipt: false, tone: 'run', status: 'VALIDATING', read: 'Checking the proposal against task contract T-07 v3.' },
+  { span: 1.2, reveal: at(CONTRACT.cy + DROP + THICK), bound: 19, gate: 'shut', receipt: false, tone: 'valid', status: 'BOUND', read: '19 of 19 fields bound. The contract is satisfied.' },
+  { span: 3.2, reveal: GATE_AT, bound: 19, gate: 'shut', receipt: false, tone: 'hold', status: 'HELD', read: 'Stopped on the site deck. The aperture stays shut until a person signs.' },
+  { span: 1.4, reveal: at(AUTHORITY.cy + DROP + THICK), bound: 19, gate: 'open', receipt: false, tone: 'signed', status: 'SIGNED', read: 'M. Avdol, PI at Site 018, 14:07. The authority never left the site.' },
+  { span: 2.2, reveal: 100, bound: 19, gate: 'open', receipt: true, tone: 'signed', status: 'RECEIPTED', read: 'REV-018-TR3-1044 - replayable later without the model that proposed it.' },
 ]
 
 const MOTIFS = {
-  MODEL: (p) => [-18, -6, 6, 18].map((y) => (
-    <line key={y} x1={p(-22, y)[0]} y1={p(-22, y)[1]} x2={p(22, y)[0]} y2={p(22, y)[1]} />
+  MODEL: [-14, -4, 6, 16].map((y) => (
+    <rect key={y} x="-22" y={y - 2} width="44" height="4" rx="2" vectorEffect="non-scaling-stroke" />
   )),
-  AGENT: (p) => {
-    const hub = p(0, 0)
-    const spokes = [p(-22, -8), p(20, -14), p(6, 20)]
-    return [
-      ...spokes.map((point) => (
-        <line key={`s${point[0]}`} x1={hub[0]} y1={hub[1]} x2={point[0]} y2={point[1]} />
-      )),
-      ...[hub, ...spokes].map((point) => (
-        <ellipse key={`n${point[0]}`} cx={point[0]} cy={point[1]} rx="4" ry="1.7" />
-      )),
-    ]
-  },
-  AUTOMATION: (p) => [
-    [-20, -12], [0, -12], [20, -12], [-20, 12], [0, 12], [20, 12],
-  ].map(([x, y]) => <polygon key={`${x}:${y}`} points={tile(p, x, y, 7)} />),
+  AGENT: [
+    <circle key="hub" cx="0" cy="0" r="6" vectorEffect="non-scaling-stroke" />,
+    ...[[-20, -10], [18, -14], [4, 20]].map(([x, y]) => [
+      <line key={`l${x}`} x1="0" y1="0" x2={x} y2={y} vectorEffect="non-scaling-stroke" />,
+      <circle key={`c${x}`} cx={x} cy={y} r="4" vectorEffect="non-scaling-stroke" />,
+    ]).flat(),
+  ],
+  AUTOMATION: [[-18, -11], [0, -11], [18, -11], [-18, 11], [0, 11], [18, 11]].map(([x, y]) => (
+    <rect key={`${x}:${y}`} x={x - 7} y={y - 7} width="14" height="14" rx="4" vectorEffect="non-scaling-stroke" />
+  )),
 }
 
-/** A solid: three faces, with the skirt hatched the way a section is hatched. */
-function Faces({ shape, className, hatch }) {
+/** A solid: three faces of one ink, rounded where they meet. */
+function Faces({ shape, className }) {
   return (
     <g className={className}>
       <polygon className="dgm-face-left" points={shape.faceLeft} />
       <polygon className="dgm-face-right" points={shape.faceRight} />
-      {hatch ? <polygon className="dgm-skirt" points={shape.faceLeft} fill={`url(#${hatch})`} /> : null}
-      {hatch ? <polygon className="dgm-skirt" points={shape.faceRight} fill={`url(#${hatch})`} /> : null}
       <polygon className="dgm-face-top" points={shape.top} />
     </g>
   )
 }
 
-function Rail({ layer, live, hot, probe }) {
+/** A label tied to a real edge, carrying the deck's live value under its name. */
+function Rail({ layer, live, hot, fact, probe }) {
   return (
     <g className={`dgm-rail${live ? ' is-live' : ''}${hot ? ' is-hot' : ''}`} {...probe}>
-      <line className="dgm-leader" x1={layer.right[0]} y1={layer.right[1]} x2="512" y2={layer.right[1]} />
-      <text className="dgm-side" x="520" y={layer.right[1] - 3}>{layer.label[0]}</text>
-      <text className="dgm-side" x="520" y={layer.right[1] + 11}>{layer.label[1]}</text>
+      <line className="dgm-leader" x1={layer.right[0]} y1={layer.right[1]} x2="424" y2={layer.right[1]} />
+      <circle className="dgm-railnode" cx="424" cy={layer.right[1]} r="2.6" />
+      <text className="dgm-side" x="434" y={layer.right[1] - 3}>{layer.label}</text>
+      <text className="dgm-sidefact" x="434" y={layer.right[1] + 12}>{fact}</text>
     </g>
   )
 }
@@ -137,31 +154,47 @@ export default function TridentSchematic({ animate = true, reduced = false, sect
   const spread = useScrollSpread({ reduced })
   const phase = useScrollPhase(PHASES, { reduced, target: section })
   const [hot, setHot] = useState(null)
+  const [source, setSource] = useState(null)
+  const [field, setField] = useState(null)
   const state = PHASES[phase] ?? PHASES[PHASES.length - 1]
-  const open = state.gate === 'signed'
+  const open = state.gate === 'open'
 
-  // Pointing at any part of the drawing lifts it and lights everything tied to
-  // it - a plate brings its leader, its pad and its tine with it. Hover only
-  // re-weights what is already drawn, so nothing is hidden behind a cursor.
+  // Pointing at a part of the drawing lifts it and lights everything tied to
+  // it. Hover only re-weights what is already drawn, so a reader who cannot
+  // hover loses nothing.
   const probe = (key) => ({
     onMouseEnter: () => setHot(key),
     onMouseLeave: () => setHot((current) => (current === key ? null : current)),
   })
   const lit = (key) => (hot === key ? ' is-hot' : '')
-  const slide = (layer) => ({ '--lift': `${layer.lift}px` })
 
-  const rows = [
-    ['CONTRACT', 'T-07 v3', state.bound > 0],
-    ['FIELDS', `${state.bound} / 19`, state.bound === 19],
-    ['CHECKPOINT', 'SITE 018', state.gate !== 'idle'],
-    ['SIGNATURE', open ? 'M. AVDOL' : 'PENDING', open],
-    ['RECEIPT', state.receipt ? 'REV-018-TR3-1044' : '- -', state.receipt],
-  ]
+  // Picking a source is the interaction that carries the claim: the reader
+  // chooses who proposes, and the aperture holds all the same.
+  const pick = (key) => ({
+    tabIndex: 0,
+    role: 'button',
+    'aria-label': `Propose from ${key.toLowerCase()}`,
+    onMouseEnter: () => { setHot(key); setSource(key) },
+    onMouseLeave: () => setHot((current) => (current === key ? null : current)),
+    onFocus: () => { setHot(key); setSource(key) },
+    onBlur: () => setHot((current) => (current === key ? null : current)),
+    onKeyDown: (event) => {
+      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setSource(key) }
+    },
+  })
+
+  const facts = {
+    surface: source ? `SOURCE ${source}` : 'ANY OF THREE',
+    contract: `${state.bound} / 19 BOUND`,
+    authority: open ? 'SIGNED - M. AVDOL' : 'SHUT - NEEDS A SIGNATURE',
+    receipt: state.receipt ? 'REV-018-TR3-1044' : 'NOT YET WRITTEN',
+  }
 
   return (
     <figure className="dgm">
       <figcaption className="dgm-head">
-        <span>Governed execution stack</span>
+        <strong>What a harness is for</strong>
+        <p>Swap the provider without renegotiating anything. The site still decides, and the run is still replayable a year later.</p>
         <small>Run 018-017 - synthetic</small>
       </figcaption>
 
@@ -169,162 +202,199 @@ export default function TridentSchematic({ animate = true, reduced = false, sect
         <svg
           className={`dgm-svg is-${state.tone}${animate ? ' is-live' : ''}`}
           ref={spread}
-          viewBox="0 0 620 672"
+          viewBox="0 0 620 700"
           role="img"
-          aria-label="Three kinds of proposal source feed one governed stack. A proposal descends through a schema contract deck to a site authority deck, where a hatched gate holds it until a named person at the site signs, and only then does it reach the receipt ledger."
+          aria-label="Three kinds of proposal source sit above the harness, drawn identically because any of them can be swapped for another. Inside the harness a proposal descends a single axis through a schema contract deck to a site authority deck, where a shut aperture holds it until a named person at the site signs, and only then does it reach the receipt ledger. The part inside the bracket is what does not change when the model does."
         >
           <defs>
-            <pattern id="tr-latt-a" width="26" height="26" patternUnits="userSpaceOnUse" patternTransform="rotate(111.44)">
-              <line className="dgm-lattice" x1="0" y1="0" x2="0" y2="26" />
-            </pattern>
-            <pattern id="tr-latt-b" width="26" height="26" patternUnits="userSpaceOnUse" patternTransform="rotate(68.56)">
-              <line className="dgm-lattice" x1="0" y1="0" x2="0" y2="26" />
-            </pattern>
-            <pattern id="tr-skirt" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-              <line className="dgm-skirtline" x1="0" y1="0" x2="0" y2="4" />
-            </pattern>
             <pattern id="tr-hatch" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
               <line className="dgm-hatch" x1="0" y1="0" x2="0" y2="5" />
             </pattern>
+            <pattern id="tr-grain" width="16" height="16" patternUnits="userSpaceOnUse">
+              <circle className="dgm-grain" cx="1" cy="1" r="1" />
+            </pattern>
           </defs>
 
-          <rect className="dgm-field" x="0" y="0" width="620" height="672" />
-          <rect className="dgm-lattice-wash" x="0" y="0" width="620" height="672" fill="url(#tr-latt-a)" />
-          <rect className="dgm-lattice-wash" x="0" y="0" width="620" height="672" fill="url(#tr-latt-b)" />
+          <text className="dgm-micro" x="20" y="26">ANY SOURCE - INTERCHANGEABLE</text>
+          <text className="dgm-micro is-quiet" x="600" y="26" textAnchor="end">ONE HARNESS - EVERY RUN THE SAME</text>
 
-          <text className="dgm-micro" x="24" y="28">PROPOSAL SOURCES</text>
-          <text className="dgm-micro is-quiet" x="596" y="28" textAnchor="end">PROPOSE ONLY - NO AUTHORITY</text>
+          {/* The harness itself. The three sources sit outside this bracket and
+              can be swapped for each other; everything inside it is the part
+              that does not change when they are. */}
+          <g className="dgm-harness">
+            <path className="dgm-bracket" d="M 122 158 H 106 A 7 7 0 0 0 99 165 V 559 A 7 7 0 0 0 106 566 H 122" />
+            <text className="dgm-brackettext" x="88" y="362" textAnchor="middle" transform="rotate(-90 88 362)">TRIDENT - THE HARNESS</text>
+          </g>
 
-          {/* Bottom deck first, so each deck occludes the one behind it. Each
-              sits in a slide group that closes the stack before the section
-              opens, and settles it into the drawn position as the reader
-              arrives. */}
-          <g className="dgm-slide" style={slide(RECEIPT)}>
+          {/* The ground the stack is measured against. Two hairlines carry the
+              footprint down from the top deck, so the four decks read as one
+              plan seen at four heights rather than four unrelated shapes. */}
+          <g className="dgm-ground">
+            <line className="dgm-axis" x1={SURFACE.left[0]} y1={SURFACE.left[1]} x2={SURFACE.left[0]} y2="572" />
+            <line className="dgm-axis" x1={SURFACE.right[0]} y1={SURFACE.right[1]} x2={SURFACE.right[0]} y2="572" />
+            <g transform={planSpace(CX, 572)}>
+              <rect className="dgm-plane" x={-HALF} y={-HALF} width={HALF * 2} height={HALF * 2} rx="18" vectorEffect="non-scaling-stroke" />
+              <rect className="dgm-planefill" x={-HALF} y={-HALF} width={HALF * 2} height={HALF * 2} rx="18" fill="url(#tr-grain)" />
+            </g>
+            <text className="dgm-edge" x="140" y="577" transform={`rotate(${EDGE_ANGLE} 140 577)`}>ONE FOOTPRINT</text>
+            <text className="dgm-edge" x="376" y="577" textAnchor="end" transform={`rotate(${-EDGE_ANGLE} 376 577)`}>FOUR HEIGHTS</text>
+          </g>
+
+          {/* Decks, top last: the deck above occludes the one it sits over. */}
+          <g className="dgm-slide" style={{ '--lift': `${RECEIPT.lift}px` }}>
             <g className={`dgm-deck${state.receipt ? ' is-live' : ''}${lit('receipt')}`} {...probe('receipt')}>
-              <Faces shape={RECEIPT} className="dgm-solid" hatch="tr-skirt" />
-              {BLOCKS.map((cell, index) => (
-                <Faces
-                  key={cell.key}
-                  shape={cell}
-                  className={`dgm-block${state.receipt && index === BLOCKS.length - 1 ? ' is-written' : ''}`}
-                />
-              ))}
+              <Faces shape={RECEIPT} className="dgm-solid" />
+              <g transform={planSpace(CX, RECEIPT.cy)}>
+                {LEDGER.map((y, index) => (
+                  <g className={`dgm-ledgerrow${state.receipt && index === LEDGER.length - 1 ? ' is-written' : ''}`} key={y}>
+                    <rect className="dgm-ledgerbar" x="-52" y={y - 7} width="104" height="14" rx="7" vectorEffect="non-scaling-stroke" />
+                    <rect className="dgm-ledgertick" x="-46" y={y - 2} width={index === LEDGER.length - 1 ? 68 : 44} height="4" rx="2" />
+                  </g>
+                ))}
+                <circle className="dgm-port" cx="0" cy="0" r="9" vectorEffect="non-scaling-stroke" />
+              </g>
             </g>
-            <Rail layer={RECEIPT} live={state.receipt} hot={hot === 'receipt'} probe={probe('receipt')} />
+            <Rail layer={RECEIPT} live={state.receipt} hot={hot === 'receipt'} fact={facts.receipt} probe={probe('receipt')} />
+            <g className={`dgm-seal${state.receipt ? ' is-struck' : ''}`}>
+              <rect className="dgm-sealbody" x="434" y={RECEIPT.right[1] + 22} width="96" height="28" rx="14" />
+              <image className="dgm-mark" href="/assets/damaros-monogram-blue.svg" x="444" y={RECEIPT.right[1] + 26} width="17" height="20" />
+              <text className="dgm-sealtext" x="468" y={RECEIPT.right[1] + 41}>SEALED</text>
+            </g>
           </g>
 
-          <g className="dgm-slide" style={slide(AUTHORITY)}>
-            <g className={`dgm-deck${state.gate !== 'idle' ? ' is-live' : ''}${lit('authority')}`} {...probe('authority')}>
-              <Faces shape={AUTHORITY} className="dgm-solid" hatch="tr-skirt" />
-              <polygon
-                className="dgm-gatefill"
-                points={GATE}
-                fill={open ? 'var(--surface-solid)' : 'url(#tr-hatch)'}
-              />
-              <polygon className={`dgm-gatering is-${state.gate}`} points={GATE} />
-              <image className="dgm-mark" href="/assets/damaros-monogram-blue.svg" x={MARK[0] - 9} y={MARK[1] - 11} width="19" height="22" />
-              <text className="dgm-mono" x={MARK[0] - 26} y={MARK[1] + 26}>SITE 018</text>
+          <g className="dgm-slide" style={{ '--lift': `${AUTHORITY.lift}px` }}>
+            <g className={`dgm-deck${open ? ' is-live' : ''}${lit('authority')}`} {...probe('authority')}>
+              <Faces shape={AUTHORITY} className="dgm-solid" />
+              <g transform={planSpace(CX, AUTHORITY.cy)}>
+                <rect className="dgm-sigbar" x="-44" y="42" width="88" height="18" rx="9" vectorEffect="non-scaling-stroke" />
+                <rect className={`dgm-sigfill${open ? ' is-signed' : ''}`} x="-38" y="47" width={open ? 76 : 26} height="8" rx="4" />
+                {/* The aperture. Shut is drawn shut - two leaves over a hole -
+                    so the claim survives with every colour removed. */}
+                <rect className="dgm-aperture" x="-22" y="-22" width="44" height="44" rx="8" fill="url(#tr-hatch)" />
+                <g className={`dgm-leaf is-left${open ? ' is-open' : ''}`}>
+                  <rect x="-22" y="-22" width="22" height="44" rx="6" vectorEffect="non-scaling-stroke" />
+                </g>
+                <g className={`dgm-leaf is-right${open ? ' is-open' : ''}`}>
+                  <rect x="0" y="-22" width="22" height="44" rx="6" vectorEffect="non-scaling-stroke" />
+                </g>
+                <rect className={`dgm-gatering is-${state.gate}`} x="-26" y="-26" width="52" height="52" rx="10" vectorEffect="non-scaling-stroke" />
+              </g>
             </g>
-            <Rail layer={AUTHORITY} live={state.gate !== 'idle'} hot={hot === 'authority'} probe={probe('authority')} />
+            <Rail layer={AUTHORITY} live={open} hot={hot === 'authority'} fact={facts.authority} probe={probe('authority')} />
           </g>
 
-          <g className="dgm-slide" style={slide(CONTRACT)}>
+          <g className="dgm-slide" style={{ '--lift': `${CONTRACT.lift}px` }}>
             <g className={`dgm-deck${state.bound > 0 ? ' is-live' : ''}${lit('contract')}`} {...probe('contract')}>
-              <Faces shape={CONTRACT} className="dgm-solid" hatch="tr-skirt" />
-              {FIELDS.map((points, index) => (
-                <polygon
-                  className={`dgm-fieldtile${index < state.bound ? ' is-bound' : ''}`}
-                  points={points}
-                  key={points}
-                />
-              ))}
+              <Faces shape={CONTRACT} className="dgm-solid" />
+              <g transform={planSpace(CX, CONTRACT.cy)}>
+                {FIELDS.map((cell, index) => (
+                  <rect
+                    className={`dgm-fieldtile${index < state.bound ? ' is-bound' : ''}${field === index ? ' is-named' : ''}`}
+                    key={cell.name}
+                    x={cell.x - 10}
+                    y={cell.y - 10}
+                    width="20"
+                    height="20"
+                    rx="6"
+                    vectorEffect="non-scaling-stroke"
+                    onMouseEnter={() => setField(index)}
+                    onMouseLeave={() => setField((current) => (current === index ? null : current))}
+                  />
+                ))}
+                <circle className="dgm-port" cx="0" cy="0" r="9" vectorEffect="non-scaling-stroke" />
+              </g>
             </g>
-            <Rail layer={CONTRACT} live={state.bound > 0} hot={hot === 'contract'} probe={probe('contract')} />
+            <Rail layer={CONTRACT} live={state.bound > 0} hot={hot === 'contract'} fact={facts.contract} probe={probe('contract')} />
+            {field === null ? null : (
+              <g className="dgm-tag is-named">
+                <line className="dgm-leader" x1="112" y1={FIELDS[field].at[1]} x2={FIELDS[field].at[0] - 10} y2={FIELDS[field].at[1]} />
+                <rect className="dgm-tagbody" x="14" y={FIELDS[field].at[1] - 10} width="98" height="20" rx="10" />
+                <text className="dgm-tagtext" x="63" y={FIELDS[field].at[1] + 4} textAnchor="middle">{FIELDS[field].name}</text>
+              </g>
+            )}
           </g>
 
-          {/* The top assembly travels together: plates, their leaders, the deck
-              they land on, and the card that reads the run off it. */}
-          <g className="dgm-slide" style={slide(SURFACE)}>
-            {SOURCES.map((source) => (
+          {/* The proposal surface travels with its plates and their leaders, so
+              nothing detaches while the stack is still opening. */}
+          <g className="dgm-slide" style={{ '--lift': `${SURFACE.lift}px` }}>
+            {SOURCES.map((item) => (
               <line
-                className={`dgm-leader${lit(source.key)}`}
-                key={`lead-${source.key}`}
-                x1={source.plate.front[0]}
-                y1={source.plate.front[1]}
-                x2={source.pad[0]}
-                y2={source.pad[1]}
+                className={`dgm-leader${lit(item.key)}`}
+                key={`lead-${item.key}`}
+                x1={item.plate.front[0]}
+                y1={item.plate.front[1]}
+                x2={item.pad[0]}
+                y2={item.pad[1]}
               />
             ))}
 
             <g className={`dgm-deck is-live${lit('surface')}`} {...probe('surface')}>
-              <Faces shape={SURFACE} className="dgm-solid" hatch="tr-skirt" />
-              {SOURCES.map((source, index) => (
+              <Faces shape={SURFACE} className="dgm-solid" />
+              <g transform={planSpace(CX, SURFACE.cy)}>
+                <rect className="dgm-planefill" x={-HALF + 8} y={-HALF + 8} width={HALF * 2 - 16} height={HALF * 2 - 16} rx="12" fill="url(#tr-grain)" />
+              </g>
+              {SOURCES.map((item) => (
                 <line
-                  className={`dgm-tine${index === 0 ? ' is-live' : ''}${lit(source.key)}`}
-                  key={`tine-${source.key}`}
-                  x1={source.pad[0]}
-                  y1={source.pad[1]}
-                  x2={RUN[0]}
-                  y2={RUN[1]}
+                  className={`dgm-tine${source === item.key ? ' is-live' : ''}${lit(item.key)}`}
+                  key={`tine-${item.key}`}
+                  x1={item.pad[0]}
+                  y1={item.pad[1]}
+                  x2={HUB[0]}
+                  y2={HUB[1]}
                 />
               ))}
-              {SOURCES.map((source, index) => (
+              {SOURCES.map((item) => (
                 <ellipse
-                  className={`dgm-pad${index === 0 ? ' is-live' : ''}${lit(source.key)}`}
-                  key={`pad-${source.key}`}
-                  cx={source.pad[0]}
-                  cy={source.pad[1]}
-                  rx="13"
-                  ry="5.2"
+                  className={`dgm-pad${source === item.key ? ' is-live' : ''}${lit(item.key)}`}
+                  key={`pad-${item.key}`}
+                  cx={item.pad[0]}
+                  cy={item.pad[1]}
+                  rx="12"
+                  ry="4.8"
                 />
               ))}
-              <ellipse className="dgm-pad is-run" cx={RUN[0]} cy={RUN[1]} rx="17" ry="6.8" />
+              <g transform={planSpace(CX, SURFACE.cy)}>
+                <circle className="dgm-port is-hub" cx="0" cy="0" r="13" vectorEffect="non-scaling-stroke" />
+              </g>
             </g>
 
-            <Rail layer={SURFACE} live hot={hot === 'surface'} probe={probe('surface')} />
+            <Rail layer={SURFACE} live hot={hot === 'surface'} fact={facts.surface} probe={probe('surface')} />
 
-            {SOURCES.map((source) => (
-              <g className={`dgm-plate${source.key === 'MODEL' ? ' is-live' : ''}${lit(source.key)}`} key={source.key} {...probe(source.key)}>
-                <Faces shape={source.plate} className="dgm-solid" />
-                <g className="dgm-motif">{MOTIFS[source.key](source.plate.p)}</g>
-                <text
-                  className="dgm-platelabel"
-                  x={source.plate.left[0] + 8}
-                  y={source.plate.left[1] + 14}
-                  transform={`rotate(${EDGE_ANGLE} ${source.plate.left[0] + 8} ${source.plate.left[1] + 14})`}
-                >
-                  {source.key}
-                </text>
+            {SOURCES.map((item) => (
+              <g className={`dgm-plate${source === item.key ? ' is-live' : ''}${lit(item.key)}`} key={item.key} {...pick(item.key)}>
+                <Faces shape={item.plate} className="dgm-solid" />
+                <g className="dgm-motif" transform={planSpace(item.cx, 118)}>{MOTIFS[item.key]}</g>
+                <text className="dgm-platelabel" x={item.cx} y="74" textAnchor="middle">{item.key}</text>
+                <text className="dgm-platenote" x={item.cx} y="86" textAnchor="middle">{item.note}</text>
               </g>
             ))}
-
-            <line className="dgm-leader" x1="212" y1="281" x2={RUN[0]} y2={RUN[1]} />
-            <g className={`dgm-card${lit('card')}`} {...probe('card')}>
-              <rect className="dgm-cardbody" x="16" y="210" width="196" height="142" rx="10" />
-              <text className="dgm-cardtitle" x="30" y="234">RUN 018-017</text>
-              <line className="dgm-cardrule" x1="30" y1="244" x2="198" y2="244" />
-              {rows.map(([key, value, good], index) => (
-                <g className={`dgm-cardrow${good ? ' is-good' : ''}`} key={key}>
-                  <text className="dgm-cardkey" x="30" y={266 + index * 18}>{key}</text>
-                  <text className="dgm-cardval" x="104" y={266 + index * 18}>{value}</text>
-                  <circle className="dgm-carddot" cx="196" cy={262 + index * 18} r="2.6" />
-                </g>
-              ))}
-            </g>
           </g>
 
-          {/* The descent. The only line in the figure that carries authority. */}
-          <path
-            className={`dgm-route is-${state.gate}`}
-            d={SPINE}
-            pathLength="100"
-            style={{ strokeDashoffset: 100 - state.reveal }}
-          />
+          {/* The axis. Solid in the open, dashed where it runs through a solid. */}
+          {RUN.map((leg) => {
+            const cut = Math.min(1, Math.max(0, (state.reveal - leg.from) / (leg.to - leg.from)))
+            return (
+              <line
+                className={`dgm-run${leg.hidden ? ' is-hidden' : ''} is-${state.gate}`}
+                key={leg.key}
+                x1={CX}
+                y1={leg.y1}
+                x2={CX}
+                y2={leg.y2}
+                pathLength="100"
+                // A hidden run keeps its dash pattern, so it cannot also use the
+                // dash offset to reveal itself. Every phase lands on a station
+                // boundary, so a hidden leg is only ever fully behind or fully
+                // through, and fades rather than draws.
+                style={leg.hidden ? { '--cut': cut } : { strokeDashoffset: 100 - cut * 100 }}
+              />
+            )
+          })}
 
-          <line className="dgm-rule" x1="24" y1="616" x2="596" y2="616" />
-          <rect className="dgm-status" x="24" y="628" width="132" height="24" rx="6" />
-          <text className="dgm-statustext" x="34" y="644">{state.status}</text>
-          <text className="dgm-read" x="170" y="644">{state.read}</text>
+          <line className="dgm-rule" x1="20" y1="640" x2="600" y2="640" />
+          <rect className="dgm-status" x="20" y="654" width="122" height="26" rx="13" />
+          <text className="dgm-statustext" x="81" y="671" textAnchor="middle">{state.status}</text>
+          <text className="dgm-read" x="156" y="671">{state.read}</text>
         </svg>
       </div>
     </figure>
