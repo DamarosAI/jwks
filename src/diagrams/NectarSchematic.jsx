@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { EDGE_ANGLE, jitter, planSpace, project, roundedDeck } from './iso'
+import { EDGE_ANGLE, jitter, planSpace, project, roundedCylinder } from './iso'
 import { useCenterOnOverflow } from './useCenterOnOverflow'
 import { useScrollRun } from './useScrollPhase'
 
@@ -12,6 +12,14 @@ import { useScrollRun } from './useScrollPhase'
  * the other. Below: three peer sites standing on one ground, each inside its
  * own reach. Above: the shared library, drawn as a mesh rather than a container,
  * so coverage is the part of it that has lit up rather than a number in a box.
+ *
+ * The three sites are deliberately not the same object. A federation of
+ * identical shapes is a diagram of a federation; a real one is uneven. So the
+ * radius of each vessel, the height of its wall and the number of bands inside
+ * it all come from how many records that site holds, its reach grows in
+ * proportion, and the chip leaving its port carries the kind of structure it
+ * actually contributed - a criterion, a unit, a mapping. A reader can tell the
+ * three apart with every label removed.
  *
  * Everything in this figure travels one way. Sites run the task locally, on
  * their own records, and publish the structure they used. Nothing is ever asked
@@ -31,7 +39,7 @@ import { useScrollRun } from './useScrollPhase'
  */
 
 const MESH = project(310, 208)
-const GROUND = project(310, 490)
+const GROUND = project(310, 478)
 
 // The library. A jittered plan lattice so it reads as a body of knowledge and
 // not a spreadsheet - the scatter is deterministic, not random, so the same
@@ -76,19 +84,43 @@ for (let a = 0; a < NODES.length; a += 1) {
 // picked by a stable seed, never by position, so the same eight run every time.
 const TRAFFIC = LINKS.filter((link) => link.life > 0.93).slice(0, 8)
 
-// Three peers on one ground, set on a ring so no site sits behind another and
-// none of them is the centre. The plan positions are chosen for where they land
-// on screen, not for where they are tidy in plan: an equilateral plan triangle
-// projects to a lopsided one, so the ring is solved backwards from a balanced
-// screen layout.
+// Three peers on one ground, set well apart on a ring so no site sits behind
+// another, none of them is the centre, and each has room for its own reach. The
+// plan positions are chosen for where they land on screen, not for where they
+// are tidy in plan: an equilateral plan triangle projects to a lopsided one, so
+// the ring is solved backwards from a balanced screen layout.
+//
+// Everything else about a site follows from what it holds. A vessel is round
+// because a site is not a box, and the three are three sizes because they are
+// three sizes.
 const SITES = [
-  { id: 'SITE 042', plan: [46, -105], records: '890', stagger: 0.08, side: 1 },
-  { id: 'SITE 103', plan: [-105, 46], records: '614', stagger: 0.16, side: -1 },
-  { id: 'SITE 018', plan: [91, 91], records: '1,204', stagger: 0.26, side: 1 },
+  { id: 'SITE 042', plan: [58, -118], records: '890', r: 40, wall: 15, bands: 4, grew: 0.94, glyph: 'unit', stagger: 0.08, side: 1 },
+  { id: 'SITE 103', plan: [-118, 58], records: '614', r: 34, wall: 12, bands: 3, grew: 0.82, glyph: 'map', stagger: 0.16, side: -1 },
+  { id: 'SITE 018', plan: [92, 92], records: '1,204', r: 46, wall: 18, bands: 5, grew: 1.08, glyph: 'rule', stagger: 0.26, side: 1 },
 ].map((site, index) => {
   const [cx, cy] = GROUND(...site.plan)
-  const shape = roundedDeck(cx, cy, 54, 13, 16)
-  return { ...site, index, cx, cy, shape, port: shape.p(0, -30), life: jitter(index, 17) }
+  const vessel = roundedCylinder(cx, cy, site.r, site.wall)
+  // Record bands, chorded to the lid that seals them so the stack fills the
+  // vessel it is in rather than sitting in a box the vessel happens to contain
+  // - and so no band is ever drawn outside the thing that is meant to be
+  // holding it shut.
+  const lid = site.r - 6
+  const rows = []
+  for (let band = 0; band < site.bands; band += 1) {
+    const y = Math.round((-lid * 0.62 + (band * lid * 1.24) / (site.bands - 1)) * 10) / 10
+    rows.push({ y, half: Math.round(Math.sqrt(lid * lid - y * y) - 5) })
+  }
+  return {
+    ...site,
+    index,
+    cx,
+    cy,
+    vessel,
+    rows,
+    run: site.r * 2 - 17,
+    port: [cx, Math.round(cy - vessel.ry * 0.62)],
+    life: jitter(index, 17),
+  }
 })
 
 const [SITE_042, SITE_103, SITE_018] = SITES
@@ -125,30 +157,43 @@ const JOINED = new Set(
   LINKS.filter((link) => link.a === JOIN.index || link.b === JOIN.index).map((link) => link.key),
 )
 
-const PHASES = [
-  { span: 2.2, bound: 30, reach: 84, up: [], joined: false, tone: 'run', status: 'LOCAL', read: 'Every site runs the task on its own records. Nothing has moved.' },
-  { span: 1.6, bound: 30, reach: 86, up: ['SITE 018'], joined: false, tone: 'pass', status: 'PUBLISHING', read: 'Site 018 publishes the structure it used - a definition, with no values in it.' },
-  { span: 1.4, bound: 34, reach: 94, up: ['SITE 018'], joined: true, tone: 'valid', status: 'LINKED', read: `It binds, and links to ${JOINED.size} criteria the library already held.` },
-  { span: 2.2, bound: 38, reach: 108, up: ['SITE 018', 'SITE 042', 'SITE 103'], joined: true, tone: 'valid', status: 'COMPOUNDING', read: 'Sites 042 and 103 pick it up. Neither one asked anybody for a record.' },
-  { span: 2.4, bound: 38, reach: 108, up: ['SITE 018', 'SITE 042', 'SITE 103'], joined: true, tone: 'valid', status: 'STEADY', read: 'Structure crosses. Records do not.' },
-]
-
-// Pointing at a site answers for that site; otherwise the run narrates itself.
-const READS = {
-  'SITE 042': 'Site 042 holds 890 records. It has published structure and released none of them.',
-  'SITE 103': 'Site 103 holds 614 records. What it contributed was a mapping, not a value.',
-  'SITE 018': 'Site 018 holds 1,204 records. Its definition is the one the other two picked up.',
+// What is leaving a port, drawn rather than only labelled: a criterion is
+// written lines, a unit is a scale, a mapping is two vocabularies joined.
+const GLYPHS = {
+  rule: [
+    <line key="a" x1="-4.5" y1="-3" x2="4.5" y2="-3" />,
+    <line key="b" x1="-4.5" y1="0" x2="4.5" y2="0" />,
+    <line key="c" x1="-4.5" y1="3" x2="1" y2="3" />,
+  ],
+  unit: [
+    <line key="base" x1="-5" y1="2.5" x2="5" y2="2.5" />,
+    <line key="l" x1="-5" y1="2.5" x2="-5" y2="-2.5" />,
+    <line key="m" x1="0" y1="2.5" x2="0" y2="-1" />,
+    <line key="r" x1="5" y1="2.5" x2="5" y2="-2.5" />,
+  ],
+  map: [
+    <line key="link" x1="-4" y1="-2.5" x2="4" y2="2.5" />,
+    <circle key="from" cx="-4" cy="-2.5" r="1.7" />,
+    <circle key="to" cx="4" cy="2.5" r="1.7" />,
+  ],
 }
 
-/** A solid: a rounded plan square and its two skirt faces, in one ink. */
-function Faces({ shape, className }) {
-  return (
-    <g className={className}>
-      <path className="dgm-face-left" d={shape.faceLeft} />
-      <path className="dgm-face-right" d={shape.faceRight} />
-      <polygon className="dgm-face-top" points={shape.top} />
-    </g>
-  )
+const PHASES = [
+  { span: 2.2, bound: 30, reach: 88, up: [], joined: false, tone: 'run', status: 'LOCAL', read: 'Every site runs the task on its own records. Nothing has moved.' },
+  { span: 1.6, bound: 30, reach: 92, up: ['SITE 018'], joined: false, tone: 'pass', status: 'PUBLISHING', read: 'Site 018 publishes the structure it used - a definition, with no values in it.' },
+  { span: 1.4, bound: 34, reach: 100, up: ['SITE 018'], joined: true, tone: 'valid', status: 'LINKED', read: `It binds, and links to ${JOINED.size} criteria the library already held.` },
+  { span: 2.2, bound: 38, reach: 112, up: ['SITE 018', 'SITE 042', 'SITE 103'], joined: true, tone: 'valid', status: 'COMPOUNDING', read: 'Sites 042 and 103 pick it up. Neither one asked anybody for a record.' },
+  { span: 2.4, bound: 38, reach: 112, up: ['SITE 018', 'SITE 042', 'SITE 103'], joined: true, tone: 'valid', status: 'STEADY', read: 'Structure crosses. Records do not.' },
+]
+
+// Pointing at a site hands it the whole readout - the word in the pill, the
+// colour of the pill and the line beside it - and what it says is what that
+// site did, not how many rows it happens to be sitting on. Otherwise the run
+// narrates itself.
+const READS = {
+  'SITE 042': { tone: 'pass', pill: 'PUBLISHER', read: 'Site 042 published the unit it measures in - the scale, not one reading taken on it.' },
+  'SITE 103': { tone: 'pass', pill: 'MAPPER', read: 'Site 103 sent a mapping between two vocabularies. There is no patient inside a mapping.' },
+  'SITE 018': { tone: 'valid', pill: 'ORIGIN', read: 'Site 018 wrote the definition the other two picked up, and sent nothing else to do it.' },
 }
 
 export default function NectarSchematic({ animate = true, reduced = false }) {
@@ -165,15 +210,20 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
   })
   const lit = (key) => (hot === key ? ' is-hot' : '')
 
+  const cue = READS[hot]
+  const tone = cue?.tone ?? state.tone
+  const pill = cue?.pill ?? state.status
+  const read = cue?.read ?? state.read
+
   return (
     <figure className="dgm">
       <div className="dgm-frame" ref={frame}>
         <svg
-          className={`dgm-svg is-${state.tone}${animate ? ' is-live' : ''}`}
+          className={`dgm-svg is-${tone}${animate ? ' is-live' : ''}`}
           ref={figure}
           viewBox="0 0 620 700"
           role="img"
-          aria-label="Three peer sites stand on one ground beneath a shared execution library drawn as a mesh of criteria. Each site runs its task locally and publishes the structure it used up into the mesh, where it binds and links to criteria already held. Nothing in the drawing travels back down to a site, the records inside each site stay under a sealed lid, and the reach of each site grows until the three overlap."
+          aria-label="Three peer sites of three different sizes stand well apart on one ground beneath a shared execution library drawn as a mesh of criteria. Each site runs its task locally and sends the structure it used up into the mesh - a criterion from one, a unit from another, a mapping from the third - where it binds and links to criteria already held. Nothing in the drawing travels back down to a site, the records inside each site stay under a sealed lid, and the reach of each site grows until they overlap."
         >
           <defs>
             <pattern id="nc-grain" width="16" height="16" patternUnits="userSpaceOnUse">
@@ -242,42 +292,44 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
 
           {/* The ground the three peers share, and the reach each one carries.
               The reaches grow with coverage until they overlap - that overlap is
-              the network effect, drawn rather than claimed. */}
-          <g transform={planSpace(310, 490)}>
+              the network effect, drawn rather than claimed - and they are three
+              sizes, because the site that has contributed most reaches furthest. */}
+          <g transform={planSpace(310, 478)}>
             <rect className="dgm-plane" x="-162" y="-162" width="324" height="324" rx="28" vectorEffect="non-scaling-stroke" />
             <rect className="dgm-planefill" x="-162" y="-162" width="324" height="324" rx="28" fill="url(#nc-grain)" />
             {SITES.map((site) => (
               <g className={`dgm-reach${lit(site.id)}`} key={site.id} style={{ '--stagger': site.stagger, '--life': site.life }}>
-                <circle className="dgm-reachfill" cx={site.plan[0]} cy={site.plan[1]} r={state.reach} fill="url(#nc-reach)" />
-                <circle className="dgm-reachrim" cx={site.plan[0]} cy={site.plan[1]} r={state.reach} vectorEffect="non-scaling-stroke" />
+                <circle className="dgm-reachfill" cx={site.plan[0]} cy={site.plan[1]} r={Math.round(state.reach * site.grew)} fill="url(#nc-reach)" />
+                <circle className="dgm-reachrim" cx={site.plan[0]} cy={site.plan[1]} r={Math.round(state.reach * site.grew)} vectorEffect="non-scaling-stroke" />
               </g>
             ))}
           </g>
 
           <text className="dgm-edge is-caption" x="310" y="626" textAnchor="middle">THREE PEERS - ONE GROUND</text>
 
-          {/* Sites, back to front. The wall is the skirt: a double rule, drawn
-              identically at every site, and no line ever crosses it. */}
+          {/* Sites, back to front. A round vessel, not a block: the wall is the
+              boundary, drawn as a double rule along its own footing, and no line
+              in the figure ever crosses it. */}
           {SITES.map((site) => (
             <g
               className={`dgm-site${lit(site.id)}`}
               key={site.id}
-              style={{ '--stagger': site.stagger, '--life': site.life }}
+              style={{ '--stagger': site.stagger, '--life': site.life, '--run': `${site.run}px` }}
               {...probe(site.id)}
             >
-              <Faces shape={site.shape} className="dgm-solid" />
-              <polyline
-                className="dgm-wall"
-                points={`${site.shape.left[0]},${site.shape.left[1] + 5} ${site.shape.front[0]},${site.shape.front[1] + 5} ${site.shape.right[0]},${site.shape.right[1] + 5}`}
-              />
+              <path className="dgm-vesselwall" d={site.vessel.wall} />
+              <ellipse className="dgm-vesseltop" cx={site.cx} cy={site.cy} rx={site.vessel.rx} ry={site.vessel.ry} />
+              <path className="dgm-wall" d={site.vessel.arc(site.wall)} />
+              <path className="dgm-wall is-inner" d={site.vessel.arc(site.wall - 4.5)} />
               <g transform={planSpace(site.cx, site.cy)}>
-                {[-17, 0, 17].map((y) => (
-                  <rect className="dgm-record" key={y} x="-32" y={y - 5} width="64" height="10" rx="5" />
+                {site.rows.map((row) => (
+                  <rect className="dgm-record" key={row.y} x={-row.half} y={row.y - 3.5} width={row.half * 2} height="7" rx="3.5" />
                 ))}
-                <rect className="dgm-lid" x="-38" y="-27" width="76" height="54" rx="14" vectorEffect="non-scaling-stroke" />
-                <rect className="dgm-sweep" x="-36" y="-25" width="7" height="50" rx="3.5" />
-                <circle className="dgm-port" cx="0" cy="-30" r="7" vectorEffect="non-scaling-stroke" />
+                <circle className="dgm-lid" cx="0" cy="0" r={site.r - 6} vectorEffect="non-scaling-stroke" />
+                <rect className="dgm-sweep" x={-site.r + 5} y={-site.r + 12} width="7" height={site.r * 2 - 24} rx="3.5" />
               </g>
+              <circle className="dgm-port" cx={site.port[0]} cy={site.port[1]} r="9" vectorEffect="non-scaling-stroke" />
+              <g className="dgm-glyph" transform={`translate(${site.port[0]} ${site.port[1]})`}>{GLYPHS[site.glyph]}</g>
             </g>
           ))}
 
@@ -293,9 +345,9 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
             </g>
           ))}
 
-          {/* Identities, each tied to its own deck by a leader. */}
+          {/* Identities, each tied to its own vessel by a leader. */}
           {SITES.map((site) => {
-            const anchor = site.side < 0 ? site.shape.left : site.shape.right
+            const anchor = site.side < 0 ? site.vessel.left : site.vessel.right
             const tip = anchor[0] + site.side * 14
             const x = tip + site.side * 8
             return (
@@ -319,8 +371,8 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
 
           <line className="dgm-rule" x1="20" y1="648" x2="600" y2="648" />
           <rect className="dgm-status" x="20" y="660" width="130" height="26" rx="13" />
-          <text className="dgm-statustext" x="85" y="677" textAnchor="middle">{state.status}</text>
-          <text className="dgm-read" x="164" y="677">{READS[hot] ?? state.read}</text>
+          <text className="dgm-statustext" x="85" y="677" textAnchor="middle">{pill}</text>
+          <text className="dgm-read" x="164" y="677">{read}</text>
         </svg>
       </div>
     </figure>

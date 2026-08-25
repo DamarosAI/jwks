@@ -218,8 +218,7 @@ body,
     gap: 10px;
   }
 
-  #root .capacity-bento > .bento-card,
-#root .systems-banner {
+  #root .capacity-bento > .bento-card {
     border-radius: var(--card-radius);
     box-shadow: none;
   }
@@ -367,10 +366,19 @@ body,
     font-size: clamp(1.8rem, 8vw, 2.3rem);
   }
 
-  #root .why-now-line {
-    min-height: 210px;
-    padding: 22px;
-    border-radius: var(--card-radius);
+  /* The rows are flush panels inside one card, so they take the card's corners
+     and none of their own. Giving each one a radius and a card height of its
+     own drew three cards inside a fourth. */
+
+  #root .why-now-title.why-now-line {
+    min-height: 264px;
+    padding: 28px 22px;
+  }
+
+  #root .why-now-lines .why-now-line {
+    min-height: 0;
+    padding: 24px 22px;
+    border-radius: 0;
   }
 
   #root .privacy-page {

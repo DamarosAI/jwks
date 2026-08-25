@@ -1058,15 +1058,19 @@ h2 {
 
 .integration-group {
   display: grid;
-  grid-template-columns: repeat(5, 150px);
+  grid-template-columns: repeat(5, 132px);
   gap: 10px;
 }
 
+/* Tiles, not cards. In a strip a third of the section wide these were big
+   enough that five of them read as a row of panels rather than as a run of
+   logos going past. */
+
 .integration-logo {
   display: grid;
-  min-height: 156px;
+  min-height: 124px;
   place-items: center;
-  padding: 20px;
+  padding: 18px;
   border: 1px solid var(--border);
   border-radius: 14px;
   background: #f5f7fa;
@@ -1176,10 +1180,16 @@ h2 {
   max-width: 1120px;
 }
 
+/* Two figures across the top, and a second row that puts the third one next to
+   the thing it counts. The carousel had the full width of the section to itself
+   and never had enough in it to earn that - five logos scrolling through a
+   1120px strip reads as a gap with a marquee in it. Beside the figure it
+   illustrates, it is the right size and it needs no label of its own. */
+
 .capacity-bento {
   display: grid;
-  grid-auto-rows: minmax(300px, auto);
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-rows: minmax(300px, auto) minmax(236px, auto);
   gap: 14px;
 }
 
@@ -1261,37 +1271,28 @@ h2 {
   color: rgba(246, 249, 252, 0.74);
 }
 
-.systems-banner {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 14px;
-  margin-top: 14px;
-}
-
 .connector-closeup {
-  min-height: 240px;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  align-items: center;
   overflow: hidden;
+  padding-bottom: 18px;
   border: 1px solid var(--border);
   border-radius: var(--card-radius);
   background: var(--surface-solid);
 }
 
-.connector-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 52px;
-  padding: 0 20px;
-  border-bottom: 1px solid var(--border);
-  color: var(--text-soft);
-  font-size: 0.7rem;
-  font-weight: 700;
-}
+/* The strip carried a header bar naming it and marking it as target behaviour.
+   The figure beside it names it, so what is left is the one thing the reader
+   could otherwise get wrong - set as a citation, like every other claim in
+   this row. */
 
-.connector-head small {
-  color: var(--muted);
-  font-size: 0.58rem;
-  font-weight: 500;
+.connector-closeup cite {
+  padding-inline: 24px;
+  color: var(--faint);
+  font-size: 0.55rem;
+  font-style: normal;
+  letter-spacing: 0.04em;
 }
 
 .connector-vendor {
@@ -5254,10 +5255,19 @@ html { scroll-padding-top: 96px; }
 .about-drum { animation: none; }
 }
 
-/* Keep section typography coherent after product-surface rules. */
+/* Keep section typography coherent after product-surface rules.
+
+   The card is inside the section, not the section itself. Carrying both meant
+   the page's own section padding was measured from inside the card's border,
+   so a hundred pixels of empty white opened above and below the two panels and
+   the blue half stopped a long way short of the bottom of its own frame. */
+
+.why-now-section { display: grid; }
+
 .why-now {
   display: grid;
   width: min(100%, 1320px);
+  margin-inline: auto;
   grid-template-columns: minmax(380px, 0.9fr) minmax(0, 1.1fr);
   gap: 0;
   overflow: hidden;
@@ -5342,7 +5352,7 @@ html { scroll-padding-top: 96px; }
 }
 
 @media (max-width: 640px) {
-  .why-now { margin-inline: 20px; width: auto; }
+  .why-now { width: 100%; }
   .why-now-title.why-now-line { min-height: 270px; padding: 30px 26px; }
   .why-now-title h2 { font-size: clamp(2.9rem, 13vw, 4rem); }
   .why-now-title p { font-size: 1.02rem; }
@@ -9457,6 +9467,26 @@ html.is-hidden .clinic-node i,
 }
 
 .dgm-port.is-hub { stroke: var(--accent-strong); stroke-width: 1.8; }
+.dgm-throat { fill: var(--accent-strong); }
+
+/* The intake apron. Three sources land inside one catchment, everything in the
+   catchment goes to one throat, and a queue waits its turn in the quadrant
+   nothing lands in - which is what an intake looks like when it is working, and
+   what the deck was missing when it was a plate with a circle on it. */
+
+.dgm-catch {
+  fill: none;
+  stroke: color-mix(in srgb, var(--accent) 28%, transparent);
+  stroke-width: 1;
+  stroke-dasharray: 4 5;
+  stroke-linecap: round;
+}
+
+.dgm-queue {
+  fill: color-mix(in srgb, var(--accent) 13%, var(--surface-solid));
+  stroke: color-mix(in srgb, var(--accent) 44%, transparent);
+  stroke-width: 1;
+}
 
 /* Trident: the three proposal surfaces. They are drawn identically on purpose.
    The reader picks which one is proposing, and the aperture holds all the same
@@ -9479,7 +9509,41 @@ html.is-hidden .clinic-node i,
 }
 
 .dgm-motif line { stroke-linecap: round; }
+.dgm-motif .is-on { fill: color-mix(in srgb, var(--accent) 26%, var(--bg-soft)); }
 .dgm-plate.is-live .dgm-motif { fill: var(--accent-soft); stroke: var(--accent); }
+
+/* The agent's motif is a loop, so it loops. The old one ran three spokes into
+   the middle of a hub disc, which read as lines crossing inside a circle rather
+   than as anything an agent actually does. */
+
+.dgm-loop { fill: none; stroke-width: 1.2; }
+
+.dgm-loopnode {
+  fill: color-mix(in srgb, var(--text) 48%, transparent);
+  stroke: none;
+  transition: fill 260ms ease;
+}
+
+.dgm-plate.is-live .dgm-loopnode,
+.dgm-plate.is-hot .dgm-loopnode { fill: var(--accent-strong); }
+
+.dgm-loopflow {
+  fill: none;
+  stroke: var(--accent-strong);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-dasharray: 8 192;
+  opacity: 0;
+}
+
+.dgm-svg.is-live .dgm-loopflow {
+  opacity: 0.6;
+  animation: dgm-travel calc(3.6s + var(--life, 0) * 2.8s) linear infinite;
+  animation-delay: calc(var(--life, 0) * -4.9s);
+}
+
+.dgm-svg.is-live .dgm-plate.is-live .dgm-loopflow,
+.dgm-svg.is-live .dgm-plate.is-hot .dgm-loopflow { opacity: 1; }
 
 .dgm-platelabel {
   fill: var(--text-soft);
@@ -9569,6 +9633,11 @@ html.is-hidden .clinic-node i,
   animation-delay: calc(var(--life, 0) * -11s);
 }
 
+.dgm-svg.is-live .dgm-queue {
+  animation: dgm-tick calc(6.2s + var(--life, 0) * 4.4s) ease-in-out infinite;
+  animation-delay: calc(var(--life, 0) * -8.6s);
+}
+
 /* The aperture on the site authority deck. Shut is drawn shut - two leaves over
    a hole - so the claim survives with every colour removed, and signing slides
    them apart rather than turning a light green. While it is shut it is under
@@ -9604,20 +9673,52 @@ html.is-hidden .clinic-node i,
 
 .dgm-svg.is-live .dgm-gatering.is-shut { animation: dgm-load 3.8s ease-in-out infinite; }
 
-.dgm-sigbar {
-  fill: var(--surface-solid);
+/* The hatch housing. The aperture used to sit on its own in the middle of an
+   empty plate, which is why the deck read as unfinished rather than as a piece
+   of equipment. It is now set in a frame with a rebate, and the run arrives at
+   the frame rather than at nothing. */
+
+.dgm-housing {
+  fill: color-mix(in srgb, var(--surface-strong) 44%, transparent);
   stroke: color-mix(in srgb, var(--text) 24%, transparent);
   stroke-width: 1;
+  stroke-linejoin: round;
 }
 
-.dgm-sigfill {
-  fill: color-mix(in srgb, var(--text) 14%, transparent);
-  transition: fill 380ms ease;
+.dgm-rebate {
+  fill: none;
+  stroke: color-mix(in srgb, var(--text) 16%, transparent);
+  stroke-width: 1;
+  stroke-linejoin: round;
 }
 
-.dgm-sigfill.is-signed { fill: color-mix(in srgb, var(--success) 74%, transparent); }
+/* The signature. Not a bar filling itself up - a stroke a named person at the
+   site makes, drawn in at the speed they make it. */
 
-/* The ledger. Rows, written one per committed run, front row last. */
+.dgm-sigplate {
+  fill: var(--bg-soft);
+  stroke: color-mix(in srgb, var(--text) 30%, transparent);
+  stroke-width: 1;
+  stroke-linejoin: round;
+}
+
+.dgm-sigrule { stroke: color-mix(in srgb, var(--text) 26%, transparent); stroke-width: 1; }
+
+.dgm-sigstroke {
+  fill: none;
+  stroke: var(--success);
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+}
+
+.dgm-sigstroke.is-signed { stroke-dashoffset: 0; }
+.dgm-svg.is-live .dgm-sigstroke { transition: stroke-dashoffset 820ms cubic-bezier(0.16, 1, 0.3, 1) 140ms; }
+
+/* The ledger. One row per committed run, front row last, and every row chained
+   to the one above it by its hash - which is the only reason a ledger is a
+   ledger rather than a list. */
 
 .dgm-ledgerbar {
   fill: var(--surface-solid);
@@ -9626,30 +9727,36 @@ html.is-hidden .clinic-node i,
   transition: fill 320ms ease, stroke 320ms ease;
 }
 
-.dgm-ledgertick { fill: color-mix(in srgb, var(--text) 18%, transparent); transition: fill 320ms ease; }
-.dgm-ledgerrow.is-written .dgm-ledgerbar { fill: var(--accent-soft); stroke: var(--accent); }
-.dgm-ledgerrow.is-written .dgm-ledgertick { fill: var(--accent-strong); }
+.dgm-ledgertick { fill: color-mix(in srgb, var(--text) 16%, transparent); transition: fill 320ms ease; }
 
-/* The seal. It appears when the receipt is written, and it stamps rather than
-   fades in. */
-
-.dgm-seal { opacity: 0; transform-origin: 492px 544px; transform: scale(1.24); }
-.dgm-seal.is-struck { opacity: 1; transform: scale(1); }
-.dgm-svg.is-live .dgm-seal { transition: opacity 260ms ease, transform 420ms cubic-bezier(0.2, 1.5, 0.4, 1); }
-
-.dgm-sealbody {
-  fill: color-mix(in srgb, var(--success-soft) 70%, var(--surface-solid));
-  stroke: color-mix(in srgb, var(--success) 44%, transparent);
+.dgm-ledgerhash {
+  fill: var(--bg-soft);
+  stroke: color-mix(in srgb, var(--text) 26%, transparent);
   stroke-width: 1;
+  transition: fill 320ms ease, stroke 320ms ease;
 }
 
-.dgm-sealtext { fill: var(--success); font-size: 9px; font-weight: 700; letter-spacing: 0.12em; }
+.dgm-ledgerchain {
+  stroke: color-mix(in srgb, var(--text) 26%, transparent);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+  stroke-linecap: round;
+}
 
-/* The descent. Three short arcs down the free left edge of the stack, one lit
-   at a time. A full-height rule over four solids was flatter and said less: it
-   read as a line drawn on top of the drawing rather than a run passing through
-   it, and it never once stopped where the claim stops. This does - the arc out
-   of the site deck has no path at all until somebody there has signed. */
+.dgm-ledgerseal { fill: color-mix(in srgb, var(--text) 16%, transparent); transition: fill 320ms ease; }
+.dgm-ledgerrow.is-written .dgm-ledgerbar { fill: var(--accent-soft); stroke: var(--accent); }
+.dgm-ledgerrow.is-written .dgm-ledgertick { fill: color-mix(in srgb, var(--accent) 78%, transparent); }
+.dgm-ledgerrow.is-written .dgm-ledgerhash { fill: var(--accent-soft); stroke: var(--accent); }
+.dgm-ledgerrow.is-written .dgm-ledgerseal { fill: var(--success); }
+
+/* The descent. One short drop per deck, down the free left edge, lit one at a
+   time - and the drop out of the site deck has no path at all until somebody
+   there has signed.
+
+   Each drop is drawn inside the deck it lands on and tucks its head under the
+   deck above, so it travels with the solid it is bolted to. Drawn between the
+   two, as it was, it stayed put while either deck moved under the pointer and
+   read as a connector attached to nothing. */
 
 .dgm-drop {
   opacity: clamp(0, calc((var(--spread, 1) - 0.9) * 10), 1);
@@ -9840,9 +9947,40 @@ html.is-hidden .clinic-node i,
   animation-delay: calc(var(--life, 0) * -8.4s);
 }
 
-/* The site wall. It is a double rule along the skirt, the way a plan draws a
-   wall - not a hatch, and never a status colour. Records sit under a sealed lid
-   inside it, and the local run sweeps across them without leaving. */
+/* A site is a round vessel, not a block. The three are deliberately not one
+   size: the radius, the wall height and the number of bands inside all come
+   from how many records that site holds, so a reader can tell which is the big
+   one with every leader removed. */
+
+.dgm-vesselwall {
+  fill: color-mix(in srgb, var(--text) 9%, var(--surface-solid));
+  stroke: color-mix(in srgb, var(--text) 34%, transparent);
+  stroke-width: 1;
+}
+
+.dgm-vesseltop {
+  fill: var(--surface-solid);
+  stroke: color-mix(in srgb, var(--text) 34%, transparent);
+  stroke-width: 1;
+  transition: stroke 300ms ease, stroke-width 300ms ease;
+}
+
+/* What is leaving a port, drawn and not only labelled: written lines are a
+   criterion, a scale is a unit, two joined dots are a mapping. */
+
+.dgm-glyph {
+  fill: none;
+  stroke: var(--accent-strong);
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+
+.dgm-glyph circle { fill: var(--accent-strong); stroke: none; }
+
+/* The site wall. It is a double rule along the vessel's own footing, the way a
+   plan draws a wall - not a hatch, and never a status colour. Records sit under
+   a sealed lid inside it, and the local run sweeps across them without leaving. */
 
 .dgm-wall {
   fill: none;
@@ -9851,6 +9989,8 @@ html.is-hidden .clinic-node i,
   stroke-linejoin: round;
   stroke-linecap: round;
 }
+
+.dgm-wall.is-inner { stroke: color-mix(in srgb, var(--text) 22%, transparent); stroke-width: 1; }
 
 .dgm-record { fill: color-mix(in srgb, var(--text) 30%, var(--surface-solid)); }
 
@@ -9866,7 +10006,7 @@ html.is-hidden .clinic-node i,
   0% { opacity: 0; transform: translateX(0); }
   14% { opacity: 1; }
   86% { opacity: 1; }
-  100% { opacity: 0; transform: translateX(69px); }
+  100% { opacity: 0; transform: translateX(var(--run, 69px)); }
 }
 
 .dgm-svg.is-live .dgm-sweep {
@@ -9923,8 +10063,8 @@ html.is-hidden .clinic-node i,
 .dgm-site.is-hot { transform: translateY(-4px); }
 
 .dgm-deck.is-hot > .dgm-solid > .dgm-face-top,
-.dgm-site.is-hot > .dgm-solid > .dgm-face-top,
-.dgm-plate.is-hot > .dgm-solid > .dgm-face-top { stroke: var(--accent-strong); stroke-width: 1.5; }
+.dgm-plate.is-hot > .dgm-solid > .dgm-face-top,
+.dgm-site.is-hot > .dgm-vesseltop { stroke: var(--accent-strong); stroke-width: 1.5; }
 
 .dgm-leader.is-hot { stroke: var(--accent); stroke-width: 1.4; }
 .dgm-tine.is-hot { stroke: var(--accent-strong); stroke-dasharray: none; }
@@ -9948,7 +10088,7 @@ html.is-hidden .clinic-node i,
 .dgm-svg.is-pass .dgm-statustext { fill: var(--accent-strong); }
 
 @media (prefers-reduced-motion: reduce) {
-  .dgm-svg :is(.dgm-droppath, .dgm-dropflow, .dgm-dropnode, .dgm-approach, .dgm-spark, .dgm-traffic, .dgm-fieldtile, .dgm-face-top, .dgm-gatering, .dgm-leaf, .dgm-sigfill, .dgm-side, .dgm-sidefact, .dgm-read, .dgm-tagbody, .dgm-node, .dgm-link, .dgm-liftpath, .dgm-liftchip, .dgm-carry, .dgm-reachrim, .dgm-sweep, .dgm-seal, .dgm-status, .dgm-statustext, .dgm-deck, .dgm-plate, .dgm-site, .dgm-ident) {
+  .dgm-svg :is(.dgm-droppath, .dgm-dropflow, .dgm-dropnode, .dgm-approach, .dgm-spark, .dgm-traffic, .dgm-fieldtile, .dgm-queue, .dgm-face-top, .dgm-vesseltop, .dgm-gatering, .dgm-leaf, .dgm-sigstroke, .dgm-loopflow, .dgm-side, .dgm-sidefact, .dgm-read, .dgm-tagbody, .dgm-node, .dgm-link, .dgm-liftpath, .dgm-liftchip, .dgm-carry, .dgm-reachrim, .dgm-sweep, .dgm-status, .dgm-statustext, .dgm-deck, .dgm-plate, .dgm-site, .dgm-ident) {
     transition: none;
     animation: none;
   }
@@ -10408,13 +10548,11 @@ html.is-hidden .clinic-node i,
   background: var(--accent-strong);
 }
 
-/* Three figures read as one row, so they end level whatever the citation
-   under each one runs to. */
+/* Two figures over a figure and the carousel it counts. */
 
-#root .capacity-bento > .metric-card {
-  grid-column: auto;
-  grid-row: auto;
-}
+#root .capacity-bento > .metric-wide { grid-column: span 3; grid-row: 1; }
+#root .capacity-bento > .metric-systems { grid-column: span 2; grid-row: 2; }
+#root .capacity-bento > .connector-closeup { grid-column: span 4; grid-row: 2; }
 
 /* The call to action is the last thing on the page and the largest thing on
    it. It had been folded into the shared section ramp, which sized it like a
@@ -10447,13 +10585,21 @@ html.is-hidden .clinic-node i,
   padding-top: 18px;
 }
 
-/* Below three-up, the figures stack and stop holding a card-height meant for
-   a row of three. */
+/* Below the two-up, everything stacks and stops holding a card height meant
+   for a row. */
 
 @media (max-width: 900px) {
   #root .capacity-bento {
     grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
     grid-auto-rows: auto;
+  }
+
+  #root .capacity-bento > .metric-wide,
+#root .capacity-bento > .metric-systems,
+#root .capacity-bento > .connector-closeup {
+    grid-column: 1 / -1;
+    grid-row: auto;
   }
 
   #root .capacity-bento > .metric-card {

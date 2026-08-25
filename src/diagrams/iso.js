@@ -87,6 +87,47 @@ export function roundedDeck(cx, cy, half, height, radius) {
   }
 }
 
+/**
+ * A plan circle seen in this projection. The two plan axes are squashed by the
+ * same pair of factors, so a circle lands as an axis-aligned ellipse rather
+ * than a tilted one - which is what lets a round solid be drawn with an
+ * ordinary <ellipse> and still be honest geometry rather than a decoration.
+ */
+export const CIRCLE_X = round(ISO_X * Math.SQRT2)
+export const CIRCLE_Y = round(ISO_Y * Math.SQRT2)
+
+export function planCircle(r) {
+  return { rx: round(r * CIRCLE_X), ry: round(r * CIRCLE_Y) }
+}
+
+/**
+ * A round solid centred on screen (cx, cy): a plan circle of radius `r`
+ * extruded `height` pixels straight down. Returns the top ellipse, the wall
+ * silhouette cut at the horizon the way a real cylinder hides its far base,
+ * and `arc(dy)` for any front-edge rule the caller wants to lay along it.
+ */
+export function roundedCylinder(cx, cy, r, height) {
+  const { rx, ry } = planCircle(r)
+  const left = round(cx - rx)
+  const right = round(cx + rx)
+  const base = round(cy + height)
+  // Left to right with sweep 0 runs through the near side of the ellipse.
+  const arc = (dy) => `M ${left} ${round(cy + dy)} A ${rx} ${ry} 0 0 0 ${right} ${round(cy + dy)}`
+  return {
+    p: project(cx, cy),
+    cx,
+    cy,
+    r,
+    rx,
+    ry,
+    height,
+    arc,
+    wall: `${arc(0)} L ${right} ${base} A ${rx} ${ry} 0 0 1 ${left} ${base} Z`,
+    left: [left, cy],
+    right: [right, cy],
+  }
+}
+
 /** The screen angle of a plan x-axis edge, for labels that run with the deck. */
 export const EDGE_ANGLE = round((Math.atan2(ISO_Y, ISO_X) * 180) / Math.PI)
 

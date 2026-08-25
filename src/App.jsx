@@ -596,7 +596,7 @@ function CapacityBento() {
   const integrationsInView = useInView(integrations, { threshold: 0 })
   const integrationsPlay = shouldRunAmbient({ reduced, inView: integrationsInView })
 
-  useEnterMotion(root, reduced, () => gsap.from('.capacity-bento > *, .systems-banner', {
+  useEnterMotion(root, reduced, () => gsap.from('.capacity-bento > *', {
     opacity: 0,
     duration: 0.86,
     stagger: 0.1,
@@ -612,30 +612,30 @@ function CapacityBento() {
         <h2><span className="capacity-title-line">A research department,</span><span className="capacity-title-line">deployed like software.</span></h2>
         <p>Disease-agnostic by design. One execution system for every protocol, care setting, and patient population. Each protocol adds reusable coverage. Every decision keeps human accountability and local control.</p>
       </div>
+      {/* Two figures over the row that pairs the third with what it counts: the
+          carousel is the systems, so the number beside it is its own caption and
+          the strip does not need a label of its own. */}
       <div className="capacity-bento">
-        <article className="bento-card metric-card metric-blue">
+        <article className="bento-card metric-card metric-wide metric-blue">
           <MetricDots active={6} total={20} tone="dark" />
           <strong>70%</strong>
           <p>of US counties had no active cancer treatment trial in 2022.</p>
           <cite>Kirkwood et al., JCO Oncology Practice 2025</cite>
         </article>
-        <article className="bento-card metric-card">
+        <article className="bento-card metric-card metric-wide">
           <MetricDots active={1} total={20} />
           <strong>4.1%</strong>
           <p>Community-program treatment-trial enrollment, versus 21.6% at NCI-designated comprehensive cancer centers.</p>
           <cite>Journal of Clinical Oncology - national benchmark</cite>
         </article>
-        <article className="bento-card metric-card">
+        <article className="bento-card metric-card metric-systems">
           <MetricDots active={20} total={20} />
           <strong>20+</strong>
           <p>systems touched daily at 60% of research sites.</p>
           <cite>SCRS Site Landscape Survey 2023</cite>
         </article>
-      </div>
-      <div className="systems-banner">
-        <div className="connector-closeup">
-          <div className="connector-head"><span>Target inputs</span><small>Synthetic walkthrough</small></div>
-          <div className={`integration-viewport${integrationsPlay ? '' : ' is-paused'}`} ref={integrations} aria-label="Target source-system examples">
+        <div className="bento-card connector-closeup">
+          <div className={`integration-viewport${integrationsPlay ? '' : ' is-paused'}`} ref={integrations} aria-label="Source systems a site works across">
             <div className="integration-track">
               {[0, 1].map((group) => (
                 <div className="integration-group" aria-hidden={group === 1} key={group}>
@@ -644,6 +644,7 @@ function CapacityBento() {
               ))}
             </div>
           </div>
+          <cite>Integration targets - not shipped connectors</cite>
         </div>
       </div>
     </section>
@@ -1306,18 +1307,20 @@ function WhyNow() {
   }))
 
   return (
-    <section className="why-now section-space" id="why-now" ref={root}>
-      <div className="why-now-title why-now-line">
-        <div>
-          <h2>Tools scale. Capacity doesn't.</h2>
-          <p>Research execution remains limited by local infrastructure, not scientific ambition.</p>
+    <section className="why-now-section section-space" id="why-now" ref={root}>
+      <div className="why-now">
+        <div className="why-now-title why-now-line">
+          <div>
+            <h2>Tools scale. Capacity doesn't.</h2>
+            <p>Research execution remains limited by local infrastructure, not scientific ambition.</p>
+          </div>
+          <CaretDown className="why-now-chevron" size={22} weight="bold" aria-hidden="true" />
         </div>
-        <CaretDown className="why-now-chevron" size={22} weight="bold" aria-hidden="true" />
-      </div>
-      <div className="why-now-lines">
-        <article className="why-now-line"><span>01</span><div><strong>More protocols</strong><p>Discovery compounds. Site-side execution remains bounded by people, systems, and fragmented evidence.</p></div></article>
-        <article className="why-now-line"><span>02</span><div><strong>More amendments</strong><p>Every change creates re-screening work and new risk when logic lives in memory.</p></div></article>
-        <article className="why-now-line"><span>03</span><div><strong>Same signatures</strong><p>A physician still owns final call. Infrastructure should make decision clearer and reconstructable.</p></div></article>
+        <div className="why-now-lines">
+          <article className="why-now-line"><span>01</span><div><strong>More protocols</strong><p>Discovery compounds. Site-side execution remains bounded by people, systems, and fragmented evidence.</p></div></article>
+          <article className="why-now-line"><span>02</span><div><strong>More amendments</strong><p>Every change creates re-screening work and new risk when logic lives in memory.</p></div></article>
+          <article className="why-now-line"><span>03</span><div><strong>Same signatures</strong><p>A physician still owns final call. Infrastructure should make decision clearer and reconstructable.</p></div></article>
+        </div>
       </div>
     </section>
   )

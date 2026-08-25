@@ -11,7 +11,7 @@ const privacy = await readSource(`${root}src/PrivacyPage.jsx`)
 const publicCopy = `${await readSource(`${root}llms.txt`)}\n${await readSource(`${root}public/llms.txt`)}`
 
 if (!publicCopy.includes('Product targets. Do not describe these as shipped') || publicCopy.includes('Also true and safe to say:') || publicCopy.includes('Works with the software a site already runs')) throw new Error('Unproven connector and deployment behavior must remain labeled as product target')
-if (!app.includes('Target inputs') || !app.includes('Synthetic walkthrough')) throw new Error('Unproven source-system examples must remain labeled as synthetic target behavior')
+if (!app.includes('Integration targets - not shipped connectors')) throw new Error('Unproven source-system examples must remain labeled as target behavior')
 
 const requiredActions = [
   'Open Evidence',
@@ -57,8 +57,13 @@ for (const figure of ['70%', '4.1%', '20+']) {
 for (const retired of ['evidence-record-card', 'criteria-stack', 'bento-core', 'record-event', 'systems-stat']) {
   if (app.includes(retired) || css.includes(`.${retired}`)) throw new Error(`Retired capacity panel still present: ${retired}`)
 }
-if (!app.includes('Target inputs') || !app.includes('integration-track')) throw new Error('Capacity must keep the target-input carousel under the figures')
-if (!/\.capacity-bento \{[^}]*grid-template-columns: repeat\(3, minmax\(0, 1fr\)\);/.test(css)) throw new Error('Capacity figures must read as one row of three')
+// The carousel sits beside the figure that counts it, not across the section.
+// Five logos scrolling through a 1120px strip read as a gap with a marquee in
+// it, and the figure beside it is the only label it needs.
+if (!app.includes('integration-track')) throw new Error('Capacity must keep the source-system carousel')
+if (app.includes('Target inputs') || app.includes('connector-head')) throw new Error('The carousel labels itself with the figure beside it')
+if (!/\.capacity-bento \{[^}]*grid-template-columns: repeat\(6, minmax\(0, 1fr\)\);/.test(css)) throw new Error('Capacity must read as two figures over a figure and its carousel')
+if (!/#root \.capacity-bento > \.connector-closeup \{ grid-column: span 4; grid-row: 2; \}/.test(css)) throw new Error('The carousel belongs on the second row beside the systems figure')
 if (!/#root \.capacity-bento > \.metric-blue \{[^}]*background: var\(--accent-strong\);/.test(css)) throw new Error('The headline capacity figure must stay solid blue')
 // A ground for the page, so a white card is an object and not the page itself.
 if (!css.includes('--page-ground:') || !/body \{[\s\S]*?var\(--page-ground\)/.test(css)) throw new Error('The page needs a ground for its surfaces to sit on')
