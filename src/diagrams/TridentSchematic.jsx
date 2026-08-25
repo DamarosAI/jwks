@@ -20,16 +20,17 @@ import { useScrollRun } from './useScrollPhase'
  * hides beneath the other. A connector hanging in the space between two things
  * is a connector that is not connected to either.
  *
- * The approval deck carries a shutter set in a frame. It is shut, bolted at the
- * seam, and the descent halts on it. Nothing about it is a status light: the
- * blades are across the hole, and when a named person at the site signs, the
- * bolts withdraw and the blades run back into the frame.
+ * The approval deck carries a shutter set in a barrel. It is shut - two blades
+ * overlapped across the bore - and the descent halts on it. Nothing about it is
+ * a status light: the blades are across the hole, and when a named person at the
+ * site signs they run out along the deck's own axis and the way through opens
+ * between them.
  *
  * Every deck runs its own mechanism, and runs it unattended. The plates ride
  * over the intake and keep proposing; the intake keeps drawing the queue down
  * its runs and swallowing them; the contract keeps walking its nineteen fields
- * in the order it checks them; something keeps trying the shutter and the bolts
- * keep taking it; and the ledger keeps posting, each hash travelling the link to
+ * in the order it checks them; something keeps trying the shutter and the two
+ * blades keep holding it; and the ledger keeps posting, each hash travelling to
  * the row it commits. That is the difference between a machine and a diagram of
  * one, and it is the whole reason the pointer is no longer load-bearing: what a
  * reader does with the cursor is lean on a mechanism that is already running -
@@ -51,6 +52,23 @@ import { useScrollRun } from './useScrollPhase'
  * held at zero opacity until `--charge` comes up, so the stack lands and then
  * the system starts, rather than arriving already busy. Scroll advances the run;
  * the pointer reads it; neither is needed for it to be alive.
+ *
+ * THE WHOLE STACK IS ONE INK, AND IT DEEPENS AS THE RUN DESCENDS.
+ *
+ * The four decks used to carry four hues - violet for the machine tier, blue for
+ * the contract, amber for the one holding and green for the one that had
+ * committed - on the theory that the deck owning a state should own a colour.
+ * The theory is sound and the drawing it produced was not: four saturated hues
+ * stacked over one plan is four unrelated objects, and the two warm ones sat
+ * forward of the two cool ones, so the middle of the figure bowed out of the
+ * page. A governed stack that reads as four things bolted together is arguing
+ * against its own claim, which is that this is one instrument.
+ *
+ * So it is one blue at four depths, and the depth is the order: authority
+ * accumulates on the way down, and the ledger is the darkest thing in the
+ * drawing because it is the only deck nothing can be taken back out of. A drop
+ * takes the ink of whatever it lands on, so the descent gets visibly heavier
+ * three times rather than changing colour three times.
  *
  * Nothing here names a vendor. The three sources are kinds of proposer, not
  * products, because the claim is about authority and not about whose model it
@@ -166,11 +184,35 @@ const QUEUE = [0, 1, 2, 3].map((step) => {
 // row a field sits in tells them which domain it came from before they read it.
 // That is the whole claim of this deck made in nineteen words: a task does not
 // run on "the data", it runs on named fields from named domains, each checked.
+//
+// Each one also carries what it is checked against, because that is the only
+// part of this deck a reader cannot see. A tile that rises has visibly been
+// checked; what the drawing could not say is checked against WHAT - and
+// "against task contract T-07 v3", repeated nineteen times, is the answer to a
+// question nobody asked. A field is bound by being matched to a specific
+// authority: a register, a roster, a randomisation list, a lab manual, a
+// dictionary, a grading scale. Naming that authority is the whole content of
+// this deck, and it is different for every one of the nineteen.
 const NAMES = [
-  'STUDYID', 'SITEID', 'USUBJID', 'ARMCD', 'VISITNUM',
-  'EXTRT', 'EXDOSE', 'EXDOSU', 'EXROUTE', 'EXSTDTC',
-  'LBTESTCD', 'LBORRES', 'LBORRESU', 'LBNRIND', 'LBDTC',
-  'AETERM', 'AETOXGR', 'AESER', 'AEACN',
+  ['STUDYID', 'against the protocol registered for this study'],
+  ['SITEID', 'against the site roster on the delegation log'],
+  ['USUBJID', 'against the enrolment list held at this site'],
+  ['ARMCD', 'against the arm the randomisation list assigned'],
+  ['VISITNUM', 'against the visit in the schedule of assessments'],
+  ['EXTRT', 'against the study treatment the protocol names'],
+  ['EXDOSE', 'against the dose level this arm is allowed'],
+  ['EXDOSU', 'against the units the protocol doses in'],
+  ['EXROUTE', 'against the route of administration on label'],
+  ['EXSTDTC', 'against the dosing window for this visit'],
+  ['LBTESTCD', 'against the assay the lab manual specifies'],
+  ['LBORRES', 'against the result as the lab reported it'],
+  ['LBORRESU', 'against the units on the lab report itself'],
+  ['LBNRIND', 'against this lab reference range for this subject'],
+  ['LBDTC', 'against the collection window for this visit'],
+  ['AETERM', 'against the MedDRA preferred term'],
+  ['AETOXGR', 'against the CTCAE grade for this term'],
+  ['AESER', 'against the regulatory seriousness criteria'],
+  ['AEACN', 'against the dose-modification rules for this arm'],
 ]
 
 // Each field is a solid standing on the deck, not a tile printed on it. Bound,
@@ -187,8 +229,10 @@ let cursor = 0
   for (let col = 0; col < count; col += 1) {
     const x = (col - (count - 1) / 2) * 28
     const y = -42 + row * 28
+    const [name, against] = NAMES[cursor]
     FIELDS.push({
-      name: NAMES[cursor],
+      name,
+      against,
       x,
       y,
       at: CONTRACT.p(x, y),
@@ -203,25 +247,28 @@ let cursor = 0
   }
 })
 
-// The aperture on the approval deck, in plan.
+// The stop on the approval deck, in plan.
 //
-// Two mechanisms have stood here and both were wrong. First a sliding hatch:
-// two leaves split at plan x = 0 and stroked all the way round, which projected
-// to a pair of parallelograms meeting on a diagonal, so the seam came out as a
-// doubled line with a notch at either end - and a hatch is a thing that covers,
-// where the claim this deck carries is that a run is HELD. Then two bolts drawn
-// across the way through, which was the right claim and the wrong instrument:
-// at reading size, two pale bars over a sixty-pixel recess read as stripes.
+// Three mechanisms have stood here. A sliding hatch, split at plan x = 0 and
+// stroked all the way round, which projected to a pair of parallelograms
+// meeting on a diagonal - so the seam came out doubled with a notch at either
+// end. Then two bolts drawn across the way through, which was the right claim
+// on the wrong instrument: at reading size two pale bars over a sixty-pixel
+// recess read as stripes. Then a six-blade diaphragm, which sealed honestly and
+// drew as a pinwheel - six arcs crossing each other inside a twenty-eight pixel
+// bore is more mechanism than a reader can resolve at the size this deck is
+// printed at, and what they were left with was a decorated circle.
 //
-// It is a diaphragm now, and it is the one place in either drawing where blades
-// overlapping each other is the point rather than a defect. An aperture is the
-// instrument that decides how much gets through, which is this deck's whole
-// job; and a diaphragm is the one mechanism a reader already knows can be shut
-// completely and opened only by a deliberate act on the barrel.
+// It is two blades now, and the two leading edges are the whole drawing. Held,
+// they lie across the bore on its own centre line, overlapped, and the run
+// stops on them. Signed, they run out along a plan axis and the way through
+// opens between them. One line becomes two: that is the smallest true picture
+// of a stop, it is legible at any size this figure is ever printed at, and it
+// needs no reader to work out what kind of instrument they are looking at.
 //
-// Both circles are honest here. A plan circle carried through this projection
-// is an ellipse on screen, the same ellipse the intake deck's throat is drawn
-// as, so the barrel reads as a barrel seen from above and to the side.
+// The bore is a plan circle carried through this projection, which is the same
+// honest ellipse the intake deck's throat is drawn as, so the barrel reads as a
+// barrel seen from above and to the side.
 const SHUT_FRAME = 50
 const SHUT_HOLE = 28
 
@@ -231,58 +278,33 @@ const SHUT_HOLE = 28
 const HOUSE_RISE = 7
 const BARREL = planCyl(0, 0, SHUT_FRAME, HOUSE_RISE)
 
-// The blades.
+// The two blades, one to each side of the bore's centre line.
 //
-// The construction is six circles rather than six drawn leaves. A blade is a
-// disc of radius BLADE_R whose centre sits BLADE_SHUT or BLADE_OPEN out along
-// its own spoke; the aperture is whatever part of the bore no disc covers.
-// Clipped to the bore, each disc shows exactly one arc - its leading edge -
-// which is what a blade looks like, and six of those arcs meeting is what an
-// iris looks like.
+// A blade is a plan rectangle wider and taller than the bore it runs in, and
+// the clip is what gives it three of its four edges: only the leading one is
+// ever inside the hole, so only the leading one is ever drawn. That is what
+// keeps this to two lines rather than two outlined slabs.
+const LEAVES = [-1, 1]
+const LEAF_HALF = 40
+
+// Shut is six plan units past the centre line each way, so the pair overlap by
+// twelve and the seal is light-tight the way a two-leaf shutter's is. Both
+// leading edges stay inside the bore, which is what makes shut read as two
+// blades meeting rather than as one rule across a hole - and it is why the
+// fills are laid down before either edge is drawn, since the blade on top would
+// otherwise paint the other blade's edge out of the picture.
 //
-// Sealing the bore of radius R = 28 with six discs of radius 22 at distance d
-// costs two conditions, and both are worth writing down because the drawing
-// lives or dies on the second one:
-//
-//   the centre       d <= 22, or nothing covers plan (0, 0).
-//   the far rim      the point of the bore furthest from every blade sits at
-//                    radius 28, thirty degrees off a spoke - halfway between two
-//                    of them. It is d^2 - 2*28*cos30*d + 28^2 <= 22^2 away, so
-//                    d^2 - 48.5d + 300 <= 0, so d >= 7.3.
-//
-// So any d in [7.3, 22] is a real seal, and the whole span is available. It is
-// the top of it that draws: at BLADE_SHUT = 19 each blade reaches just three
-// past the centre, so the six overlap by the least that still seals and every
-// one of the six leading arcs survives into the picture - the pinwheel a closed
-// iris actually makes. Deeper than that and the later blades paint the earlier
-// ones out, and the seal collapses into two or three anonymous discs. (Worst
-// case at 19: sqrt(28^2 + 19^2 - 2*28*19*cos30) = 15.0, well inside 22.)
-//
-// Open is BLADE_OPEN - BLADE_R = 12 across the flats and 15.5 to the corners -
-// a curved hexagon a quarter the width of the bore. Stopped down, the way a
-// lens is drawn when it is being drawn as a lens.
-//
-// Each blade is drawn twice, and that is the second thing this mechanism turns
-// on. A real iris tucks cyclically - every blade lies under its neighbour and
-// over the one before it, all the way round - which no painter's-order drawing
-// can do, because the overlap is a cycle and z-order is a line. Draw six opaque
-// discs in spoke order and the last two paint the other four out: the seal
-// stops looking like six blades and starts looking like three coins.
-//
-// So the fills go down first, in one pass, and every blade's edge is drawn over
-// all of them in a second. The fills give the assembly its true silhouette for
-// free - the aperture is exactly the part of the bore no disc reached - and the
-// edge pass puts all six leading arcs back into the picture, which is what a
-// reader actually recognises an iris by.
-const BLADES = [0, 60, 120, 180, 240, 300]
-const BLADE_R = 22
-const BLADE_SHUT = 19
-const BLADE_OPEN = 34
-// The twist. A real diaphragm's blades pivot on the barrel, so its aperture
-// rotates as it changes size; without that the six discs read as a round
-// shutter rather than an iris. Fifteen degrees is a quarter of the sixty the
-// six-fold symmetry gives - enough to see, not enough to look like a wheel.
-const BLADE_TURN = 15
+// Twelve is a floor, not a preference. The bore is fifty-six plan units across
+// and comes out about forty-eight pixels wide at the size this figure is read
+// at, so the gap between the two edges is a tenth of the opening. Any less and
+// the pair reads as one line drawn twice by accident.
+const LEAF_SHUT = -6
+
+// Open parks each blade a few units inside its own side of the bore, so a
+// sliver of each stays in the drawing. A blade that clears the opening entirely
+// leaves nothing behind to say there was ever a blade, and the deck goes back
+// to being a plate with a hole in it.
+const LEAF_OPEN = 24
 
 // The ledger writes one row per committed run, each chained to the row above it
 // by its hash, front row last. Each row carries the revision it is a record of,
@@ -353,9 +375,18 @@ const READS = {
 }
 
 /**
- * A field answers for itself. It is the one part of the stack small enough to
- * need naming and numerous enough to be worth pointing at - nineteen of them in
- * a grid a reader sweeps across without aiming.
+ * A field answers for itself, and it answers with the one fact the drawing
+ * cannot draw: what it is checked against. It is the one part of the stack small
+ * enough to need naming and numerous enough to be worth pointing at - nineteen
+ * of them in a grid a reader sweeps across without aiming.
+ *
+ * The line used to say "checked against task contract T-07 v3" for all nineteen,
+ * which is the identifier of the contract doing the checking and not the thing
+ * being checked against. It told a reader nothing they had not already read off
+ * the rail, and it told them the same nothing nineteen times. Every field now
+ * names its own authority - a register, a roster, a randomisation list, a lab
+ * manual, a dictionary, a grading scale - so sweeping the grid is a tour of what
+ * a task contract is actually made of.
  *
  * Everything else a deck does, it does on its own: the intake keeps drawing
  * proposals off the queue, the contract keeps walking its fields, the ledger
@@ -365,9 +396,10 @@ const READS = {
  */
 function fieldCue(index, state) {
   if (index === null) return null
+  const cell = FIELDS[index]
   return index < state.bound
-    ? { tone: 'valid', pill: 'CHECKED', read: `${FIELDS[index].name} checked against task contract T-07 v3.` }
-    : { tone: 'run', pill: 'UNCHECKED', read: `${FIELDS[index].name} has not been checked, so nothing below has moved.` }
+    ? { tone: 'valid', pill: 'CHECKED', read: `${cell.name} checked ${cell.against}.` }
+    : { tone: 'run', pill: 'UNCHECKED', read: `${cell.name} is not yet checked ${cell.against}.` }
 }
 
 const LOOP = 'M -6 -13 H 6 A 13 13 0 0 1 6 13 H -6 A 13 13 0 0 1 -6 -13 Z'
@@ -719,11 +751,11 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
               <Faces shape={AUTHORITY} className="dgm-solid" />
               <Drop leg={DROPS[1]} drops={state.drops} />
               <g transform={planSpace(CX, AUTHORITY.cy)}>
-                {/* The stop. Shut is drawn shut - six blades closed on a seal
-                    - so the claim survives with every colour removed. Push on it
-                    with the pointer and it answers the way the mechanism would:
-                    the blades strain a hair off the seal and come straight
-                    back. */}
+                {/* The stop. Shut is drawn shut - two blades overlapped across
+                    the bore - so the claim survives with every colour removed.
+                    Push on it with the pointer and it answers the way the
+                    mechanism would: the blades strain a hair against each other
+                    and come straight back, without ever parting. */}
                 {/* Open is carried on the group, not inferred, so the frame can
                     stop bracing against something nobody is holding any more. */}
                 <g className={`dgm-shutter${open ? ' is-open' : ''}${tried ? ' is-tried' : ''}`}>
@@ -750,33 +782,37 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
                       <g transform={planDrop(6)}>
                         <circle className="dgm-shaftfloor is-bore" cx="0" cy="0" r={SHUT_HOLE} />
                       </g>
-                      {/* The six blades, inside the clip. The clip is what turns
-                          a whole disc into a blade: all a reader ever sees of one
-                          is the arc it cuts across the bore. Fills first, then
-                          every edge over all of them - see the note on the
-                          constants for why the second pass is not optional.
+                      {/* The two blades, inside the clip. The clip is what
+                          turns a rectangle into a blade: all a reader ever sees
+                          of one is the edge it lays across the bore.
+
+                          Fills first, then both edges over both fills. Held, the
+                          blades overlap by eight plan units, so drawing each one
+                          complete in turn would let the second paint the first
+                          one's leading edge out - and the whole point of this
+                          mechanism is that a reader can see two of them. The
+                          second pass puts both edges back.
 
                           The two throws travel with the assembly as custom
                           properties rather than being written into the
                           keyframes, so the geometry is stated once - up there,
-                          next to the arithmetic that solves it - and the
-                          stylesheet animates between whatever this file says it
-                          is. The spoke rides on each blade for the same reason:
-                          one class carries rotate-then-translate, so a blade
-                          moves along its own spoke and nothing has to know which
-                          spoke that is except the blade. */}
+                          beside the note that solves it - and the stylesheet
+                          animates between whatever this file says it is. The
+                          side rides on each blade for the same reason: one class
+                          carries the throw, and a blade only has to know which
+                          way out is. */}
                       <g
-                        className={`dgm-iris${open ? ' is-clear' : ''}`}
-                        style={{ '--shut': `${BLADE_SHUT}px`, '--open': `${BLADE_OPEN}px`, '--turn': `${BLADE_TURN}deg` }}
+                        className={`dgm-bank${open ? ' is-clear' : ''}`}
+                        style={{ '--shut': `${LEAF_SHUT}px`, '--open': `${LEAF_OPEN}px` }}
                       >
-                        {BLADES.map((spoke) => (
-                          <g className="dgm-blade" key={spoke} style={{ '--spoke': spoke }}>
-                            <circle className="dgm-bladeface" cx="0" cy="0" r={BLADE_R} />
+                        {LEAVES.map((side) => (
+                          <g className="dgm-blade" key={side} style={{ '--side': side }}>
+                            <rect className="dgm-bladeface" x={side < 0 ? -LEAF_HALF : 0} y={-LEAF_HALF} width={LEAF_HALF} height={LEAF_HALF * 2} />
                           </g>
                         ))}
-                        {BLADES.map((spoke) => (
-                          <g className="dgm-blade" key={`edge${spoke}`} style={{ '--spoke': spoke }}>
-                            <circle className="dgm-bladeedge" cx="0" cy="0" r={BLADE_R} vectorEffect="non-scaling-stroke" />
+                        {LEAVES.map((side) => (
+                          <g className="dgm-blade" key={`edge${side}`} style={{ '--side': side }}>
+                            <rect className="dgm-bladeedge" x={side < 0 ? -LEAF_HALF : 0} y={-LEAF_HALF} width={LEAF_HALF} height={LEAF_HALF * 2} vectorEffect="non-scaling-stroke" />
                           </g>
                         ))}
                       </g>
