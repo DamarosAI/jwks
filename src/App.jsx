@@ -381,15 +381,6 @@ function SectionEyebrow({ children }) {
   return <p className="section-eyebrow">{children}</p>
 }
 
-function MobilePreviewFrame({ children }) {
-  return (
-    <div className="mobile-preview-frame">
-      <p className="mobile-preview-eyebrow">Mobile preview</p>
-      {children}
-    </div>
-  )
-}
-
 function WindowBrand() {
   return (
     <span className="window-title window-brand">
@@ -463,7 +454,6 @@ function Footer() {
 function MiniRun() {
   const root = useRef(null)
   const reduced = useReducedMotion()
-  const narrow = useMediaQuery(NARROW_VIEWPORT)
   const inView = useInView(root)
   const [active, setActive] = useState(0)
   const [tick, setTick] = useState(0)
@@ -474,7 +464,7 @@ function MiniRun() {
   const visible = useDocumentVisible()
   const { fading, swap } = useSoftSwap(reduced)
   const steps = ['Protocol', 'Evidence', 'Screening', 'Resolve', 'Replay']
-  const playing = !narrow && shouldPlayAutoplay({ reduced, held, inView, visible })
+  const playing = shouldPlayAutoplay({ reduced, held, inView, visible })
 
   useEffect(() => {
     if (!playing) return undefined
@@ -560,9 +550,7 @@ function LandingHero() {
           <a className="button button-secondary" href="#trident" onClick={(event) => smoothSection(event, '#trident')}>How it works <ArrowRight size={17} weight="bold" /></a>
         </div>
       </div>
-      <MobilePreviewFrame>
-        <div className="hero-workspace-wrap"><MiniRun /></div>
-      </MobilePreviewFrame>
+      <div className="hero-workspace-wrap"><MiniRun /></div>
       <a className="hero-scroll-cue" href="#thesis" aria-label="Continue to the thesis" onClick={(event) => smoothSection(event, '#thesis')}>
         <CaretDown size={22} weight="bold" />
       </a>
@@ -1202,7 +1190,7 @@ function SiteControlSection() {
   return (
     <section className="control-section section-space" id="site-control" ref={root}>
       <SectionEyebrow>Control</SectionEyebrow>
-      <MobilePreviewFrame>
+      <div className="control-system-wrap">
       <div className="control-system" aria-label="Damaros site control">
         <div className="mac-titlebar"><div className="traffic-lights" aria-hidden="true"><i /><i /><i /></div><WindowBrand /><span className="window-live"><i /> Trident on site</span></div>
         <div className="control-product-grid">
@@ -1276,7 +1264,7 @@ function SiteControlSection() {
           </div>
         </div>
       </div>
-      </MobilePreviewFrame>
+      </div>
       <div className="control-copy">
         <h2><span>Evidence stays</span><span>with the site.</span></h2>
         <p>Patient data, harness context, evidence, signatures, and execution records remain under site governance. Site release controls every outbound artifact.</p>

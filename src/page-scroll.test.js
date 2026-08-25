@@ -85,8 +85,10 @@ describe('demo page scroll', () => {
   })
 
   it('clips live demo surfaces without trapping page scroll', () => {
+    // One clip rule for every width. The phone sheet no longer restates it,
+    // because there is no longer a phone-only product geometry to clip.
     assert.match(css, CLIP_SURFACES)
-    assert.match(mobile, CLIP_SURFACES)
+    assert.doesNotMatch(mobile, /overflow:\s*clip;/)
     assert.doesNotMatch(css, /\.landing-source-view \.workspace-view \{[\s\S]*?overscroll-behavior:\s*contain;/)
     assert.match(app, /useDemoPageWheel\(\)/)
   })

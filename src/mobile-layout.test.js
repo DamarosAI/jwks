@@ -2,45 +2,67 @@ import { readFile } from 'node:fs/promises'
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 
-const css = await readFile(new URL('./mobile.css', import.meta.url), 'utf8')
+const css = await readFile(new URL('./styles.css', import.meta.url), 'utf8')
+const mobile = await readFile(new URL('./mobile.css', import.meta.url), 'utf8')
 const app = await readFile(new URL('./App.jsx', import.meta.url), 'utf8')
 const main = await readFile(new URL('./main.jsx', import.meta.url), 'utf8')
 
-describe('mobile miniature layout', () => {
-  it('loads correction last and keeps section spine below navigation', () => {
+describe('one responsive design', () => {
+  it('loads the phone sheet last and keeps the spine under the nav', () => {
     assert.match(main, /import '\.\/styles\.css'[\s\S]*import '\.\/mobile\.css'/)
-    assert.match(css, /#root \.page-spine,[\s\S]*?top:\s*calc\(max\(8px,[\s\S]*?grid-template-columns:\s*repeat\(7,/)
-    assert.match(css, /#root \.page-spine\.page-spine-about \{[\s\S]*?grid-template-columns:\s*repeat\(5,/)
+    assert.match(mobile, /#root \.page-spine,[\s\S]*?top:\s*calc\(max\(8px,/)
+    // The spine sizes itself to however many sections a page has, so adding
+    // or removing one never leaves an empty column behind.
+    assert.match(mobile, /#root \.page-spine,[\s\S]*?grid-auto-flow:\s*column;[\s\S]*?grid-auto-columns:\s*minmax\(0, 1fr\);/)
+    assert.doesNotMatch(mobile, /grid-template-columns:\s*repeat\(\d+, minmax\(0, 1fr\)\);\s*\n\s*align-content/)
     assert.match(app, /const narrow = useMediaQuery\(NARROW_VIEWPORT\)[\s\S]*?const \[visible, setVisible\] = useState\(about \|\| narrow\)/)
   })
 
-  it('keeps desktop product rails inside scaled mobile canvases', () => {
-    assert.match(css, /#root \.hero-workspace-wrap \{[\s\S]*?zoom:\s*0\.42;/)
-    assert.match(css, /#root \.hero-workspace \.hero-app-grid \{[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\);[\s\S]*?grid-template-rows:\s*52px minmax\(0, 1fr\);/)
-    assert.match(css, /#root \.control-product-grid \{[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\);/)
+  it('sizes the page on a fluid scale instead of a second set of sizes', () => {
+    for (const token of ['--fluid-display', '--fluid-h2', '--fluid-lead', '--fluid-body', '--fluid-section-space', '--gutter']) {
+      assert.match(css, new RegExp(`${token}:\\s*clamp\\(`))
+    }
+    assert.match(css, /#root \.hero-heading,[\s\S]*?font-size:\s*var\(--fluid-display\);/)
+    assert.match(css, /#root \.section-heading h2,[\s\S]*?font-size:\s*var\(--fluid-h2\);/)
+    assert.match(css, /#root \.section-space \{\s*padding-block:\s*var\(--fluid-section-space\);/)
+    // The phone sheet is chrome only. It must not restate an editorial size.
+    assert.doesNotMatch(mobile, /#root \.hero-heading \{[^}]*font-size:/)
+    assert.doesNotMatch(mobile, /#root \.hero-copy > p \{[^}]*font-size:/)
+    assert.doesNotMatch(mobile, /#root \.about-hero-copy h1 \{[^}]*font-size:/)
+    assert.doesNotMatch(mobile, /#root \.final-cta h2 \{[^}]*font-size:/)
+    assert.doesNotMatch(mobile, /\.thesis-head h2[^{]*\{[^}]*font-size:/)
+    assert.doesNotMatch(mobile, /--mobile-display/)
   })
 
-  it('clips mobile extras so stage CTAs stay in the crop', () => {
-    assert.match(css, /#root \.hero-actions \{[\s\S]*?grid-template-columns:\s*1fr;/)
-    assert.match(css, /#root \.page-spine,[\s\S]*?background:\s*var\(--bg\);/)
-    assert.match(css, /#root \.biomarker-rain \{\s*top:\s*168px;/)
-    assert.match(css, /#root \.hero-heading \.hero-line:first-child \{\s*white-space:\s*normal;/)
-    assert.match(css, /#root \.hero-workspace \.source-patient-list,[\s\S]*?#root \.hero-workspace \.replay-ledger \{\s*display:\s*none;/)
-    assert.match(css, /#root \.control-system \.source-protocol-summary,[\s\S]*?display:\s*none;/)
-    assert.match(css, /#root \.page-shell:has\(\.about-hero\) \.final-cta > p:not\(\.section-eyebrow\) \{[\s\S]*?font-size:\s*0\.75rem;/)
-    assert.doesNotMatch(css, /#root \.biomarker-rain \{\s*display:\s*none;/)
-  })
-
-  it('keeps product frames static and pauses autoplay on narrow screens', () => {
-    assert.match(css, /#root \.hero-workspace \{[\s\S]*?height:\s*799px;[\s\S]*?max-height:\s*799px;[\s\S]*?overflow:\s*hidden;/)
-    assert.match(css, /#root \.control-system \{[\s\S]*?height:\s*680px;[\s\S]*?max-height:\s*680px;[\s\S]*?overflow:\s*hidden;/)
-    assert.match(css, /#root \.control-control-detail,[\s\S]*?max-height:\s*100%;[\s\S]*?overflow:\s*hidden;/)
-    assert.match(css, /overflow-x:\s*clip;/)
-    assert.equal((app.match(/const playing = !narrow && shouldPlayAutoplay/g) || []).length, 1)
+  it('runs one workspace at every width, never a shrunken copy of it', () => {
+    // No zoom, no preview frame, no second composition.
+    assert.doesNotMatch(mobile, /zoom:/)
+    assert.doesNotMatch(css, /zoom:\s*0\./)
+    assert.doesNotMatch(app, /MobilePreviewFrame/)
+    assert.doesNotMatch(app, /mobile-preview-eyebrow/)
     assert.doesNotMatch(app, /mobile-workspace-hint/)
-    assert.equal((app.match(/<MobilePreviewFrame>/g) || []).length, 2)
-    assert.match(app, /className="mobile-preview-eyebrow">Mobile preview<\/p>/)
-    assert.match(css, /#root \.mobile-preview-eyebrow \{[\s\S]*?display:\s*block;/)
-    assert.match(css, /#root \.mobile-preview-frame \{\s*display:\s*block;/)
+    // The window answers to its own width, so a narrow desktop column and a
+    // phone get the same treatment.
+    assert.match(css, /\.hero-workspace-wrap \{[^}]*container:\s*product-window \/ inline-size;/)
+    assert.match(css, /\.control-system-wrap \{[\s\S]*?container:\s*control-window \/ inline-size;/)
+    assert.match(app, /<div className="control-system-wrap">/)
+    assert.match(css, /@container product-window \(max-width: 900px\) \{[\s\S]*?#root \.hero-app-grid \{[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\);/)
+    assert.match(css, /@container control-window \(max-width: 900px\) \{[\s\S]*?#root \.control-product-grid \{[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\);/)
+  })
+
+  it('reflows every record on a phone instead of switching it off', () => {
+    for (const pane of ['source-patient-list', 'obligation-list', 'replay-ledger', 'evidence-coverage', 'source-protocol-summary', 'source-criteria-list', 'source-amendment', 'resolve-compare-bar', 'recommended-action', 'screen-result-pair']) {
+      assert.doesNotMatch(mobile, new RegExp(`\\.${pane}[^{]*\\{[^}]*display:\\s*none`))
+    }
+    assert.match(css, /@container product-window \(max-width: 640px\) \{[\s\S]*?#root \.hero-workspace \.source-protocol-summary,[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\);/)
+    assert.match(css, /@media \(max-width: 640px\) \{[\s\S]*?\.source-protocol-summary,\s*\n\.source-evidence-grid,\s*\n\.source-screen-grid,\s*\n\.source-replay-grid \{\s*grid-template-columns:\s*1fr;/)
+  })
+
+  it('plays the workspace on a phone and marks the stage a phone can see', () => {
+    assert.match(app, /const playing = shouldPlayAutoplay\(\{ reduced, held, inView, visible \}\)/)
+    assert.doesNotMatch(app, /!narrow && shouldPlayAutoplay/)
+    assert.doesNotMatch(mobile, /animation:\s*none !important/)
+    // Lying on its side the rail marker has to become an underline.
+    assert.match(css, /@container product-window \(max-width: 900px\) \{[\s\S]*?#root \.hero-app-nav button\.active::before \{[\s\S]*?height:\s*3px;/)
   })
 })
