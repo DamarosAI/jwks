@@ -201,7 +201,10 @@ describe('Trident and Nectar schematics', () => {
       assert.match(source, /role="img"[\s\S]{0,12}aria-label="[A-Z][^"]{160,}"/)
     }
     assert.match(app, /<h2><span>Any model can propose\.<\/span>/)
-    assert.match(app, /<h2><span>Execution intelligence that crosses site boundaries\.<\/span>/)
+    // Nectar leads on what the network does and answers it with the constraint,
+    // set as a dek in the blue every other dek on the site uses.
+    assert.match(app, /<h2><span>Execution intelligence that crosses site boundaries\.<\/span><\/h2>/)
+    assert.match(app, /<p className="nectar-dek">Patient data that never does\.<\/p>/)
   })
 
   it('states the harness claim in the title instead of lettering it on the drawing', () => {

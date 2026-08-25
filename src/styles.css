@@ -9271,6 +9271,22 @@ html.is-hidden .clinic-node i,
   line-height: 1.5;
 }
 
+/* The heading says what the network does and the dek says what it costs the
+   site: nothing. Set in the blue every other dek on the site uses, a step above
+   the body copy and close under the line it answers, so the two read as one
+   statement. The ramp is anchored to the body size rather than to --fluid-lead,
+   which bottoms out below it and inverted the two on a phone. */
+
+.nectar-copy .nectar-dek {
+  max-width: 34ch;
+  margin-top: 15px;
+  color: var(--accent);
+  font-size: clamp(1.14rem, 1.02rem + 0.5vw, 1.42rem);
+  letter-spacing: -0.004em;
+  line-height: 1.32;
+  text-wrap: balance;
+}
+
 .nectar-copy .control-facts {
   margin-top: 28px;
 }

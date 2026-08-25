@@ -1044,7 +1044,8 @@ function NectarSection() {
         <NectarSchematic animate={animate} reduced={reduced} />
       </div>
       <div className="nectar-copy">
-        <h2><span>Execution intelligence that crosses site boundaries.</span><span>Patient data that never does.</span></h2>
+        <h2><span>Execution intelligence that crosses site boundaries.</span></h2>
+        <p className="nectar-dek">Patient data that never does.</p>
         <p>Nectar is a shared execution library. Sites contribute structure, not records. Coverage compounds. Patient data stays at the site that collected it.</p>
         <div className="control-facts">
           <span><ShieldCheck size={18} /> PHI-free by construction</span>
