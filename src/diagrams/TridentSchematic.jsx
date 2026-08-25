@@ -309,9 +309,26 @@ const MOTIFS = {
   // possibilities, and the uneven heights are the only part of that a mark this
   // size can carry. Four stacked bars, which is what this was, is a list icon -
   // the same doodle every menu button in the world already uses.
+  //
+  // It resamples. Each column breathes on a clock of its own, so the shape
+  // keeps re-forming without ever losing its envelope - which is the difference
+  // between a drawing of a distribution and a thing drawing from one. The bars
+  // scale from their own feet, so the rule they stand on never moves.
   MODEL: [7, 13, 21, 26, 20, 11, 6].map((height, slot) => {
     const x = -21 + slot * 7
-    return <rect key={x} x={x - 2} y={13 - height} width="4" height={height} rx="1.5" vectorEffect="non-scaling-stroke" />
+    return (
+      <rect
+        className="dgm-draw"
+        key={x}
+        style={{ '--life': jitter(slot, 31) }}
+        x={x - 2}
+        y={13 - height}
+        width="4"
+        height={height}
+        rx="1.5"
+        vectorEffect="non-scaling-stroke"
+      />
+    )
   }),
   // A tool loop, drawn as a loop and running as one. The old motif ran three
   // spokes into the middle of a hub disc, which read as lines crossing inside a
@@ -326,28 +343,24 @@ const MOTIFS = {
       <circle className="dgm-loopnode" key={`${x}:${y}`} cx={x} cy={y} r="2.4" />
     )),
   ],
-  // A schedule: one rule, evenly spaced runs standing on it, and the one that
-  // has just fired. Even spacing is the whole difference between this mark and
-  // the model's beside it - a job runs on the clock, a model does not. Six
-  // rounded tiles in two rows, which is what this was, is an app launcher.
+  // A schedule, and it had to stop being a bar chart. Evenly spaced columns
+  // standing on a rule is the same object as the model's distribution beside
+  // it at a different set of heights - two of the three plates were reading as
+  // one mark, and the difference between them was a fact about spacing that
+  // nobody was going to measure.
+  //
+  // A schedule is a line of time with fixed stops on it and a head moving along
+  // it. So: one rule, seven ticks hanging under it rather than standing on it,
+  // and a marker that steps stop to stop and comes back to the start. Nothing
+  // about it is a column, and the one thing it does - advance - is the one
+  // thing a scheduled job does.
   AUTOMATION: [
-    <line key="rule" x1="-22" y1="13" x2="22" y2="13" vectorEffect="non-scaling-stroke" />,
-    ...[0, 1, 2, 3, 4, 5].map((slot) => {
-      const fired = slot === 3
-      const x = -18 + slot * 7.2
-      return (
-        <rect
-          className={fired ? 'is-on' : undefined}
-          key={x}
-          x={x - 2.5}
-          y={fired ? -10 : -3}
-          width="5"
-          height={fired ? 23 : 16}
-          rx="1.5"
-          vectorEffect="non-scaling-stroke"
-        />
-      )
+    <line key="rule" x1="-22" y1="0" x2="22" y2="0" vectorEffect="non-scaling-stroke" />,
+    ...[0, 1, 2, 3, 4, 5, 6].map((slot) => {
+      const x = Math.round((-21 + slot * 7) * 10) / 10
+      return <line className="dgm-stop" key={x} x1={x} y1="0" x2={x} y2="7" vectorEffect="non-scaling-stroke" />
     }),
+    <rect className="dgm-hand" key="head" x="-24" y="-7" width="6" height="7" rx="1.5" vectorEffect="non-scaling-stroke" />,
   ],
 }
 
@@ -406,15 +419,24 @@ function Seat({ seat }) {
  * A leader is a hairline and a label is a few characters tall, so the whole
  * strip gets one invisible hit area - otherwise the reader has to land on a
  * one-pixel line to read what the rail is about.
+ *
+ * The leader rides the tier, because it is tied to a corner of that tier and has
+ * to stay tied to it. The words do not: they sit in `dgm-steady`, which subtracts
+ * the tier's float straight back out, so a reader gets a deck that breathes and
+ * type that is nailed down. The node is the joint between the two, so it is
+ * wide enough that three pixels of travel never shows the end of the hairline
+ * coming out from under it.
  */
 function Rail({ layer, live, hot, fact, probe }) {
   return (
     <g className={`dgm-rail${live ? ' is-live' : ''}${hot ? ' is-hot' : ''}`} {...probe}>
       <rect className="dgm-hit" x={layer.right[0]} y={layer.right[1] - 18} width={600 - layer.right[0]} height="36" />
       <line className="dgm-leader" x1={layer.right[0]} y1={layer.right[1]} x2="424" y2={layer.right[1]} />
-      <circle className="dgm-railnode" cx="424" cy={layer.right[1]} r="2.6" />
-      <text className="dgm-side" x="434" y={layer.right[1] - 3}>{layer.label}</text>
-      <text className="dgm-sidefact" x="434" y={layer.right[1] + 12}>{fact}</text>
+      <g className="dgm-steady">
+        <circle className="dgm-railnode" cx="424" cy={layer.right[1]} r="3.4" />
+        <text className="dgm-side" x="434" y={layer.right[1] - 3}>{layer.label}</text>
+        <text className="dgm-sidefact" x="434" y={layer.right[1] + 12}>{fact}</text>
+      </g>
     </g>
   )
 }
@@ -537,7 +559,6 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
               <rect className="dgm-plane" x={-HALF} y={-HALF} width={HALF * 2} height={HALF * 2} rx={RAD} vectorEffect="non-scaling-stroke" />
               <rect className="dgm-planefill" x={-HALF} y={-HALF} width={HALF * 2} height={HALF * 2} rx={RAD} fill="url(#tr-grain)" />
             </g>
-            <text className="dgm-edge is-caption" x={CX} y="626" textAnchor="middle">ONE PLAN - FOUR HEIGHTS</text>
           </g>
 
           {/* Decks, top last: the deck above occludes the one it sits over, and
@@ -586,6 +607,21 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
                       y2={row.y}
                       vectorEffect="non-scaling-stroke"
                     />
+                    {/* The verifier. It walks the same links the hashes came
+                        down, on the same clock, half a period out of step - so
+                        the deck is being written and being audited at once and
+                        the two marks never meet. It runs whether or not anyone
+                        is looking; pointing at the deck is what makes it
+                        visible, which is why arriving never restarts it. */}
+                    <line
+                      className="dgm-ledgeraudit"
+                      pathLength="100"
+                      x1="-54"
+                      y1={LEDGER[row.index - 1].y}
+                      x2="-54"
+                      y2={row.y}
+                      vectorEffect="non-scaling-stroke"
+                    />
                   </g>
                 ))}
                 {/* A committed row is a bar with a thickness standing on the
@@ -607,9 +643,15 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
                       <rect className="dgm-ledgerhash" x="-59" y={row.y - 4.5} width="9" height="9" rx="2" vectorEffect="non-scaling-stroke" />
                       <g className="dgm-ledgercap">
                         <polygon className="dgm-ledgerbar" points={row.bar.base} />
-                        <rect className="dgm-ledgertick" x="-37" y={row.y - 1.5} width="30" height="3" rx="1.5" />
-                        <rect className="dgm-ledgertick" x="0" y={row.y - 1.5} width={last ? 28 : 17} height="3" rx="1.5" />
-                        <rect className="dgm-ledgerseal" x="41" y={row.y - 3.5} width="7" height="7" rx="2" />
+                        {/* Two marks on a row, not four. Two rules and a seal
+                            ruled across every record was a drawing of a line of
+                            text, and four of those stacked in eighty pixels
+                            read as hatching rather than as four records. One
+                            rule is enough to say something is written there;
+                            stripped to none, the row came out as a length of
+                            pipe with a stud on the end. */}
+                        <rect className="dgm-ledgertick" x="-34" y={row.y - 1.5} width={last ? 42 : 30} height="3" rx="1.5" />
+                        <rect className="dgm-ledgerseal" x="38" y={row.y - 3.5} width="7" height="7" rx="2" />
                       </g>
                     </g>
                   )
@@ -728,34 +770,31 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
                       <polygon
                         className={`dgm-fieldtile${bound ? ' is-bound' : ''}${field === index ? ' is-named' : ''}`}
                         points={cell.block.base}
+                        style={{ '--life': cell.life }}
                         {...touch(index)}
                       />
                     </g>
                   )
                 })}
-                {/* The field answers on the tile, not in the margin: a tick if
-                    the contract has checked it, an open bar if it has not. It
-                    rides the cap, so it is on top of a field that has stood up
-                    rather than on the deck the field used to lie on. */}
-                {field === null ? null : (
-                  <g transform={field < state.bound ? planDrop(-FIELD_RISE) : undefined}>
-                    <path
-                      className="dgm-fieldcheck"
-                      d={field < state.bound
-                        ? `M ${FIELDS[field].x - 4.4} ${FIELDS[field].y + 0.4} l 3.1 3.3 l 5.9 -6.8`
-                        : `M ${FIELDS[field].x - 4.4} ${FIELDS[field].y} h 8.8`}
-                      vectorEffect="non-scaling-stroke"
-                    />
-                  </g>
-                )}
+                {/* The tile used to carry a tick when the contract had checked
+                    it. A tick is an icon of being checked, drawn on top of a
+                    solid that is already standing up because it was checked -
+                    the figure saying the same thing twice, once in its own
+                    vocabulary and once in a borrowed one. The tile's own state
+                    is the answer, and the pill in the margin names it. */}
               </g>
             </g>
             <Rail layer={CONTRACT} live={state.bound > 0} hot={hot === 'contract'} fact={facts.contract} probe={probe('contract')} />
             {field === null ? null : (
               <g className="dgm-tag is-named">
-                <line className="dgm-leader" x1="118" y1={FIELDS[field].at[1]} x2={FIELDS[field].at[0] - 10} y2={FIELDS[field].at[1]} />
-                <rect className="dgm-tagbody" x="20" y={FIELDS[field].at[1] - 11} width="98" height="22" rx="11" />
-                <text className="dgm-tagtext" x="69" y={FIELDS[field].at[1] + 4} textAnchor="middle">{FIELDS[field].name}</text>
+                {/* The leader rides the deck it points into; the pill does not.
+                    It runs six pixels under the pill it arrives at, so three
+                    pixels of tier float can never open a gap at the joint. */}
+                <line className="dgm-leader" x1="112" y1={FIELDS[field].at[1]} x2={FIELDS[field].at[0] - 10} y2={FIELDS[field].at[1]} />
+                <g className="dgm-steady">
+                  <rect className="dgm-tagbody" x="20" y={FIELDS[field].at[1] - 11} width="98" height="22" rx="11" />
+                  <text className="dgm-tagtext" x="69" y={FIELDS[field].at[1] + 4} textAnchor="middle">{FIELDS[field].name}</text>
+                </g>
               </g>
             )}
           </g>
@@ -885,8 +924,13 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
               >
                 <Faces shape={item.plate} className="dgm-solid" />
                 <g className="dgm-motif" transform={planSpace(item.cx, item.y)}>{MOTIFS[item.key]}</g>
-                <text className="dgm-platelabel" x={item.cx} y={item.y - 48} textAnchor="middle">{item.key}</text>
-                <text className="dgm-platenote" x={item.cx} y={item.y - 36} textAnchor="middle">{item.note}</text>
+                {/* The plate rides and its name does not. Two offsets to undo
+                    here rather than one - the plate's own ride, and the bob of
+                    the tier this whole group sits inside. */}
+                <g className="dgm-steady">
+                  <text className="dgm-platelabel" x={item.cx} y={item.y - 48} textAnchor="middle">{item.key}</text>
+                  <text className="dgm-platenote" x={item.cx} y={item.y - 36} textAnchor="middle">{item.note}</text>
+                </g>
               </g>
             ))}
           </g>

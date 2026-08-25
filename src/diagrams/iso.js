@@ -211,6 +211,38 @@ export function planPrism(cx, cy, halfX, halfY, depth, radius) {
 }
 
 /**
+ * A round solid standing on a plane, built and drawn in plan coordinates. The
+ * cylinder to `planPrism`'s block, so a floor can carry two kinds of thing
+ * without either of them leaving the projection to be drawn.
+ *
+ * Inside `planSpace` a plan circle is an ordinary <circle> - the matrix does the
+ * squashing - so the two ends are circles and only the wall between them has to
+ * be solved. The silhouette runs through the two points where the plan circle is
+ * tangent to the extrusion direction: the solid goes up by equal negative steps
+ * on both axes, so the direction is the (1, 1) diagonal and the tangents are at
+ * +/- r / sqrt(2) along (1, -1). The near half of the base runs between them
+ * through the front of the circle, and the far half is hidden by the solid.
+ */
+export function planCyl(cx, cy, r, depth) {
+  const step = round(depth / (2 * ISO_Y))
+  const t = round(r / Math.SQRT2)
+  const [ax, ay] = [round(cx + t), round(cy - t)]
+  const [bx, by] = [round(cx - t), round(cy + t)]
+  const [ux, uy] = [round(ax - step), round(ay - step)]
+  const [vx, vy] = [round(bx - step), round(by - step)]
+  return {
+    step,
+    depth,
+    r,
+    base: { cx, cy },
+    top: { cx: round(cx - step), cy: round(cy - step) },
+    // Sweep 1 from the right tangent runs through the front of the circle,
+    // which is the half a viewer can see; sweep 0 back along the top rim.
+    wall: `M ${ax} ${ay} A ${r} ${r} 0 0 1 ${bx} ${by} L ${vx} ${vy} A ${r} ${r} 0 0 0 ${ux} ${uy} Z`,
+  }
+}
+
+/**
  * The projection as an SVG transform, so ordinary primitives can be drawn in
  * plan coordinates and land correctly on a deck. This is what lets the figures
  * carry rounded corners and true circles: a `<rect rx>` drawn inside this

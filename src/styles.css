@@ -9393,24 +9393,37 @@ html.is-hidden .clinic-node i,
 .dgm-face-left,
 .dgm-face-right { vector-effect: non-scaling-stroke; }
 
+/* The top face is roughly three quarters of a deck's drawn area - the projected
+   diamond is 263 by 103, the two skirts 263 by 15 each - so leaving it pure
+   white spent the entire colour budget on the quarter of the object nobody
+   looks at. Eight per cent is the ceiling and the ceiling is what this face
+   wants: the top has to stay lighter than the page ground or a deck's roof
+   merges with the sheet where the two meet, and at eight all four tops hold
+   above the paper at four different hues. At twelve, three of the four fall
+   below it and the decks lose their footing. */
 .dgm-face-top {
-  fill: var(--surface-solid);
-  stroke: color-mix(in srgb, var(--ink) 30%, color-mix(in srgb, var(--text) 58%, transparent));
+  fill: color-mix(in srgb, var(--ink) 8%, var(--surface-solid));
+  stroke: color-mix(in srgb, var(--ink-deep) 74%, transparent);
   stroke-width: 1;
   stroke-linejoin: round;
-  transition: stroke 300ms ease;
+  transition: stroke 300ms ease, fill 300ms ease;
 }
 
 .dgm-face-left {
-  fill: color-mix(in srgb, var(--ink) 9%, var(--body-near));
-  stroke: color-mix(in srgb, var(--text) 44%, transparent);
+  fill: color-mix(in srgb, var(--ink) var(--wash, 34%), var(--body-near));
+  stroke: color-mix(in srgb, var(--ink-deep) 50%, transparent);
   stroke-width: 1;
   stroke-linejoin: round;
 }
 
+/* The same wash carried one step into the tier's own dark, not a second mix -
+   the two skirts are one pigment at one density and only the value differs,
+   which is what makes them read as two faces of one object rather than as two
+   colours. Below about fourteen per cent they stop separating; above about
+   twenty-four the violet stops being a white solid with a hue on it. */
 .dgm-face-right {
-  fill: color-mix(in srgb, var(--ink) 16%, var(--body-far));
-  stroke: color-mix(in srgb, var(--text) 50%, transparent);
+  fill: color-mix(in srgb, var(--ink-deep) var(--shade, 18%), color-mix(in srgb, var(--ink) var(--wash, 34%), var(--body-far)));
+  stroke: color-mix(in srgb, var(--ink-deep) 55%, transparent);
   stroke-width: 1;
   stroke-linejoin: round;
 }
@@ -9448,7 +9461,7 @@ html.is-hidden .clinic-node i,
    difference between a drawing of four decks and a place where four things are
    running at four different rates.
 
-   `--bob` is registered so it can be animated inside the same calc() the boot
+   `--float` is registered so it can be animated inside the same calc() the boot
    uses. A second animation on `transform` would replace the boot outright, and
    a wrapper group for the float would leave every rail hanging off a deck that
    moves without it. One number, folded into the transform the tier already has.
@@ -9457,18 +9470,47 @@ html.is-hidden .clinic-node i,
    separation. Any more and the drops connecting the tiers start to work visibly
    for their living, and a governed stack that wobbles is not reassuring. */
 
-@property --bob {
+/* THE SOLIDS FLOAT AND THE TYPE DOES NOT.
+
+   Every carrier that drifts writes its offset into a registered custom property
+   rather than animating `transform` directly, and a `.dgm-steady` group inside
+   it subtracts the sum straight back out. So a deck breathes, a plate rides and
+   a slab drifts, while the words naming them sit exactly where they were set.
+
+   Three properties, not one, because they nest: a plate rides inside a tier
+   that bobs, so a plate's label has two offsets to undo. They are summed rather
+   than chained because a custom property cannot be defined in terms of itself.
+
+   Type printed on a solid's own face is not in this list - a number stencilled
+   on a site's wall travels with the wall it is painted on, which is the tile
+   moving and not a label floating. */
+
+@property --float {
   syntax: '<length>';
-  inherits: false;
+  inherits: true;
   initial-value: 0px;
 }
 
-@keyframes dgm-bob {
-  0%, 100% { --bob: 0px; }
-  50% { --bob: -3px; }
+@property --ride {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0px;
 }
 
-.dgm-slide { transform: translateY(calc(var(--lift, 0px) * (1 - var(--spread, 1)) + var(--bob, 0px))); }
+@property --drift {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0px;
+}
+
+.dgm-steady { transform: translateY(calc((var(--float, 0px) + var(--ride, 0px) + var(--drift, 0px)) * -1)); }
+
+@keyframes dgm-bob {
+  0%, 100% { --float: 0px; }
+  50% { --float: -3px; }
+}
+
+.dgm-slide { transform: translateY(calc(var(--lift, 0px) * (1 - var(--spread, 1)) + var(--float, 0px))); }
 
 .dgm-svg.is-live .dgm-slide {
   animation: dgm-bob calc(7.4s + var(--life, 0) * 4.6s) ease-in-out infinite;
@@ -9496,10 +9538,33 @@ html.is-hidden .clinic-node i,
   --ink: var(--accent);
   --ink-deep: var(--accent-strong);
   --ink-soft: var(--accent-soft);
-  /* The two body tones every skirt is mixed into, so the near and far faces of
-     a solid separate before any hue is added to them. */
-  --body-near: color-mix(in srgb, var(--text) 5%, var(--surface-solid));
-  --body-far: color-mix(in srgb, var(--text) 11%, var(--surface-solid));
+  /* How much of itself a solid carries, and how far its turned face goes.
+     Two numbers for the whole system, inherited, so a tier could override them
+     and none needs to.
+
+     They used to be 9% and 16% of ink mixed into a text-into-white neutral,
+     which meant nine tenths of every face was a colour with no colour in it -
+     and measured against the sheet, three of the four near faces came out at or
+     below the chroma of the paper they were sitting on. The receipt tier was
+     the worst: less colourful than the page. That is what "faded" was. It was
+     never the inks; it was that the faces were grey with a rumour of ink in
+     them.
+
+     34% is where two constraints meet rather than a number picked by eye. A
+     tint reads as a colour rather than as a warm or cool grey at roughly three
+     times its surround's chroma, and the weakest ink that has to clear the
+     sheet is the accent, which gets there at exactly 34%. A white solid under
+     diffuse light also sets its vertical face at about 0.85 of its horizontal
+     one, and the accent at 34% lands there too. */
+  --wash: 34%;
+  --shade: 18%;
+  /* The lit face starts as the solid's own white. There was no reason for it to
+     start grey - that 5% of text was spent before any ink arrived. The turned
+     face keeps a trace, only to break the tie between the two skirts; the
+     darkening itself is now done with the tier's own dark, because shading with
+     black is exactly what turns a hue into a grey. */
+  --body-near: var(--surface-solid);
+  --body-far: color-mix(in srgb, var(--text) 5%, var(--surface-solid));
   opacity: calc(0.62 + 0.38 * var(--charge, 1));
   transition: --spread 1150ms cubic-bezier(0.16, 1, 0.3, 1), --charge 1450ms 200ms cubic-bezier(0.33, 1, 0.68, 1);
 }
@@ -9526,22 +9591,47 @@ html.is-hidden .clinic-node i,
    that colour. Blue - the house ink - starts where the site's own governance
    does, at the contract. */
 
+/* Each ink is its token, or as close to it as the tier can carry. They were all
+   pre-muted on the way in - violet mixed a fifth of the way to black before a
+   face ever saw it, green routed through `--settled`, which exists to stop a
+   1.3px rim reading as a highlighter and has no business setting the colour of
+   a whole deck. `--settled` still owns the small marks it was invented for: the
+   seal on a ledger row, the rim of an opened shutter, the word in a signed
+   pill. It no longer owns a tier.
+
+   `--ink-soft` is one construction at one strength across all four, so a pad or
+   a motif standing on a deck reads as shallow relief in that deck's own colour
+   rather than as four differently-weighted tints. */
+
 .dgm-slide.is-surface {
-  --ink: color-mix(in srgb, var(--governed) 82%, var(--text));
-  --ink-deep: color-mix(in srgb, var(--governed) 56%, var(--text));
-  --ink-soft: color-mix(in srgb, var(--governed) 18%, var(--surface-solid));
+  /* Eased a little off the token. Violet is the lightest and most chromatic of
+     the four, and at full strength the machine tier - the one band here that is
+     not the site - came out as the loudest colour in the drawing. */
+  --ink: color-mix(in srgb, var(--governed) 74%, var(--text));
+  --ink-deep: color-mix(in srgb, var(--governed) 50%, var(--text));
+  --ink-soft: color-mix(in srgb, var(--ink) 22%, var(--surface-solid));
+}
+
+/* Written out rather than inherited. The blue tier had no rule at all - it was
+   falling through to the figure default, which is the same blue, so it worked
+   and nobody could see that the one tier a reader spends longest on had never
+   been given a decision. */
+.dgm-slide.is-contract {
+  --ink: var(--accent);
+  --ink-deep: var(--accent-strong);
+  --ink-soft: color-mix(in srgb, var(--ink) 22%, var(--surface-solid));
 }
 
 .dgm-slide.is-authority {
   --ink: var(--warning);
   --ink-deep: color-mix(in srgb, var(--warning) 72%, var(--text));
-  --ink-soft: var(--warning-soft);
+  --ink-soft: color-mix(in srgb, var(--ink) 22%, var(--surface-solid));
 }
 
 .dgm-slide.is-receipt {
-  --ink: var(--settled);
-  --ink-deep: color-mix(in srgb, var(--settled) 70%, var(--text));
-  --ink-soft: var(--success-soft);
+  --ink: var(--success);
+  --ink-deep: color-mix(in srgb, var(--success) 70%, var(--text));
+  --ink-soft: color-mix(in srgb, var(--ink) 22%, var(--surface-solid));
 }
 
 /* Ambient occlusion, not a cast shadow. There is no light source in an
@@ -9595,11 +9685,15 @@ html.is-hidden .clinic-node i,
 
    THE SOLIDS SETTLE. Anything standing on a surface breathes on its own long
    clock: the nineteen contract fields, the four waiting proposals, the three
-   landing pads, the forty-two criteria in the library. Half a pixel, nine to
-   sixteen seconds, scattered so no two are in step - the amplitude of a city
-   seen from far enough away rather than a row of things vibrating. Only what is
-   standing settles: a field or a criterion still lying flat is part of the deck
-   it is printed on, and part of a deck does not breathe on its own.
+   landing pads. Half a pixel, nine to sixteen seconds, scattered so no two are
+   in step - the amplitude of a city seen from far enough away rather than a row
+   of things vibrating. Only what is standing settles: a field still lying flat
+   is part of the deck it is printed on, and part of a deck does not breathe on
+   its own.
+
+   Nectar's criteria used to settle on this clock too. They have their own now -
+   a wander across the floor rather than a breath in place - because a library
+   floor is a floor of plant and plant gets moved about.
 
    Inside `planSpace` a translate is in plan units, and equal negative steps on
    both axes cancel in x and subtract in y - so this is straight up the screen,
@@ -9611,7 +9705,7 @@ html.is-hidden .clinic-node i,
   64% { transform: translate(-0.3px, -0.3px); }
 }
 
-.dgm-svg.is-live :is(.dgm-stand, .dgm-field.is-bound, .dgm-crit.is-bound) {
+.dgm-svg.is-live :is(.dgm-stand, .dgm-field.is-bound) {
   animation: dgm-stir calc(9.2s + var(--life, 0) * 6.8s) ease-in-out infinite;
   animation-delay: calc(var(--life, 0) * -13.4s);
 }
@@ -9633,7 +9727,8 @@ html.is-hidden .clinic-node i,
 }
 
 .dgm-svg.is-live .dgm-tine:not(.is-live),
-.dgm-svg.is-live .dgm-channel {
+.dgm-svg.is-live .dgm-channel,
+.dgm-svg.is-live .dgm-feeder {
   animation: dgm-creep calc(6.4s + var(--life, 0) * 3.6s) linear infinite;
   animation-delay: calc(var(--life, 0) * -8.8s);
 }
@@ -9806,9 +9901,11 @@ html.is-hidden .clinic-node i,
    cannot also be transitioned, so hover lights it instead. */
 
 @keyframes dgm-ride {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-2.6px); }
+  0%, 100% { --ride: 0px; }
+  50% { --ride: -2.6px; }
 }
+
+.dgm-plate { transform: translateY(var(--ride, 0px)); }
 
 .dgm-svg.is-live .dgm-plate {
   animation: dgm-ride calc(6.8s + var(--life, 0) * 3.4s) ease-in-out infinite;
@@ -9824,8 +9921,53 @@ html.is-hidden .clinic-node i,
 }
 
 .dgm-motif line { stroke-linecap: round; }
-.dgm-motif .is-on { fill: color-mix(in srgb, var(--ink) 26%, var(--bg-soft)); }
 .dgm-plate.is-live .dgm-motif { fill: var(--ink-soft); stroke: var(--ink); }
+
+/* THE PLATES RUN. All three drifted, and one of the three had a mechanism in
+   it; the other two were still pictures riding a float, which is the same
+   criticism the decks below them already answered.
+
+   The model resamples. Seven columns, seven clocks, each scaling from its own
+   foot so the rule they stand on never moves and the envelope of the
+   distribution survives while its shape keeps re-forming. A model's output is a
+   draw from a distribution, and this is the only scale at which that is
+   drawable. */
+
+@keyframes dgm-resample {
+  0%, 100% { transform: scaleY(1); }
+  32% { transform: scaleY(0.74); }
+  68% { transform: scaleY(1.2); }
+}
+
+.dgm-draw {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+
+.dgm-svg.is-live .dgm-draw {
+  animation: dgm-resample calc(3.9s + var(--life, 0) * 2.8s) ease-in-out infinite;
+  animation-delay: calc(var(--life, 0) * -6.4s);
+}
+
+/* The schedule advances. Seven stops on a rule and a head that steps between
+   them and returns - held at each stop rather than gliding, because a scheduled
+   job fires at a time and waits, and a marker sliding smoothly along a line is
+   a progress bar, which is the opposite claim. `steps()` does the holding, so
+   the motion is discrete without seven keyframes describing it. */
+
+.dgm-stop { stroke-width: 1; opacity: 0.62; }
+
+.dgm-hand { fill: color-mix(in srgb, var(--ink) 30%, var(--bg-soft)); }
+
+/* Seven stops seven plan units apart, so the head has to travel forty-nine to
+   land on all seven and wrap - `steps(7, end)` over forty-two would stop one
+   short and never reach the last one. */
+@keyframes dgm-advance {
+  from { transform: translateX(0); }
+  to { transform: translateX(49px); }
+}
+
+.dgm-svg.is-live .dgm-hand { animation: dgm-advance 7.7s steps(7, end) infinite; }
 
 /* The agent's motif is a loop, so it loops. The old one ran three spokes into
    the middle of a hub disc, which read as lines crossing inside a circle rather
@@ -9961,23 +10103,29 @@ html.is-hidden .clinic-node i,
 .dgm-field.is-bound .dgm-face-left,
 .dgm-field.is-bound .dgm-face-right { opacity: 1; }
 
+/* Unbound, a tile is cut from the deck's own paper, so only its edge shows -
+   which is what "not yet built on" should look like. It used to be pure white
+   on a white deck, which read the same; on a deck that now carries eight per
+   cent of its own ink it would read as a hole punched through it. */
 .dgm-fieldtile {
-  fill: var(--surface-solid);
+  fill: color-mix(in srgb, var(--ink) 8%, var(--surface-solid));
+  fill-opacity: 1;
   stroke: color-mix(in srgb, var(--text) 22%, transparent);
   stroke-width: 1;
   cursor: pointer;
   vector-effect: non-scaling-stroke;
-  transition: fill 320ms ease, stroke 320ms ease, transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: fill 320ms ease, fill-opacity 320ms ease, stroke 320ms ease, transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .dgm-fieldtile.is-bound { transform: translate(calc(var(--lift, 0px) * -1), calc(var(--lift, 0px) * -1)); }
 
 .dgm-fieldtile.is-bound {
-  fill: color-mix(in srgb, var(--ink) 24%, var(--surface-solid));
+  fill: color-mix(in srgb, var(--ink) 46%, var(--surface-solid));
+  fill-opacity: 0.6;
   stroke: color-mix(in srgb, var(--ink) 64%, transparent);
 }
 
-.dgm-fieldtile.is-named { fill: var(--ink); stroke: var(--ink-deep); stroke-width: 1.6; }
+.dgm-fieldtile.is-named { fill: var(--ink); fill-opacity: 1; stroke: var(--ink-deep); stroke-width: 1.6; }
 
 /* Things standing on a deck are extruded like the deck is. A riser is the same
    plan shape drawn a few pixels lower, so what shows under it is its own side -
@@ -10000,19 +10148,6 @@ html.is-hidden .clinic-node i,
 
 .dgm-riser.is-up { opacity: 0.28; }
 
-/* The answer is drawn in the tile the reader is pointing at: a tick if the
-   contract has checked that field, a flat bar if it has not. A count of
-   nineteen means nothing until one of them shows what being checked looks
-   like. */
-
-.dgm-fieldcheck {
-  fill: none;
-  stroke: var(--surface-solid);
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  pointer-events: none;
-}
 
 /* The contract walks its own fields, in the order it checks them. `--seq` is a
    field's place in that pass, so the check crosses the grid as one band -
@@ -10024,29 +10159,61 @@ html.is-hidden .clinic-node i,
    restarts it, which is the point - the contract is seen re-checking from the
    first field rather than getting brighter in place. */
 
+/* NO COLOUR INTERPOLATES IN A KEYFRAME HERE, AND THAT IS NOT A STYLE CHOICE.
+
+   `dgm-passbound` used to animate `fill` between two `color-mix()` values built
+   out of `var(--ink)`. It looks correct in every static frame and it survives
+   `getComputedStyle` - which reports a perfectly ordinary pale blue-grey. But
+   the moment anything forces a style recalculation on an ancestor while those
+   animations are in flight - pointing at one tile changes a class on the root
+   of the figure, which is enough - the compositor re-snapshots the keyframes
+   and paints roughly half the grid in a neon green that exists nowhere in the
+   token set, in the stylesheet, or in the computed styles. It is a rasteriser
+   fault, not a cascade fault, which is why it could not be found by reading.
+
+   So: the pass is a number, never a colour. `fill-opacity` and `stroke-width`
+   both interpolate as scalars and neither can be mis-decoded into a hue. The
+   tile carries its deep colour statically and sits at partial opacity over the
+   deck's own top face; the check landing on it takes that opacity to one, which
+   deepens the tile against the deck exactly the way the fill mix used to,
+   through a mechanism that cannot go wrong. */
+
 @keyframes dgm-pass {
   0%, 9%, 100% { stroke-width: 1; }
   4% { stroke-width: 2.4; }
 }
 
-/* A bound tile is already blue, so an extra pixel of edge on it is a wave a
+/* A bound tile is already coloured, so an extra pixel of edge on it is a wave a
    reader has to be told about. It deepens as the pass reaches it instead: at
    19/19 the whole grid is bound, and the band crossing it is the only thing
    left saying the contract is still checking rather than finished. */
 
 @keyframes dgm-passbound {
-  0%, 9%, 100% { stroke-width: 1; fill: color-mix(in srgb, var(--ink) 24%, var(--surface-solid)); }
-  4% { stroke-width: 2.4; fill: color-mix(in srgb, var(--ink) 46%, var(--surface-solid)); }
+  0%, 9%, 100% { stroke-width: 1; fill-opacity: 0.6; }
+  4% { stroke-width: 2.4; fill-opacity: 1; }
 }
 
 @keyframes dgm-passhard {
-  0%, 9%, 100% { stroke-width: 1; }
-  4% { stroke-width: 3.2; stroke: var(--ink-deep); }
+  0%, 9%, 100% { stroke-width: 1; fill-opacity: 0.6; }
+  4% { stroke-width: 3.2; fill-opacity: 1; }
 }
 
+/* THE ORDER IS NOT AN ORDER. It ran on `--seq`, the field's index in the
+   contract, which drew a wave sweeping the grid in reading order - the same
+   wave, in the same direction, on every cycle. A contract does not check its
+   fields in the order they are printed; it checks all nineteen, continuously,
+   and which one is under the head at any instant is not a fact worth
+   asserting.
+
+   Nineteen clocks, all different lengths, all started at different points. No
+   two share a period, so the visiting order never repeats within any run a
+   reader will sit through - random every time, without a random number, which
+   the diagram sources are not allowed to use and would not survive a test
+   suite if they were. */
+
 .dgm-svg.is-live .dgm-fieldtile:not(.is-named) {
-  animation: dgm-pass 5.6s ease-in-out infinite;
-  animation-delay: calc(var(--seq, 0) * 1.4s);
+  animation: dgm-pass calc(4.6s + var(--life, 0) * 3.9s) ease-in-out infinite;
+  animation-delay: calc(var(--life, 0) * -8.3s);
 }
 
 .dgm-svg.is-live .dgm-fieldtile.is-bound:not(.is-named) { animation-name: dgm-passbound; }
@@ -10095,6 +10262,46 @@ html.is-hidden .clinic-node i,
    of itself against its own side of the frame. */
 .dgm-leaf.is-left.is-open { transform: translateX(-22px); }
 .dgm-leaf.is-right.is-open { transform: translateX(22px); }
+
+/* A GATE THAT OPENS ONCE AND STAYS OPEN IS A DOOR SOMEBODY LEFT AJAR.
+
+   This deck was the only one in the figure with nothing running on it after the
+   run reached it: the blades ran back, the bolts withdrew, and then the whole
+   mechanism sat still for the rest of the drawing's life. Which also said the
+   wrong thing - a shutter admits one run and closes behind it, or it is not a
+   shutter, and the claim this deck carries is that nothing gets through here
+   without a signature.
+
+   So once it is signed it cycles. Open, hold, close, hold, open: four seconds
+   of clearance in eleven, with the bolts driving back across the seam while the
+   blades are home. The two are written into one keyframe each and share a
+   period, so the blades arriving and the bolts taking hold are one event.
+
+   The cycle starts shut, which is where the blades already are when the class
+   lands - so the first opening of the loop reads as the signature opening it
+   rather than as an animation snapping into place over a transition. */
+
+@keyframes dgm-cycle {
+  0%, 4% { transform: translateX(0); }
+  16%, 52% { transform: translateX(calc(var(--blade, 1) * 22px)); }
+  64%, 100% { transform: translateX(0); }
+}
+
+@keyframes dgm-latch {
+  0%, 8% { transform: translateY(0); }
+  20%, 48% { transform: translateY(calc(var(--end, 1) * 26px)); }
+  60%, 100% { transform: translateY(0); }
+}
+
+/* The frame takes each closing the way it takes a load. */
+@keyframes dgm-shutload {
+  0%, 58%, 72%, 100% { stroke-width: 1; }
+  65% { stroke-width: 1.9; }
+}
+
+.dgm-svg.is-live .dgm-leaf.is-open { animation: dgm-cycle 11s cubic-bezier(0.5, 0, 0.2, 1) infinite; }
+.dgm-svg.is-live .dgm-bolt.is-clear { animation: dgm-latch 11s cubic-bezier(0.5, 0, 0.2, 1) infinite; }
+.dgm-svg.is-live .dgm-shutter.is-open .dgm-housing { animation: dgm-shutload 11s ease-out infinite; }
 
 /* Drawn over the blades, so the opening keeps one clean edge whatever is behind
    it. It stays graphite while the run is held: the thing under load is the
@@ -10262,9 +10469,9 @@ html.is-hidden .clinic-node i,
    bars read as an illustration of a ledger; a thin accent edge round a row that
    is otherwise the same paper as the rest of the deck reads as a record. */
 
-.dgm-ledgerrow.is-written .dgm-ledgerbar { fill: color-mix(in srgb, var(--ink) 9%, var(--surface-solid)); stroke: var(--ink); }
+.dgm-ledgerrow.is-written .dgm-ledgerbar { fill: color-mix(in srgb, var(--ink) 22%, var(--surface-solid)); stroke: var(--ink); }
 .dgm-ledgerrow.is-written .dgm-ledgertick { fill: color-mix(in srgb, var(--ink) 72%, transparent); }
-.dgm-ledgerrow.is-written .dgm-ledgerhash { fill: color-mix(in srgb, var(--ink) 22%, var(--surface-solid)); stroke: var(--ink); }
+.dgm-ledgerrow.is-written .dgm-ledgerhash { fill: color-mix(in srgb, var(--ink) 34%, var(--surface-solid)); stroke: var(--ink); }
 .dgm-ledgerrow.is-written .dgm-ledgerseal { fill: var(--settled); }
 
 /* The ledger posts, and posting is the thing worth watching: a row is committed
@@ -10322,12 +10529,63 @@ html.is-hidden .clinic-node i,
   animation-delay: calc(var(--seq, 0) * 2s - 0.5s);
 }
 
-/* Lean on the deck and the chain is what lights - every hash, and every link
-   carrying one down. That is the whole of what makes a ledger a ledger, and it
-   is the honest answer to a pointer: the record is not revealed, the chain
-   holding it together is. */
+/* LEANING ON THE LEDGER RE-VERIFIES IT.
 
-.dgm-deck.is-hot .dgm-ledgerchain { stroke: var(--ink); stroke-dasharray: none; }
+   The answer to a pointer here used to be that the dashed chain went solid -
+   one shape going from hollow to filled, which is the laziest move a diagram
+   has, and it told a reader nothing they could not already see. A ledger's
+   whole claim is that it can be checked: every row's hash has to match the row
+   above it, all the way to the top, and that is a walk, not a state.
+
+   So pointing at the deck walks it. A verifier runs the chain from the first
+   row down, and each seal takes a beat as the walk reaches it - `--seq` again,
+   because this one genuinely is an order and the order is the point. It is the
+   same clock the posting runs on, offset half a period, so the two never
+   collide and the deck reads as a thing being written and a thing being audited
+   rather than as a thing that lights up.
+
+   The chain itself gains weight rather than changing kind: still dashed, still
+   the same links, just legible. What a pointer buys is the walk. */
+
+.dgm-deck.is-hot .dgm-ledgerchain { stroke: color-mix(in srgb, var(--ink) 76%, transparent); stroke-width: 1.4; }
+
+/* The verifier runs on its own clock whether or not anybody is pointing, in the
+   opposite direction to the posting and half a period out of step with it, and
+   the pointer only decides whether it can be seen. That is the same rule the
+   rest of the pair keeps: a mechanism under a pointer carries more, it never
+   runs faster - so nothing here re-times, and the walk a reader uncovers is
+   already mid-stride rather than starting over because they arrived. */
+
+@property --audit {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+.dgm-deck { transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1), --audit 260ms ease; }
+.dgm-deck.is-hot { --audit: 1; }
+
+@keyframes dgm-verify {
+  0% { stroke-dashoffset: 0; opacity: 0; }
+  6% { opacity: calc(var(--run-in, 1) * var(--audit, 0)); }
+  22% { stroke-dashoffset: -105; opacity: calc(var(--run-in, 1) * var(--audit, 0)); }
+  23%, 100% { stroke-dashoffset: -105; opacity: 0; }
+}
+
+.dgm-ledgeraudit {
+  fill: none;
+  stroke: var(--settled);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-dasharray: 6 194;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.dgm-svg.is-live .dgm-ledgeraudit {
+  animation: dgm-verify 6.4s linear infinite;
+  animation-delay: calc((0.75 - var(--seq, 0)) * 2s);
+}
 .dgm-deck.is-hot .dgm-ledgerhash { fill: var(--ink-deep); stroke: var(--ink-deep); }
 .dgm-deck.is-hot .dgm-ledgerbar { stroke: color-mix(in srgb, var(--ink) 62%, transparent); }
 
@@ -10420,19 +10678,28 @@ html.is-hidden .clinic-node i,
    up, so compounding is something a reader watches rather than reads. */
 
 /* The library is a plane held above the ground, not printed on the same sheet as
-   it, so the whole of it drifts - its grain, its edge, the mesh on it and the
-   chips that land there. One clock, shared and unjittered, because a chip has to
-   arrive exactly where its node is: the lift arcs underneath stay put, and a
-   chip is wide enough to keep the end of its arc hidden through the whole
-   travel. */
+   it, so the whole of it drifts - its grain, its edge, the mesh on it, the gates
+   on its rim and the chips that land there. One clock, shared and unjittered.
+
+   The channels drift with it. They used to stay put while the slab moved, which
+   was fine while they ended on a node in the middle of the plane and a chip was
+   wide enough to hide the end of the arc; it is not fine now that each one ends
+   at the foot of a gate, where three pixels of travel would show as the route
+   parting from the thing it arrives at. Moving the joint to the site end costs
+   nothing: the mast head there is seven and a half pixels across and was built
+   for exactly this, and the worst case it has to swallow - the orbit's lateral
+   two and a half plus this three - is under four. */
 
 @keyframes dgm-drift {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-3px); }
+  0%, 100% { --drift: 0px; }
+  50% { --drift: -3px; }
 }
 
+.dgm-library,
+.dgm-lift { transform: translateY(var(--drift, 0px)); }
+
 .dgm-svg.is-live .dgm-library,
-.dgm-svg.is-live .dgm-liftchip { animation: dgm-drift 11s ease-in-out infinite; }
+.dgm-svg.is-live .dgm-lift { animation: dgm-drift 11s ease-in-out infinite; }
 
 /* The slab's shade on the federation runs the drift's clock, not a tier's, so
    the ground darkens as the library settles towards it and lifts as it rises. */
@@ -10497,9 +10764,12 @@ html.is-hidden .clinic-node i,
 
 .dgm-library.is-hot .dgm-traffic { stroke-dasharray: 8 92; }
 .dgm-library.is-hot .dgm-link.is-bound { stroke: var(--accent); }
-.dgm-library.is-hot .dgm-crit.is-bound .dgm-node { fill: var(--accent-strong); }
+/* Leaning on the panel deepens every lamp into its own dark, rather than
+   repainting the floor one colour. Forty-two solids going blue under a cursor
+   would throw away the only state this figure carries. */
+.dgm-library.is-hot .dgm-crit.is-bound .dgm-node { fill: var(--ink-deep); }
 .dgm-library.is-hot .dgm-crit.is-bound :is(.dgm-face-left, .dgm-face-right) {
-  fill: color-mix(in srgb, var(--accent) 22%, var(--surface-solid));
+  fill: color-mix(in srgb, var(--ink) 48%, var(--surface-solid));
 }
 .dgm-library.is-hot .dgm-pulse { stroke: var(--accent-strong); stroke-width: 1.8; }
 
@@ -10520,6 +10790,60 @@ html.is-hidden .clinic-node i,
   opacity: var(--in);
 }
 
+/* Red, amber, green - the three words a floor of plant has always used, and the
+   only legend this drawing needs. A criterion is a thing the library is holding
+   good, holding under review, or not holding; the state is the colour of the
+   solid itself and the light on top of it, not a key in the margin.
+
+   Each tier sets the same two inks every other solid in the pair is drawn from,
+   so a criterion is the same material as a deck and a site at three hues rather
+   than three separately tuned tints. Amber and green are the same two the other
+   figure's authority and receipt tiers use, which is what makes the two drawings
+   read as one system. */
+
+.dgm-crit.is-red {
+  --ink: var(--danger);
+  --ink-deep: color-mix(in srgb, var(--danger) 68%, var(--text));
+}
+
+.dgm-crit.is-amber {
+  --ink: var(--warning);
+  --ink-deep: color-mix(in srgb, var(--warning) 72%, var(--text));
+}
+
+.dgm-crit.is-green {
+  --ink: var(--success);
+  --ink-deep: color-mix(in srgb, var(--success) 70%, var(--text));
+}
+
+/* THE FLOOR MOVES. Not a bob and not a drift - a wander in plan, so a solid
+   shifts along the slab's own two axes the way a pallet gets nudged across a
+   floor rather than hovering off it. Two or three plan units, under a fifth of a
+   criterion's own width, so nothing ever parts from the lattice it stands on.
+   Blocks take one route and drums the other, and both run on clocks scattered
+   far enough apart that forty-two of them never travel together. */
+
+@keyframes dgm-shuffle {
+  0%, 11% { transform: translate(0, 0); }
+  29%, 42% { transform: translate(2.4px, -1.3px); }
+  60%, 73% { transform: translate(0.7px, 2.2px); }
+  91%, 100% { transform: translate(0, 0); }
+}
+
+@keyframes dgm-shuffleback {
+  0%, 14% { transform: translate(0, 0); }
+  32%, 47% { transform: translate(-1.9px, 1.6px); }
+  64%, 78% { transform: translate(1.4px, 1.8px); }
+  94%, 100% { transform: translate(0, 0); }
+}
+
+.dgm-svg.is-live .dgm-crit {
+  animation: dgm-shuffle calc(13s + var(--life, 0) * 9.4s) ease-in-out infinite;
+  animation-delay: calc(var(--life, 0) * -18.6s);
+}
+
+.dgm-svg.is-live .dgm-crit.is-drum { animation-name: dgm-shuffleback; }
+
 .dgm-crit .dgm-face-left,
 .dgm-crit .dgm-face-right {
   opacity: 0;
@@ -10527,14 +10851,17 @@ html.is-hidden .clinic-node i,
   transition: opacity 420ms ease, fill 300ms ease;
 }
 
+/* Built from the same two numbers the decks use, so a criterion is the same
+   material as everything else in the pair rather than a separately tuned tint
+   that drifts every time the face recipe moves. */
 .dgm-crit .dgm-face-left {
-  fill: color-mix(in srgb, var(--accent) 13%, var(--body-near));
-  stroke: color-mix(in srgb, var(--text) 30%, transparent);
+  fill: color-mix(in srgb, var(--ink) var(--wash, 34%), var(--body-near));
+  stroke: color-mix(in srgb, var(--ink-deep) 44%, transparent);
 }
 
 .dgm-crit .dgm-face-right {
-  fill: color-mix(in srgb, var(--accent) 22%, var(--body-far));
-  stroke: color-mix(in srgb, var(--text) 34%, transparent);
+  fill: color-mix(in srgb, var(--ink-deep) var(--shade, 18%), color-mix(in srgb, var(--ink) var(--wash, 34%), var(--body-far)));
+  stroke: color-mix(in srgb, var(--ink-deep) 50%, transparent);
 }
 
 .dgm-crit.is-bound .dgm-face-left,
@@ -10575,33 +10902,112 @@ html.is-hidden .clinic-node i,
   animation-delay: calc(var(--life, 0) * -9.7s);
 }
 
+/* The lamp on top of a solid. Unbound it is the criterion's own colour at a
+   fifth, which is a thing on the floor with its light off; bound, it is that
+   colour at full and it starts switching. */
+
 .dgm-node {
-  fill: color-mix(in srgb, var(--text) 20%, var(--surface-solid));
+  fill: var(--ink);
+  fill-opacity: 0.22;
   stroke: color-mix(in srgb, var(--text) 26%, transparent);
   stroke-width: 1;
   stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
-  transition: fill 420ms ease, stroke 420ms ease, transform 520ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: fill 420ms ease, fill-opacity 420ms ease, stroke 420ms ease, transform 520ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.dgm-crit.is-bound .dgm-node { fill: var(--accent); stroke: var(--accent-strong); }
-.dgm-crit.is-new .dgm-node { fill: var(--accent-strong); stroke: var(--accent-strong); }
+.dgm-crit.is-bound .dgm-node { fill-opacity: 1; stroke: var(--ink-deep); }
+/* The one that has just bound is marked by its own outline, not by being
+   repainted a colour no other criterion on the floor is wearing. The ring
+   riding it is what says which one it is. */
+.dgm-crit.is-new .dgm-node { stroke: var(--ink-deep); stroke-width: 2; }
 
-/* A criterion ringing out. On a two-pixel dot this could swing the whole way
-   down and still read as one thing pulsing; on a roof twelve pixels across it
-   reads as a second colour, and forty-two of them in two colours is a chart
-   legend nobody asked for. Shallow enough that the population stays one
-   material and only the light on it moves. */
+/* LAMPS. A criterion the library is holding goes out and comes back on a clock
+   of its own - a switch, not a fade, because a light that eases is a light
+   nobody ever built. Two patterns across forty-two incommensurable periods, so
+   no two ever agree and the floor never falls into a loop a reader can catch.
 
-@keyframes dgm-beat {
-  0%, 100% { fill-opacity: 1; }
-  50% { fill-opacity: 0.72; }
+   `step-end` is what makes it a switch: each keyframe holds its value until the
+   next one, so nothing between the two states is ever drawn.
+
+   Nothing interpolates a colour here, and nothing on this floor may. A keyframe
+   that mixes two color-mix() values gets re-snapshotted by the compositor when a
+   class change forces a style recalc mid-animation, and what comes back is not a
+   colour anywhere in this stylesheet. Only scalars move. */
+
+@keyframes dgm-lamp {
+  0% { fill-opacity: 1; }
+  46% { fill-opacity: 0.2; }
+  60% { fill-opacity: 1; }
+}
+
+@keyframes dgm-lampflick {
+  0% { fill-opacity: 1; }
+  21% { fill-opacity: 0.2; }
+  27% { fill-opacity: 1; }
+  63% { fill-opacity: 0.2; }
+  82% { fill-opacity: 1; }
 }
 
 .dgm-svg.is-live .dgm-crit.is-bound .dgm-node {
-  animation: dgm-beat calc(3.4s + var(--life, 0) * 3.8s) ease-in-out infinite;
-  animation-delay: calc(var(--life, 0) * -9s);
+  animation: dgm-lamp calc(5.2s + var(--life, 0) * 7.4s) step-end infinite;
+  animation-delay: calc(var(--life, 0) * -12.7s);
 }
+
+.dgm-svg.is-live .dgm-crit.is-bound.is-flick .dgm-node { animation-name: dgm-lampflick; }
+
+/* A gate on the rim, where a channel now arrives. The same solid as everything
+   else on this floor at the scale of a port, seated so its outboard face is
+   flush with the slab's own plan boundary - which is what makes the riser from
+   the landing point up to its crown a single mark lying on one continuous
+   surface instead of a line in the air.
+
+   It is drawn in the library's own ink rather than a criterion's, because it
+   belongs to the slab and not to the floor standing on it. */
+
+.dgm-gate .dgm-face-left {
+  fill: color-mix(in srgb, var(--accent) 30%, var(--surface-solid));
+  stroke: color-mix(in srgb, var(--accent-strong) 46%, transparent);
+}
+
+.dgm-gate .dgm-face-right {
+  fill: color-mix(in srgb, var(--accent-strong) 22%, color-mix(in srgb, var(--accent) 30%, var(--body-far)));
+  stroke: color-mix(in srgb, var(--accent-strong) 52%, transparent);
+}
+
+.dgm-gatecap {
+  fill: color-mix(in srgb, var(--accent) 26%, var(--surface-solid));
+  stroke: color-mix(in srgb, var(--accent-strong) 62%, transparent);
+  stroke-width: 1;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  transition: fill 300ms ease, stroke 300ms ease;
+}
+
+/* A gate with a route running through it takes the accent; leaning on the site
+   that owns it takes the accent's own dark. Both are a change of value on the
+   crown alone - the body of the gate belongs to the slab and never moves. */
+.dgm-gate.is-up .dgm-gatecap { fill: var(--accent); stroke: var(--accent-strong); }
+.dgm-gate.is-hot .dgm-gatecap { fill: var(--accent-strong); stroke: var(--accent-strong); }
+
+/* Gate to criterion, on the slab. Same dash and the same creep as the channel
+   feeding it, so the route is one continuous thing that changes surface at the
+   rim rather than two marks that happen to meet there. Drawn among the mesh, so
+   every solid taller than it passes in front - which is the one move no arc in
+   screen space can make, and the thing that proves the last leg is on the floor
+   rather than over it. */
+
+.dgm-feeder {
+  fill: none;
+  stroke: color-mix(in srgb, var(--text) 18%, transparent);
+  stroke-width: 1.2;
+  stroke-dasharray: 2 5;
+  stroke-linecap: round;
+  opacity: clamp(0, calc((var(--spread, 1) - 0.5) * 2.6), 1);
+  transition: stroke 300ms ease, stroke-width 300ms ease;
+}
+
+.dgm-feeder.is-up { stroke: color-mix(in srgb, var(--accent) 72%, transparent); stroke-width: 1.8; }
 
 .dgm-countbody {
   fill: var(--surface-solid);
@@ -10638,6 +11044,9 @@ html.is-hidden .clinic-node i,
   stroke-width: 1;
   stroke-dasharray: 2 5;
   stroke-linecap: round;
+  /* A channel turns a corner now, at the rim where the arc becomes the riser.
+     The default miter throws a spike whenever a dash spans that turn. */
+  stroke-linejoin: round;
   opacity: clamp(0, calc((var(--spread, 1) - 0.5) * 2.6), 1);
   transition: stroke 300ms ease;
 }
@@ -10649,6 +11058,7 @@ html.is-hidden .clinic-node i,
   stroke: var(--accent);
   stroke-width: 2.2;
   stroke-linecap: round;
+  stroke-linejoin: round;
   stroke-dasharray: 100;
   stroke-dashoffset: 100;
   opacity: clamp(0, calc((var(--spread, 1) - 0.7) * 3.4), 1);
@@ -10678,6 +11088,7 @@ html.is-hidden .clinic-node i,
 .dgm-fall {
   fill: none;
   stroke-linecap: round;
+  stroke-linejoin: round;
   opacity: 0;
   pointer-events: none;
 }
@@ -10704,7 +11115,12 @@ html.is-hidden .clinic-node i,
 .dgm-lift.is-hot .dgm-rise { stroke-dasharray: 8 92; }
 .dgm-lift.is-hot .dgm-fall { stroke-dasharray: 14 86; }
 
-.dgm-liftchip { fill: var(--accent-strong); opacity: 0; }
+.dgm-liftchip {
+  fill: none;
+  stroke: var(--accent-strong);
+  stroke-width: 1.8;
+  opacity: 0;
+}
 .dgm-lift.is-up .dgm-liftchip { opacity: 1; }
 .dgm-svg.is-live .dgm-liftchip { transition: opacity 300ms ease 520ms; }
 
@@ -10730,10 +11146,13 @@ html.is-hidden .clinic-node i,
 .dgm-site.is-hot .dgm-masthead { stroke: var(--accent-strong); }
 
 .dgm-ticket { pointer-events: none; }
-.dgm-carry { opacity: 0; transform: translateY(10px); }
-.dgm-ticket.is-up .dgm-carry { opacity: 1; transform: translateY(0); }
+/* A ticket arrives by fading in where it belongs, not by sliding ten pixels
+   into place. The slide was the largest displacement any type in either figure
+   took, and a word that travels to its position is a word that floats. */
+.dgm-carry { opacity: 0; }
+.dgm-ticket.is-up .dgm-carry { opacity: 1; }
 .dgm-carry .dgm-tagtext { font-size: 8px; }
-.dgm-svg.is-live .dgm-carry { transition: opacity 320ms ease 420ms, transform 520ms cubic-bezier(0.16, 1, 0.3, 1) 420ms; }
+.dgm-svg.is-live .dgm-carry { transition: opacity 320ms ease 420ms; }
 
 /* Reach. What a site's coverage touches. Three of them, growing with the
    library, until they overlap - which is the whole of the network effect and
@@ -10996,9 +11415,10 @@ html.is-hidden .clinic-node i,
 /* The plates are not in this list: they are already riding, and a transform an
    animation owns cannot also be transitioned. Pointing at one lights it. */
 
-.dgm-deck,
-.dgm-site,
-.dgm-ident { transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1); }
+/* Not `.dgm-ident` - it carries nothing but type and a hairline, and it had a
+   dangling transition on a transform no rule ever set. `.dgm-deck` sets its own
+   transition where `--audit` is declared, because it carries both. */
+.dgm-site { transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1); }
 
 .dgm-deck.is-hot,
 .dgm-site.is-hot { transform: translateY(-4px); }
@@ -11031,7 +11451,7 @@ html.is-hidden .clinic-node i,
 @media (prefers-reduced-motion: reduce) {
   .dgm-svg { transition: none; }
 
-  .dgm-svg :is(.dgm-droppath, .dgm-dropflow, .dgm-dropnode, .dgm-approach, .dgm-spark, .dgm-traffic, .dgm-fieldtile, .dgm-queue, .dgm-face-top, .dgm-holerim, .dgm-bolt, .dgm-leaf, .dgm-ring, .dgm-loopflow, .dgm-side, .dgm-sidefact, .dgm-read, .dgm-tagbody, .dgm-node, .dgm-link, .dgm-liftpath, .dgm-liftchip, .dgm-carry, .dgm-reachfill, .dgm-reachrim, .dgm-sweep, .dgm-wallmark, .dgm-status, .dgm-statustext, .dgm-deck, .dgm-plate, .dgm-site, .dgm-ident, .dgm-catch, .dgm-throat, .dgm-ledgerchain, .dgm-ledgerbar, .dgm-ledgerhash, .dgm-slide, .dgm-housing, .dgm-pad, .dgm-intakepath, .dgm-intake, .dgm-ledgerflow, .dgm-ledgerseal, .dgm-library, .dgm-pulse, .dgm-seat, .dgm-riser, .dgm-tine, .dgm-orbit, .dgm-reach, .dgm-crit, .dgm-stand, .dgm-field, .dgm-face-left, .dgm-face-right, .dgm-mast, .dgm-masthead, .dgm-channel, .dgm-rise, .dgm-fall, .dgm-second) {
+  .dgm-svg :is(.dgm-droppath, .dgm-dropflow, .dgm-dropnode, .dgm-approach, .dgm-spark, .dgm-traffic, .dgm-fieldtile, .dgm-queue, .dgm-face-top, .dgm-holerim, .dgm-bolt, .dgm-leaf, .dgm-ring, .dgm-loopflow, .dgm-side, .dgm-sidefact, .dgm-read, .dgm-tagbody, .dgm-node, .dgm-link, .dgm-liftpath, .dgm-liftchip, .dgm-carry, .dgm-reachfill, .dgm-reachrim, .dgm-sweep, .dgm-wallmark, .dgm-status, .dgm-statustext, .dgm-deck, .dgm-plate, .dgm-site, .dgm-ident, .dgm-catch, .dgm-throat, .dgm-ledgerchain, .dgm-ledgerbar, .dgm-ledgerhash, .dgm-slide, .dgm-housing, .dgm-pad, .dgm-intakepath, .dgm-intake, .dgm-ledgerflow, .dgm-ledgerseal, .dgm-library, .dgm-pulse, .dgm-seat, .dgm-riser, .dgm-tine, .dgm-orbit, .dgm-reach, .dgm-crit, .dgm-stand, .dgm-field, .dgm-face-left, .dgm-face-right, .dgm-mast, .dgm-masthead, .dgm-channel, .dgm-feeder, .dgm-gate, .dgm-gatecap, .dgm-lift, .dgm-rise, .dgm-fall, .dgm-second, .dgm-steady, .dgm-draw, .dgm-hand, .dgm-ledgeraudit) {
     transition: none;
     animation: none;
   }

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { EDGE_ANGLE, jitter, planPrism, planSpace, project, roundedDeck } from './iso'
+import { EDGE_ANGLE, ISO_X, ISO_Y, jitter, planCyl, planPrism, planSpace, project, roundedDeck } from './iso'
 import { Faces } from './Solid'
 import { useCenterOnOverflow } from './useCenterOnOverflow'
 import { useScrollRun } from './useScrollPhase'
@@ -33,13 +33,24 @@ import { useScrollRun } from './useScrollPhase'
  * that crosses a channel in either direction is anything but a definition. The
  * claim was never that the site is one-way. It is that the record is nowhere.
  *
- * Binding is elevation, and a criterion is a plate rather than a dot. Unbound,
+ * Binding is elevation, and a criterion is a solid rather than a dot. Unbound,
  * it lies flat on the slab; one the library has bound is standing on that same
- * footprint with two side faces under it, as high as it is connected - so
- * coverage compounding is a skyline growing, the hubs are the tall buildings,
- * and the weight of the library is visible without a legend. The mesh
- * underneath stays printed on the slab, because that lattice is the index and
- * the solids are what the index is holding.
+ * footprint with its sides under it, as high as it is connected - so coverage
+ * compounding is a skyline growing, the hubs are the tall buildings, and the
+ * weight of the library is visible without a legend. The mesh underneath stays
+ * printed on the slab, because that lattice is the index and the solids are
+ * what the index is holding.
+ *
+ * What stands there is a floor of plant, not a chart. Every solid carries one
+ * of three states - the library holding it good, holding it under review, or
+ * not holding it - in red, amber and green, the three words a floor has always
+ * used, with no legend anywhere on the sheet. Two thirds of them are blocks and
+ * the rest are drums, which is the same solid built on a circle instead of a
+ * square, because two shapes mixed on one plane read as machinery while
+ * forty-two of one shape read as a diagram. The lamp on top of each one goes
+ * out and comes back on a clock of its own, and the whole floor wanders a
+ * couple of plan units along the slab's own axes, the way things get moved
+ * about a floor. Every bit of it is deterministic; none of it repeats.
  *
  * Nothing here is nailed down. The library drifts on one slow clock and drops
  * its shade on the federation below it; each site orbits its own footprint on
@@ -49,13 +60,21 @@ import { useScrollRun } from './useScrollPhase'
  * their neighbours. All of it on timings scattered by `jitter`, so the drawing
  * never falls into a loop a reader can catch.
  *
- * Two of those layers are the quiet ones, and they are the ones that make the
- * upper plane read as a place rather than a chart. Every criterion standing on
- * the slab settles on its own long clock, half a pixel at a time, so forty-two
- * solids breathe out of step the way a skyline does; and a channel with no
- * definition crossing it still creeps its dashes toward the library, because a
- * site that is not publishing this second is still reporting. Both are the same
- * two layers the other figure carries, at the two scales the pair works at.
+ * A channel with no definition crossing it still creeps its dashes toward the
+ * library, because a site that is not publishing this second is still
+ * reporting - the same quiet layer the other figure runs on its idle tines, at
+ * the scale this drawing works at.
+ *
+ * A channel also stops at the rim now, and that is the one repair in this
+ * figure that is geometry rather than styling. An arc ending on the slab's top
+ * face has to cross the near skirt to get there, and in an axonometric the band
+ * just outside a near edge is the same band the near face occupies - so the eye
+ * reads the whole run as a wire laid over a photograph. Instead each one lands
+ * on the underside rim, arriving along one of the drawing's own plan axes, at
+ * the foot of a gate standing on that rim; and a run on the floor carries the
+ * definition the rest of the way in, drawn among the mesh so every solid taller
+ * than it passes in front. That last part is the move no arc in screen space can
+ * make, and it is what puts the leg on the slab rather than above it.
  *
  * The panel takes a pointer as a panel, over a target the size of the slab: a
  * two-pixel node is not something to aim at. Leaning on anything here loads a
@@ -102,16 +121,58 @@ const GROUND = project(310, GROUND_Y)
 
 const GROUND_HALF = 172
 
-// A jittered plan lattice so the library reads as a body of knowledge and not a
-// spreadsheet - the scatter is deterministic, not random, so the same mesh is
+// Nothing is allowed off the slab. The plan boundary is a rounded square, so a
+// solid that scatters past it is pulled back along its own normal rather than
+// clipped: a criterion standing half over the rim is a criterion standing on
+// nothing, and one clipped at the rim is worse.
+const FLOOR_HALF = LIB_HALF - CRIT_HALF - 5
+const FLOOR_RADIUS = 28
+const FLOOR_INSET = FLOOR_HALF - FLOOR_RADIUS
+
+function onFloor(x, y) {
+  const dx = Math.max(Math.abs(x) - FLOOR_INSET, 0)
+  const dy = Math.max(Math.abs(y) - FLOOR_INSET, 0)
+  const out = Math.hypot(dx, dy)
+  if (out <= FLOOR_RADIUS) return [x, y]
+  const pull = FLOOR_RADIUS / out
+  return [
+    Math.round(Math.sign(x) * (FLOOR_INSET + dx * pull)),
+    Math.round(Math.sign(y) * (FLOOR_INSET + dy * pull)),
+  ]
+}
+
+// A plan lattice with the grid beaten out of it, so the library reads as a body
+// of knowledge and not a spreadsheet: rows are bricked half a cell against each
+// other and every node carries a scatter of its own, so no run of three ever
+// lines up. The scatter is deterministic, not random, so the same floor is
 // drawn on every render and in every test.
+//
+// Each one also gets a state and a shape. A criterion is a thing the library is
+// either holding good, holding under review, or failing to hold - red, amber,
+// green, the three words a floor of plant has always used - and it is a block or
+// a drum, because two kinds of solid mixed on one plane read as machinery while
+// forty-two of one kind read as a chart.
 const NODES = []
 for (let row = 0; row < 6; row += 1) {
   for (let col = 0; col < 7; col += 1) {
     const index = row * 7 + col
-    const x = -132 + col * 44 + Math.round((jitter(index, 3) - 0.5) * 20)
-    const y = -100 + row * 40 + Math.round((jitter(index, 9) - 0.5) * 18)
-    NODES.push({ index, x, y, at: MESH(x, y), seed: jitter(index, 7), life: jitter(index, 11) })
+    const brick = row % 2 ? 11 : -11
+    const [x, y] = onFloor(
+      -132 + col * 44 + brick + Math.round((jitter(index, 3) - 0.5) * 30),
+      -100 + row * 40 + Math.round((jitter(index, 9) - 0.5) * 26),
+    )
+    const grade = jitter(index, 29)
+    NODES.push({
+      index,
+      x,
+      y,
+      at: MESH(x, y),
+      seed: jitter(index, 7),
+      life: jitter(index, 11),
+      round: jitter(index, 23) > 0.62,
+      lamp: grade < 0.15 ? 'is-red' : grade < 0.41 ? 'is-amber' : 'is-green',
+      flick: jitter(index, 37) > 0.66,
+    })
   }
 }
 
@@ -154,16 +215,16 @@ const BUSIEST = Math.max(...DEGREE)
 NODES.forEach((node) => {
   const depth = CRIT_LOW + Math.round((DEGREE[node.index] / BUSIEST) * CRIT_SPAN)
   node.depth = depth
-  node.block = planPrism(node.x, node.y, CRIT_HALF, CRIT_HALF, depth, CRIT_RADIUS)
+  // A drum is the same solid as a block built on a circle instead of a square:
+  // same footprint, same storey, same extrusion solved the same way, so the two
+  // sit on the floor as one population at two shapes rather than as two symbols.
+  node.block = node.round
+    ? planCyl(node.x, node.y, CRIT_HALF, depth)
+    : planPrism(node.x, node.y, CRIT_HALF, CRIT_HALF, depth, CRIT_RADIUS)
   // Where the top of this one sits on screen, for anything that has to arrive
   // at the criterion rather than at the slab it is standing on.
   node.up = [node.at[0], Math.round((node.at[1] - depth) * 10) / 10]
 })
-
-// Back to front on screen, so a criterion standing in front of another occludes
-// it rather than being drawn under it. Forty-two solids on one plane in reading
-// order is a pile; in depth order it is a place.
-const MASSING = [...NODES].sort((a, b) => a.at[1] - b.at[1])
 
 // Traffic. Marks running their own links on their own clocks, so the library
 // reads as something in use rather than a diagram of one. They are picked by a
@@ -250,30 +311,131 @@ const MAST_HEAD = 7.5
 // and give each site its own third of the library.
 const BAND = [...ORDER.slice(30, 38)].sort((a, b) => (a.x - a.y) - (b.x - b.y))
 const JOIN = BAND[Math.floor(BAND.length / 2)]
+
+// Where a channel arrives, and why it stopped arriving on the top face.
+//
+// A curve that ends on the slab's roof has to cross the near skirt to get
+// there, and in an axonometric the band just outside a near edge is the same
+// band the near face occupies - so the eye resolves the ambiguity as "in front
+// of everything" and the whole run reads as a wire laid over a photograph. The
+// old arcs did exactly that: the one from Site 042 started well outside the
+// near-right skirt and ended inside it. It crossed.
+//
+// The repair is geometric rather than cosmetic, and it is three things.
+//
+// The terminus moves to the skirt's bottom rim - the lowest, nearest boundary
+// of the whole silhouette, and the only point on it a line coming from below
+// cannot be read as passing in front of. A quadratic lies inside the hull of its
+// three points, so with the control point outboard as well the curve cannot
+// touch the slab; that is a guarantee rather than an inspection.
+//
+// The terminal tangent becomes a plan axis. Putting the control point on the
+// outward plan normal makes the arc arrive perpendicular to the face it lands
+// on in the drawing's own geometry - which on screen is the same 21-degree
+// slope every skirt and every wall marking already runs at.
+//
+// And something stands where it lands. A curve ending in air at a rim is still
+// a curve ending in air; a curve ending at the foot of a gate is a route
+// arriving at a place. The gate is the same solid as a criterion, a deck and a
+// site, at the scale of a port, and its outboard face is coplanar with the
+// slab's own skirt - so the riser from the landing point to its crown is one
+// straight mark lying on one continuous surface.
+//
+// Which rim point is not chosen either. Screen x here depends only on (x - y),
+// so the rim point directly over a site is the one that keeps that site's own
+// (x - y). Two sites resolve onto a flat edge and the third, sitting on the plan
+// diagonal, resolves to the front corner - the one place where the outward plan
+// normal and the height axis project to the same screen direction, which is why
+// a site under it can send a line straight up and still be telling the truth.
+const GATE_ACROSS = 6
+const GATE_ALONG = 14
+const GATE_CORNER = 9
+const GATE_RISE = 20
+const GATE_REACH = 58
+// The rim's diagonal extreme, solved rather than read off `LIBRARY.front`:
+// `roundedPlan` samples its corner arcs in seven steps and never lands on 45
+// degrees, so the sampled front corner sits four pixels off the true one - and
+// four pixels is the whole composition off centre.
+const RIM_CORNER = LIB_HALF - 28 + 28 / Math.SQRT2
+const GATE_SEAT = RIM_CORNER - ((GATE_CORNER - CRIT_RADIUS) * Math.SQRT2 + CRIT_RADIUS) / Math.SQRT2
+
+const r1 = (value) => Math.round(value * 10) / 10
+
+function gateFor(site) {
+  const reach = site.plan[0] - site.plan[1]
+  if (reach > 40) {
+    const rim = [LIB_HALF, LIB_HALF - reach]
+    return { edge: 'right', rim, seat: [LIB_HALF - GATE_ACROSS, rim[1]], halfX: GATE_ACROSS, halfY: GATE_ALONG, out: [1, 0] }
+  }
+  if (reach < -40) {
+    const rim = [LIB_HALF + reach, LIB_HALF]
+    return { edge: 'left', rim, seat: [rim[0], LIB_HALF - GATE_ACROSS], halfX: GATE_ALONG, halfY: GATE_ACROSS, out: [0, 1] }
+  }
+  return { edge: 'corner', rim: [RIM_CORNER, RIM_CORNER], seat: [GATE_SEAT, GATE_SEAT], halfX: GATE_CORNER, halfY: GATE_CORNER, out: [1, 1] }
+}
+
 const CHANNELS = [
-  { key: 'SITE 018', site: SITE_018, node: JOIN, bow: -1, label: 'CRITERION I-4.2' },
-  { key: 'SITE 042', site: SITE_042, node: BAND[BAND.length - 1], bow: 1, label: 'UNIT mg/m2' },
-  { key: 'SITE 103', site: SITE_103, node: BAND[0], bow: -1, label: 'MAP LOINC 718-7' },
+  { key: 'SITE 018', site: SITE_018, node: JOIN, label: 'CRITERION I-4.2' },
+  { key: 'SITE 042', site: SITE_042, node: BAND[BAND.length - 1], label: 'UNIT mg/m2' },
+  { key: 'SITE 103', site: SITE_103, node: BAND[0], label: 'MAP LOINC 718-7' },
 ].map((item) => {
   const foot = item.site.solid.back
-  const [x1, y1] = [foot[0], Math.round((foot[1] - MAST) * 10) / 10]
-  const [x2, y2] = item.node.at
-  // Bow the arc off the chord rather than lifting it straight up, so a site
-  // sitting under its own node still gets a curve instead of a plumb line.
-  const span = Math.hypot(x2 - x1, y2 - y1) || 1
-  const cx = Math.round((x1 + x2) / 2 - ((y2 - y1) / span) * 52 * item.bow)
-  const cy = Math.round((y1 + y2) / 2 + ((x2 - x1) / span) * 52 * item.bow - 34)
+  const [x1, y1] = [foot[0], r1(foot[1] - MAST)]
+  const gate = gateFor(item.site)
+  const rim = MESH(...gate.rim)
+  // The three points of the arrival: the underside rim where the curve stops,
+  // and the crown of the gate the riser climbs to. Both sit in the same plane
+  // the skirt is cut in, so the riser is one mark on one surface.
+  const land = [rim[0], r1(rim[1] + LIB_WALL)]
+  const crown = [rim[0], r1(rim[1] - GATE_RISE)]
+  // The outward plan normal of the face the curve lands on, carried through the
+  // projection. A quadratic's tangent at the end is (end - control), so putting
+  // the control this far outboard locks the last stretch of the arc to a plan
+  // axis of the drawing.
+  const away = [(gate.out[0] - gate.out[1]) * ISO_X, (gate.out[0] + gate.out[1]) * ISO_Y]
+  const span = Math.hypot(...away) || 1
+  const ctrl = [r1(land[0] + (GATE_REACH * away[0]) / span), r1(land[1] + (GATE_REACH * away[1]) / span)]
+  // At the corner the outward normal projects to screen-vertical, so a quadratic
+  // there is a plumb line. One extra control point off the mast gives that
+  // channel a bow of its own and still arrives on the same vertical tangent.
+  const bow = [x1 + 34, r1(y1 - 56)]
+  const arc = gate.edge === 'corner'
+    ? `C ${bow[0]} ${bow[1]} ${ctrl[0]} ${ctrl[1]} ${land[0]} ${land[1]}`
+    : `Q ${ctrl[0]} ${ctrl[1]} ${land[0]} ${land[1]}`
+  const mid = gate.edge === 'corner'
+    ? [0.125 * x1 + 0.375 * bow[0] + 0.375 * ctrl[0] + 0.125 * land[0], 0.125 * y1 + 0.375 * bow[1] + 0.375 * ctrl[1] + 0.125 * land[1]]
+    : [0.25 * x1 + 0.5 * ctrl[0] + 0.25 * land[0], 0.25 * y1 + 0.5 * ctrl[1] + 0.25 * land[1]]
   return {
     ...item,
     foot,
     head: [x1, y1],
-    path: `M ${x1} ${y1} Q ${cx} ${cy} ${x2} ${y2}`,
-    // The midpoint of a quadratic, where the label rides.
-    mid: [Math.round(0.25 * x1 + 0.5 * cx + 0.25 * x2), Math.round(0.25 * y1 + 0.5 * cy + 0.25 * y2)],
+    gate: {
+      ...gate,
+      at: MESH(...gate.seat),
+      solid: planPrism(gate.seat[0], gate.seat[1], gate.halfX, gate.halfY, GATE_RISE, CRIT_RADIUS),
+    },
+    // Mast head, arc, riser: one `d`, so every mark already running this route
+    // keeps running it, and the join at the rim is a corner in a single stroke
+    // rather than two strokes meeting.
+    path: `M ${x1} ${y1} ${arc} L ${crown[0]} ${crown[1]}`,
+    // The midpoint of the arc, where the label rides. It stays on the curve's
+    // own leg rather than the riser, so all three land in the clear band under
+    // the slab instead of out over it.
+    mid: [Math.round(mid[0]), Math.round(mid[1])],
   }
 })
 
 const BY_SITE = Object.fromEntries(CHANNELS.map((item) => [item.key, item]))
+
+// Back to front on screen, so a solid standing in front of another occludes it
+// rather than being drawn under it. Forty-five solids on one plane in reading
+// order is a pile; in depth order it is a place - and the gates go through the
+// same sort as the criteria rather than being appended after them, so the
+// ordering stays correct if the lattice is ever moved.
+const FLOOR = [
+  ...NODES.map((node) => ({ key: `c${node.index}`, kind: 'crit', at: node.at, node })),
+  ...CHANNELS.map((item) => ({ key: `g${item.key}`, kind: 'gate', at: item.gate.at, item })),
+].sort((a, b) => a.at[1] - b.at[1])
 
 const JOINED = new Set(
   LINKS.filter((link) => link.a === JOIN.index || link.b === JOIN.index).map((link) => link.key),
@@ -444,7 +606,13 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
               <rect className="dgm-hit" x="-160" y="-160" width="320" height="320" rx="28" />
             </g>
 
-            <text className="dgm-edge" x="146" y="144" transform={`rotate(${-EDGE_ANGLE} 146 144)`}>DEFINITIONS</text>
+            {/* Lettered along the slab's back edge, and held still while the
+                slab drifts under it. Set four pixels inboard of where it used
+                to sit, so the three pixels the slab travels can only ever carry
+                the edge further away from the word rather than across it. */}
+            <g className="dgm-steady">
+              <text className="dgm-edge" x="149" y="147" transform={`rotate(${-EDGE_ANGLE} 149 147)`}>DEFINITIONS</text>
+            </g>
 
             <g className="dgm-mesh">
               {LINKS.map((link) => (
@@ -474,30 +642,72 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
                   y2={link.to[1]}
                 />
               ))}
-              {/* Binding is elevation, and a criterion is a plate rather than a
+              {/* What the gates feed. A channel now stops at the rim, so
+                  something has to carry the definition the rest of the way in -
+                  and it is a run on the floor rather than another arc over it,
+                  drawn here among the mesh so every solid taller than it passes
+                  in front. That is the one move no arc in screen space can make,
+                  and it is what finally puts the last leg on the slab instead of
+                  above it. */}
+              {CHANNELS.map((item) => (
+                <line
+                  className={`dgm-feeder${state.up.includes(item.key) ? ' is-up' : ''}`}
+                  key={`f-${item.key}`}
+                  style={{ '--life': item.site.life }}
+                  x1={item.gate.at[0]}
+                  y1={item.gate.at[1]}
+                  x2={item.node.at[0]}
+                  y2={item.node.at[1]}
+                />
+              ))}
+              {/* Binding is elevation, and a criterion is a solid rather than a
                   dot. One the library has not bound is its own footprint lying
                   flat on the slab; one it has is standing on that footprint with
-                  two side faces under it, as high as it is connected. So the
-                  slab grows a skyline with a shape to it - the hubs are the tall
+                  its sides under it, as high as it is connected. So the slab
+                  grows a skyline with a shape to it - the hubs are the tall
                   buildings - and coverage compounding is a thing a reader
                   watches happen rather than dots changing colour.
 
-                  Drawn back to front, so a criterion standing in front of
-                  another occludes it the way the decks in the other figure do.
-                  Sorting on screen y is what makes forty-two solids on one plane
-                  read as a place instead of as a pile. */}
+                  Blocks and drums, red, amber and green, each on its own clock:
+                  a floor of plant, where what is holding and what is not is the
+                  state of the light on top of the thing rather than a legend
+                  somewhere else on the page.
+
+                  Drawn back to front with the gates in the same pass, so a solid
+                  standing in front of another occludes it the way the decks in
+                  the other figure do. */}
               <g transform={planSpace(310, MESH_Y)}>
-                {MASSING.map((node) => {
+                {FLOOR.map((slot) => {
+                  if (slot.kind === 'gate') {
+                    const { item } = slot
+                    return (
+                      <g className={`dgm-gate${state.up.includes(item.key) ? ' is-up' : ''}${lit(item.key)}`} key={slot.key}>
+                        <path className="dgm-face-left" d={item.gate.solid.faceLeft} />
+                        <path className="dgm-face-right" d={item.gate.solid.faceRight} />
+                        <polygon className="dgm-gatecap" points={item.gate.solid.top} />
+                      </g>
+                    )
+                  }
+                  const { node } = slot
                   const bound = node.rank < state.bound
                   return (
                     <g
-                      className={`dgm-crit${bound ? ' is-bound' : ''}${node.rank === JOIN.rank && state.joined ? ' is-new' : ''}`}
-                      key={node.index}
+                      className={`dgm-crit ${node.lamp}${node.round ? ' is-drum' : ''}${node.flick ? ' is-flick' : ''}${bound ? ' is-bound' : ''}${node.rank === JOIN.rank && state.joined ? ' is-new' : ''}`}
+                      key={slot.key}
                       style={{ '--stagger': Math.round((node.rank / TOTAL) * 100) / 100, '--life': node.life, '--lift': `${node.block.step}px` }}
                     >
-                      <path className="dgm-face-left" d={node.block.faceLeft} />
-                      <path className="dgm-face-right" d={node.block.faceRight} />
-                      <polygon className="dgm-node" points={node.block.base} />
+                      {node.round ? (
+                        <>
+                          <path className="dgm-face-right" d={node.block.wall} />
+                          <circle className="dgm-node" cx={node.block.base.cx} cy={node.block.base.cy} r={node.block.r} />
+                        </>
+                      ) : (
+                        <>
+                          <path className="dgm-face-left" d={node.block.faceLeft} />
+                          <path className="dgm-face-right" d={node.block.faceRight} />
+                          <polygon className="dgm-node" points={node.block.base} />
+                        </>
+                      )}
                     </g>
                   )
                 })}
@@ -590,7 +800,12 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
                 <path className="dgm-liftpath" d={item.path} pathLength="100" />
                 <path className="dgm-rise" d={item.path} pathLength="100" />
                 <path className="dgm-fall" d={item.path} pathLength="100" />
-                <circle className="dgm-liftchip" cx={item.node.at[0]} cy={item.node.at[1]} r="7" />
+                {/* Where the definition ended up. It rides the roof of the
+                    criterion it landed on rather than its footprint, and it is
+                    a ring rather than a disc - a filled chip at the foot of a
+                    standing solid reads as a puddle under it, and one on the
+                    roof would cover the only thing that criterion has to say. */}
+                <circle className="dgm-liftchip" cx={item.node.up[0]} cy={item.node.up[1]} r="10.5" />
               </g>
             )
           })}
