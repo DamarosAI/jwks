@@ -57,19 +57,19 @@ const BIOMARKERS = [
 ]
 
 const PLATFORM_SCREENING_QUEUE = [
-  { id: 'S-1066', name: 'M. Hughes', status: 'REVIEW', criterion: 'I-2.1 - biomarker missing', blocker: 'EGFR / ALK molecular status', rule: 'EGFR / ALK status required before randomization.', facts: ['No molecular DiagnosticReport found', 'Order placed 06-19 - no result'], sources: ['Awaiting DiagnosticReport', 'DocumentReference - none'], result: 'REVIEW', reason: 'Required source not yet received' },
-  { id: 'S-1051', name: 'E. Morn', status: 'REVIEW', criterion: 'I-3.4 - CMP stale', blocker: 'Serum chemistry within 7-day window', rule: 'CMP must be drawn within 7 days of C1D1.', facts: ['K+ 5.0 mmol/L drawn 06-09', '11 days old at evaluation'], sources: ['Observation/chem-5521'], result: 'REVIEW', reason: 'Evidence outside freshness window' },
-  { id: 'S-1047', name: 'E. Hunt', status: 'REVIEW', criterion: 'E-4.2 - ECOG conflict', blocker: 'ECOG performance status', rule: 'ECOG must be 0-1 within 14 days of C1D1.', facts: ['Structured observation: ECOG 1 - 06-18', 'Oncology note: ECOG 2 - 06-20'], sources: ['Observation/ecog-8841', 'DocumentReference/note-2207'], result: 'REVIEW', reason: 'Conflicting source facts' },
-  { id: 'S-1078', name: 'I. Rey', status: 'REVIEW', criterion: 'E-5.3 - washout edge', blocker: 'At least 21-day prior-therapy washout', rule: 'At least 21 days between last systemic therapy and C1D1.', facts: ['Infusion record: 05-30', 'Discharge summary: 06-02'], sources: ['MedicationAdministration/inf-771', 'DocumentReference/dc-3390'], result: 'REVIEW', reason: 'Last-dose date ambiguous across sources' },
-  { id: 'S-1088', name: 'D. Martinez', status: 'FAIL', criterion: 'I-1.1 - histology mismatch', blocker: 'Histologically confirmed NSCLC', rule: 'Histologically confirmed NSCLC required.', facts: ['Pathology: small-cell carcinoma', 'No NSCLC component'], sources: ['Pathology DiagnosticReport/path-3310'], result: 'FAIL', reason: 'Confirmed SCLC; protocol requires NSCLC' },
-  { id: 'S-1093', name: 'A. Lucchesi', status: 'FAIL', criterion: 'I-4.2 - ECOG 3', blocker: 'ECOG performance status 0-1', rule: 'ECOG performance status 0-1 required.', facts: ['ECOG 3 documented 06-18', 'Declining performance status'], sources: ['Observation/ecog-7782'], result: 'FAIL', reason: 'ECOG 3 exceeds protocol limit' },
-  { id: 'S-1109', name: 'F. Leiter', status: 'FAIL', criterion: 'E-7 - active CNS metastases', blocker: 'No active CNS metastases', rule: 'No active untreated CNS metastases on steroids.', facts: ['MRI: active untreated CNS lesions', 'On dexamethasone'], sources: ['DocumentReference/mri-5567'], result: 'FAIL', reason: 'Active untreated CNS metastases on steroids' },
-  { id: 'S-1044', name: 'J. Bond', status: 'PASS', criterion: 'All criteria met - confirm', blocker: 'No unresolved blocker', rule: 'All inclusion met. No exclusion triggered.', facts: ['EGFR+ confirmed', 'ECOG 1 - 06-19', 'CMP fresh - 06-20'], sources: ['DiagnosticReport/mol-441', 'Observation/ecog-9920'], result: 'PASS', reason: 'All required evidence present and fresh' },
+  { id: 'S-1066', name: 'K. Osei', status: 'REVIEW', criterion: 'I-2.1 - biomarker missing', blocker: 'EGFR / ALK molecular status', rule: 'EGFR / ALK status required before randomization.', facts: ['No molecular DiagnosticReport found', 'Order placed 06-19 - no result'], sources: ['Awaiting DiagnosticReport', 'DocumentReference - none'], result: 'REVIEW', reason: 'Required source not yet received' },
+  { id: 'S-1051', name: 'P. Larsen', status: 'REVIEW', criterion: 'I-3.4 - CMP stale', blocker: 'Serum chemistry within 7-day window', rule: 'CMP must be drawn within 7 days of C1D1.', facts: ['K+ 5.0 mmol/L drawn 06-09', '11 days old at evaluation'], sources: ['Observation/chem-5521'], result: 'REVIEW', reason: 'Evidence outside freshness window' },
+  { id: 'S-1047', name: 'R. Delgado', status: 'REVIEW', criterion: 'E-4.2 - ECOG conflict', blocker: 'ECOG performance status', rule: 'ECOG must be 0-1 within 14 days of C1D1.', facts: ['Structured observation: ECOG 1 - 06-18', 'Oncology note: ECOG 2 - 06-20'], sources: ['Observation/ecog-8841', 'DocumentReference/note-2207'], result: 'REVIEW', reason: 'Conflicting source facts' },
+  { id: 'S-1078', name: 'T. Novak', status: 'REVIEW', criterion: 'E-5.3 - washout edge', blocker: 'At least 21-day prior-therapy washout', rule: 'At least 21 days between last systemic therapy and C1D1.', facts: ['Infusion record: 05-30', 'Discharge summary: 06-02'], sources: ['MedicationAdministration/inf-771', 'DocumentReference/dc-3390'], result: 'REVIEW', reason: 'Last-dose date ambiguous across sources' },
+  { id: 'S-1088', name: 'D. Whitfield', status: 'FAIL', criterion: 'I-1.1 - histology mismatch', blocker: 'Histologically confirmed NSCLC', rule: 'Histologically confirmed NSCLC required.', facts: ['Pathology: small-cell carcinoma', 'No NSCLC component'], sources: ['Pathology DiagnosticReport/path-3310'], result: 'FAIL', reason: 'Confirmed SCLC; protocol requires NSCLC' },
+  { id: 'S-1093', name: 'S. Bergman', status: 'FAIL', criterion: 'I-4.2 - ECOG 3', blocker: 'ECOG performance status 0-1', rule: 'ECOG performance status 0-1 required.', facts: ['ECOG 3 documented 06-18', 'Declining performance status'], sources: ['Observation/ecog-7782'], result: 'FAIL', reason: 'ECOG 3 exceeds protocol limit' },
+  { id: 'S-1109', name: 'C. Halloran', status: 'FAIL', criterion: 'E-7 - active CNS metastases', blocker: 'No active CNS metastases', rule: 'No active untreated CNS metastases on steroids.', facts: ['MRI: active untreated CNS lesions', 'On dexamethasone'], sources: ['DocumentReference/mri-5567'], result: 'FAIL', reason: 'Active untreated CNS metastases on steroids' },
+  { id: 'S-1044', name: 'M. Iyer', status: 'PASS', criterion: 'All criteria met - confirm', blocker: 'No unresolved blocker', rule: 'All inclusion met. No exclusion triggered.', facts: ['EGFR+ confirmed', 'ECOG 1 - 06-19', 'CMP fresh - 06-20'], sources: ['DiagnosticReport/mol-441', 'Observation/ecog-9920'], result: 'PASS', reason: 'All required evidence present and fresh' },
 ]
 
 const RESOLVE_WORK_ITEMS = [
   {
-    key: 'ecog-conflict', patient: 'E. Hunt', subject: 'S-1047', criterion: 'E-4.2', issue: 'Conflicting ECOG sources',
+    key: 'ecog-conflict', patient: 'R. Delgado', subject: 'S-1047', criterion: 'E-4.2', issue: 'Conflicting ECOG sources',
     driver: 'Structured ECOG 1 conflicts with newer oncology note ECOG 2', citationSummary: 'Two conflicting source facts remain cited',
     citations: ['Observation/ecog-8841', 'DocumentReference/note-2207'],
     evidence: [
@@ -83,10 +83,10 @@ const RESOLVE_WORK_ITEMS = [
       { id: 'note', label: 'Accept newer note - ECOG 2', impact: 'Result stays REVIEW. Newer narrative assessment governs this run; structured ECOG 1 remains cited.' },
       { id: 'repeat', label: 'Request repeat ECOG assessment', impact: 'Result stays REVIEW until a new signed assessment is available.' },
     ],
-    signer: 'Dr. M. Avdol', role: 'PI / Sub-I - clinical interpretation', record: 'R-884', defaultAction: 'note',
+    signer: 'Dr. A. Voss', role: 'PI / Sub-I - clinical interpretation', record: 'R-884', defaultAction: 'note',
   },
   {
-    key: 'biomarker-missing', patient: 'M. Hughes', subject: 'S-1066', criterion: 'I-2.1', issue: 'Pathology source pending',
+    key: 'biomarker-missing', patient: 'K. Osei', subject: 'S-1066', criterion: 'I-2.1', issue: 'Pathology source pending',
     driver: 'Molecular order exists, but no final EGFR / ALK report is available', citationSummary: 'Order and source-system status remain bound',
     citations: ['ServiceRequest/mol-1904', 'DiagnosticReport/mol-pending'],
     evidence: [
@@ -100,10 +100,10 @@ const RESOLVE_WORK_ITEMS = [
       { id: 'external', label: 'Attach verified external report', impact: 'Result stays REVIEW until the signed external report is attached and source-verified.' },
       { id: 'cancel', label: 'Close molecular order follow-up', impact: 'Work item closes without clearing eligibility.' },
     ],
-    signer: 'J. Kujo', role: 'Lead CRA - source follow-up', record: 'R-891', defaultAction: 'hold',
+    signer: 'L. Brenner', role: 'Lead CRA - source follow-up', record: 'R-891', defaultAction: 'hold',
   },
   {
-    key: 'renal-stale', patient: 'E. Morn', subject: 'S-1051', criterion: 'I-7.4', issue: 'Renal value outside window',
+    key: 'renal-stale', patient: 'P. Larsen', subject: 'S-1051', criterion: 'I-7.4', issue: 'Renal value outside window',
     driver: 'Creatinine clearance passes threshold but is four days outside protocol window', citationSummary: 'Prior lab and scheduled repeat draw remain cited',
     citations: ['Observation/renal-5521', 'ServiceRequest/cmp-7740'],
     evidence: [
@@ -117,10 +117,10 @@ const RESOLVE_WORK_ITEMS = [
       { id: 'defer', label: 'Defer screening visit', impact: 'Visit moves to pending. Existing lab remains visible but cannot satisfy freshness.' },
       { id: 'review', label: 'Request PI deviation review', impact: 'Result stays REVIEW. No eligibility change occurs without signed PI rationale.' },
     ],
-    signer: 'G. Recca, RN', role: 'Research coordinator - visit control', record: 'R-896', defaultAction: 'await',
+    signer: 'N. Patel, RN', role: 'Research coordinator - visit control', record: 'R-896', defaultAction: 'await',
   },
   {
-    key: 'washout-ambiguity', patient: 'I. Rey', subject: 'S-1078', criterion: 'E-5.3', issue: 'Last-dose date ambiguous',
+    key: 'washout-ambiguity', patient: 'T. Novak', subject: 'S-1078', criterion: 'E-5.3', issue: 'Last-dose date ambiguous',
     driver: 'Infusion administration and discharge summary disagree on last therapy date', citationSummary: 'Two treatment dates remain cited',
     citations: ['MedicationAdministration/inf-771', 'DocumentReference/dc-3390'],
     evidence: [
@@ -134,7 +134,7 @@ const RESOLVE_WORK_ITEMS = [
       { id: 'conservative', label: 'Use conservative date - 06-02', impact: 'Result stays REVIEW until the 21-day washout completes on 06-23.' },
       { id: 'reconcile', label: 'Request pharmacy reconciliation', impact: 'Result stays REVIEW while pharmacy confirms treatment chronology.' },
     ],
-    signer: 'Dr. I. Netero', role: 'Medical monitor - treatment chronology', record: 'R-902', defaultAction: 'conservative',
+    signer: 'Dr. K. Sandoval', role: 'Medical monitor - treatment chronology', record: 'R-902', defaultAction: 'conservative',
   },
 ]
 
@@ -500,8 +500,8 @@ function MiniRun() {
         <aside className="hero-app-nav">
           <strong>DMR-204</strong>
           {steps.map((step, index) => (
-            <button key={step} type="button" className={`${index === active ? 'active' : ''}${index < active ? ' visited' : ''}`} onClick={() => selectStage(index)}>
-              <SpineGlyph kind={step} /><span>{step}</span>{index < active && <small className="spine-state">Done</small>}
+            <button key={step} type="button" className={`${index === active ? 'active' : ''}${index < active ? ' visited' : ''}`} aria-current={index === active ? 'step' : undefined} onClick={() => selectStage(index)}>
+              <SpineGlyph kind={step} /><span>{step}</span>
             </button>
           ))}
         </aside>
@@ -577,7 +577,7 @@ function ThesisSection() {
     <section className="thesis-section section-space" id="thesis" ref={root}>
       <SectionEyebrow>Thesis</SectionEyebrow>
       <div className="thesis-head">
-        <h2><span className="accent-text">The next generation of medicine</span> cannot run on yesterday's research infrastructure.</h2>
+        <h2><span className="thesis-line accent-text">The next generation of medicine</span><span className="thesis-line">cannot run on yesterday's research infrastructure.</span></h2>
         <p className="thesis-closer"><BrandName /> is building what comes next.</p>
       </div>
     </section>
@@ -596,27 +596,14 @@ function CapacityBento() {
   const integrationsInView = useInView(integrations, { threshold: 0 })
   const integrationsPlay = shouldRunAmbient({ reduced, inView: integrationsInView })
 
-  useEnterMotion(root, reduced, () => {
-    const record = root.current?.querySelector('.evidence-record-card')
-    return [
-      gsap.from('.capacity-bento > *, .systems-banner', {
-        opacity: 0,
-        duration: 0.86,
-        stagger: 0.1,
-        ease: 'power2.out',
-        clearProps: 'transform',
-        scrollTrigger: { trigger: root.current, start: 'top 70%', once: true },
-      }),
-      record ? gsap.from('.record-event', {
-        opacity: 0,
-        duration: 0.5,
-        stagger: 0.16,
-        ease: 'power2.out',
-        clearProps: 'transform',
-        scrollTrigger: { trigger: record, start: 'top 78%', once: true },
-      }) : null,
-    ]
-  })
+  useEnterMotion(root, reduced, () => gsap.from('.capacity-bento > *, .systems-banner', {
+    opacity: 0,
+    duration: 0.86,
+    stagger: 0.1,
+    ease: 'power2.out',
+    clearProps: 'transform',
+    scrollTrigger: { trigger: root.current, start: 'top 70%', once: true },
+  }))
 
   return (
     <section className="capacity-section section-space" id="capacity" ref={root}>
@@ -626,18 +613,6 @@ function CapacityBento() {
         <p>Disease-agnostic by design. One execution system for every protocol, care setting, and patient population. Each protocol adds reusable coverage. Every decision keeps human accountability and local control.</p>
       </div>
       <div className="capacity-bento">
-        <article className="bento-card bento-core">
-          <div className="bento-copy">
-            <span className="product-label">COMPILED PROTOCOL</span>
-            <h3><span>One locked version</span>{' '}<span>governs every screen.</span></h3>
-            <p>An amendment recompiles the logic and re-runs the affected cohort without relying on memory.</p>
-          </div>
-          <div className="criteria-stack" aria-label="Example compiled protocol criteria">
-            <div><span>I-2.1</span><strong>EGFR molecular status</strong><small>Source-dependent</small></div>
-            <div><span>I-4.2</span><strong>ECOG 0-1 within 14 days</strong><small>Human resolution</small></div>
-            <div><span>E-5.3</span><strong>21-day therapy washout</strong><small>Computable</small></div>
-          </div>
-        </article>
         <article className="bento-card metric-card metric-blue">
           <MetricDots active={6} total={20} tone="dark" />
           <strong>70%</strong>
@@ -650,47 +625,14 @@ function CapacityBento() {
           <p>Community-program treatment-trial enrollment, versus 21.6% at NCI-designated comprehensive cancer centers.</p>
           <cite>Journal of Clinical Oncology - national benchmark</cite>
         </article>
-        <article className="bento-card evidence-record-card">
-          <div className="record-head"><span className="product-label">Site-owned execution</span></div>
-          <div className="record-chain">
-            <ol aria-label="Site execution chain">
-              <li className="record-event">
-                <b>LOCKED</b>
-                <strong>Protocol v2.1 locked</strong>
-                <small>Sponsor packet - aead45cf</small>
-                <em>HIPAA-aligned hold - compiled at site</em>
-              </li>
-              <li className="record-event">
-                <b>BOUND</b>
-                <strong>1,284 source records bound</strong>
-                <small>Evidence snapshot - 09:55</small>
-                <em>PHI on-site - no raw egress</em>
-              </li>
-              <li className="record-event">
-                <b>SIGNED</b>
-                <strong>PI decision signed</strong>
-                <small>Dr. M. Avdol - 14:07</small>
-                <em>Local authority - attributable</em>
-              </li>
-              <li className="record-event">
-                <b>SEALED</b>
-                <strong>Replay sealed - Record intact</strong>
-                <small>sha256 - rpl...1047</small>
-              </li>
-            </ol>
-          </div>
-          <div className="record-copy">
-            <h3><span>Software prepares the record.</span><span className="accent-text">Your site makes the call.</span></h3>
-            <p>Every protocol version, source, and signed decision stays bound, reconstructable, and under local control.</p>
-          </div>
-        </article>
-      </div>
-      <div className="systems-banner">
-        <div className="systems-stat">
+        <article className="bento-card metric-card">
+          <MetricDots active={20} total={20} />
           <strong>20+</strong>
           <p>systems touched daily at 60% of research sites.</p>
           <cite>SCRS Site Landscape Survey 2023</cite>
-        </div>
+        </article>
+      </div>
+      <div className="systems-banner">
         <div className="connector-closeup">
           <div className="connector-head"><span>Target inputs</span><small>Synthetic walkthrough</small></div>
           <div className={`integration-viewport${integrationsPlay ? '' : ' is-paused'}`} ref={integrations} aria-label="Target source-system examples">
@@ -854,7 +796,7 @@ function ProtocolView({ tick = 0, onAdvance }) {
       <div className="protocol-source-head"><span>PROTOCOL</span><em><i /> INGESTED - LOCKED V2.1</em><small>Fetched NCT00000204 - parsed sponsor packet - 06-21 14:02Z</small></div>
       <h4>DMR-204 - EGFR-mutant NSCLC</h4><p>NCT00000204 - Phase II - randomized 1:1 - hash aead45cf</p>
       <div className="source-amendment"><span>AMENDMENT CASCADE</span><strong>v2.0 - 04-12 <ArrowRight size={14} /> v2.1 - 06-21</strong><small>Narrowed prior-lines criterion - re-screen triggered</small></div>
-      <div className="source-protocol-summary"><section><span>SPONSOR</span><h5>Meridian Oncology Therapeutics</h5><p>NCT00000204 - DMR-204 - v2.1 - Phase II</p><div><i>IN</i><span><strong>Dr. I. Netero</strong><small>Medical Monitor</small></span><i>JK</i><span><strong>J. Kujo</strong><small>Lead CRA</small></span></div></section><section><span>STUDY ARMS - LLM-PARSED FROM PACKET</span><div className="source-arm"><b>ARM A</b><span><strong>Velartinib - 80 mg PO daily</strong><small>Investigational - oral 3rd-gen EGFR-TKI</small></span></div><div className="source-arm"><b>ARM B</b><span><strong>Platinum doublet</strong><small>Comparator - standard of care</small></span></div><p>Randomized 1:1 - target n=140 - stratified by ECOG and prior lines</p></section></div>
+      <div className="source-protocol-summary"><section><span>SPONSOR</span><h5>Meridian Oncology Therapeutics</h5><p>NCT00000204 - DMR-204 - v2.1 - Phase II</p><div><i>KS</i><span><strong>Dr. K. Sandoval</strong><small>Medical Monitor</small></span><i>LB</i><span><strong>L. Brenner</strong><small>Lead CRA</small></span></div></section><section><span>STUDY ARMS - LLM-PARSED FROM PACKET</span><div className="source-arm"><b>ARM A</b><span><strong>Velartinib - 80 mg PO daily</strong><small>Investigational - oral 3rd-gen EGFR-TKI</small></span></div><div className="source-arm"><b>ARM B</b><span><strong>Platinum doublet</strong><small>Comparator - standard of care</small></span></div><p>Randomized 1:1 - target n=140 - stratified by ECOG and prior lines</p></section></div>
       <div className="source-criteria-head"><span>ELIGIBILITY - 36 CRITERIA - 25 SOURCE-MAPPED</span><button type="button" onClick={onAdvance}>Open Evidence <ArrowRight size={14} weight="bold" /></button></div>
       <div className="source-criteria-list">{criteria.map(([id, name, type], index) => <div className={index === focus ? 'is-live' : ''} key={id}><span>{id}</span><strong>{name}</strong><em>{type}</em></div>)}</div>
     </div>
@@ -881,7 +823,7 @@ function EvidenceView({ refreshing, onAdvance, tick = 0, playing = false, select
   ]
   const detail = obligations[selected] || obligations[0]
   const isActed = Boolean(acted[detail.code])
-  const actionOwner = detail.code === 'E-4.2' ? 'PI / Sub-I - Dr. M. Avdol' : 'Site coordinator - G. Freecss'
+  const actionOwner = detail.code === 'E-4.2' ? 'PI / Sub-I - Dr. A. Voss' : 'Site coordinator - J. Moreau'
   const actionTicket = `TASK-${detail.code.replace(/[^0-9]/g, '')}-1047`
   const pickObligation = (index) => {
     setLocked(true)
@@ -906,7 +848,7 @@ function EvidenceView({ refreshing, onAdvance, tick = 0, playing = false, select
         <div className="obligation-list">
           <span>PROTOCOL OBLIGATIONS - SOURCE MAPPING</span>
           {obligations.map((item, index) => (
-            <button type="button" className={`${selected === index ? 'active ' : ''}${item.status.toLowerCase()}`} aria-label={`${item.code}. ${item.fact}. ${acted[item.code] ? 'ROUTED' : item.status}`} onClick={() => pickObligation(index)} key={item.code}>
+            <button type="button" className={`${selected === index ? 'active ' : ''}${item.status.toLowerCase()}`} aria-label={`${item.code}. ${item.fact}. ${acted[item.code] ? 'ROUTED' : item.status}`} aria-current={selected === index ? 'true' : undefined} onClick={() => pickObligation(index)} key={item.code}>
               <i className="evidence-status-dot" aria-hidden="true" />
               <div><b>{item.code}</b><strong>{item.fact}</strong></div>
               <footer><span>{item.cls}</span><small>{acted[item.code] ? 'Action recorded' : item.action} <ArrowRight size={12} weight="bold" /></small></footer>
@@ -971,7 +913,7 @@ function ScreeningView({ onAdvance, tick = 0 }) {
       <div className="source-view-intro"><span>SCREENING</span><small>Protocol v2.1</small></div>
       <div className="screen-summary-strip"><div className="pass"><strong>1</strong><span>Pass</span></div><div className="review"><strong>4</strong><span>Review</span></div><div className="fail"><strong>3</strong><span>Fail</span></div></div>
       <div className="source-screen-grid">
-        <div className="source-patient-list"><span>PATIENT QUEUE - DECISIVE CRITERION</span>{PLATFORM_SCREENING_QUEUE.map((patient, index) => <button type="button" className={`${index === selectedSubject ? 'active ' : ''}${patient.status.toLowerCase()}`} onClick={() => setSelectedSubject(index)} key={patient.id}><i /><span><strong>{patient.name}<small>{patient.id}</small></strong><em>{patient.criterion}</em></span><b>{patient.status === 'PASS' ? 'CONFIRM' : patient.status}</b></button>)}</div>
+        <div className="source-patient-list"><span>PATIENT QUEUE - DECISIVE CRITERION</span>{PLATFORM_SCREENING_QUEUE.map((patient, index) => <button type="button" className={`${index === selectedSubject ? 'active ' : ''}${patient.status.toLowerCase()}`} aria-current={index === selectedSubject ? 'true' : undefined} onClick={() => setSelectedSubject(index)} key={patient.id}><i /><span><strong>{patient.name}<small>{patient.id}</small></strong><em>{patient.criterion}</em></span><b>{patient.status === 'PASS' ? 'CONFIRM' : patient.status}</b></button>)}</div>
         <div className="source-patient-detail"><div className={settle}><header><h4>{subject.name}<small>{subject.id}</small></h4><em className={subject.status.toLowerCase()}>{subject.status === 'PASS' ? 'CONFIRM' : subject.status}</em></header><span>PRIMARY BLOCKER</span><h5>{subject.criterion.split(' - ')[0]} - {subject.blocker}</h5><span>NORMALIZED RULE</span><p>{subject.rule}</p><span>PATIENT FACTS USED</span><ul>{subject.facts.map((fact) => <li key={fact}>{fact}</li>)}</ul><span>EVIDENCE SOURCES</span><p className="source-records">{subject.sources.join(' - ')}</p><div className="screen-result-pair"><span><small>DETERMINISTIC RESULT</small><strong>{subject.status === 'REVIEW' ? 'REVIEW, not FAIL' : subject.status}</strong></span><span><small>REVIEW TRIGGER</small><strong>{reviewTrigger}</strong></span></div>{recommendation && <div className="recommended-action"><span>RECOMMENDED NEXT ACTION</span><strong>{recommendation}</strong></div>}{subject.status === 'REVIEW' && <button className="source-primary-action" type="button" onClick={onAdvance}>Open in Resolve <ArrowRight size={14} weight="bold" /></button>}</div></div>
       </div>
     </div>
@@ -1005,12 +947,12 @@ function ResolveView({ tick = 0 }) {
   return (
     <div className="workspace-view source-resolve-view" key="resolve">
       <div className="source-resolve-top"><span>RESOLVE</span><small>{remaining} awaiting judgment - {Object.keys(signedDecisions).length} committed</small></div>
-      <div className="resolve-person-tabs">{RESOLVE_WORK_ITEMS.map((item, index) => <button type="button" className={`${work === index ? 'active ' : ''}${signedDecisions[item.key] ? 'committed' : ''}`} onClick={() => selectWork(index)} key={item.key}><i>{item.patient.split(' ').map((part) => part[0]).join('')}</i>{item.patient}</button>)}</div>
+      <div className="resolve-person-tabs">{RESOLVE_WORK_ITEMS.map((item, index) => <button type="button" className={`${work === index ? 'active ' : ''}${signedDecisions[item.key] ? 'committed' : ''}`} aria-current={work === index ? 'true' : undefined} onClick={() => selectWork(index)} key={item.key}><i>{item.patient.split(' ').map((part) => part[0]).join('')}</i>{item.patient}</button>)}</div>
       <div className={settle}>
       <div className="resolve-subject-title"><h4>{selectedWork.patient}<small>{selectedWork.subject}</small></h4><span>{selectedWork.criterion} - {selectedWork.rule}</span></div>
       <div className="resolve-compare-bar"><div><span>{selectedWork.evidence[0].label}</span><strong>{selectedWork.evidence[0].value}</strong><small>{selectedWork.evidence[0].meta}</small></div><b>{selectedWork.symbol}</b><div><span>{selectedWork.evidence[1].label}</span><strong>{selectedWork.evidence[1].value}</strong><small>{selectedWork.evidence[1].meta}</small></div></div>
       <p className="resolve-prompt">{selectedWork.prompt}</p>
-      <div className="source-decision-list"><span>YOUR CALL</span>{selectedWork.actions.map((action) => <button className={decision === action.id ? 'selected' : ''} type="button" disabled={Boolean(signed)} onClick={() => setDecision(action.id)} key={action.id}><i />{action.label}</button>)}</div>
+      <div className="source-decision-list" role="group" aria-label="Decision to sign"><span>YOUR CALL</span>{selectedWork.actions.map((action) => <button className={decision === action.id ? 'selected' : ''} type="button" aria-pressed={decision === action.id} disabled={Boolean(signed)} onClick={() => setDecision(action.id)} key={action.id}><i />{action.label}</button>)}</div>
       {signed ? <div className="resolve-signed-receipt"><span>DECISION SIGNED - BOUND TO REPLAY</span><strong>{selectedWork.actions.find((action) => action.id === signed)?.label}</strong><small>{selectedWork.signer} - {selectedWork.role} - {selectedWork.record}</small></div> : <div className="resolve-sign-row"><small>{decision ? `${selectedWork.role} signs - evidence preserved - PHI-free` : 'Select a decision to sign'}</small><button type="button" disabled={!decision} onClick={signDecision}>Sign decision</button></div>}
       </div>
       </div>
@@ -1030,7 +972,7 @@ function ReplayView({ tick = 0 }) {
     { event: 'Criterion evaluated', detail: 'I-4.2 ECOG - Protocol v2.1', time: '10:02', actor: 'evaluator', id: 'EVT-1108', flag: 'CONFLICT', rows: [['Screening', 'deterministic - no model'], ['Criterion', 'I-4.2 ECOG 0-1'], ['Facts used', 'structured ECOG 1 (06-18); note ECOG 2 (06-20)'], ['Result', 'REVIEW'], ['Exception', 'CONFLICTING_SOURCE'], ['Integrity', 'Verified - record intact']] },
     { event: 'Screening evaluated', detail: '1 eligible - 4 review - 3 fail', time: '10:03', actor: 'evaluator', id: 'EVT-1110', rows: [['Protocol', 'v2.1'], ['Cohort', '8 subjects'], ['Result', '1 pass - 4 review - 3 fail']] },
     { event: 'Review opened', detail: 'Review R-884 - Screening', time: '10:04', actor: 'system', id: 'EVT-1111', rows: [['Work item', 'Review R-884'], ['Owner', 'PI / Sub-I'], ['State', 'Awaiting site judgment']] },
-    { event: 'Resolve committed', detail: 'Review R-884 - PI signature', time: '14:07', actor: 'You', id: 'EVT-1207', rows: [['Decision', 'Accept note - ECOG 2'], ['Signer', 'Dr. M. Avdol - PI / Sub-I'], ['Signature', 'Ed25519 verified']] },
+    { event: 'Resolve committed', detail: 'Review R-884 - PI signature', time: '14:07', actor: 'You', id: 'EVT-1207', rows: [['Decision', 'Accept note - ECOG 2'], ['Signer', 'Dr. A. Voss - PI / Sub-I'], ['Signature', 'Ed25519 verified']] },
     { event: 'Replay sealed', detail: 'RPL-1047 - export bundle', time: '14:08', actor: 'system', id: 'EVT-1208', rows: [['Object', 'RPL-2026-0622-018-1047'], ['Chain', 'intact - 9 / 9 events'], ['PHI', 'sponsor-safe - excluded']] },
   ]
   const selectedEvent = chain[selected]
@@ -1042,8 +984,8 @@ function ReplayView({ tick = 0 }) {
 
   return (
     <div className="workspace-view source-replay-view" key="replay">
-      <div className="source-replay-head"><span><b>REPLAY</b><small>Subject S-1047 - DMR-204 - Site 018 - Protocol v2.1 - Run RPL-2026-0622-018-1047 - 06-22</small></span><button className={exportReady ? 'ready' : ''} type="button" onClick={() => { setExportOpen(true); if (exportReady) setExportReady(false) }}>{exportReady ? ' Replay ready' : 'Export Replay'}</button></div>
-      <div className="source-replay-grid"><div className="replay-ledger"><span>RECONSTRUCTION LEDGER</span><header><small>TIME</small><small>EVENT</small><small>ACTOR</small><small>INTEGRITY</small></header>{chain.map((item, index) => <button type="button" className={selected === index ? 'active' : ''} onClick={() => { setSelected(index); setExportOpen(false) }} key={item.id}><time>{item.time}</time><span><strong>{item.event}</strong><small>{item.detail}</small></span><em>{item.actor}</em><b> Verified</b></button>)}</div><div className="replay-event-detail"><div className={settle}>{exportOpen ? <InlineActionPanel open complete={exportReady} eyebrow="ACTION REQUIRED" title="Prepare sponsor-safe replay" description="Review chain integrity and data boundary before marking this replay ready. Raw PHI stays excluded." rows={[["Replay", "RPL-2026-0622-018-1047"], ["Events", "9 verified - chain intact"], ["Signature", "Ed25519 - verified"], ["Data boundary", "Sponsor-safe - raw PHI excluded"]]} confirmLabel="Prepare replay" successTitle="Replay ready" successDescription="Sponsor-safe replay is ready inside Damaros. Nothing downloaded to this device." onClose={() => setExportOpen(false)} onConfirm={() => setExportReady(true)} /> : <><span>SELECTED EVENT</span><header><h4>{selectedEvent.event}</h4>{selectedEvent.flag && <em>{selectedEvent.flag}</em>}<small>{selectedEvent.time} - {selectedEvent.id}</small></header><dl>{selectedEvent.rows.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl><footer><span>RELATED EVENTS</span><small>{selected > 0 ? chain[selected - 1].event : 'Protocol intake'} - {selected < chain.length - 1 ? chain[selected + 1].event : 'Export bundle'}</small></footer></>}</div></div></div>
+      <div className="source-replay-head"><span><b>REPLAY</b><small>Subject S-1047 - DMR-204 - Site 018 - Protocol v2.1 - Run RPL-2026-0622-018-1047 - 06-22</small></span><button className={exportReady ? 'ready' : ''} type="button" onClick={() => { setExportOpen(true); if (exportReady) setExportReady(false) }}>{exportReady ? 'Replay ready' : 'Export Replay'}</button></div>
+      <div className="source-replay-grid"><div className="replay-ledger"><span>RECONSTRUCTION LEDGER</span><header><small>TIME</small><small>EVENT</small><small>ACTOR</small><small>INTEGRITY</small></header>{chain.map((item, index) => <button type="button" className={selected === index ? 'active' : ''} aria-current={selected === index ? 'true' : undefined} onClick={() => { setSelected(index); setExportOpen(false) }} key={item.id}><time>{item.time}</time><span><strong>{item.event}</strong><small>{item.detail}</small></span><em>{item.actor}</em><b>Verified</b></button>)}</div><div className="replay-event-detail"><div className={settle}>{exportOpen ? <InlineActionPanel open complete={exportReady} eyebrow="ACTION REQUIRED" title="Prepare sponsor-safe replay" description="Review chain integrity and data boundary before marking this replay ready. Raw PHI stays excluded." rows={[["Replay", "RPL-2026-0622-018-1047"], ["Events", "9 verified - chain intact"], ["Signature", "Ed25519 - verified"], ["Data boundary", "Sponsor-safe - raw PHI excluded"]]} confirmLabel="Prepare replay" successTitle="Replay ready" successDescription="Sponsor-safe replay is ready inside Damaros. Nothing downloaded to this device." onClose={() => setExportOpen(false)} onConfirm={() => setExportReady(true)} /> : <><span>SELECTED EVENT</span><header><h4>{selectedEvent.event}</h4>{selectedEvent.flag && <em>{selectedEvent.flag}</em>}<small>{selectedEvent.time} - {selectedEvent.id}</small></header><dl>{selectedEvent.rows.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl><footer><span>RELATED EVENTS</span><small>{selected > 0 ? chain[selected - 1].event : 'Protocol intake'} - {selected < chain.length - 1 ? chain[selected + 1].event : 'Export bundle'}</small></footer></>}</div></div></div>
     </div>
   )
 }

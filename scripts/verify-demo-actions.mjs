@@ -48,12 +48,21 @@ if (css.includes('.biomarker-rain span::before')) throw new Error('Biomarker lin
 
 if (!app.includes("aria-live=\"polite\"")) throw new Error('Demo actions need an announced confirmation region')
 if (!app.includes('A research department,</span>') || !app.includes('deployed like software.')) throw new Error('Capacity thesis drifted')
-if (!app.includes('Site-owned execution') || !app.includes('Your site makes the call.') || !app.includes('Replay sealed - Record intact')) {
-  throw new Error('Execution record copy drifted')
+// Capacity is three figures and the systems they reach. The compiled-protocol
+// panel and the execution-record card moved out - Trident and Nectar carry
+// that story on their own sheets now.
+for (const figure of ['70%', '4.1%', '20+']) {
+  if (!app.includes(`<strong>${figure}</strong>`)) throw new Error(`Capacity figure ${figure} drifted`)
 }
-if (app.includes('The execution record stays under site control.')) throw new Error('Old execution record headline remains')
-if (app.includes('record-spine') || css.includes('.record-spine {')) throw new Error('Site-owned execution cards must not keep a left spine')
-if (!css.includes('.record-event') || !app.includes('Replay sealed - Record intact') || !css.includes('background: var(--accent-strong)')) throw new Error('Execution record cards must stay blue and bound')
+for (const retired of ['evidence-record-card', 'criteria-stack', 'bento-core', 'record-event', 'systems-stat']) {
+  if (app.includes(retired) || css.includes(`.${retired}`)) throw new Error(`Retired capacity panel still present: ${retired}`)
+}
+if (!app.includes('Target inputs') || !app.includes('integration-track')) throw new Error('Capacity must keep the target-input carousel under the figures')
+if (!/\.capacity-bento \{[^}]*grid-template-columns: repeat\(3, minmax\(0, 1fr\)\);/.test(css)) throw new Error('Capacity figures must read as one row of three')
+if (!/#root \.capacity-bento > \.metric-blue \{[^}]*background: var\(--accent-strong\);/.test(css)) throw new Error('The headline capacity figure must stay solid blue')
+// A ground for the page, so a white card is an object and not the page itself.
+if (!css.includes('--page-ground:') || !/body \{[\s\S]*?var\(--page-ground\)/.test(css)) throw new Error('The page needs a ground for its surfaces to sit on')
+if (!/#root \.final-cta h2 \{[^}]*font-size: var\(--fluid-cta\);/.test(css) || !css.includes('--fluid-cta:')) throw new Error('The final call to action needs its own scale, not the section one')
 if (!app.includes('control-security-workspace') || !app.includes('Trident execution') || !app.includes('No PHI egress') || !css.includes('.control-control-detail')) {
   throw new Error('Site control must show local Trident custody and fail-closed execution')
 }

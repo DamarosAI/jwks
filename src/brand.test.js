@@ -60,7 +60,8 @@ describe('Damaros brand mark', () => {
   })
 
   it('answers the thesis with the brand mark and even section padding', () => {
-    assert.match(app, /className="accent-text">The next generation of medicine<\/span> cannot run on yesterday's research infrastructure\./)
+    assert.match(app, /<span className="thesis-line accent-text">The next generation of medicine<\/span><span className="thesis-line">cannot run on yesterday's research infrastructure\.<\/span>/)
+    assert.match(css, /#root \.thesis-head h2 \.thesis-line \{[^}]*display:\s*block;/)
     assert.match(app, /className="thesis-closer"><BrandName \/> is building what comes next\./)
     assert.match(css, /\.thesis-section\.section-space \{[\s\S]*?padding-block:\s*112px;/)
     assert.match(css, /\.landing-hero \{[\s\S]*?padding:\s*clamp\(196px, 22vh, 248px\) var\(--gutter\) 112px;/)

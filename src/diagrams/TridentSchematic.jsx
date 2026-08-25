@@ -221,7 +221,7 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
   const facts = {
     surface: source ? `SOURCE ${source}` : 'ANY OF THREE',
     contract: 'T-07 V3',
-    authority: open ? 'SIGNED - M. AVDOL' : 'SHUT - NEEDS A SIGNATURE',
+    authority: open ? 'SIGNED - A. VOSS' : 'SHUT - NEEDS A SIGNATURE',
     receipt: state.receipt ? 'REV-018-TR3-1044' : 'NOT YET WRITTEN',
   }
 
