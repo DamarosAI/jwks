@@ -9476,7 +9476,27 @@ html.is-hidden .clinic-node i,
   fill: color-mix(in srgb, var(--accent) 13%, var(--surface-solid));
   stroke: color-mix(in srgb, var(--accent) 44%, transparent);
   stroke-width: 1;
+  cursor: pointer;
+  transition: transform 560ms cubic-bezier(0.16, 1, 0.3, 1), fill 300ms ease, stroke 300ms ease;
 }
+
+/* Point at a waiting proposal and the intake takes it in: the chip leaves the
+   queue and runs to the throat, which is the one route off this deck. It is
+   drawn in plan, so the run follows the deck's own geometry rather than a
+   screen diagonal that happens to look right. */
+
+.dgm-queued { cursor: pointer; }
+
+.dgm-queued.is-taken > .dgm-queue {
+  transform: translate(calc(var(--qx, 0) * -0.78px), calc(var(--qy, 0) * -0.78px));
+  fill: var(--accent);
+  stroke: var(--accent-strong);
+}
+
+.dgm-catch.is-live { stroke: color-mix(in srgb, var(--accent) 64%, transparent); stroke-dasharray: none; }
+.dgm-port.is-hot { stroke: var(--accent-strong); stroke-width: 2.2; }
+.dgm-throat { transition: fill 300ms ease, r 300ms ease; }
+.dgm-throat.is-hot { r: 7; }
 
 /* Trident: the three proposal surfaces. They are drawn identically on purpose.
    The reader picks which one is proposing, and the aperture holds all the same
@@ -9613,6 +9633,20 @@ html.is-hidden .clinic-node i,
 
 .dgm-fieldtile.is-named { fill: var(--accent); stroke: var(--accent-strong); stroke-width: 1.6; }
 
+/* The answer is drawn in the tile the reader is pointing at: a tick if the
+   contract has checked that field, a flat bar if it has not. A count of
+   nineteen means nothing until one of them shows what being checked looks
+   like. */
+
+.dgm-fieldcheck {
+  fill: none;
+  stroke: var(--surface-solid);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
 @keyframes dgm-tick {
   0%, 86%, 100% { stroke-width: 1; }
   91% { stroke-width: 1.9; }
@@ -9695,6 +9729,34 @@ html.is-hidden .clinic-node i,
 
 .dgm-svg.is-live .dgm-bolt:not(.is-clear) { animation: dgm-load 3.8s ease-in-out infinite; }
 
+/* Push on the shutter and it answers as the mechanism would. The blades give a
+   hair against their own bolts and come straight back, and the bolts colour up
+   under the load while they do it. A held run is the one moment in this figure
+   where nothing happens on purpose, and a reader who is told that and shown
+   nothing has only been told it. */
+
+.dgm-shutter { cursor: pointer; }
+
+@keyframes dgm-give {
+  0%, 100% { transform: translateX(0); }
+  34% { transform: translateX(calc(var(--blade, 1) * 3.2px)); }
+}
+
+@keyframes dgm-take {
+  0%, 100% { transform: translateY(0); }
+  34% { transform: translateY(calc(var(--end, 1) * -2.2px)); }
+}
+
+.dgm-shutter.is-tried .dgm-leaf:not(.is-open) {
+  animation: dgm-give 820ms cubic-bezier(0.2, 0.86, 0.3, 1);
+}
+
+.dgm-shutter.is-tried .dgm-bolt:not(.is-clear) {
+  fill: color-mix(in srgb, var(--warning) 48%, var(--surface-solid));
+  stroke: var(--warning);
+  animation: dgm-take 820ms cubic-bezier(0.2, 0.86, 0.3, 1);
+}
+
 /* The shutter frame. The hole used to sit on its own in the middle of an empty
    plate, which is why the deck read as unfinished - and then it collected a
    rebate and a ring trying to answer that, which is how it became a blob. One
@@ -9744,6 +9806,28 @@ html.is-hidden .clinic-node i,
 .dgm-ledgerrow.is-written .dgm-ledgertick { fill: color-mix(in srgb, var(--accent) 72%, transparent); }
 .dgm-ledgerrow.is-written .dgm-ledgerhash { fill: color-mix(in srgb, var(--accent) 22%, var(--surface-solid)); stroke: var(--accent); }
 .dgm-ledgerrow.is-written .dgm-ledgerseal { fill: var(--success); }
+
+/* Point at a row and the chain is what lights: this row's hash, the link that
+   carries it, and the hash of the row it came from. That is the whole of what
+   makes a ledger a ledger, and until now it was a dotted line in the margin
+   nobody had a reason to look at. */
+
+.dgm-ledgerrow { cursor: pointer; }
+.dgm-ledgerchain { transition: stroke 260ms ease, stroke-width 260ms ease; }
+
+.dgm-ledgerchain.is-hot {
+  stroke: var(--accent-strong);
+  stroke-width: 1.9;
+  stroke-dasharray: none;
+}
+
+.dgm-ledgerrow.is-hot .dgm-ledgerbar { stroke: var(--accent-strong); stroke-width: 1.7; }
+
+.dgm-ledgerrow.is-hot .dgm-ledgerhash,
+.dgm-ledgerrow.is-parent .dgm-ledgerhash {
+  fill: var(--accent-strong);
+  stroke: var(--accent-strong);
+}
 
 /* The descent. One short drop per deck, down the free left edge, lit one at a
    time - and the drop out of the site deck has no path at all until somebody
@@ -10024,6 +10108,22 @@ html.is-hidden .clinic-node i,
 
 .dgm-sweep { fill: color-mix(in srgb, var(--accent) 38%, transparent); opacity: 0; }
 
+/* The site's number, lettered along its own wall. Set in the machine face at
+   wall scale and tracked open, so it reads as stencilled on the object rather
+   than typeset beside it. It never carries a status colour: a name is not a
+   state, and this one has to survive the whole run unchanged. */
+
+.dgm-wallmark {
+  fill: color-mix(in srgb, var(--text) 52%, transparent);
+  font-family: var(--font-mono);
+  font-size: 7.6px;
+  letter-spacing: 0.12em;
+  pointer-events: none;
+  transition: fill 260ms ease;
+}
+
+.dgm-site.is-hot .dgm-wallmark { fill: var(--accent-strong); }
+
 @keyframes dgm-sweep {
   0% { opacity: 0; transform: translateX(0); }
   14% { opacity: var(--run-in, 1); }
@@ -10034,6 +10134,16 @@ html.is-hidden .clinic-node i,
 .dgm-svg.is-live .dgm-sweep {
   animation: dgm-sweep calc(3s + var(--life, 0) * 2.4s) ease-in-out infinite;
   animation-delay: calc(var(--stagger, 0) * -6s);
+}
+
+/* Point at a site and it shows you what it does rather than telling you: the
+   local run picks up and crosses its own records, inside its own wall, and
+   still nothing leaves. */
+
+.dgm-svg.is-live .dgm-site.is-hot .dgm-sweep {
+  animation-duration: 1.5s;
+  animation-delay: 0s;
+  fill: color-mix(in srgb, var(--accent) 62%, transparent);
 }
 
 /* Edge tags: what a leader is carrying, and what a tile is called. */
@@ -10092,7 +10202,7 @@ html.is-hidden .clinic-node i,
 .dgm-tine.is-hot { stroke: var(--accent-strong); stroke-dasharray: none; }
 .dgm-pad.is-hot { fill: var(--accent-soft); stroke: var(--accent-strong); }
 .dgm-rail.is-hot .dgm-side { fill: var(--text); }
-.dgm-ident.is-hot .dgm-side { fill: var(--accent-strong); }
+.dgm-ident.is-hot .dgm-sidefact { fill: var(--accent-strong); }
 .dgm-lift.is-hot .dgm-liftpath { stroke: var(--accent-strong); stroke-width: 2.8; }
 
 /* Readout */
@@ -10110,7 +10220,7 @@ html.is-hidden .clinic-node i,
 .dgm-svg.is-pass .dgm-statustext { fill: var(--accent-strong); }
 
 @media (prefers-reduced-motion: reduce) {
-  .dgm-svg :is(.dgm-droppath, .dgm-dropflow, .dgm-dropnode, .dgm-approach, .dgm-spark, .dgm-traffic, .dgm-fieldtile, .dgm-queue, .dgm-face-top, .dgm-holerim, .dgm-bolt, .dgm-leaf, .dgm-ring, .dgm-loopflow, .dgm-side, .dgm-sidefact, .dgm-read, .dgm-tagbody, .dgm-node, .dgm-link, .dgm-liftpath, .dgm-liftchip, .dgm-carry, .dgm-reachfill, .dgm-reachrim, .dgm-sweep, .dgm-status, .dgm-statustext, .dgm-deck, .dgm-plate, .dgm-site, .dgm-ident) {
+  .dgm-svg :is(.dgm-droppath, .dgm-dropflow, .dgm-dropnode, .dgm-approach, .dgm-spark, .dgm-traffic, .dgm-fieldtile, .dgm-queue, .dgm-face-top, .dgm-holerim, .dgm-bolt, .dgm-leaf, .dgm-ring, .dgm-loopflow, .dgm-side, .dgm-sidefact, .dgm-read, .dgm-tagbody, .dgm-node, .dgm-link, .dgm-liftpath, .dgm-liftchip, .dgm-carry, .dgm-reachfill, .dgm-reachrim, .dgm-sweep, .dgm-wallmark, .dgm-status, .dgm-statustext, .dgm-deck, .dgm-plate, .dgm-site, .dgm-ident, .dgm-catch, .dgm-throat, .dgm-ledgerchain, .dgm-ledgerbar, .dgm-ledgerhash) {
     transition: none;
     animation: none;
   }

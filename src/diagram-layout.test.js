@@ -326,8 +326,9 @@ describe('Trident and Nectar schematics', () => {
     for (const key of ['MODEL', 'AGENT', 'AUTOMATION', 'surface', 'contract', 'authority', 'receipt']) {
       assert.match(trident, new RegExp(`^  ${key}: \\{ tone: '\\w+', pill: '[A-Z]+', read: '`, 'm'))
     }
-    // A field tile answers for itself, in the contract's own colour.
-    assert.match(trident, /\{ tone: 'valid', pill: 'FIELD', read: `\$\{FIELDS\[field\]\.name\}/)
+    // A part of a deck answers for itself, ahead of the deck it sits on.
+    assert.match(trident, /const cue = partCue\(part, state\) \?\? READS\[hot\]/)
+    assert.match(trident, /function partCue\(part, state\) \{/)
     // No Trident phase carries prose any more - the phases carry state.
     assert.doesNotMatch(trident, /status: 'PROPOSING', read:/)
     // Nectar does the same, and what it says about a site is what that site did
@@ -342,6 +343,48 @@ describe('Trident and Nectar schematics', () => {
     for (const tone of ['valid', 'signed', 'hold', 'pass']) {
       assert.match(DGM_BLOCK, new RegExp(`\\.dgm-svg\\.is-${tone} \\.dgm-status`))
     }
+  })
+
+  it('answers a pointer with the mechanism rather than with a caption', () => {
+    // Every deck has parts, and pointing at one makes that part do the thing it
+    // is for. A waiting proposal is taken up into the throat. A field ticks or
+    // visibly does not. The shutter gives a hair against its own bolts and comes
+    // straight back. A ledger row lights the link that seals it to the row
+    // above. The line beside the pill is what is left over once the drawing has
+    // shown it - an identifier, a count, a consequence - never a caption for
+    // something the reader has just watched happen.
+    for (const kind of ['queue', 'field', 'shutter', 'row']) {
+      assert.match(trident, new RegExp(`part\\.kind === '${kind}'`))
+      assert.match(trident, new RegExp(`touch\\('${kind}'`))
+    }
+    // The chip travels in plan; its target stays where the queue is. Hanging the
+    // target on the chip moves it out from under the pointer the moment it is
+    // taken, and then the two chatter.
+    assert.match(DGM_BLOCK, /\.dgm-queued\.is-taken > \.dgm-queue \{[\s\S]*?transform: translate\(calc\(var\(--qx/)
+    assert.match(trident, /<rect className="dgm-hit" x=\{chip\.x - 10\}/)
+    assert.match(DGM_BLOCK, /\.dgm-fieldcheck \{/)
+    assert.match(DGM_BLOCK, /@keyframes dgm-give/)
+    assert.match(DGM_BLOCK, /\.dgm-shutter\.is-tried \.dgm-leaf:not\(\.is-open\)/)
+    assert.match(DGM_BLOCK, /\.dgm-shutter\.is-tried \.dgm-bolt:not\(\.is-clear\)/)
+    // The chain is drawn a link at a time so one of them can light.
+    assert.match(trident, /\{LEDGER\.slice\(1\)\.map\(\(row\) => \(/)
+    assert.match(DGM_BLOCK, /\.dgm-ledgerrow\.is-parent \.dgm-ledgerhash/)
+    // And a Nectar site shows the local run crossing its own records.
+    assert.match(DGM_BLOCK, /\.dgm-svg\.is-live \.dgm-site\.is-hot \.dgm-sweep/)
+  })
+
+  it('letters each site on its own wall instead of in the margin', () => {
+    // The middle of a plan side carried through the projection, half a wall
+    // down, running along the edge - so the number is on the object rather than
+    // pointed at from off to one side. The margin keeps the two figures and
+    // stops repeating the name, which would be the drawing saying it twice.
+    assert.match(nectar, /const \[mx, my\] = solid\.p\(site\.half, 0\)/)
+    assert.match(nectar, /className="dgm-wallmark"/)
+    assert.match(nectar, /rotate\(\$\{-EDGE_ANGLE\}/)
+    assert.doesNotMatch(nectar, /className="dgm-side"/)
+    assert.match(DGM_BLOCK, /\.dgm-wallmark \{[\s\S]*?font-family: var\(--font-mono\);/)
+    // A name is not a state, so it never takes a status colour.
+    assert.doesNotMatch(DGM_BLOCK, /\.dgm-svg\.is-\w+ \.dgm-wallmark/)
   })
 
   it('places the source labels above their plates, upright and legible', () => {
@@ -412,7 +455,7 @@ describe('Trident and Nectar schematics', () => {
     assert.match(trident, /;\[5, 5, 5, 4\]\.forEach\(\(count, row\) => \{/)
     assert.match(trident, /const x = \(col - \(count - 1\) \/ 2\) \* 28/)
     assert.doesNotMatch(trident, /planSpace\(CX, CONTRACT\.cy\)[\s\S]{0,900}dgm-port/)
-    assert.match(trident, /onMouseEnter=\{\(\) => setField\(index\)\}/)
+    assert.match(trident, /\{\.\.\.touch\('field', index\)\}/)
     assert.match(DGM_BLOCK, /\.dgm-fieldtile\.is-named \{/)
   })
 
@@ -445,15 +488,25 @@ describe('Trident and Nectar schematics', () => {
     assert.match(nectar, /className="dgm-reachrim" x=\{site\.plan\[0\] - span\} y=\{site\.plan\[1\] - span\} width=\{span \* 2\} height=\{span \* 2\}/)
     assert.match(nectar, /<clipPath id="nc-ground">/)
     assert.match(nectar, /<g clipPath="url\(#nc-ground\)">/)
-    // Solved against the plan, not chosen: with sites 148 plan units apart and
-    // reach factors of 0.82 and 0.94, the opening figure has every pair clear
-    // (1.76 * 78 = 137 < 148) and the closing one has every pair overlapping
-    // (1.76 * 104 = 183 > 148).
-    assert.match(nectar, /reach: 78/)
-    assert.match(nectar, /reach: 104/)
-    assert.match(nectar, /plan: \[22, -126\]/)
-    assert.match(nectar, /plan: \[-126, 22\]/)
-    assert.match(nectar, /plan: \[60, 60\]/)
+    // Solved against the plan, not chosen - and re-solved here rather than
+    // pinned to literals, because the claim is the geometry. Spreading the
+    // sites without regrowing the reach would leave the closing frame asserting
+    // an overlap it no longer draws, and a hard-coded pair of coordinates would
+    // not have caught it. Reaches are plan-aligned squares, so two of them meet
+    // exactly when the larger of their two axis gaps is inside the sum of their
+    // half-sizes.
+    const sites = [...nectar.matchAll(/plan: \[(-?\d+), (-?\d+)\], records: '[\d,]+', half: \d+, wall: \d+, bands: \d+, grew: ([\d.]+)/g)]
+      .map((match) => ({ x: Number(match[1]), y: Number(match[2]), grew: Number(match[3]) }))
+    const reaches = [...nectar.matchAll(/reach: (\d+)/g)].map((match) => Number(match[1]))
+    assert.equal(sites.length, 3)
+    assert.equal(reaches.length >= 2, true)
+    const apart = (a, b) => Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y))
+    for (const [a, b] of [[0, 1], [0, 2], [1, 2]]) {
+      const gap = apart(sites[a], sites[b])
+      const span = sites[a].grew + sites[b].grew
+      assert.equal(span * reaches[0] < gap, true, `sites ${a} and ${b} already touch in the opening figure`)
+      assert.equal(span * reaches[reaches.length - 1] > gap, true, `sites ${a} and ${b} never overlap by the closing figure`)
+    }
     assert.match(DGM_BLOCK, /\.dgm-reachrim \{[\s\S]*?transition: x var\(--grow\)/)
     // And the three definitions land in three parts of the library rather than
     // in one corner of it, because that is what compounding coverage looks like.
@@ -518,8 +571,19 @@ describe('Trident and Nectar schematics', () => {
   })
 
   it('gives the beat that carries the claim the widest stretch of scroll', () => {
-    assert.match(trident, /span: 3\.2, drops: 2, bound: 19, gate: 'shut'/)
-    assert.match(nectar, /span: 2\.4, bound: 38, reach: 104/)
+    // The hold at the shut shutter and the steady state after coverage has
+    // compounded are the two frames that state the claim, so each owns the
+    // widest stretch of its own run and is what a reader parked mid-section is
+    // left looking at. Read off the source rather than pinned to a number, so
+    // retuning a phase cannot quietly hand the beat to a different one.
+    const widest = (source) => {
+      const phases = [...source.matchAll(/\{ span: ([\d.]+),[^}]*status: '([A-Z]+)'/g)]
+        .map((match) => ({ span: Number(match[1]), status: match[2] }))
+      assert.equal(phases.length >= 5, true)
+      return phases.reduce((best, phase) => (phase.span > best.span ? phase : best)).status
+    }
+    assert.equal(widest(trident), 'HELD')
+    assert.equal(widest(nectar), 'STEADY')
   })
 
   it('leaves the claim readable in the resting state', () => {

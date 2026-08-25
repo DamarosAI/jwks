@@ -50,7 +50,7 @@ import { useScrollRun } from './useScrollPhase'
  */
 
 const MESH = project(310, 200)
-const GROUND = project(310, 468)
+const GROUND = project(310, 462)
 
 const GROUND_HALF = 172
 
@@ -108,9 +108,9 @@ const TRAFFIC = LINKS.filter((link) => link.life > 0.88).slice(0, 14)
 //
 // Everything else about a site follows from what it holds.
 const SITES = [
-  { id: 'SITE 042', plan: [22, -126], records: '890', half: 44, wall: 18, bands: 4, grew: 0.94, stagger: 0.08, place: 'right' },
-  { id: 'SITE 103', plan: [-126, 22], records: '614', half: 40, wall: 15, bands: 3, grew: 0.82, stagger: 0.16, place: 'left' },
-  { id: 'SITE 018', plan: [60, 60], records: '1,204', half: 55, wall: 22, bands: 5, grew: 1.08, stagger: 0.26, place: 'below' },
+  { id: 'SITE 042', plan: [46, -124], records: '890', half: 44, wall: 18, bands: 4, grew: 0.94, stagger: 0.08, place: 'right' },
+  { id: 'SITE 103', plan: [-124, 46], records: '614', half: 40, wall: 15, bands: 3, grew: 0.82, stagger: 0.16, place: 'left' },
+  { id: 'SITE 018', plan: [100, 100], records: '1,204', half: 55, wall: 22, bands: 5, grew: 1.08, stagger: 0.26, place: 'below' },
 ].map((site, index) => {
   const [cx, cy] = GROUND(...site.plan)
   // The corner radius is a fixed share of the plan size, so a small site and a
@@ -124,6 +124,12 @@ const SITES = [
     const y = Math.round((-lid * 0.58 + (band * lid * 1.16) / (site.bands - 1)) * 10) / 10
     rows.push({ y, half: lid - 7 })
   }
+  // The site letters its own wall. The right-hand skirt is a flat plan side, so
+  // the middle of it is plan (half, 0) carried through the projection, and the
+  // mark sits half a wall down from that edge and runs along it. A label lying
+  // on the asset is the asset naming itself, which is what a leader pointing at
+  // it from the margin can never quite be.
+  const [mx, my] = solid.p(site.half, 0)
   return {
     ...site,
     index,
@@ -132,6 +138,7 @@ const SITES = [
     solid,
     lid,
     rows,
+    mark: [mx, Math.round((my + site.wall / 2 + 2.6) * 10) / 10],
     run: (lid - 7) * 2 - 8,
     life: jitter(index, 17),
   }
@@ -177,13 +184,16 @@ const JOINED = new Set(
 // The reach numbers are solved against the plan, not chosen: at the opening
 // figure no two reaches touch, and by the closing one every pair does. That is
 // the only claim in either drawing made by geometry alone, so it has to be true
-// of the geometry rather than approximately suggested by it.
+// of the geometry rather than approximately suggested by it - and the suite
+// re-solves it from these numbers rather than trusting them, because moving a
+// site without regrowing the reach leaves the last frame asserting an overlap
+// it no longer draws.
 const PHASES = [
   { span: 2.2, bound: 30, reach: 78, up: [], joined: false, tone: 'run', status: 'LOCAL', read: 'Every site runs the task on its own records. Nothing has moved.' },
-  { span: 1.6, bound: 30, reach: 82, up: ['SITE 018'], joined: false, tone: 'pass', status: 'PUBLISHING', read: 'Site 018 publishes the structure it used - a definition, with no values in it.' },
-  { span: 1.4, bound: 34, reach: 90, up: ['SITE 018'], joined: true, tone: 'valid', status: 'LINKED', read: `It binds, and links to ${JOINED.size} criteria the library already held.` },
-  { span: 2.2, bound: 38, reach: 104, up: ['SITE 018', 'SITE 042', 'SITE 103'], joined: true, tone: 'valid', status: 'COMPOUNDING', read: 'Sites 042 and 103 pick it up. Neither one asked anybody for a record.' },
-  { span: 2.4, bound: 38, reach: 104, up: ['SITE 018', 'SITE 042', 'SITE 103'], joined: true, tone: 'valid', status: 'STEADY', read: 'Structure crosses. Records do not.' },
+  { span: 1.6, bound: 30, reach: 86, up: ['SITE 018'], joined: false, tone: 'pass', status: 'PUBLISHING', read: 'Site 018 publishes the structure it used - a definition, with no values in it.' },
+  { span: 1.4, bound: 34, reach: 98, up: ['SITE 018'], joined: true, tone: 'valid', status: 'LINKED', read: `It binds, and links to ${JOINED.size} criteria the library already held.` },
+  { span: 2.2, bound: 38, reach: 124, up: ['SITE 018', 'SITE 042', 'SITE 103'], joined: true, tone: 'valid', status: 'COMPOUNDING', read: 'Sites 042 and 103 pick it up. Neither one asked anybody for a record.' },
+  { span: 2.4, bound: 38, reach: 124, up: ['SITE 018', 'SITE 042', 'SITE 103'], joined: true, tone: 'valid', status: 'STEADY', read: 'Structure crosses. Records do not.' },
 ]
 
 // Pointing at a site hands it the whole readout - the word in the pill, the
@@ -192,14 +202,18 @@ const PHASES = [
 // narrates itself.
 const READS = {
   'SITE 042': { tone: 'pass', pill: 'PUBLISHER', read: 'Site 042 published the unit it measures in - the scale, not one reading taken on it.' },
-  'SITE 103': { tone: 'pass', pill: 'MAPPER', read: 'Site 103 sent a mapping between two vocabularies. There is no patient inside a mapping.' },
+  'SITE 103': { tone: 'pass', pill: 'MAPPER', read: 'Site 103 sent a mapping between two vocabularies. No patient is in a mapping.' },
   'SITE 018': { tone: 'valid', pill: 'ORIGIN', read: 'Site 018 wrote the definition the other two picked up, and sent nothing else to do it.' },
 }
 
 /**
- * A site's identity, set on whichever side of the sheet that site owns. The
- * two outliers hang theirs off a real edge of the solid; the near one carries
- * its own under the plan, where there is room for it and nothing to cross.
+ * What a site holds and what leaves it, set on whichever side of the sheet that
+ * site owns. The two outliers hang theirs off a real edge of the solid; the
+ * near one carries its own under the plan, where there is room for it.
+ *
+ * The name is not here any more - it is lettered on the site's own wall, so the
+ * margin is left carrying the two numbers, which is all a margin was ever good
+ * for. Repeating the name in both places would be the figure saying it twice.
  */
 function Ident({ site, lit, probe }) {
   const below = site.place === 'below'
@@ -207,7 +221,10 @@ function Ident({ site, lit, probe }) {
   const anchor = side < 0 ? site.solid.left : site.solid.right
   const tip = anchor[0] + side * 16
   const x = below ? site.cx : tip + side * 8
-  const top = below ? site.solid.front[1] + site.wall + 30 : anchor[1] - 6
+  // Both lines stand on the leader rather than straddling it. With the name
+  // gone the strip is two lines, and centring two lines on a hairline runs it
+  // straight through the first one.
+  const top = below ? site.solid.front[1] + site.wall + 24 : anchor[1] - 17
   const align = below ? 'middle' : (side < 0 ? 'end' : 'start')
   return (
     <g className={`dgm-ident${lit}`} {...probe}>
@@ -216,18 +233,17 @@ function Ident({ site, lit, probe }) {
       <rect
         className="dgm-hit"
         x={below ? site.cx - 76 : (side < 0 ? 8 : anchor[0])}
-        y={top - 16}
+        y={top - 14}
         width={below ? 152 : (side < 0 ? anchor[0] - 8 : 612 - anchor[0])}
-        height="46"
+        height="40"
       />
       {below ? (
-        <line className="dgm-leader" x1={site.cx} y1={site.solid.front[1] + site.wall + 4} x2={site.cx} y2={top - 12} />
+        <line className="dgm-leader" x1={site.cx} y1={site.solid.front[1] + site.wall + 4} x2={site.cx} y2={top - 11} />
       ) : (
         <line className="dgm-leader" x1={anchor[0]} y1={anchor[1]} x2={tip} y2={anchor[1]} />
       )}
-      <text className="dgm-side" x={x} y={top} textAnchor={align}>{site.id}</text>
-      <text className="dgm-sidefact" x={x} y={top + 13} textAnchor={align}>{site.records} RECORDS</text>
-      <text className="dgm-sidefact is-quiet" x={x} y={top + 25} textAnchor={align}>EGRESS NONE</text>
+      <text className="dgm-sidefact" x={x} y={top} textAnchor={align}>{site.records} RECORDS</text>
+      <text className="dgm-sidefact is-quiet" x={x} y={top + 12} textAnchor={align}>EGRESS NONE</text>
     </g>
   )
 }
@@ -375,6 +391,17 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
               {...probe(site.id)}
             >
               <Faces shape={site.solid} className="dgm-solid" />
+              {/* Stencilled on the wall, along it, the way a number is put on
+                  the side of the thing it belongs to. */}
+              <text
+                className="dgm-wallmark"
+                x={site.mark[0]}
+                y={site.mark[1]}
+                textAnchor="middle"
+                transform={`rotate(${-EDGE_ANGLE} ${site.mark[0]} ${site.mark[1]})`}
+              >
+                {site.id}
+              </text>
               <g transform={planSpace(site.cx, site.cy)}>
                 <rect className="dgm-wall" x={-site.half + 5} y={-site.half + 5} width={(site.half - 5) * 2} height={(site.half - 5) * 2} rx={Math.round(site.half * 0.26)} vectorEffect="non-scaling-stroke" />
                 <rect className="dgm-wall is-inner" x={-site.half + 9} y={-site.half + 9} width={(site.half - 9) * 2} height={(site.half - 9) * 2} rx={Math.round(site.half * 0.2)} vectorEffect="non-scaling-stroke" />
