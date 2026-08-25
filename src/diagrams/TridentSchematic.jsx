@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { jitter, planDrop, planPrism, planSpace, roundedDeck } from './iso'
+import { jitter, planCyl, planDrop, planPrism, planSpace, roundedDeck } from './iso'
 import { Faces } from './Solid'
 import { useCenterOnOverflow } from './useCenterOnOverflow'
 import { useScrollRun } from './useScrollPhase'
@@ -148,11 +148,29 @@ const QUEUE = [0, 1, 2, 3].map((step) => {
 // centred. Nineteen is the count, so the grid is the count: it is a thing a
 // reader can total, and the centre is left clear rather than pinned under a
 // node the tiles have to make room for.
+// The nineteen fields, and they are not decoration. These are the variable
+// names a study actually carries - CDISC, the standard every regulated trial
+// submits in - grouped one domain to a row, which is why the grid is five, five,
+// five and four rather than an even block:
+//
+//   who and where   DM and SV: the study, the site, the subject, the arm they
+//                   were assigned to and the visit this run belongs to
+//   what was given  EX: the treatment, the dose, its units, the route and when
+//                   it started
+//   what was read   LB: the lab test, the result as collected, its units,
+//                   whether it fell outside the reference range, and when
+//   what was judged AE: the reported term, the CTCAE toxicity grade, whether it
+//                   was serious, and what was done about the treatment
+//
+// A reader who works in trials recognises every one of these on sight, and the
+// row a field sits in tells them which domain it came from before they read it.
+// That is the whole claim of this deck made in nineteen words: a task does not
+// run on "the data", it runs on named fields from named domains, each checked.
 const NAMES = [
-  'SUBJECT', 'SITE', 'PROTOCOL', 'ARM', 'CYCLE',
-  'DAY', 'DOSE', 'UNIT', 'ROUTE', 'LOINC',
-  'VALUE', 'RANGE', 'GRADE', 'CTCAE', 'ONSET',
-  'ACTION', 'SOURCE', 'PAGE', 'HASH',
+  'STUDYID', 'SITEID', 'USUBJID', 'ARMCD', 'VISITNUM',
+  'EXTRT', 'EXDOSE', 'EXDOSU', 'EXROUTE', 'EXSTDTC',
+  'LBTESTCD', 'LBORRES', 'LBORRESU', 'LBNRIND', 'LBDTC',
+  'AETERM', 'AETOXGR', 'AESER', 'AEACN',
 ]
 
 // Each field is a solid standing on the deck, not a tile printed on it. Bound,
@@ -185,36 +203,86 @@ let cursor = 0
   }
 })
 
-// The shutter on the approval deck, in plan.
+// The aperture on the approval deck, in plan.
 //
-// It used to be a housing, a rebate, a ring and two rounded leaves - four
-// nested rounded squares that collapsed into one grey blob at reading size -
-// with a hand-drawn signature stroke laid over the top of them, which measured
-// out as overlapping the ring it sat beside. The leaves were worse: split at
-// plan x = 0 and stroked all the way round, each one projected to a
-// parallelogram, so the two met on a diagonal and the seam came out as a
-// doubled line with a notch at either end.
+// Two mechanisms have stood here and both were wrong. First a sliding hatch:
+// two leaves split at plan x = 0 and stroked all the way round, which projected
+// to a pair of parallelograms meeting on a diagonal, so the seam came out as a
+// doubled line with a notch at either end - and a hatch is a thing that covers,
+// where the claim this deck carries is that a run is HELD. Then two bolts drawn
+// across the way through, which was the right claim and the wrong instrument:
+// at reading size, two pale bars over a sixty-pixel recess read as stripes.
 //
-// So: one frame, one opening, and two blades clipped to that opening. The clip
-// takes every edge of a blade except the one at the seam, which is the only
-// edge that should ever be visible, and it guarantees a blade can never be
-// drawn outside the hole it is supposed to be filling.
+// It is a diaphragm now, and it is the one place in either drawing where blades
+// overlapping each other is the point rather than a defect. An aperture is the
+// instrument that decides how much gets through, which is this deck's whole
+// job; and a diaphragm is the one mechanism a reader already knows can be shut
+// completely and opened only by a deliberate act on the barrel.
+//
+// Both circles are honest here. A plan circle carried through this projection
+// is an ellipse on screen, the same ellipse the intake deck's throat is drawn
+// as, so the barrel reads as a barrel seen from above and to the side.
 const SHUT_FRAME = 50
-const SHUT_HOLE = 30
-const BLADE = 36
+const SHUT_HOLE = 28
 
-// The frame is a block bolted to the deck with the shaft cut through it, so the
-// whole assembly - opening, blades, rim and bolts - sits one storey up and the
-// approach arrives at the foot of something rather than at a drawing of one.
+// The barrel is a short cylinder standing on the deck with the bore cut through
+// it, so the whole assembly - bore, blades and rim - sits one storey up and the
+// run arrives at the foot of something rather than at a drawing of one.
 const HOUSE_RISE = 7
-const HOUSING = planPrism(0, 0, SHUT_FRAME, SHUT_FRAME, HOUSE_RISE, 13)
+const BARREL = planCyl(0, 0, SHUT_FRAME, HOUSE_RISE)
 
-// Two bolts across the seam. Shut is a mechanism holding, not a light that has
-// gone red: they lie over the join itself, bridging the two blades, and
-// withdraw along it into the frame when the site signs. Set at the ends of the
-// seam instead they read as tabs stuck to the side of the opening, which is a
-// picture of a shut thing rather than a drawing of what is holding it shut.
-const BOLTS = [-1, 1]
+// The blades.
+//
+// The construction is six circles rather than six drawn leaves. A blade is a
+// disc of radius BLADE_R whose centre sits BLADE_SHUT or BLADE_OPEN out along
+// its own spoke; the aperture is whatever part of the bore no disc covers.
+// Clipped to the bore, each disc shows exactly one arc - its leading edge -
+// which is what a blade looks like, and six of those arcs meeting is what an
+// iris looks like.
+//
+// Sealing the bore of radius R = 28 with six discs of radius 22 at distance d
+// costs two conditions, and both are worth writing down because the drawing
+// lives or dies on the second one:
+//
+//   the centre       d <= 22, or nothing covers plan (0, 0).
+//   the far rim      the point of the bore furthest from every blade sits at
+//                    radius 28, thirty degrees off a spoke - halfway between two
+//                    of them. It is d^2 - 2*28*cos30*d + 28^2 <= 22^2 away, so
+//                    d^2 - 48.5d + 300 <= 0, so d >= 7.3.
+//
+// So any d in [7.3, 22] is a real seal, and the whole span is available. It is
+// the top of it that draws: at BLADE_SHUT = 19 each blade reaches just three
+// past the centre, so the six overlap by the least that still seals and every
+// one of the six leading arcs survives into the picture - the pinwheel a closed
+// iris actually makes. Deeper than that and the later blades paint the earlier
+// ones out, and the seal collapses into two or three anonymous discs. (Worst
+// case at 19: sqrt(28^2 + 19^2 - 2*28*19*cos30) = 15.0, well inside 22.)
+//
+// Open is BLADE_OPEN - BLADE_R = 12 across the flats and 15.5 to the corners -
+// a curved hexagon a quarter the width of the bore. Stopped down, the way a
+// lens is drawn when it is being drawn as a lens.
+//
+// Each blade is drawn twice, and that is the second thing this mechanism turns
+// on. A real iris tucks cyclically - every blade lies under its neighbour and
+// over the one before it, all the way round - which no painter's-order drawing
+// can do, because the overlap is a cycle and z-order is a line. Draw six opaque
+// discs in spoke order and the last two paint the other four out: the seal
+// stops looking like six blades and starts looking like three coins.
+//
+// So the fills go down first, in one pass, and every blade's edge is drawn over
+// all of them in a second. The fills give the assembly its true silhouette for
+// free - the aperture is exactly the part of the bore no disc reached - and the
+// edge pass puts all six leading arcs back into the picture, which is what a
+// reader actually recognises an iris by.
+const BLADES = [0, 60, 120, 180, 240, 300]
+const BLADE_R = 22
+const BLADE_SHUT = 19
+const BLADE_OPEN = 34
+// The twist. A real diaphragm's blades pivot on the barrel, so its aperture
+// rotates as it changes size; without that the six discs read as a round
+// shutter rather than an iris. Fifteen degrees is a quarter of the sixty the
+// six-fold symmetry gives - enough to see, not enough to look like a wheel.
+const BLADE_TURN = 15
 
 // The ledger writes one row per committed run, each chained to the row above it
 // by its hash, front row last. Each row carries the revision it is a record of,
@@ -510,21 +578,18 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
           ref={figure}
           viewBox="0 0 620 700"
           role="img"
-          aria-label="Three kinds of proposal source - a model, an agent loop and a scheduled job - sit above one site, drawn identically because any of them can be swapped for another. A proposal lands on an intake deck, drops to a schema contract deck of nineteen named fields, and drops again to an approval deck where a shutter holds it closed until a named person at the site signs. Only then does it reach the receipt ledger, where every row is chained to the row above it by its hash."
+          aria-label="Three kinds of proposal source - a model, an agent loop and a scheduled job - sit above one site, drawn identically because any of them can be swapped for another. A proposal lands on an intake deck, drops to a schema contract deck of nineteen named fields, and drops again to an approval deck whose aperture stays shut until a named person at the site signs. Only then does it reach the receipt ledger, where every row is chained to the row above it by its hash."
         >
           <defs>
-            <pattern id="tr-hatch" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-              <line className="dgm-hatch" x1="0" y1="0" x2="0" y2="5" />
-            </pattern>
             <pattern id="tr-grain" width="16" height="16" patternUnits="userSpaceOnUse">
               <circle className="dgm-grain" cx="1" cy="1" r="1" />
             </pattern>
-            {/* The opening the blades run in. Clipping to it is what keeps a
-                blade inside the hole it is filling, at any throw - and what
-                lets the shaft under it be drawn as exactly the part of itself
-                that can be seen down the hole. */}
+            {/* The bore the blades run in. Clipping to it is what turns a
+                whole disc into a blade - all that is ever drawn of one is the
+                arc it cuts across the bore - and what lets the shaft under it
+                be drawn as exactly the part of itself that can be seen down. */}
             <clipPath id="tr-hole">
-              <rect x={-SHUT_HOLE} y={-SHUT_HOLE} width={SHUT_HOLE * 2} height={SHUT_HOLE * 2} rx="8" />
+              <circle cx="0" cy="0" r={SHUT_HOLE} />
             </clipPath>
             {/* The mouth of the intake, for the same reason. */}
             <clipPath id="tr-well">
@@ -540,21 +605,17 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
             <text className="dgm-countkey" x="500" y="41">FIELDS BOUND</text>
           </g>
 
-          {/* The ground the stack is measured against. Two hairlines carry the
-              footprint down from the top deck, so the four decks read as one
-              plan seen at four heights rather than four unrelated shapes. They
-              are drawn from the ground upwards and gated on `--charge`, so as
-              the figure takes power the footprint climbs out of the plan and
-              ties the stack together in front of the reader. */}
-          {/* Each hairline stops five pixels below the top deck's corner rather
-              than on it. The skirt there is a vertical edge collinear with the
-              hairline and eleven pixels deep, so the two overlap and read as one
-              line - and the tier can drift its three pixels without the corner
-              pulling away from the footprint it is supposed to be standing on.
-              Every deck below occludes its own band of the same hairline. */}
+          {/* The ground the stack is measured against.
+
+              Two hairlines used to run the full height of the drawing here,
+              corner to corner, carrying the top deck's footprint down to this
+              plane. They were there to say "one plan, four heights" - which the
+              four skirts standing over one footprint, and the shade each drops
+              on the deck below, already say, and say in three dimensions rather
+              than with a pair of rules. What they actually did was fence the
+              figure: two verticals down the outside of it, crossing every tier,
+              with the decks cut into them. The plane is enough. */}
           <g className="dgm-ground">
-            <line className="dgm-axis" pathLength="100" x1={SURFACE.left[0]} y1={GROUND} x2={SURFACE.left[0]} y2={SURFACE.left[1] + 5} />
-            <line className="dgm-axis" pathLength="100" x1={SURFACE.right[0]} y1={GROUND} x2={SURFACE.right[0]} y2={SURFACE.right[1] + 5} />
             <g transform={planSpace(CX, GROUND)}>
               <rect className="dgm-plane" x={-HALF} y={-HALF} width={HALF * 2} height={HALF * 2} rx={RAD} vectorEffect="non-scaling-stroke" />
               <rect className="dgm-planefill" x={-HALF} y={-HALF} width={HALF * 2} height={HALF * 2} rx={RAD} fill="url(#tr-grain)" />
@@ -574,15 +635,6 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
               <Faces shape={RECEIPT} className="dgm-solid" />
               <Drop leg={DROPS[2]} drops={state.drops} />
               <g transform={planSpace(CX, RECEIPT.cy)}>
-                <line
-                  className={`dgm-approach${state.drops >= 3 ? ' is-here' : ''}`}
-                  x1="-67"
-                  y1="67"
-                  x2="-56"
-                  y2="44"
-                  pathLength="100"
-                  vectorEffect="non-scaling-stroke"
-                />
                 {/* The chain is drawn a link at a time rather than as one rule
                     down the margin, and each link carries the hash down to the
                     row below it on the ledger's own clock. A ledger is a ledger
@@ -667,22 +719,11 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
               <Faces shape={AUTHORITY} className="dgm-solid" />
               <Drop leg={DROPS[1]} drops={state.drops} />
               <g transform={planSpace(CX, AUTHORITY.cy)}>
-                {/* The run crosses the deck to reach the hatch, so where it
-                    stops is where the aperture is rather than a corner away. */}
-                <line
-                  className={`dgm-approach${state.drops >= 2 ? ' is-here' : ''}`}
-                  x1="-67"
-                  y1="67"
-                  x2="-43"
-                  y2="43"
-                  pathLength="100"
-                  vectorEffect="non-scaling-stroke"
-                />
-                {/* The shutter. Shut is drawn shut - two blades across a hole,
-                    bolted at the seam - so the claim survives with every colour
-                    removed. Push on it with the pointer and it answers the way
-                    the mechanism would: the blades give a hair, the bolts take
-                    the load, and it comes straight back. */}
+                {/* The stop. Shut is drawn shut - six blades closed on a seal
+                    - so the claim survives with every colour removed. Push on it
+                    with the pointer and it answers the way the mechanism would:
+                    the blades strain a hair off the seal and come straight
+                    back. */}
                 {/* Open is carried on the group, not inferred, so the frame can
                     stop bracing against something nobody is holding any more. */}
                 <g className={`dgm-shutter${open ? ' is-open' : ''}${tried ? ' is-tried' : ''}`}>
@@ -691,9 +732,8 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
                       phase - the shaft below only becomes visible once the
                       blades have run back, which is late in a run to be
                       establishing that this deck has a hole in it at all. */}
-                  <path className="dgm-face-left" d={HOUSING.faceLeft} />
-                  <path className="dgm-face-right" d={HOUSING.faceRight} />
-                  <polygon className="dgm-housing" points={HOUSING.top} />
+                  <path className="dgm-face-right" d={BARREL.wall} />
+                  <circle className="dgm-housing" cx={BARREL.top.cx} cy={BARREL.top.cy} r={SHUT_FRAME} />
                   {/* Everything the frame carries sits on the frame, one storey
                       up, so the opening is cut through a block rather than
                       printed beside one. The clip travels with the group, so the
@@ -702,38 +742,48 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
                     <g clipPath="url(#tr-hole)">
                       {/* The shaft. Clipped to the opening, so what is drawn is
                           exactly what can be seen down it: the far wall across
-                          the top, and the floor six pixels below - hatched,
-                          because the floor is the one surface on this deck the
-                          reader is looking straight down at. The blades run in
-                          over the top of it. */}
-                      <rect className="dgm-shaft" x={-SHUT_HOLE} y={-SHUT_HOLE} width={SHUT_HOLE * 2} height={SHUT_HOLE * 2} rx="8" />
+                          the top and the floor six pixels below. Two tones and
+                          nothing else - the hatch that used to be printed on
+                          that floor was the fourth pattern inside a sixty-pixel
+                          square, and it turned the assembly into a smudge. */}
+                      <circle className="dgm-shaft is-bore" cx="0" cy="0" r={SHUT_HOLE} />
                       <g transform={planDrop(6)}>
-                        <rect className="dgm-shaftfloor" x={-SHUT_HOLE} y={-SHUT_HOLE} width={SHUT_HOLE * 2} height={SHUT_HOLE * 2} rx="8" />
-                        <rect className="dgm-aperture" x={-SHUT_HOLE} y={-SHUT_HOLE} width={SHUT_HOLE * 2} height={SHUT_HOLE * 2} rx="8" fill="url(#tr-hatch)" />
+                        <circle className="dgm-shaftfloor is-bore" cx="0" cy="0" r={SHUT_HOLE} />
                       </g>
-                      <g className={`dgm-leaf is-left${open ? ' is-open' : ''}`} style={{ '--blade': -1 }}>
-                        <rect x={-BLADE} y={-BLADE} width={BLADE} height={BLADE * 2} vectorEffect="non-scaling-stroke" />
-                      </g>
-                      <g className={`dgm-leaf is-right${open ? ' is-open' : ''}`} style={{ '--blade': 1 }}>
-                        <rect x="0" y={-BLADE} width={BLADE} height={BLADE * 2} vectorEffect="non-scaling-stroke" />
+                      {/* The six blades, inside the clip. The clip is what turns
+                          a whole disc into a blade: all a reader ever sees of one
+                          is the arc it cuts across the bore. Fills first, then
+                          every edge over all of them - see the note on the
+                          constants for why the second pass is not optional.
+
+                          The two throws travel with the assembly as custom
+                          properties rather than being written into the
+                          keyframes, so the geometry is stated once - up there,
+                          next to the arithmetic that solves it - and the
+                          stylesheet animates between whatever this file says it
+                          is. The spoke rides on each blade for the same reason:
+                          one class carries rotate-then-translate, so a blade
+                          moves along its own spoke and nothing has to know which
+                          spoke that is except the blade. */}
+                      <g
+                        className={`dgm-iris${open ? ' is-clear' : ''}`}
+                        style={{ '--shut': `${BLADE_SHUT}px`, '--open': `${BLADE_OPEN}px`, '--turn': `${BLADE_TURN}deg` }}
+                      >
+                        {BLADES.map((spoke) => (
+                          <g className="dgm-blade" key={spoke} style={{ '--spoke': spoke }}>
+                            <circle className="dgm-bladeface" cx="0" cy="0" r={BLADE_R} />
+                          </g>
+                        ))}
+                        {BLADES.map((spoke) => (
+                          <g className="dgm-blade" key={`edge${spoke}`} style={{ '--spoke': spoke }}>
+                            <circle className="dgm-bladeedge" cx="0" cy="0" r={BLADE_R} vectorEffect="non-scaling-stroke" />
+                          </g>
+                        ))}
                       </g>
                     </g>
-                    {/* Drawn over the blades, so the hole keeps one clean edge
-                        whatever is behind it. */}
-                    <rect className={`dgm-holerim is-${state.gate}`} x={-SHUT_HOLE} y={-SHUT_HOLE} width={SHUT_HOLE * 2} height={SHUT_HOLE * 2} rx="8" vectorEffect="non-scaling-stroke" />
-                    {BOLTS.map((end) => (
-                      <rect
-                        className={`dgm-bolt${open ? ' is-clear' : ''}`}
-                        key={end}
-                        style={{ '--end': end }}
-                        x="-13"
-                        y={end * 14 - 4.5}
-                        width="26"
-                        height="9"
-                        rx="3"
-                        vectorEffect="non-scaling-stroke"
-                      />
-                    ))}
+                    {/* Drawn over the blades, so the bore keeps one clean edge
+                        whatever is inside it. */}
+                    <circle className={`dgm-holerim is-${state.gate}`} cx="0" cy="0" r={SHUT_HOLE} vectorEffect="non-scaling-stroke" />
                   </g>
                 </g>
               </g>

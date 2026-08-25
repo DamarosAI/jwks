@@ -9300,11 +9300,14 @@ html.is-hidden .clinic-node i,
    site token, and the figures sit directly on the page lattice rather than
    inside a panel of their own.
 
-   Both drawings are alive at rest. Proposals keep arriving, the contract keeps
-   checking its fields, traffic keeps running the library mesh - each on its own
-   `--life` clock, scattered so nothing falls into step and no loop is short
-   enough for a reader to catch. Scroll advances the run and the pointer reads
-   it; neither is needed for the figure to be in motion. */
+   Both drawings are alive at rest, and they are alive in two different ways on
+   purpose. In Trident every mechanism runs on its own `--life` clock, scattered
+   so nothing falls into step: four tiers of a stack are four things running at
+   four rates, and that is the claim. Nectar's slab is one floor, so it has one
+   clock, read at a phase taken from where each solid stands - the swell and the
+   lamps cross it as waves rather than as forty-two accidents. Scroll advances
+   the run and the pointer reads it; neither is needed for either figure to be
+   in motion. */
 
 .dgm {
   display: flex;
@@ -9327,8 +9330,7 @@ html.is-hidden .clinic-node i,
   font-synthesis: none;
 }
 
-/* Ground. The plane a figure is measured against, and the hairlines that carry
-   one footprint through every height of the stack. */
+/* Ground. The plane a figure is measured against. */
 
 .dgm-grain { fill: color-mix(in srgb, var(--accent) 30%, transparent); }
 .dgm-grain.is-fine { fill: color-mix(in srgb, var(--accent) 44%, transparent); }
@@ -9352,20 +9354,6 @@ html.is-hidden .clinic-node i,
   stroke-width: 1;
 }
 
-/* The footprint hairlines, drawn from the ground upwards as the figure takes
-   power. They are the first thing that happens after the stack lands: one plan
-   climbing through four heights, tying the decks together in front of the
-   reader instead of being there all along. */
-
-.dgm-axis {
-  stroke: color-mix(in srgb, var(--accent) 30%, transparent);
-  stroke-width: 1;
-  stroke-linecap: round;
-  stroke-dasharray: 100;
-  stroke-dashoffset: calc(100 * (1 - var(--charge, 1)));
-}
-
-.dgm-hatch { stroke: color-mix(in srgb, var(--text) 28%, transparent); stroke-width: 1.1; }
 .dgm-rule { stroke: var(--border); stroke-width: 1; }
 .dgm-mark { opacity: 0.92; }
 
@@ -9722,8 +9710,12 @@ html.is-hidden .clinic-node i,
    use, so the pattern lands exactly where it started and the loop has no seam
    in it. A crawl that jumps once a cycle is worse than no crawl. */
 
+/* The standing route creeps. Twenty-seven is three dot pitches, so the run is
+   exactly where it started when the period turns over and the creep has no seam
+   in it. */
+
 @keyframes dgm-creep {
-  to { stroke-dashoffset: -21; }
+  to { stroke-dashoffset: -27; }
 }
 
 .dgm-svg.is-live .dgm-tine:not(.is-live),
@@ -9786,6 +9778,17 @@ html.is-hidden .clinic-node i,
   stroke: none;
   pointer-events: none;
 }
+
+/* The approval bore runs both tones darker than the intake throat's. The throat
+   is a mouth taking things in, and a lit floor is the right bottom for one; the
+   bore is a way through that is normally shut, and the only way an open
+   aperture reads as open is if the reader can see it is a hole. Two tones of
+   dark under a light blade assembly does that in one glance and needs no badge
+   to help it. The floor stays lighter than the wall above it, so the shaft
+   still has a depth rather than being a flat dark disc. */
+
+.dgm-shaft.is-bore { fill: color-mix(in srgb, var(--text) 38%, var(--surface-solid)); }
+.dgm-shaftfloor.is-bore { fill: color-mix(in srgb, var(--text) 26%, var(--surface-solid)); }
 
 /* The intake apron. Three sources land inside one catchment, everything in the
    catchment goes to one throat, and a queue waits its turn in the quadrant
@@ -10229,181 +10232,201 @@ html.is-hidden .clinic-node i,
   animation-delay: calc(var(--life, 0) * -8.6s);
 }
 
-/* The shutter on the approval deck. Shut is drawn shut - two blades across a
-   hole, bolted at the seam - so the claim survives with every colour removed,
-   and signing runs them back into the frame rather than turning a light green.
+/* THE APERTURE ON THE APPROVAL DECK.
 
-   Clipping the blades to the opening is the whole repair. Split at plan x = 0
-   and stroked all the way round, each blade projected to a parallelogram: the
-   pair met on a diagonal, the seam came out doubled with a notch at either end,
-   and the frame it sat in was three nested rounded squares deep, which at
-   reading size was one grey blob. Clipped, a blade shows exactly one edge - the
-   seam - and cannot be drawn outside the hole it is filling at any throw. */
+   Two mechanisms have stood here and both were wrong. First a sliding hatch -
+   two leaves over a hatched floor with bolts across the seam - which was the
+   wrong metaphor, because a hatch covers and the claim this deck carries is
+   that a run is HELD. Then two bolts drawn across the way through, which was
+   the right claim on the wrong instrument: at reading size two pale bars over a
+   sixty-pixel recess read as stripes, not as a mechanism.
 
-/* The opening is a shaft, not a printed square. Clipped to the hole, so what is
-   drawn is exactly what can be seen down it: the far wall across the top, then
-   the floor five pixels below, hatched because the floor is the one surface in
-   this deck the reader is looking straight down at. The blades run in over the
-   top of it, which is why a shut shutter still reads as covering something -
-   before, they covered a flat patch of hatch printed on the deck. */
+   It is a diaphragm now. An aperture is the instrument that decides how much
+   gets through, which is this deck's entire job, and it is the one mechanism a
+   reader already knows can be shut completely and opened only by a deliberate
+   act on the barrel. It is also the only place in either figure where blades
+   overlapping each other is the point rather than a defect.
 
-.dgm-aperture { stroke: none; opacity: 0.72; }
+   Six discs, clipped to the bore, each showing exactly the arc it cuts across
+   it. The throws are solved in the drawing rather than eyeballed here, and they
+   arrive as --shut and --open: shut is the shallowest overlap that still seals
+   the bore completely, so all six leading arcs survive into the picture instead
+   of the last two painting the other four out. Every strain below is kept
+   inside that seal - the aperture flexes under load, it never leaks.
 
-.dgm-leaf { transition: transform 620ms cubic-bezier(0.16, 1, 0.3, 1); }
+   Under the blades is a shaft, not a printed disc: clipped to the bore, so what
+   is drawn is exactly what can be seen down it - the far wall across the top
+   and the floor six pixels below, two tones and nothing else. */
 
-.dgm-leaf > rect {
-  fill: color-mix(in srgb, var(--text) 11%, var(--surface-solid));
-  stroke: color-mix(in srgb, var(--text) 50%, transparent);
-  stroke-width: 1.1;
-}
+/* A STOP THAT OPENS ONCE AND STAYS OPEN IS A DOOR SOMEBODY LEFT AJAR.
 
-/* Short of a full throw on purpose: a blade that clears the opening entirely
-   leaves nothing behind to say there was ever a blade. Each one parks a sliver
-   of itself against its own side of the frame. */
-.dgm-leaf.is-left.is-open { transform: translateX(-22px); }
-.dgm-leaf.is-right.is-open { transform: translateX(22px); }
+   This deck was once the only one in the figure with nothing running on it
+   after the run arrived: it opened, and then sat still for the rest of the
+   drawing's life. Which said the wrong thing too - an approval admits one run
+   and closes behind it, or it is not an approval.
 
-/* A GATE THAT OPENS ONCE AND STAYS OPEN IS A DOOR SOMEBODY LEFT AJAR.
-
-   This deck was the only one in the figure with nothing running on it after the
-   run reached it: the blades ran back, the bolts withdrew, and then the whole
-   mechanism sat still for the rest of the drawing's life. Which also said the
-   wrong thing - a shutter admits one run and closes behind it, or it is not a
-   shutter, and the claim this deck carries is that nothing gets through here
-   without a signature.
-
-   So once it is signed it cycles. Open, hold, close, hold, open: four seconds
-   of clearance in eleven, with the bolts driving back across the seam while the
-   blades are home. The two are written into one keyframe each and share a
-   period, so the blades arriving and the bolts taking hold are one event.
-
-   The cycle starts shut, which is where the blades already are when the class
-   lands - so the first opening of the loop reads as the signature opening it
-   rather than as an animation snapping into place over a transition. */
-
-@keyframes dgm-cycle {
-  0%, 4% { transform: translateX(0); }
-  16%, 52% { transform: translateX(calc(var(--blade, 1) * 22px)); }
-  64%, 100% { transform: translateX(0); }
-}
+   So once it is signed it cycles. Open, hold, close, hold: four seconds of
+   clearance in eleven. It starts closed, which is where the blades already are
+   when the class lands, so the first opening reads as the signature working the
+   mechanism rather than as an animation snapping into place. */
 
 @keyframes dgm-latch {
-  0%, 8% { transform: translateY(0); }
-  20%, 48% { transform: translateY(calc(var(--end, 1) * 26px)); }
-  60%, 100% { transform: translateY(0); }
+  0%, 8% { transform: rotate(calc(var(--spoke, 0) * 1deg)) translateX(var(--shut, 19px)); }
+  20%, 52% { transform: rotate(calc(var(--spoke, 0) * 1deg)) translateX(var(--open, 34px)); }
+  64%, 100% { transform: rotate(calc(var(--spoke, 0) * 1deg)) translateX(var(--shut, 19px)); }
 }
 
-/* The frame takes each closing the way it takes a load. */
+/* The twist. A real diaphragm's blades pivot on the barrel, so the aperture
+   rotates as it changes size; without it six discs sliding in and out read as a
+   round shutter rather than an iris. It runs on the assembly, one clock, so the
+   six stay a set. */
+
+@keyframes dgm-turn {
+  0%, 8% { transform: rotate(0deg); }
+  20%, 52% { transform: rotate(calc(var(--turn, 15deg) * -1)); }
+  64%, 100% { transform: rotate(0deg); }
+}
+
+/* The barrel takes each closing the way it takes a load. */
 @keyframes dgm-shutload {
   0%, 58%, 72%, 100% { stroke-width: 1; }
   65% { stroke-width: 1.9; }
 }
 
-.dgm-svg.is-live .dgm-leaf.is-open { animation: dgm-cycle 11s cubic-bezier(0.5, 0, 0.2, 1) infinite; }
-.dgm-svg.is-live .dgm-bolt.is-clear { animation: dgm-latch 11s cubic-bezier(0.5, 0, 0.2, 1) infinite; }
+.dgm-svg.is-live .dgm-iris.is-clear .dgm-blade { animation: dgm-latch 11s cubic-bezier(0.5, 0, 0.2, 1) infinite; }
+.dgm-svg.is-live .dgm-iris.is-clear { animation: dgm-turn 11s cubic-bezier(0.5, 0, 0.2, 1) infinite; }
 .dgm-svg.is-live .dgm-shutter.is-open .dgm-housing { animation: dgm-shutload 11s ease-out infinite; }
 
-/* Drawn over the blades, so the opening keeps one clean edge whatever is behind
-   it. It stays graphite while the run is held: the thing under load is the
-   mechanism, so the mechanism is what carries the colour, and an opening ringed
-   in orange turns the deck into a badge. Signing is the one state it takes. */
+/* Drawn over the blades, so the bore keeps one clean edge whatever is inside
+   it. It is the deck's own ink and only ever the deck's own ink. A green ring
+   on an amber deck was the drawing borrowing the next tier's colour to say
+   "cleared" - which is both the badge this rim was written to avoid and a claim
+   the ledger below it is already making. What signing changes here is the
+   weight, not the hue. */
 
 .dgm-holerim {
   fill: none;
-  stroke: color-mix(in srgb, var(--text) 56%, transparent);
+  stroke: color-mix(in srgb, var(--text) 50%, transparent);
   stroke-width: 1.3;
   stroke-linejoin: round;
+  transition: stroke 300ms ease, stroke-width 300ms ease;
+}
+
+.dgm-holerim.is-open { stroke: var(--ink-deep); stroke-width: 1.8; }
+
+/* The assembly. Its only job in CSS is to carry the twist, which means it needs
+   to turn about the aperture centre - the origin of its own user space, one
+   storey up on the deck - and not about the middle of the viewBox, which is
+   where a default transform-origin of 50% 50% would put it. */
+
+.dgm-iris {
+  transform-origin: 0 0;
+  transition: transform 620ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dgm-iris.is-clear { transform: rotate(calc(var(--turn, 15deg) * -1)); }
+
+/* A blade. One class carries the motion for both passes - rotate onto the
+   spoke, then run out along it - so a blade only ever moves in the one
+   direction a blade can move, and the fill and the edge that share a spoke stay
+   welded together whatever either of them is doing.
+
+   Closed is a mechanism holding, so while it holds it takes strain - a fraction
+   of a pixel of it, straight out along its own spoke, and never enough to break
+   the seal. Signing runs them out to the stop. */
+
+.dgm-blade {
+  transform-origin: 0 0;
+  transform: rotate(calc(var(--spoke, 0) * 1deg)) translateX(var(--shut, 19px));
+  transition: transform 620ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dgm-iris.is-clear .dgm-blade {
+  transform: rotate(calc(var(--spoke, 0) * 1deg)) translateX(var(--open, 34px));
+}
+
+/* The two passes. The face is opaque and carries no edge of its own, so six of
+   them stack into one blade mass with the aperture cut out of it exactly where
+   no disc reached; the edge is the same circle stroked and unfilled, drawn over
+   every face, which is where the six leading arcs come back from. */
+
+.dgm-bladeface {
+  fill: color-mix(in srgb, var(--text) 11%, var(--surface-solid));
+  stroke: none;
+  transition: fill 300ms ease;
+}
+
+.dgm-bladeedge {
+  fill: none;
+  stroke: color-mix(in srgb, var(--text) 40%, transparent);
+  stroke-width: 1;
   transition: stroke 300ms ease;
 }
 
-.dgm-holerim.is-open { stroke: var(--settled); stroke-width: 1.6; }
-
-/* The bolts across the seam. Shut is a mechanism holding, so while it holds it
-   takes strain - a fraction of a pixel of it, on its own clock - instead of
-   blinking. Signing withdraws them into the frame, and the blades follow. */
-
-.dgm-bolt {
-  fill: color-mix(in srgb, var(--text) 28%, var(--surface-solid));
-  stroke: color-mix(in srgb, var(--text) 54%, transparent);
-  stroke-width: 1;
-  transition: transform 620ms cubic-bezier(0.16, 1, 0.3, 1), fill 300ms ease, stroke 300ms ease;
+.dgm-svg.is-hold .dgm-iris:not(.is-clear) .dgm-bladeface {
+  fill: color-mix(in srgb, var(--warning) 22%, var(--surface-solid));
 }
 
-.dgm-svg.is-hold .dgm-bolt:not(.is-clear) {
-  fill: color-mix(in srgb, var(--warning) 30%, var(--surface-solid));
-  stroke: var(--warning);
-}
+.dgm-svg.is-hold .dgm-iris:not(.is-clear) .dgm-bladeedge { stroke: var(--warning); }
 
-.dgm-bolt.is-clear { transform: translateY(calc(var(--end, 1) * 26px)); }
-
-/* Something keeps trying the shutter, and it keeps holding. Two soft breaths
-   and then one real attempt per cycle: the blades give a hair at the seam and
-   the bolts take it, on one shared clock so the give and the load are the same
-   event rather than two things that happen to be moving.
-
-   Both live in a single keyframe each because a CSS animation does not compose
-   transforms - a second animation on the same property replaces the first
-   outright, so the breathing and the attempt have to be written as one run. */
+/* Something keeps trying the stop, and it keeps holding. Two soft breaths and
+   then one real attempt per cycle, written as one keyframe because a CSS
+   animation does not compose transforms - a second animation on the same
+   property replaces the first outright. */
 
 @keyframes dgm-load {
-  0%, 100% { transform: translateY(0); }
-  20% { transform: translateY(calc(var(--end, 1) * -0.9px)); }
-  40% { transform: translateY(0); }
-  60% { transform: translateY(calc(var(--end, 1) * -0.9px)); }
-  84% { transform: translateY(0); }
-  90% { transform: translateY(calc(var(--end, 1) * -2.4px)); }
-  96% { transform: translateY(0); }
+  0%, 100% { transform: rotate(calc(var(--spoke, 0) * 1deg)) translateX(var(--shut, 19px)); }
+  20% { transform: rotate(calc(var(--spoke, 0) * 1deg)) translateX(calc(var(--shut, 19px) + 0.8px)); }
+  40% { transform: rotate(calc(var(--spoke, 0) * 1deg)) translateX(var(--shut, 19px)); }
+  60% { transform: rotate(calc(var(--spoke, 0) * 1deg)) translateX(calc(var(--shut, 19px) + 0.8px)); }
+  84% { transform: rotate(calc(var(--spoke, 0) * 1deg)) translateX(var(--shut, 19px)); }
+  90% { transform: rotate(calc(var(--spoke, 0) * 1deg)) translateX(calc(var(--shut, 19px) + 2.2px)); }
+  96% { transform: rotate(calc(var(--spoke, 0) * 1deg)) translateX(var(--shut, 19px)); }
 }
 
-@keyframes dgm-strain {
-  0%, 84%, 100% { transform: translateX(0); }
-  90% { transform: translateX(calc(var(--blade, 1) * 2.4px)); }
-}
-
-/* The frame takes the attempt too. Load runs through the whole assembly, not
-   just the two bolts in the middle of it, and a housing that never moves while
-   the thing it holds is being tried is scenery. */
+/* The barrel takes the attempt too. Load runs through the whole assembly, not
+   just the blades inside it, and a barrel that never moves while the thing it
+   holds is being tried is scenery. */
 
 @keyframes dgm-brace {
   0%, 84%, 100% { stroke-width: 1; }
   90% { stroke-width: 2; }
 }
 
-.dgm-svg.is-live .dgm-bolt:not(.is-clear) { animation: dgm-load 7.6s ease-in-out infinite; }
-.dgm-svg.is-live .dgm-leaf:not(.is-open) { animation: dgm-strain 7.6s ease-in-out infinite; }
-.dgm-svg.is-live .dgm-shutter:not(.is-open) .dgm-housing { animation: dgm-brace 7.6s ease-in-out infinite;   vector-effect: non-scaling-stroke;
+.dgm-svg.is-live .dgm-iris:not(.is-clear) .dgm-blade { animation: dgm-load 7.6s ease-in-out infinite; }
+.dgm-svg.is-live .dgm-shutter:not(.is-open) .dgm-housing {
+  animation: dgm-brace 7.6s ease-in-out infinite;
+  vector-effect: non-scaling-stroke;
 }
 
 /* Lean on the approval deck and the same thing happens on demand, harder: the
-   blades give against their own bolts and come straight back, and the bolts
-   colour up under the load while they do. A held run is the one moment in this
-   figure where nothing happens on purpose, and a reader who is told that and
-   shown nothing has only been told it. */
-
-@keyframes dgm-give {
-  0%, 100% { transform: translateX(0); }
-  34% { transform: translateX(calc(var(--blade, 1) * 3.2px)); }
-}
+   blades strain out along their spokes and come straight back, colouring up
+   while they do. Nineteen plus two and a fifth is still under the twenty-two
+   at which a blade would stop reaching the centre, so the seal survives every
+   attempt in this stylesheet by six-tenths of a pixel. A held run is the one
+   moment in this figure where nothing happens on purpose, and a reader who is
+   told that and shown nothing has only been told it. */
 
 @keyframes dgm-take {
-  0%, 100% { transform: translateY(0); }
-  34% { transform: translateY(calc(var(--end, 1) * -2.2px)); }
+  0%, 100% { transform: rotate(calc(var(--spoke, 0) * 1deg)) translateX(var(--shut, 19px)); }
+  34% { transform: rotate(calc(var(--spoke, 0) * 1deg)) translateX(calc(var(--shut, 19px) + 2.2px)); }
 }
 
-.dgm-shutter.is-tried .dgm-leaf:not(.is-open) {
-  animation: dgm-give 820ms cubic-bezier(0.2, 0.86, 0.3, 1);
-}
-
-.dgm-shutter.is-tried .dgm-bolt:not(.is-clear) {
-  fill: color-mix(in srgb, var(--warning) 48%, var(--surface-solid));
-  stroke: var(--warning);
+.dgm-shutter.is-tried .dgm-iris:not(.is-clear) .dgm-blade {
   animation: dgm-take 820ms cubic-bezier(0.2, 0.86, 0.3, 1);
 }
 
-/* The shutter frame. The hole used to sit on its own in the middle of an empty
-   plate, which is why the deck read as unfinished - and then it collected a
-   rebate and a ring trying to answer that, which is how it became a blob. One
-   frame now, and the bolts give the flanks something to be. */
+.dgm-shutter.is-tried .dgm-iris:not(.is-clear) .dgm-bladeface {
+  fill: color-mix(in srgb, var(--warning) 38%, var(--surface-solid));
+}
+
+.dgm-shutter.is-tried .dgm-iris:not(.is-clear) .dgm-bladeedge { stroke: var(--warning); }
+
+/* The barrel. The bore used to sit on its own in the middle of an empty plate,
+   which is why the deck read as unfinished - and then it collected a rebate and
+   a ring trying to answer that, which is how it became a blob. One cylinder
+   now: a plan circle carried through the projection, so it stands on the deck
+   as an ellipse and a wall, the same way the intake deck's throat does. */
 
 .dgm-housing {
   fill: color-mix(in srgb, var(--surface-strong) 40%, transparent);
@@ -10643,24 +10666,11 @@ html.is-hidden .clinic-node i,
   animation-delay: calc(var(--life, 0) * -5.5s);
 }
 
-/* The run crossing the site deck to reach the aperture. Without it the descent
-   stops at a corner and the reader has to be told why; with it, the thing that
-   stops the run is the thing the run visibly arrives at. */
-
-.dgm-approach {
-  stroke: color-mix(in srgb, var(--ink) 46%, transparent);
-  stroke-width: 2.2;
-  stroke-linecap: round;
-  stroke-dasharray: 100;
-  stroke-dashoffset: 100;
-}
-
-.dgm-approach.is-here { stroke-dashoffset: 0; }
-.dgm-svg.is-hold .dgm-approach.is-here { stroke: var(--warning); }
-
-.dgm-svg.is-live .dgm-approach {
-  transition: stroke-dashoffset 620ms cubic-bezier(0.16, 1, 0.3, 1) 240ms, stroke 320ms ease;
-}
+/* The stub that used to run from each drop's landing corner into the middle of
+   its deck is gone. It was drawn to say "the run crosses the deck to reach the
+   mechanism", which the deck already says by being one plan - and what it
+   actually did was hang a second, shorter line off the end of an arc, so the
+   left margin of the stack carried three descents and two orphan tails. */
 
 .dgm-dropnode {
   fill: var(--surface-solid);
@@ -10755,14 +10765,12 @@ html.is-hidden .clinic-node i,
   animation-delay: calc(var(--life, 0) * -24s);
 }
 
-/* Lean on the plane and the library resolves: traffic doubles on every bound
-   link, what it already holds rings harder, and the criteria that are bound take
-   the strong accent. Nothing is revealed that was hidden - the panel works
-   harder while it is being looked at, which is the only honest thing a library
-   can do for a pointer. Doubling is a dash pattern and not a rate, so no mark in
-   flight jumps when the cursor arrives. */
+/* Lean on the plane and the library comes up: the index it holds strengthens
+   and every bound criterion deepens into its own dark. Nothing is revealed that
+   was hidden - the panel is easier to read while it is being looked at, which is
+   the only honest thing a library can do for a pointer, and nothing anywhere
+   changes rate, so no mark in flight jumps when the cursor arrives. */
 
-.dgm-library.is-hot .dgm-traffic { stroke-dasharray: 8 92; }
 .dgm-library.is-hot .dgm-link.is-bound { stroke: var(--accent); }
 /* Leaning on the panel deepens every lamp into its own dark, rather than
    repainting the floor one colour. Forty-two solids going blue under a cursor
@@ -10771,7 +10779,6 @@ html.is-hidden .clinic-node i,
 .dgm-library.is-hot .dgm-crit.is-bound :is(.dgm-face-left, .dgm-face-right) {
   fill: color-mix(in srgb, var(--ink) 48%, var(--surface-solid));
 }
-.dgm-library.is-hot .dgm-pulse { stroke: var(--accent-strong); stroke-width: 1.8; }
 
 /* Binding is elevation, and a criterion is a plate rather than a dot. Unbound,
    it is its own footprint lying flat on the slab; bound, it is standing on that
@@ -10786,7 +10793,12 @@ html.is-hidden .clinic-node i,
    up the screen. */
 
 .dgm-crit {
-  --in: clamp(0, calc((var(--spread, 1) - var(--stagger, 0) * 0.8) * 3.2), 1);
+  /* Staggered while the geometry arrives and complete once it has. The 0.6
+     leaves the last criterion at (1 - 0.6) * 2.6 = 1.04 at rest, which clamps to
+     a whole solid - the old coefficients left the back of the floor sitting
+     permanently at two-thirds opacity, which is a fade nobody asked for
+     pretending to be a stagger. */
+  --in: clamp(0, calc((var(--spread, 1) - var(--stagger, 0) * 0.6) * 2.6), 1);
   opacity: var(--in);
 }
 
@@ -10816,33 +10828,33 @@ html.is-hidden .clinic-node i,
   --ink-deep: color-mix(in srgb, var(--success) 70%, var(--text));
 }
 
-/* THE FLOOR MOVES. Not a bob and not a drift - a wander in plan, so a solid
-   shifts along the slab's own two axes the way a pallet gets nudged across a
-   floor rather than hovering off it. Two or three plan units, under a fifth of a
-   criterion's own width, so nothing ever parts from the lattice it stands on.
-   Blocks take one route and drums the other, and both run on clocks scattered
-   far enough apart that forty-two of them never travel together. */
+/* THE FLOOR MOVES - as one floor.
 
-@keyframes dgm-shuffle {
-  0%, 11% { transform: translate(0, 0); }
-  29%, 42% { transform: translate(2.4px, -1.3px); }
-  60%, 73% { transform: translate(0.7px, 2.2px); }
-  91%, 100% { transform: translate(0, 0); }
-}
+   It used to wander: two plan routes, forty-two clocks scattered far enough
+   apart that no two solids ever travelled together. Every solid moving on its
+   own schedule is the definition of a floor that is never still and never
+   together, and forty-two of them at once is not a working floor, it is churn.
 
-@keyframes dgm-shuffleback {
-  0%, 14% { transform: translate(0, 0); }
-  32%, 47% { transform: translate(-1.9px, 1.6px); }
-  64%, 78% { transform: translate(1.4px, 1.8px); }
-  94%, 100% { transform: translate(0, 0); }
+   So there is one keyframe and one period, and a solid reads it at a phase taken
+   from where it stands. What crosses the slab is a swell: the back row settles
+   while the front row is rising, everything between them is in order, and the
+   whole thing wraps because phase nought and phase one are the same phase.
+
+   The motion itself is straight down the screen and back. Inside `planSpace` a
+   translate is in plan units, and equal steps on both axes cancel in x and add
+   in y - so 3.2 plan units is 2 * ISO_Y * 3.2 = 2.2 screen pixels of rise, under
+   a quarter of a criterion's own height. Nothing parts from the lattice it
+   stands on; the lattice breathes. */
+
+@keyframes dgm-tide {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(3.2px, 3.2px); }
 }
 
 .dgm-svg.is-live .dgm-crit {
-  animation: dgm-shuffle calc(13s + var(--life, 0) * 9.4s) ease-in-out infinite;
-  animation-delay: calc(var(--life, 0) * -18.6s);
+  animation: dgm-tide 9.4s ease-in-out infinite;
+  animation-delay: calc(var(--wave, 0) * -9.4s);
 }
-
-.dgm-svg.is-live .dgm-crit.is-drum { animation-name: dgm-shuffleback; }
 
 .dgm-crit .dgm-face-left,
 .dgm-crit .dgm-face-right {
@@ -10868,10 +10880,17 @@ html.is-hidden .clinic-node i,
 .dgm-crit.is-bound .dgm-face-right { opacity: 1; }
 
 .dgm-crit.is-bound .dgm-node { transform: translate(calc(var(--lift, 0px) * -1), calc(var(--lift, 0px) * -1)); }
-.dgm-resolve.is-up { transform: translateY(calc(var(--rise, 0px) * -1)); }
+
+/* The index. Every line here is drawn from one end by `--in`, and the
+   coefficients matter more than they look: the old pair left a third of the mesh
+   permanently part-drawn at rest - eighteen links under forty percent, two under
+   twenty - so the lattice was full of strokes stopping in mid-air with nothing
+   at the end of them. The 0.55 puts the worst case at (1 - 0.55) * 2.4 = 1.08,
+   which clamps to a whole line, and the stagger during the boot sweep is
+   unchanged. */
 
 .dgm-link {
-  --in: clamp(0, calc((var(--spread, 1) - var(--stagger, 0)) * 2.6), 1);
+  --in: clamp(0, calc((var(--spread, 1) - var(--stagger, 0) * 0.55) * 2.4), 1);
   fill: none;
   stroke: color-mix(in srgb, var(--text) 16%, transparent);
   stroke-width: 1;
@@ -10883,24 +10902,6 @@ html.is-hidden .clinic-node i,
 
 .dgm-link.is-bound { stroke: color-mix(in srgb, var(--accent) 46%, transparent); }
 .dgm-link.is-new { stroke: var(--accent); stroke-width: 1.8; }
-
-/* Traffic on the mesh. Eight marks on eight clocks, so the library is a thing
-   in use rather than a picture of one. */
-
-.dgm-traffic {
-  stroke: var(--accent-strong);
-  stroke-width: 2.4;
-  stroke-linecap: round;
-  stroke-dasharray: 8 192;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.dgm-svg.is-live .dgm-traffic.is-bound {
-  opacity: calc(0.9 * var(--run-in, 1));
-  animation: dgm-travel calc(4.8s + var(--life, 0) * 5.4s) linear infinite;
-  animation-delay: calc(var(--life, 0) * -9.7s);
-}
 
 /* The lamp on top of a solid. Unbound it is the criterion's own colour at a
    fifth, which is a thing on the floor with its light off; bound, it is that
@@ -10922,75 +10923,63 @@ html.is-hidden .clinic-node i,
    riding it is what says which one it is. */
 .dgm-crit.is-new .dgm-node { stroke: var(--ink-deep); stroke-width: 2; }
 
-/* LAMPS. A criterion the library is holding goes out and comes back on a clock
-   of its own - a switch, not a fade, because a light that eases is a light
-   nobody ever built. Two patterns across forty-two incommensurable periods, so
-   no two ever agree and the floor never falls into a loop a reader can catch.
+/* LAMPS. Every criterion the library is holding brightens and dims on the same
+   period as every other one, at a phase taken from where it stands - so what
+   crosses the floor is a second wave, slower than the swell under it and
+   travelling the same way.
 
-   `step-end` is what makes it a switch: each keyframe holds its value until the
-   next one, so nothing between the two states is ever drawn.
+   This was two `step-end` patterns on forty-two incommensurable clocks, which is
+   to say it was forty-two lights switching hard at forty-two unrelated moments.
+   Switching is right for one lamp and wrong for a floor of them: hard edges at
+   random times is a fault board, and what this floor is meant to say is that the
+   library is working. So it eases, and the easing is what makes forty-two of
+   them one thing rather than forty-two things.
+
+   It also never goes fully out. A lamp at 0.42 is a criterion the library is
+   still holding, dimmer; a lamp at 0.2 was one that had gone off, which is a
+   state this drawing has a colour for and should not be saying twice.
 
    Nothing interpolates a colour here, and nothing on this floor may. A keyframe
    that mixes two color-mix() values gets re-snapshotted by the compositor when a
    class change forces a style recalc mid-animation, and what comes back is not a
    colour anywhere in this stylesheet. Only scalars move. */
 
-@keyframes dgm-lamp {
-  0% { fill-opacity: 1; }
-  46% { fill-opacity: 0.2; }
-  60% { fill-opacity: 1; }
-}
-
-@keyframes dgm-lampflick {
-  0% { fill-opacity: 1; }
-  21% { fill-opacity: 0.2; }
-  27% { fill-opacity: 1; }
-  63% { fill-opacity: 0.2; }
-  82% { fill-opacity: 1; }
+@keyframes dgm-breathe {
+  0%, 100% { fill-opacity: 1; }
+  50% { fill-opacity: 0.42; }
 }
 
 .dgm-svg.is-live .dgm-crit.is-bound .dgm-node {
-  animation: dgm-lamp calc(5.2s + var(--life, 0) * 7.4s) step-end infinite;
-  animation-delay: calc(var(--life, 0) * -12.7s);
+  animation: dgm-breathe 5.6s ease-in-out infinite;
+  animation-delay: calc(var(--wave, 0) * -5.6s);
 }
 
-.dgm-svg.is-live .dgm-crit.is-bound.is-flick .dgm-node { animation-name: dgm-lampflick; }
+/* The landing on the rim, where a channel arrives.
 
-/* A gate on the rim, where a channel now arrives. The same solid as everything
-   else on this floor at the scale of a port, seated so its outboard face is
-   flush with the slab's own plan boundary - which is what makes the riser from
-   the landing point up to its crown a single mark lying on one continuous
-   surface instead of a line in the air.
+   Three prisms used to stand here - the same solid as a criterion at the scale
+   of a port, two lit faces each and a crown that went full accent the moment its
+   site published. They were three of the four brightest objects in the figure
+   and they were parked on the one edge that has to read as an edge, so the slab
+   ended up with three lumps on its perimeter and a reader's eye went to them
+   before it went to the floor.
 
-   It is drawn in the library's own ink rather than a criterion's, because it
-   belongs to the slab and not to the floor standing on it. */
+   A route needs somewhere it stops, not something built where it stopped. This
+   is a dot, in plan units, so it projects to the same squashed ellipse a drum's
+   cap does and belongs to the floor rather than being pasted onto it - and it is
+   the same mark the route is made of, held still. */
 
-.dgm-gate .dgm-face-left {
-  fill: color-mix(in srgb, var(--accent) 30%, var(--surface-solid));
-  stroke: color-mix(in srgb, var(--accent-strong) 46%, transparent);
-}
-
-.dgm-gate .dgm-face-right {
-  fill: color-mix(in srgb, var(--accent-strong) 22%, color-mix(in srgb, var(--accent) 30%, var(--body-far)));
-  stroke: color-mix(in srgb, var(--accent-strong) 52%, transparent);
-}
-
-.dgm-gatecap {
-  fill: color-mix(in srgb, var(--accent) 26%, var(--surface-solid));
-  stroke: color-mix(in srgb, var(--accent-strong) 62%, transparent);
+.dgm-land {
+  fill: color-mix(in srgb, var(--accent) 34%, var(--surface-solid));
+  stroke: color-mix(in srgb, var(--accent-strong) 54%, transparent);
   stroke-width: 1;
-  stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
   transition: fill 300ms ease, stroke 300ms ease;
 }
 
-/* A gate with a route running through it takes the accent; leaning on the site
-   that owns it takes the accent's own dark. Both are a change of value on the
-   crown alone - the body of the gate belongs to the slab and never moves. */
-.dgm-gate.is-up .dgm-gatecap { fill: var(--accent); stroke: var(--accent-strong); }
-.dgm-gate.is-hot .dgm-gatecap { fill: var(--accent-strong); stroke: var(--accent-strong); }
+.dgm-land.is-up { fill: var(--accent); stroke: var(--accent-strong); }
+.dgm-land.is-hot { fill: var(--accent-strong); stroke: var(--accent-strong); }
 
-/* Gate to criterion, on the slab. Same dash and the same creep as the channel
+/* Rim to criterion, on the slab. Same dots at the same pitch as the channel
    feeding it, so the route is one continuous thing that changes surface at the
    rim rather than two marks that happen to meet there. Drawn among the mesh, so
    every solid taller than it passes in front - which is the one move no arc in
@@ -10999,15 +10988,15 @@ html.is-hidden .clinic-node i,
 
 .dgm-feeder {
   fill: none;
-  stroke: color-mix(in srgb, var(--text) 18%, transparent);
-  stroke-width: 1.2;
-  stroke-dasharray: 2 5;
+  stroke: color-mix(in srgb, var(--text) 22%, transparent);
+  stroke-width: 1.6;
+  stroke-dasharray: 0 9;
   stroke-linecap: round;
   opacity: clamp(0, calc((var(--spread, 1) - 0.5) * 2.6), 1);
   transition: stroke 300ms ease, stroke-width 300ms ease;
 }
 
-.dgm-feeder.is-up { stroke: color-mix(in srgb, var(--accent) 72%, transparent); stroke-width: 1.8; }
+.dgm-feeder.is-up { stroke: color-mix(in srgb, var(--accent) 72%, transparent); stroke-width: 2; }
 
 .dgm-countbody {
   fill: var(--surface-solid);
@@ -11018,19 +11007,28 @@ html.is-hidden .clinic-node i,
 .dgm-countval { fill: var(--accent-strong); font-family: var(--font-mono); font-size: 12px; font-weight: 700; }
 .dgm-countkey { fill: var(--muted); font-size: 9px; font-weight: 600; letter-spacing: 0.1em; }
 
-/* The channels. Structure crosses in both directions here and a record crosses
-   in neither, which is a different claim from the one this figure used to make
-   and a truer one: a library nobody can take anything back out of is a filing
-   cabinet. What never moves is the record, and nothing in either direction is
-   anything but a definition.
+/* THE CHANNELS, AND WHY NOTHING ON ONE IS A LINE.
 
-   Three layers, in the order a reader needs them. The route is always there, so
-   the three sites read as on one network before anything has been published.
-   The arc fills in when a site publishes, which is the event. And two marks run
-   the same curve in opposite directions on separate clocks, which is the
-   traffic - one dash pattern travelling forward, one travelling back, so the
-   direction of an exchange is something a reader sees rather than infers from
-   an arrowhead four pixels wide. */
+   Structure crosses in both directions here and a record crosses in neither,
+   which is a different claim from the one this figure used to make and a truer
+   one: a library nobody can take anything back out of is a filing cabinet.
+
+   There were three layers on each route and the middle one was a solid
+   two-pixel accent arc, five hundred pixels long, drawn in the moment its site
+   published. It was the heaviest single mark in either figure and it made the
+   wrong claim twice: a solid line between two things is a pipe, and three of
+   them converging on a slab is plumbing. A federation is not plumbed together.
+   Sites and a library are in contact - intermittently, in both directions, with
+   nothing continuous between them - which is a thing a drawing can say exactly,
+   and says with dots.
+
+   So there are two layers. The route is a run of dots, always there, creeping,
+   so the three sites read as on one network before anything has been published.
+   And what crosses it is a packet: three or four dots close together, travelling
+   the whole curve and gone, one going up and one coming down. A dot is a
+   zero-length dash under a round cap - the shortest mark this stylesheet can
+   make, and the only one that can say "something crossed here" without also
+   saying "and the way is still there behind it". */
 
 /* Nothing on a channel is a target. Its tag is a filled pill that crosses the
    library's own slab, and a pointer sliding over one would otherwise drop the
@@ -11040,9 +11038,12 @@ html.is-hidden .clinic-node i,
 
 .dgm-channel {
   fill: none;
-  stroke: color-mix(in srgb, var(--text) 17%, transparent);
-  stroke-width: 1;
-  stroke-dasharray: 2 5;
+  stroke: color-mix(in srgb, var(--text) 28%, transparent);
+  stroke-width: 1.8;
+  /* A dash of no length with a round cap is a dot of stroke-width across. Nine
+     is the pitch; the feeder that continues this route past the rim uses the
+     same one, so the two read as one run of dots changing surface. */
+  stroke-dasharray: 0 9;
   stroke-linecap: round;
   /* A channel turns a corner now, at the rim where the arc becomes the riser.
      The default miter throws a spike whenever a dash spans that turn. */
@@ -11053,31 +11054,15 @@ html.is-hidden .clinic-node i,
 
 .dgm-lift.is-hot .dgm-channel { stroke: color-mix(in srgb, var(--accent) 46%, transparent); }
 
-.dgm-liftpath {
-  fill: none;
-  stroke: var(--accent);
-  stroke-width: 2.2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 100;
-  stroke-dashoffset: 100;
-  opacity: clamp(0, calc((var(--spread, 1) - 0.7) * 3.4), 1);
-}
+/* Up and back, on the one curve. Each is a packet of dots rather than a dash:
+   `pathLength` is a hundred, so a dasharray summing to two hundred puts exactly
+   one packet on the path at a time and running the offset to -200 carries it
+   from end to end and round again with nothing left behind it.
 
-.dgm-lift.is-up .dgm-liftpath { stroke-dashoffset: 0; }
-
-/* Both properties transition, so leaning on a channel thickens it rather than
-   stepping it. A stroke width that jumps under the cursor is the same jolt as a
-   clock that jumps, and it was the last one left in this figure. */
-.dgm-svg.is-live .dgm-liftpath {
-  transition: stroke-dashoffset 880ms cubic-bezier(0.16, 1, 0.3, 1), stroke 300ms ease, stroke-width 300ms ease;
-}
-
-/* Up and back, on the one curve. The mark that rises is the tighter of the two
-   and runs in the strong accent - a site offering the structure it used. The one
-   that falls is longer and lighter, because what comes back down is a whole
-   definition rather than a ping, and it wants to read as arriving rather than
-   as being fetched. */
+   The one that rises is the tighter and quicker of the two, in the strong accent
+   - a site offering the structure it used. The one that falls is a longer, wider
+   packet, because what comes back down is a whole definition rather than a ping,
+   and it wants to read as arriving rather than as being fetched. */
 
 @keyframes dgm-return {
   from { stroke-dashoffset: 0; }
@@ -11093,8 +11078,10 @@ html.is-hidden .clinic-node i,
   pointer-events: none;
 }
 
-.dgm-rise { stroke: var(--accent-strong); stroke-width: 2.4; stroke-dasharray: 8 192; }
-.dgm-fall { stroke: var(--accent); stroke-width: 2.8; stroke-dasharray: 14 186; }
+/* Three dots at a pitch of 3.5, then a hundred and ninety-three of nothing. */
+.dgm-rise { stroke: var(--accent-strong); stroke-width: 2.6; stroke-dasharray: 0 3.5 0 3.5 0 193; }
+/* Four dots at a pitch of six, then a hundred and eighty-two of nothing. */
+.dgm-fall { stroke: var(--accent); stroke-width: 3; stroke-dasharray: 0 6 0 6 0 6 0 182; }
 
 .dgm-lift.is-up .dgm-rise { opacity: calc(0.95 * var(--run-in, 1)); }
 .dgm-lift.is-down .dgm-fall { opacity: calc(0.8 * var(--run-in, 1)); }
@@ -11109,11 +11096,12 @@ html.is-hidden .clinic-node i,
   animation-delay: calc(var(--life, 0) * -6.7s);
 }
 
-/* Leaning on a channel doubles what it is carrying, the way leaning on the
-   library doubles its traffic: a second mark in each direction, put there by a
-   dash pattern and not by a rate, so nothing already in flight moves. */
-.dgm-lift.is-hot .dgm-rise { stroke-dasharray: 8 92; }
-.dgm-lift.is-hot .dgm-fall { stroke-dasharray: 14 86; }
+/* Leaning on a channel doubles what it is carrying: a second packet in each
+   direction, put there by halving the trailing gap so the pattern repeats twice
+   over the two hundred instead of once. It is a dash pattern and not a rate, so
+   nothing already in flight moves when the cursor arrives. */
+.dgm-lift.is-hot .dgm-rise { stroke-dasharray: 0 3.5 0 3.5 0 93; }
+.dgm-lift.is-hot .dgm-fall { stroke-dasharray: 0 6 0 6 0 6 0 82; }
 
 .dgm-liftchip {
   fill: none;
@@ -11202,63 +11190,24 @@ html.is-hidden .clinic-node i,
   animation-delay: calc(var(--life, 0) * -8.4s);
 }
 
-/* A definition binding is the library resolving against what it already held,
-   so it propagates: two rings out of the node that took it, on offset clocks,
-   through the criteria it has just linked to. It is the one mark in either
-   figure whose job is to look like thinking rather than like storage - and
-   like every other moving thing here, it waits for power. */
+/* THERE ARE NO EXPANDING RINGS HERE ANY MORE.
 
-.dgm-ring {
-  fill: none;
-  stroke: var(--accent-strong);
-  stroke-width: 1.6;
-  opacity: 0;
-  pointer-events: none;
-}
+   Two of them rang out of a criterion whenever one bound, and four more rang
+   continuously out of criteria the library already held, on clocks scattered so
+   no two ever coincided. Six circles growing to three times their radius and
+   fading, at all times, over a slab three hundred pixels across.
 
-.dgm-resolve { opacity: var(--run-in, 1); }
+   They were meant to say the library was thinking. What a growing radius
+   actually says is that something is propagating outwards at a uniform rate in
+   every direction - and the lattice it was supposed to be propagating through is
+   drawn directly underneath it. The ring crossed links, criteria and empty slab
+   at exactly the same speed, touching none of them, because a circle is radial
+   and a mesh is not. It was a decoration sitting on top of the one structure in
+   the figure that could have carried the claim honestly.
 
-@keyframes dgm-propagate {
-  0% { opacity: 0; transform: scale(0.3); }
-  18% { opacity: 0.8; }
-  100% { opacity: 0; transform: scale(3.4); }
-}
-
-.dgm-svg.is-live .dgm-ring {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: dgm-propagate 3.4s cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
-}
-
-.dgm-svg.is-live .dgm-ring.is-late { animation-delay: 1.7s; }
-
-/* The library keeps settling whether or not a site has just published. A handful
-   of criteria it already holds ring out through their neighbours, on clocks long
-   enough and far enough apart that no two ever coincide - so the upper plane is
-   a panel that is thinking rather than a lattice waiting for the next phase to
-   light part of it. */
-
-.dgm-pulse {
-  fill: none;
-  stroke: var(--accent);
-  stroke-width: 1.2;
-  opacity: 0;
-  pointer-events: none;
-  transform-box: fill-box;
-  transform-origin: center;
-  transition: stroke 260ms ease, stroke-width 260ms ease;
-}
-
-@keyframes dgm-settle {
-  0% { opacity: 0; transform: scale(0.35); }
-  6% { opacity: calc(0.44 * var(--run-in, 1)); }
-  34%, 100% { opacity: 0; transform: scale(2.6); }
-}
-
-.dgm-svg.is-live .dgm-pulse {
-  animation: dgm-settle calc(7.2s + var(--life, 0) * 5.4s) cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
-  animation-delay: calc(var(--life, 0) * -12.6s);
-}
+   The wave carries it instead. A floor whose every lamp is breathing in order is
+   a floor that is working, and it is drawn on the criteria themselves rather
+   than in the air above them. */
 
 /* A site is the same solid Trident stands its decks on, at another scale. The
    three are deliberately not one size: the plan size, the wall height and the
@@ -11432,7 +11381,6 @@ html.is-hidden .clinic-node i,
 .dgm-pad.is-hot { fill: var(--ink-soft); stroke: var(--ink-deep); }
 .dgm-rail.is-hot .dgm-side { fill: var(--text); }
 .dgm-ident.is-hot .dgm-sidefact { fill: var(--accent-strong); }
-.dgm-lift.is-hot .dgm-liftpath { stroke: var(--accent-strong); stroke-width: 2.8; }
 
 /* Readout */
 
@@ -11451,7 +11399,7 @@ html.is-hidden .clinic-node i,
 @media (prefers-reduced-motion: reduce) {
   .dgm-svg { transition: none; }
 
-  .dgm-svg :is(.dgm-droppath, .dgm-dropflow, .dgm-dropnode, .dgm-approach, .dgm-spark, .dgm-traffic, .dgm-fieldtile, .dgm-queue, .dgm-face-top, .dgm-holerim, .dgm-bolt, .dgm-leaf, .dgm-ring, .dgm-loopflow, .dgm-side, .dgm-sidefact, .dgm-read, .dgm-tagbody, .dgm-node, .dgm-link, .dgm-liftpath, .dgm-liftchip, .dgm-carry, .dgm-reachfill, .dgm-reachrim, .dgm-sweep, .dgm-wallmark, .dgm-status, .dgm-statustext, .dgm-deck, .dgm-plate, .dgm-site, .dgm-ident, .dgm-catch, .dgm-throat, .dgm-ledgerchain, .dgm-ledgerbar, .dgm-ledgerhash, .dgm-slide, .dgm-housing, .dgm-pad, .dgm-intakepath, .dgm-intake, .dgm-ledgerflow, .dgm-ledgerseal, .dgm-library, .dgm-pulse, .dgm-seat, .dgm-riser, .dgm-tine, .dgm-orbit, .dgm-reach, .dgm-crit, .dgm-stand, .dgm-field, .dgm-face-left, .dgm-face-right, .dgm-mast, .dgm-masthead, .dgm-channel, .dgm-feeder, .dgm-gate, .dgm-gatecap, .dgm-lift, .dgm-rise, .dgm-fall, .dgm-second, .dgm-steady, .dgm-draw, .dgm-hand, .dgm-ledgeraudit) {
+  .dgm-svg :is(.dgm-droppath, .dgm-dropflow, .dgm-dropnode, .dgm-spark, .dgm-fieldtile, .dgm-queue, .dgm-face-top, .dgm-holerim, .dgm-blade, .dgm-bladeface, .dgm-bladeedge, .dgm-iris, .dgm-loopflow, .dgm-side, .dgm-sidefact, .dgm-read, .dgm-tagbody, .dgm-node, .dgm-link, .dgm-liftchip, .dgm-carry, .dgm-reachfill, .dgm-reachrim, .dgm-sweep, .dgm-wallmark, .dgm-status, .dgm-statustext, .dgm-deck, .dgm-plate, .dgm-site, .dgm-ident, .dgm-catch, .dgm-throat, .dgm-ledgerchain, .dgm-ledgerbar, .dgm-ledgerhash, .dgm-slide, .dgm-housing, .dgm-pad, .dgm-intakepath, .dgm-intake, .dgm-ledgerflow, .dgm-ledgerseal, .dgm-library, .dgm-seat, .dgm-riser, .dgm-tine, .dgm-orbit, .dgm-reach, .dgm-crit, .dgm-stand, .dgm-field, .dgm-face-left, .dgm-face-right, .dgm-mast, .dgm-masthead, .dgm-channel, .dgm-feeder, .dgm-land, .dgm-lift, .dgm-rise, .dgm-fall, .dgm-second, .dgm-steady, .dgm-draw, .dgm-hand, .dgm-ledgeraudit) {
     transition: none;
     animation: none;
   }

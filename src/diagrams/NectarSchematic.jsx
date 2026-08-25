@@ -52,29 +52,48 @@ import { useScrollRun } from './useScrollPhase'
  * couple of plan units along the slab's own axes, the way things get moved
  * about a floor. Every bit of it is deterministic; none of it repeats.
  *
- * Nothing here is nailed down. The library drifts on one slow clock and drops
- * its shade on the federation below it; each site orbits its own footprint on
- * a clock of its own - a true plan circle carried through the projection, so
- * the three of them move in the ground rather than bobbing in the air; traffic
- * runs the mesh; criteria the library already holds keep ringing out through
- * their neighbours. All of it on timings scattered by `jitter`, so the drawing
- * never falls into a loop a reader can catch.
+ * Nothing here is nailed down, and none of it is scattered either. The library
+ * drifts on one slow clock and drops its shade on the federation below it; each
+ * site orbits its own footprint on a clock of its own - a true plan circle
+ * carried through the projection, so the three of them move in the ground
+ * rather than bobbing in the air.
+ *
+ * On the slab itself there is exactly one clock, and every solid standing on it
+ * reads that clock at a phase taken from where it is standing. The floor rises
+ * and settles as a single wave crossing it, and the lamps brighten and dim as a
+ * second, slower one. That is the whole of the motion up there.
+ *
+ * It used to be the opposite: forty-two lamps switching on forty-two
+ * incommensurable clocks, forty-two solids wandering two plan units on
+ * forty-two more, twelve marks flying along twelve different links, four
+ * expanding rings and a fifth pair on top of them. Every one of those was
+ * defensible on its own and the sum was noise - a floor where nothing was ever
+ * still and nothing was ever together, which is what a reader means by busy.
+ * One wave says the same thing (a working floor, not a diagram of one) and says
+ * it as a system rather than as forty-two accidents.
  *
  * A channel with no definition crossing it still creeps its dashes toward the
  * library, because a site that is not publishing this second is still
  * reporting - the same quiet layer the other figure runs on its idle tines, at
  * the scale this drawing works at.
  *
- * A channel also stops at the rim now, and that is the one repair in this
- * figure that is geometry rather than styling. An arc ending on the slab's top
- * face has to cross the near skirt to get there, and in an axonometric the band
- * just outside a near edge is the same band the near face occupies - so the eye
- * reads the whole run as a wire laid over a photograph. Instead each one lands
- * on the underside rim, arriving along one of the drawing's own plan axes, at
- * the foot of a gate standing on that rim; and a run on the floor carries the
- * definition the rest of the way in, drawn among the mesh so every solid taller
- * than it passes in front. That last part is the move no arc in screen space can
- * make, and it is what puts the leg on the slab rather than above it.
+ * A channel also stops at the rim, and that is the one repair in this figure
+ * that is geometry rather than styling. An arc ending on the slab's top face has
+ * to cross the near skirt to get there, and in an axonometric the band just
+ * outside a near edge is the same band the near face occupies - so the eye reads
+ * the whole run as a wire laid over a photograph. Instead each one lands on the
+ * underside rim, arriving along one of the drawing's own plan axes, climbs the
+ * skirt to the rim above it, and a run on the floor carries the definition the
+ * rest of the way in - drawn among the mesh, so every solid taller than it
+ * passes in front. That last part is the move no arc in screen space can make,
+ * and it is what puts the leg on the slab rather than above it.
+ *
+ * Nothing on the route is a line. The standing route is a run of dots, and what
+ * travels it is a packet of three or four more, so an exchange between a site
+ * and the library is a signal rather than a pipe with something sliding down
+ * it. Three solid arcs across the middle of the sheet were the heaviest ink in
+ * the drawing and said the wrong thing besides: a federation is not plumbed
+ * together, it is in contact.
  *
  * The panel takes a pointer as a panel, over a target the size of the slab: a
  * two-pixel node is not something to aim at. Leaning on anything here loads a
@@ -152,6 +171,15 @@ function onFloor(x, y) {
 // green, the three words a floor of plant has always used - and it is a block or
 // a drum, because two kinds of solid mixed on one plane read as machinery while
 // forty-two of one kind read as a chart.
+//
+// And each one gets a phase. `wave` is where the solid sits along the plan
+// diagonal, normalised to nought-to-one - which in this projection is simply how
+// far down the screen it is, because screen y depends on (x + y) and nothing
+// else. Every animation on this floor is one keyframe read at a delay of
+// -wave * period, so a solid at the back and a solid at the front are at
+// opposite phases and everything between them is in order. Nought and one land
+// a whole period apart, which is the same phase, so the wave wraps round the
+// slab with no seam in it.
 const NODES = []
 for (let row = 0; row < 6; row += 1) {
   for (let col = 0; col < 7; col += 1) {
@@ -168,13 +196,20 @@ for (let row = 0; row < 6; row += 1) {
       y,
       at: MESH(x, y),
       seed: jitter(index, 7),
-      life: jitter(index, 11),
       round: jitter(index, 23) > 0.62,
       lamp: grade < 0.15 ? 'is-red' : grade < 0.41 ? 'is-amber' : 'is-green',
-      flick: jitter(index, 37) > 0.66,
     })
   }
 }
+
+// The wave, solved over the floor that was actually built rather than over the
+// nominal grid, so the front row really is at phase one and the back row really
+// is at phase nought however far `onFloor` had to pull a node back inboard.
+const WAVE_LOW = Math.min(...NODES.map((node) => node.x + node.y))
+const WAVE_SPAN = Math.max(...NODES.map((node) => node.x + node.y)) - WAVE_LOW
+NODES.forEach((node) => {
+  node.wave = Math.round(((node.x + node.y - WAVE_LOW) / WAVE_SPAN) * 100) / 100
+})
 
 // Coverage does not grow in reading order - it grows wherever a site happens to
 // contribute, so the mesh fills in unevenly the way a real library does.
@@ -201,7 +236,6 @@ for (let a = 0; a < NODES.length; a += 1) {
       to: NODES[b].at,
       rank: Math.max(NODES[a].rank, NODES[b].rank),
       stagger: Math.round(((a + b) / (2 * TOTAL)) * 100) / 100,
-      life: jitter(a * 7 + b, 13),
     })
   }
 }
@@ -226,18 +260,20 @@ NODES.forEach((node) => {
   node.up = [node.at[0], Math.round((node.at[1] - depth) * 10) / 10]
 })
 
-// Traffic. Marks running their own links on their own clocks, so the library
-// reads as something in use rather than a diagram of one. They are picked by a
-// stable seed, never by position, so the same ones run every time.
-const TRAFFIC = LINKS.filter((link) => link.life > 0.88).slice(0, 14)
-
-// The library resolves against itself, not only when a site has just published.
-// A handful of criteria it already holds ring out through their neighbours on
-// long clocks, so the upper plane is a panel that is thinking rather than a
-// lattice waiting for the next phase to light part of it. They are taken from
-// the first thirty ranks, which are bound in every phase of the run, and picked
-// by a stable seed so the same ones ring on every render.
-const PULSE = ORDER.slice(0, 30).filter((node) => node.life > 0.72).slice(0, 4)
+// There is no traffic layer on the mesh any more, and no ring layer over it.
+// Twelve marks flying along twelve links on twelve clocks, four criteria
+// expanding rings out of themselves, and a fifth pair every time something bound
+// - between them that was sixteen independent expanding or travelling objects on
+// one three-hundred-pixel slab, which is why the panel read as busy rather than
+// as thinking. What they were there to say is now said by the wave: a floor
+// where every lamp is breathing in order is unmistakably a thing in use, and it
+// costs one keyframe rather than sixteen clocks.
+//
+// The expanding ring in particular was never honest. A radius growing out of a
+// node is a claim about propagation through a lattice, and the lattice it grew
+// through is drawn right there underneath it - the ring crossed links, criteria
+// and empty slab at the same rate, touching nothing, because it was a circle and
+// the mesh is not radial.
 
 // Three peers on one ground, set well apart so no site sits behind another,
 // none of them is the centre, and each one owns a side of the sheet: the two
@@ -334,12 +370,13 @@ const JOIN = BAND[Math.floor(BAND.length / 2)]
 // on in the drawing's own geometry - which on screen is the same 21-degree
 // slope every skirt and every wall marking already runs at.
 //
-// And something stands where it lands. A curve ending in air at a rim is still
-// a curve ending in air; a curve ending at the foot of a gate is a route
-// arriving at a place. The gate is the same solid as a criterion, a deck and a
-// site, at the scale of a port, and its outboard face is coplanar with the
-// slab's own skirt - so the riser from the landing point to its crown is one
-// straight mark lying on one continuous surface.
+// And the landing is a point on the rim, not a building on it. Three prisms
+// standing where the three routes arrived - each with two lit faces and a crown
+// that went full accent whenever its site published - were three of the four
+// brightest objects in the figure, parked on the one edge that was supposed to
+// read as an edge. What a route needs at its end is somewhere it stops, and a
+// dot on the rim is exactly that: the same mark the route itself is made of,
+// held still where the surface changes.
 //
 // Which rim point is not chosen either. Screen x here depends only on (x - y),
 // so the rim point directly over a site is the one that keeps that site's own
@@ -347,31 +384,23 @@ const JOIN = BAND[Math.floor(BAND.length / 2)]
 // diagonal, resolves to the front corner - the one place where the outward plan
 // normal and the height axis project to the same screen direction, which is why
 // a site under it can send a line straight up and still be telling the truth.
-const GATE_ACROSS = 6
-const GATE_ALONG = 14
-const GATE_CORNER = 9
-const GATE_RISE = 20
 const GATE_REACH = 58
 // The rim's diagonal extreme, solved rather than read off `LIBRARY.front`:
 // `roundedPlan` samples its corner arcs in seven steps and never lands on 45
 // degrees, so the sampled front corner sits four pixels off the true one - and
 // four pixels is the whole composition off centre.
 const RIM_CORNER = LIB_HALF - 28 + 28 / Math.SQRT2
-const GATE_SEAT = RIM_CORNER - ((GATE_CORNER - CRIT_RADIUS) * Math.SQRT2 + CRIT_RADIUS) / Math.SQRT2
+// The landing dot, in plan units, so it projects to the same squashed ellipse a
+// drum's cap does and belongs to the floor rather than being pasted on it.
+const LAND_R = 5
 
 const r1 = (value) => Math.round(value * 10) / 10
 
 function gateFor(site) {
   const reach = site.plan[0] - site.plan[1]
-  if (reach > 40) {
-    const rim = [LIB_HALF, LIB_HALF - reach]
-    return { edge: 'right', rim, seat: [LIB_HALF - GATE_ACROSS, rim[1]], halfX: GATE_ACROSS, halfY: GATE_ALONG, out: [1, 0] }
-  }
-  if (reach < -40) {
-    const rim = [LIB_HALF + reach, LIB_HALF]
-    return { edge: 'left', rim, seat: [rim[0], LIB_HALF - GATE_ACROSS], halfX: GATE_ALONG, halfY: GATE_ACROSS, out: [0, 1] }
-  }
-  return { edge: 'corner', rim: [RIM_CORNER, RIM_CORNER], seat: [GATE_SEAT, GATE_SEAT], halfX: GATE_CORNER, halfY: GATE_CORNER, out: [1, 1] }
+  if (reach > 40) return { edge: 'right', rim: [LIB_HALF, LIB_HALF - reach], out: [1, 0] }
+  if (reach < -40) return { edge: 'left', rim: [LIB_HALF + reach, LIB_HALF], out: [0, 1] }
+  return { edge: 'corner', rim: [RIM_CORNER, RIM_CORNER], out: [1, 1] }
 }
 
 const CHANNELS = [
@@ -383,11 +412,12 @@ const CHANNELS = [
   const [x1, y1] = [foot[0], r1(foot[1] - MAST)]
   const gate = gateFor(item.site)
   const rim = MESH(...gate.rim)
-  // The three points of the arrival: the underside rim where the curve stops,
-  // and the crown of the gate the riser climbs to. Both sit in the same plane
-  // the skirt is cut in, so the riser is one mark on one surface.
+  // The two points of the arrival: the underside rim where the curve stops, and
+  // the rim above it where the route reaches the floor. They are one skirt
+  // thickness apart on screen and nothing else, so the last leg of the route is
+  // the skirt's own vertical edge - a mark lying on a surface the drawing has
+  // already committed to, rather than a riser climbing something in the air.
   const land = [rim[0], r1(rim[1] + LIB_WALL)]
-  const crown = [rim[0], r1(rim[1] - GATE_RISE)]
   // The outward plan normal of the face the curve lands on, carried through the
   // projection. A quadratic's tangent at the end is (end - control), so putting
   // the control this far outboard locks the last stretch of the arc to a plan
@@ -409,15 +439,11 @@ const CHANNELS = [
     ...item,
     foot,
     head: [x1, y1],
-    gate: {
-      ...gate,
-      at: MESH(...gate.seat),
-      solid: planPrism(gate.seat[0], gate.seat[1], gate.halfX, gate.halfY, GATE_RISE, CRIT_RADIUS),
-    },
-    // Mast head, arc, riser: one `d`, so every mark already running this route
+    gate: { ...gate, at: rim },
+    // Mast head, arc, skirt: one `d`, so every mark already running this route
     // keeps running it, and the join at the rim is a corner in a single stroke
     // rather than two strokes meeting.
-    path: `M ${x1} ${y1} ${arc} L ${crown[0]} ${crown[1]}`,
+    path: `M ${x1} ${y1} ${arc} L ${rim[0]} ${rim[1]}`,
     // The midpoint of the arc, where the label rides. It stays on the curve's
     // own leg rather than the riser, so all three land in the clear band under
     // the slab instead of out over it.
@@ -429,12 +455,12 @@ const BY_SITE = Object.fromEntries(CHANNELS.map((item) => [item.key, item]))
 
 // Back to front on screen, so a solid standing in front of another occludes it
 // rather than being drawn under it. Forty-five solids on one plane in reading
-// order is a pile; in depth order it is a place - and the gates go through the
-// same sort as the criteria rather than being appended after them, so the
+// order is a pile; in depth order it is a place - and the landings go through
+// the same sort as the criteria rather than being appended after them, so the
 // ordering stays correct if the lattice is ever moved.
 const FLOOR = [
   ...NODES.map((node) => ({ key: `c${node.index}`, kind: 'crit', at: node.at, node })),
-  ...CHANNELS.map((item) => ({ key: `g${item.key}`, kind: 'gate', at: item.gate.at, item })),
+  ...CHANNELS.map((item) => ({ key: `g${item.key}`, kind: 'land', at: item.gate.at, item })),
 ].sort((a, b) => a.at[1] - b.at[1])
 
 const JOINED = new Set(
@@ -548,7 +574,6 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
   const [figure, phase, booted] = useScrollRun(PHASES, { reduced })
   const [hot, setHot] = useState(null)
   const state = PHASES[phase] ?? PHASES[PHASES.length - 1]
-  const joinUp = JOIN.rank < state.bound
 
   // Pointing at a site lifts it and lights the structure it has published.
   // Hover only re-weights what is already drawn.
@@ -571,7 +596,7 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
           ref={figure}
           viewBox="0 0 620 700"
           role="img"
-          aria-label="Three peer sites of three different sizes stand well apart on one ground, beneath a shared execution library drawn as a slab held above them with a mesh of criteria on it. Each site runs its task locally and sends the structure it used up a channel from a mast on its own roof - a criterion from one, a unit from another, a mapping from the third. A criterion the library binds stands up off the slab, and any site can take a bound definition back down its channel and run it. Structure crosses in both directions and no record crosses in either: the records inside every site stay under a sealed lid, and the reach of each site grows until they overlap."
+          aria-label="Three peer sites of three different sizes stand well apart on one ground, beneath a shared execution library drawn as a slab held above them with a mesh of criteria on it. Each site runs its task locally and beams the structure it used up a channel from a mast on its own roof - a criterion from one, a unit from another, a mapping from the third. A criterion the library binds stands up off the slab, and any site can take a bound definition back down its channel and run it. Structure crosses in both directions and no record crosses in either: the records inside every site stay under a sealed lid, and the reach of each site grows until they overlap."
         >
           <defs>
             <pattern id="nc-grain" width="16" height="16" patternUnits="userSpaceOnUse">
@@ -627,28 +652,16 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
                   y2={link.to[1]}
                 />
               ))}
-              {/* Traffic. Marks running their own links on their own clocks, so
-                  the library is busy whether or not the reader is doing anything
-                  to it. Leaning on the panel puts a second mark on every run. */}
-              {TRAFFIC.map((link) => (
-                <line
-                  className={`dgm-traffic${link.rank < state.bound ? ' is-bound' : ''}`}
-                  key={`t-${link.key}`}
-                  style={{ '--life': link.life }}
-                  pathLength="100"
-                  x1={link.from[0]}
-                  y1={link.from[1]}
-                  x2={link.to[0]}
-                  y2={link.to[1]}
-                />
-              ))}
-              {/* What the gates feed. A channel now stops at the rim, so
-                  something has to carry the definition the rest of the way in -
-                  and it is a run on the floor rather than another arc over it,
-                  drawn here among the mesh so every solid taller than it passes
-                  in front. That is the one move no arc in screen space can make,
-                  and it is what finally puts the last leg on the slab instead of
-                  above it. */}
+              {/* The last leg. A channel stops at the rim, so something has to
+                  carry the definition the rest of the way in - and it is a run
+                  on the floor rather than another arc over it, drawn here among
+                  the mesh so every solid taller than it passes in front. That is
+                  the one move no arc in screen space can make, and it is what
+                  finally puts the last leg on the slab instead of above it.
+
+                  Same dots as the channel that feeds it, at the same pitch, so
+                  the route is one thing that changes surface at the rim rather
+                  than two marks that happen to meet there. */}
               {CHANNELS.map((item) => (
                 <line
                   className={`dgm-feeder${state.up.includes(item.key) ? ' is-up' : ''}`}
@@ -673,28 +686,35 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
                   state of the light on top of the thing rather than a legend
                   somewhere else on the page.
 
-                  Drawn back to front with the gates in the same pass, so a solid
-                  standing in front of another occludes it the way the decks in
-                  the other figure do. */}
+                  All of it on one clock, read at a phase taken from where the
+                  solid stands: the floor swells and settles as a single wave
+                  crossing the slab, and the lamps breathe as a slower one behind
+                  it. Nothing here has a clock of its own any more.
+
+                  Drawn back to front with the landings in the same pass, so a
+                  solid standing in front of another occludes it the way the
+                  decks in the other figure do. */}
               <g transform={planSpace(310, MESH_Y)}>
                 {FLOOR.map((slot) => {
-                  if (slot.kind === 'gate') {
+                  if (slot.kind === 'land') {
                     const { item } = slot
                     return (
-                      <g className={`dgm-gate${state.up.includes(item.key) ? ' is-up' : ''}${lit(item.key)}`} key={slot.key}>
-                        <path className="dgm-face-left" d={item.gate.solid.faceLeft} />
-                        <path className="dgm-face-right" d={item.gate.solid.faceRight} />
-                        <polygon className="dgm-gatecap" points={item.gate.solid.top} />
-                      </g>
+                      <circle
+                        className={`dgm-land${state.up.includes(item.key) ? ' is-up' : ''}${lit(item.key)}`}
+                        key={slot.key}
+                        cx={item.gate.rim[0]}
+                        cy={item.gate.rim[1]}
+                        r={LAND_R}
+                      />
                     )
                   }
                   const { node } = slot
                   const bound = node.rank < state.bound
                   return (
                     <g
-                      className={`dgm-crit ${node.lamp}${node.round ? ' is-drum' : ''}${node.flick ? ' is-flick' : ''}${bound ? ' is-bound' : ''}${node.rank === JOIN.rank && state.joined ? ' is-new' : ''}`}
+                      className={`dgm-crit ${node.lamp}${bound ? ' is-bound' : ''}${node.rank === JOIN.rank && state.joined ? ' is-new' : ''}`}
                       key={slot.key}
-                      style={{ '--stagger': Math.round((node.rank / TOTAL) * 100) / 100, '--life': node.life, '--lift': `${node.block.step}px` }}
+                      style={{ '--stagger': Math.round((node.rank / TOTAL) * 100) / 100, '--wave': node.wave, '--lift': `${node.block.step}px` }}
                     >
                       {node.round ? (
                         <>
@@ -712,32 +732,6 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
                   )
                 })}
               </g>
-              {/* The library settling on its own. Criteria it already holds keep
-                  resolving against their neighbours, so the panel is thinking
-                  between phases rather than only when a site arrives. Each rings
-                  at the roof height of the criterion it belongs to, in the air
-                  over the index rather than flat on it. */}
-              {PULSE.map((node) => (
-                <circle
-                  className="dgm-pulse"
-                  key={`p-${node.index}`}
-                  style={{ '--life': node.life }}
-                  cx={node.up[0]}
-                  cy={node.up[1]}
-                  r="9"
-                />
-              ))}
-              {/* A definition that binds does not just light up - it propagates.
-                  The ring is the library resolving against what it already held,
-                  which is the one thing in this figure that has to look like
-                  thinking rather than like storage. It rides the node it came
-                  from, so it rings at the height that node is standing at. */}
-              {state.joined ? (
-                <g className={`dgm-resolve${joinUp ? ' is-up' : ''}`} style={{ '--rise': `${JOIN.depth}px` }}>
-                  <circle className="dgm-ring" cx={JOIN.at[0]} cy={JOIN.at[1]} r="10" />
-                  <circle className="dgm-ring is-late" cx={JOIN.at[0]} cy={JOIN.at[1]} r="10" />
-                </g>
-              ) : null}
             </g>
           </g>
 
@@ -779,8 +773,15 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
 
           {/* The channels, drawn before the sites so every foot ends up under
               the mast head it belongs to. Each one is a standing route that is
-              always there, the arc filling in when that site publishes, and two
-              marks running it in opposite directions on separate clocks.
+              always there, and two packets running it in opposite directions.
+
+              Nothing on a channel is a line. The route is a run of dots and what
+              travels it is a short burst of them, so what crosses between a site
+              and the library reads as a signal rather than as something sliding
+              down a pipe. There used to be a solid two-pixel accent arc under
+              all of this, drawn in when a site published - five hundred pixels
+              of unbroken stroke, the heaviest single mark in the figure, and the
+              one thing in it that claimed a federation is plumbed together.
 
               Both directions carry structure and neither carries a record.
               Drawing only the rising half was the figure asserting in a caption
@@ -797,7 +798,6 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
                 style={{ '--life': item.site.life }}
               >
                 <path className="dgm-channel" d={item.path} />
-                <path className="dgm-liftpath" d={item.path} pathLength="100" />
                 <path className="dgm-rise" d={item.path} pathLength="100" />
                 <path className="dgm-fall" d={item.path} pathLength="100" />
                 {/* Where the definition ended up. It rides the roof of the

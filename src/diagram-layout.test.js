@@ -128,22 +128,41 @@ describe('Trident and Nectar schematics', () => {
     for (const rule of [
       '.dgm-svg.is-live .dgm-spark',
       '.dgm-svg.is-live .dgm-fieldtile:not(.is-named)',
-      '.dgm-svg.is-live .dgm-bolt:not(.is-clear)',
+      '.dgm-svg.is-live .dgm-iris:not(.is-clear) .dgm-blade',
       '.dgm-svg.is-live .dgm-drop.is-done .dgm-dropflow',
-      '.dgm-svg.is-live .dgm-traffic.is-bound',
+      '.dgm-svg.is-live .dgm-crit',
       '.dgm-svg.is-live .dgm-crit.is-bound .dgm-node',
       '.dgm-svg.is-live .dgm-reachrim',
-      '.dgm-svg.is-live .dgm-ring',
       '.dgm-svg.is-live .dgm-sweep',
     ]) {
       const escaped = rule.replace(/[.()*:]/g, (c) => `\\${c}`)
       assert.match(DGM_BLOCK, new RegExp(`${escaped} \\{[\\s\\S]*?animation:`))
     }
-    // Every ambient clock is jittered per element rather than shared.
+    // In Trident every ambient clock is jittered per element rather than shared.
     assert.match(DGM_BLOCK, /animation: dgm-travel calc\(5\.2s \+ var\(--life, 0\) \* 4\.6s\) linear infinite;/)
     assert.match(trident, /life: jitter\(index, 4\)/)
-    assert.match(nectar, /life: jitter\(index, 11\)/)
-    assert.match(nectar, /const TRAFFIC = LINKS\.filter\(\(link\) => link\.life > 0\.88\)/)
+    // On Nectar's slab it is the opposite, and deliberately so. Forty-two lamps
+    // on forty-two incommensurable clocks, forty-two solids wandering on
+    // forty-two more, twelve marks flying twelve links and six expanding rings
+    // over the top - every one defensible alone, and the sum was noise. There is
+    // one clock up there now, read at a phase taken from where a solid stands,
+    // so the floor moves as a wave crossing it rather than as forty-two
+    // accidents. `--wave` is the plan diagonal normalised, which in this
+    // projection is simply how far down the screen the solid is.
+    assert.match(nectar, /const WAVE_LOW = Math\.min\(\.\.\.NODES\.map\(\(node\) => node\.x \+ node\.y\)\)/)
+    assert.match(nectar, /node\.wave = Math\.round\(\(\(node\.x \+ node\.y - WAVE_LOW\) \/ WAVE_SPAN\) \* 100\) \/ 100/)
+    assert.match(nectar, /'--wave': node\.wave/)
+    // Nought and one are a whole period apart, which is the same phase, so the
+    // wave wraps round the slab without a seam in it.
+    for (const rule of ['.dgm-svg.is-live .dgm-crit', '.dgm-svg.is-live .dgm-crit.is-bound .dgm-node']) {
+      const escaped = rule.replace(/[.()*:]/g, (c) => `\\${c}`)
+      assert.match(DGM_BLOCK, new RegExp(`${escaped} \\{[^}]*animation-delay: calc\\(var\\(--wave, 0\\) \\* -[\\d.]+s\\);`))
+    }
+    // And nothing on that slab keeps a clock of its own any more.
+    assert.doesNotMatch(nectar, /const TRAFFIC|const PULSE|dgm-traffic|dgm-pulse|dgm-ring|dgm-resolve/)
+    for (const rule of ['.dgm-traffic', '.dgm-pulse', '.dgm-ring', '.dgm-resolve']) {
+      assert.doesNotMatch(DGM_BLOCK, new RegExp(`\\${rule}[\\s,{]`))
+    }
   })
 
   it('runs the two quiet layers both figures share', () => {
@@ -163,28 +182,42 @@ describe('Trident and Nectar schematics', () => {
     assert.equal((trident.match(/className="dgm-stand"/g) || []).length, 2)
     // Nectar's criteria left this clock for one of their own. A breath in place
     // is right for a contract field bolted to a deck and wrong for a floor of
-    // plant, which gets moved about - so they wander along the slab's own two
-    // plan axes instead, blocks one way and drums the other, far enough out of
-    // step that forty-two of them never travel together.
+    // plant - so the floor swells instead, straight up the screen and back, on
+    // one period read at a phase taken from where each solid stands. Inside
+    // `planSpace` a translate is in plan units and equal steps on both axes
+    // cancel in x, so 3.2 is 2 * ISO_Y * 3.2 = 2.2 screen pixels of rise.
     assert.doesNotMatch(DGM_BLOCK, /dgm-stir[\s\S]{0,120}\.dgm-crit/)
-    assert.match(DGM_BLOCK, /@keyframes dgm-shuffle \{[\s\S]*?29%, 42% \{ transform: translate\(2\.4px, -1\.3px\); \}/)
-    assert.match(DGM_BLOCK, /@keyframes dgm-shuffleback \{/)
-    assert.match(DGM_BLOCK, /\.dgm-svg\.is-live \.dgm-crit \{\s*\n\s*animation: dgm-shuffle calc\(13s \+ var\(--life, 0\) \* 9\.4s\)/)
-    assert.match(DGM_BLOCK, /\.dgm-svg\.is-live \.dgm-crit\.is-drum \{ animation-name: dgm-shuffleback; \}/)
+    assert.match(DGM_BLOCK, /@keyframes dgm-tide \{[\s\S]*?50% \{ transform: translate\(3\.2px, 3\.2px\); \}/)
+    assert.match(DGM_BLOCK, /\.dgm-svg\.is-live \.dgm-crit \{\s*\n\s*animation: dgm-tide 9\.4s ease-in-out infinite;\s*\n\s*animation-delay: calc\(var\(--wave, 0\) \* -9\.4s\);/)
+    // One route, not two. Blocks and drums are one population at two shapes, and
+    // giving them separate wander patterns was the drawing insisting on a
+    // difference it had already said with the shapes.
+    assert.doesNotMatch(DGM_BLOCK, /dgm-shuffle|dgm-shuffleback/)
+    assert.doesNotMatch(nectar, /is-drum|is-flick/)
     // An idle connection is still a live connection: a tine with no proposal on
     // it, a channel with no definition crossing it and the run from a gate to
     // the criterion it feeds all creep, in the direction the thing would travel
     // if it came.
-    assert.match(DGM_BLOCK, /@keyframes dgm-creep \{\s*\n\s*to \{ stroke-dashoffset: -21; \}/)
+    assert.match(DGM_BLOCK, /@keyframes dgm-creep \{\s*\n\s*to \{ stroke-dashoffset: -27; \}/)
     assert.match(DGM_BLOCK, /\.dgm-svg\.is-live \.dgm-tine:not\(\.is-live\),\s*\n\.dgm-svg\.is-live \.dgm-channel,\s*\n\.dgm-svg\.is-live \.dgm-feeder \{\s*\n\s*animation: dgm-creep/)
-    // Three whole dash periods, so the pattern lands where it started and the
-    // loop has no seam. All three dash patterns are period 7 for that reason.
+    // Three whole dash periods each, so the pattern lands where it started and
+    // the loop has no seam: Trident's tine is period 7 and creeps 21, Nectar's
+    // two are period 9 and creep 27.
     assert.match(DGM_BLOCK, /\.dgm-tine \{[\s\S]*?stroke-dasharray: 3 4;/)
-    assert.match(DGM_BLOCK, /\.dgm-channel \{[\s\S]*?stroke-dasharray: 2 5;/)
-    assert.match(DGM_BLOCK, /\.dgm-feeder \{[\s\S]*?stroke-dasharray: 2 5;/)
+    // A dash of no length under a round cap is a dot of stroke-width across, and
+    // that is what a route between a site and the library is made of now. A
+    // solid line between two things is a pipe, and a federation is not plumbed
+    // together - it is in contact. The channel and the run that continues it
+    // past the rim share a pitch, so the two read as one route changing surface.
+    assert.match(DGM_BLOCK, /\.dgm-channel \{[\s\S]*?stroke-dasharray: 0 9;/)
+    assert.match(DGM_BLOCK, /\.dgm-feeder \{[\s\S]*?stroke-dasharray: 0 9;/)
+    for (const rule of ['.dgm-channel', '.dgm-feeder']) {
+      const escaped = rule.replace(/[.()*:]/g, (c) => `\\${c}`)
+      assert.match(DGM_BLOCK, new RegExp(`${escaped} \\{[^}]*stroke-linecap: round;`))
+    }
     // And every one of these layers stops dead against a reduced-motion
     // preference.
-    for (const cls of ['.dgm-stand', '.dgm-field', '.dgm-crit', '.dgm-tine', '.dgm-channel', '.dgm-feeder', '.dgm-gate', '.dgm-lift', '.dgm-steady', '.dgm-draw', '.dgm-hand', '.dgm-ledgeraudit']) {
+    for (const cls of ['.dgm-stand', '.dgm-field', '.dgm-crit', '.dgm-tine', '.dgm-channel', '.dgm-feeder', '.dgm-land', '.dgm-lift', '.dgm-steady', '.dgm-draw', '.dgm-hand', '.dgm-ledgeraudit']) {
       assert.match(DGM_BLOCK, new RegExp(`prefers-reduced-motion[\\s\\S]*?\\${cls}[,)]`))
     }
   })
@@ -228,14 +261,19 @@ describe('Trident and Nectar schematics', () => {
     assert.doesNotMatch(driver, /setProperty\('--charge'/)
     assert.match(DGM_BLOCK, /--run-in: clamp\(0, calc\(\(var\(--charge, 1\) - 0\.42\) \* 2\.4\), 1\);/)
     assert.match(DGM_BLOCK, /opacity: calc\(0\.62 \+ 0\.38 \* var\(--charge, 1\)\);/)
-    for (const mark of ['.dgm-spark', '.dgm-drop.is-done .dgm-dropflow', '.dgm-resolve']) {
+    for (const mark of ['.dgm-spark', '.dgm-drop.is-done .dgm-dropflow', '.dgm-lift.is-up .dgm-rise']) {
       const escaped = mark.replace(/[.()*:]/g, (c) => `\\${c}`)
       assert.match(DGM_BLOCK, new RegExp(`${escaped} \\{[^}]*var\\(--run-in`))
     }
-    // The footprint climbs out of the ground as power arrives, rather than
-    // having been there the whole time.
-    assert.match(DGM_BLOCK, /\.dgm-axis \{[\s\S]*?stroke-dashoffset: calc\(100 \* \(1 - var\(--charge, 1\)\)\);/)
-    assert.match(trident, /<line className="dgm-axis" pathLength="100" x1=\{SURFACE\.left\[0\]\} y1=\{GROUND\}/)
+    // The two footprint hairlines that used to climb out of the ground as power
+    // arrived are gone, and with them the last thing in either figure that was a
+    // rule rather than an object. They said "one plan, four heights" - which the
+    // four skirts standing over one footprint, and the shade each drops on the
+    // deck below, already say in three dimensions. What they did instead was
+    // fence the drawing: two verticals down the outside of it, crossing every
+    // tier, with the decks cut into them.
+    assert.doesNotMatch(trident, /dgm-axis/)
+    assert.doesNotMatch(DGM_BLOCK, /\.dgm-axis[\s,{]/)
   })
 
   it('never names a vendor inside the figures', () => {
@@ -366,15 +404,18 @@ describe('Trident and Nectar schematics', () => {
     // The full-height axis, its hidden-line dashes and its stations are gone.
     assert.doesNotMatch(trident, /const RUN = STATIONS|hidden: true|hidden: false|dgm-run/)
     assert.doesNotMatch(DGM_BLOCK, /\.dgm-run \{|\.dgm-run\.is-hidden/)
-    // Where it stops is where the aperture is, not a corner away from it.
-    assert.match(trident, /className=\{`dgm-approach\$\{state\.drops >= 2 \? ' is-here' : ''\}`\}/)
-    assert.match(DGM_BLOCK, /\.dgm-svg\.is-hold \.dgm-approach\.is-here \{ stroke: var\(--warning\); \}/)
-    // And the footprint still runs down to a ground plane, so the four decks
-    // read as four heights of one plan. The caption that said so in words is
-    // gone: the axis, the plane and the four skirts standing over one footprint
-    // are the claim, and lettering it as well was the drawing not trusting its
-    // own geometry.
-    assert.match(trident, /className="dgm-axis"/)
+    // The two stubs that used to run in from a deck's left corner to the
+    // mechanism standing on it are gone as well. A drop already lands on that
+    // corner and the mechanism is already sitting in the middle of the deck; a
+    // second short line drawn between them added no information and read as a
+    // scratch across the face of the tile, on the two decks least able to
+    // afford one.
+    assert.doesNotMatch(trident, /dgm-approach/)
+    assert.doesNotMatch(DGM_BLOCK, /\.dgm-approach[\s,{]/)
+    // The stack still stands on a ground plane, so the four decks read as four
+    // heights of one plan. The caption that said so in words is gone, and so are
+    // the two hairlines that said it in rules: the plane and the four skirts
+    // standing over one footprint are the claim.
     assert.match(trident, /className="dgm-plane"/)
     assert.doesNotMatch(trident, /ONE PLAN - FOUR HEIGHTS/)
   })
@@ -435,18 +476,18 @@ describe('Trident and Nectar schematics', () => {
     // swallows; the contract walks its nineteen fields in the order it checks
     // them; something keeps trying the shutter and the bolts keep taking it;
     // and the ledger posts, each hash travelling the link to the row it commits.
-    // The library above Nectar does the same: it drifts, and what it already
-    // holds keeps resolving against its neighbours.
+    // The library above Nectar does the same: it drifts, and every criterion it
+    // is holding breathes in order across the floor.
     for (const rule of [
       '.dgm-svg.is-live .dgm-plate',
       '.dgm-svg.is-live .dgm-intake',
       '.dgm-svg.is-live .dgm-catch',
       '.dgm-svg.is-live .dgm-throat',
       '.dgm-svg.is-live .dgm-fieldtile:not(.is-named)',
-      '.dgm-svg.is-live .dgm-leaf:not(.is-open)',
+      '.dgm-svg.is-live .dgm-iris:not(.is-clear) .dgm-blade',
       '.dgm-svg.is-live .dgm-ledgerflow',
       '.dgm-svg.is-live .dgm-library',
-      '.dgm-svg.is-live .dgm-pulse',
+      '.dgm-svg.is-live .dgm-crit.is-bound .dgm-node',
     ]) {
       const escaped = rule.replace(/[.()*:]/g, (c) => `\\${c}`)
       assert.match(DGM_BLOCK, new RegExp(`${escaped}[,\\s][^{]*\\{[^}]*animation:`))
@@ -485,11 +526,6 @@ describe('Trident and Nectar schematics', () => {
     assert.match(DGM_BLOCK, /\.dgm-steady \{ transform: translateY\(calc\(\(var\(--float, 0px\) \+ var\(--ride, 0px\) \+ var\(--drift, 0px\)\) \* -1\)\); \}/)
     assert.match(trident, /life: jitter\(index, 12\)/)
     assert.equal((trident.match(/className="dgm-slide is-\w+" style=\{\{ '--lift': `\$\{\w+\.lift\}px`, '--life': \w+\.life \}\}>/g) || []).length, 4)
-    // The footprint hairlines stop inside the top deck's skirt rather than on
-    // its corner, so a tier can drift without pulling away from the plan it is
-    // standing on. The skirt edge there is collinear and eleven pixels deep.
-    assert.match(trident, /y2=\{SURFACE\.left\[1\] \+ 5\}/)
-    assert.match(trident, /y2=\{SURFACE\.right\[1\] \+ 5\}/)
     // Each tier's own mechanism, suited to what that tier is for: the pad rings
     // as its source lets a proposal go, the pass deepens the tiles it has
     // reached, the frame braces while it is still holding something, and the
@@ -512,7 +548,7 @@ describe('Trident and Nectar schematics', () => {
     // Pointing at a deck leans on what it is already doing. The intake carries a
     // second mark on every run - a change of dash pattern and not of rate, so
     // nothing in flight teleports the moment the pointer arrives. The contract
-    // re-checks from the first field. The shutter gives against its own bolts
+    // re-checks from the first field. The aperture strains against its own seal
     // and comes straight back.
     assert.match(DGM_BLOCK, /\.dgm-deck\.is-hot \.dgm-intake \{ stroke-dasharray: 7 93;/)
     assert.match(DGM_BLOCK, /\.dgm-svg\.is-live \.dgm-deck\.is-hot \.dgm-fieldtile:not\(\.is-named\) \{ animation-name: dgm-passhard; \}/)
@@ -532,9 +568,15 @@ describe('Trident and Nectar schematics', () => {
     assert.match(DGM_BLOCK, /\.dgm-svg\.is-live \.dgm-ledgeraudit \{\s*\n\s*animation: dgm-verify 6\.4s linear infinite;/)
     assert.match(trident, /className="dgm-ledgeraudit"/)
     assert.doesNotMatch(DGM_BLOCK, /\.dgm-deck\.is-hot \.dgm-ledgerchain \{[^}]*stroke-dasharray: none/)
-    assert.match(DGM_BLOCK, /\.dgm-shutter\.is-tried \.dgm-leaf:not\(\.is-open\)/)
-    assert.match(DGM_BLOCK, /\.dgm-shutter\.is-tried \.dgm-bolt:not\(\.is-clear\)/)
-    assert.match(DGM_BLOCK, /@keyframes dgm-give/)
+    assert.match(DGM_BLOCK, /\.dgm-shutter\.is-tried \.dgm-iris:not\(\.is-clear\) \.dgm-blade \{\s*\n\s*animation: dgm-take/)
+    // The strain never breaks the seal. A blade seals while its centre is inside
+    // 22 of the bore's own centre; shut is 19 and the hardest attempt in the
+    // stylesheet adds 2.2, which leaves six tenths of a pixel in hand.
+    const shutAt = Number(trident.match(/const BLADE_SHUT = ([\d.]+)/)[1])
+    const bladeR = Number(trident.match(/const BLADE_R = ([\d.]+)/)[1])
+    const strains = [...DGM_BLOCK.matchAll(/var\(--shut, 19px\) \+ ([\d.]+)px/g)].map((m) => Number(m[1]))
+    assert.equal(strains.length >= 2, true)
+    assert.equal(shutAt + Math.max(...strains) < bladeR, true, 'the aperture leaks while it is being tried')
     assert.match(trident, /const tried = hot === 'authority' && !open/)
     // A field is the one part small enough to need naming, so it keeps its own
     // target and answers in the tile - by standing up and taking the tier's ink,
@@ -558,7 +600,13 @@ describe('Trident and Nectar schematics', () => {
     assert.match(DGM_BLOCK, /\.dgm-svg\.is-live \.dgm-site\.is-hot \.dgm-sweep/)
     assert.match(nectar, /className=\{`dgm-library\$\{lit\('library'\)\}`\} \{\.\.\.probe\('library'\)\}/)
     assert.match(nectar, /<rect className="dgm-hit" x="-160" y="-160" width="320" height="320" rx="28" \/>/)
-    assert.match(DGM_BLOCK, /\.dgm-library\.is-hot \.dgm-traffic \{ stroke-dasharray: 8 92; \}/)
+    // What leaning on the panel does is make the index it holds easier to read -
+    // the bound links strengthen and every bound criterion deepens into its own
+    // dark. It used to double the traffic on the mesh instead, which is a
+    // reasonable answer for a panel that has traffic on it and this one no
+    // longer does.
+    assert.match(DGM_BLOCK, /\.dgm-library\.is-hot \.dgm-link\.is-bound \{ stroke: var\(--accent\); \}/)
+    assert.match(DGM_BLOCK, /\.dgm-library\.is-hot \.dgm-crit\.is-bound \.dgm-node \{ fill: var\(--ink-deep\); \}/)
     // Nothing on a rising arc is a target: its tag crosses the library's own
     // plane, and a pointer sliding over one would drop the panel on the way.
     assert.match(DGM_BLOCK, /\.dgm-lift \{ pointer-events: none; \}/)
@@ -599,9 +647,9 @@ describe('Trident and Nectar schematics', () => {
   })
 
   it('gives each Trident deck something to be, not just a face to sit on', () => {
-    // An intake with a catchment and a queue, a shutter in a frame with bolts
-    // across its seam, and a ledger whose rows are chained.
-    for (const part of ['dgm-catch', 'dgm-queue', 'dgm-throat', 'dgm-housing', 'dgm-aperture', 'dgm-holerim', 'dgm-bolt', 'dgm-ledgerhash', 'dgm-ledgerchain', 'dgm-ledgerseal']) {
+    // An intake with a catchment and a queue, an aperture in a barrel, and a
+    // ledger whose rows are chained.
+    for (const part of ['dgm-catch', 'dgm-queue', 'dgm-throat', 'dgm-housing', 'dgm-iris', 'dgm-holerim', 'dgm-blade', 'dgm-ledgerhash', 'dgm-ledgerchain', 'dgm-ledgerseal']) {
       assert.match(trident, new RegExp(`className=[^>]{0,40}${part}`))
       assert.match(DGM_BLOCK, new RegExp(`\\.${part}[\\s,{]`))
     }
@@ -616,22 +664,80 @@ describe('Trident and Nectar schematics', () => {
   })
 
   it('shuts the gate mechanically rather than colouring a status light', () => {
-    assert.match(trident, /url\(#tr-hatch\)/)
-    assert.match(trident, /className=\{`dgm-leaf is-left\$\{open \? ' is-open' : ''\}`\}/)
-    assert.match(trident, /className=\{`dgm-leaf is-right\$\{open \? ' is-open' : ''\}`\}/)
-    // Clipped to the opening. Stroked all the way round, each blade projected
-    // to a parallelogram and the pair met on a diagonal, so the seam came out
-    // doubled and notched at both ends. Clipped, a blade shows one edge - the
-    // seam - and cannot be drawn outside the hole it is filling at any throw.
-    assert.match(trident, /<clipPath id="tr-hole">/)
+    // Two mechanisms stood here before this one and both were wrong. A sliding
+    // hatch: two leaves split at plan x = 0 and stroked all the way round, which
+    // projected to a pair of parallelograms meeting on a diagonal, so the seam
+    // came out doubled and notched at both ends - and a hatch covers, where the
+    // claim this deck carries is that a run is HELD. Then two bolts drawn across
+    // the way through, which was the right claim on the wrong instrument: at
+    // reading size two pale bars over a sixty-pixel recess read as stripes.
+    assert.doesNotMatch(trident, /dgm-leaf|dgm-bolt|dgm-aperture|tr-hatch|const BLADE = |BOLT_REACH/)
+    for (const rule of ['.dgm-leaf', '.dgm-bolt', '.dgm-aperture', '.dgm-hatch']) {
+      assert.doesNotMatch(DGM_BLOCK, new RegExp(`\\${rule}[\\s,{]`))
+    }
+    assert.doesNotMatch(DGM_BLOCK, /@keyframes dgm-(cycle|strain|give)/)
+
+    // It is a diaphragm, in a barrel. Both circles, because a plan circle
+    // carried through this projection is an honest ellipse - the same one the
+    // intake deck's throat is drawn as - and a square frame around an iris would
+    // be the one part of the assembly that had never seen a camera.
+    assert.match(trident, /const BARREL = planCyl\(0, 0, SHUT_FRAME, HOUSE_RISE\)/)
+    assert.match(trident, /<clipPath id="tr-hole">\s*\n\s*<circle cx="0" cy="0" r=\{SHUT_HOLE\} \/>/)
     assert.match(trident, /<g clipPath="url\(#tr-hole\)">/)
-    assert.match(DGM_BLOCK, /\.dgm-leaf\.is-left\.is-open \{ transform: translateX\(-22px\); \}/)
-    assert.match(DGM_BLOCK, /\.dgm-leaf\.is-right\.is-open \{ transform: translateX\(22px\); \}/)
-    // Shut is a mechanism holding: bolts lie over the seam and withdraw along
-    // it, rather than a ring pulsing beside it.
-    assert.match(trident, /const BOLTS = \[-1, 1\]/)
-    assert.match(trident, /y=\{end \* 14 - 4\.5\}/)
-    assert.match(DGM_BLOCK, /\.dgm-bolt\.is-clear \{ transform: translateY\(calc\(var\(--end, 1\) \* 26px\)\); \}/)
+    assert.match(trident, /<circle className=\{`dgm-holerim is-\$\{state\.gate\}`\} cx="0" cy="0" r=\{SHUT_HOLE\}/)
+    // Six blades on six spokes, and the clip is what turns a whole disc into a
+    // blade: all a reader ever sees of one is the arc it cuts across the bore.
+    assert.match(trident, /const BLADES = \[0, 60, 120, 180, 240, 300\]/)
+    assert.match(trident, /<circle className="dgm-bladeface" cx="0" cy="0" r=\{BLADE_R\} \/>/)
+    assert.match(trident, /<circle className="dgm-bladeedge" cx="0" cy="0" r=\{BLADE_R\}/)
+    assert.match(trident, /'--shut': `\$\{BLADE_SHUT\}px`, '--open': `\$\{BLADE_OPEN\}px`, '--turn': `\$\{BLADE_TURN\}deg`/)
+
+    // SHUT IS A REAL SEAL, AND IT IS SOLVED RATHER THAN EYEBALLED.
+    //
+    // Sealing a bore of radius R with six discs of radius r at distance d costs
+    // two conditions: d <= r, or nothing covers the centre; and the point of the
+    // bore furthest from every blade - radius R, thirty degrees off a spoke,
+    // halfway between two of them - has to be inside r as well. Re-solved here
+    // from the drawing's own numbers, because a blade throw nudged for looks is
+    // exactly the edit that would open a hole in the middle of a deck whose
+    // entire job is being shut.
+    const num = (name) => Number(trident.match(new RegExp(`const ${name} = ([\\d.]+)`))[1])
+    const R = num('SHUT_HOLE')
+    const r = num('BLADE_R')
+    const shut = num('BLADE_SHUT')
+    const open = num('BLADE_OPEN')
+    const worst = (d) => Math.sqrt(R * R + d * d - 2 * R * d * Math.cos(Math.PI / 6))
+    assert.equal(shut <= r, true, 'a closed blade does not reach the centre of the bore')
+    assert.equal(worst(shut) < r, true, 'the closed iris leaves a gap between two blades')
+    // And open is an aperture rather than a hole with something in the way: the
+    // blades clear the centre by a real margin and the opening stays well inside
+    // the bore, so it reads as stopped down rather than as a shutter half shut.
+    assert.equal(open - r > 6, true, 'the open aperture is too small to read as open')
+    assert.equal(open - r < R, true, 'the open aperture is as wide as the bore, so nothing reads as an iris')
+
+    // The assembly turns as it opens, because a real diaphragm's blades pivot on
+    // the barrel - and it turns about the aperture centre, which is the origin of
+    // its own user space. A default transform-origin of 50% 50% would put it at
+    // the middle of the viewBox and swing the whole mechanism across the deck.
+    assert.match(DGM_BLOCK, /\.dgm-iris \{\s*\n\s*transform-origin: 0 0;/)
+    assert.match(DGM_BLOCK, /\.dgm-blade \{\s*\n\s*transform-origin: 0 0;/)
+    assert.match(DGM_BLOCK, /@keyframes dgm-turn \{[\s\S]*?20%, 52% \{ transform: rotate\(calc\(var\(--turn, 15deg\) \* -1\)\); \}/)
+    // A blade only ever moves in the one direction a blade can move: onto its
+    // spoke, then out along it. Every keyframe that touches one says so.
+    for (const frames of DGM_BLOCK.match(/@keyframes dgm-(latch|load|take)[\s\S]*?\n\}/g) || []) {
+      for (const step of frames.match(/transform: [^;]+;/g) || []) {
+        assert.match(step, /rotate\(calc\(var\(--spoke, 0\) \* 1deg\)\) translateX\(/)
+      }
+    }
+    // Two passes, and the second is not decoration. A real iris tucks
+    // cyclically - every blade under its neighbour and over the one before it,
+    // all the way round - which no painter's-order drawing can do, because the
+    // overlap is a cycle and z-order is a line. Six opaque discs in spoke order
+    // means the last two paint the other four out and the seal reads as three
+    // coins. Fills first, then every edge over all of them, and all six leading
+    // arcs are back in the picture.
+    assert.match(DGM_BLOCK, /\.dgm-bladeface \{[\s\S]*?stroke: none;/)
+    assert.match(DGM_BLOCK, /\.dgm-bladeedge \{\s*\n\s*fill: none;/)
     // Nectar's boundary is the skirt of every site deck, drawn as a wall rather
     // than a hatch, and identically at every site.
     assert.match(nectar, /className="dgm-wall"/)
@@ -639,7 +745,14 @@ describe('Trident and Nectar schematics', () => {
   })
 
   it('lays the contract out as a count and leaves its middle clear', () => {
-    assert.match(trident, /'SUBJECT', 'SITE', 'PROTOCOL'/)
+    // The nineteen are real CDISC variables, one domain per row - registration
+    // and visit, then dosing, then labs, then adverse events - so the grid the
+    // contract walks is a thing somebody at a site would recognise rather than
+    // nineteen plausible-looking words.
+    assert.match(trident, /'STUDYID', 'SITEID', 'USUBJID', 'ARMCD', 'VISITNUM',/)
+    assert.match(trident, /'EXTRT', 'EXDOSE', 'EXDOSU', 'EXROUTE', 'EXSTDTC',/)
+    assert.match(trident, /'LBTESTCD', 'LBORRES', 'LBORRESU', 'LBNRIND', 'LBDTC',/)
+    assert.match(trident, /'AETERM', 'AETOXGR', 'AESER', 'AEACN',/)
     assert.equal((trident.match(/'[A-Z][A-Z0-9]+',/g) || []).length >= 18, true)
     // Nineteen tiles as 5-5-5-4 with the short row centred. The node that used
     // to sit at the deck's origin had tiles running through it.
@@ -671,8 +784,28 @@ describe('Trident and Nectar schematics', () => {
     assert.match(DGM_BLOCK, /@keyframes dgm-return \{\s*\n\s*from \{ stroke-dashoffset: 0; \}\s*\n\s*to \{ stroke-dashoffset: 200; \}/)
     assert.match(DGM_BLOCK, /\.dgm-svg\.is-live \.dgm-lift\.is-down \.dgm-fall \{[\s\S]*?animation: dgm-return/)
     // One curve, two directions. Two separate arcs would be a picture of two
-    // pipes; the exchange is one channel with traffic on it.
+    // pipes; the exchange is one channel with signal on it.
     assert.match(nectar, /<path className="dgm-channel" d=\{item\.path\} \/>/)
+    // And nothing on that channel is a line. There used to be a solid two-pixel
+    // accent arc under all of this - five hundred pixels of unbroken stroke, the
+    // heaviest single mark in either figure, drawn in the moment its site
+    // published. It made the wrong claim twice: a solid line between two things
+    // is a pipe, and three of them converging on a slab is plumbing. What
+    // crosses is a packet - three or four dots travelling the whole curve and
+    // gone - because a dot is the only mark that can say "something crossed
+    // here" without also saying "and the way is still there behind it".
+    assert.doesNotMatch(nectar, /dgm-liftpath/)
+    assert.doesNotMatch(DGM_BLOCK, /\.dgm-liftpath[\s,{]/)
+    for (const [rule, dots] of [['.dgm-rise', 3], ['.dgm-fall', 4]]) {
+      const escaped = rule.replace(/[.()*:]/g, (c) => `\\${c}`)
+      const dash = DGM_BLOCK.match(new RegExp(`${escaped} \\{[^}]*stroke-dasharray: ([\\d. ]+);`))[1]
+      const parts = dash.trim().split(/\s+/).map(Number)
+      // Dashes of no length under a round cap: one dot each, and the pattern has
+      // to sum to twice the pathLength so one packet sits on the curve at a time
+      // and dgm-travel carries it off the end with nothing left behind.
+      assert.deepEqual(parts.filter((v, i) => i % 2 === 0), new Array(dots).fill(0))
+      assert.equal(parts.reduce((a, b) => a + b, 0), 200)
+    }
     // Both directions are on the same phase table, and a site can be doing both
     // at once - which is the steady state of a federation.
     assert.match(nectar, /up: \['SITE 018', 'SITE 042', 'SITE 103'\], down: \['SITE 042', 'SITE 103'\]/)
@@ -688,8 +821,8 @@ describe('Trident and Nectar schematics', () => {
     // definition, never a state of a crossing - so no route, mast, gate, wall or
     // channel may reach for it.
     for (const rule of [
-      '.dgm-channel', '.dgm-feeder', '.dgm-rise', '.dgm-fall', '.dgm-liftpath',
-      '.dgm-mast', '.dgm-masthead', '.dgm-gatecap', '.dgm-wall', '.dgm-lid', '.dgm-record',
+      '.dgm-channel', '.dgm-feeder', '.dgm-rise', '.dgm-fall', '.dgm-land',
+      '.dgm-mast', '.dgm-masthead', '.dgm-wall', '.dgm-lid', '.dgm-record',
     ]) {
       const escaped = rule.replace(/[.()*:]/g, (c) => `\\${c}`)
       assert.doesNotMatch(DGM_BLOCK, new RegExp(`${escaped} \\{[^}]*var\\(--danger`))
@@ -702,8 +835,10 @@ describe('Trident and Nectar schematics', () => {
     // roof, and the head on that mast is what swallows the foot of the arc - the
     // site orbits and the library drifts, so an endpoint parked on a silhouette
     // would part from it on the first frame. Both ends of a channel now carry a
-    // solid with a crown for exactly that reason: a mast below and a gate above.
-    assert.match(nectar, /path: `M \$\{x1\} \$\{y1\} \$\{arc\} L \$\{crown\[0\]\} \$\{crown\[1\]\}`/)
+    // solid with a crown for exactly that reason. Above, the arc lands on the
+    // underside rim and climbs the skirt's own vertical edge to the rim above
+    // it, which is a surface the drawing has already committed to.
+    assert.match(nectar, /path: `M \$\{x1\} \$\{y1\} \$\{arc\} L \$\{rim\[0\]\} \$\{rim\[1\]\}`/)
     assert.match(nectar, /const foot = item\.site\.solid\.back/)
     assert.match(nectar, /const \[x1, y1\] = \[foot\[0\], r1\(foot\[1\] - MAST\)\]/)
     assert.match(nectar, /<circle className="dgm-masthead" cx=\{chan\.head\[0\]\} cy=\{chan\.head\[1\]\} r=\{MAST_HEAD\} \/>/)
@@ -716,19 +851,17 @@ describe('Trident and Nectar schematics', () => {
     // "in front of everything" and the whole run reads as a wire laid over a
     // photograph. The old arcs did exactly that.
     //
-    // Three things fix it, and each is load-bearing on its own: the terminus
-    // moves to the skirt's bottom rim, the terminal tangent becomes one of the
-    // drawing's own plan axes, and a gate stands on the rim for the curve to
-    // arrive at. This test re-solves all three from the projection, because
-    // pinning them to coordinates would let the next edit to the slab, the sites
-    // or the gate seats quietly reintroduce the crossing.
+    // Two things fix it, and each is load-bearing on its own: the terminus moves
+    // to the skirt's bottom rim, and the terminal tangent becomes one of the
+    // drawing's own plan axes. This test re-solves both from the projection,
+    // because pinning them to coordinates would let the next edit to the slab or
+    // the sites quietly reintroduce the crossing.
     const num = (name, source = nectar) => Number(source.match(new RegExp(`const ${name} = (-?[\\d.]+)`))[1])
     const LIB_HALF = num('LIB_HALF')
     const LIB_WALL = num('LIB_WALL')
     const MESH_Y = num('MESH_Y')
     const GROUND_Y = num('GROUND_Y')
     const MAST = num('MAST')
-    const GATE_RISE = num('GATE_RISE')
     const GATE_REACH = num('GATE_REACH')
     const mesh = ISO.project(310, MESH_Y)
     const ground = ISO.project(310, GROUND_Y)
@@ -791,9 +924,9 @@ describe('Trident and Nectar schematics', () => {
       )
 
       // The curve is bounded by the hull of its control points, and this walks
-      // it anyway: nothing on the arc leg may be inside the slab. The riser
-      // after it is excluded on purpose - it lies on the skirt and then on the
-      // gate's outboard face, which are surfaces, not the interior.
+      // it anyway: nothing on the arc leg may be inside the slab. The climb
+      // after it is excluded on purpose - it lies on the skirt's own vertical
+      // edge, which is a surface, not the interior.
       const control = edge === 'corner'
         ? [start, [start[0] + 34, start[1] - 56], ctrl, land]
         : [start, ctrl, land]
@@ -811,18 +944,25 @@ describe('Trident and Nectar schematics', () => {
       // silhouette a line coming from below cannot be misread at.
       assert.ok(Math.abs(land[1] - (rim[1] + LIB_WALL)) < 1e-9)
     }
-    // Right edge, left edge, front corner: three gates spread across the whole
-    // near silhouette rather than three landings on one side of it.
+    // Right edge, left edge, front corner: three landings spread across the
+    // whole near silhouette rather than three on one side of it.
     assert.deepEqual([...edges].sort(), ['corner', 'left', 'right'])
 
-    // The gate itself is the same solid as a criterion, a deck and a site, at
-    // the scale of a port - seated so its outboard face is flush with the slab's
-    // plan boundary, which is what makes the riser one straight mark on one
-    // continuous surface instead of a line in the air.
-    assert.match(nectar, /solid: planPrism\(gate\.seat\[0\], gate\.seat\[1\], gate\.halfX, gate\.halfY, GATE_RISE, CRIT_RADIUS\)/)
-    assert.match(nectar, /seat: \[LIB_HALF - GATE_ACROSS, rim\[1\]\]/)
-    assert.match(nectar, /const crown = \[rim\[0\], r1\(rim\[1\] - GATE_RISE\)\]/)
-    assert.ok(GATE_RISE > LIB_WALL, 'a gate has to stand taller than the slab is thick to read as a gate')
+    // A route needs somewhere it stops, not something built where it stopped.
+    // Three prisms used to stand here - the same solid as a criterion at the
+    // scale of a port, two lit faces each and a crown that went full accent the
+    // moment its site published. They were three of the four brightest objects
+    // in the figure and they were parked on the one edge that has to read as an
+    // edge. It is a dot now, in plan units, so it projects to the same squashed
+    // ellipse a drum's cap does and belongs to the floor rather than being
+    // pasted onto it - the same mark the route is made of, held still.
+    assert.doesNotMatch(nectar, /GATE_RISE|GATE_ACROSS|GATE_ALONG|GATE_CORNER|GATE_SEAT|gate\.solid|dgm-gate/)
+    for (const rule of ['.dgm-gate', '.dgm-gatecap']) {
+      assert.doesNotMatch(DGM_BLOCK, new RegExp(`\\${rule}[\\s,{]`))
+    }
+    assert.match(nectar, /const LAND_R = 5/)
+    assert.match(nectar, /<circle\s*\n\s*className=\{`dgm-land\$\{state\.up\.includes\(item\.key\) \? ' is-up' : ''\}\$\{lit\(item\.key\)\}`\}/)
+    assert.match(nectar, /gate: \{ \.\.\.gate, at: rim \}/)
     // The front corner is solved rather than read off `LIBRARY.front`:
     // `roundedPlan` samples its arcs in seven steps and never lands on 45
     // degrees, so the sampled corner is four pixels off the true one - and four
@@ -843,10 +983,7 @@ describe('Trident and Nectar schematics', () => {
     assert.match(DGM_BLOCK, /\.dgm-library,\s*\n\.dgm-lift \{ transform: translateY\(var\(--drift, 0px\)\); \}/)
     // And a channel turns a corner now, so every mark that runs one has to
     // round its joins or the default miter throws a spike as a dash spans it.
-    for (const rule of ['.dgm-channel', '.dgm-liftpath']) {
-      const escaped = rule.replace(/[.()*:]/g, (c) => `\\${c}`)
-      assert.match(DGM_BLOCK, new RegExp(`${escaped} \\{[^}]*stroke-linejoin: round;`))
-    }
+    assert.match(DGM_BLOCK, /\.dgm-channel \{[^}]*stroke-linejoin: round;/)
     assert.match(DGM_BLOCK, /\.dgm-rise,\s*\n\.dgm-fall \{[^}]*stroke-linejoin: round;/)
   })
 
@@ -894,19 +1031,29 @@ describe('Trident and Nectar schematics', () => {
     for (const [cls, token] of [['is-red', '--danger'], ['is-amber', '--warning'], ['is-green', '--success']]) {
       assert.match(DGM_BLOCK, new RegExp(`\\.dgm-crit\\.${cls} \\{\\s*\\n\\s*--ink: var\\(${token}\\);`))
     }
-    // And each one switches on and off on a clock of its own. A switch, not a
-    // fade: `step-end` holds every keyframe until the next, so nothing between
-    // the two states is ever drawn. Two patterns over forty-two incommensurable
-    // periods, so the floor never falls into a loop a reader can catch.
-    assert.match(DGM_BLOCK, /@keyframes dgm-lamp \{[\s\S]*?46% \{ fill-opacity: 0\.2; \}/)
-    assert.match(DGM_BLOCK, /@keyframes dgm-lampflick \{/)
-    assert.match(DGM_BLOCK, /\.dgm-svg\.is-live \.dgm-crit\.is-bound \.dgm-node \{\s*\n\s*animation: dgm-lamp calc\(5\.2s \+ var\(--life, 0\) \* 7\.4s\) step-end infinite;/)
-    assert.match(DGM_BLOCK, /\.dgm-svg\.is-live \.dgm-crit\.is-bound\.is-flick \.dgm-node \{ animation-name: dgm-lampflick; \}/)
+    // And every one of them brightens and dims on the same period, at a phase
+    // taken from where it stands, so what crosses the floor is a wave.
+    //
+    // This was two `step-end` patterns on forty-two incommensurable clocks - to
+    // say, forty-two lights switching hard at forty-two unrelated moments.
+    // Switching is right for one lamp and wrong for a floor of them: hard edges
+    // at random times is a fault board, and what this floor is meant to say is
+    // that the library is working. The easing is what makes forty-two of them
+    // one thing rather than forty-two things.
+    assert.match(DGM_BLOCK, /@keyframes dgm-breathe \{[\s\S]*?50% \{ fill-opacity: 0\.42; \}/)
+    assert.match(DGM_BLOCK, /\.dgm-svg\.is-live \.dgm-crit\.is-bound \.dgm-node \{\s*\n\s*animation: dgm-breathe 5\.6s ease-in-out infinite;\s*\n\s*animation-delay: calc\(var\(--wave, 0\) \* -5\.6s\);/)
+    assert.doesNotMatch(DGM_BLOCK, /dgm-lamp|dgm-lampflick/)
+    // It also never goes fully out. A lamp at 0.42 is a criterion the library is
+    // still holding, dimmer; the 0.2 it used to reach was one that had gone off,
+    // which is a state this floor already has a colour for.
+    const dim = Number(DGM_BLOCK.match(/@keyframes dgm-breathe \{[\s\S]*?50% \{ fill-opacity: ([\d.]+); \}/)[1])
+    const off = Number(DGM_BLOCK.match(/\.dgm-node \{[\s\S]*?fill-opacity: ([\d.]+);/)[1])
+    assert.equal(dim > off * 1.5, true, 'a breathing lamp dips as far as an unbound one, so the two states collide')
     // Nothing on this floor may interpolate a colour. A keyframe mixing two
     // color-mix() values gets re-snapshotted by the compositor whenever a class
     // change forces a style recalc mid-animation, and what came back was a
     // highlighter green present nowhere in the token set. Only scalars move.
-    for (const frames of DGM_BLOCK.match(/@keyframes dgm-(lamp|lampflick|pass|passbound|passhard)[\s\S]*?\n\}/g) || []) {
+    for (const frames of DGM_BLOCK.match(/@keyframes dgm-(breathe|tide|pass|passbound|passhard)[\s\S]*?\n\}/g) || []) {
       assert.doesNotMatch(frames, /fill:|stroke:|color-mix/)
     }
   })
@@ -1032,8 +1179,11 @@ describe('Trident and Nectar schematics', () => {
       /bar: planPrism\(4, y, 48, 5\.5, 5, 3\)/,
       /block: planPrism\(x, 52, 5, 5, 5, 3\)/,
       /puck: planPrism\(source\.land\[0\], source\.land\[1\], 12, 12, 4, 12\)/,
-      /const HOUSING = planPrism\(0, 0, SHUT_FRAME, SHUT_FRAME, HOUSE_RISE, 13\)/,
     ]) assert.match(trident, call)
+    // The approval deck's barrel is the one solid in either figure built on a
+    // circle rather than a square, and it is `planCyl` doing it - the same
+    // extrusion solved the same way, so a barrel is the same material as a deck.
+    assert.match(trident, /const BARREL = planCyl\(0, 0, SHUT_FRAME, HOUSE_RISE\)/)
     // A raised cap moves by the plan step its own sides were built with, so a
     // roof can never land somewhere its walls do not reach.
     assert.match(DGM_BLOCK, /\.dgm-fieldtile\.is-bound \{ transform: translate\(calc\(var\(--lift, 0px\) \* -1\), calc\(var\(--lift, 0px\) \* -1\)\); \}/)
@@ -1043,7 +1193,17 @@ describe('Trident and Nectar schematics', () => {
     // what is drawn is exactly what can be seen down them - far wall, then floor.
     assert.match(trident, /<clipPath id="tr-well">/)
     assert.match(trident, /<circle className="dgm-shaft" cx="0" cy="0" r="14" \/>/)
-    assert.match(trident, /<rect className="dgm-shaft" x=\{-SHUT_HOLE\}/)
+    assert.match(trident, /<circle className="dgm-shaft is-bore" cx="0" cy="0" r=\{SHUT_HOLE\} \/>/)
+    // The approval bore runs both tones darker than the intake throat's. The
+    // throat is a mouth taking things in and a lit floor is the right bottom for
+    // one; the bore is a way through that is normally shut, and the only way an
+    // open aperture reads as open is if a reader can see it is a hole.
+    const tone = (rule) => Number(DGM_BLOCK.match(new RegExp(`\\${rule} \\{[^}]*var\\(--text\\) (\\d+)%`))[1])
+    assert.equal(tone('.dgm-shaft.is-bore') > tone('.dgm-shaft'), true)
+    assert.equal(tone('.dgm-shaftfloor.is-bore') > tone('.dgm-shaftfloor'), true)
+    // And the blades over it are lighter than either, so the assembly reads as a
+    // light plate with a dark hole in it rather than as grey on grey.
+    assert.equal(tone('.dgm-bladeface') < tone('.dgm-shaftfloor.is-bore'), true)
     assert.match(DGM_BLOCK, /\.dgm-port\.is-hub \{ fill: none;/)
   })
 
@@ -1079,9 +1239,9 @@ describe('Trident and Nectar schematics', () => {
     // tangents sit at +/- r / sqrt(2) along (1, -1).
     assert.match(iso, /const t = round\(r \/ Math\.SQRT2\)/)
     // Drawn back to front, so one standing in front of another occludes it -
-    // and the gates go through the same sort as the criteria rather than being
-    // appended after them, so the ordering survives the lattice being moved.
-    assert.match(nectar, /\}\)\),\s*\n\s*\.\.\.CHANNELS\.map\(\(item\) => \(\{ key: `g\$\{item\.key\}`, kind: 'gate', at: item\.gate\.at, item \}\)\),\s*\n\]\.sort\(\(a, b\) => a\.at\[1\] - b\.at\[1\]\)/)
+    // and the landings go through the same sort as the criteria rather than
+    // being appended after them, so the ordering survives the lattice moving.
+    assert.match(nectar, /\}\)\),\s*\n\s*\.\.\.CHANNELS\.map\(\(item\) => \(\{ key: `g\$\{item\.key\}`, kind: 'land', at: item\.gate\.at, item \}\)\),\s*\n\]\.sort\(\(a, b\) => a\.at\[1\] - b\.at\[1\]\)/)
     assert.match(nectar, /<path className="dgm-face-left" d=\{node\.block\.faceLeft\} \/>/)
     assert.match(nectar, /<polygon className="dgm-node" points=\{node\.block\.base\} \/>/)
     assert.match(nectar, /<path className="dgm-face-right" d=\{node\.block\.wall\} \/>/)
@@ -1091,10 +1251,18 @@ describe('Trident and Nectar schematics', () => {
     assert.match(nectar, /'--lift': `\$\{node\.block\.step\}px`/)
     assert.match(DGM_BLOCK, /\.dgm-crit\.is-bound \.dgm-node \{ transform: translate\(calc\(var\(--lift, 0px\) \* -1\), calc\(var\(--lift, 0px\) \* -1\)\); \}/)
     assert.match(DGM_BLOCK, /\.dgm-crit\.is-bound \.dgm-face-left,\s*\n\.dgm-crit\.is-bound \.dgm-face-right \{ opacity: 1; \}/)
-    // A ring rides the node it came from, so it resolves at the height that node
-    // is standing at rather than through the slab underneath it.
-    assert.match(nectar, /const joinUp = JOIN\.rank < state\.bound/)
-    assert.match(DGM_BLOCK, /\.dgm-resolve\.is-up \{ transform: translateY\(calc\(var\(--rise, 0px\) \* -1\)\); \}/)
+    // What a definition arriving leaves behind is a ring on the roof of the
+    // criterion it landed on, and nothing else. Two expanding rings used to go
+    // out of that criterion as well, and four more went out of criteria the
+    // library already held - six circles growing to three times their radius and
+    // fading, at all times, over a slab three hundred pixels across. A growing
+    // radius claims something is propagating outwards at a uniform rate in every
+    // direction, and the lattice it was supposed to propagate through is drawn
+    // right underneath it: the ring crossed links, criteria and empty slab at
+    // the same speed, touching none of them, because a circle is radial and a
+    // mesh is not.
+    assert.match(nectar, /<circle className="dgm-liftchip" cx=\{item\.node\.up\[0\]\} cy=\{item\.node\.up\[1\]\} r="10\.5" \/>/)
+    assert.doesNotMatch(nectar, /joinUp|--rise/)
     // And each site orbits its own footprint - a true plan circle carried
     // through the projection, so the three move in the ground rather than
     // hovering over it, with the reach each one carries running the same circle
@@ -1123,7 +1291,7 @@ describe('Trident and Nectar schematics', () => {
     assert.doesNotMatch(DGM_BLOCK, /\.is-hot[^{]*\{[^}]*animation-delay/)
     // Doubling, not accelerating: the same period with a second mark in it, so
     // nothing already in flight moves when the cursor lands.
-    for (const rule of ['.dgm-deck.is-hot .dgm-intake', '.dgm-library.is-hot .dgm-traffic', '.dgm-lift.is-hot .dgm-rise', '.dgm-lift.is-hot .dgm-fall']) {
+    for (const rule of ['.dgm-deck.is-hot .dgm-intake', '.dgm-lift.is-hot .dgm-rise', '.dgm-lift.is-hot .dgm-fall']) {
       const escaped = rule.replace(/[.()*:]/g, (c) => `\\${c}`)
       assert.match(DGM_BLOCK, new RegExp(`${escaped} \\{[^}]*stroke-dasharray:`))
     }
@@ -1139,7 +1307,7 @@ describe('Trident and Nectar schematics', () => {
     assert.match(DGM_BLOCK, /\.dgm-svg\.is-live \.dgm-sweep\.is-again \{\s*\n\s*animation-delay: calc\(var\(--stagger, 0\) \* -6s - 1\.5s - var\(--life, 0\) \* 1\.2s\);/)
     // Anything a hover repaints has to be able to get there: a property that
     // steps under the cursor is the same jolt as a clock that steps.
-    for (const rule of ['.dgm-liftpath', '.dgm-reachrim', '.dgm-sweep', '.dgm-queue']) {
+    for (const rule of ['.dgm-channel', '.dgm-reachrim', '.dgm-sweep', '.dgm-queue']) {
       const escaped = rule.replace(/[.()*:]/g, (c) => `\\${c}`)
       assert.match(DGM_BLOCK, new RegExp(`${escaped} \\{[^}]*transition:`))
     }
@@ -1178,7 +1346,7 @@ describe('Trident and Nectar schematics', () => {
 
   it('will not draw a governed path through a stack that has not assembled', () => {
     assert.match(DGM_BLOCK, /\.dgm-drop \{\s*\n\s*opacity: clamp\(0, calc\(\(var\(--spread, 1\) - 0\.9\) \* 10\), 1\);/)
-    assert.match(DGM_BLOCK, /\.dgm-liftpath \{[\s\S]*?opacity: clamp\(0, calc\(\(var\(--spread, 1\) - 0\.7\) \* 3\.4\), 1\);/)
+    assert.match(DGM_BLOCK, /\.dgm-channel \{[\s\S]*?opacity: clamp\(0, calc\(\(var\(--spread, 1\) - 0\.5\) \* 2\.6\), 1\);/)
   })
 
   it('gives the beat that carries the claim the widest stretch of scroll', () => {
@@ -1202,7 +1370,7 @@ describe('Trident and Nectar schematics', () => {
     assert.match(nectar, /status: 'STEADY', read: 'Structure crosses\. Records do not\.'/)
     // The boot transition is killed first, then every ambient clock behind it.
     assert.match(DGM_BLOCK, /@media \(prefers-reduced-motion: reduce\) \{\s*\n\s*\.dgm-svg \{ transition: none; \}\s*\n\s*\n\s*\.dgm-svg :is\(/)
-    for (const name of ['dgm-droppath', 'dgm-approach', 'dgm-spark', 'dgm-traffic', 'dgm-reachrim', 'dgm-sweep']) {
+    for (const name of ['dgm-droppath', 'dgm-blade', 'dgm-spark', 'dgm-crit', 'dgm-reachrim', 'dgm-sweep']) {
       assert.match(DGM_BLOCK, new RegExp(`prefers-reduced-motion[\\s\\S]*?\\.${name}[,)]`))
     }
   })
