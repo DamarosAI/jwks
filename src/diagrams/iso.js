@@ -132,6 +132,85 @@ export function roundedCylinder(cx, cy, r, height) {
 export const EDGE_ANGLE = round((Math.atan2(ISO_Y, ISO_X) * 180) / Math.PI)
 
 /**
+ * A translation, written in plan units, that lands `depth` pixels straight down
+ * the screen. Inside `planSpace` a plain y offset is not a drop - it slides
+ * along a plan axis, which moves the shape sideways as well - so anything that
+ * needs to be extruded downwards while it is drawn in plan has to solve for it:
+ * equal steps on both plan axes cancel in x and add in y.
+ *
+ * This is what lets a tile, a ledger row or a shutter plinth carry a side face
+ * without leaving the projection to draw it.
+ */
+export function planDrop(depth) {
+  const step = round(depth / (2 * ISO_Y))
+  return `translate(${step} ${step})`
+}
+
+/**
+ * A rounded plan rectangle, sampled in the same outline order `roundedPlan`
+ * samples a square: right corner, front, left, back. Same corner construction,
+ * two half-sizes, so a ledger row and a field tile are one shape at two ratios.
+ */
+export function roundedBox(halfX, halfY, radius, steps = 5) {
+  const r = Math.max(0, Math.min(radius, halfX, halfY))
+  const ix = halfX - r
+  const iy = halfY - r
+  const arcs = [
+    [ix, -iy, -90, 0],
+    [ix, iy, 0, 90],
+    [-ix, iy, 90, 180],
+    [-ix, -iy, 180, 270],
+  ]
+  const out = []
+  arcs.forEach(([ax, ay, from, to]) => {
+    for (let step = 0; step <= steps; step += 1) {
+      const angle = ((from + ((to - from) * step) / steps) * Math.PI) / 180
+      out.push([round(ax + Math.cos(angle) * r), round(ay + Math.sin(angle) * r)])
+    }
+  })
+  return out
+}
+
+/**
+ * A solid standing on a plane, built and drawn in plan coordinates: the top
+ * face and the two near skirt faces, extruded `depth` pixels straight up off
+ * the surface it is standing on.
+ *
+ * This is `roundedDeck` at object scale and inside the projection instead of
+ * outside it, and it is why a field tile, a ledger row, a waiting proposal and
+ * a criterion in the library are all the same object as the deck they stand on,
+ * several scales down. Everything on a plane in either figure is a thing with a
+ * volume; nothing is a glyph printed on the surface.
+ *
+ * `(cx, cy)` is where the solid stands, not where its roof is. Inside
+ * `planSpace` a plain y offset is not a drop - it slides along a plan axis and
+ * carries the shape sideways - so the extrusion runs equal steps on both plan
+ * axes, which cancel in x and add in y. `base` is the footprint that lands
+ * exactly on `(cx, cy)`; `top` is the same ring one storey up. Callers get both
+ * so a solid can be drawn lying flat and then raised without its outline
+ * changing shape on the way.
+ */
+export function planPrism(cx, cy, halfX, halfY, depth, radius) {
+  const step = round(depth / (2 * ISO_Y))
+  const ring = roundedBox(halfX, halfY, radius).map(([x, y]) => [round(x + cx - step), round(y + cy - step)])
+  const under = ring.map(([x, y]) => [round(x + step), round(y + step)])
+  const pick = (score) => ring.reduce((best, point, index) => (score(point) > score(ring[best]) ? index : best), 0)
+  const iRight = pick(([x, y]) => x - y)
+  const iFront = pick(([x, y]) => x + y)
+  const iLeft = pick(([x, y]) => y - x)
+  const trace = (list) => list.map(([x, y]) => `${x} ${y}`).join(' L ')
+  const face = (from, to) => `M ${trace(ring.slice(from, to + 1))} L ${trace(under.slice(from, to + 1).reverse())} Z`
+  return {
+    step,
+    depth,
+    top: pts(ring),
+    base: pts(under),
+    faceRight: face(iRight, iFront),
+    faceLeft: face(iFront, iLeft),
+  }
+}
+
+/**
  * The projection as an SVG transform, so ordinary primitives can be drawn in
  * plan coordinates and land correctly on a deck. This is what lets the figures
  * carry rounded corners and true circles: a `<rect rx>` drawn inside this

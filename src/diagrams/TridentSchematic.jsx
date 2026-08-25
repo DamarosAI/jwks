@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { jitter, planSpace, roundedDeck } from './iso'
+import { jitter, planDrop, planPrism, planSpace, roundedDeck } from './iso'
 import { Faces } from './Solid'
 import { useCenterOnOverflow } from './useCenterOnOverflow'
 import { useScrollRun } from './useScrollPhase'
@@ -38,6 +38,15 @@ import { useScrollRun } from './useScrollPhase'
  * behind a hover, because nothing was ever worth hiding behind a four-pixel
  * target.
  *
+ * Under all of that are two quieter layers, running at rates nothing else here
+ * uses. Every small solid standing on a deck - nineteen contract fields, four
+ * waiting proposals, three landing pads - settles on its own long clock, half a
+ * pixel at a time; and a tine with no proposal on it still creeps its dashes
+ * toward the intake, because a source that has not published this second is
+ * still attached. Rates are what make a drawing read as a system rather than as
+ * a loop: the throat swallows in two seconds, the contract walks its fields in
+ * six, a tier breathes in eight, and the things standing on it settle in twelve.
+ *
  * None of it runs while the figure is still assembling: every ambient clock is
  * held at zero opacity until `--charge` comes up, so the stack lands and then
  * the system starts, rather than arriving already busy. Scroll advances the run;
@@ -50,7 +59,11 @@ import { useScrollRun } from './useScrollPhase'
 
 const CX = 258
 const HALF = 76
-const THICK = 11
+// Fifteen, not eleven. A deck is a solid held in the air, and at eleven the two
+// skirt faces were a band too thin to read as sides - four tiers came out as
+// four outlines printed on one sheet. The extra four pixels are what let the
+// body colours separate and the tier read as an object with a thickness.
+const THICK = 15
 const RAD = 16
 const SEP = 104
 const TOP = 196
@@ -62,6 +75,13 @@ const GROUND = 562
 // the first time should not have to learn four two-word terms to follow a
 // drawing whose whole point is that it is obvious. The rail underneath each
 // one still carries the exact value, so nothing is lost by being plain.
+//
+// Each one also carries its own ink, set on the tier in the stylesheet: violet
+// for the machine tier, blue for the contract, amber for the deck that is
+// holding and green for the one that has committed. Those are the four states
+// the run passes through, so the deck that owns a state owns the colour - which
+// is why a drop takes the ink of whichever deck it lands on and the descent
+// visibly changes hands on its way down.
 const LAYERS = [
   { key: 'surface', label: 'PROPOSAL' },
   { key: 'contract', label: 'SCHEMA' },
@@ -82,6 +102,18 @@ const LAYERS = [
 
 const [SURFACE, CONTRACT, AUTHORITY, RECEIPT] = LAYERS
 
+// What each tier is held above, and therefore where its shade falls: the deck
+// below it, or the ground for the bottom one. A slab floating over a plane
+// darkens it - that is not a light source, it is the absence of one - and it is
+// the only cue in an axonometric that says four tiers are apart rather than
+// stacked. Each shade carries the clock of the tier casting it, so it spreads
+// as that tier rises and tightens as it comes back down.
+const SEATS = LAYERS.map((deck, index) => ({
+  key: deck.key,
+  onto: index === LAYERS.length - 1 ? GROUND : LAYERS[index + 1].cy,
+  life: deck.life,
+}))
+
 // Three sources, three kinds, drawn identically. Each plate carries a plan
 // motif so the figure reads without a legend, and a landing pad on the surface
 // deck directly under it, so no leader has to cross another. The agent stands
@@ -94,8 +126,12 @@ const SOURCES = [
 ].map((source, index) => ({
   ...source,
   index,
-  plate: roundedDeck(source.cx, source.y, 34, 7, 12),
+  plate: roundedDeck(source.cx, source.y, 34, 9, 12),
   pad: SURFACE.p(...source.land),
+  // The landing pad is a puck standing on the deck, not an ellipse painted on
+  // it. A plan disc is a plan square whose corner radius is its own half-size,
+  // so it comes out of the same construction as everything else here.
+  puck: planPrism(source.land[0], source.land[1], 12, 12, 4, 12),
   life: jitter(index, 4),
 }))
 
@@ -103,7 +139,10 @@ const HUB = SURFACE.p(0, 0)
 
 // Proposals waiting their turn, in the one quadrant of the intake deck that no
 // source lands in. A queue is what an intake looks like when it is working.
-const QUEUE = [0, 1, 2, 3].map((step) => ({ step, x: 14 + step * 13, y: 52, life: jitter(step, 21) }))
+const QUEUE = [0, 1, 2, 3].map((step) => {
+  const x = 14 + step * 13
+  return { step, x, y: 52, life: jitter(step, 21), block: planPrism(x, 52, 5, 5, 5, 3) }
+})
 
 // 19 contract fields as a plan grid, laid out 5-5-5-4 with the short row
 // centred. Nineteen is the count, so the grid is the count: it is a thing a
@@ -116,13 +155,32 @@ const NAMES = [
   'ACTION', 'SOURCE', 'PAGE', 'HASH',
 ]
 
+// Each field is a solid standing on the deck, not a tile printed on it. Bound,
+// it is up on its own storey with two side faces under it; unbound, the same
+// footprint is lying flat on the deck waiting to be built on. So the count is
+// something a reader watches rise rather than watches change colour, and the
+// deck a reader spends longest on has a relief instead of a wallpaper.
+const FIELD_HALF = 9
+const FIELD_RISE = 7
+
 const FIELDS = []
 let cursor = 0
 ;[5, 5, 5, 4].forEach((count, row) => {
   for (let col = 0; col < count; col += 1) {
     const x = (col - (count - 1) / 2) * 28
     const y = -42 + row * 28
-    FIELDS.push({ name: NAMES[cursor], x, y, at: CONTRACT.p(x, y), seq: Math.round((cursor / 19) * 100) / 100 })
+    FIELDS.push({
+      name: NAMES[cursor],
+      x,
+      y,
+      at: CONTRACT.p(x, y),
+      seq: Math.round((cursor / 19) * 100) / 100,
+      block: planPrism(x, y, FIELD_HALF, FIELD_HALF, FIELD_RISE, 5),
+      // `seq` is the order the contract checks in, which is what the pass runs
+      // on. Settling is not a run, so it gets a scattered clock instead - a
+      // grid of nineteen breathing in reading order is a wave, not a relief.
+      life: jitter(cursor, 17),
+    })
     cursor += 1
   }
 })
@@ -145,6 +203,12 @@ const SHUT_FRAME = 50
 const SHUT_HOLE = 30
 const BLADE = 36
 
+// The frame is a block bolted to the deck with the shaft cut through it, so the
+// whole assembly - opening, blades, rim and bolts - sits one storey up and the
+// approach arrives at the foot of something rather than at a drawing of one.
+const HOUSE_RISE = 7
+const HOUSING = planPrism(0, 0, SHUT_FRAME, SHUT_FRAME, HOUSE_RISE, 13)
+
 // Two bolts across the seam. Shut is a mechanism holding, not a light that has
 // gone red: they lie over the join itself, bridging the two blades, and
 // withdraw along it into the frame when the site signs. Set at the ends of the
@@ -155,11 +219,20 @@ const BOLTS = [-1, 1]
 // The ledger writes one row per committed run, each chained to the row above it
 // by its hash, front row last. Each row carries the revision it is a record of,
 // so pointing at one can show which run it belongs to rather than say so.
-const LEDGER = [-33, -11, 11, 33].map((y, index, all) => ({
+// Spread wider than the rows used to be. Twenty-two plan units apart came out
+// as seven and a half pixels on screen, and a row with a thickness is nearly
+// nine - so the stack had every bar sitting on the one behind it. Twenty-six
+// gives each record its own band.
+const LEDGER = [-39, -13, 13, 39].map((y, index, all) => ({
   y,
   index,
   seq: Math.round((index / all.length) * 100) / 100,
   rev: `REV-018-TR3-104${index + 1}`,
+  // A committed row is a bar with a thickness, standing on the deck. Same
+  // construction as a field tile at another ratio, because a record and a
+  // checked field are the same kind of thing to this drawing: something the
+  // system now holds, and holds up.
+  bar: planPrism(4, y, 48, 5.5, 5, 3),
 }))
 
 // The descent. One short drop per deck, and it belongs to the deck it lands on
@@ -298,6 +371,37 @@ function Drop({ leg, drops }) {
 }
 
 /**
+ * The shade a floating tier drops on whatever is under it. Two steps of
+ * penumbra rather than a blur: a filter over four groups costs more than it
+ * buys at this scale, and there is no light here to blur anyway - this is the
+ * plane being occluded, not lit.
+ *
+ * It is drawn outside the tier's own group on purpose. A shade belongs to the
+ * surface it falls on, so it must not travel with the solid casting it; what it
+ * does carry is that solid's clock, which is what keeps the two locked while
+ * the tier drifts.
+ *
+ * Inset, and hard, rather than the caster's own footprint softened. Every deck
+ * here is the same size as every other, so an occlusion cast straight down
+ * covers the whole of the one below and reads as that deck being dirty rather
+ * than as anything being above it. A shade needs a receiver visible around it.
+ * Insetting it is also the honest approximation: occlusion between two parallel
+ * planes is deepest in the middle and lifts towards the edges, where the field
+ * gets in.
+ */
+function Seat({ seat }) {
+  return (
+    <g className="dgm-seat" style={{ '--life': seat.life }}>
+      <g transform={planSpace(CX, seat.onto)}>
+        {[8, 20, 32].map((inset) => (
+          <rect className="dgm-seatstep" key={inset} x={-HALF + inset} y={-HALF + inset} width={(HALF - inset) * 2} height={(HALF - inset) * 2} rx={RAD} />
+        ))}
+      </g>
+    </g>
+  )
+}
+
+/**
  * A label tied to a real edge, carrying the deck's live value under its name.
  * A leader is a hairline and a label is a few characters tall, so the whole
  * strip gets one invisible hit area - otherwise the reader has to land on a
@@ -394,9 +498,15 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
               <circle className="dgm-grain" cx="1" cy="1" r="1" />
             </pattern>
             {/* The opening the blades run in. Clipping to it is what keeps a
-                blade inside the hole it is filling, at any throw. */}
+                blade inside the hole it is filling, at any throw - and what
+                lets the shaft under it be drawn as exactly the part of itself
+                that can be seen down the hole. */}
             <clipPath id="tr-hole">
               <rect x={-SHUT_HOLE} y={-SHUT_HOLE} width={SHUT_HOLE * 2} height={SHUT_HOLE * 2} rx="8" />
+            </clipPath>
+            {/* The mouth of the intake, for the same reason. */}
+            <clipPath id="tr-well">
+              <circle cx="0" cy="0" r="14" />
             </clipPath>
           </defs>
 
@@ -431,8 +541,14 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
           </g>
 
           {/* Decks, top last: the deck above occludes the one it sits over, and
-              occludes the head of the drop that lands on it. */}
-          <g className="dgm-slide" style={{ '--lift': `${RECEIPT.lift}px`, '--life': RECEIPT.life }}>
+              occludes the head of the drop that lands on it.
+
+              Each tier is preceded by the shade it drops on the plane below,
+              which is why the shades are here rather than inside the tiers -
+              drawn in document order they land on the deck beneath and are then
+              covered by the deck above, exactly as an occlusion should be. */}
+          <Seat seat={SEATS[3]} />
+          <g className="dgm-slide is-receipt" style={{ '--lift': `${RECEIPT.lift}px`, '--life': RECEIPT.life }}>
             <g className={`dgm-deck${state.receipt ? ' is-live' : ''}${lit('receipt')}`} {...probe('receipt')}>
               <Faces shape={RECEIPT} className="dgm-solid" />
               <Drop leg={DROPS[2]} drops={state.drops} />
@@ -472,6 +588,11 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
                     />
                   </g>
                 ))}
+                {/* A committed row is a bar with a thickness standing on the
+                    deck, and one that has not been written yet is the same
+                    footprint lying flat on it. The hash chip and the chain stay
+                    down on the deck where the links run - the record stands up,
+                    the thing binding it to the record above does not. */}
                 {LEDGER.map((row) => {
                   const last = row.index === LEDGER.length - 1
                   const written = state.receipt || !last
@@ -479,13 +600,17 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
                     <g
                       className={`dgm-ledgerrow${written ? ' is-written' : ''}`}
                       key={row.y}
-                      style={{ '--seq': row.seq }}
+                      style={{ '--seq': row.seq, '--lift': `${row.bar.step}px` }}
                     >
-                      <rect className="dgm-ledgerbar" x="-44" y={row.y - 5.5} width="96" height="11" rx="3" vectorEffect="non-scaling-stroke" />
+                      <path className="dgm-face-left" d={row.bar.faceLeft} />
+                      <path className="dgm-face-right" d={row.bar.faceRight} />
                       <rect className="dgm-ledgerhash" x="-59" y={row.y - 4.5} width="9" height="9" rx="2" vectorEffect="non-scaling-stroke" />
-                      <rect className="dgm-ledgertick" x="-37" y={row.y - 1.5} width="30" height="3" rx="1.5" />
-                      <rect className="dgm-ledgertick" x="0" y={row.y - 1.5} width={last ? 28 : 17} height="3" rx="1.5" />
-                      <rect className="dgm-ledgerseal" x="41" y={row.y - 3.5} width="7" height="7" rx="2" />
+                      <g className="dgm-ledgercap">
+                        <polygon className="dgm-ledgerbar" points={row.bar.base} />
+                        <rect className="dgm-ledgertick" x="-37" y={row.y - 1.5} width="30" height="3" rx="1.5" />
+                        <rect className="dgm-ledgertick" x="0" y={row.y - 1.5} width={last ? 28 : 17} height="3" rx="1.5" />
+                        <rect className="dgm-ledgerseal" x="41" y={row.y - 3.5} width="7" height="7" rx="2" />
+                      </g>
                     </g>
                   )
                 })}
@@ -494,7 +619,8 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
             <Rail layer={RECEIPT} live={state.receipt} hot={hot === 'receipt'} fact={facts.receipt} probe={probe('receipt')} />
           </g>
 
-          <g className="dgm-slide" style={{ '--lift': `${AUTHORITY.lift}px`, '--life': AUTHORITY.life }}>
+          <Seat seat={SEATS[2]} />
+          <g className="dgm-slide is-authority" style={{ '--lift': `${AUTHORITY.lift}px`, '--life': AUTHORITY.life }}>
             <g className={`dgm-deck${open ? ' is-live' : ''}${lit('authority')}`} {...probe('authority')}>
               <Faces shape={AUTHORITY} className="dgm-solid" />
               <Drop leg={DROPS[1]} drops={state.drops} />
@@ -518,72 +644,109 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
                 {/* Open is carried on the group, not inferred, so the frame can
                     stop bracing against something nobody is holding any more. */}
                 <g className={`dgm-shutter${open ? ' is-open' : ''}${tried ? ' is-tried' : ''}`}>
-                  <rect className="dgm-housing" x={-SHUT_FRAME} y={-SHUT_FRAME} width={SHUT_FRAME * 2} height={SHUT_FRAME * 2} rx="13" vectorEffect="non-scaling-stroke" />
-                  <rect className="dgm-aperture" x={-SHUT_HOLE} y={-SHUT_HOLE} width={SHUT_HOLE * 2} height={SHUT_HOLE * 2} rx="8" fill="url(#tr-hatch)" />
-                  <g clipPath="url(#tr-hole)">
-                    <g className={`dgm-leaf is-left${open ? ' is-open' : ''}`} style={{ '--blade': -1 }}>
-                      <rect x={-BLADE} y={-BLADE} width={BLADE} height={BLADE * 2} vectorEffect="non-scaling-stroke" />
+                  {/* The frame is a block bolted to the deck, with the shaft cut
+                      through it. Its own two side faces are what say so in every
+                      phase - the shaft below only becomes visible once the
+                      blades have run back, which is late in a run to be
+                      establishing that this deck has a hole in it at all. */}
+                  <path className="dgm-face-left" d={HOUSING.faceLeft} />
+                  <path className="dgm-face-right" d={HOUSING.faceRight} />
+                  <polygon className="dgm-housing" points={HOUSING.top} />
+                  {/* Everything the frame carries sits on the frame, one storey
+                      up, so the opening is cut through a block rather than
+                      printed beside one. The clip travels with the group, so the
+                      blades are still guaranteed to stay inside the hole. */}
+                  <g transform={planDrop(-HOUSE_RISE)}>
+                    <g clipPath="url(#tr-hole)">
+                      {/* The shaft. Clipped to the opening, so what is drawn is
+                          exactly what can be seen down it: the far wall across
+                          the top, and the floor six pixels below - hatched,
+                          because the floor is the one surface on this deck the
+                          reader is looking straight down at. The blades run in
+                          over the top of it. */}
+                      <rect className="dgm-shaft" x={-SHUT_HOLE} y={-SHUT_HOLE} width={SHUT_HOLE * 2} height={SHUT_HOLE * 2} rx="8" />
+                      <g transform={planDrop(6)}>
+                        <rect className="dgm-shaftfloor" x={-SHUT_HOLE} y={-SHUT_HOLE} width={SHUT_HOLE * 2} height={SHUT_HOLE * 2} rx="8" />
+                        <rect className="dgm-aperture" x={-SHUT_HOLE} y={-SHUT_HOLE} width={SHUT_HOLE * 2} height={SHUT_HOLE * 2} rx="8" fill="url(#tr-hatch)" />
+                      </g>
+                      <g className={`dgm-leaf is-left${open ? ' is-open' : ''}`} style={{ '--blade': -1 }}>
+                        <rect x={-BLADE} y={-BLADE} width={BLADE} height={BLADE * 2} vectorEffect="non-scaling-stroke" />
+                      </g>
+                      <g className={`dgm-leaf is-right${open ? ' is-open' : ''}`} style={{ '--blade': 1 }}>
+                        <rect x="0" y={-BLADE} width={BLADE} height={BLADE * 2} vectorEffect="non-scaling-stroke" />
+                      </g>
                     </g>
-                    <g className={`dgm-leaf is-right${open ? ' is-open' : ''}`} style={{ '--blade': 1 }}>
-                      <rect x="0" y={-BLADE} width={BLADE} height={BLADE * 2} vectorEffect="non-scaling-stroke" />
-                    </g>
+                    {/* Drawn over the blades, so the hole keeps one clean edge
+                        whatever is behind it. */}
+                    <rect className={`dgm-holerim is-${state.gate}`} x={-SHUT_HOLE} y={-SHUT_HOLE} width={SHUT_HOLE * 2} height={SHUT_HOLE * 2} rx="8" vectorEffect="non-scaling-stroke" />
+                    {BOLTS.map((end) => (
+                      <rect
+                        className={`dgm-bolt${open ? ' is-clear' : ''}`}
+                        key={end}
+                        style={{ '--end': end }}
+                        x="-13"
+                        y={end * 14 - 4.5}
+                        width="26"
+                        height="9"
+                        rx="3"
+                        vectorEffect="non-scaling-stroke"
+                      />
+                    ))}
                   </g>
-                  {/* Drawn over the blades, so the hole keeps one clean edge
-                      whatever is behind it. */}
-                  <rect className={`dgm-holerim is-${state.gate}`} x={-SHUT_HOLE} y={-SHUT_HOLE} width={SHUT_HOLE * 2} height={SHUT_HOLE * 2} rx="8" vectorEffect="non-scaling-stroke" />
-                  {BOLTS.map((end) => (
-                    <rect
-                      className={`dgm-bolt${open ? ' is-clear' : ''}`}
-                      key={end}
-                      style={{ '--end': end }}
-                      x="-13"
-                      y={end * 14 - 4.5}
-                      width="26"
-                      height="9"
-                      rx="3"
-                      vectorEffect="non-scaling-stroke"
-                    />
-                  ))}
                 </g>
               </g>
             </g>
             <Rail layer={AUTHORITY} live={open} hot={hot === 'authority'} fact={facts.authority} probe={probe('authority')} />
           </g>
 
-          <g className="dgm-slide" style={{ '--lift': `${CONTRACT.lift}px`, '--life': CONTRACT.life }}>
+          <Seat seat={SEATS[1]} />
+          <g className="dgm-slide is-contract" style={{ '--lift': `${CONTRACT.lift}px`, '--life': CONTRACT.life }}>
             <g className={`dgm-deck${state.bound > 0 ? ' is-live' : ''}${lit('contract')}`} {...probe('contract')}>
               <Faces shape={CONTRACT} className="dgm-solid" />
               <Drop leg={DROPS[0]} drops={state.drops} />
               <g transform={planSpace(CX, CONTRACT.cy)}>
-                {/* The contract walks its own fields. `--seq` is the field's
+                {/* Nineteen solids on a deck. A bound field is standing on its
+                    own storey with two side faces under it; an unbound one is
+                    the same footprint lying flat, waiting to be built on. The
+                    faces come in as the cap goes up, on one clock, so binding is
+                    a thing that rises rather than a colour that changes.
+
+                    The contract walks its own fields too. `--seq` is the field's
                     place in the run, so the check travels the grid in the order
                     the contract checks it rather than nineteen tiles blinking
                     independently, which is a decoration and not a pass. */}
-                {FIELDS.map((cell, index) => (
-                  <rect
-                    className={`dgm-fieldtile${index < state.bound ? ' is-bound' : ''}${field === index ? ' is-named' : ''}`}
-                    key={cell.name}
-                    style={{ '--seq': cell.seq }}
-                    x={cell.x - 9}
-                    y={cell.y - 9}
-                    width="18"
-                    height="18"
-                    rx="5"
-                    vectorEffect="non-scaling-stroke"
-                    {...touch(index)}
-                  />
-                ))}
-                {/* The field answers in the tile, not in the margin: a tick if
-                    the contract has checked it, an open bar if it has not. The
-                    name in the tag is only there to say which one it was. */}
+                {FIELDS.map((cell, index) => {
+                  const bound = index < state.bound
+                  return (
+                    <g
+                      className={`dgm-field${bound ? ' is-bound' : ''}`}
+                      key={cell.name}
+                      style={{ '--seq': cell.seq, '--life': cell.life, '--lift': `${cell.block.step}px` }}
+                    >
+                      <path className="dgm-face-left" d={cell.block.faceLeft} />
+                      <path className="dgm-face-right" d={cell.block.faceRight} />
+                      <polygon
+                        className={`dgm-fieldtile${bound ? ' is-bound' : ''}${field === index ? ' is-named' : ''}`}
+                        points={cell.block.base}
+                        {...touch(index)}
+                      />
+                    </g>
+                  )
+                })}
+                {/* The field answers on the tile, not in the margin: a tick if
+                    the contract has checked it, an open bar if it has not. It
+                    rides the cap, so it is on top of a field that has stood up
+                    rather than on the deck the field used to lie on. */}
                 {field === null ? null : (
-                  <path
-                    className="dgm-fieldcheck"
-                    d={field < state.bound
-                      ? `M ${FIELDS[field].x - 4.4} ${FIELDS[field].y + 0.4} l 3.1 3.3 l 5.9 -6.8`
-                      : `M ${FIELDS[field].x - 4.4} ${FIELDS[field].y} h 8.8`}
-                    vectorEffect="non-scaling-stroke"
-                  />
+                  <g transform={field < state.bound ? planDrop(-FIELD_RISE) : undefined}>
+                    <path
+                      className="dgm-fieldcheck"
+                      d={field < state.bound
+                        ? `M ${FIELDS[field].x - 4.4} ${FIELDS[field].y + 0.4} l 3.1 3.3 l 5.9 -6.8`
+                        : `M ${FIELDS[field].x - 4.4} ${FIELDS[field].y} h 8.8`}
+                      vectorEffect="non-scaling-stroke"
+                    />
+                  </g>
                 )}
               </g>
             </g>
@@ -605,7 +768,8 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
               last, so the head is always hidden under the solid. That is what
               lets a plate ride: an endpoint parked exactly on a silhouette parts
               from it the moment either end moves. */}
-          <g className="dgm-slide" style={{ '--lift': `${SURFACE.lift}px`, '--life': SURFACE.life }}>
+          <Seat seat={SEATS[0]} />
+          <g className="dgm-slide is-surface" style={{ '--lift': `${SURFACE.lift}px`, '--life': SURFACE.life }}>
             {SOURCES.map((item) => (
               <line
                 className={`dgm-leader${lit(item.key)}`}
@@ -640,24 +804,22 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
                     <line className="dgm-intake" pathLength="100" x1={chip.x} y1={chip.y} x2="0" y2="0" vectorEffect="non-scaling-stroke" />
                   </g>
                 ))}
+                {/* A proposal waiting its turn is a thing with a size, sitting
+                    on the apron. Four flat chips read as marks printed on the
+                    deck; four blocks read as a queue. */}
                 {QUEUE.map((chip) => (
-                  <rect
-                    className="dgm-queue"
-                    key={chip.step}
-                    style={{ '--life': chip.life }}
-                    x={chip.x - 5}
-                    y={chip.y - 5}
-                    width="10"
-                    height="10"
-                    rx="3"
-                    vectorEffect="non-scaling-stroke"
-                  />
+                  <g className="dgm-stand" key={chip.step} style={{ '--life': chip.life }}>
+                    <path className="dgm-face-left" d={chip.block.faceLeft} />
+                    <path className="dgm-face-right" d={chip.block.faceRight} />
+                    <polygon className="dgm-queue" points={chip.block.top} />
+                  </g>
                 ))}
               </g>
               {SOURCES.map((item) => (
                 <line
                   className={`dgm-tine${source === item.key ? ' is-live' : ''}${lit(item.key)}`}
                   key={`tine-${item.key}`}
+                  style={{ '--life': item.life }}
                   x1={item.pad[0]}
                   y1={item.pad[1]}
                   x2={HUB[0]}
@@ -678,20 +840,37 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
                   y2={HUB[1]}
                 />
               ))}
-              {SOURCES.map((item) => (
-                <ellipse
-                  className={`dgm-pad${source === item.key ? ' is-live' : ''}${lit(item.key)}`}
-                  key={`pad-${item.key}`}
-                  style={{ '--life': item.life }}
-                  cx={item.pad[0]}
-                  cy={item.pad[1]}
-                  rx="12"
-                  ry="4.8"
-                />
-              ))}
+              {/* The pads, in plan, standing on the deck. Each tine and each
+                  spark ends at the plan point the puck is standing on, and the
+                  puck is drawn over the top of both - so a leader never shows a
+                  free end beside the thing it is supposed to reach. */}
               <g transform={planSpace(CX, SURFACE.cy)}>
+                {SOURCES.map((item) => (
+                  <g className="dgm-stand" key={`pad-${item.key}`} style={{ '--life': item.life }}>
+                    <path className="dgm-face-left" d={item.puck.faceLeft} />
+                    <path className="dgm-face-right" d={item.puck.faceRight} />
+                    <polygon
+                      className={`dgm-pad${source === item.key ? ' is-live' : ''}${lit(item.key)}`}
+                      points={item.puck.top}
+                    />
+                  </g>
+                ))}
+              </g>
+              {/* The throat is a hole, so it is drawn as one: clipped to the
+                  mouth of the hub, the far wall shows across the top and the
+                  floor sits five pixels down with the throat standing on it.
+                  An intake whose middle is a filled dot on a flat deck is a
+                  symbol for taking something in; this one has somewhere for a
+                  proposal to go. */}
+              <g transform={planSpace(CX, SURFACE.cy)}>
+                <g clipPath="url(#tr-well)">
+                  <circle className="dgm-shaft" cx="0" cy="0" r="14" />
+                  <g transform={planDrop(5)}>
+                    <circle className="dgm-shaftfloor" cx="0" cy="0" r="14" />
+                    <circle className="dgm-throat" cx="0" cy="0" r="5" />
+                  </g>
+                </g>
                 <circle className="dgm-port is-hub" cx="0" cy="0" r="14" vectorEffect="non-scaling-stroke" />
-                <circle className="dgm-throat" cx="0" cy="0" r="5" />
               </g>
             </g>
 

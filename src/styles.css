@@ -9369,39 +9369,53 @@ html.is-hidden .clinic-node i,
 .dgm-rule { stroke: var(--border); stroke-width: 1; }
 .dgm-mark { opacity: 0.92; }
 
-/* Solids. A rounded plan square and two skirt faces, three weights of one ink,
-   and no second palette. The radius is a plan radius carried through the
-   projection, so a Damaros corner stays a Damaros corner at every height.
+/* Solids. A rounded plan square and two skirt faces, three weights of one ink.
+   The radius is a plan radius carried through the projection, so a Damaros
+   corner stays a Damaros corner at every height.
 
-   The three faces sit close together on purpose. A solid here is a drafted
-   object with a caught edge, not a rendered one with a light source: the depth
-   is already in the projection, and the moment the skirts are shaded hard
-   enough to read as shadow the whole stack turns into a pile of toy blocks.
-   The edge carries the drawing; the fill only has to separate the planes. */
+   The three faces used to sit within four percent of each other, on the theory
+   that an axonometric has no light source and shading one is what turns a stack
+   into a pile of toy blocks. That is true of a rendered highlight and false of a
+   body colour: with the faces that close the solids came out as outlines, and a
+   drawing of four floating tiers read as four rectangles printed on a sheet.
+   They are still three weights of one ink and there is still no light source -
+   the skirts are simply given enough body to be sides, and each one is tinted
+   with the ink of the tier it belongs to, so a deck is a coloured object rather
+   than a white object with coloured furniture on it. */
+
+/* Non-scaling, because the same three faces are now used inside the projection
+   as well as outside it: a deck is built in screen space and a field tile, a
+   ledger row and a criterion are built in plan, and the plan matrix scales
+   anisotropically. One declaration here is what lets `planPrism` hand its
+   output to the same component `roundedDeck` hands its output to. */
+
+.dgm-face-top,
+.dgm-face-left,
+.dgm-face-right { vector-effect: non-scaling-stroke; }
 
 .dgm-face-top {
   fill: var(--surface-solid);
-  stroke: color-mix(in srgb, var(--text) 52%, transparent);
+  stroke: color-mix(in srgb, var(--ink) 30%, color-mix(in srgb, var(--text) 58%, transparent));
   stroke-width: 1;
   stroke-linejoin: round;
   transition: stroke 300ms ease;
 }
 
 .dgm-face-left {
-  fill: color-mix(in srgb, var(--text) 3.5%, var(--surface-solid));
+  fill: color-mix(in srgb, var(--ink) 9%, var(--body-near));
   stroke: color-mix(in srgb, var(--text) 44%, transparent);
   stroke-width: 1;
   stroke-linejoin: round;
 }
 
 .dgm-face-right {
-  fill: color-mix(in srgb, var(--text) 7%, var(--surface-solid));
-  stroke: color-mix(in srgb, var(--text) 44%, transparent);
+  fill: color-mix(in srgb, var(--ink) 16%, var(--body-far));
+  stroke: color-mix(in srgb, var(--text) 50%, transparent);
   stroke-width: 1;
   stroke-linejoin: round;
 }
 
-.dgm-deck.is-live > .dgm-solid > .dgm-face-top { stroke: color-mix(in srgb, var(--accent) 60%, var(--text)); }
+.dgm-deck.is-live > .dgm-solid > .dgm-face-top { stroke: var(--ink-deep); }
 
 /* Boot. Two numbers run the whole entrance, and both are registered, so the
    browser can interpolate them: adding one class to the sheet eases every
@@ -9475,6 +9489,17 @@ html.is-hidden .clinic-node i,
      without a signature. Carried toward the ink it stays unmistakably the
      settled colour and stops shouting. */
   --settled: color-mix(in srgb, var(--success) 76%, var(--text));
+  /* The ink a solid and everything standing on it are drawn in. Blue by
+     default, which is what Nectar wants everywhere - its three sites are peers
+     and colouring one would say one of them mattered more. Trident overrides it
+     per tier. */
+  --ink: var(--accent);
+  --ink-deep: var(--accent-strong);
+  --ink-soft: var(--accent-soft);
+  /* The two body tones every skirt is mixed into, so the near and far faces of
+     a solid separate before any hue is added to them. */
+  --body-near: color-mix(in srgb, var(--text) 5%, var(--surface-solid));
+  --body-far: color-mix(in srgb, var(--text) 11%, var(--surface-solid));
   opacity: calc(0.62 + 0.38 * var(--charge, 1));
   transition: --spread 1150ms cubic-bezier(0.16, 1, 0.3, 1), --charge 1450ms 200ms cubic-bezier(0.33, 1, 0.68, 1);
 }
@@ -9482,6 +9507,135 @@ html.is-hidden .clinic-node i,
 .dgm-svg.is-booted {
   --spread: 1;
   --charge: 1;
+}
+
+/* Every Trident tier is the colour of the authority it holds, and holds it
+   whether or not the run has reached it. Top to bottom: proposed by a machine,
+   checked against a contract, held for a person, committed. Those four are not
+   a palette applied to the drawing - they are the four states the run passes
+   through, so the deck that owns a state owns the colour, and the run only
+   lights whichever tier currently has the proposal.
+
+   Which makes the descent the claim, drawn: a drop is owned by the deck it
+   lands on and takes that deck's ink, so the run visibly changes hands three
+   times on its way down. Nothing carries a colour it did not earn.
+
+   Violet is the machine tier, and it is the only band of the four that is not
+   the site. A model, an agent loop and a scheduled job all propose in it; none
+   of them has any authority, which is exactly why no deck below is drawn in
+   that colour. Blue - the house ink - starts where the site's own governance
+   does, at the contract. */
+
+.dgm-slide.is-surface {
+  --ink: color-mix(in srgb, var(--governed) 82%, var(--text));
+  --ink-deep: color-mix(in srgb, var(--governed) 56%, var(--text));
+  --ink-soft: color-mix(in srgb, var(--governed) 18%, var(--surface-solid));
+}
+
+.dgm-slide.is-authority {
+  --ink: var(--warning);
+  --ink-deep: color-mix(in srgb, var(--warning) 72%, var(--text));
+  --ink-soft: var(--warning-soft);
+}
+
+.dgm-slide.is-receipt {
+  --ink: var(--settled);
+  --ink-deep: color-mix(in srgb, var(--settled) 70%, var(--text));
+  --ink-soft: var(--success-soft);
+}
+
+/* Ambient occlusion, not a cast shadow. There is no light source in an
+   axonometric and nothing here invents one - but a slab held above a plane
+   still darkens it, and without that the four tiers were four outlines at four
+   heights with nothing saying they were apart. Two steps of penumbra rather
+   than a blur: a filter over four groups costs more than it buys at this scale.
+
+   Each shade breathes on the clock of the tier that casts it, in antiphase to
+   that tier's own bob - spreading and thinning as the tier rises, tightening as
+   it settles. That is what turns three pixels of drift into height, and it is
+   the reason the boot gate is folded into the keyframe rather than sitting on
+   the element: an animated opacity would otherwise paint four shades on top of
+   each other while the stack is still closed. */
+
+.dgm-seat {
+  --seat-in: clamp(0, calc((var(--spread, 1) - 0.5) * 2.4), 1);
+  opacity: var(--seat-in);
+  pointer-events: none;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* Three steps at a low alpha each rather than two at a high one: stacked, they
+   ramp from six percent at the rim to about seventeen in the middle, and no
+   single edge in the stack is strong enough to read as a drawn line. */
+.dgm-seatstep { fill: color-mix(in srgb, var(--text) 6%, transparent); }
+
+/* The library is nearly the size of the ground it is held over, so its shade
+   covers nearly all of it. At a deck's weight that came out as a dirty patch
+   across the federation rather than as height, and the three reaches it lies
+   under were the casualty. */
+.dgm-seat.is-library .dgm-seatstep { fill: color-mix(in srgb, var(--text) 4.5%, transparent); }
+
+@keyframes dgm-seat {
+  0%, 100% { opacity: var(--seat-in); transform: scale(1); }
+  50% { opacity: calc(var(--seat-in) * 0.62); transform: scale(1.07); }
+}
+
+.dgm-svg.is-live .dgm-seat {
+  animation: dgm-seat calc(7.4s + var(--life, 0) * 4.6s) ease-in-out infinite;
+  animation-delay: calc(var(--life, 0) * -10.2s);
+}
+
+/* Two layers that belong to both figures, added because the drawings had gone
+   quiet in exactly the places they had just gained mass. Everything that was
+   moving was either the whole sheet (a tier bobbing, a site orbiting, a slab
+   drifting) or a single travelling mark; the sixty-odd small solids standing on
+   those surfaces, and the connections between them at rest, were the still part
+   of a picture whose whole claim is that it is running.
+
+   THE SOLIDS SETTLE. Anything standing on a surface breathes on its own long
+   clock: the nineteen contract fields, the four waiting proposals, the three
+   landing pads, the forty-two criteria in the library. Half a pixel, nine to
+   sixteen seconds, scattered so no two are in step - the amplitude of a city
+   seen from far enough away rather than a row of things vibrating. Only what is
+   standing settles: a field or a criterion still lying flat is part of the deck
+   it is printed on, and part of a deck does not breathe on its own.
+
+   Inside `planSpace` a translate is in plan units, and equal negative steps on
+   both axes cancel in x and subtract in y - so this is straight up the screen,
+   the same solve `planDrop` and `planPrism` use. */
+
+@keyframes dgm-stir {
+  0%, 100% { transform: translate(0, 0); }
+  38% { transform: translate(-0.85px, -0.85px); }
+  64% { transform: translate(-0.3px, -0.3px); }
+}
+
+.dgm-svg.is-live :is(.dgm-stand, .dgm-field.is-bound, .dgm-crit.is-bound) {
+  animation: dgm-stir calc(9.2s + var(--life, 0) * 6.8s) ease-in-out infinite;
+  animation-delay: calc(var(--life, 0) * -13.4s);
+}
+
+/* AN IDLE CONNECTION IS STILL A LIVE CONNECTION. A tine with no proposal on it
+   and a channel with no definition crossing it were both dead dashes; now the
+   dashes creep along them, slowly, in the direction the thing would travel if
+   it came. Both figures make the same claim with the same mechanism, at the two
+   scales they work at: a source that has not proposed this second is still
+   attached to the intake, and a site that is not publishing this second is
+   still reporting to the library.
+
+   The offset is three whole dash periods, not the -200 the travelling marks
+   use, so the pattern lands exactly where it started and the loop has no seam
+   in it. A crawl that jumps once a cycle is worse than no crawl. */
+
+@keyframes dgm-creep {
+  to { stroke-dashoffset: -21; }
+}
+
+.dgm-svg.is-live .dgm-tine:not(.is-live),
+.dgm-svg.is-live .dgm-channel {
+  animation: dgm-creep calc(6.4s + var(--life, 0) * 3.6s) linear infinite;
+  animation-delay: calc(var(--life, 0) * -8.8s);
 }
 
 .dgm-site {
@@ -9502,20 +9656,41 @@ html.is-hidden .clinic-node i,
 .dgm-hit { fill: none; pointer-events: all; }
 
 .dgm-railnode { fill: color-mix(in srgb, var(--text) 24%, transparent); transition: fill 260ms ease; }
-.dgm-rail.is-live .dgm-railnode { fill: var(--accent); }
-.dgm-rail.is-live .dgm-leader { stroke: color-mix(in srgb, var(--accent) 56%, transparent); }
+.dgm-rail.is-live .dgm-railnode { fill: var(--ink); }
+.dgm-rail.is-live .dgm-leader { stroke: color-mix(in srgb, var(--ink) 56%, transparent); }
 
 /* Ports. Where the tines converge, and where structure leaves a site. */
 
 .dgm-port {
   fill: var(--surface-solid);
-  stroke: color-mix(in srgb, var(--accent) 68%, transparent);
+  stroke: color-mix(in srgb, var(--ink) 68%, transparent);
   stroke-width: 1.4;
   transition: stroke 300ms ease;
 }
 
-.dgm-port.is-hub { stroke: var(--accent-strong); stroke-width: 1.8; }
-.dgm-throat { fill: var(--accent-strong); }
+/* No fill: the hub is the rim of a hole, and a filled ring would paper over the
+   shaft it is the mouth of. */
+.dgm-port.is-hub { fill: none; stroke: var(--ink-deep); stroke-width: 1.8; }
+.dgm-throat { fill: var(--ink-deep); }
+
+/* The throat is a hole, so it is drawn as one. Clipped to the mouth of the hub,
+   what is drawn is exactly what can be seen down it: the far wall across the
+   top and the floor five pixels below, with the throat itself standing on that
+   floor rather than printed on the deck. A shaft is the one thing that makes an
+   intake read as taking something in rather than as a dot in a ring, and it
+   costs two shapes and a clip. */
+
+.dgm-shaft {
+  fill: color-mix(in srgb, var(--text) 30%, var(--surface-solid));
+  stroke: none;
+  pointer-events: none;
+}
+
+.dgm-shaftfloor {
+  fill: color-mix(in srgb, var(--text) 9%, var(--surface-solid));
+  stroke: none;
+  pointer-events: none;
+}
 
 /* The intake apron. Three sources land inside one catchment, everything in the
    catchment goes to one throat, and a queue waits its turn in the quadrant
@@ -9524,7 +9699,7 @@ html.is-hidden .clinic-node i,
 
 .dgm-catch {
   fill: none;
-  stroke: color-mix(in srgb, var(--accent) 28%, transparent);
+  stroke: color-mix(in srgb, var(--ink) 30%, transparent);
   stroke-width: 1;
   stroke-dasharray: 4 5;
   stroke-linecap: round;
@@ -9533,10 +9708,12 @@ html.is-hidden .clinic-node i,
 }
 
 .dgm-queue {
-  fill: color-mix(in srgb, var(--accent) 13%, var(--surface-solid));
-  stroke: color-mix(in srgb, var(--accent) 44%, transparent);
+  fill: color-mix(in srgb, var(--ink) 15%, var(--surface-solid));
+  stroke: color-mix(in srgb, var(--ink) 48%, transparent);
   stroke-width: 1;
   pointer-events: none;
+  transition: fill 260ms ease;
+  vector-effect: non-scaling-stroke;
 }
 
 /* The intake never stops pulling. Every proposal waiting on the apron has a run
@@ -9553,7 +9730,7 @@ html.is-hidden .clinic-node i,
 
 .dgm-intakepath {
   fill: none;
-  stroke: color-mix(in srgb, var(--accent) 22%, transparent);
+  stroke: color-mix(in srgb, var(--ink) 24%, transparent);
   stroke-width: 1;
   stroke-linecap: round;
   pointer-events: none;
@@ -9562,7 +9739,7 @@ html.is-hidden .clinic-node i,
 
 .dgm-intake {
   fill: none;
-  stroke: var(--accent);
+  stroke: var(--ink);
   stroke-width: 2;
   stroke-linecap: round;
   stroke-dasharray: 7 193;
@@ -9570,7 +9747,7 @@ html.is-hidden .clinic-node i,
   pointer-events: none;
 }
 
-.dgm-deck.is-hot .dgm-intakepath { stroke: color-mix(in srgb, var(--accent) 46%, transparent); }
+.dgm-deck.is-hot .dgm-intakepath { stroke: color-mix(in srgb, var(--ink) 48%, transparent); }
 
 .dgm-svg.is-live .dgm-intake {
   animation: dgm-travel calc(3.6s + var(--life, 0) * 2.4s) linear infinite;
@@ -9594,9 +9771,15 @@ html.is-hidden .clinic-node i,
 
 .dgm-svg.is-live .dgm-catch { animation: dgm-crawl 2.6s linear infinite; }
 .dgm-svg.is-live .dgm-throat { animation: dgm-swallow 1.9s ease-in-out infinite; }
-.dgm-deck.is-hot .dgm-catch { stroke: color-mix(in srgb, var(--accent) 58%, transparent); }
-.dgm-svg.is-live .dgm-deck.is-hot .dgm-catch { animation-duration: 1.3s; }
-.dgm-svg.is-live .dgm-deck.is-hot .dgm-throat { animation-duration: 1.05s; }
+/* Leaning on the intake deepens the catchment and the proposals waiting in it,
+   and puts a second mark on every run. It used to wind the crawl and the
+   swallow on as well - which is a rate change on two clocks that are already
+   carrying something, so the ants round the catchment and the throat's own
+   breath both jumped to wherever the new phase happened to land the instant a
+   cursor arrived. Nothing here re-times a running clock any more: a mechanism
+   under a pointer carries more, it does not run faster. */
+.dgm-deck.is-hot .dgm-catch { stroke: color-mix(in srgb, var(--ink) 60%, transparent); }
+.dgm-deck.is-hot .dgm-queue { fill: color-mix(in srgb, var(--ink) 30%, var(--surface-solid)); }
 
 /* Trident: the three proposal surfaces. They are drawn identically on purpose.
    The reader picks which one is proposing, and the aperture holds all the same
@@ -9606,7 +9789,7 @@ html.is-hidden .clinic-node i,
 .dgm-plate:focus { outline: none; }
 
 .dgm-plate:focus-visible > .dgm-solid > .dgm-face-top {
-  stroke: var(--accent-strong);
+  stroke: var(--ink-deep);
   stroke-width: 2;
 }
 
@@ -9641,8 +9824,8 @@ html.is-hidden .clinic-node i,
 }
 
 .dgm-motif line { stroke-linecap: round; }
-.dgm-motif .is-on { fill: color-mix(in srgb, var(--accent) 26%, var(--bg-soft)); }
-.dgm-plate.is-live .dgm-motif { fill: var(--accent-soft); stroke: var(--accent); }
+.dgm-motif .is-on { fill: color-mix(in srgb, var(--ink) 26%, var(--bg-soft)); }
+.dgm-plate.is-live .dgm-motif { fill: var(--ink-soft); stroke: var(--ink); }
 
 /* The agent's motif is a loop, so it loops. The old one ran three spokes into
    the middle of a hub disc, which read as lines crossing inside a circle rather
@@ -9657,11 +9840,11 @@ html.is-hidden .clinic-node i,
 }
 
 .dgm-plate.is-live .dgm-loopnode,
-.dgm-plate.is-hot .dgm-loopnode { fill: var(--accent-strong); }
+.dgm-plate.is-hot .dgm-loopnode { fill: var(--ink-deep); }
 
 .dgm-loopflow {
   fill: none;
-  stroke: var(--accent-strong);
+  stroke: var(--ink-deep);
   stroke-width: 2.2;
   stroke-linecap: round;
   stroke-dasharray: 8 192;
@@ -9692,7 +9875,7 @@ html.is-hidden .clinic-node i,
   letter-spacing: 0.04em;
 }
 
-.dgm-plate.is-live .dgm-platelabel { fill: var(--accent-strong); }
+.dgm-plate.is-live .dgm-platelabel { fill: var(--ink-deep); }
 
 .dgm-tine {
   stroke: color-mix(in srgb, var(--text) 34%, transparent);
@@ -9702,16 +9885,17 @@ html.is-hidden .clinic-node i,
   transition: stroke 260ms ease;
 }
 
-.dgm-tine.is-live { stroke: var(--accent); stroke-dasharray: none; stroke-width: 1.8; }
+.dgm-tine.is-live { stroke: var(--ink); stroke-dasharray: none; stroke-width: 1.8; }
 
 .dgm-pad {
   fill: var(--bg-soft);
   stroke: color-mix(in srgb, var(--text) 30%, transparent);
   stroke-width: 1;
   transition: fill 260ms ease, stroke 260ms ease;
+  vector-effect: non-scaling-stroke;
 }
 
-.dgm-pad.is-live { fill: var(--accent-soft); stroke: var(--accent); }
+.dgm-pad.is-live { fill: var(--ink-soft); stroke: var(--ink); }
 
 /* A pad is where a source puts a proposal down, so it rings when one leaves.
    Same clock as that source's spark, so the ping and the mark setting off down
@@ -9738,7 +9922,7 @@ html.is-hidden .clinic-node i,
 }
 
 .dgm-spark {
-  stroke: var(--accent);
+  stroke: var(--ink);
   stroke-width: 2.4;
   stroke-linecap: round;
   stroke-dasharray: 9 191;
@@ -9755,20 +9939,66 @@ html.is-hidden .clinic-node i,
    filled, what is not is visibly not, and every one of them names itself. The
    contract never stops checking, so a tile ticks now and then on its own. */
 
+/* A field is a solid standing on the deck. Bound, it is up on its own storey
+   with two side faces under it; unbound, the same footprint is lying flat on
+   the deck, waiting to be built on. The cap translates and the faces fade on
+   one clock, so what a reader sees is the field rising - which is the whole
+   difference between a count that changes colour and a count that happens.
+
+   Inside `planSpace` a translate is in plan units, so lifting the cap means
+   equal negative steps on both plan axes: they cancel in x and subtract in y,
+   which is straight up the screen. `--lift` is that step, handed down from the
+   solid that was built with it, so the cap can never land somewhere its own
+   side faces do not reach. */
+
+.dgm-field .dgm-face-left,
+.dgm-field .dgm-face-right {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 320ms ease;
+}
+
+.dgm-field.is-bound .dgm-face-left,
+.dgm-field.is-bound .dgm-face-right { opacity: 1; }
+
 .dgm-fieldtile {
   fill: var(--surface-solid);
   stroke: color-mix(in srgb, var(--text) 22%, transparent);
   stroke-width: 1;
   cursor: pointer;
-  transition: fill 320ms ease, stroke 320ms ease;
+  vector-effect: non-scaling-stroke;
+  transition: fill 320ms ease, stroke 320ms ease, transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+.dgm-fieldtile.is-bound { transform: translate(calc(var(--lift, 0px) * -1), calc(var(--lift, 0px) * -1)); }
 
 .dgm-fieldtile.is-bound {
-  fill: color-mix(in srgb, var(--accent) 24%, var(--surface-solid));
-  stroke: color-mix(in srgb, var(--accent) 64%, transparent);
+  fill: color-mix(in srgb, var(--ink) 24%, var(--surface-solid));
+  stroke: color-mix(in srgb, var(--ink) 64%, transparent);
 }
 
-.dgm-fieldtile.is-named { fill: var(--accent); stroke: var(--accent-strong); stroke-width: 1.6; }
+.dgm-fieldtile.is-named { fill: var(--ink); stroke: var(--ink-deep); stroke-width: 1.6; }
+
+/* Things standing on a deck are extruded like the deck is. A riser is the same
+   plan shape drawn a few pixels lower, so what shows under it is its own side -
+   the identical construction every solid in the figure is built from, at the
+   scale of a tile, a ledger row or a shutter plinth.
+
+   Which makes it a state and not a decoration: a bound field stands up, a
+   committed row stands up, and nineteen tiles lying flat on a deck is a table
+   while nineteen that rise as the contract binds them is a count a reader can
+   watch happen. It is also the only depth cue available inside a plan, where
+   everything is drawn on one surface by definition. */
+
+.dgm-riser {
+  fill: color-mix(in srgb, var(--ink) 46%, var(--text));
+  stroke: none;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 320ms ease;
+}
+
+.dgm-riser.is-up { opacity: 0.28; }
 
 /* The answer is drawn in the tile the reader is pointing at: a tick if the
    contract has checked that field, a flat bar if it has not. A count of
@@ -9805,13 +10035,13 @@ html.is-hidden .clinic-node i,
    left saying the contract is still checking rather than finished. */
 
 @keyframes dgm-passbound {
-  0%, 9%, 100% { stroke-width: 1; fill: color-mix(in srgb, var(--accent) 24%, var(--surface-solid)); }
-  4% { stroke-width: 2.4; fill: color-mix(in srgb, var(--accent) 46%, var(--surface-solid)); }
+  0%, 9%, 100% { stroke-width: 1; fill: color-mix(in srgb, var(--ink) 24%, var(--surface-solid)); }
+  4% { stroke-width: 2.4; fill: color-mix(in srgb, var(--ink) 46%, var(--surface-solid)); }
 }
 
 @keyframes dgm-passhard {
   0%, 9%, 100% { stroke-width: 1; }
-  4% { stroke-width: 3.2; stroke: var(--accent-strong); }
+  4% { stroke-width: 3.2; stroke: var(--ink-deep); }
 }
 
 .dgm-svg.is-live .dgm-fieldtile:not(.is-named) {
@@ -9843,7 +10073,14 @@ html.is-hidden .clinic-node i,
    reading size was one grey blob. Clipped, a blade shows exactly one edge - the
    seam - and cannot be drawn outside the hole it is filling at any throw. */
 
-.dgm-aperture { stroke: none; opacity: 0.8; }
+/* The opening is a shaft, not a printed square. Clipped to the hole, so what is
+   drawn is exactly what can be seen down it: the far wall across the top, then
+   the floor five pixels below, hatched because the floor is the one surface in
+   this deck the reader is looking straight down at. The blades run in over the
+   top of it, which is why a shut shutter still reads as covering something -
+   before, they covered a flat patch of hatch printed on the deck. */
+
+.dgm-aperture { stroke: none; opacity: 0.72; }
 
 .dgm-leaf { transition: transform 620ms cubic-bezier(0.16, 1, 0.3, 1); }
 
@@ -9872,7 +10109,7 @@ html.is-hidden .clinic-node i,
   transition: stroke 300ms ease;
 }
 
-.dgm-holerim.is-open { stroke: var(--settled); }
+.dgm-holerim.is-open { stroke: var(--settled); stroke-width: 1.6; }
 
 /* The bolts across the seam. Shut is a mechanism holding, so while it holds it
    takes strain - a fraction of a pixel of it, on its own clock - instead of
@@ -9927,7 +10164,8 @@ html.is-hidden .clinic-node i,
 
 .dgm-svg.is-live .dgm-bolt:not(.is-clear) { animation: dgm-load 7.6s ease-in-out infinite; }
 .dgm-svg.is-live .dgm-leaf:not(.is-open) { animation: dgm-strain 7.6s ease-in-out infinite; }
-.dgm-svg.is-live .dgm-shutter:not(.is-open) .dgm-housing { animation: dgm-brace 7.6s ease-in-out infinite; }
+.dgm-svg.is-live .dgm-shutter:not(.is-open) .dgm-housing { animation: dgm-brace 7.6s ease-in-out infinite;   vector-effect: non-scaling-stroke;
+}
 
 /* Lean on the approval deck and the same thing happens on demand, harder: the
    blades give against their own bolts and come straight back, and the bolts
@@ -9965,6 +10203,7 @@ html.is-hidden .clinic-node i,
   stroke: color-mix(in srgb, var(--text) 26%, transparent);
   stroke-width: 1;
   stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
 }
 
 /* The ledger. One row per committed run, front row last, and every row chained
@@ -9975,8 +10214,26 @@ html.is-hidden .clinic-node i,
   fill: var(--surface-solid);
   stroke: color-mix(in srgb, var(--text) 20%, transparent);
   stroke-width: 1;
+  vector-effect: non-scaling-stroke;
   transition: fill 320ms ease, stroke 320ms ease;
 }
+
+/* The row and everything written on it go up together; the hash chip and the
+   chain stay on the deck, because what stands up is the record and what binds
+   it to the record above it is a link running along the surface. */
+
+.dgm-ledgerrow .dgm-face-left,
+.dgm-ledgerrow .dgm-face-right {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 320ms ease;
+}
+
+.dgm-ledgerrow.is-written .dgm-face-left,
+.dgm-ledgerrow.is-written .dgm-face-right { opacity: 1; }
+
+.dgm-ledgercap { transition: transform 380ms cubic-bezier(0.16, 1, 0.3, 1); }
+.dgm-ledgerrow.is-written .dgm-ledgercap { transform: translate(calc(var(--lift, 0px) * -1), calc(var(--lift, 0px) * -1)); }
 
 .dgm-ledgertick { fill: color-mix(in srgb, var(--text) 16%, transparent); transition: fill 320ms ease; }
 
@@ -10005,9 +10262,9 @@ html.is-hidden .clinic-node i,
    bars read as an illustration of a ledger; a thin accent edge round a row that
    is otherwise the same paper as the rest of the deck reads as a record. */
 
-.dgm-ledgerrow.is-written .dgm-ledgerbar { fill: color-mix(in srgb, var(--accent) 9%, var(--surface-solid)); stroke: var(--accent); }
-.dgm-ledgerrow.is-written .dgm-ledgertick { fill: color-mix(in srgb, var(--accent) 72%, transparent); }
-.dgm-ledgerrow.is-written .dgm-ledgerhash { fill: color-mix(in srgb, var(--accent) 22%, var(--surface-solid)); stroke: var(--accent); }
+.dgm-ledgerrow.is-written .dgm-ledgerbar { fill: color-mix(in srgb, var(--ink) 9%, var(--surface-solid)); stroke: var(--ink); }
+.dgm-ledgerrow.is-written .dgm-ledgertick { fill: color-mix(in srgb, var(--ink) 72%, transparent); }
+.dgm-ledgerrow.is-written .dgm-ledgerhash { fill: color-mix(in srgb, var(--ink) 22%, var(--surface-solid)); stroke: var(--ink); }
 .dgm-ledgerrow.is-written .dgm-ledgerseal { fill: var(--settled); }
 
 /* The ledger posts, and posting is the thing worth watching: a row is committed
@@ -10023,7 +10280,7 @@ html.is-hidden .clinic-node i,
 
 .dgm-ledgerflow {
   fill: none;
-  stroke: var(--accent-strong);
+  stroke: var(--ink-deep);
   stroke-width: 2.2;
   stroke-linecap: round;
   stroke-dasharray: 6 194;
@@ -10070,9 +10327,9 @@ html.is-hidden .clinic-node i,
    is the honest answer to a pointer: the record is not revealed, the chain
    holding it together is. */
 
-.dgm-deck.is-hot .dgm-ledgerchain { stroke: var(--accent); stroke-dasharray: none; }
-.dgm-deck.is-hot .dgm-ledgerhash { fill: var(--accent-strong); stroke: var(--accent-strong); }
-.dgm-deck.is-hot .dgm-ledgerbar { stroke: color-mix(in srgb, var(--accent) 62%, transparent); }
+.dgm-deck.is-hot .dgm-ledgerchain { stroke: var(--ink); stroke-dasharray: none; }
+.dgm-deck.is-hot .dgm-ledgerhash { fill: var(--ink-deep); stroke: var(--ink-deep); }
+.dgm-deck.is-hot .dgm-ledgerbar { stroke: color-mix(in srgb, var(--ink) 62%, transparent); }
 
 /* The descent. One short drop per deck, down the free left edge, lit one at a
    time - and the drop out of the site deck has no path at all until somebody
@@ -10088,9 +10345,15 @@ html.is-hidden .clinic-node i,
   pointer-events: none;
 }
 
+/* A drop is owned by the deck it lands on, so it is drawn in that deck's ink.
+   That is the four-colour claim in one move: the descent leaves the machine
+   tier violet, arrives at the contract blue, reaches the approval deck amber
+   and is committed green. Nothing about the run is stated in words that the
+   colour of the line does not already say. */
+
 .dgm-droppath {
   fill: none;
-  stroke: color-mix(in srgb, var(--accent) 32%, transparent);
+  stroke: color-mix(in srgb, var(--ink) 32%, transparent);
   stroke-width: 1.6;
   stroke-linecap: round;
   stroke-dasharray: 100;
@@ -10098,7 +10361,7 @@ html.is-hidden .clinic-node i,
 }
 
 .dgm-drop.is-done .dgm-droppath { stroke-dashoffset: 0; }
-.dgm-drop.is-latest .dgm-droppath { stroke: var(--accent); stroke-width: 2.6; }
+.dgm-drop.is-latest .dgm-droppath { stroke: var(--ink); stroke-width: 2.6; }
 .dgm-svg.is-hold .dgm-drop.is-latest .dgm-droppath { stroke: var(--warning); }
 
 .dgm-svg.is-live .dgm-droppath {
@@ -10107,7 +10370,7 @@ html.is-hidden .clinic-node i,
 
 .dgm-dropflow {
   fill: none;
-  stroke: var(--accent-strong);
+  stroke: var(--ink-deep);
   stroke-width: 2.6;
   stroke-linecap: round;
   stroke-dasharray: 7 193;
@@ -10127,7 +10390,7 @@ html.is-hidden .clinic-node i,
    stops the run is the thing the run visibly arrives at. */
 
 .dgm-approach {
-  stroke: color-mix(in srgb, var(--accent) 46%, transparent);
+  stroke: color-mix(in srgb, var(--ink) 46%, transparent);
   stroke-width: 2.2;
   stroke-linecap: round;
   stroke-dasharray: 100;
@@ -10143,13 +10406,13 @@ html.is-hidden .clinic-node i,
 
 .dgm-dropnode {
   fill: var(--surface-solid);
-  stroke: color-mix(in srgb, var(--accent) 42%, transparent);
+  stroke: color-mix(in srgb, var(--ink) 42%, transparent);
   stroke-width: 1.4;
   opacity: 0;
 }
 
 .dgm-drop.is-done .dgm-dropnode { opacity: 1; }
-.dgm-drop.is-latest .dgm-dropnode { fill: var(--accent); stroke: var(--accent-strong); }
+.dgm-drop.is-latest .dgm-dropnode { fill: var(--ink); stroke: var(--ink-deep); }
 .dgm-svg.is-hold .dgm-drop.is-latest .dgm-dropnode { fill: var(--warning); stroke: var(--warning); }
 .dgm-svg.is-live .dgm-dropnode { transition: opacity 300ms ease 400ms, fill 300ms ease, stroke 300ms ease; }
 
@@ -10171,6 +10434,60 @@ html.is-hidden .clinic-node i,
 .dgm-svg.is-live .dgm-library,
 .dgm-svg.is-live .dgm-liftchip { animation: dgm-drift 11s ease-in-out infinite; }
 
+/* The slab's shade on the federation runs the drift's clock, not a tier's, so
+   the ground darkens as the library settles towards it and lifts as it rises. */
+.dgm-svg.is-live .dgm-seat.is-library {
+  animation-duration: 11s;
+  animation-delay: 0s;
+}
+
+/* Each site orbits its own footprint. Not a bob - a true plan circle of radius
+   two, carried through the projection, so the three of them move in the ground
+   rather than hovering over it: equal steps on both plan axes come out as an
+   ellipse in the ratio the projection itself uses, and a solid tracing one
+   reads as sitting on a plane that is alive rather than drifting off it.
+   Eight stops, because four corners of an ellipse traced linearly is a diamond.
+   The site that has contributed most is the slowest, by its own clock.
+   `dgm-reach` runs the same circle in plan units inside the ground group, so a
+   site never drifts out of the coverage it carries.
+
+   It lives on an inner group. The hover lift belongs to the site itself, and a
+   transform an animation owns cannot also be transitioned - two groups is what
+   lets a reader pick up a site that is already moving without the drift being
+   replaced by the lift for as long as the cursor is there. */
+
+@keyframes dgm-orbit {
+  0%, 100% { transform: translate(1.73px, 0.68px); }
+  12.5% { transform: translate(0, 0.96px); }
+  25% { transform: translate(-1.73px, 0.68px); }
+  37.5% { transform: translate(-2.45px, 0); }
+  50% { transform: translate(-1.73px, -0.68px); }
+  62.5% { transform: translate(0, -0.96px); }
+  75% { transform: translate(1.73px, -0.68px); }
+  87.5% { transform: translate(2.45px, 0); }
+}
+
+@keyframes dgm-orbitplan {
+  0%, 100% { transform: translate(2px, 0); }
+  12.5% { transform: translate(1.41px, 1.41px); }
+  25% { transform: translate(0, 2px); }
+  37.5% { transform: translate(-1.41px, 1.41px); }
+  50% { transform: translate(-2px, 0); }
+  62.5% { transform: translate(-1.41px, -1.41px); }
+  75% { transform: translate(0, -2px); }
+  87.5% { transform: translate(1.41px, -1.41px); }
+}
+
+.dgm-svg.is-live .dgm-orbit {
+  animation: dgm-orbit calc(19s + var(--life, 0) * 11s) linear infinite;
+  animation-delay: calc(var(--life, 0) * -24s);
+}
+
+.dgm-svg.is-live .dgm-reach {
+  animation: dgm-orbitplan calc(19s + var(--life, 0) * 11s) linear infinite;
+  animation-delay: calc(var(--life, 0) * -24s);
+}
+
 /* Lean on the plane and the library resolves: traffic doubles on every bound
    link, what it already holds rings harder, and the criteria that are bound take
    the strong accent. Nothing is revealed that was hidden - the panel works
@@ -10180,8 +10497,51 @@ html.is-hidden .clinic-node i,
 
 .dgm-library.is-hot .dgm-traffic { stroke-dasharray: 8 92; }
 .dgm-library.is-hot .dgm-link.is-bound { stroke: var(--accent); }
-.dgm-library.is-hot .dgm-node.is-bound { fill: var(--accent-strong); }
+.dgm-library.is-hot .dgm-crit.is-bound .dgm-node { fill: var(--accent-strong); }
+.dgm-library.is-hot .dgm-crit.is-bound :is(.dgm-face-left, .dgm-face-right) {
+  fill: color-mix(in srgb, var(--accent) 22%, var(--surface-solid));
+}
 .dgm-library.is-hot .dgm-pulse { stroke: var(--accent-strong); stroke-width: 1.8; }
+
+/* Binding is elevation, and a criterion is a plate rather than a dot. Unbound,
+   it is its own footprint lying flat on the slab; bound, it is standing on that
+   footprint with two side faces under it, as high as it is connected - so the
+   library grows a skyline with a shape to it, the hubs are the tall buildings,
+   and coverage compounding is something a reader watches happen.
+
+   The cap translates and the faces fade on one clock, and `--lift` is the plan
+   step the solid was built with, so a cap can never land somewhere its own
+   sides do not reach. Inside `planSpace` a translate is in plan units: equal
+   negative steps on both axes cancel in x and subtract in y, which is straight
+   up the screen. */
+
+.dgm-crit {
+  --in: clamp(0, calc((var(--spread, 1) - var(--stagger, 0) * 0.8) * 3.2), 1);
+  opacity: var(--in);
+}
+
+.dgm-crit .dgm-face-left,
+.dgm-crit .dgm-face-right {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 420ms ease, fill 300ms ease;
+}
+
+.dgm-crit .dgm-face-left {
+  fill: color-mix(in srgb, var(--accent) 13%, var(--body-near));
+  stroke: color-mix(in srgb, var(--text) 30%, transparent);
+}
+
+.dgm-crit .dgm-face-right {
+  fill: color-mix(in srgb, var(--accent) 22%, var(--body-far));
+  stroke: color-mix(in srgb, var(--text) 34%, transparent);
+}
+
+.dgm-crit.is-bound .dgm-face-left,
+.dgm-crit.is-bound .dgm-face-right { opacity: 1; }
+
+.dgm-crit.is-bound .dgm-node { transform: translate(calc(var(--lift, 0px) * -1), calc(var(--lift, 0px) * -1)); }
+.dgm-resolve.is-up { transform: translateY(calc(var(--rise, 0px) * -1)); }
 
 .dgm-link {
   --in: clamp(0, calc((var(--spread, 1) - var(--stagger, 0)) * 2.6), 1);
@@ -10216,21 +10576,29 @@ html.is-hidden .clinic-node i,
 }
 
 .dgm-node {
-  --in: clamp(0, calc((var(--spread, 1) - var(--stagger, 0) * 0.8) * 3.2), 1);
-  fill: color-mix(in srgb, var(--text) 22%, transparent);
-  opacity: var(--in);
-  transition: fill 420ms ease, r 420ms cubic-bezier(0.16, 1, 0.3, 1);
+  fill: color-mix(in srgb, var(--text) 20%, var(--surface-solid));
+  stroke: color-mix(in srgb, var(--text) 26%, transparent);
+  stroke-width: 1;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  transition: fill 420ms ease, stroke 420ms ease, transform 520ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.dgm-node.is-bound { fill: var(--accent); }
-.dgm-node.is-new { fill: var(--accent-strong); }
+.dgm-crit.is-bound .dgm-node { fill: var(--accent); stroke: var(--accent-strong); }
+.dgm-crit.is-new .dgm-node { fill: var(--accent-strong); stroke: var(--accent-strong); }
+
+/* A criterion ringing out. On a two-pixel dot this could swing the whole way
+   down and still read as one thing pulsing; on a roof twelve pixels across it
+   reads as a second colour, and forty-two of them in two colours is a chart
+   legend nobody asked for. Shallow enough that the population stays one
+   material and only the light on it moves. */
 
 @keyframes dgm-beat {
   0%, 100% { fill-opacity: 1; }
-  50% { fill-opacity: 0.42; }
+  50% { fill-opacity: 0.72; }
 }
 
-.dgm-svg.is-live .dgm-node.is-bound {
+.dgm-svg.is-live .dgm-crit.is-bound .dgm-node {
   animation: dgm-beat calc(3.4s + var(--life, 0) * 3.8s) ease-in-out infinite;
   animation-delay: calc(var(--life, 0) * -9s);
 }
@@ -10244,14 +10612,37 @@ html.is-hidden .clinic-node i,
 .dgm-countval { fill: var(--accent-strong); font-family: var(--font-mono); font-size: 12px; font-weight: 700; }
 .dgm-countkey { fill: var(--muted); font-size: 9px; font-weight: 600; letter-spacing: 0.1em; }
 
-/* Structure rising. Every path in Nectar points the same way, because there is
-   no reason for the library to ask a site for anything. */
+/* The channels. Structure crosses in both directions here and a record crosses
+   in neither, which is a different claim from the one this figure used to make
+   and a truer one: a library nobody can take anything back out of is a filing
+   cabinet. What never moves is the record, and nothing in either direction is
+   anything but a definition.
 
-/* Nothing on a rising arc is a target. Its tag is a filled pill that crosses the
-   library's own plane, and a pointer sliding over one would otherwise drop the
-   panel's hover on the way past. What lights an arc is pointing at the site that
-   sent it. */
+   Three layers, in the order a reader needs them. The route is always there, so
+   the three sites read as on one network before anything has been published.
+   The arc fills in when a site publishes, which is the event. And two marks run
+   the same curve in opposite directions on separate clocks, which is the
+   traffic - one dash pattern travelling forward, one travelling back, so the
+   direction of an exchange is something a reader sees rather than infers from
+   an arrowhead four pixels wide. */
+
+/* Nothing on a channel is a target. Its tag is a filled pill that crosses the
+   library's own slab, and a pointer sliding over one would otherwise drop the
+   panel's hover on the way past. What lights a channel is pointing at the site
+   that owns it. */
 .dgm-lift { pointer-events: none; }
+
+.dgm-channel {
+  fill: none;
+  stroke: color-mix(in srgb, var(--text) 17%, transparent);
+  stroke-width: 1;
+  stroke-dasharray: 2 5;
+  stroke-linecap: round;
+  opacity: clamp(0, calc((var(--spread, 1) - 0.5) * 2.6), 1);
+  transition: stroke 300ms ease;
+}
+
+.dgm-lift.is-hot .dgm-channel { stroke: color-mix(in srgb, var(--accent) 46%, transparent); }
 
 .dgm-liftpath {
   fill: none;
@@ -10264,14 +10655,84 @@ html.is-hidden .clinic-node i,
 }
 
 .dgm-lift.is-up .dgm-liftpath { stroke-dashoffset: 0; }
-.dgm-svg.is-live .dgm-liftpath { transition: stroke-dashoffset 880ms cubic-bezier(0.16, 1, 0.3, 1); }
+
+/* Both properties transition, so leaning on a channel thickens it rather than
+   stepping it. A stroke width that jumps under the cursor is the same jolt as a
+   clock that jumps, and it was the last one left in this figure. */
+.dgm-svg.is-live .dgm-liftpath {
+  transition: stroke-dashoffset 880ms cubic-bezier(0.16, 1, 0.3, 1), stroke 300ms ease, stroke-width 300ms ease;
+}
+
+/* Up and back, on the one curve. The mark that rises is the tighter of the two
+   and runs in the strong accent - a site offering the structure it used. The one
+   that falls is longer and lighter, because what comes back down is a whole
+   definition rather than a ping, and it wants to read as arriving rather than
+   as being fetched. */
+
+@keyframes dgm-return {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: 200; }
+}
+
+.dgm-rise,
+.dgm-fall {
+  fill: none;
+  stroke-linecap: round;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.dgm-rise { stroke: var(--accent-strong); stroke-width: 2.4; stroke-dasharray: 8 192; }
+.dgm-fall { stroke: var(--accent); stroke-width: 2.8; stroke-dasharray: 14 186; }
+
+.dgm-lift.is-up .dgm-rise { opacity: calc(0.95 * var(--run-in, 1)); }
+.dgm-lift.is-down .dgm-fall { opacity: calc(0.8 * var(--run-in, 1)); }
+
+.dgm-svg.is-live .dgm-lift.is-up .dgm-rise {
+  animation: dgm-travel calc(3.8s + var(--life, 0) * 2.6s) linear infinite;
+  animation-delay: calc(var(--life, 0) * -5.1s);
+}
+
+.dgm-svg.is-live .dgm-lift.is-down .dgm-fall {
+  animation: dgm-return calc(4.6s + var(--life, 0) * 3.2s) linear infinite;
+  animation-delay: calc(var(--life, 0) * -6.7s);
+}
+
+/* Leaning on a channel doubles what it is carrying, the way leaning on the
+   library doubles its traffic: a second mark in each direction, put there by a
+   dash pattern and not by a rate, so nothing already in flight moves. */
+.dgm-lift.is-hot .dgm-rise { stroke-dasharray: 8 92; }
+.dgm-lift.is-hot .dgm-fall { stroke-dasharray: 14 86; }
 
 .dgm-liftchip { fill: var(--accent-strong); opacity: 0; }
 .dgm-lift.is-up .dgm-liftchip { opacity: 1; }
 .dgm-svg.is-live .dgm-liftchip { transition: opacity 300ms ease 520ms; }
 
+/* The mast. A post on the far corner of a site's own roof, wearing a head wide
+   enough to swallow the foot of the channel that leaves it - which is what lets
+   both ends of that channel move without either one showing a free end. */
+
+.dgm-mast {
+  stroke: color-mix(in srgb, var(--text) 40%, transparent);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  transition: stroke 260ms ease;
+}
+
+.dgm-masthead {
+  fill: var(--surface-solid);
+  stroke: color-mix(in srgb, var(--accent) 54%, transparent);
+  stroke-width: 1.4;
+  transition: stroke 260ms ease;
+}
+
+.dgm-site.is-hot .dgm-mast { stroke: var(--accent-strong); }
+.dgm-site.is-hot .dgm-masthead { stroke: var(--accent-strong); }
+
+.dgm-ticket { pointer-events: none; }
 .dgm-carry { opacity: 0; transform: translateY(10px); }
-.dgm-lift.is-up .dgm-carry { opacity: 1; transform: translateY(0); }
+.dgm-ticket.is-up .dgm-carry { opacity: 1; transform: translateY(0); }
+.dgm-carry .dgm-tagtext { font-size: 8px; }
 .dgm-svg.is-live .dgm-carry { transition: opacity 320ms ease 420ms, transform 520ms cubic-bezier(0.16, 1, 0.3, 1) 420ms; }
 
 /* Reach. What a site's coverage touches. Three of them, growing with the
@@ -10307,7 +10768,7 @@ html.is-hidden .clinic-node i,
   fill: color-mix(in srgb, var(--accent) 5%, transparent);
   stroke: color-mix(in srgb, var(--accent) 52%, transparent);
   stroke-width: 1.1;
-  transition: x var(--grow), y var(--grow), width var(--grow), height var(--grow), stroke 300ms ease;
+  transition: x var(--grow), y var(--grow), width var(--grow), height var(--grow), stroke 300ms ease, stroke-width 300ms ease;
 }
 
 .dgm-reach.is-hot .dgm-reachrim { stroke: var(--accent-strong); stroke-width: 1.4; }
@@ -10412,7 +10873,18 @@ html.is-hidden .clinic-node i,
   stroke-width: 1;
 }
 
-.dgm-sweep { fill: color-mix(in srgb, var(--accent) 38%, transparent); opacity: 0; }
+.dgm-sweep {
+  fill: color-mix(in srgb, var(--accent) 38%, transparent);
+  opacity: 0;
+  transition: fill 260ms ease;
+}
+
+/* The second head, parked until a reader leans on the site. It is the same run
+   at the same rate, half a period behind - which is what makes the wrapper's
+   opacity the only thing that changes when the cursor arrives. */
+.dgm-second { opacity: 0; transition: opacity 240ms ease; }
+.dgm-site.is-hot .dgm-second,
+.dgm-site.is-running .dgm-second { opacity: 1; }
 
 /* The site's number, lettered along its own wall. Set in the machine face at
    wall scale and tracked open, so it reads as stencilled on the object rather
@@ -10442,13 +10914,20 @@ html.is-hidden .clinic-node i,
   animation-delay: calc(var(--stagger, 0) * -6s);
 }
 
+/* Half a period behind the first, on the same clock. */
+.dgm-svg.is-live .dgm-sweep.is-again {
+  animation-delay: calc(var(--stagger, 0) * -6s - 1.5s - var(--life, 0) * 1.2s);
+}
+
 /* Point at a site and it shows you what it does rather than telling you: the
-   local run picks up and crosses its own records, inside its own wall, and
-   still nothing leaves. */
+   local run crosses its own records, inside its own wall, and still nothing
+   leaves. Leaning on it puts a second head across them and deepens the ink -
+   it does not wind the first head on. Re-timing a running clock teleports
+   whatever it was carrying to wherever the new phase happens to land, which is
+   precisely the jolt a reader feels the moment their cursor arrives, and it was
+   in this figure three times over. */
 
 .dgm-svg.is-live .dgm-site.is-hot .dgm-sweep {
-  animation-duration: 1.5s;
-  animation-delay: 0s;
   fill: color-mix(in srgb, var(--accent) 62%, transparent);
 }
 
@@ -10456,16 +10935,39 @@ html.is-hidden .clinic-node i,
 
 .dgm-tagbody {
   fill: var(--surface-solid);
-  stroke: color-mix(in srgb, var(--accent) 40%, transparent);
+  stroke: color-mix(in srgb, var(--ink) 40%, transparent);
   stroke-width: 1;
 }
 
-.dgm-tagtext { fill: var(--accent-strong); font-size: 9px; font-weight: 600; letter-spacing: 0.08em; }
+.dgm-tagtext { fill: var(--ink-deep); font-size: 9px; font-weight: 600; letter-spacing: 0.08em; }
 
 /* Type. Switzer carries every label; the mono face is reserved for values a
    machine produced - counts, identifiers, record totals. */
 
 .dgm-read { fill: var(--text-soft); font-size: 11.5px; font-weight: 500; transition: fill 260ms ease; }
+
+/* Some of the type in these figures stands on a solid, a plate or a pill, and
+   some of it stands on the bare sheet - and the sheet is a dot lattice. A dot
+   landing inside `0 LEAVE` reads as a strike through it, and one landing in
+   `tool loop` reads as a hyphen nobody typed.
+
+   Every label with nothing under it carries its own clearance in the colour of
+   the ground it is on, so the lattice is knocked out around each glyph. Against
+   the flat ground the halo is nothing at all. The labels that sit on something
+   are deliberately not in this list: a page-ground halo on a white deck would
+   be the one thing here that is visible. */
+
+.dgm-side,
+.dgm-sidefact,
+.dgm-platelabel,
+.dgm-platenote,
+.dgm-edge.is-caption,
+.dgm-read {
+  paint-order: stroke fill;
+  stroke: var(--page-ground);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
 
 .dgm-side {
   fill: var(--text-soft);
@@ -10485,7 +10987,7 @@ html.is-hidden .clinic-node i,
 
 .dgm-sidefact.is-quiet { fill: var(--faint); }
 .dgm-rail.is-live .dgm-side { fill: var(--text); }
-.dgm-rail.is-live .dgm-sidefact { fill: var(--accent-strong); }
+.dgm-rail.is-live .dgm-sidefact { fill: var(--ink-deep); }
 
 /* Pointer. Pointing at a solid lifts it off the sheet and lights everything
    tied to it. Hover only re-weights what is already drawn: no part of either
@@ -10503,11 +11005,11 @@ html.is-hidden .clinic-node i,
 
 .dgm-deck.is-hot > .dgm-solid > .dgm-face-top,
 .dgm-plate.is-hot > .dgm-solid > .dgm-face-top,
-.dgm-site.is-hot > .dgm-solid > .dgm-face-top { stroke: var(--accent-strong); stroke-width: 1.5; }
+.dgm-site.is-hot > .dgm-solid > .dgm-face-top { stroke: var(--ink-deep); stroke-width: 1.5; }
 
-.dgm-leader.is-hot { stroke: var(--accent); stroke-width: 1.4; }
-.dgm-tine.is-hot { stroke: var(--accent-strong); stroke-dasharray: none; }
-.dgm-pad.is-hot { fill: var(--accent-soft); stroke: var(--accent-strong); }
+.dgm-leader.is-hot { stroke: var(--ink); stroke-width: 1.4; }
+.dgm-tine.is-hot { stroke: var(--ink-deep); stroke-dasharray: none; }
+.dgm-pad.is-hot { fill: var(--ink-soft); stroke: var(--ink-deep); }
 .dgm-rail.is-hot .dgm-side { fill: var(--text); }
 .dgm-ident.is-hot .dgm-sidefact { fill: var(--accent-strong); }
 .dgm-lift.is-hot .dgm-liftpath { stroke: var(--accent-strong); stroke-width: 2.8; }
@@ -10529,7 +11031,7 @@ html.is-hidden .clinic-node i,
 @media (prefers-reduced-motion: reduce) {
   .dgm-svg { transition: none; }
 
-  .dgm-svg :is(.dgm-droppath, .dgm-dropflow, .dgm-dropnode, .dgm-approach, .dgm-spark, .dgm-traffic, .dgm-fieldtile, .dgm-queue, .dgm-face-top, .dgm-holerim, .dgm-bolt, .dgm-leaf, .dgm-ring, .dgm-loopflow, .dgm-side, .dgm-sidefact, .dgm-read, .dgm-tagbody, .dgm-node, .dgm-link, .dgm-liftpath, .dgm-liftchip, .dgm-carry, .dgm-reachfill, .dgm-reachrim, .dgm-sweep, .dgm-wallmark, .dgm-status, .dgm-statustext, .dgm-deck, .dgm-plate, .dgm-site, .dgm-ident, .dgm-catch, .dgm-throat, .dgm-ledgerchain, .dgm-ledgerbar, .dgm-ledgerhash, .dgm-slide, .dgm-housing, .dgm-pad, .dgm-intakepath, .dgm-intake, .dgm-ledgerflow, .dgm-ledgerseal, .dgm-library, .dgm-pulse) {
+  .dgm-svg :is(.dgm-droppath, .dgm-dropflow, .dgm-dropnode, .dgm-approach, .dgm-spark, .dgm-traffic, .dgm-fieldtile, .dgm-queue, .dgm-face-top, .dgm-holerim, .dgm-bolt, .dgm-leaf, .dgm-ring, .dgm-loopflow, .dgm-side, .dgm-sidefact, .dgm-read, .dgm-tagbody, .dgm-node, .dgm-link, .dgm-liftpath, .dgm-liftchip, .dgm-carry, .dgm-reachfill, .dgm-reachrim, .dgm-sweep, .dgm-wallmark, .dgm-status, .dgm-statustext, .dgm-deck, .dgm-plate, .dgm-site, .dgm-ident, .dgm-catch, .dgm-throat, .dgm-ledgerchain, .dgm-ledgerbar, .dgm-ledgerhash, .dgm-slide, .dgm-housing, .dgm-pad, .dgm-intakepath, .dgm-intake, .dgm-ledgerflow, .dgm-ledgerseal, .dgm-library, .dgm-pulse, .dgm-seat, .dgm-riser, .dgm-tine, .dgm-orbit, .dgm-reach, .dgm-crit, .dgm-stand, .dgm-field, .dgm-face-left, .dgm-face-right, .dgm-mast, .dgm-masthead, .dgm-channel, .dgm-rise, .dgm-fall, .dgm-second) {
     transition: none;
     animation: none;
   }
