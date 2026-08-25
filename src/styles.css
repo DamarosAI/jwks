@@ -9192,16 +9192,6 @@ html.is-hidden .clinic-node i,
   margin-top: 28px;
 }
 
-.trident-boundary {
-  max-width: 42ch;
-  margin-top: 22px;
-  padding-top: 18px;
-  border-top: 1px solid var(--border);
-  color: var(--muted);
-  font-size: 0.82rem;
-  line-height: 1.5;
-}
-
 /* The figures are not cards. They sit directly on the page field, which is why
    the lattice behind them belongs to the section and not to the drawing. */
 

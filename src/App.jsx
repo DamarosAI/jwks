@@ -1010,7 +1010,6 @@ function TridentSection() {
           <span><Fingerprint size={18} /> Provider identity</span>
           <span><FileText size={18} /> 19 versioned tasks</span>
         </div>
-        <p className="trident-boundary">Trident prepares source-grounded work. It never publishes a protocol, casts a Screening verdict, chooses a Resolve action, signs, or releases site data.</p>
       </div>
       <div className="trident-diagram">
         <TridentSchematic animate={animate} reduced={reduced} />
