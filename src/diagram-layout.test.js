@@ -305,7 +305,10 @@ describe('Trident and Nectar schematics', () => {
     // free end - and the drop out of the site deck still has no path at all
     // until somebody there has signed.
     assert.match(trident, /const DROPS = LAYERS\.slice\(1\)\.map\(\(deck, index\) => \{/)
-    assert.match(trident, /const head = \[x \+ 13, Math\.round\(\(y - SEP \+ 6\) \* 100\) \/ 100\]/)
+    // Deep enough to survive the tiers drifting apart: thirteen pixels right of
+    // the upper deck's left corner its front edge has already fallen five, so a
+    // head six pixels down sat less than a pixel inside an eleven-pixel skirt.
+    assert.match(trident, /const head = \[x \+ 13, Math\.round\(\(y - SEP \+ 11\) \* 100\) \/ 100\]/)
     assert.match(trident, /<Drop leg=\{DROPS\[0\]\} drops=\{state\.drops\} \/>/)
     assert.match(trident, /<Drop leg=\{DROPS\[1\]\} drops=\{state\.drops\} \/>/)
     assert.match(trident, /<Drop leg=\{DROPS\[2\]\} drops=\{state\.drops\} \/>/)
@@ -408,6 +411,40 @@ describe('Trident and Nectar schematics', () => {
     assert.match(trident, /className="dgm-ledgerflow"/)
     assert.match(DGM_BLOCK, /@keyframes dgm-post \{/)
     assert.match(DGM_BLOCK, /@keyframes dgm-stamp \{/)
+  })
+
+  it('floats the four tiers over one plan, each on its own clock', () => {
+    // The stack is a city, not a masonry pile: four tiers held over one plan,
+    // drifting out of step. `--bob` is registered so it can be animated inside
+    // the same calc() the boot already uses - a second animation on `transform`
+    // would replace the boot outright, and a wrapper group for the float would
+    // leave every rail hanging off a deck that moves without it.
+    assert.match(DGM_BLOCK, /@property --bob \{\s*\n\s*syntax: '<length>';/)
+    assert.match(DGM_BLOCK, /\.dgm-slide \{ transform: translateY\(calc\(var\(--lift, 0px\) \* \(1 - var\(--spread, 1\)\) \+ var\(--bob, 0px\)\)\); \}/)
+    assert.match(DGM_BLOCK, /\.dgm-svg\.is-live \.dgm-slide \{[^}]*animation: dgm-bob/)
+    assert.match(trident, /life: jitter\(index, 12\)/)
+    assert.equal((trident.match(/className="dgm-slide" style=\{\{ '--lift': `\$\{\w+\.lift\}px`, '--life': \w+\.life \}\}>/g) || []).length, 4)
+    // The footprint hairlines stop inside the top deck's skirt rather than on
+    // its corner, so a tier can drift without pulling away from the plan it is
+    // standing on. The skirt edge there is collinear and eleven pixels deep.
+    assert.match(trident, /y2=\{SURFACE\.left\[1\] \+ 5\}/)
+    assert.match(trident, /y2=\{SURFACE\.right\[1\] \+ 5\}/)
+    // Each tier's own mechanism, suited to what that tier is for: the pad rings
+    // as its source lets a proposal go, the pass deepens the tiles it has
+    // reached, the frame braces while it is still holding something, and the
+    // row takes its edge as the seal lands.
+    for (const rule of [
+      '.dgm-svg.is-live .dgm-pad',
+      '.dgm-svg.is-live .dgm-fieldtile.is-bound:not(.is-named)',
+      '.dgm-svg.is-live .dgm-shutter:not(.is-open) .dgm-housing',
+      '.dgm-svg.is-live .dgm-ledgerrow.is-written .dgm-ledgerbar',
+    ]) {
+      const escaped = rule.replace(/[.()*:]/g, (c) => `\\${c}`)
+      assert.match(DGM_BLOCK, new RegExp(`${escaped}[,\\s][^{]*\\{[^}]*animation`))
+    }
+    // The frame stops bracing once nothing is being held, and it is told so
+    // rather than left to infer it from a tone class.
+    assert.match(trident, /dgm-shutter\$\{open \? ' is-open' : ''\}/)
   })
 
   it('answers a pointer by loading a mechanism, not by starting one', () => {
@@ -606,7 +643,20 @@ describe('Trident and Nectar schematics', () => {
     // its seal turns - rather than by a pill parked beside the deck announcing
     // it in words the rail was already carrying.
     assert.match(trident, /const written = state\.receipt \|\| !last/)
-    assert.match(DGM_BLOCK, /\.dgm-ledgerrow\.is-written \.dgm-ledgerseal \{ fill: var\(--success\); \}/)
+    assert.match(DGM_BLOCK, /\.dgm-ledgerrow\.is-written \.dgm-ledgerseal \{ fill: var\(--settled\); \}/)
+  })
+
+  it('keeps the figures off the site green and on a deeper one', () => {
+    // At figure scale - a 1.3px rim round the opening, a 7px seal on a ledger
+    // row, a 9px pill - the success token comes out emerald and reads as a
+    // highlighter, which is the wrong register for a drawing whose subject is a
+    // thing that will not move without a signature. Carried toward the ink it is
+    // still unmistakably the settled colour and stops shouting.
+    assert.match(DGM_BLOCK, /--settled: color-mix\(in srgb, var\(--success\) \d\d%, var\(--text\)\);/)
+    // Derived, not picked: no figure invents a colour of its own.
+    assert.doesNotMatch(DGM_BLOCK, /#[0-9a-fA-F]{3,8}\b/)
+    // And nothing in either drawing reaches past it to the raw token.
+    assert.doesNotMatch(DGM_BLOCK, /(stroke|fill): var\(--success\);/)
   })
 
   it('runs both figures off one trigger anchored to the figure itself', () => {

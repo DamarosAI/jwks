@@ -9429,7 +9429,37 @@ html.is-hidden .clinic-node i,
   initial-value: 0;
 }
 
-.dgm-slide { transform: translateY(calc(var(--lift, 0px) * (1 - var(--spread, 1)))); }
+/* The stack is a city, not a masonry pile. Four tiers held over one plan, each
+   on its own long clock, so the whole thing breathes out of step - which is the
+   difference between a drawing of four decks and a place where four things are
+   running at four different rates.
+
+   `--bob` is registered so it can be animated inside the same calc() the boot
+   uses. A second animation on `transform` would replace the boot outright, and
+   a wrapper group for the float would leave every rail hanging off a deck that
+   moves without it. One number, folded into the transform the tier already has.
+
+   The drift is small on purpose - three pixels against a hundred-and-four-pixel
+   separation. Any more and the drops connecting the tiers start to work visibly
+   for their living, and a governed stack that wobbles is not reassuring. */
+
+@property --bob {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+@keyframes dgm-bob {
+  0%, 100% { --bob: 0px; }
+  50% { --bob: -3px; }
+}
+
+.dgm-slide { transform: translateY(calc(var(--lift, 0px) * (1 - var(--spread, 1)) + var(--bob, 0px))); }
+
+.dgm-svg.is-live .dgm-slide {
+  animation: dgm-bob calc(7.4s + var(--life, 0) * 4.6s) ease-in-out infinite;
+  animation-delay: calc(var(--life, 0) * -10.2s);
+}
 
 /* `--run-in` is the later, harder gate the travelling marks hang off, so motion
    starts after the gain rather than with it - two events, in the order a
@@ -9438,6 +9468,13 @@ html.is-hidden .clinic-node i,
   --spread: 0;
   --charge: 0;
   --run-in: clamp(0, calc((var(--charge, 1) - 0.42) * 2.4), 1);
+  /* The figures' own green, deeper than the site's. At figure scale - a 1.3px
+     rim round the opening, a 7px seal on a ledger row, a 9px pill - the success
+     token comes out emerald and reads as a highlighter, which is the wrong
+     register for a drawing whose whole subject is a thing that will not move
+     without a signature. Carried toward the ink it stays unmistakably the
+     settled colour and stops shouting. */
+  --settled: color-mix(in srgb, var(--success) 76%, var(--text));
   opacity: calc(0.62 + 0.38 * var(--charge, 1));
   transition: --spread 1150ms cubic-bezier(0.16, 1, 0.3, 1), --charge 1450ms 200ms cubic-bezier(0.33, 1, 0.68, 1);
 }
@@ -9676,6 +9713,21 @@ html.is-hidden .clinic-node i,
 
 .dgm-pad.is-live { fill: var(--accent-soft); stroke: var(--accent); }
 
+/* A pad is where a source puts a proposal down, so it rings when one leaves.
+   Same clock as that source's spark, so the ping and the mark setting off down
+   the tine are one event and not two things that happen to be moving. */
+
+@keyframes dgm-emit {
+  0% { stroke-width: 1; }
+  5% { stroke-width: 2.8; }
+  26%, 100% { stroke-width: 1; }
+}
+
+.dgm-svg.is-live .dgm-pad {
+  animation: dgm-emit calc(5.2s + var(--life, 0) * 4.6s) ease-out infinite;
+  animation-delay: calc(var(--life, 0) * -7.3s);
+}
+
 /* A mark travelling one of the three tines. Every source keeps proposing, on
    its own clock, whether or not anybody is pointing at the drawing - which is
    the honest picture: the harness is busy, and none of it carries authority. */
@@ -9747,6 +9799,16 @@ html.is-hidden .clinic-node i,
   4% { stroke-width: 2.4; }
 }
 
+/* A bound tile is already blue, so an extra pixel of edge on it is a wave a
+   reader has to be told about. It deepens as the pass reaches it instead: at
+   19/19 the whole grid is bound, and the band crossing it is the only thing
+   left saying the contract is still checking rather than finished. */
+
+@keyframes dgm-passbound {
+  0%, 9%, 100% { stroke-width: 1; fill: color-mix(in srgb, var(--accent) 24%, var(--surface-solid)); }
+  4% { stroke-width: 2.4; fill: color-mix(in srgb, var(--accent) 46%, var(--surface-solid)); }
+}
+
 @keyframes dgm-passhard {
   0%, 9%, 100% { stroke-width: 1; }
   4% { stroke-width: 3.2; stroke: var(--accent-strong); }
@@ -9757,6 +9819,7 @@ html.is-hidden .clinic-node i,
   animation-delay: calc(var(--seq, 0) * 1.4s);
 }
 
+.dgm-svg.is-live .dgm-fieldtile.is-bound:not(.is-named) { animation-name: dgm-passbound; }
 .dgm-svg.is-live .dgm-deck.is-hot .dgm-fieldtile:not(.is-named) { animation-name: dgm-passhard; }
 
 @keyframes dgm-tick {
@@ -9809,7 +9872,7 @@ html.is-hidden .clinic-node i,
   transition: stroke 300ms ease;
 }
 
-.dgm-holerim.is-open { stroke: var(--success); }
+.dgm-holerim.is-open { stroke: var(--settled); }
 
 /* The bolts across the seam. Shut is a mechanism holding, so while it holds it
    takes strain - a fraction of a pixel of it, on its own clock - instead of
@@ -9853,8 +9916,18 @@ html.is-hidden .clinic-node i,
   90% { transform: translateX(calc(var(--blade, 1) * 2.4px)); }
 }
 
+/* The frame takes the attempt too. Load runs through the whole assembly, not
+   just the two bolts in the middle of it, and a housing that never moves while
+   the thing it holds is being tried is scenery. */
+
+@keyframes dgm-brace {
+  0%, 84%, 100% { stroke-width: 1; }
+  90% { stroke-width: 2; }
+}
+
 .dgm-svg.is-live .dgm-bolt:not(.is-clear) { animation: dgm-load 7.6s ease-in-out infinite; }
 .dgm-svg.is-live .dgm-leaf:not(.is-open) { animation: dgm-strain 7.6s ease-in-out infinite; }
+.dgm-svg.is-live .dgm-shutter:not(.is-open) .dgm-housing { animation: dgm-brace 7.6s ease-in-out infinite; }
 
 /* Lean on the approval deck and the same thing happens on demand, harder: the
    blades give against their own bolts and come straight back, and the bolts
@@ -9935,7 +10008,7 @@ html.is-hidden .clinic-node i,
 .dgm-ledgerrow.is-written .dgm-ledgerbar { fill: color-mix(in srgb, var(--accent) 9%, var(--surface-solid)); stroke: var(--accent); }
 .dgm-ledgerrow.is-written .dgm-ledgertick { fill: color-mix(in srgb, var(--accent) 72%, transparent); }
 .dgm-ledgerrow.is-written .dgm-ledgerhash { fill: color-mix(in srgb, var(--accent) 22%, var(--surface-solid)); stroke: var(--accent); }
-.dgm-ledgerrow.is-written .dgm-ledgerseal { fill: var(--success); }
+.dgm-ledgerrow.is-written .dgm-ledgerseal { fill: var(--settled); }
 
 /* The ledger posts, and posting is the thing worth watching: a row is committed
    by the hash of the row above it landing on it, so the hash is drawn travelling
@@ -9975,8 +10048,20 @@ html.is-hidden .clinic-node i,
   animation-delay: calc((var(--seq, 0) - 0.25) * 2s);
 }
 
+@keyframes dgm-posted {
+  0%, 14%, 100% { stroke-width: 1; }
+  19% { stroke-width: 1.9; }
+}
+
 .dgm-svg.is-live .dgm-ledgerrow.is-written .dgm-ledgerseal {
   animation: dgm-stamp 6.4s ease-out infinite;
+  animation-delay: calc(var(--seq, 0) * 2s - 0.5s);
+}
+
+/* The row takes the hash as the seal lands on it - same clock, same delay, so
+   the edge gaining and the stamp coming down are the one event. */
+.dgm-svg.is-live .dgm-ledgerrow.is-written .dgm-ledgerbar {
+  animation: dgm-posted 6.4s ease-out infinite;
   animation-delay: calc(var(--seq, 0) * 2s - 0.5s);
 }
 
@@ -10435,7 +10520,7 @@ html.is-hidden .clinic-node i,
 .dgm-svg.is-valid .dgm-status,
 .dgm-svg.is-signed .dgm-status { fill: var(--success-soft); }
 .dgm-svg.is-valid .dgm-statustext,
-.dgm-svg.is-signed .dgm-statustext { fill: var(--success); }
+.dgm-svg.is-signed .dgm-statustext { fill: var(--settled); }
 .dgm-svg.is-hold .dgm-status { fill: var(--warning-soft); }
 .dgm-svg.is-hold .dgm-statustext { fill: var(--warning); }
 .dgm-svg.is-pass .dgm-status { fill: var(--accent-soft); }
@@ -10444,7 +10529,7 @@ html.is-hidden .clinic-node i,
 @media (prefers-reduced-motion: reduce) {
   .dgm-svg { transition: none; }
 
-  .dgm-svg :is(.dgm-droppath, .dgm-dropflow, .dgm-dropnode, .dgm-approach, .dgm-spark, .dgm-traffic, .dgm-fieldtile, .dgm-queue, .dgm-face-top, .dgm-holerim, .dgm-bolt, .dgm-leaf, .dgm-ring, .dgm-loopflow, .dgm-side, .dgm-sidefact, .dgm-read, .dgm-tagbody, .dgm-node, .dgm-link, .dgm-liftpath, .dgm-liftchip, .dgm-carry, .dgm-reachfill, .dgm-reachrim, .dgm-sweep, .dgm-wallmark, .dgm-status, .dgm-statustext, .dgm-deck, .dgm-plate, .dgm-site, .dgm-ident, .dgm-catch, .dgm-throat, .dgm-ledgerchain, .dgm-ledgerbar, .dgm-ledgerhash, .dgm-intakepath, .dgm-intake, .dgm-ledgerflow, .dgm-ledgerseal, .dgm-library, .dgm-pulse) {
+  .dgm-svg :is(.dgm-droppath, .dgm-dropflow, .dgm-dropnode, .dgm-approach, .dgm-spark, .dgm-traffic, .dgm-fieldtile, .dgm-queue, .dgm-face-top, .dgm-holerim, .dgm-bolt, .dgm-leaf, .dgm-ring, .dgm-loopflow, .dgm-side, .dgm-sidefact, .dgm-read, .dgm-tagbody, .dgm-node, .dgm-link, .dgm-liftpath, .dgm-liftchip, .dgm-carry, .dgm-reachfill, .dgm-reachrim, .dgm-sweep, .dgm-wallmark, .dgm-status, .dgm-statustext, .dgm-deck, .dgm-plate, .dgm-site, .dgm-ident, .dgm-catch, .dgm-throat, .dgm-ledgerchain, .dgm-ledgerbar, .dgm-ledgerhash, .dgm-slide, .dgm-housing, .dgm-pad, .dgm-intakepath, .dgm-intake, .dgm-ledgerflow, .dgm-ledgerseal, .dgm-library, .dgm-pulse) {
     transition: none;
     animation: none;
   }

@@ -75,6 +75,8 @@ const LAYERS = [
     ...roundedDeck(CX, cy, HALF, THICK, RAD),
     // Where this deck rests while the stack is still closed.
     lift: Math.round((MIDDLE - cy) * 0.44),
+    // Its own drift clock, so the four tiers never breathe in step.
+    life: jitter(index, 12),
   }
 })
 
@@ -166,7 +168,13 @@ const LEDGER = [-33, -11, 11, 33].map((y, index, all) => ({
 // either one never opens a gap: there is no free end left to hang.
 const DROPS = LAYERS.slice(1).map((deck, index) => {
   const [x, y] = deck.left
-  const head = [x + 13, Math.round((y - SEP + 6) * 100) / 100]
+  // Eleven pixels under the deck above, not six. Thirteen pixels right of that
+  // deck's left corner its front edge has already fallen five, so a head at six
+  // sat less than a pixel inside an eleven-pixel skirt - fine while the stack
+  // was rigid, and the moment the tiers started drifting apart the head came out
+  // from under the deck it is supposed to be tucked into. Eleven puts it in the
+  // middle of the band, with five pixels of tolerance either way.
+  const head = [x + 13, Math.round((y - SEP + 11) * 100) / 100]
   return {
     key: `${LAYERS[index].key}-${deck.key}`,
     index,
@@ -406,9 +414,15 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
               are drawn from the ground upwards and gated on `--charge`, so as
               the figure takes power the footprint climbs out of the plan and
               ties the stack together in front of the reader. */}
+          {/* Each hairline stops five pixels below the top deck's corner rather
+              than on it. The skirt there is a vertical edge collinear with the
+              hairline and eleven pixels deep, so the two overlap and read as one
+              line - and the tier can drift its three pixels without the corner
+              pulling away from the footprint it is supposed to be standing on.
+              Every deck below occludes its own band of the same hairline. */}
           <g className="dgm-ground">
-            <line className="dgm-axis" pathLength="100" x1={SURFACE.left[0]} y1={GROUND} x2={SURFACE.left[0]} y2={SURFACE.left[1]} />
-            <line className="dgm-axis" pathLength="100" x1={SURFACE.right[0]} y1={GROUND} x2={SURFACE.right[0]} y2={SURFACE.right[1]} />
+            <line className="dgm-axis" pathLength="100" x1={SURFACE.left[0]} y1={GROUND} x2={SURFACE.left[0]} y2={SURFACE.left[1] + 5} />
+            <line className="dgm-axis" pathLength="100" x1={SURFACE.right[0]} y1={GROUND} x2={SURFACE.right[0]} y2={SURFACE.right[1] + 5} />
             <g transform={planSpace(CX, GROUND)}>
               <rect className="dgm-plane" x={-HALF} y={-HALF} width={HALF * 2} height={HALF * 2} rx={RAD} vectorEffect="non-scaling-stroke" />
               <rect className="dgm-planefill" x={-HALF} y={-HALF} width={HALF * 2} height={HALF * 2} rx={RAD} fill="url(#tr-grain)" />
@@ -418,7 +432,7 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
 
           {/* Decks, top last: the deck above occludes the one it sits over, and
               occludes the head of the drop that lands on it. */}
-          <g className="dgm-slide" style={{ '--lift': `${RECEIPT.lift}px` }}>
+          <g className="dgm-slide" style={{ '--lift': `${RECEIPT.lift}px`, '--life': RECEIPT.life }}>
             <g className={`dgm-deck${state.receipt ? ' is-live' : ''}${lit('receipt')}`} {...probe('receipt')}>
               <Faces shape={RECEIPT} className="dgm-solid" />
               <Drop leg={DROPS[2]} drops={state.drops} />
@@ -480,7 +494,7 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
             <Rail layer={RECEIPT} live={state.receipt} hot={hot === 'receipt'} fact={facts.receipt} probe={probe('receipt')} />
           </g>
 
-          <g className="dgm-slide" style={{ '--lift': `${AUTHORITY.lift}px` }}>
+          <g className="dgm-slide" style={{ '--lift': `${AUTHORITY.lift}px`, '--life': AUTHORITY.life }}>
             <g className={`dgm-deck${open ? ' is-live' : ''}${lit('authority')}`} {...probe('authority')}>
               <Faces shape={AUTHORITY} className="dgm-solid" />
               <Drop leg={DROPS[1]} drops={state.drops} />
@@ -501,7 +515,9 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
                     removed. Push on it with the pointer and it answers the way
                     the mechanism would: the blades give a hair, the bolts take
                     the load, and it comes straight back. */}
-                <g className={`dgm-shutter${tried ? ' is-tried' : ''}`}>
+                {/* Open is carried on the group, not inferred, so the frame can
+                    stop bracing against something nobody is holding any more. */}
+                <g className={`dgm-shutter${open ? ' is-open' : ''}${tried ? ' is-tried' : ''}`}>
                   <rect className="dgm-housing" x={-SHUT_FRAME} y={-SHUT_FRAME} width={SHUT_FRAME * 2} height={SHUT_FRAME * 2} rx="13" vectorEffect="non-scaling-stroke" />
                   <rect className="dgm-aperture" x={-SHUT_HOLE} y={-SHUT_HOLE} width={SHUT_HOLE * 2} height={SHUT_HOLE * 2} rx="8" fill="url(#tr-hatch)" />
                   <g clipPath="url(#tr-hole)">
@@ -534,7 +550,7 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
             <Rail layer={AUTHORITY} live={open} hot={hot === 'authority'} fact={facts.authority} probe={probe('authority')} />
           </g>
 
-          <g className="dgm-slide" style={{ '--lift': `${CONTRACT.lift}px` }}>
+          <g className="dgm-slide" style={{ '--lift': `${CONTRACT.lift}px`, '--life': CONTRACT.life }}>
             <g className={`dgm-deck${state.bound > 0 ? ' is-live' : ''}${lit('contract')}`} {...probe('contract')}>
               <Faces shape={CONTRACT} className="dgm-solid" />
               <Drop leg={DROPS[0]} drops={state.drops} />
@@ -589,7 +605,7 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
               last, so the head is always hidden under the solid. That is what
               lets a plate ride: an endpoint parked exactly on a silhouette parts
               from it the moment either end moves. */}
-          <g className="dgm-slide" style={{ '--lift': `${SURFACE.lift}px` }}>
+          <g className="dgm-slide" style={{ '--lift': `${SURFACE.lift}px`, '--life': SURFACE.life }}>
             {SOURCES.map((item) => (
               <line
                 className={`dgm-leader${lit(item.key)}`}
@@ -666,6 +682,7 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
                 <ellipse
                   className={`dgm-pad${source === item.key ? ' is-live' : ''}${lit(item.key)}`}
                   key={`pad-${item.key}`}
+                  style={{ '--life': item.life }}
                   cx={item.pad[0]}
                   cy={item.pad[1]}
                   rx="12"
