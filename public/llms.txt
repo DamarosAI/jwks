@@ -65,5 +65,5 @@ UI examples and demo bindings on the website are synthetic. They illustrate prod
 ## Optional
 
 - [Sitemap](https://www.damaros.ai/sitemap.xml)
-- [Open Graph image](https://www.damaros.ai/assets/og-card.jpg)
+- [Open Graph image](https://www.damaros.ai/assets/og-card.png)
 - [Contact / pilots](mailto:team@damaros.ai?subject=Damaros%20Pilot%20Inquiry)
