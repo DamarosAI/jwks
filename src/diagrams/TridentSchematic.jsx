@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import { jitter, planSpace, roundedDeck } from './iso'
+import { Faces } from './Solid'
 import { useCenterOnOverflow } from './useCenterOnOverflow'
 import { useScrollRun } from './useScrollPhase'
 
@@ -19,16 +20,19 @@ import { useScrollRun } from './useScrollPhase'
  * hides beneath the other. A connector hanging in the space between two things
  * is a connector that is not connected to either.
  *
- * The authority deck carries an aperture in a hatch housing. It is shut, and
- * the descent halts on it. Nothing about it is a status light: the leaves are
- * closed, and when a named person at the site signs - a stroke, drawn as they
- * make it - they slide apart and the run continues to the ledger.
+ * The approval deck carries a shutter set in a frame. It is shut, bolted at the
+ * seam, and the descent halts on it. Nothing about it is a status light: the
+ * blades are across the hole, and when a named person at the site signs, the
+ * bolts withdraw and the blades run back into the frame.
  *
- * The drawing is never still. Proposals keep arriving on all three tines, the
- * agent's tool loop keeps going round, the contract keeps checking its fields
- * and the shut aperture keeps taking the load - on timings scattered by
- * `jitter` so nothing falls into step. Scroll advances the run; the pointer
- * reads it; neither is needed for it to be alive.
+ * The drawing is never still once it has power. Proposals keep arriving on all
+ * three tines, the agent's tool loop keeps going round, the contract keeps
+ * checking its fields and the shut bolts keep taking the load - on timings
+ * scattered by `jitter` so nothing falls into step. None of it runs while the
+ * figure is still assembling: every ambient clock is held at zero opacity until
+ * `--charge` comes up, so the stack lands and then the system starts, rather
+ * than arriving already busy. Scroll advances the run; the pointer reads it;
+ * neither is needed for it to be alive.
  *
  * Nothing here names a vendor. The three sources are kinds of proposer, not
  * products, because the claim is about authority and not about whose model it
@@ -38,17 +42,22 @@ import { useScrollRun } from './useScrollPhase'
 const CX = 258
 const HALF = 76
 const THICK = 11
-const RAD = 22
+const RAD = 16
 const SEP = 104
 const TOP = 196
 const MIDDLE = TOP + SEP * 1.5
 const GROUND = 562
 
+// One plain word per deck. `PROPOSAL SURFACE` and `SITE AUTHORITY` are what
+// these decks are called inside the product; a reader meeting the figure for
+// the first time should not have to learn four two-word terms to follow a
+// drawing whose whole point is that it is obvious. The rail underneath each
+// one still carries the exact value, so nothing is lost by being plain.
 const LAYERS = [
-  { key: 'surface', label: 'PROPOSAL SURFACE' },
-  { key: 'contract', label: 'SCHEMA CONTRACT' },
-  { key: 'authority', label: 'SITE AUTHORITY' },
-  { key: 'receipt', label: 'RECEIPT LEDGER' },
+  { key: 'surface', label: 'PROPOSAL' },
+  { key: 'contract', label: 'SCHEMA' },
+  { key: 'authority', label: 'APPROVAL' },
+  { key: 'receipt', label: 'LEDGER' },
 ].map((layer, index) => {
   const cy = TOP + index * SEP
   return {
@@ -107,10 +116,30 @@ let cursor = 0
   }
 })
 
-// What a named person at the site actually does. It is a stroke, drawn in as
-// they make it, rather than a bar filling itself up.
-const SIGNATURE = 'M -33 -58 C -28 -67 -22 -55 -16 -62 C -11 -68 -6 -56 -1 -61'
-  + ' C 4 -66 9 -56 14 -61 C 19 -64 25 -58 32 -62'
+// The shutter on the approval deck, in plan.
+//
+// It used to be a housing, a rebate, a ring and two rounded leaves - four
+// nested rounded squares that collapsed into one grey blob at reading size -
+// with a hand-drawn signature stroke laid over the top of them, which measured
+// out as overlapping the ring it sat beside. The leaves were worse: split at
+// plan x = 0 and stroked all the way round, each one projected to a
+// parallelogram, so the two met on a diagonal and the seam came out as a
+// doubled line with a notch at either end.
+//
+// So: one frame, one opening, and two blades clipped to that opening. The clip
+// takes every edge of a blade except the one at the seam, which is the only
+// edge that should ever be visible, and it guarantees a blade can never be
+// drawn outside the hole it is supposed to be filling.
+const SHUT_FRAME = 50
+const SHUT_HOLE = 30
+const BLADE = 36
+
+// Two bolts across the seam. Shut is a mechanism holding, not a light that has
+// gone red: they lie over the join itself, bridging the two blades, and
+// withdraw along it into the frame when the site signs. Set at the ends of the
+// seam instead they read as tabs stuck to the side of the opening, which is a
+// picture of a shut thing rather than a drawing of what is holding it shut.
+const BOLTS = [-1, 1]
 
 // The ledger writes one row per committed run, each chained to the row above it
 // by its hash, front row last.
@@ -155,17 +184,21 @@ const READS = {
   AUTOMATION: { tone: 'run', pill: 'PROPOSER', read: 'A scheduled job drafts it, and gets no more authority than a person would.' },
   surface: { tone: 'run', pill: 'INTAKE', read: 'Anything can propose. A proposal is a request, and a request is not a decision.' },
   contract: { tone: 'valid', pill: 'CHECKED', read: 'Task contract T-07 v3. Nineteen named fields, each one checked before anything moves.' },
-  authority: { tone: 'hold', pill: 'GATED', read: 'The aperture is shut. It opens for a signature from the site, and for nothing else.' },
+  authority: { tone: 'hold', pill: 'GATED', read: 'The shutter is shut. It opens for a signature from the site, and for nothing else.' },
   receipt: { tone: 'signed', pill: 'LEDGER', read: 'One row per committed run, each one chained to the row above it by its hash.' },
 }
 
 const LOOP = 'M -6 -13 H 6 A 13 13 0 0 1 6 13 H -6 A 13 13 0 0 1 -6 -13 Z'
 
 const MOTIFS = {
-  // Stacked weights, unevenly - a model, not a menu icon.
-  MODEL: [[-14, 44], [-4, 30], [6, 40], [16, 22]].map(([y, w]) => (
-    <rect key={y} x={-w / 2} y={y - 2} width={w} height="4" rx="2" vectorEffect="non-scaling-stroke" />
-  )),
+  // A distribution standing on the plate: a model's output is a shape over
+  // possibilities, and the uneven heights are the only part of that a mark this
+  // size can carry. Four stacked bars, which is what this was, is a list icon -
+  // the same doodle every menu button in the world already uses.
+  MODEL: [7, 13, 21, 26, 20, 11, 6].map((height, slot) => {
+    const x = -21 + slot * 7
+    return <rect key={x} x={x - 2} y={13 - height} width="4" height={height} rx="1.5" vectorEffect="non-scaling-stroke" />
+  }),
   // A tool loop, drawn as a loop and running as one. The old motif ran three
   // spokes into the middle of a hub disc, which read as lines crossing inside a
   // circle rather than as anything an agent does.
@@ -176,33 +209,32 @@ const MOTIFS = {
     // sitting on an outlined track is a bump in the silhouette, and three of
     // them turned the loop into a blob.
     ...[[-19, 0], [19, 0], [0, -13]].map(([x, y]) => (
-      <circle className="dgm-loopnode" key={`${x}:${y}`} cx={x} cy={y} r="3.4" />
+      <circle className="dgm-loopnode" key={`${x}:${y}`} cx={x} cy={y} r="2.4" />
     )),
   ],
-  // A schedule: the same slot filled on every run of it.
-  AUTOMATION: [[-18, -11], [0, -11], [18, -11], [-18, 11], [0, 11], [18, 11]].map(([x, y], slot) => (
-    <rect
-      className={slot % 3 === 0 ? 'is-on' : undefined}
-      key={`${x}:${y}`}
-      x={x - 7}
-      y={y - 7}
-      width="14"
-      height="14"
-      rx="4"
-      vectorEffect="non-scaling-stroke"
-    />
-  )),
-}
-
-/** A solid: a rounded plan square and its two skirt faces, in one ink. */
-function Faces({ shape, className }) {
-  return (
-    <g className={className}>
-      <path className="dgm-face-left" d={shape.faceLeft} />
-      <path className="dgm-face-right" d={shape.faceRight} />
-      <polygon className="dgm-face-top" points={shape.top} />
-    </g>
-  )
+  // A schedule: one rule, evenly spaced runs standing on it, and the one that
+  // has just fired. Even spacing is the whole difference between this mark and
+  // the model's beside it - a job runs on the clock, a model does not. Six
+  // rounded tiles in two rows, which is what this was, is an app launcher.
+  AUTOMATION: [
+    <line key="rule" x1="-22" y1="13" x2="22" y2="13" vectorEffect="non-scaling-stroke" />,
+    ...[0, 1, 2, 3, 4, 5].map((slot) => {
+      const fired = slot === 3
+      const x = -18 + slot * 7.2
+      return (
+        <rect
+          className={fired ? 'is-on' : undefined}
+          key={x}
+          x={x - 2.5}
+          y={fired ? -10 : -3}
+          width="5"
+          height={fired ? 23 : 16}
+          rx="1.5"
+          vectorEffect="non-scaling-stroke"
+        />
+      )
+    }),
+  ],
 }
 
 /**
@@ -278,7 +310,7 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
   const facts = {
     surface: source ? `SOURCE ${source}` : 'ANY OF THREE',
     contract: 'T-07 V3',
-    authority: open ? 'SIGNED - A. VOSS' : 'SHUT - NEEDS A SIGNATURE',
+    authority: open ? 'SIGNED A. VOSS 09:41Z' : 'SHUT - NEEDS A SIGNATURE',
     receipt: state.receipt ? 'REV-018-TR3-1044' : 'NOT YET WRITTEN',
   }
 
@@ -297,7 +329,7 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
           ref={figure}
           viewBox="0 0 620 700"
           role="img"
-          aria-label="Three kinds of proposal source - a model, an agent loop and a scheduled job - sit above one site, drawn identically because any of them can be swapped for another. A proposal lands on an intake deck, drops to a schema contract deck of nineteen named fields, and drops again to a site authority deck where a shut aperture holds it until a named person at the site signs. Only then does it reach the receipt ledger, where every row is chained to the row above it by its hash."
+          aria-label="Three kinds of proposal source - a model, an agent loop and a scheduled job - sit above one site, drawn identically because any of them can be swapped for another. A proposal lands on an intake deck, drops to a schema contract deck of nineteen named fields, and drops again to an approval deck where a shutter holds it closed until a named person at the site signs. Only then does it reach the receipt ledger, where every row is chained to the row above it by its hash."
         >
           <defs>
             <pattern id="tr-hatch" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
@@ -306,6 +338,11 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
             <pattern id="tr-grain" width="16" height="16" patternUnits="userSpaceOnUse">
               <circle className="dgm-grain" cx="1" cy="1" r="1" />
             </pattern>
+            {/* The opening the blades run in. Clipping to it is what keeps a
+                blade inside the hole it is filling, at any throw. */}
+            <clipPath id="tr-hole">
+              <rect x={-SHUT_HOLE} y={-SHUT_HOLE} width={SHUT_HOLE * 2} height={SHUT_HOLE * 2} rx="8" />
+            </clipPath>
           </defs>
 
           <image className="dgm-mark" href="/assets/damaros-monogram-blue.svg" x="22" y="16" width="34" height="40" />
@@ -318,10 +355,13 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
 
           {/* The ground the stack is measured against. Two hairlines carry the
               footprint down from the top deck, so the four decks read as one
-              plan seen at four heights rather than four unrelated shapes. */}
+              plan seen at four heights rather than four unrelated shapes. They
+              are drawn from the ground upwards and gated on `--charge`, so as
+              the figure takes power the footprint climbs out of the plan and
+              ties the stack together in front of the reader. */}
           <g className="dgm-ground">
-            <line className="dgm-axis" x1={SURFACE.left[0]} y1={SURFACE.left[1]} x2={SURFACE.left[0]} y2={GROUND} />
-            <line className="dgm-axis" x1={SURFACE.right[0]} y1={SURFACE.right[1]} x2={SURFACE.right[0]} y2={GROUND} />
+            <line className="dgm-axis" pathLength="100" x1={SURFACE.left[0]} y1={GROUND} x2={SURFACE.left[0]} y2={SURFACE.left[1]} />
+            <line className="dgm-axis" pathLength="100" x1={SURFACE.right[0]} y1={GROUND} x2={SURFACE.right[0]} y2={SURFACE.right[1]} />
             <g transform={planSpace(CX, GROUND)}>
               <rect className="dgm-plane" x={-HALF} y={-HALF} width={HALF * 2} height={HALF * 2} rx={RAD} vectorEffect="non-scaling-stroke" />
               <rect className="dgm-planefill" x={-HALF} y={-HALF} width={HALF * 2} height={HALF * 2} rx={RAD} fill="url(#tr-grain)" />
@@ -351,11 +391,11 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
                   const written = state.receipt || !last
                   return (
                     <g className={`dgm-ledgerrow${written ? ' is-written' : ''}`} key={y}>
-                      <rect className="dgm-ledgerbar" x="-44" y={y - 7.5} width="96" height="15" rx="7.5" vectorEffect="non-scaling-stroke" />
-                      <rect className="dgm-ledgerhash" x="-59" y={y - 5} width="10" height="10" rx="3" vectorEffect="non-scaling-stroke" />
-                      <rect className="dgm-ledgertick" x="-36" y={y - 2} width="32" height="4" rx="2" />
-                      <rect className="dgm-ledgertick" x="2" y={y - 2} width={last ? 30 : 18} height="4" rx="2" />
-                      <circle className="dgm-ledgerseal" cx="44" cy={y} r="4" />
+                      <rect className="dgm-ledgerbar" x="-44" y={y - 5.5} width="96" height="11" rx="3" vectorEffect="non-scaling-stroke" />
+                      <rect className="dgm-ledgerhash" x="-59" y={y - 4.5} width="9" height="9" rx="2" vectorEffect="non-scaling-stroke" />
+                      <rect className="dgm-ledgertick" x="-37" y={y - 1.5} width="30" height="3" rx="1.5" />
+                      <rect className="dgm-ledgertick" x="0" y={y - 1.5} width={last ? 28 : 17} height="3" rx="1.5" />
+                      <rect className="dgm-ledgerseal" x="41" y={y - 3.5} width="7" height="7" rx="2" />
                     </g>
                   )
                 })}
@@ -380,24 +420,35 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
                   pathLength="100"
                   vectorEffect="non-scaling-stroke"
                 />
-                {/* The hatch. Shut is drawn shut - two leaves over a hole, set
-                    in a housing - so the claim survives with every colour
+                {/* The shutter. Shut is drawn shut - two blades across a hole,
+                    bolted at the seam - so the claim survives with every colour
                     removed. */}
-                <rect className="dgm-housing" x="-48" y="-48" width="96" height="96" rx="18" vectorEffect="non-scaling-stroke" />
-                <rect className="dgm-rebate" x="-41" y="-41" width="82" height="82" rx="14" vectorEffect="non-scaling-stroke" />
-                <rect className="dgm-aperture" x="-26" y="-26" width="52" height="52" rx="11" fill="url(#tr-hatch)" />
-                <g className={`dgm-leaf is-left${open ? ' is-open' : ''}`}>
-                  <rect x="-26" y="-26" width="26" height="52" rx="6" vectorEffect="non-scaling-stroke" />
+                <rect className="dgm-housing" x={-SHUT_FRAME} y={-SHUT_FRAME} width={SHUT_FRAME * 2} height={SHUT_FRAME * 2} rx="13" vectorEffect="non-scaling-stroke" />
+                <rect className="dgm-aperture" x={-SHUT_HOLE} y={-SHUT_HOLE} width={SHUT_HOLE * 2} height={SHUT_HOLE * 2} rx="8" fill="url(#tr-hatch)" />
+                <g clipPath="url(#tr-hole)">
+                  <g className={`dgm-leaf is-left${open ? ' is-open' : ''}`}>
+                    <rect x={-BLADE} y={-BLADE} width={BLADE} height={BLADE * 2} vectorEffect="non-scaling-stroke" />
+                  </g>
+                  <g className={`dgm-leaf is-right${open ? ' is-open' : ''}`}>
+                    <rect x="0" y={-BLADE} width={BLADE} height={BLADE * 2} vectorEffect="non-scaling-stroke" />
+                  </g>
                 </g>
-                <g className={`dgm-leaf is-right${open ? ' is-open' : ''}`}>
-                  <rect x="0" y="-26" width="26" height="52" rx="6" vectorEffect="non-scaling-stroke" />
-                </g>
-                <rect className={`dgm-gatering is-${state.gate}`} x="-31" y="-31" width="62" height="62" rx="15" vectorEffect="non-scaling-stroke" />
-                {/* The signature block, clear of the housing along the back
-                    edge of the deck. */}
-                <rect className="dgm-sigplate" x="-40" y="-70" width="80" height="18" rx="8" vectorEffect="non-scaling-stroke" />
-                <line className="dgm-sigrule" x1="-33" y1="-54" x2="33" y2="-54" vectorEffect="non-scaling-stroke" />
-                <path className={`dgm-sigstroke${open ? ' is-signed' : ''}`} d={SIGNATURE} pathLength="100" vectorEffect="non-scaling-stroke" />
+                {/* Drawn over the blades, so the hole keeps one clean edge
+                    whatever is behind it. */}
+                <rect className={`dgm-holerim is-${state.gate}`} x={-SHUT_HOLE} y={-SHUT_HOLE} width={SHUT_HOLE * 2} height={SHUT_HOLE * 2} rx="8" vectorEffect="non-scaling-stroke" />
+                {BOLTS.map((end) => (
+                  <rect
+                    className={`dgm-bolt${open ? ' is-clear' : ''}`}
+                    key={end}
+                    style={{ '--end': end }}
+                    x="-13"
+                    y={end * 14 - 4.5}
+                    width="26"
+                    height="9"
+                    rx="3"
+                    vectorEffect="non-scaling-stroke"
+                  />
+                ))}
               </g>
             </g>
             <Rail layer={AUTHORITY} live={open} hot={hot === 'authority'} fact={facts.authority} probe={probe('authority')} />

@@ -8,10 +8,11 @@ const mobile = await readSource(new URL('./mobile.css', import.meta.url))
 const driver = await readSource(new URL('./diagrams/useScrollPhase.js', import.meta.url))
 const pan = await readSource(new URL('./diagrams/useCenterOnOverflow.js', import.meta.url))
 const iso = await readSource(new URL('./diagrams/iso.js', import.meta.url))
+const solid = await readSource(new URL('./diagrams/Solid.jsx', import.meta.url))
 const trident = await readSource(new URL('./diagrams/TridentSchematic.jsx', import.meta.url))
 const nectar = await readSource(new URL('./diagrams/NectarSchematic.jsx', import.meta.url))
 
-const sources = [driver, pan, iso, trident, nectar]
+const sources = [driver, pan, iso, solid, trident, nectar]
 const figures = [trident, nectar]
 
 // Every literal colour, radius and face in the schematic layer has to come from
@@ -59,43 +60,52 @@ describe('Trident and Nectar schematics', () => {
     assert.match(iso, /export function roundedDeck\(cx, cy, half, height, radius\)/)
     assert.match(iso, /const skirt = \(from, to\) =>/)
     assert.match(trident, /roundedDeck\(CX, cy, HALF, THICK, RAD\)/)
-    assert.match(trident, /<path className="dgm-face-left" d=\{shape\.faceLeft\} \/>/)
-    // Sharp-cornered polygon decks are gone from both figures.
+    // One solid, drawn by one component, so a Trident deck and a Nectar site
+    // cannot drift into being two different objects.
+    assert.match(solid, /<path className="dgm-face-left" d=\{shape\.faceLeft\} \/>/)
+    assert.match(solid, /export function Faces\(\{ shape, className \}\)/)
     for (const source of figures) {
+      assert.match(source, /import \{ Faces \} from '\.\/Solid'/)
+      assert.match(source, /<Faces shape=\{/)
+      // Sharp-cornered polygon decks are gone from both figures, and neither
+      // one carries its own copy of the component.
       assert.doesNotMatch(source, /polygon className="dgm-face-left"/)
+      assert.doesNotMatch(source, /function Faces\(/)
     }
   })
 
-  it('stands a Nectar site up as a round vessel rather than a block on a slab', () => {
-    // A site is not a box, and the square deck each one stood on was a second
-    // silhouette competing with the reach it sits inside. The vessel is a plan
-    // circle carried through the same projection - an axis-aligned ellipse,
-    // because the squash is symmetric - extruded to a wall.
-    assert.match(iso, /export function roundedCylinder\(cx, cy, r, height\)/)
-    assert.match(iso, /export function planCircle\(r\)/)
-    assert.match(iso, /export const CIRCLE_X = round\(ISO_X \* Math\.SQRT2\)/)
-    assert.match(nectar, /const vessel = roundedCylinder\(cx, cy, site\.r, site\.wall\)/)
-    assert.match(nectar, /className="dgm-vesselwall" d=\{site\.vessel\.wall\}/)
-    assert.match(nectar, /className="dgm-vesseltop"/)
-    assert.doesNotMatch(nectar, /roundedDeck|dgm-face-top|dgm-face-left|dgm-face-right/)
-    assert.doesNotMatch(DGM_BLOCK, /\.dgm-site\.is-hot > \.dgm-solid/)
+  it('stands a Nectar site on the same solid a Trident deck stands on', () => {
+    // A site was a round vessel, which read as a different drawing from the one
+    // beside it and left every identity pinned to the edge of an ellipse with
+    // nowhere to sit. It is the same rounded plan square now, at another scale,
+    // and the corner radius is a fixed share of the plan size so a small site
+    // and a large one are one object rather than two shapes.
+    assert.match(nectar, /const solid = roundedDeck\(cx, cy, site\.half, site\.wall, Math\.round\(site\.half \* 0\.34\)\)/)
+    assert.match(nectar, /<Faces shape=\{site\.solid\} className="dgm-solid" \/>/)
+    assert.doesNotMatch(nectar, /roundedCylinder|dgm-vesselwall|dgm-vesseltop|planCircle/)
+    for (const rule of ['.dgm-vesselwall', '.dgm-vesseltop']) {
+      assert.doesNotMatch(DGM_BLOCK, new RegExp(`\\${rule}[\\s,{]`))
+    }
+    assert.match(DGM_BLOCK, /\.dgm-site\.is-hot > \.dgm-solid > \.dgm-face-top/)
   })
 
-  it('tells the three sites apart by what each one holds and what it sent', () => {
-    // Three identical shapes is a diagram of a federation. The radius, the wall
-    // height, the number of bands inside and the reach all follow the record
-    // count, and the chip leaving each port carries the kind of structure that
-    // site actually contributed.
-    assert.match(nectar, /records: '890', r: 40, wall: 15, bands: 4, grew: 0\.94, glyph: 'unit'/)
-    assert.match(nectar, /records: '614', r: 34, wall: 12, bands: 3, grew: 0\.82, glyph: 'map'/)
-    assert.match(nectar, /records: '1,204', r: 46, wall: 18, bands: 5, grew: 1\.08, glyph: 'rule'/)
-    assert.match(nectar, /const GLYPHS = \{/)
-    assert.match(nectar, /\{GLYPHS\[site\.glyph\]\}/)
-    // The bands are chorded to the lid that seals them, so a stack fills its
-    // vessel and no band is drawn outside the thing holding it shut.
-    assert.match(nectar, /const lid = site\.r - 6/)
-    assert.match(nectar, /half: Math\.round\(Math\.sqrt\(lid \* lid - y \* y\) - 5\)/)
-    assert.match(DGM_BLOCK, /\.dgm-glyph \{/)
+  it('tells the three sites apart by what each one holds', () => {
+    // Three identical shapes is a diagram of a federation. The plan size, the
+    // wall height, the number of bands inside and the reach all follow the
+    // record count.
+    assert.match(nectar, /records: '890', half: 44, wall: 18, bands: 4, grew: 0\.94/)
+    assert.match(nectar, /records: '614', half: 40, wall: 15, bands: 3, grew: 0\.82/)
+    assert.match(nectar, /records: '1,204', half: 55, wall: 22, bands: 5, grew: 1\.08/)
+    // The bands sit under the lid that seals them, so a stack fills the site it
+    // is in and no band is drawn outside the thing holding it shut.
+    assert.match(nectar, /const lid = site\.half - 7/)
+    assert.match(nectar, /rows\.push\(\{ y, half: lid - 7 \}\)/)
+    // The badge that sat on the roof of every site - a circle with a little
+    // glyph inside it - is gone from the figure and from the sheet.
+    assert.doesNotMatch(nectar, /dgm-glyph|dgm-port|const GLYPHS/)
+    for (const rule of ['.dgm-glyph']) {
+      assert.doesNotMatch(DGM_BLOCK, new RegExp(`\\${rule}[\\s,{]`))
+    }
   })
 
   it('scatters both figures deterministically, never from a random source', () => {
@@ -113,11 +123,12 @@ describe('Trident and Nectar schematics', () => {
     for (const rule of [
       '.dgm-svg.is-live .dgm-spark',
       '.dgm-svg.is-live .dgm-fieldtile:not(.is-named)',
-      '.dgm-svg.is-live .dgm-gatering.is-shut',
+      '.dgm-svg.is-live .dgm-bolt:not(.is-clear)',
       '.dgm-svg.is-live .dgm-drop.is-done .dgm-dropflow',
       '.dgm-svg.is-live .dgm-traffic.is-bound',
       '.dgm-svg.is-live .dgm-node.is-bound',
       '.dgm-svg.is-live .dgm-reachrim',
+      '.dgm-svg.is-live .dgm-ring',
       '.dgm-svg.is-live .dgm-sweep',
     ]) {
       const escaped = rule.replace(/[.()*:]/g, (c) => `\\${c}`)
@@ -127,7 +138,30 @@ describe('Trident and Nectar schematics', () => {
     assert.match(DGM_BLOCK, /animation: dgm-travel calc\(5\.2s \+ var\(--life, 0\) \* 4\.6s\) linear infinite;/)
     assert.match(trident, /life: jitter\(index, 4\)/)
     assert.match(nectar, /life: jitter\(index, 11\)/)
-    assert.match(nectar, /const TRAFFIC = LINKS\.filter\(\(link\) => link\.life > 0\.93\)/)
+    assert.match(nectar, /const TRAFFIC = LINKS\.filter\(\(link\) => link\.life > 0\.88\)/)
+  })
+
+  it('holds every moving mark until the figure has power', () => {
+    // The figure used to arrive already busy: every ambient clock ran from the
+    // first frame, so the drawing was working while it was still sliding into
+    // place and nothing ever read as switching on. Motion now waits on a gate
+    // that opens after the gain, which is what makes the run a power-on rather
+    // than an entrance.
+    assert.match(driver, /node\.style\.setProperty\('--charge', ease\(Math\.min\(1, Math\.max\(0, \(p - wake\) \/ surge\)\)\)\.toFixed\(4\)\)/)
+    assert.match(driver, /const wake = lead \* 0\.6/)
+    assert.match(driver, /const surge = lead \* 1\.4/)
+    // Reduced motion parks the figure charged, not dark.
+    assert.match(driver, /node\.style\.setProperty\('--charge', '1'\)/)
+    assert.match(DGM_BLOCK, /--run-in: clamp\(0, calc\(\(var\(--charge, 1\) - 0\.42\) \* 2\.4\), 1\);/)
+    assert.match(DGM_BLOCK, /opacity: calc\(0\.62 \+ 0\.38 \* var\(--charge, 1\)\);/)
+    for (const mark of ['.dgm-spark', '.dgm-drop.is-done .dgm-dropflow', '.dgm-resolve']) {
+      const escaped = mark.replace(/[.()*:]/g, (c) => `\\${c}`)
+      assert.match(DGM_BLOCK, new RegExp(`${escaped} \\{[^}]*var\\(--run-in`))
+    }
+    // The footprint climbs out of the ground as power arrives, rather than
+    // having been there the whole time.
+    assert.match(DGM_BLOCK, /\.dgm-axis \{[\s\S]*?stroke-dashoffset: calc\(100 \* \(1 - var\(--charge, 1\)\)\);/)
+    assert.match(trident, /<line className="dgm-axis" pathLength="100" x1=\{SURFACE\.left\[0\]\} y1=\{GROUND\}/)
   })
 
   it('never names a vendor inside the figures', () => {
@@ -200,11 +234,14 @@ describe('Trident and Nectar schematics', () => {
     for (const source of figures) {
       assert.match(source, /role="img"[\s\S]{0,12}aria-label="[A-Z][^"]{160,}"/)
     }
-    assert.match(app, /<h2><span>Any model can propose\.<\/span>/)
-    // Nectar leads on what the network does and answers it with the constraint,
-    // set as a dek in the blue every other dek on the site uses.
+    // Both sections open the same way: the heading says what the system does and
+    // one dek, in the blue every other dek on the site uses, says what it will
+    // not do. One class, so the pair cannot drift into two treatments.
+    assert.match(app, /<h2><span>Any model can propose\.<\/span><\/h2>/)
+    assert.match(app, /<p className="section-dek">None can decide\.<\/p>/)
     assert.match(app, /<h2><span>Execution intelligence that crosses site boundaries\.<\/span><\/h2>/)
-    assert.match(app, /<p className="nectar-dek">Patient data that never does\.<\/p>/)
+    assert.match(app, /<p className="section-dek">Patient data that never does\.<\/p>/)
+    assert.doesNotMatch(css, /\.nectar-dek/)
   })
 
   it('states the harness claim in the title instead of lettering it on the drawing', () => {
@@ -328,18 +365,18 @@ describe('Trident and Nectar schematics', () => {
   })
 
   it('gives each Trident deck something to be, not just a face to sit on', () => {
-    // An intake with a catchment and a queue, a hatch set in a housing, a
-    // signature somebody makes, and a ledger whose rows are chained.
-    for (const part of ['dgm-catch', 'dgm-queue', 'dgm-throat', 'dgm-housing', 'dgm-rebate', 'dgm-sigplate', 'dgm-sigstroke', 'dgm-ledgerhash', 'dgm-ledgerchain', 'dgm-ledgerseal']) {
+    // An intake with a catchment and a queue, a shutter in a frame with bolts
+    // across its seam, and a ledger whose rows are chained.
+    for (const part of ['dgm-catch', 'dgm-queue', 'dgm-throat', 'dgm-housing', 'dgm-aperture', 'dgm-holerim', 'dgm-bolt', 'dgm-ledgerhash', 'dgm-ledgerchain', 'dgm-ledgerseal']) {
       assert.match(trident, new RegExp(`className=[^>]{0,40}${part}`))
       assert.match(DGM_BLOCK, new RegExp(`\\.${part}[\\s,{]`))
     }
-    // The signature is a stroke drawn at the speed it is made, not a bar
-    // filling itself up, and the pill that announced the seal is gone.
-    assert.match(trident, /const SIGNATURE = 'M -33 -58 C/)
-    assert.match(DGM_BLOCK, /\.dgm-sigstroke\.is-signed \{ stroke-dashoffset: 0; \}/)
-    assert.doesNotMatch(trident, /dgm-seal|RECEIPT SEALED/)
-    for (const rule of ['.dgm-seal', '.dgm-sealbody', '.dgm-sealtext', '.dgm-sigbar', '.dgm-sigfill']) {
+    // The hand-drawn signature stroke is gone. It was the one gag in either
+    // figure, it measured out as overlapping the ring beside it, and what a
+    // named person signed is a fact - so the rail carries it as one.
+    assert.doesNotMatch(trident, /const SIGNATURE|dgm-sigplate|dgm-sigstroke|dgm-sigrule|dgm-seal|RECEIPT SEALED/)
+    assert.match(trident, /authority: open \? 'SIGNED A\. VOSS \d\d:\d\dZ' : 'SHUT - NEEDS A SIGNATURE'/)
+    for (const rule of ['.dgm-sigplate', '.dgm-sigstroke', '.dgm-sigrule', '.dgm-rebate', '.dgm-gatering', '.dgm-seal', '.dgm-sigbar', '.dgm-sigfill']) {
       assert.doesNotMatch(DGM_BLOCK, new RegExp(`\\${rule}[\\s,{]`))
     }
   })
@@ -348,8 +385,19 @@ describe('Trident and Nectar schematics', () => {
     assert.match(trident, /url\(#tr-hatch\)/)
     assert.match(trident, /className=\{`dgm-leaf is-left\$\{open \? ' is-open' : ''\}`\}/)
     assert.match(trident, /className=\{`dgm-leaf is-right\$\{open \? ' is-open' : ''\}`\}/)
-    assert.match(DGM_BLOCK, /\.dgm-leaf\.is-left\.is-open \{ transform: translateX\(-19px\); \}/)
-    assert.match(DGM_BLOCK, /\.dgm-leaf\.is-right\.is-open \{ transform: translateX\(19px\); \}/)
+    // Clipped to the opening. Stroked all the way round, each blade projected
+    // to a parallelogram and the pair met on a diagonal, so the seam came out
+    // doubled and notched at both ends. Clipped, a blade shows one edge - the
+    // seam - and cannot be drawn outside the hole it is filling at any throw.
+    assert.match(trident, /<clipPath id="tr-hole">/)
+    assert.match(trident, /<g clipPath="url\(#tr-hole\)">/)
+    assert.match(DGM_BLOCK, /\.dgm-leaf\.is-left\.is-open \{ transform: translateX\(-22px\); \}/)
+    assert.match(DGM_BLOCK, /\.dgm-leaf\.is-right\.is-open \{ transform: translateX\(22px\); \}/)
+    // Shut is a mechanism holding: bolts lie over the seam and withdraw along
+    // it, rather than a ring pulsing beside it.
+    assert.match(trident, /const BOLTS = \[-1, 1\]/)
+    assert.match(trident, /y=\{end \* 14 - 4\.5\}/)
+    assert.match(DGM_BLOCK, /\.dgm-bolt\.is-clear \{ transform: translateY\(calc\(var\(--end, 1\) \* 26px\)\); \}/)
     // Nectar's boundary is the skirt of every site deck, drawn as a wall rather
     // than a hatch, and identically at every site.
     assert.match(nectar, /className="dgm-wall"/)
@@ -383,23 +431,30 @@ describe('Trident and Nectar schematics', () => {
     assert.doesNotMatch(nectar, /RECORD REQUEST|REFUSED|dgm-cross|is-back|BACK_TO|BACK_FROM/i)
     assert.doesNotMatch(DGM_BLOCK, /\.dgm-route\.is-back|\.dgm-cross|\.dgm-refused/)
     assert.doesNotMatch(DGM_BLOCK, /var\(--danger\)/)
-    // Every path rises from a site port into the mesh.
+    // Every path rises from the back corner of a site's own roof into the mesh
+    // - the far edge, so the line climbs away from the reader.
     assert.match(nectar, /path: `M \$\{x1\} \$\{y1\} Q \$\{cx\} \$\{cy\} \$\{x2\} \$\{y2\}`/)
-    assert.match(nectar, /port: \[cx, Math\.round\(cy - vessel\.ry \* 0\.62\)\]/)
+    assert.match(nectar, /const \[x1, y1\] = item\.site\.solid\.back/)
   })
 
   it('shows the network effect as geometry rather than a claim', () => {
     // Three reaches on one ground, growing with coverage until they overlap -
     // and three sizes of reach, because the site that has contributed the most
-    // is the one that reaches furthest.
-    assert.match(nectar, /className="dgm-reachrim" cx=\{site\.plan\[0\]\} cy=\{site\.plan\[1\]\} r=\{Math\.round\(state\.reach \* site\.grew\)\}/)
-    assert.match(nectar, /reach: 88/)
-    assert.match(nectar, /reach: 112/)
-    // Set well apart, so no reach is drawn inside another site's silhouette.
-    assert.match(nectar, /plan: \[58, -118\]/)
-    assert.match(nectar, /plan: \[-118, 58\]/)
-    assert.match(nectar, /plan: \[92, 92\]/)
-    assert.match(DGM_BLOCK, /\.dgm-reachrim \{[\s\S]*?transition: r 620ms/)
+    // is the one that reaches furthest. Squared off in plan like the sites they
+    // belong to, and clipped to the ground the three of them stand on.
+    assert.match(nectar, /className="dgm-reachrim" x=\{site\.plan\[0\] - span\} y=\{site\.plan\[1\] - span\} width=\{span \* 2\} height=\{span \* 2\}/)
+    assert.match(nectar, /<clipPath id="nc-ground">/)
+    assert.match(nectar, /<g clipPath="url\(#nc-ground\)">/)
+    // Solved against the plan, not chosen: with sites 148 plan units apart and
+    // reach factors of 0.82 and 0.94, the opening figure has every pair clear
+    // (1.76 * 78 = 137 < 148) and the closing one has every pair overlapping
+    // (1.76 * 104 = 183 > 148).
+    assert.match(nectar, /reach: 78/)
+    assert.match(nectar, /reach: 104/)
+    assert.match(nectar, /plan: \[22, -126\]/)
+    assert.match(nectar, /plan: \[-126, 22\]/)
+    assert.match(nectar, /plan: \[60, 60\]/)
+    assert.match(DGM_BLOCK, /\.dgm-reachrim \{[\s\S]*?transition: x var\(--grow\)/)
     // And the three definitions land in three parts of the library rather than
     // in one corner of it, because that is what compounding coverage looks like.
     assert.match(nectar, /const BAND = \[\.\.\.ORDER\.slice\(30, 38\)\]\.sort\(\(a, b\) => \(a\.x - a\.y\) - \(b\.x - b\.y\)\)/)
@@ -435,7 +490,11 @@ describe('Trident and Nectar schematics', () => {
     // is why the run drifted between window sizes: on a stacked layout the copy
     // column pushed the opening phases above the fold. One trigger, on the
     // drawing, over a distance proportional to the drawing.
-    assert.match(driver, /export function useScrollRun\(phases, \{ reduced, lead = 0\.26, start = 'top 84%', travel = 0\.92 \}\)/)
+    // Anchored so the stack lands early and the phases play while the figure
+    // crosses the middle of the screen. At `top 84%` over 0.92 of the figure's
+    // height the opening beats were spent while it was still below the fold, so
+    // a reader met it already halfway through its own run.
+    assert.match(driver, /export function useScrollRun\(phases, \{ reduced, lead = 0\.16, start = 'top 90%', travel = 1\.25 \}\)/)
     assert.match(driver, /end: \(\) => `\+=\$\{Math\.round\(node\.getBoundingClientRect\(\)\.height \* travel\)\}`/)
     assert.match(driver, /node\.style\.setProperty\('--spread', ease\(Math\.min\(1, p \/ lead\)\)\.toFixed\(4\)\)/)
     assert.match(driver, /const along = Math\.max\(0, \(p - lead\) \/ \(1 - lead\)\)/)
@@ -460,7 +519,7 @@ describe('Trident and Nectar schematics', () => {
 
   it('gives the beat that carries the claim the widest stretch of scroll', () => {
     assert.match(trident, /span: 3\.2, drops: 2, bound: 19, gate: 'shut'/)
-    assert.match(nectar, /span: 2\.4, bound: 38, reach: 112/)
+    assert.match(nectar, /span: 2\.4, bound: 38, reach: 104/)
   })
 
   it('leaves the claim readable in the resting state', () => {

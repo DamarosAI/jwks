@@ -1003,7 +1003,8 @@ function TridentSection() {
       <div className="section-field" ref={field} aria-hidden="true" />
       <SectionEyebrow>Trident</SectionEyebrow>
       <div className="trident-copy">
-        <h2><span>Any model can propose.</span><span>None can decide.</span></h2>
+        <h2><span>Any model can propose.</span></h2>
+        <p className="section-dek">None can decide.</p>
         <p>Trident is a governed AI harness. Operators choose the provider. Every task is versioned, schema-validated, and receipted. Checkpoints keep authority with the site.</p>
         <div className="control-facts">
           <span><CheckCircle size={18} /> Schema-validated</span>
@@ -1045,7 +1046,7 @@ function NectarSection() {
       </div>
       <div className="nectar-copy">
         <h2><span>Execution intelligence that crosses site boundaries.</span></h2>
-        <p className="nectar-dek">Patient data that never does.</p>
+        <p className="section-dek">Patient data that never does.</p>
         <p>Nectar is a shared execution library. Sites contribute structure, not records. Coverage compounds. Patient data stays at the site that collected it.</p>
         <div className="control-facts">
           <span><ShieldCheck size={18} /> PHI-free by construction</span>
