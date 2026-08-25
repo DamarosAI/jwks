@@ -237,7 +237,7 @@ describe('Trident and Nectar schematics', () => {
     // Both sections open the same way: the heading says what the system does and
     // one dek, in the blue every other dek on the site uses, says what it will
     // not do. One class, so the pair cannot drift into two treatments.
-    assert.match(app, /<h2><span>Any model can propose\.<\/span><\/h2>/)
+    assert.match(app, /<h2><span>Any model can propose at the point of care\.<\/span><\/h2>/)
     assert.match(app, /<p className="section-dek">None can decide\.<\/p>/)
     assert.match(app, /<h2><span>Execution intelligence that crosses site boundaries\.<\/span><\/h2>/)
     assert.match(app, /<p className="section-dek">Patient data that never does\.<\/p>/)
