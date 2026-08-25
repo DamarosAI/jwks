@@ -1,10 +1,10 @@
-import { readFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
+import { readSource } from '../src/source-text.js'
 
 const root = fileURLToPath(new URL('../', import.meta.url))
-const app = await readFile(`${root}src/App.jsx`, 'utf8')
-const css = await readFile(`${root}src/styles.css`, 'utf8')
-const inquiry = await readFile(`${root}src/PilotInquiry.jsx`, 'utf8')
+const app = await readSource(`${root}src/App.jsx`)
+const css = await readSource(`${root}src/styles.css`)
+const inquiry = await readSource(`${root}src/PilotInquiry.jsx`)
 
 const buttons = app.match(/<PilotButton\b/g) || []
 if (buttons.length < 4) throw new Error(`Expected 4 Start a pilot controls, found ${buttons.length}`)

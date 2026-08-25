@@ -1,11 +1,11 @@
-import { readFile } from 'node:fs/promises'
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
+import { readSource } from './source-text.js'
 
-const css = await readFile(new URL('./styles.css', import.meta.url), 'utf8')
-const mobile = await readFile(new URL('./mobile.css', import.meta.url), 'utf8')
-const app = await readFile(new URL('./App.jsx', import.meta.url), 'utf8')
-const main = await readFile(new URL('./main.jsx', import.meta.url), 'utf8')
+const css = await readSource(new URL('./styles.css', import.meta.url))
+const mobile = await readSource(new URL('./mobile.css', import.meta.url))
+const app = await readSource(new URL('./App.jsx', import.meta.url))
+const main = await readSource(new URL('./main.jsx', import.meta.url))
 
 describe('one responsive design', () => {
   it('loads the phone sheet last and keeps the spine under the nav', () => {

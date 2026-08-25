@@ -1,14 +1,14 @@
-import { readFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
+import { readSource } from '../src/source-text.js'
 
 const root = fileURLToPath(new URL('../', import.meta.url))
-const app = await readFile(`${root}src/App.jsx`, 'utf8')
+const app = await readSource(`${root}src/App.jsx`)
 const catalog = app
-const css = await readFile(`${root}src/styles.css`, 'utf8')
-const html = await readFile(`${root}index.html`, 'utf8')
-const vercel = await readFile(`${root}vercel.json`, 'utf8')
-const privacy = await readFile(`${root}src/PrivacyPage.jsx`, 'utf8')
-const publicCopy = `${await readFile(`${root}llms.txt`, 'utf8')}\n${await readFile(`${root}public/llms.txt`, 'utf8')}`
+const css = await readSource(`${root}src/styles.css`)
+const html = await readSource(`${root}index.html`)
+const vercel = await readSource(`${root}vercel.json`)
+const privacy = await readSource(`${root}src/PrivacyPage.jsx`)
+const publicCopy = `${await readSource(`${root}llms.txt`)}\n${await readSource(`${root}public/llms.txt`)}`
 
 if (!publicCopy.includes('Product targets. Do not describe these as shipped') || publicCopy.includes('Also true and safe to say:') || publicCopy.includes('Works with the software a site already runs')) throw new Error('Unproven connector and deployment behavior must remain labeled as product target')
 if (!app.includes('Target inputs') || !app.includes('Synthetic walkthrough')) throw new Error('Unproven source-system examples must remain labeled as synthetic target behavior')

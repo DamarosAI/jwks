@@ -1,10 +1,10 @@
-import { readFile } from 'node:fs/promises'
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
+import { readSource } from './source-text.js'
 
-const app = await readFile(new URL('./App.jsx', import.meta.url), 'utf8')
-const css = await readFile(new URL('./styles.css', import.meta.url), 'utf8')
-const mobile = await readFile(new URL('./mobile.css', import.meta.url), 'utf8')
+const app = await readSource(new URL('./App.jsx', import.meta.url))
+const css = await readSource(new URL('./styles.css', import.meta.url))
+const mobile = await readSource(new URL('./mobile.css', import.meta.url))
 
 describe('Damaros brand mark', () => {
   it('moves spine titles into home eyebrows and keeps the spine numeric', () => {

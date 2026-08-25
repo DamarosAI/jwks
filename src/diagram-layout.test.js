@@ -1,15 +1,15 @@
-import { readFile } from 'node:fs/promises'
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
+import { readSource } from './source-text.js'
 
-const app = await readFile(new URL('./App.jsx', import.meta.url), 'utf8')
-const css = await readFile(new URL('./styles.css', import.meta.url), 'utf8')
-const mobile = await readFile(new URL('./mobile.css', import.meta.url), 'utf8')
-const driver = await readFile(new URL('./diagrams/useScrollPhase.js', import.meta.url), 'utf8')
-const pan = await readFile(new URL('./diagrams/useCenterOnOverflow.js', import.meta.url), 'utf8')
-const iso = await readFile(new URL('./diagrams/iso.js', import.meta.url), 'utf8')
-const trident = await readFile(new URL('./diagrams/TridentSchematic.jsx', import.meta.url), 'utf8')
-const nectar = await readFile(new URL('./diagrams/NectarSchematic.jsx', import.meta.url), 'utf8')
+const app = await readSource(new URL('./App.jsx', import.meta.url))
+const css = await readSource(new URL('./styles.css', import.meta.url))
+const mobile = await readSource(new URL('./mobile.css', import.meta.url))
+const driver = await readSource(new URL('./diagrams/useScrollPhase.js', import.meta.url))
+const pan = await readSource(new URL('./diagrams/useCenterOnOverflow.js', import.meta.url))
+const iso = await readSource(new URL('./diagrams/iso.js', import.meta.url))
+const trident = await readSource(new URL('./diagrams/TridentSchematic.jsx', import.meta.url))
+const nectar = await readSource(new URL('./diagrams/NectarSchematic.jsx', import.meta.url))
 
 const sources = [driver, pan, iso, trident, nectar]
 const figures = [trident, nectar]
@@ -138,8 +138,11 @@ describe('Trident and Nectar schematics', () => {
 
   it('puts the lattice on the page rather than inside a panel', () => {
     // The figures are not cards: no border, no surface, no shadow of their own.
-    const panel = css.match(/\.trident-diagram,\n\.nectar-network \{[^}]*\}/)[0]
-    assert.doesNotMatch(panel, /border|background|box-shadow|border-radius/)
+    // Anchored at column 0 so this is the top-level rule and not the indented
+    // copy inside the 900px block, and \r?\n so it holds on a CRLF checkout.
+    const panel = css.match(/^\.trident-diagram,\r?\n\.nectar-network \{[^}]*\}/m)
+    assert.ok(panel, 'no top-level .trident-diagram / .nectar-network rule to check')
+    assert.doesNotMatch(panel[0], /border|background|box-shadow|border-radius/)
     // The dot field belongs to the section, bled to the width of the page.
     assert.match(css, /\.section-field \{[\s\S]*?width: 100vw;/)
     assert.match(css, /\.section-field \{[\s\S]*?background-image: radial-gradient\(circle at center, color-mix\(in srgb, var\(--accent\)/)

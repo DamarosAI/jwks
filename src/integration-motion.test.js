@@ -1,9 +1,9 @@
-import { readFile } from 'node:fs/promises'
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
+import { readSource } from './source-text.js'
 
-const css = await readFile(new URL('./styles.css', import.meta.url), 'utf8')
-const app = await readFile(new URL('./App.jsx', import.meta.url), 'utf8')
+const css = await readSource(new URL('./styles.css', import.meta.url))
+const app = await readSource(new URL('./App.jsx', import.meta.url))
 
 describe('connector logo motion', () => {
   it('keeps the marquee moving during ordinary page scroll', () => {

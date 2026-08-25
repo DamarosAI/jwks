@@ -1,6 +1,6 @@
-import { readFile } from 'node:fs/promises'
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
+import { readSource } from './source-text.js'
 import {
   DEMO_PAGE_WHEEL_SURFACES,
   applyPassedPageWheel,
@@ -11,9 +11,9 @@ import {
   shouldPassPageWheel,
 } from './page-scroll.js'
 
-const app = await readFile(new URL('./App.jsx', import.meta.url), 'utf8')
-const css = await readFile(new URL('./styles.css', import.meta.url), 'utf8')
-const mobile = await readFile(new URL('./mobile.css', import.meta.url), 'utf8')
+const app = await readSource(new URL('./App.jsx', import.meta.url))
+const css = await readSource(new URL('./styles.css', import.meta.url))
+const mobile = await readSource(new URL('./mobile.css', import.meta.url))
 
 const CLIP_SURFACES = /#root :is\(\s*\.hero-workspace,\s*\.hero-app-grid,\s*\.landing-source-view,\s*\.landing-source-view \.workspace-view,\s*\.landing-source-demo,\s*\.landing-source-demo \.workspace-view,\s*\.control-system,[\s\S]*?overflow:\s*clip;[\s\S]*?overscroll-behavior:\s*auto;/
 
