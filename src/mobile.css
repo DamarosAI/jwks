@@ -271,6 +271,14 @@ body,
     font-size: clamp(2rem, 9vw, 2.7rem);
   }
 
+  /* Trident's heading is two short clauses and Nectar's is one long one, so the
+     same ramp does not fit both: at 9vw the Nectar line broke into three stubs
+     down a phone column. It takes its own step down and lands in two. */
+
+  #root .nectar-copy h2 {
+    font-size: clamp(1.62rem, 6.9vw, 2.2rem);
+  }
+
   #root .trident-copy h2 span,
   #root .nectar-copy h2 span {
     white-space: normal;
