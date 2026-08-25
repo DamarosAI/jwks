@@ -22,50 +22,69 @@ export function pts(list) {
   return list.map(([x, y]) => `${x},${y}`).join(' ')
 }
 
-const drop = (height) => ([x, y]) => [x, round(y + height)]
+/**
+ * A plan-aligned rounded square, sampled into plan points in outline order:
+ * right corner, front, left, back. Projected, that order runs clockwise on
+ * screen, which is what lets a slice of it be read as a silhouette.
+ *
+ * Damaros rounds its edges, so the solids in these figures round theirs. The
+ * radius is a plan radius carried through the projection rather than a screen
+ * radius pasted on afterwards, so a corner stays the same corner at every
+ * height of the stack.
+ */
+export function roundedPlan(half, radius, steps = 7) {
+  const r = Math.max(0, Math.min(radius, half))
+  const inset = half - r
+  const arcs = [
+    [inset, -inset, -90, 0],
+    [inset, inset, 0, 90],
+    [-inset, inset, 90, 180],
+    [-inset, -inset, 180, 270],
+  ]
+  const out = []
+  arcs.forEach(([ax, ay, from, to]) => {
+    for (let step = 0; step <= steps; step += 1) {
+      const angle = ((from + ((to - from) * step) / steps) * Math.PI) / 180
+      out.push([round(ax + Math.cos(angle) * r), round(ay + Math.sin(angle) * r)])
+    }
+  })
+  return out
+}
 
 /**
- * A plan-aligned box: half-extents hx/hy in plan units, extruded `height`
- * screen pixels straight down. Returns the three visible faces plus the four
- * projected corners, so callers can hang leaders off a real edge.
+ * A rounded solid centred on screen (cx, cy): a rounded plan square extruded
+ * `height` pixels straight down. Returns the top face, the two skirt faces cut
+ * at the front corner, and the four extreme corners so callers can hang a
+ * leader or an arc off a real edge rather than a guessed one.
  */
-export function box(p, x, y, hx, hy, height) {
-  const back = p(x - hx, y - hy)
-  const right = p(x + hx, y - hy)
-  const front = p(x + hx, y + hy)
-  const left = p(x - hx, y + hy)
-  const under = drop(height)
-  return {
-    back,
-    right,
-    front,
-    left,
-    top: pts([back, right, front, left]),
-    faceRight: pts([right, front, under(front), under(right)]),
-    faceLeft: pts([left, front, under(front), under(left)]),
-  }
-}
-
-/** A deck centred on screen (cx, cy). Carries its own projection. */
-export function deck(cx, cy, half, height) {
+export function roundedDeck(cx, cy, half, height, radius) {
   const p = project(cx, cy)
-  return { p, ...box(p, 0, 0, half, half, height) }
-}
+  const plan = roundedPlan(half, radius)
+  const ring = plan.map(([x, y]) => p(x, y))
+  const pick = (score) => plan.reduce((best, point, index) => (score(point) > score(plan[best]) ? index : best), 0)
+  const iRight = pick(([x, y]) => x - y)
+  const iFront = pick(([x, y]) => x + y)
+  const iLeft = pick(([x, y]) => y - x)
+  const iBack = pick(([x, y]) => -x - y)
 
-/** A flat plan square on a deck - the unit the field grids are built from. */
-export function tile(p, x, y, r) {
-  return pts([p(x - r, y - r), p(x + r, y - r), p(x + r, y + r), p(x - r, y + r)])
-}
+  const trace = (list) => list.map(([x, y]) => `${x} ${y}`).join(' L ')
+  const skirt = (from, to) => {
+    const face = ring.slice(from, to + 1)
+    const under = face.map(([x, y]) => [x, round(y + height)])
+    return `M ${trace(face)} L ${trace(under.reverse())} Z`
+  }
 
-/** Painter's order for extruded plan grids: back of the deck first. */
-export function depthSort(cells) {
-  return [...cells].sort((a, b) => a[0] + a[1] - (b[0] + b[1]))
-}
-
-/** Point a fraction of the way along one of a deck's two front edges. */
-export function alongFront(shape, side, t) {
-  const from = side === 'left' ? shape.left : shape.right
-  return [round(from[0] + (shape.front[0] - from[0]) * t), round(from[1] + (shape.front[1] - from[1]) * t)]
+  return {
+    p,
+    height,
+    top: pts(ring),
+    faceRight: skirt(iRight, iFront),
+    faceLeft: skirt(iFront, iLeft),
+    back: ring[iBack],
+    right: ring[iRight],
+    front: ring[iFront],
+    left: ring[iLeft],
+  }
 }
 
 /** The screen angle of a plan x-axis edge, for labels that run with the deck. */
@@ -84,20 +103,11 @@ export function planSpace(cx, cy) {
   return `matrix(${ISO_X}, ${ISO_Y}, ${-ISO_X}, ${ISO_Y}, ${cx}, ${cy})`
 }
 
-/** How far a deck's front corner falls below its centre, in screen pixels. */
-export function frontDrop(half) {
-  return round(2 * half * ISO_Y)
-}
-
-/** Straight-line interpolation between two projected points. */
-export function between(from, to, t) {
-  return [round(from[0] + (to[0] - from[0]) * t), round(from[1] + (to[1] - from[1]) * t)]
-}
-
 /**
- * A stable value in [0, 1) for an index. The figures need scatter that reads
- * as organic but has to be identical on every render and in every test, so
- * this stands in for a random source rather than calling one.
+ * A stable value in [0, 1) for an index. Both figures need scatter that reads
+ * as organic - positions that are not on a grid, ambient timings that never
+ * fall into step - but it has to be identical on every render and in every
+ * test, so this stands in for a random source rather than calling one.
  */
 export function jitter(index, salt) {
   const value = Math.sin(index * 12.9898 + salt * 78.233) * 43758.5453

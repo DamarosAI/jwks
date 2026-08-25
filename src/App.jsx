@@ -1081,7 +1081,7 @@ function TridentSection() {
         <p className="trident-boundary">Trident prepares source-grounded work. It never publishes a protocol, casts a Screening verdict, chooses a Resolve action, signs, or releases site data.</p>
       </div>
       <div className="trident-diagram">
-        <TridentSchematic animate={animate} reduced={reduced} section={root} />
+        <TridentSchematic animate={animate} reduced={reduced} />
       </div>
     </section>
   )
@@ -1110,7 +1110,7 @@ function NectarSection() {
       <div className="section-field" ref={field} aria-hidden="true" />
       <SectionEyebrow>Nectar</SectionEyebrow>
       <div className="nectar-network">
-        <NectarSchematic animate={animate} reduced={reduced} section={root} />
+        <NectarSchematic animate={animate} reduced={reduced} />
       </div>
       <div className="nectar-copy">
         <h2><span>Execution intelligence that crosses site boundaries.</span><span>Patient data that never does.</span></h2>

@@ -38,8 +38,8 @@ describe('theme and product language', () => {
 
   it('keeps the diagrams off-screen, narrow and reduced-motion safe', () => {
     assert.match(app, /const animate = shouldRunAmbient\(\{ reduced, inView, narrow \}\)/)
-    assert.match(app, /<NectarSchematic animate=\{animate\} reduced=\{reduced\} section=\{root\} \/>/)
-    assert.match(app, /<TridentSchematic animate=\{animate\} reduced=\{reduced\} section=\{root\} \/>/)
+    assert.match(app, /<NectarSchematic animate=\{animate\} reduced=\{reduced\} \/>/)
+    assert.match(app, /<TridentSchematic animate=\{animate\} reduced=\{reduced\} \/>/)
     assert.match(css, /@media.*prefers-reduced-motion/)
   })
 })

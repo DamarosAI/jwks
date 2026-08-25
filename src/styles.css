@@ -3802,13 +3802,6 @@ html { scroll-padding-top: 96px; }
   flex: 1;
 }
 
-.hero-app-nav button > small {
-  color: var(--success);
-  font-size: 0.5rem;
-  font-weight: 650;
-  letter-spacing: 0.04em;
-}
-
 .hero-app-nav button.active {
   background: color-mix(in srgb, var(--accent) 8%, var(--surface-solid));
   color: var(--text);
@@ -3846,8 +3839,6 @@ html { scroll-padding-top: 96px; }
 .hero-app-nav button:not(.active):hover > svg:first-child {
   color: var(--muted);
 }
-
-.hero-app-nav button .spine-state { color: var(--success); }
 
 .hero-app-main {
   min-width: 0;
@@ -9572,11 +9563,17 @@ html.is-hidden .clinic-node i,
 }
 
 /* -- Trident and Nectar schematics --
-   Two axonometric figures drawn in one language: plan-projected solids, rounded
-   where a Damaros edge is rounded, labelled in Switzer and reserving the mono
-   face for machine values only. Nothing here introduces a value of its own -
-   every colour, radius and weight comes from a site token, and the figures sit
-   directly on the page lattice rather than inside a panel of their own. */
+   Two axonometric figures drawn in one language: rounded plan solids, labelled
+   in Switzer and reserving the mono face for machine values only. Nothing here
+   introduces a value of its own - every colour, radius and weight comes from a
+   site token, and the figures sit directly on the page lattice rather than
+   inside a panel of their own.
+
+   Both drawings are alive at rest. Proposals keep arriving, the contract keeps
+   checking its fields, traffic keeps running the library mesh - each on its own
+   `--life` clock, scattered so nothing falls into step and no loop is short
+   enough for a reader to catch. Scroll advances the run and the pointer reads
+   it; neither is needed for the figure to be in motion. */
 
 .dgm {
   display: flex;
@@ -9585,56 +9582,9 @@ html.is-hidden .clinic-node i,
   margin: 0;
 }
 
-/* A figure title, not a window chrome bar. It names what the drawing answers. */
-
-.dgm-head {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  padding: 0 2px 20px;
-}
-
-.dgm-head strong {
-  color: var(--text);
-  font-family: var(--font-ui);
-  font-size: 1.04rem;
-  font-weight: 600;
-  letter-spacing: -0.015em;
-}
-
-.dgm-head p {
-  max-width: 52ch;
-  color: var(--text-soft);
-  font-size: 0.85rem;
-  font-weight: 400;
-  line-height: 1.45;
-}
-
-.dgm-head small {
-  color: var(--faint);
-  font-family: var(--font-mono);
-  font-size: 0.62rem;
-  font-weight: 500;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-}
-
-/* The harness bracket. What is inside it is the part that does not change when
-   the model does - which is the whole of what Trident sells. */
-
-.dgm-bracket {
-  fill: none;
-  stroke: color-mix(in srgb, var(--accent) 46%, transparent);
-  stroke-width: 1.2;
-  stroke-linecap: round;
-}
-
-.dgm-brackettext {
-  fill: var(--accent-strong);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-}
+/* No figure title. The section beside the drawing already says what it is for,
+   and a heading repeating it over the top of the sheet was one more thing
+   between the reader and the drawing. */
 
 .dgm-frame { min-width: 0; }
 
@@ -9680,8 +9630,11 @@ html.is-hidden .clinic-node i,
 
 .dgm-hatch { stroke: color-mix(in srgb, var(--text) 28%, transparent); stroke-width: 1.1; }
 .dgm-rule { stroke: var(--border); stroke-width: 1; }
+.dgm-mark { opacity: 0.92; }
 
-/* Solids. Three faces, three weights of one ink, and no second palette. */
+/* Solids. A rounded plan square and two skirt faces, three weights of one ink,
+   and no second palette. The radius is a plan radius carried through the
+   projection, so a Damaros corner stays a Damaros corner at every height. */
 
 .dgm-face-top {
   fill: var(--surface-solid);
@@ -9707,7 +9660,7 @@ html.is-hidden .clinic-node i,
 
 .dgm-deck.is-live > .dgm-solid > .dgm-face-top { stroke: color-mix(in srgb, var(--accent) 60%, var(--text)); }
 
-/* Assembly. Both figures arrive closed and open as the section enters, scrubbed
+/* Assembly. Both figures arrive closed and open as the figure enters, scrubbed
    off one `--spread` value written straight onto the element, so the reader's
    scroll drives it without a single React render. */
 
@@ -9727,11 +9680,14 @@ html.is-hidden .clinic-node i,
   transition: stroke 260ms ease;
 }
 
+/* A hairline leader and a 10px label are not a target. This is. */
+.dgm-hit { fill: none; pointer-events: all; }
+
 .dgm-railnode { fill: color-mix(in srgb, var(--text) 24%, transparent); transition: fill 260ms ease; }
 .dgm-rail.is-live .dgm-railnode { fill: var(--accent); }
 .dgm-rail.is-live .dgm-leader { stroke: color-mix(in srgb, var(--accent) 56%, transparent); }
 
-/* Ports. Where the axis meets a deck, and where structure leaves a site. */
+/* Ports. Where the tines converge, and where structure leaves a site. */
 
 .dgm-port {
   fill: var(--surface-solid);
@@ -9801,8 +9757,32 @@ html.is-hidden .clinic-node i,
 
 .dgm-pad.is-live { fill: var(--accent-soft); stroke: var(--accent); }
 
+/* A mark travelling one of the three tines. Every source keeps proposing, on
+   its own clock, whether or not anybody is pointing at the drawing - which is
+   the honest picture: the harness is busy, and none of it carries authority. */
+
+@keyframes dgm-travel {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -200; }
+}
+
+.dgm-spark {
+  stroke: var(--accent);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-dasharray: 9 191;
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.dgm-svg.is-live .dgm-spark {
+  animation: dgm-travel calc(5.2s + var(--life, 0) * 4.6s) linear infinite;
+  animation-delay: calc(var(--life, 0) * -7.3s);
+}
+
 /* Plan grids. A field of tiles is a count, not a decoration: what is bound is
-   filled, what is not is visibly not, and every one of them names itself. */
+   filled, what is not is visibly not, and every one of them names itself. The
+   contract never stops checking, so a tile ticks now and then on its own. */
 
 .dgm-fieldtile {
   fill: var(--surface-solid);
@@ -9819,9 +9799,20 @@ html.is-hidden .clinic-node i,
 
 .dgm-fieldtile.is-named { fill: var(--accent); stroke: var(--accent-strong); stroke-width: 1.6; }
 
+@keyframes dgm-tick {
+  0%, 86%, 100% { stroke-width: 1; }
+  91% { stroke-width: 1.9; }
+}
+
+.dgm-svg.is-live .dgm-fieldtile:not(.is-named) {
+  animation: dgm-tick calc(7.4s + var(--life, 0) * 5.6s) ease-in-out infinite;
+  animation-delay: calc(var(--life, 0) * -11s);
+}
+
 /* The aperture on the site authority deck. Shut is drawn shut - two leaves over
    a hole - so the claim survives with every colour removed, and signing slides
-   them apart rather than turning a light green. */
+   them apart rather than turning a light green. While it is shut it is under
+   load, and the ring says so without ever becoming a status light. */
 
 .dgm-aperture { stroke: none; opacity: 0.75; }
 
@@ -9846,6 +9837,13 @@ html.is-hidden .clinic-node i,
 
 .dgm-gatering.is-open { stroke: var(--success); }
 
+@keyframes dgm-load {
+  0%, 100% { stroke-opacity: 1; }
+  50% { stroke-opacity: 0.38; }
+}
+
+.dgm-svg.is-live .dgm-gatering.is-shut { animation: dgm-load 3.8s ease-in-out infinite; }
+
 .dgm-sigbar {
   fill: var(--surface-solid);
   stroke: color-mix(in srgb, var(--text) 24%, transparent);
@@ -9857,7 +9855,7 @@ html.is-hidden .clinic-node i,
   transition: fill 380ms ease;
 }
 
-.dgm-sigfill.is-signed { fill: var(--success); }
+.dgm-sigfill.is-signed { fill: color-mix(in srgb, var(--success) 74%, transparent); }
 
 /* The ledger. Rows, written one per committed run, front row last. */
 
@@ -9872,10 +9870,10 @@ html.is-hidden .clinic-node i,
 .dgm-ledgerrow.is-written .dgm-ledgerbar { fill: var(--accent-soft); stroke: var(--accent); }
 .dgm-ledgerrow.is-written .dgm-ledgertick { fill: var(--accent-strong); }
 
-/* The seal. It is the one place the mark belongs in this figure: it appears
-   when the receipt is written, and it stamps rather than fades in. */
+/* The seal. It appears when the receipt is written, and it stamps rather than
+   fades in. */
 
-.dgm-seal { opacity: 0; transform-origin: 482px 544px; transform: scale(1.24); }
+.dgm-seal { opacity: 0; transform-origin: 492px 544px; transform: scale(1.24); }
 .dgm-seal.is-struck { opacity: 1; transform: scale(1); }
 .dgm-svg.is-live .dgm-seal { transition: opacity 260ms ease, transform 420ms cubic-bezier(0.2, 1.5, 0.4, 1); }
 
@@ -9886,33 +9884,82 @@ html.is-hidden .clinic-node i,
 }
 
 .dgm-sealtext { fill: var(--success); font-size: 9px; font-weight: 700; letter-spacing: 0.12em; }
-.dgm-mark { opacity: 1; }
 
-/* The axis. One line down one stack, drawn the way a drawing draws an axis:
-   solid where it runs in the open, dashed where it passes through a solid. That
-   is what makes four decks read as four heights of one plan instead of four
-   rectangles with a line laid over them. */
+/* The descent. Three short arcs down the free left edge of the stack, one lit
+   at a time. A full-height rule over four solids was flatter and said less: it
+   read as a line drawn on top of the drawing rather than a run passing through
+   it, and it never once stopped where the claim stops. This does - the arc out
+   of the site deck has no path at all until somebody there has signed. */
 
-.dgm-run {
+.dgm-drop {
+  opacity: clamp(0, calc((var(--spread, 1) - 0.9) * 10), 1);
+  pointer-events: none;
+}
+
+.dgm-droppath {
   fill: none;
-  stroke: var(--accent);
-  stroke-width: 2.6;
+  stroke: color-mix(in srgb, var(--accent) 32%, transparent);
+  stroke-width: 1.6;
   stroke-linecap: round;
   stroke-dasharray: 100;
-  /* An axis cannot run through a stack that has not finished assembling. */
-  opacity: clamp(0, calc((var(--spread, 1) - 0.82) * 5.6), 1);
-  transition: stroke 300ms ease;
+  stroke-dashoffset: 100;
 }
 
-.dgm-run.is-hidden {
-  stroke: color-mix(in srgb, var(--accent) 52%, transparent);
-  stroke-width: 1.6;
-  stroke-dasharray: 4 4;
-  opacity: calc(var(--cut, 0) * clamp(0, calc((var(--spread, 1) - 0.82) * 5.6), 1));
+.dgm-drop.is-done .dgm-droppath { stroke-dashoffset: 0; }
+.dgm-drop.is-latest .dgm-droppath { stroke: var(--accent); stroke-width: 2.6; }
+.dgm-svg.is-hold .dgm-drop.is-latest .dgm-droppath { stroke: var(--warning); }
+
+.dgm-svg.is-live .dgm-droppath {
+  transition: stroke-dashoffset 720ms cubic-bezier(0.16, 1, 0.3, 1), stroke 320ms ease, stroke-width 320ms ease;
 }
 
-.dgm-svg.is-live .dgm-run { transition: stroke-dashoffset 620ms cubic-bezier(0.16, 1, 0.3, 1), stroke 300ms ease; }
-.dgm-svg.is-live .dgm-run.is-hidden { transition: opacity 420ms ease, stroke 300ms ease; }
+.dgm-dropflow {
+  fill: none;
+  stroke: var(--accent-strong);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-dasharray: 7 193;
+  opacity: 0;
+}
+
+.dgm-drop.is-done .dgm-dropflow { opacity: 0.9; }
+.dgm-svg.is-hold .dgm-drop.is-latest .dgm-dropflow { opacity: 0; }
+
+.dgm-svg.is-live .dgm-drop.is-done .dgm-dropflow {
+  animation: dgm-travel calc(4.4s + var(--life, 0) * 3.4s) linear infinite;
+  animation-delay: calc(var(--life, 0) * -5.5s);
+}
+
+/* The run crossing the site deck to reach the aperture. Without it the descent
+   stops at a corner and the reader has to be told why; with it, the thing that
+   stops the run is the thing the run visibly arrives at. */
+
+.dgm-approach {
+  stroke: color-mix(in srgb, var(--accent) 46%, transparent);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+}
+
+.dgm-approach.is-here { stroke-dashoffset: 0; }
+.dgm-svg.is-hold .dgm-approach.is-here { stroke: var(--warning); }
+
+.dgm-svg.is-live .dgm-approach {
+  transition: stroke-dashoffset 620ms cubic-bezier(0.16, 1, 0.3, 1) 240ms, stroke 320ms ease;
+}
+
+.dgm-dropnode {
+  fill: var(--surface-solid);
+  stroke: color-mix(in srgb, var(--accent) 42%, transparent);
+  stroke-width: 1.4;
+  opacity: 0;
+}
+
+.dgm-drop.is-done .dgm-dropnode { opacity: 1; }
+.dgm-drop.is-latest .dgm-dropnode { fill: var(--accent); stroke: var(--accent-strong); }
+.dgm-svg.is-hold .dgm-drop.is-latest .dgm-dropnode { fill: var(--warning); stroke: var(--warning); }
+.dgm-svg.is-live .dgm-dropnode { transition: opacity 300ms ease 400ms, fill 300ms ease, stroke 300ms ease; }
 
 /* Nectar: the library, drawn as a mesh. Coverage is the part of it that has lit
    up, so compounding is something a reader watches rather than reads. */
@@ -9931,6 +9978,24 @@ html.is-hidden .clinic-node i,
 .dgm-link.is-bound { stroke: color-mix(in srgb, var(--accent) 46%, transparent); }
 .dgm-link.is-new { stroke: var(--accent); stroke-width: 1.8; }
 
+/* Traffic on the mesh. Eight marks on eight clocks, so the library is a thing
+   in use rather than a picture of one. */
+
+.dgm-traffic {
+  stroke: var(--accent-strong);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-dasharray: 8 192;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.dgm-svg.is-live .dgm-traffic.is-bound {
+  opacity: 0.85;
+  animation: dgm-travel calc(4.8s + var(--life, 0) * 5.4s) linear infinite;
+  animation-delay: calc(var(--life, 0) * -9.7s);
+}
+
 .dgm-node {
   --in: clamp(0, calc((var(--spread, 1) - var(--stagger, 0) * 0.8) * 3.2), 1);
   fill: color-mix(in srgb, var(--text) 22%, transparent);
@@ -9947,8 +10012,8 @@ html.is-hidden .clinic-node i,
 }
 
 .dgm-svg.is-live .dgm-node.is-bound {
-  animation: dgm-beat 4.4s ease-in-out infinite;
-  animation-delay: calc(var(--beat, 0) * -620ms);
+  animation: dgm-beat calc(3.4s + var(--life, 0) * 3.8s) ease-in-out infinite;
+  animation-delay: calc(var(--life, 0) * -9s);
 }
 
 .dgm-countbody {
@@ -10005,6 +10070,16 @@ html.is-hidden .clinic-node i,
 
 .dgm-reach.is-hot .dgm-reachrim { stroke: var(--accent-strong); stroke-width: 1.4; }
 
+@keyframes dgm-swell {
+  0%, 100% { stroke-opacity: 1; }
+  50% { stroke-opacity: 0.34; }
+}
+
+.dgm-svg.is-live .dgm-reachrim {
+  animation: dgm-swell calc(6.6s + var(--life, 0) * 4.2s) ease-in-out infinite;
+  animation-delay: calc(var(--life, 0) * -8.4s);
+}
+
 /* The site wall. It is a double rule along the skirt, the way a plan draws a
    wall - not a hatch, and never a status colour. Records sit under a sealed lid
    inside it, and the local run sweeps across them without leaving. */
@@ -10035,7 +10110,7 @@ html.is-hidden .clinic-node i,
 }
 
 .dgm-svg.is-live .dgm-sweep {
-  animation: dgm-sweep 3.4s ease-in-out infinite;
+  animation: dgm-sweep calc(3s + var(--life, 0) * 2.4s) ease-in-out infinite;
   animation-delay: calc(var(--stagger, 0) * -6s);
 }
 
@@ -10052,9 +10127,7 @@ html.is-hidden .clinic-node i,
 /* Type. Switzer carries every label; the mono face is reserved for values a
    machine produced - counts, identifiers, record totals. */
 
-.dgm-micro { fill: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: 0.12em; }
-.dgm-micro.is-quiet { fill: var(--faint); }
-.dgm-read { fill: var(--text-soft); font-size: 11.5px; font-weight: 500; }
+.dgm-read { fill: var(--text-soft); font-size: 11.5px; font-weight: 500; transition: fill 260ms ease; }
 
 .dgm-side {
   fill: var(--text-soft);
@@ -10115,7 +10188,7 @@ html.is-hidden .clinic-node i,
 .dgm-svg.is-pass .dgm-statustext { fill: var(--accent-strong); }
 
 @media (prefers-reduced-motion: reduce) {
-  .dgm-svg :is(.dgm-run, .dgm-fieldtile, .dgm-face-top, .dgm-gatering, .dgm-leaf, .dgm-sigfill, .dgm-side, .dgm-sidefact, .dgm-tagbody, .dgm-node, .dgm-link, .dgm-liftpath, .dgm-liftchip, .dgm-carry, .dgm-seal, .dgm-status, .dgm-statustext, .dgm-deck, .dgm-plate, .dgm-site, .dgm-ident) {
+  .dgm-svg :is(.dgm-droppath, .dgm-dropflow, .dgm-dropnode, .dgm-approach, .dgm-spark, .dgm-traffic, .dgm-fieldtile, .dgm-face-top, .dgm-gatering, .dgm-leaf, .dgm-sigfill, .dgm-side, .dgm-sidefact, .dgm-read, .dgm-tagbody, .dgm-node, .dgm-link, .dgm-liftpath, .dgm-liftchip, .dgm-carry, .dgm-reachrim, .dgm-sweep, .dgm-seal, .dgm-status, .dgm-statustext, .dgm-deck, .dgm-plate, .dgm-site, .dgm-ident) {
     transition: none;
     animation: none;
   }
@@ -10314,8 +10387,7 @@ html.is-hidden .clinic-node i,
     text-align: center;
   }
 
-  #root .hero-app-nav button > svg,
-#root .hero-app-nav button > small {
+  #root .hero-app-nav button > svg {
     display: none;
   }
 
@@ -10436,4 +10508,126 @@ html.is-hidden .clinic-node i,
   #root .control-source-nav .control-policy-list {
     grid-template-columns: minmax(0, 1fr);
   }
+}
+
+/* Demo controls.
+
+   A control has to answer three questions without being pressed: can I press
+   it, what is selected right now, and did my press land. The solid actions in
+   the workspace answered only the third - they had a press state and a focus
+   ring but no hover, so until you had already committed to the click they read
+   as printed labels rather than buttons. */
+
+@media (hover: hover) and (pointer: fine) {
+  #root :is(.landing-source-demo, .hero-workspace, .control-system) :is(.source-criteria-head > button, .source-primary-action, .source-replay-head > button, .resolve-sign-row > button, .evidence-action-receipt button):hover:not(:disabled) {
+    border-color: color-mix(in srgb, var(--accent) 88%, #10161d);
+    background: color-mix(in srgb, var(--accent) 88%, #10161d);
+    box-shadow: 0 3px 10px color-mix(in srgb, var(--accent) 26%, transparent);
+  }
+
+  #root :is(.landing-source-demo, .hero-workspace) .source-replay-head > button.ready:hover {
+    border-color: color-mix(in srgb, var(--success) 88%, #10161d);
+    background: color-mix(in srgb, var(--success) 88%, #10161d);
+    box-shadow: 0 3px 10px color-mix(in srgb, var(--success) 26%, transparent);
+  }
+}
+
+/* A disabled control must stop looking pressable. Several of these kept the
+   accent fill and the pointer cursor while refusing the click. */
+
+#root :is(.landing-source-demo, .hero-workspace, .control-system) :is(.source-criteria-head > button, .source-primary-action, .source-replay-head > button, .evidence-action-receipt button):disabled {
+  border-color: var(--border);
+  background: var(--surface-strong);
+  color: var(--faint);
+  cursor: default;
+  box-shadow: none;
+}
+
+/* Once a decision is signed the options are history, not choices. The one that
+   was taken carries the same green as the receipt underneath it; the rest
+   recede and stop answering the pointer. */
+
+#root .source-decision-list button:disabled {
+  cursor: default;
+}
+
+#root .source-decision-list button:disabled:not(.selected),
+#root .source-decision-list button:disabled:not(.selected):hover {
+  border-color: var(--border);
+  background: var(--surface-solid);
+  opacity: 0.52;
+}
+
+#root .source-decision-list button.selected:disabled {
+  border-color: color-mix(in srgb, var(--success) 52%, var(--border));
+  background: color-mix(in srgb, var(--success) 5%, white);
+  color: var(--text);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--success) 24%, transparent);
+}
+
+#root .source-decision-list button.selected:disabled > i {
+  border-color: var(--success);
+}
+
+/* Committed work reads in the avatar rather than in a badge. */
+
+#root .resolve-person-tabs button.committed > i {
+  border-color: color-mix(in srgb, var(--success) 40%, var(--border));
+  background: color-mix(in srgb, var(--success) 8%, white);
+  color: var(--success);
+}
+
+/* The stage marker is the answer to "where am I". It used to pop while the row
+   it belongs to faded over 140ms, so the rail moved as two things. Draw it on
+   every row and scale it in, and one gesture carries the change. */
+
+#root .hero-app-nav button::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 0;
+  width: 3px;
+  border-radius: 0 2px 2px 0;
+  background: var(--accent);
+  opacity: 0;
+  transform: scaleY(0.24);
+  transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1), opacity 140ms ease;
+}
+
+#root .hero-app-nav button.active::before {
+  opacity: 1;
+  transform: scaleY(1);
+}
+
+@container product-window (max-width: 900px) {
+  #root .hero-app-nav button::before {
+    transform: scaleX(0.24);
+  }
+
+  #root .hero-app-nav button.active::before {
+    transform: scaleX(1);
+  }
+}
+
+/* A focus ring has to survive the surface it lands on. Mixed 72% into white it
+   was lighter than the row beneath it on a selected item. */
+
+#root :is(.hero-workspace, .control-system) :is(button, [role='button']):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #root .hero-app-nav button::before {
+    transition: none;
+  }
+}
+
+/* The thesis is two statements, so it breaks where it turns rather than
+   wherever the column happens to run out. */
+
+#root .thesis-head h2 .thesis-line {
+  display: block;
+  text-wrap: balance;
 }
