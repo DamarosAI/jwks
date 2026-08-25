@@ -592,10 +592,6 @@ function CapacityBento() {
   const root = useRef(null)
   const reduced = useReducedMotion()
 
-  const integrations = useRef(null)
-  const integrationsInView = useInView(integrations, { threshold: 0 })
-  const integrationsPlay = shouldRunAmbient({ reduced, inView: integrationsInView })
-
   useEnterMotion(root, reduced, () => gsap.from('.capacity-bento > *', {
     opacity: 0,
     duration: 0.86,
@@ -613,8 +609,8 @@ function CapacityBento() {
         <p>Disease-agnostic by design. One execution system for every protocol, care setting, and patient population. Each protocol adds reusable coverage. Every decision keeps human accountability and local control.</p>
       </div>
       {/* Two figures over the row that pairs the third with what it counts: the
-          carousel is the systems, so the number beside it is its own caption and
-          the strip does not need a label of its own. */}
+          panel is the systems, so the number beside it is its own caption and
+          the logos need no label of their own. */}
       <div className="capacity-bento">
         <article className="bento-card metric-card metric-wide metric-blue">
           <MetricDots active={6} total={20} tone="dark" />
@@ -635,16 +631,9 @@ function CapacityBento() {
           <cite>SCRS Site Landscape Survey 2023</cite>
         </article>
         <div className="bento-card connector-closeup">
-          <div className={`integration-viewport${integrationsPlay ? '' : ' is-paused'}`} ref={integrations} aria-label="Source systems a site works across">
-            <div className="integration-track">
-              {[0, 1].map((group) => (
-                <div className="integration-group" aria-hidden={group === 1} key={group}>
-                  {INTEGRATIONS.map(([name, src]) => <div className={`integration-logo integration-${name.toLowerCase()}`} key={`${group}-${name}`}><img src={src} alt={group === 0 ? name : ''} loading="lazy" decoding="async" /></div>)}
-                </div>
-              ))}
-            </div>
-          </div>
-          <cite>Integration targets - not shipped connectors</cite>
+          <ul className="integration-grid" aria-label="Source systems a site works across">
+            {INTEGRATIONS.map(([name, src]) => <li className={`integration-logo integration-${name.toLowerCase()}`} key={name}><img src={src} alt={name} loading="lazy" decoding="async" /></li>)}
+          </ul>
         </div>
       </div>
     </section>

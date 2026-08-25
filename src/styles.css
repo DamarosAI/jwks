@@ -1036,59 +1036,55 @@ h2 {
   font-size: 0.42em;
 }
 
-.integration-viewport {
-  width: calc(100% + 2px);
-  margin-inline: -1px;
-  padding: 16px 0;
-  overflow: hidden;
-  mask-image: linear-gradient(to right, transparent, black 7%, black 93%, transparent);
-}
+/* Bays, not tiles. The list is five and it is not growing, so it sits still and
+   fills the panel it is in: one surface cut into five by the grid gap, which
+   keeps its rules however many columns the panel is wide enough to hold. */
 
-.integration-track {
-  display: flex;
-  width: max-content;
-  gap: 10px;
-  animation: integration-scroll 30s linear infinite;
-  will-change: auto;
-}
-
-.integration-viewport:not(.is-paused) .integration-track {
-  will-change: transform;
-}
-
-.integration-group {
+.integration-grid {
   display: grid;
-  grid-template-columns: repeat(5, 132px);
-  gap: 10px;
+  height: 100%;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: var(--border);
 }
-
-/* Tiles, not cards. In a strip a third of the section wide these were big
-   enough that five of them read as a row of panels rather than as a run of
-   logos going past. */
 
 .integration-logo {
   display: grid;
-  min-height: 124px;
+  min-height: 118px;
   place-items: center;
-  padding: 18px;
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  background: #f5f7fa;
+  padding: 20px 16px;
+  background: var(--surface-solid);
 }
-
 
 .integration-logo img {
   display: block;
   width: min(100%, 132px);
-  max-height: 36px;
+  max-height: 34px;
   object-fit: contain;
 }
 
 .integration-epic img { width: 94px; }
 .integration-redcap img { width: 126px; }
 
-@keyframes integration-scroll {
-  to { transform: translateX(calc(-50% - 5px)); }
+/* Below the width that holds five legible bays the panel goes two up, and the
+   odd one out takes the full row rather than leaving a gap in the grid. */
+
+@container systems-panel (max-width: 640px) {
+  .integration-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .integration-logo {
+    min-height: 96px;
+    padding: 16px 14px;
+  }
+
+  .integration-logo:last-child {
+    grid-column: 1 / -1;
+  }
 }
 
 .section-space {
@@ -1181,10 +1177,10 @@ h2 {
 }
 
 /* Two figures across the top, and a second row that puts the third one next to
-   the thing it counts. The carousel had the full width of the section to itself
-   and never had enough in it to earn that - five logos scrolling through a
-   1120px strip reads as a gap with a marquee in it. Beside the figure it
-   illustrates, it is the right size and it needs no label of its own. */
+   the thing it counts. The logos had the full width of the section to
+   themselves and never had enough in them to earn it - five of them scrolling
+   through a 1120px strip read as a gap with a marquee in it. Beside the figure
+   they illustrate, they are the right size and need no label of their own. */
 
 .capacity-bento {
   display: grid;
@@ -1271,28 +1267,17 @@ h2 {
   color: rgba(246, 249, 252, 0.74);
 }
 
+/* The panel is the logos and nothing else - no header bar, no caption, no
+   frame inside the frame. It sizes its own bays, so it is the container the
+   grid inside it measures against, not the viewport. */
+
 .connector-closeup {
   display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
-  align-items: center;
   overflow: hidden;
-  padding-bottom: 18px;
   border: 1px solid var(--border);
   border-radius: var(--card-radius);
   background: var(--surface-solid);
-}
-
-/* The strip carried a header bar naming it and marking it as target behaviour.
-   The figure beside it names it, so what is left is the one thing the reader
-   could otherwise get wrong - set as a citation, like every other claim in
-   this row. */
-
-.connector-closeup cite {
-  padding-inline: 24px;
-  color: var(--faint);
-  font-size: 0.55rem;
-  font-style: normal;
-  letter-spacing: 0.04em;
+  container: systems-panel / inline-size;
 }
 
 .connector-vendor {
@@ -4945,30 +4930,6 @@ html { scroll-padding-top: 96px; }
     padding: 24px 20px;
   }
 
-  .integration-group {
-    grid-template-columns: repeat(5, 132px);
-  }
-
-  .integration-logo {
-    min-height: 140px;
-    padding: 16px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .integration-track {
-    animation: none;
-    transform: none;
-  }
-
-  .integration-group[aria-hidden="true"] {
-    display: none;
-  }
-
-  .integration-viewport {
-    overflow: visible;
-    mask-image: none;
-  }
 }
 
 /* Final responsive cascade for the expanded Trident workbench. */
@@ -8635,19 +8596,12 @@ html { scroll-padding-top: 96px; }
 
 .hero-workspace,
 .control-system,
-.integration-viewport {
-  contain: layout style;
-  overflow-anchor: none;
-}
-
 html.is-scrolling .network-core i,
 html.is-scrolling .clinic-node i,
 html.is-hidden .biomarker-rain span,
-html.is-hidden .integration-track,
 html.is-hidden .network-core i,
 html.is-hidden .clinic-node i,
-.biomarker-rain.is-paused span,
-.integration-viewport.is-paused .integration-track {
+.biomarker-rain.is-paused span {
   animation-play-state: paused;
 }
 
@@ -8769,8 +8723,7 @@ html.is-hidden .clinic-node i,
 
 @media (update: slow), (prefers-reduced-data: reduce) {
 
-  .integration-track,
-.network-core i,
+  .network-core i,
 .clinic-node i {
     animation: none;
   }
@@ -10548,7 +10501,7 @@ html.is-hidden .clinic-node i,
   background: var(--accent-strong);
 }
 
-/* Two figures over a figure and the carousel it counts. */
+/* Two figures over a figure and the systems it counts. */
 
 #root .capacity-bento > .metric-wide { grid-column: span 3; grid-row: 1; }
 #root .capacity-bento > .metric-systems { grid-column: span 2; grid-row: 2; }
