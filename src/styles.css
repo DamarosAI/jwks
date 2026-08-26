@@ -83,9 +83,11 @@
   --type-eyebrow: clamp(0.72rem, 0.662rem + 0.258vw, 0.92rem);
   /* Two of the six eyebrows are not section labels, they are product names, and
      for a long time the sheet drew them as though it could not tell the
-     difference. Nineteen to twenty-four pixels on the same 360-to-1600 line
-     every other editorial size runs on. */
-  --type-brand-eyebrow: clamp(1.19rem, 1.097rem + 0.403vw, 1.5rem);
+     difference. Twenty-three to twenty-nine pixels on the same 360-to-1600 line
+     every other editorial size runs on - the whole clamp scaled by 1.2 off the
+     19-to-24 it opened at, because these are set in the display face now and
+     the display face has one weight. Size is the only lever it gives. */
+  --type-brand-eyebrow: clamp(1.428rem, 1.316rem + 0.484vw, 1.8rem);
   /* Fluid page scale. Every editorial size is a straight line between a
      360px phone and a 1600px desktop, so a heading grows with the viewport
      instead of jumping at a breakpoint. One design, continuously sized. */
@@ -807,29 +809,36 @@ h2 {
    names of their own were drawn at the same volume as the word "Capacity", and
    a reader scanning the page met the brand as a caption.
 
-   The jump is size and weight together, because either alone reads as an
-   accident. Twenty-two-odd pixels at 700 puts these two in the same typographic
-   register as the wordmark in the nav - Switzer, bold, tight - which is the tie
-   worth making: a product name should look like the company name, not like a
-   section heading's caption.
+   THE DISPLAY FACE, AND WHAT THAT COSTS. These are set in Endless, which is
+   what every headline on the site is set in and what the two names should be
+   set in: a product name belongs to the same voice as the sentence it is
+   introducing, not to the UI face every caption uses.
 
-   Switzer, not the display face. Endless ships one weight, 400, and
-   `font-synthesis: none` is set two rules up - so the display face at "bold" is
-   the display face at 400, which is lighter than the headline beside it and the
-   opposite of prominent. Size could carry it alone there and weight could not,
-   and this needs both.
+   Endless ships one weight. There is a single @font-face for it, 400, and
+   `font-synthesis: none` is set two rules up - so `font-weight: 700` here would
+   render at 400 and the sheet would be stating a weight it does not get. It
+   says 400, which is the truth.
 
-   Tracking comes DOWN, 0.16em to 0.10em. Letterspacing is what makes fourteen
-   pixels of uppercase legible; at twenty-two it is what makes a word stop being
-   a word. And the ink goes one step deeper than the labels', so the two names
-   are separated from the four topics by colour as well as by weight. */
+   Which leaves size as the only lever the face gives, so size carries all of
+   it: twenty-three to twenty-nine pixels against a label at twelve to fifteen,
+   a ratio just under two to one at every viewport. That is a wider gap than the
+   weight jump ever bought, and it is why the clamp went up by a fifth when the
+   family changed - the two moves are one move.
+
+   Tracking comes DOWN, 0.16em to 0.06em, in two steps for two reasons.
+   Letterspacing is what makes fourteen pixels of uppercase legible and at
+   twenty-seven it is what stops a word being a word; and Endless is a wider
+   face than Switzer, so the same tracking on it opens further than the number
+   suggests. The ink goes one step deeper than the labels', so the two names are
+   separated from the four topics by colour as well as by scale. */
 
 .section-eyebrow.is-brand,
 #root .section-eyebrow.is-brand {
   color: var(--accent-strong);
+  font-family: var(--font-display);
   font-size: var(--type-brand-eyebrow);
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  font-weight: 400;
+  letter-spacing: 0.06em;
 }
 
 .mobile-preview-frame {
