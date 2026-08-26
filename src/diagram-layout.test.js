@@ -1345,17 +1345,37 @@ describe('Trident and Nectar schematics', () => {
     assert.match(DGM_BLOCK, /\.dgm-ledgerrow\.is-written \.dgm-ledgerseal \{ fill: var\(--settled\); \}/)
   })
 
-  it('keeps the figures off the site green and on a deeper one', () => {
-    // At figure scale - a 1.3px rim round the opening, a 7px seal on a ledger
-    // row, a 9px pill - the success token comes out emerald and reads as a
-    // highlighter, which is the wrong register for a drawing whose subject is a
-    // thing that will not move without a signature. Carried toward the ink it is
-    // still unmistakably the settled colour and stops shouting.
-    assert.match(DGM_BLOCK, /--settled: color-mix\(in srgb, var\(--success\) \d\d%, var\(--text\)\);/)
+  it('states every state in blue and leaves green meaning a kind of definition', () => {
+    // SETTLED IS A BLUE. It was the success token carried toward the ink, which
+    // was the right repair to the wrong colour: Trident is one ink at four
+    // depths, and a seal on a ledger row was the last place a state still
+    // reached past every tier in the drawing for a hue of its own. On Nectar's
+    // board green already means something else - the UNITS district, a KIND of
+    // definition - so the same green saying "committed" in the readout below it
+    // was two meanings on one channel.
+    assert.match(DGM_BLOCK, /--settled: color-mix\(in srgb, var\(--accent-strong\) \d\d%, var\(--accent\)\);/)
+    assert.match(DGM_BLOCK, /\.dgm-ledgerrow\.is-written \.dgm-ledgerseal \{ fill: var\(--settled\); \}/)
+    // Green survives in exactly one place, and it is not a state: the district
+    // that holds the scales a reading is taken on. Colour there is the kind of
+    // thing standing on the board, which is the one job it has on that floor.
+    const greens = [...DGM_BLOCK.matchAll(/^[^\n]*var\(--success[^\n]*$/gm)].map((m) => m[0])
+    assert.equal(greens.length, 2, 'green is only the UNITS district, and only in its two ink lines')
+    for (const line of greens) assert.match(line, /^ {2}--ink(-deep)?: /)
+    assert.match(DGM_BLOCK, /\.dgm-crit\.is-green,\s*\n\.dgm-district\.is-green \{\s*\n\s*--ink: var\(--success\);/)
+    // Nothing states a state in it. No seal, no rim, no readout.
+    assert.doesNotMatch(DGM_BLOCK, /(stroke|fill): var\(--success(-soft)?\)/)
     // Derived, not picked: no figure invents a colour of its own.
     assert.doesNotMatch(DGM_BLOCK, /#[0-9a-fA-F]{3,8}\b/)
-    // And nothing in either drawing reaches past it to the raw token.
-    assert.doesNotMatch(DGM_BLOCK, /(stroke|fill): var\(--success\);/)
+
+    // AND SETTLED IS THE ONLY FILLED PILL. The two states were told apart by hue
+    // alone - a green tint for settled beside a blue tint for passing - so taking
+    // the green out collapsed them into the same chip, and no tint light enough
+    // to sit under dark type is more than a few levels off any other. The
+    // difference moves onto weight instead: passing is a tint with the deep blue
+    // written on it, settled is the deep blue with the paper written on it.
+    assert.match(DGM_BLOCK, /\.dgm-svg\.is-valid \.dgm-status,\s*\n\.dgm-svg\.is-signed \.dgm-status \{ fill: var\(--settled\); \}/)
+    assert.match(DGM_BLOCK, /\.dgm-svg\.is-valid \.dgm-statustext,\s*\n\.dgm-svg\.is-signed \.dgm-statustext \{ fill: var\(--surface-solid\); \}/)
+    assert.match(DGM_BLOCK, /\.dgm-svg\.is-pass \.dgm-status \{ fill: var\(--accent-soft\); \}/)
   })
 
   it('keeps the whole Trident stack in one ink and deepens it as the run descends', () => {
