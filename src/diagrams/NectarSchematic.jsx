@@ -54,7 +54,7 @@ import { useScrollRun } from './useScrollPhase'
  * of the plan square, each in its own ink and built as its own solid: a block, a
  * drum, a bar, a post. Colour, shape and place say the same thing three times
  * over, so none of them has to be learned, and there is no legend anywhere on
- * this sheet. Each district letters itself on the slab it is part of.
+ * this sheet - and no lettering either. Nothing is printed on the board.
  *
  * Inside a district the index is a mesh, because everything in it is the same
  * kind of thing and the ties are dense and short. Between districts nothing is
@@ -89,23 +89,33 @@ import { useScrollRun } from './useScrollPhase'
  * reporting - the same quiet layer the other figure runs on its idle tines, at
  * the scale this drawing works at.
  *
- * A channel also stops at the rim, and that is the one repair in this figure
- * that is geometry rather than styling. An arc ending on the slab's top face has
- * to cross the near skirt to get there, and in an axonometric the band just
- * outside a near edge is the same band the near face occupies - so the eye reads
- * the whole run as a wire laid over a photograph. Instead each one lands on the
- * underside rim, arriving along one of the drawing's own plan axes, climbs the
- * skirt to the rim above it, and a run on the board carries the definition the
- * rest of the way in - to a pad on the district that kind of definition belongs
- * to, drawn among the mesh, so every solid taller than it passes in front. That
- * last part is the move no arc in screen space can make, and it is what puts the
- * leg on the slab rather than above it.
+ * A CHANNEL GOES THROUGH THE SLAB, NOT ONTO ITS EDGE, and that is the one
+ * repair in this figure that is geometry rather than styling. An arc ending on
+ * the slab's top face has to cross the near skirt to get there, and in an
+ * axonometric the band just outside a near edge is the same band the near face
+ * occupies - so the eye reads the whole run as a wire laid over a photograph.
+ * The repair after that was worse in a quieter way: stop dead on the underside
+ * rim, climb the skirt, hand off to a trace that set out from the boundary.
+ * Three marks pretending to be one, all of them balanced on the one line in the
+ * drawing that has to read as an edge, and a route that arrived nowhere because
+ * it arrived AT the outline.
+ *
+ * A board takes a signal from the other side of itself through a hole. So each
+ * site has one: a port cut clean through the slab, twenty-four plan units in
+ * from the rim, drawn exactly the way the intake throat in the other figure is -
+ * a plan circle for the wall, the floor a step below it, both clipped to the
+ * bore. The route rises from the site, passes beneath the near skirt, and comes
+ * up through its port; the packets on it go under the edge and reappear in the
+ * hole. That is only honest because the slab is painted after the channels, so
+ * the order those two groups are drawn in is load-bearing and says so where it
+ * happens. And it is what got every run off the boundary: a trace on this board
+ * now starts at a port and ends beside a district, and touches neither edge.
  *
  * Nothing is built where a route arrives, and nothing is written on it. There
  * were three prisms on the rim once, then three dots, and three filled pills
  * riding the channels saying CRITERION, UNIT and MAP - all of them furniture
  * answering a question the board now answers by having places on it. A route
- * arrives in a lettered district. That is what crossed and where it went.
+ * arrives in a district of its own kind. That is what crossed and where it went.
  *
  * Nothing on the route is a line. The standing route is a run of dots, and what
  * travels it is a packet of three or four more, so an exchange between a site
@@ -190,18 +200,21 @@ const GROUND_HALF = 172
 // read as held above the ground, and every word on them is now a place on the
 // board instead of a caption over it.
 //
-// `mark` is where the district letters itself: sixty-four plan units out from
-// its own centre, which clears the ring round the cluster, on the side that
-// faces the wide middle of the slab rather than the corner behind it. The slab
-// is a diamond on screen and its two tips are narrow, so a name set straight
-// outboard of the front or back district runs off the sheet - each one is turned
-// a quarter of the way round the diamond instead, which puts all four in the
-// widest band the board has and none of them over a cluster or a run.
+// None of them is lettered. Each district printed its own name on the slab for
+// a while, one word turned a quarter of the way round the diamond so it cleared
+// its own cluster - and four words on the one plane in this figure that has to
+// read as a held surface is type back over the drawing, which is exactly what
+// the three floating tickets were doing before they came off it.
+//
+// The board does not need them. Kind is already carried by ink, by solid and by
+// corner, three times over, and a name printed on top of all three is the
+// drawing saying out loud what it has finished showing. `key` stays because the
+// code is read by people too, and because it is what a route is matched into.
 const DISTRICTS = [
-  { key: 'CRITERIA', at: [84, 84], mark: [-16, 62], tone: 'is-blue', kind: 'block', count: 11, spread: 47 },
-  { key: 'UNITS', at: [84, -84], mark: [62, 16], tone: 'is-green', kind: 'drum', count: 10, spread: 45 },
-  { key: 'MAPPINGS', at: [-84, 84], mark: [-62, -16], tone: 'is-violet', kind: 'bar', count: 10, spread: 45 },
-  { key: 'ENDPOINTS', at: [-84, -84], mark: [16, -62], tone: 'is-amber', kind: 'post', count: 11, spread: 47 },
+  { key: 'CRITERIA', at: [84, 84], tone: 'is-blue', kind: 'block', count: 11, spread: 47 },
+  { key: 'UNITS', at: [84, -84], tone: 'is-green', kind: 'drum', count: 10, spread: 45 },
+  { key: 'MAPPINGS', at: [-84, 84], tone: 'is-violet', kind: 'bar', count: 10, spread: 45 },
+  { key: 'ENDPOINTS', at: [-84, -84], tone: 'is-amber', kind: 'post', count: 11, spread: 47 },
 ]
 
 // What each kind of definition is built as. A criterion is a block, a unit is a
@@ -355,19 +368,31 @@ const BY_BAND = DISTRICTS.map((district, band) => ({
 // posts standing on the library. The corners are square in plan instead, which
 // on screen is the same corner every solid in the drawing already turns.
 //
-// A pad sits one clear step outside a district on each of its four sides. The
-// bus uses two of them, the run in from the rim uses a third, and a via is drawn
-// wherever a run starts, turns or ends - because a corner in a hairline is not
-// something a reader sees, and a board is legible precisely because it says
-// where its runs change direction.
-const PAD_OUT = 11
+// How far a district's ground reaches past the cluster standing on it. It is
+// named because three separate things now measure themselves against it - the
+// disc itself, the bus pads, and where a site's route lands - and while it was
+// a literal in the JSX those three could and did drift apart.
+const GROUND_OUT = 10
+
+// A pad sits one clear step outside a district on each of its four sides, and
+// the step has to clear the ground as well as the cluster. It used to be 11
+// against a ground of 13, which put every pad on this board a couple of units
+// INSIDE the disc it was supposed to be standing clear of - so the bus appeared
+// to start under the district rather than beside it, and the one thing a pad
+// exists to show, that a run leaves from outside, was the one thing it did not.
+// 20 against a ground of 10 leaves ten clear units all the way round.
+//
+// A via is drawn wherever a run starts, turns or ends - because a corner in a
+// hairline is not something a reader sees, and a board is legible precisely
+// because it says where its runs change direction.
+const PAD_OUT = 20
 const VIA_R = 3.2
 
-// The junction at the middle of the board. The four districts sit at the four
-// corners of the plan square, which left the centre of the slab empty - and an
-// empty middle is what made the first districted floor read as four separate
-// diagrams rather than as one board. Everything taps it.
-const JUNCTION = [0, 0]
+// The junction at the middle of the board, centred on the origin. The four
+// districts sit at the four corners of the plan square, which left the centre of
+// the slab empty - and an empty middle is what made the first districted floor
+// read as four separate diagrams rather than as one board. Everything taps it,
+// and every tap stops on its edge.
 const JUNCTION_HALF = 15
 
 function padOn(district, axis, sign) {
@@ -420,13 +445,30 @@ const SIDES = [
 // The four taps. Each one is a single straight run from the junction to the
 // middle of a side, which is a T on the bus - and a T is what says the bus is a
 // bus rather than four wires that happen to meet at the corners.
-const SPURS = SIDES.map((side, index) => ({
-  key: `tap-${side.key}`,
-  index,
-  ...run(JUNCTION, side.tap),
-  ends: [JUNCTION, side.tap],
-  life: jitter(index, 23),
-}))
+//
+// A tap starts on the EDGE of the junction square, not at its centre. They used
+// to run to [0, 0], which meant four runs converging on one point under a
+// filled square - so the square read as something printed over the top of a
+// crossing rather than as a part the four runs arrive at, and the four last
+// segments were drawn and then covered up. A run that stops where the part it
+// meets begins is the same run with nothing wasted, and it is what makes the
+// junction a component on this board instead of a lid.
+function onJunction(tap) {
+  return tap[0] === 0
+    ? [0, Math.sign(tap[1]) * JUNCTION_HALF]
+    : [Math.sign(tap[0]) * JUNCTION_HALF, 0]
+}
+
+const SPURS = SIDES.map((side, index) => {
+  const start = onJunction(side.tap)
+  return {
+    key: `tap-${side.key}`,
+    index,
+    ...run(start, side.tap),
+    ends: [start, side.tap],
+    life: jitter(index, 23),
+  }
+})
 
 const TRACES = [...SIDES, ...SPURS].map((trace) => ({
   ...trace,
@@ -515,6 +557,95 @@ const [SITE_042, SITE_103, SITE_018] = SITES
 const MAST = 17
 const MAST_HEAD = 7.5
 
+// WHERE A ROUTE CROSSES THE PLANE OF THE BOARD: A HOLE IN IT.
+//
+// A site and the library are two surfaces at two heights, and everything that
+// passes between them has to get from one to the other. For a long time the
+// drawing dodged that. The route ran up from the site, stopped dead on the
+// bottom rim of the library's near skirt, climbed the thirteen pixels of that
+// skirt, and then a separate trace set off across the board - three marks
+// pretending to be one, all of them balanced on the one line in the figure that
+// has to read as an edge, and the corner where they met parked on the boundary
+// itself. It arrived nowhere. It arrived AT the outline.
+//
+// A board does not do that. A board takes a signal from the other side of
+// itself through a hole, and the hole is a part with a position, a size and a
+// wall you can see down. So each site gets one: a port, cut clean through the
+// slab, drawn exactly the way the intake throat in the other figure is drawn -
+// a plan circle for the wall, the floor a few units below it, both clipped to
+// the bore. The route rises from the site, goes under the slab, and comes up
+// through its port. The packets running it disappear beneath the near edge and
+// reappear in the hole, which is what going through something looks like.
+//
+// This is also what got every trace off the edge of the tile. The run across
+// the board starts at the port now, and the port is twenty-four plan units in,
+// so nothing on this board begins on its boundary any more.
+//
+// THE PORT SITS DIRECTLY ABOVE ITS SITE. Screen x depends only on (x - y), so a
+// port that keeps its site's own (x - y) is drawn in the same column as the
+// site under it, and the two halves of a route that is mostly hidden still read
+// as one route. Two of the three resolve onto a flat face and take the standard
+// inset. The third sits on the plan diagonal, under the front corner, and the
+// diagonal is the narrow direction of a diamond: a plan unit is worth 0.48 of a
+// pixel there against 0.93 on a face, and CRITERIA is parked on the same
+// diagonal. 138 is where those two squeezes are equal - about nine pixels of
+// clear board on each side of it - and it is solved rather than chosen.
+const PORT_IN = 24
+const PORT_CORNER = 138
+// The bore, in plan. A plan circle of radius r comes out as a screen ellipse
+// 2.45r wide and 0.96r tall, so 7.5 is about eighteen pixels by seven at the
+// size this figure is printed - large enough to read as an opening with a wall
+// and a floor in it, and still inside the nine pixels of clear board the front
+// corner has to spare on each side of its own port.
+const PORT_R = 7.5
+
+// How far down the wall of the port the floor sits. Equal positive steps on
+// both plan axes cancel in x and add in y, so this is straight down the screen -
+// the same solve every riser in both figures uses.
+const PORT_DROP = 4.5
+
+// A port is fed by a curve from below, and the curve arrives along the plan
+// normal of the face its port is nearest. That keeps the last stretch of every
+// channel on one of the two slopes every skirt, every wall marking and every
+// deck edge in both drawings already runs at, so the part of it a reader can
+// still see before it passes under the slab is lying in the drawing's own
+// geometry rather than cutting across it.
+const GATE_REACH = 58
+const r1 = (value) => Math.round(value * 10) / 10
+
+function portFor(site) {
+  const reach = site.plan[0] - site.plan[1]
+  const inset = LIB_HALF - PORT_IN
+  if (reach > 40) return { face: 'right', at: [inset, inset - reach], out: [1, 0] }
+  if (reach < -40) return { face: 'left', at: [inset + reach, inset], out: [0, 1] }
+  return { face: 'corner', at: [PORT_CORNER, PORT_CORNER], out: [1, 1] }
+}
+
+// Where a route lands. Not at a node in the middle of a cluster - that was the
+// old feeder, and it crossed the floor at a screen angle matching nothing it
+// crossed - and not at a bus pad either, because a definition arriving from a
+// site is not traffic between two kinds, it is a new member of one kind.
+//
+// It lands on the rim of its district's own ground, five units clear of it, on
+// the side the port is on, reached by a single straight run along a plan axis.
+// One leg, no corner, nothing to route around: the port is already outside
+// everything and the district is the next thing the run meets.
+const DOCK_GAP = 5
+
+function dockOn(district, port) {
+  const [cx, cy] = district.at
+  const reach = district.spread + GROUND_OUT + DOCK_GAP
+  // Along x when a horizontal run from the port actually meets the disc, along
+  // y otherwise. On the diagonal both do and x wins, which is the same tie the
+  // rest of this file breaks the same way.
+  if (Math.abs(port[1] - cy) < reach) {
+    const off = Math.sqrt(reach * reach - (port[1] - cy) ** 2)
+    return [r1(cx + Math.sign(port[0] - cx) * off), r1(port[1])]
+  }
+  const off = Math.sqrt(Math.max(reach * reach - (port[0] - cx) ** 2, 0))
+  return [r1(port[0]), r1(cy + Math.sign(port[1] - cy) * off)]
+}
+
 // What each site publishes, and into which district. A site does not put a
 // definition down at a coordinate; it puts it into a kind, and the kind is a
 // place on the board - so the criterion goes to CRITERIA, the unit to UNITS and
@@ -527,57 +658,6 @@ const MAST_HEAD = 7.5
 // only part a reader could not already see.
 const JOIN = CRITERIA.hub
 
-// Where a channel arrives, and why it stopped arriving on the top face.
-//
-// A curve that ends on the slab's roof has to cross the near skirt to get
-// there, and in an axonometric the band just outside a near edge is the same
-// band the near face occupies - so the eye resolves the ambiguity as "in front
-// of everything" and the whole run reads as a wire laid over a photograph. The
-// old arcs did exactly that: the one from Site 042 started well outside the
-// near-right skirt and ended inside it. It crossed.
-//
-// The repair is geometric rather than cosmetic, and it is three things.
-//
-// The terminus moves to the skirt's bottom rim - the lowest, nearest boundary
-// of the whole silhouette, and the only point on it a line coming from below
-// cannot be read as passing in front of. A quadratic lies inside the hull of its
-// three points, so with the control point outboard as well the curve cannot
-// touch the slab; that is a guarantee rather than an inspection.
-//
-// The terminal tangent becomes a plan axis. Putting the control point on the
-// outward plan normal makes the arc arrive perpendicular to the face it lands
-// on in the drawing's own geometry - which on screen is the same 21-degree
-// slope every skirt and every wall marking already runs at.
-//
-// And nothing is built where the route arrives. There were three prisms on the
-// rim once - each with two lit faces and a crown that went full accent whenever
-// its site published - which made three of the four brightest objects in the
-// figure and parked them on the one edge that has to read as an edge. Then a
-// dot, which was better and still an object placed on a boundary to mark a
-// thing that needs no marking: the route crosses the rim and keeps going. What
-// says where it changed surface is the corner in the run itself.
-//
-// Which rim point is not chosen either. Screen x here depends only on (x - y),
-// so the rim point directly over a site is the one that keeps that site's own
-// (x - y). Two sites resolve onto a flat edge and the third, sitting on the plan
-// diagonal, resolves to the front corner - the one place where the outward plan
-// normal and the height axis project to the same screen direction, which is why
-// a site under it can send a line straight up and still be telling the truth.
-const GATE_REACH = 58
-// The rim's diagonal extreme, solved rather than read off `LIBRARY.front`:
-// `roundedPlan` samples its corner arcs in seven steps and never lands on 45
-// degrees, so the sampled front corner sits four pixels off the true one - and
-// four pixels is the whole composition off centre.
-const RIM_CORNER = LIB_HALF - 28 + 28 / Math.SQRT2
-const r1 = (value) => Math.round(value * 10) / 10
-
-function gateFor(site) {
-  const reach = site.plan[0] - site.plan[1]
-  if (reach > 40) return { edge: 'right', rim: [LIB_HALF, LIB_HALF - reach], out: [1, 0] }
-  if (reach < -40) return { edge: 'left', rim: [LIB_HALF + reach, LIB_HALF], out: [0, 1] }
-  return { edge: 'corner', rim: [RIM_CORNER, RIM_CORNER], out: [1, 1] }
-}
-
 const CHANNELS = [
   { key: 'SITE 018', site: SITE_018, into: CRITERIA },
   { key: 'SITE 042', site: SITE_042, into: UNITS },
@@ -585,58 +665,38 @@ const CHANNELS = [
 ].map((item) => {
   const foot = item.site.solid.back
   const [x1, y1] = [foot[0], r1(foot[1] - MAST)]
-  const gate = gateFor(item.site)
-  const rim = MESH(...gate.rim)
-  // The two points of the arrival: the underside rim where the curve stops, and
-  // the rim above it where the route reaches the floor. They are one skirt
-  // thickness apart on screen and nothing else, so the last leg of the route is
-  // the skirt's own vertical edge - a mark lying on a surface the drawing has
-  // already committed to, rather than a riser climbing something in the air.
-  const land = [rim[0], r1(rim[1] + LIB_WALL)]
-  // The outward plan normal of the face the curve lands on, carried through the
-  // projection. A quadratic's tangent at the end is (end - control), so putting
-  // the control this far outboard locks the last stretch of the arc to a plan
-  // axis of the drawing.
-  const away = [(gate.out[0] - gate.out[1]) * ISO_X, (gate.out[0] + gate.out[1]) * ISO_Y]
+  const port = portFor(item.site)
+  const land = MESH(...port.at)
+  // The outward plan normal of the face the port is nearest, carried through
+  // the projection. A quadratic's tangent at the end is (end - control), so
+  // putting the control this far outboard locks the last stretch of the arc to
+  // a plan axis of the drawing - and puts the whole of the control triangle
+  // outboard of the port, so the curve reaches it from outside the slab and
+  // passes under the near skirt rather than over it.
+  const away = [(port.out[0] - port.out[1]) * ISO_X, (port.out[0] + port.out[1]) * ISO_Y]
   const span = Math.hypot(...away) || 1
   const ctrl = [r1(land[0] + (GATE_REACH * away[0]) / span), r1(land[1] + (GATE_REACH * away[1]) / span)]
   // At the corner the outward normal projects to screen-vertical, so a quadratic
   // there is a plumb line. One extra control point off the mast gives that
   // channel a bow of its own and still arrives on the same vertical tangent.
   const bow = [x1 + 34, r1(y1 - 56)]
-  const arc = gate.edge === 'corner'
+  const arc = port.face === 'corner'
     ? `C ${bow[0]} ${bow[1]} ${ctrl[0]} ${ctrl[1]} ${land[0]} ${land[1]}`
     : `Q ${ctrl[0]} ${ctrl[1]} ${land[0]} ${land[1]}`
-  // The last leg, on the slab. A channel stops at the rim, so something has to
-  // carry the definition the rest of the way in - and it is a run on the board
-  // like every other, along the board's own axes, ending at a pad on the side of
-  // its district that faces the rim it came from. It is not a line drawn from
-  // the edge to a node in the middle of a cluster: that was the old feeder, and
-  // it crossed the floor at a screen angle matching nothing it crossed.
-  const into = item.into
-  const side = Math.abs(gate.rim[0] - into.at[0]) >= Math.abs(gate.rim[1] - into.at[1])
-    ? { axis: 'x', sign: Math.sign(gate.rim[0] - into.at[0]) }
-    : { axis: 'y', sign: Math.sign(gate.rim[1] - into.at[1]) }
-  const dock = padOn(into, side.axis, side.sign || 1)
-  // Turn on the short axis first, so the jog happens at the rim and the long leg
-  // is the one that crosses the open slab.
-  const feed = run(
-    gate.rim,
-    dock,
-    Math.abs(dock[0] - gate.rim[0]) <= Math.abs(dock[1] - gate.rim[1]) ? 'x' : 'y',
-  )
+  const dock = dockOn(item.into, port.at)
+  const feed = run(port.at, dock, 'x')
   return {
     ...item,
     node: item.into.hub,
     foot,
     head: [x1, y1],
-    gate: { ...gate, at: rim },
-    // Mast head, arc, skirt: one `d`, so every mark already running this route
-    // keeps running it, and the join at the rim is a corner in a single stroke
-    // rather than two strokes meeting.
-    path: `M ${x1} ${y1} ${arc} L ${rim[0]} ${rim[1]}`,
+    port: { ...port, screen: land },
+    // Mast head and arc: one `d`, so every mark already running this route keeps
+    // running it, and the part of it that is under the slab is under the slab in
+    // the same stroke rather than in a second one that has to be kept in step.
+    path: `M ${x1} ${y1} ${arc}`,
     feed: feed.d,
-    feedVias: [gate.rim, ...feed.bends, dock],
+    feedVias: [port.at, ...feed.bends, dock],
   }
 })
 
@@ -671,11 +731,11 @@ const JOINED = new Set(
 // has bound. A site can be both at once, which is the steady state of a
 // federation and the frame this run rests on.
 const PHASES = [
-  { span: 2.2, bound: 30, reach: 66, up: [], down: [], joined: false, tone: 'run', status: 'LOCAL', read: 'Every site runs the task on its own records. Nothing has moved.' },
-  { span: 1.6, bound: 30, reach: 76, up: ['SITE 018'], down: [], joined: false, tone: 'pass', status: 'PUBLISHING', read: 'Site 018 publishes the structure it used - a definition, with no values in it.' },
-  { span: 1.4, bound: 34, reach: 92, up: ['SITE 018'], down: [], joined: true, tone: 'valid', status: 'LINKED', read: `It binds, and links to ${JOINED.size} criteria the library already held.` },
-  { span: 2.2, bound: 38, reach: 112, up: ['SITE 018', 'SITE 042', 'SITE 103'], down: ['SITE 042', 'SITE 103'], joined: true, tone: 'valid', status: 'COMPOUNDING', read: 'Sites 042 and 103 take the definition down and run it on records of their own.' },
-  { span: 2.4, bound: 38, reach: 112, up: ['SITE 018', 'SITE 042', 'SITE 103'], down: ['SITE 018', 'SITE 042', 'SITE 103'], joined: true, tone: 'valid', status: 'STEADY', read: 'Structure crosses. Records do not.' },
+  { span: 2.2, bound: 30, reach: 66, up: [], down: [], joined: false, tone: 'run', status: 'LOCAL', read: 'Three sites, three sets of definitions. None of them can run the others.' },
+  { span: 1.6, bound: 30, reach: 76, up: ['SITE 018'], down: [], joined: false, tone: 'pass', status: 'PUBLISHING', read: 'Site 018 publishes the definition it just ran, so another site can run the same one.' },
+  { span: 1.4, bound: 34, reach: 92, up: ['SITE 018'], down: [], joined: true, tone: 'valid', status: 'LINKED', read: `It binds against ${JOINED.size} criteria already here, so the three now agree what this test means.` },
+  { span: 2.2, bound: 38, reach: 112, up: ['SITE 018', 'SITE 042', 'SITE 103'], down: ['SITE 042', 'SITE 103'], joined: true, tone: 'valid', status: 'COMPOUNDING', read: 'Sites 042 and 103 pull it down and run it. Two more sites open, no protocol rewritten.' },
+  { span: 2.4, bound: 38, reach: 112, up: ['SITE 018', 'SITE 042', 'SITE 103'], down: ['SITE 018', 'SITE 042', 'SITE 103'], joined: true, tone: 'valid', status: 'STEADY', read: 'One definition, three sites executing it. Structure crosses; records never do.' },
 ]
 
 // Pointing at a site hands it the whole readout - the word in the pill, the
@@ -683,10 +743,10 @@ const PHASES = [
 // site did, not how many rows it happens to be sitting on. Otherwise the run
 // narrates itself.
 const READS = {
-  'SITE 042': { tone: 'pass', pill: 'PUBLISHER', read: 'Site 042 published the unit it measures in - the scale, not one reading taken on it.' },
-  'SITE 103': { tone: 'pass', pill: 'MAPPER', read: 'Site 103 sent a mapping between two vocabularies. No patient is in a mapping.' },
-  'SITE 018': { tone: 'valid', pill: 'ORIGIN', read: 'Site 018 wrote the definition the other two picked up, and sent nothing else to do it.' },
-  library: { tone: 'valid', pill: 'LIBRARY', read: 'Every criterion here came up from a site, and any site can take one back down.' },
+  'SITE 042': { tone: 'pass', pill: 'PUBLISHER', read: 'Site 042 published the scale it measures on, so a reading taken here is comparable anywhere.' },
+  'SITE 103': { tone: 'pass', pill: 'MAPPER', read: 'Site 103 sent a mapping between two vocabularies. The other two can now read its codes.' },
+  'SITE 018': { tone: 'valid', pill: 'ORIGIN', read: 'Site 018 wrote the definition the other two are running. One author, three sites executing.' },
+  library: { tone: 'valid', pill: 'LIBRARY', read: 'Every definition here came up from a site, and any site can take one down and run it.' },
 }
 
 // A shade is stepped rather than blurred, and the steps are a share of the
@@ -799,6 +859,18 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
             </pattern>
             {/* Reach is clipped to the ground the three sites share. Coverage
                 that runs off the edge of the federation is not coverage. */}
+            {/* One clip per port. A port is a wall and a floor a few units
+                below it, and without this the floor - the same circle, moved
+                straight down the screen - hangs out under the bore and the hole
+                comes out as a crescent stuck to a disc. `userSpaceOnUse` is the
+                default, and these are referenced from inside `planSpace`, so
+                the circle is written in plan units exactly like the port. */}
+            {CHANNELS.map((item) => (
+              <clipPath id={`nc-port-${item.key.replace(' ', '-')}`} key={item.key}>
+                <circle cx={item.port.at[0]} cy={item.port.at[1]} r={PORT_R} />
+              </clipPath>
+            ))}
+
             <clipPath id="nc-ground">
               <rect x={-GROUND_HALF} y={-GROUND_HALF} width={GROUND_HALF * 2} height={GROUND_HALF * 2} rx="30" />
             </clipPath>
@@ -812,6 +884,107 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
             <text className="dgm-countkey" x="504" y="41">CRITERIA BOUND</text>
           </g>
 
+          {/* The ground the three peers share, and the reach each one carries.
+              The reaches grow with coverage until they overlap - that overlap is
+              the network effect, drawn rather than claimed - and they are three
+              sizes, because the site that has contributed most reaches furthest.
+              Each one orbits with the site it belongs to, so a site never drifts
+              inside its own coverage.
+
+              A reach is a plan circle. It was a plan square, on the argument
+              that it should be the same shape as the site standing in it - which
+              is true of a thing that has an extent and false of a thing that has
+              a radius. Coverage does not have corners, and squared off, three of
+              them met along flat edges and locked together into one rectilinear
+              field. Circles meet at a point and part again, which is what lets a
+              reader see three of them where the drawing has three. */}
+          <g transform={planSpace(310, GROUND_Y)}>
+            <rect className="dgm-plane" x={-GROUND_HALF} y={-GROUND_HALF} width={GROUND_HALF * 2} height={GROUND_HALF * 2} rx="30" vectorEffect="non-scaling-stroke" />
+            <rect className="dgm-planefill" x={-GROUND_HALF} y={-GROUND_HALF} width={GROUND_HALF * 2} height={GROUND_HALF * 2} rx="30" fill="url(#nc-grain)" />
+          </g>
+
+          {/* The slab's own shade on the federation, breathing with the drift
+              that casts it. This is the whole of what makes the upper plane read
+              as held above the ground rather than printed further up the page -
+              and it goes on the bare plane, under the reaches, because a shade
+              laid over three overlapping coverage fields mutes the one thing in
+              this figure that is a claim made by geometry alone. */}
+          <Seat half={LIB_HALF} radius={28} cy={GROUND_Y} kind="library" />
+
+          <g transform={planSpace(310, GROUND_Y)}>
+            <g clipPath="url(#nc-ground)">
+              {SITES.map((site) => {
+                const span = Math.round(state.reach * site.grew)
+                return (
+                  <g className={`dgm-reach${lit(site.id)}`} key={site.id} style={{ '--stagger': site.stagger, '--life': site.life }}>
+                    <circle className="dgm-reachfill" cx={site.plan[0]} cy={site.plan[1]} r={span} fill="url(#nc-reach)" />
+                    <circle className="dgm-reachrim" cx={site.plan[0]} cy={site.plan[1]} r={span} vectorEffect="non-scaling-stroke" />
+                  </g>
+                )
+              })}
+            </g>
+            {/* Last, so three overlapping fields never soften the one edge that
+                says where the shared ground stops. */}
+            <rect className="dgm-planeedge" x={-GROUND_HALF} y={-GROUND_HALF} width={GROUND_HALF * 2} height={GROUND_HALF * 2} rx="30" vectorEffect="non-scaling-stroke" />
+          </g>
+
+          {/* The channels, drawn before the sites so every foot ends up under
+              the mast head it belongs to - and before the library, so every head
+              ends up under the slab it goes into. Each one is a standing route
+              that is always there, and two packets running it in opposite
+              directions.
+
+              A route no longer stops on the library's rim. It runs to that
+              site's port, which is well inside the plan, so its last stretch
+              passes beneath the near skirt and is painted over by the slab. What
+              a reader sees is a packet going under the edge and coming up in a
+              hole, which is what crossing between two surfaces looks like when
+              the drawing is willing to say which side of the slab it is on.
+
+              Nothing on a channel is a line. The route is a run of dots and what
+              travels it is a short burst of them, so what crosses between a site
+              and the library reads as a signal rather than as something sliding
+              down a pipe. There used to be a solid two-pixel accent arc under
+              all of this, drawn in when a site published - five hundred pixels
+              of unbroken stroke, the heaviest single mark in the figure, and the
+              one thing in it that claimed a federation is plumbed together.
+
+              Both directions carry structure and neither carries a record.
+              Drawing only the rising half was the figure asserting in a caption
+              what it would not draw: a library nobody can take anything out of
+              is a filing cabinet, and the phase that says two sites picked the
+              definition up showed nothing at all coming down. */}
+          {CHANNELS.map((item) => {
+            const up = state.up.includes(item.key)
+            const down = state.down.includes(item.key)
+            return (
+              <g
+                className={`dgm-lift${up ? ' is-up' : ''}${down ? ' is-down' : ''}${lit(item.key)}`}
+                key={item.key}
+                style={{ '--life': item.site.life }}
+              >
+                <path className="dgm-channel" d={item.path} />
+                <path className="dgm-rise" d={item.path} pathLength="100" />
+                <path className="dgm-fall" d={item.path} pathLength="100" />
+              </g>
+            )
+          })}
+
+          {/* THE LIBRARY IS DRAWN AFTER THE CHANNELS, AND THAT IS LOAD-BEARING.
+
+              A route from a site goes UNDER this slab and comes up through a
+              port cut in it. Nothing about that is a trick of stroke order:
+              the arc genuinely ends inside the plan, and the only thing that
+              stops it being drawn across the near skirt is the slab being
+              painted over it afterwards. Move this group back above the
+              channels and every one of them turns into a wire laid over a
+              photograph - which is exactly what the old arcs were, and why
+              they had to stop dead on the rim instead of arriving anywhere.
+
+              The sites still come after it, so a site is never drawn under
+              the slab it publishes into, and the ground and the reaches
+              still come before it, so a channel crosses the coverage it
+              belongs to rather than hiding beneath it. */}
           {/* The library, and the mesh that lives on it, drawn as one panel. It
               is a slab rather than a sheet, it drifts as one, and it answers a
               pointer as one - over a target the size of the whole plane, because
@@ -823,11 +996,12 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
               <rect className="dgm-hit" x="-160" y="-160" width="320" height="320" rx="28" />
             </g>
 
-            {/* The slab used to be lettered DEFINITIONS along its back edge.
-                It is not any more: the board names its four districts on its own
-                surface, and a fifth word on the same plane naming the category
-                all four belong to is the drawing saying the same thing twice -
-                once where it is useful and once over the top of a cluster. */}
+            {/* Nothing is written on the slab. It was lettered DEFINITIONS
+                along its back edge once, and after that its four districts
+                printed their own names on its surface. Both are off it now, for
+                the same reason: this is the one plane in the figure that has to
+                read as a held surface, and a word lying on it is a word between
+                the reader and the thing the panel is claiming. */}
 
             <g className="dgm-mesh">
               {/* The board, in plan: district grounds, then the traces between
@@ -849,7 +1023,7 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
                     key={district.key}
                     cx={district.at[0]}
                     cy={district.at[1]}
-                    r={district.spread + 13}
+                    r={district.spread + GROUND_OUT}
                   />
                 ))}
 
@@ -882,12 +1056,46 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
                   </g>
                 ))}
 
-                {/* The last leg of a site's route, on the slab. A channel stops
-                    at the rim, so something has to carry the definition the rest
-                    of the way in - and it is a routed trace like every other run
-                    on this board, ending at the hub of the district that kind of
-                    definition belongs to. It is drawn among the mesh, so every
-                    solid taller than it passes in front. */}
+                {/* The three ports, and the run each one feeds.
+
+                    A port is a hole through the slab: the wall is a plan circle
+                    in the board's own dark, the floor is the same circle four
+                    and a half units further down the screen, and both are
+                    clipped to the bore so what is drawn is exactly what can be
+                    seen down it. It is the same part, built the same way, as the
+                    intake throat on the other figure's first deck - because it
+                    is the same thing, a place where something crosses the plane.
+
+                    The run leaves the port and lands on the rim of its own
+                    district's ground. One leg, along a plan axis, and both ends
+                    a long way from every edge of the tile: the leg the port
+                    replaced started ON the boundary and its first corner sat on
+                    it too, which is how a board ends up looking like it has been
+                    drawn round its own outline.
+
+                    All of it is inside `planSpace`, so a run is on the slab
+                    rather than over it and any solid taller than it passes in
+                    front. */}
+                {CHANNELS.map((item) => (
+                  <g className={`dgm-portal${lit(item.key)}`} key={`p-${item.key}`}>
+                    <g clipPath={`url(#nc-port-${item.key.replace(' ', '-')})`}>
+                      <circle className="dgm-shaft" cx={item.port.at[0]} cy={item.port.at[1]} r={PORT_R} />
+                      <circle
+                        className="dgm-shaftfloor"
+                        cx={item.port.at[0] + PORT_DROP}
+                        cy={item.port.at[1] + PORT_DROP}
+                        r={PORT_R}
+                      />
+                    </g>
+                    <circle
+                      className="dgm-portrim"
+                      cx={item.port.at[0]}
+                      cy={item.port.at[1]}
+                      r={PORT_R}
+                      vectorEffect="non-scaling-stroke"
+                    />
+                  </g>
+                ))}
                 {CHANNELS.map((item) => (
                   <g
                     className={`dgm-trace is-feed${state.up.includes(item.key) ? ' is-up' : ''}${lit(item.key)}`}
@@ -968,116 +1176,7 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
               </g>
             </g>
 
-            {/* What each district is called, lettered on the board beside it and
-                held still while the slab drifts under the words. Set along the
-                plan x axis, which is the same slope every skirt and every wall
-                marking in both figures runs at, so a name lies on the surface it
-                belongs to rather than floating over it.
-
-                This is where the three tickets went. CRITERION, UNIT and MAP
-                were three filled pills parked in mid-air over the middle of the
-                drawing, naming payloads a reader had no way to place; the same
-                four words are now places on the board, printed once each, and
-                every route that arrives arrives at one of them. */}
-            <g className="dgm-steady">
-              {BY_BAND.map((district) => {
-                // Outward along the district's own diagonal, so the four names
-                // land at the four corners of the slab - clear of the cluster
-                // each one belongs to, clear of every trace crossing the middle,
-                // and as far from each other as the board allows.
-                const [lx, ly] = MESH(district.at[0] + district.mark[0], district.at[1] + district.mark[1])
-                return (
-                  <text
-                    className="dgm-district-name"
-                    key={district.key}
-                    x={lx}
-                    y={ly}
-                    textAnchor="middle"
-                    transform={`rotate(${-EDGE_ANGLE} ${lx} ${ly})`}
-                  >
-                    {district.key}
-                  </text>
-                )
-              })}
-            </g>
           </g>
-
-          {/* The ground the three peers share, and the reach each one carries.
-              The reaches grow with coverage until they overlap - that overlap is
-              the network effect, drawn rather than claimed - and they are three
-              sizes, because the site that has contributed most reaches furthest.
-              Each one orbits with the site it belongs to, so a site never drifts
-              inside its own coverage.
-
-              A reach is a plan circle. It was a plan square, on the argument
-              that it should be the same shape as the site standing in it - which
-              is true of a thing that has an extent and false of a thing that has
-              a radius. Coverage does not have corners, and squared off, three of
-              them met along flat edges and locked together into one rectilinear
-              field. Circles meet at a point and part again, which is what lets a
-              reader see three of them where the drawing has three. */}
-          <g transform={planSpace(310, GROUND_Y)}>
-            <rect className="dgm-plane" x={-GROUND_HALF} y={-GROUND_HALF} width={GROUND_HALF * 2} height={GROUND_HALF * 2} rx="30" vectorEffect="non-scaling-stroke" />
-            <rect className="dgm-planefill" x={-GROUND_HALF} y={-GROUND_HALF} width={GROUND_HALF * 2} height={GROUND_HALF * 2} rx="30" fill="url(#nc-grain)" />
-          </g>
-
-          {/* The slab's own shade on the federation, breathing with the drift
-              that casts it. This is the whole of what makes the upper plane read
-              as held above the ground rather than printed further up the page -
-              and it goes on the bare plane, under the reaches, because a shade
-              laid over three overlapping coverage fields mutes the one thing in
-              this figure that is a claim made by geometry alone. */}
-          <Seat half={LIB_HALF} radius={28} cy={GROUND_Y} kind="library" />
-
-          <g transform={planSpace(310, GROUND_Y)}>
-            <g clipPath="url(#nc-ground)">
-              {SITES.map((site) => {
-                const span = Math.round(state.reach * site.grew)
-                return (
-                  <g className={`dgm-reach${lit(site.id)}`} key={site.id} style={{ '--stagger': site.stagger, '--life': site.life }}>
-                    <circle className="dgm-reachfill" cx={site.plan[0]} cy={site.plan[1]} r={span} fill="url(#nc-reach)" />
-                    <circle className="dgm-reachrim" cx={site.plan[0]} cy={site.plan[1]} r={span} vectorEffect="non-scaling-stroke" />
-                  </g>
-                )
-              })}
-            </g>
-            {/* Last, so three overlapping fields never soften the one edge that
-                says where the shared ground stops. */}
-            <rect className="dgm-planeedge" x={-GROUND_HALF} y={-GROUND_HALF} width={GROUND_HALF * 2} height={GROUND_HALF * 2} rx="30" vectorEffect="non-scaling-stroke" />
-          </g>
-
-          {/* The channels, drawn before the sites so every foot ends up under
-              the mast head it belongs to. Each one is a standing route that is
-              always there, and two packets running it in opposite directions.
-
-              Nothing on a channel is a line. The route is a run of dots and what
-              travels it is a short burst of them, so what crosses between a site
-              and the library reads as a signal rather than as something sliding
-              down a pipe. There used to be a solid two-pixel accent arc under
-              all of this, drawn in when a site published - five hundred pixels
-              of unbroken stroke, the heaviest single mark in the figure, and the
-              one thing in it that claimed a federation is plumbed together.
-
-              Both directions carry structure and neither carries a record.
-              Drawing only the rising half was the figure asserting in a caption
-              what it would not draw: a library nobody can take anything out of
-              is a filing cabinet, and the phase that says two sites picked the
-              definition up showed nothing at all coming down. */}
-          {CHANNELS.map((item) => {
-            const up = state.up.includes(item.key)
-            const down = state.down.includes(item.key)
-            return (
-              <g
-                className={`dgm-lift${up ? ' is-up' : ''}${down ? ' is-down' : ''}${lit(item.key)}`}
-                key={item.key}
-                style={{ '--life': item.site.life }}
-              >
-                <path className="dgm-channel" d={item.path} />
-                <path className="dgm-rise" d={item.path} pathLength="100" />
-                <path className="dgm-fall" d={item.path} pathLength="100" />
-              </g>
-            )
-          })}
 
           {/* Sites, back to front. The same solid Trident stands its decks on:
               the skirt is the boundary, ruled along its own footing, and no line
@@ -1148,10 +1247,11 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
               least drafted thing in either figure and they were solving a
               problem the drawing has now solved properly: a reader could see
               something crossing and had no way to see what kind of thing it was.
-              The board answers that by having places on it. A route from a site
-              arrives in CRITERIA, or in UNITS, or in MAPPINGS, and the district
-              is lettered on the slab it is part of - so what crossed is said
-              once, in the drawing, where it landed. */}
+              The board answers that by having places on it. A route from a
+              site arrives among the blocks, or among the drums, or among the
+              bars, and the district it lands in is drawn in its own ink and
+              built as its own solid - so what crossed is said once, in the
+              drawing, by where it landed. */}
 
           {/* Identities, each on the side of the sheet its site owns. */}
           {SITES.map((site) => (

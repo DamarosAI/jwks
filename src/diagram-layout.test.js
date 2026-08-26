@@ -106,8 +106,10 @@ describe('Trident and Nectar schematics', () => {
     assert.match(nectar, /const lid = site\.half - 7/)
     assert.match(nectar, /rows\.push\(\{ y, half: lid - 7 \}\)/)
     // The badge that sat on the roof of every site - a circle with a little
-    // glyph inside it - is gone from the figure and from the sheet.
-    assert.doesNotMatch(nectar, /dgm-glyph|dgm-port|const GLYPHS/)
+    // glyph inside it - is gone from the figure and from the sheet. (`dgm-port`
+    // used to be banned here as a prefix, which stopped meaning the badge the
+    // moment the slab grew real ports; the badge itself is what this holds.)
+    assert.doesNotMatch(nectar, /dgm-glyph|dgm-badge|const GLYPHS/)
     for (const rule of ['.dgm-glyph']) {
       assert.doesNotMatch(DGM_BLOCK, new RegExp(`\\${rule}[\\s,{]`))
     }
@@ -138,7 +140,7 @@ describe('Trident and Nectar schematics', () => {
     for (const rule of [
       '.dgm-svg.is-live .dgm-spark',
       '.dgm-svg.is-live .dgm-fieldtile:not(.is-named)',
-      '.dgm-svg.is-live .dgm-bank:not(.is-clear) .dgm-blade',
+      '.dgm-svg.is-live .dgm-bank:not(.is-clear) .dgm-bladeedge',
       '.dgm-svg.is-live .dgm-drop.is-done .dgm-dropflow',
       '.dgm-svg.is-live .dgm-tracerun',
       '.dgm-svg.is-live .dgm-crit',
@@ -438,7 +440,7 @@ describe('Trident and Nectar schematics', () => {
     assert.match(trident, /onFocus: \(\) => \{ setHot\(key\); setSource\(key\) \}/)
     assert.match(DGM_BLOCK, /\.dgm-plate:focus-visible > \.dgm-solid > \.dgm-face-top/)
     // Every phase holds at the aperture no matter who proposed.
-    assert.match(trident, /gate: 'shut', receipt: false, tone: 'hold', status: 'HELD'/)
+    assert.match(trident, /gate: 'closed', receipt: false, tone: 'hold', status: 'HELD'/)
   })
 
   it('hands the whole readout to the pointer, pill and colour included', () => {
@@ -492,7 +494,7 @@ describe('Trident and Nectar schematics', () => {
       '.dgm-svg.is-live .dgm-catch',
       '.dgm-svg.is-live .dgm-throat',
       '.dgm-svg.is-live .dgm-fieldtile:not(.is-named)',
-      '.dgm-svg.is-live .dgm-bank:not(.is-clear) .dgm-blade',
+      '.dgm-svg.is-live .dgm-bank:not(.is-clear) .dgm-bladeedge',
       '.dgm-svg.is-live .dgm-ledgerflow',
       '.dgm-svg.is-live .dgm-library',
       '.dgm-svg.is-live .dgm-crit.is-bound .dgm-node',
@@ -576,16 +578,18 @@ describe('Trident and Nectar schematics', () => {
     assert.match(DGM_BLOCK, /\.dgm-svg\.is-live \.dgm-ledgeraudit \{\s*\n\s*animation: dgm-verify 6\.4s linear infinite;/)
     assert.match(trident, /className="dgm-ledgeraudit"/)
     assert.doesNotMatch(DGM_BLOCK, /\.dgm-deck\.is-hot \.dgm-ledgerchain \{[^}]*stroke-dasharray: none/)
-    assert.match(DGM_BLOCK, /\.dgm-shutter\.is-tried \.dgm-bank:not\(\.is-clear\) \.dgm-blade \{\s*\n\s*animation: dgm-take/)
-    // The strain never parts the pair. Shut carries each blade four - now six -
-    // plan units past the bore's centre line, so the two overlap by twice that;
-    // every attempt in this stylesheet moves each of them out by the same amount
-    // and the overlap has to survive the hardest one.
-    const shutAt = Number(trident.match(/const LEAF_SHUT = (-?[\d.]+)/)[1])
-    assert.equal(shutAt < 0, true, 'the blades do not reach each other when the stop is shut')
-    const strains = [...DGM_BLOCK.matchAll(/\(var\(--shut, -?[\d.]+px\) \+ ([\d.]+)px\)/g)].map((m) => Number(m[1]))
+    assert.match(DGM_BLOCK, /\.dgm-shutter\.is-tried \.dgm-bank:not\(\.is-clear\) \.dgm-bladeedge \{\s*\n\s*animation: dgm-take/)
+    // The strain never moves the pair, because it cannot: closed is the centre
+    // line and past it is through the other blade. It used to travel each blade
+    // a hair further in, which was only ever safe while they overlapped. The
+    // seam takes the load instead - it is scaled off the state's own resting
+    // weight, so trying a held gate deepens a seam that is already deeper - and
+    // nothing in this stylesheet adds a throw to `--shut` any more.
+    assert.equal(Number(trident.match(/const LEAF_SHUT = (-?[\d.]+)/)[1]), 0)
+    assert.doesNotMatch(DGM_BLOCK, /var\(--shut,[^)]*\) \+ [\d.]+px/)
+    const strains = [...DGM_BLOCK.matchAll(/stroke-width: calc\(var\(--seam\) \* ([\d.]+)\)/g)].map((m) => Number(m[1]))
     assert.equal(strains.length >= 2, true)
-    assert.equal(shutAt + Math.max(...strains) < 0, true, 'the stop parts while it is being tried')
+    assert.equal(Math.min(...strains) > 1, true, 'a load has to deepen the seam, not lighten it')
     assert.match(trident, /const tried = hot === 'authority' && !open/)
     // A field is the one part small enough to need naming, so it keeps its own
     // target and answers in the tile - by standing up and taking the tier's ink,
@@ -666,7 +670,7 @@ describe('Trident and Nectar schematics', () => {
     // figure, it measured out as overlapping the ring beside it, and what a
     // named person signed is a fact - so the rail carries it as one.
     assert.doesNotMatch(trident, /const SIGNATURE|dgm-sigplate|dgm-sigstroke|dgm-sigrule|dgm-seal|RECEIPT SEALED/)
-    assert.match(trident, /authority: open \? 'SIGNED A\. VOSS \d\d:\d\dZ' : 'SHUT - NEEDS A SIGNATURE'/)
+    assert.match(trident, /authority: open \? 'SIGNED A\. VOSS \d\d:\d\dZ' : 'CLOSED - NEEDS A SIGNATURE'/)
     for (const rule of ['.dgm-sigplate', '.dgm-sigstroke', '.dgm-sigrule', '.dgm-rebate', '.dgm-gatering', '.dgm-seal', '.dgm-sigbar', '.dgm-sigfill']) {
       assert.doesNotMatch(DGM_BLOCK, new RegExp(`\\${rule}[\\s,{]`))
     }
@@ -707,21 +711,23 @@ describe('Trident and Nectar schematics', () => {
     assert.match(trident, /<rect className="dgm-bladeedge" x=\{side < 0 \? -LEAF_HALF : 0\} y=\{-LEAF_HALF\} width=\{LEAF_HALF\} height=\{LEAF_HALF \* 2\}/)
     assert.match(trident, /'--shut': `\$\{LEAF_SHUT\}px`, '--open': `\$\{LEAF_OPEN\}px`/)
 
-    // SHUT IS A REAL SEAL, AND OPEN IS A REAL OPENING. Re-solved here from the
+    // CLOSED IS A REAL SEAL, AND OPEN IS A REAL OPENING. Re-solved here from the
     // drawing's own numbers, because a throw nudged for looks is exactly the
     // edit that would leave a gap down the middle of a deck whose entire job is
-    // being shut - or clear the blades out of a bore that then has nothing in it
-    // to say there was ever a mechanism.
+    // being closed - or clear the blades out of a bore that then has nothing in
+    // it to say there was ever a mechanism.
     const num = (name) => Number(trident.match(new RegExp(`const ${name} = (-?[\\d.]+)`))[1])
     const bore = num('SHUT_HOLE')
     const half = num('LEAF_HALF')
     const shut = num('LEAF_SHUT')
     const open = num('LEAF_OPEN')
-    // Shut, each blade runs -shut past the centre line, so the pair overlap by
-    // twice that and the bore is covered edge to edge.
-    assert.equal(shut < 0, true, 'the two blades meet exactly on the centre line, so the seam is one line drawn twice')
-    assert.equal(half + shut >= bore, true, 'a shut blade does not reach the far side of the bore')
-    assert.equal(-2 * shut >= bore * 0.18, true, 'the overlap is too narrow for the pair to read as two blades')
+    // Closed, each blade stops ON the centre line, so the two leading edges land
+    // on the same line and the pair meets there. Not past it: an overlap is two
+    // blades that have gone through each other, which is what the drawing said
+    // for as long as this was negative, and it read as a band rather than a
+    // meeting.
+    assert.equal(shut, 0, 'a closed blade stops on the centre line - it does not cross the other one')
+    assert.equal(half + shut >= bore, true, 'a closed blade does not reach the far side of the bore')
     // Open, each blade parks a sliver of itself inside its own side of the bore
     // - clear enough to read as open, present enough to say there was a blade.
     assert.equal(open < bore, true, 'an opened blade leaves the bore entirely, so nothing says there was one')
@@ -733,23 +739,41 @@ describe('Trident and Nectar schematics', () => {
     // figure borrowing a mechanism it does not have.
     assert.match(DGM_BLOCK, /\.dgm-blade \{\s*\n\s*transform: translateX\(calc\(var\(--side, 1\) \* var\(--shut, -?[\d.]+px\)\)\);/)
     assert.match(DGM_BLOCK, /\.dgm-bank\.is-clear \.dgm-blade \{ transform: translateX\(calc\(var\(--side, 1\) \* var\(--open, [\d.]+px\)\)\); \}/)
-    for (const frames of DGM_BLOCK.match(/@keyframes dgm-(latch|load|take)[\s\S]*?\n\}/g) || []) {
+    // And OPENING IS THE ONLY THING THAT MOVES ONE. `dgm-latch` is the whole of
+    // it; every other keyframe that touches the assembly touches a stroke width.
+    // A load used to travel the blades a hair further in, which worked only
+    // while they had overlap to spend - and past the centre line is through the
+    // other blade, so the drawing would be showing the pair crossing every time
+    // something tried the gate. What takes the load now is the seam and the
+    // frame, which is where a load is taken.
+    for (const frames of DGM_BLOCK.match(/@keyframes dgm-(latch|seam|take|brace|shutload)[\s\S]*?\n\}/g) || []) {
       for (const step of frames.match(/transform: [^;]+;/g) || []) {
         assert.match(step, /^transform: translateX\(calc\(var\(--side, 1\) \*/)
       }
     }
+    assert.doesNotMatch(DGM_BLOCK, /@keyframes dgm-load/)
+    assert.match(DGM_BLOCK, /\.dgm-svg\.is-live \.dgm-bank:not\(\.is-clear\) \.dgm-bladeedge \{ animation: dgm-seam/)
 
-    // Two passes, and the second is not decoration. Held, the blades overlap, so
-    // drawing each one complete in turn lets the second paint the first one's
-    // leading edge out - and the whole point of this mechanism is that a reader
-    // can see two of them. Fills first, both edges after.
+    // One pass, face and edge together. Two were needed only while the blades
+    // overlapped and the one on top could paint the other's leading edge out.
     assert.match(DGM_BLOCK, /\.dgm-bladeface \{[\s\S]*?stroke: none;/)
     assert.match(DGM_BLOCK, /\.dgm-bladeedge \{\s*\n\s*fill: none;/)
-    assert.match(trident, /\{LEAVES\.map\(\(side\) => \([\s\S]{0,400}dgm-bladeface[\s\S]{0,400}\{LEAVES\.map\(\(side\) => \([\s\S]{0,400}dgm-bladeedge/)
+    assert.match(trident, /\{LEAVES\.map\(\(side\) => \([\s\S]{0,200}dgm-bladeface[\s\S]{0,200}dgm-bladeedge[\s\S]{0,200}\n\s*<\/g>\n\s*\)\)\}/)
     // The two lines across the bore are the mechanism, so they are the heaviest
     // stroke in the assembly - heavier than the rim round the hole and heavier
     // than the barrel they are set in.
-    const weight = (rule) => Number(DGM_BLOCK.match(new RegExp(`\\${rule} \\{[^}]*stroke-width: ([\\d.]+)`))[1])
+    // Scans every rule body that ends in the class and takes the first that
+    // actually states a width, so an animation-only rule earlier in the sheet
+    // cannot answer for the part. `.dgm-bladeedge` states its own in `--seam`,
+    // because a state has to be able to set the resting weight the keyframes
+    // scale.
+    const weight = (rule) => {
+      for (const body of DGM_BLOCK.match(new RegExp(`\\${rule} \\{[^}]*\\}`, 'g')) || []) {
+        const width = body.match(/stroke-width: ([\d.]+)/) || body.match(/--seam: ([\d.]+)/)
+        if (width) return Number(width[1])
+      }
+      throw new Error(`no stroke width for ${rule}`)
+    }
     assert.equal(weight('.dgm-bladeedge') > weight('.dgm-holerim'), true)
     assert.equal(weight('.dgm-bladeedge') > weight('.dgm-housing'), true)
 
@@ -850,7 +874,9 @@ describe('Trident and Nectar schematics', () => {
     assert.match(nectar, /const down = state\.down\.includes\(item\.key\)/)
     // What never travels is a record. No path in the figure asks for one, none
     // is refused at a wall, and the margin says so as a count rather than as a
-    // policy word the two channels overhead would be busy contradicting.
+    // policy word the two channels overhead would be busy contradicting. The
+    // captions say it once - see 'leaves the claim readable in the resting
+    // state' - and spend the rest of the run on what the federation can do.
     assert.doesNotMatch(nectar, /RECORD REQUEST|REFUSED|dgm-cross|is-back|BACK_TO|BACK_FROM/i)
     assert.doesNotMatch(DGM_BLOCK, /\.dgm-route\.is-back|\.dgm-cross|\.dgm-refused/)
     // Nothing anywhere in either figure is drawn in an alarm colour, and there
@@ -864,32 +890,49 @@ describe('Trident and Nectar schematics', () => {
     assert.doesNotMatch(DGM_BLOCK, /\.dgm-crit\.is-red[\s,{]/)
     assert.doesNotMatch(nectar, /is-red|lamp:/)
     assert.match(nectar, />0 LEAVE<\/text>/)
-    assert.match(nectar, /status: 'STEADY', read: 'Structure crosses\. Records do not\.'/)
+    // ONE CAPTION CARRIES THE RECORD CLAIM, AND THE OTHER FOUR CARRY CAPABILITY.
+    // Every phase used to restate that no record moves - no values in it, no
+    // patient in a mapping, nothing has moved - which is four fifths of the
+    // reader's attention spent on what the figure is NOT doing. It is said once,
+    // in the phase that rests, and the rest of the run says what the federation
+    // can now do that it could not before.
+    const reads = [...nectar.matchAll(/status: '[A-Z]+', read: [`']([^`']*)/g)].map((m) => m[1])
+    assert.equal(reads.length >= 5, true)
+    const denials = reads.filter((read) => /records? (do not|never|no values|nothing has moved)|no values in it|no patient/i.test(read))
+    assert.equal(denials.length, 1, 'the record claim is made once, in the phase that rests, not in every one')
+    assert.match(reads[reads.length - 1], /Structure crosses; records never do\./)
     // Every channel leaves a mast standing on the far corner of a site's own
     // roof, and the head on that mast is what swallows the foot of the arc - the
     // site orbits and the library drifts, so an endpoint parked on a silhouette
-    // would part from it on the first frame. Both ends of a channel now carry a
-    // solid with a crown for exactly that reason. Above, the arc lands on the
-    // underside rim and climbs the skirt's own vertical edge to the rim above
-    // it, which is a surface the drawing has already committed to.
-    assert.match(nectar, /path: `M \$\{x1\} \$\{y1\} \$\{arc\} L \$\{rim\[0\]\} \$\{rim\[1\]\}`/)
+    // would part from it on the first frame. Above, there is no join to protect
+    // at all: the arc runs to a port well inside the plan and the slab is
+    // painted over the last of it, so the one `d` is the mast head and the curve
+    // and nothing else. It used to carry a third segment climbing the skirt.
+    assert.match(nectar, /path: `M \$\{x1\} \$\{y1\} \$\{arc\}`/)
     assert.match(nectar, /const foot = item\.site\.solid\.back/)
     assert.match(nectar, /const \[x1, y1\] = \[foot\[0\], r1\(foot\[1\] - MAST\)\]/)
     assert.match(nectar, /<circle className="dgm-masthead" cx=\{chan\.head\[0\]\} cy=\{chan\.head\[1\]\} r=\{MAST_HEAD\} \/>/)
   })
 
-  it('lands every channel on a gate at the rim without ever crossing the slab', () => {
+  it('brings every channel up through a hole in the slab instead of onto its edge', () => {
     // A curve that ends on the slab's top face has to cross the near skirt to
     // get there, and in an axonometric the band just outside a near edge is the
     // same band the near face occupies - so the eye resolves the ambiguity as
     // "in front of everything" and the whole run reads as a wire laid over a
-    // photograph. The old arcs did exactly that.
+    // photograph. The first arcs did exactly that. The repair after them was to
+    // stop dead on the underside rim, climb the skirt, and hand off to a trace
+    // that set out from the boundary - three marks pretending to be one, all of
+    // them balanced on the one line in the figure that has to read as an edge.
     //
-    // Two things fix it, and each is load-bearing on its own: the terminus moves
-    // to the skirt's bottom rim, and the terminal tangent becomes one of the
-    // drawing's own plan axes. This test re-solves both from the projection,
-    // because pinning them to coordinates would let the next edit to the slab or
-    // the sites quietly reintroduce the crossing.
+    // A board does not do that. It takes a signal from the other side of itself
+    // through a hole. So the route now ends at a port cut through the slab, the
+    // stretch of it that is inside the plan is genuinely inside the plan, and
+    // what stops that being drawn across the skirt is the slab being painted
+    // over it afterwards.
+    //
+    // All of it is re-solved here from the projection rather than pinned to
+    // coordinates, because pinning would let the next edit to the slab, the
+    // districts or the sites quietly put a run back on the boundary.
     const num = (name, source = nectar) => Number(source.match(new RegExp(`const ${name} = (-?[\\d.]+)`))[1])
     const LIB_HALF = num('LIB_HALF')
     const LIB_WALL = num('LIB_WALL')
@@ -897,131 +940,234 @@ describe('Trident and Nectar schematics', () => {
     const GROUND_Y = num('GROUND_Y')
     const MAST = num('MAST')
     const GATE_REACH = num('GATE_REACH')
+    const PORT_IN = num('PORT_IN')
+    const PORT_CORNER = num('PORT_CORNER')
+    const GROUND_OUT = num('GROUND_OUT')
+    const DOCK_GAP = num('DOCK_GAP')
     const mesh = ISO.project(310, MESH_Y)
     const ground = ISO.project(310, GROUND_Y)
 
     // The slab's exact silhouette: its plan ring projected, then the same ring
-    // dropped by one wall. Not two half-planes - the plan corners are rounded, so
-    // the front corner sits a good five pixels inboard of where the two flat
+    // dropped by one wall. Not two half-planes - the plan corners are rounded,
+    // so the front corner sits a good five pixels inboard of where the two flat
     // edges would meet, and a half-plane test would call that region safe.
     const ring = ISO.roundedPlan(LIB_HALF, 28).map(([x, y]) => mesh(x, y))
-    const poly = [...ring, ...ring.map(([x, y]) => [x, y + LIB_WALL]).reverse()]
-    const inside = ([px, py]) => {
+    // `j = i, i += 1`, not `j = i += 1`. The second is what this crossing test
+    // was written with, and it assigns j the NEW i - so every edge it tested ran
+    // from a point to itself, no ray ever crossed anything, and the containment
+    // check this whole test is built on returned false for every point in the
+    // plane including the middle of the slab. It has been vacuous since it was
+    // written. It is not now, which is why it has something to say about the
+    // arcs going under the slab rather than only about their staying off it.
+    const within = (poly, [px, py]) => {
       let hit = false
-      for (let i = 0, j = poly.length - 1; i < poly.length; j = i += 1) {
+      for (let i = 0, j = poly.length - 1; i < poly.length; j = i, i += 1) {
         const [xi, yi] = poly[i]
         const [xj, yj] = poly[j]
         if ((yi > py) !== (yj > py) && px < ((xj - xi) * (py - yi)) / (yj - yi) + xi) hit = !hit
       }
       return hit
     }
+    // Two shapes, because two different questions get asked of them. The top
+    // face alone is what a port has to be inside - a port is cut in the roof, not
+    // in the wall. The whole silhouette, roof and both skirts, is what a control
+    // point has to stay out of.
+    const onTop = (point) => within(ring, point)
+    const skirt = ring.map(([x, y]) => [x, y + LIB_WALL])
+    const inside = (point) => onTop(point) || within(skirt, point)
 
-    const sites = [...nectar.matchAll(/plan: \[(-?\d+), (-?\d+)\], records: '[\d,]+', half: (\d+), wall: (\d+)/g)]
-      .map((m) => ({ plan: [Number(m[1]), Number(m[2])], half: Number(m[3]), wall: Number(m[4]) }))
+    // How far a plan point is from the slab's own boundary, and what that is
+    // worth on screen. The two are not the same number and the difference is the
+    // whole reason the front corner is a special case: a plan unit spent going
+    // inboard from a flat face is worth 0.93 of a pixel, and one spent going
+    // inboard along the diagonal is worth 0.48.
+    const rimGap = ([x, y]) => {
+      const c = LIB_HALF - 28
+      const ax = Math.abs(x)
+      const ay = Math.abs(y)
+      return ax > c && ay > c ? 28 - Math.hypot(ax - c, ay - c) : LIB_HALF - Math.max(ax, ay)
+    }
+    const rimGapPx = (point) => {
+      const c = LIB_HALF - 28
+      const ax = Math.abs(point[0])
+      const ay = Math.abs(point[1])
+      let normal
+      if (ax > c && ay > c) {
+        const len = Math.hypot(ax - c, ay - c) || 1
+        normal = [(ax - c) / len, (ay - c) / len]
+      } else {
+        normal = ax >= ay ? [1, 0] : [0, 1]
+      }
+      return rimGap(point) * Math.hypot((normal[0] - normal[1]) * ISO.ISO_X, (normal[0] + normal[1]) * ISO.ISO_Y)
+    }
+
+    const districts = [...nectar.matchAll(/\{ key: '([A-Z]+)', at: \[(-?\d+), (-?\d+)\], tone: '[a-z-]+', kind: '[a-z]+', count: \d+, spread: (\d+) \}/g)]
+      .map((m) => ({ key: m[1], at: [Number(m[2]), Number(m[3])], spread: Number(m[4]) }))
+    assert.equal(districts.length, 4)
+    const groundOf = (district) => district.spread + GROUND_OUT
+
+    const sites = [...nectar.matchAll(/\{ id: '(SITE \d+)', plan: \[(-?\d+), (-?\d+)\], records: '[\d,]+', half: (\d+), wall: (\d+)/g)]
+      .map((m) => ({ id: m[1], plan: [Number(m[2]), Number(m[3])], half: Number(m[4]), wall: Number(m[5]) }))
     assert.equal(sites.length, 3)
+    // Which district each site publishes into, read off the source and keyed by
+    // the site rather than by position - the two lists are not in the same order
+    // and never were.
+    const feeds = Object.fromEntries(
+      [...nectar.matchAll(/\{ key: '(SITE \d+)', site: SITE_\d+, into: ([A-Z]+) \}/g)].map((m) => [m[1], m[2]]),
+    )
+    assert.deepEqual(Object.values(feeds).sort(), ['CRITERIA', 'MAPPINGS', 'UNITS'])
 
-    const edges = []
+    const faces = []
     for (const site of sites) {
-      // Which rim point is not chosen. Screen x here depends only on (x - y), so
-      // the rim point standing directly over a site is the one that keeps that
-      // site's own (x - y). Two sites resolve onto a flat edge; the third, on
-      // the plan diagonal, resolves to the front corner.
+      // Which port is not chosen. Screen x here depends only on (x - y), so the
+      // port standing directly over a site is the one that keeps that site's own
+      // (x - y) - which is what lets a route whose middle is hidden still read as
+      // one route. Two sites resolve onto a flat face; the third, on the plan
+      // diagonal, resolves under the front corner.
       const span = site.plan[0] - site.plan[1]
-      const corner = LIB_HALF - 28 + 28 / Math.SQRT2
-      const edge = span > 40 ? 'right' : span < -40 ? 'left' : 'corner'
-      edges.push(edge)
-      const rimPlan = edge === 'right' ? [LIB_HALF, LIB_HALF - span]
-        : edge === 'left' ? [LIB_HALF + span, LIB_HALF]
-          : [corner, corner]
-      const out = edge === 'right' ? [1, 0] : edge === 'left' ? [0, 1] : [1, 1]
+      const inset = LIB_HALF - PORT_IN
+      const face = span > 40 ? 'right' : span < -40 ? 'left' : 'corner'
+      faces.push(face)
+      const port = face === 'right' ? [inset, inset - span]
+        : face === 'left' ? [inset + span, inset]
+          : [PORT_CORNER, PORT_CORNER]
+      const out = face === 'right' ? [1, 0] : face === 'left' ? [0, 1] : [1, 1]
 
-      const rim = mesh(...rimPlan)
-      const land = [rim[0], rim[1] + LIB_WALL]
-      // The mast head, on the far corner of the site's own roof.
+      // THE PORT IS DIRECTLY ABOVE ITS SITE. Not approximately - exactly, in the
+      // one coordinate screen x depends on.
+      assert.equal(port[0] - port[1], span, `${face}: the port is not in its site's own column`)
+
+      // IT IS ON THE BOARD, NOT ON THE BOUNDARY. Nine pixels of clear slab on
+      // every side of every port, which is the corner's ceiling: past that the
+      // diagonal runs out of room between the rim and the district sitting on
+      // the same diagonal, and the two squeezes trade against each other.
+      assert.ok(rimGapPx(port) >= 9, `${face}: the port is too close to the edge of the tile`)
+      for (const district of districts) {
+        const clear = Math.hypot(port[0] - district.at[0], port[1] - district.at[1]) - groundOf(district)
+        assert.ok(clear >= 8, `${face}: the port sits on ${district.key}`)
+      }
+
+      // The arc. Its control point sits on the outward plan normal of the face
+      // its port is nearest, carried through the projection, so the last stretch
+      // runs along a plan axis of the drawing rather than at whatever angle the
+      // chord happened to leave. On screen that is the same slope every skirt and
+      // every wall marking already runs at.
+      const land = mesh(...port)
       const [cx, base] = ground(...site.plan)
       const solid = ISO.roundedDeck(cx, base - site.wall, site.half, site.wall, Math.round(site.half * 0.34))
       const start = [solid.back[0], solid.back[1] - MAST]
-      // The control point sits on the outward plan normal of the face the curve
-      // lands on, carried through the projection.
       const away = [(out[0] - out[1]) * ISO.ISO_X, (out[0] + out[1]) * ISO.ISO_Y]
       const len = Math.hypot(...away)
       const ctrl = [land[0] + (GATE_REACH * away[0]) / len, land[1] + (GATE_REACH * away[1]) / len]
-
-      // A quadratic's tangent at the end is (end - control), so the last stretch
-      // of the arc runs along a plan axis of the drawing rather than at whatever
-      // angle the chord happened to leave. On screen that is the same slope every
-      // skirt and every wall marking already runs at.
       const tangent = [land[0] - ctrl[0], land[1] - ctrl[1]]
       assert.ok(
         Math.abs(tangent[0] * away[1] - tangent[1] * away[0]) < 1e-9,
-        `${edge}: the arc does not arrive along a plan axis`,
+        `${face}: the arc does not arrive along a plan axis`,
       )
 
-      // The curve is bounded by the hull of its control points, and this walks
-      // it anyway: nothing on the arc leg may be inside the slab. The climb
-      // after it is excluded on purpose - it lies on the skirt's own vertical
-      // edge, which is a surface, not the interior.
-      const control = edge === 'corner'
-        ? [start, [start[0] + 34, start[1] - 56], ctrl, land]
-        : [start, ctrl, land]
-      const at = (t) => {
-        const u = 1 - t
-        return control.length === 4
-          ? [0, 1].map((k) => u * u * u * control[0][k] + 3 * u * u * t * control[1][k] + 3 * u * t * t * control[2][k] + t * t * t * control[3][k])
-          : [0, 1].map((k) => u * u * control[0][k] + 2 * u * t * control[1][k] + t * t * control[2][k])
-      }
-      for (let step = 0; step <= 400; step += 1) {
-        const point = at((step / 400) * 0.999)
-        assert.ok(!inside(point), `${edge}: the channel crosses the slab at ${point.map(Math.round)}`)
-      }
-      // And it stops exactly on the underside rim, which is the one point on the
-      // silhouette a line coming from below cannot be misread at.
-      assert.ok(Math.abs(land[1] - (rim[1] + LIB_WALL)) < 1e-9)
-    }
-    // Right edge, left edge, front corner: three landings spread across the
-    // whole near silhouette rather than three on one side of it.
-    assert.deepEqual([...edges].sort(), ['corner', 'left', 'right'])
+      // AND IT ENDS UNDER THE SLAB. This is the assertion the old one inverted:
+      // the terminus used to have to be OUTSIDE the silhouette, because nothing
+      // was going to cover it. It has to be inside now, or there is no hole being
+      // gone through - the route would just be stopping short of one.
+      assert.ok(onTop(land), `${face}: the channel stops outside the slab instead of going into it`)
+      // The control point stays outboard, so the curve reaches the port from
+      // outside and passes beneath the near skirt rather than doubling back over
+      // the top of it.
+      assert.ok(!inside(ctrl), `${face}: the arc turns back over the slab on its way in`)
 
-    // NOTHING IS BUILT WHERE A ROUTE ARRIVES.
+      // The last leg: one straight run along a plan axis, from the port to a pad
+      // on the rim of its own district's ground. Not into a bus pad - a
+      // definition arriving from a site is a new member of one kind, not traffic
+      // between two - and not at a node in the middle of a cluster, which is what
+      // the old feeder did at a screen angle matching nothing it crossed.
+      const home = districts.find((district) => district.key === feeds[site.id])
+      const reach = groundOf(home) + DOCK_GAP
+      const dock = Math.abs(port[1] - home.at[1]) < reach
+        ? [home.at[0] + Math.sign(port[0] - home.at[0]) * Math.sqrt(reach ** 2 - (port[1] - home.at[1]) ** 2), port[1]]
+        : [port[0], home.at[1] + Math.sign(port[1] - home.at[1]) * Math.sqrt(Math.max(reach ** 2 - (port[0] - home.at[0]) ** 2, 0))]
+      assert.ok(
+        Math.abs(dock[0] - port[0]) < 1e-9 || Math.abs(dock[1] - port[1]) < 1e-9,
+        `${face}: the run in from the port is not on a plan axis`,
+      )
+      assert.ok(Math.hypot(dock[0] - port[0], dock[1] - port[1]) > 12, `${face}: the run in is too short to read as a run`)
+
+      // NOTHING ON THAT RUN GOES NEAR AN EDGE OR THROUGH A CLUSTER. Walked, not
+      // sampled at the ends: the leg the port replaced started ON the boundary,
+      // and its first corner sat on it too.
+      for (let step = 0; step <= 200; step += 1) {
+        const t = step / 200
+        const point = [port[0] + (dock[0] - port[0]) * t, port[1] + (dock[1] - port[1]) * t]
+        assert.ok(rimGapPx(point) >= 9, `${face}: the run in touches the edge of the tile`)
+        for (const district of districts) {
+          if (district.key === home.key) continue
+          const clear = Math.hypot(point[0] - district.at[0], point[1] - district.at[1]) - groundOf(district)
+          assert.ok(clear >= 8, `${face}: the run in crosses ${district.key}`)
+        }
+      }
+      // And it stops five units clear of the ground it is landing beside, so the
+      // pad is beside the district rather than on top of it.
+      const landing = Math.hypot(dock[0] - home.at[0], dock[1] - home.at[1]) - groundOf(home)
+      assert.ok(Math.abs(landing - DOCK_GAP) < 1e-6, `${face}: the run in does not stop clear of its own district`)
+    }
+    // Right face, left face, front corner: three ports spread across the whole
+    // near half of the board rather than three on one side of it.
+    assert.deepEqual([...faces].sort(), ['corner', 'left', 'right'])
+
+    // THE SLAB IS PAINTED OVER THE CHANNELS, AND THAT IS LOAD-BEARING. The arcs
+    // genuinely end inside the plan; the only thing keeping them off the near
+    // skirt is stroke order. Put the library back above them and every route in
+    // this figure turns into a wire laid over a photograph.
+    assert.ok(
+      nectar.indexOf('{CHANNELS.map((item) => {') < nectar.indexOf('<g className={`dgm-library'),
+      'the library is drawn before the channels, so every route crosses the slab it goes into',
+    )
+    // The sites still come after it, so a site is never drawn under the slab it
+    // publishes into.
+    assert.ok(nectar.indexOf('<g className={`dgm-library') < nectar.indexOf('const chan = BY_SITE[site.id]'))
+
+    // A PORT IS DRAWN AS A HOLE, and as the same hole the other figure's intake
+    // throat is: a plan circle for the wall, the same circle a few units further
+    // down the screen for the floor, both clipped to the bore so what is drawn is
+    // exactly what can be seen down it. One part, two figures.
+    assert.match(nectar, /<circle className="dgm-shaft" cx=\{item\.port\.at\[0\]\} cy=\{item\.port\.at\[1\]\} r=\{PORT_R\} \/>/)
+    assert.match(nectar, /className="dgm-shaftfloor"[\s\S]{0,160}cx=\{item\.port\.at\[0\] \+ PORT_DROP\}/)
+    assert.match(nectar, /<clipPath id=\{`nc-port-\$\{item\.key\.replace\(' ', '-'\)\}`\}/)
+    assert.match(nectar, /<g clipPath=\{`url\(#nc-port-\$\{item\.key\.replace\(' ', '-'\)\}\)`\}>/)
+    assert.match(nectar, /className="dgm-portrim"/)
+    assert.match(DGM_BLOCK, /\.dgm-portal \.dgm-shaft \{ fill: color-mix\(in srgb, var\(--ink-deep\) (\d+)%/)
+    // The port runs deeper than the throat it shares a construction with,
+    // because it is a fifth of the size and the throat's two tones read as a pale
+    // ring with nothing in it at that scale - which is a pad, and a pad is the
+    // one thing this part must not be mistaken for.
+    const tone = (rule) => Number(DGM_BLOCK.match(new RegExp(`${rule} \\{ fill: color-mix\\(in srgb, var\\(--ink-deep\\) (\\d+)%`))[1])
+    assert.ok(tone('\\.dgm-portal \\.dgm-shaft') > tone('\\.dgm-portal \\.dgm-shaftfloor'))
+    assert.ok(tone('\\.dgm-portal \\.dgm-shaft') > Number(DGM_BLOCK.match(/\.dgm-shaft \{\s*\n\s*fill: color-mix\(in srgb, var\(--ink-deep\) (\d+)%/)[1]))
+
+    // NOTHING IS BUILT ON THE RIM, and nothing is written there either.
     //
-    // Three prisms stood here once - the same solid as a criterion at the scale
+    // Three prisms stood there once - the same solid as a criterion at the scale
     // of a port, two lit faces each and a crown that went full accent the moment
     // its site published. They were three of the four brightest objects in the
     // figure and they were parked on the one edge that has to read as an edge.
     // Then a dot, which was better and still an object placed on a boundary to
-    // mark something that needs no marking. The route crosses the rim and keeps
-    // going; what says where it changed surface is the corner in the run itself.
-    assert.doesNotMatch(nectar, /GATE_RISE|GATE_ACROSS|GATE_ALONG|GATE_CORNER|GATE_SEAT|gate\.solid|dgm-gate|LAND_R|dgm-land/)
+    // mark something that needs no marking.
+    assert.doesNotMatch(nectar, /GATE_RISE|GATE_ACROSS|GATE_ALONG|GATE_CORNER|GATE_SEAT|gate\.solid|dgm-gate|LAND_R|dgm-land|RIM_CORNER/)
     for (const rule of ['.dgm-gate', '.dgm-gatecap', '.dgm-land']) {
       assert.doesNotMatch(DGM_BLOCK, new RegExp(`\\${rule}[\\s,{]`))
     }
-    assert.match(nectar, /gate: \{ \.\.\.gate, at: rim \}/)
-    // The front corner is solved rather than read off `LIBRARY.front`:
-    // `roundedPlan` samples its arcs in seven steps and never lands on 45
-    // degrees, so the sampled corner is four pixels off the true one - and four
-    // pixels is the whole composition off centre.
-    assert.match(nectar, /const RIM_CORNER = LIB_HALF - 28 \+ 28 \/ Math\.SQRT2/)
     assert.doesNotMatch(nectar, /^[^/\n]*LIBRARY\.front/m)
 
-    // What the rim feeds. A channel stops at the rim, so a run on the board
-    // carries the definition the rest of the way in - drawn among the mesh, so
-    // every solid taller than it passes in front of it. That is the one move no
-    // arc in screen space can make, and it is what puts the last leg on the slab
-    // instead of above it.
-    //
-    // It is a routed trace like every other run up there, ending on a pad of the
-    // district that kind of definition belongs to. The old feeder was a straight
-    // dotted line from the rim to a node in the middle of the mesh, crossing the
-    // floor at a screen angle that matched nothing it crossed.
+    // What the port feeds, on the sheet.
     assert.match(nectar, /className=\{`dgm-trace is-feed\$\{state\.up\.includes\(item\.key\) \? ' is-up' : ''\}\$\{lit\(item\.key\)\}`\}/)
     assert.match(nectar, /<path className="dgm-tracepath" d=\{item\.feed\} \/>/)
-    assert.match(nectar, /const dock = padOn\(into, side\.axis, side\.sign \|\| 1\)/)
-    // The channels drift with the slab now. Three pixels of travel at a joint
-    // that has nothing to hide it would show as the route parting from the gate;
+    assert.match(nectar, /const dock = dockOn\(item\.into, port\.at\)/)
+    assert.match(nectar, /const feed = run\(port\.at, dock, 'x'\)/)
+    // The channels drift with the slab. Three pixels of travel at a joint that
+    // has nothing to hide it would show as the route parting from its port;
     // moved to the site end it is swallowed by a mast head built for it.
     assert.match(DGM_BLOCK, /\.dgm-library,\s*\n\.dgm-lift \{ transform: translateY\(var\(--drift, 0px\)\); \}/)
-    // And a channel turns a corner now, so every mark that runs one has to
-    // round its joins or the default miter throws a spike as a dash spans it.
+    // And a channel turns a corner, so every mark that runs one has to round its
+    // joins or the default miter throws a spike as a dash spans it.
     assert.match(DGM_BLOCK, /\.dgm-channel \{[^}]*stroke-linejoin: round;/)
     assert.match(DGM_BLOCK, /\.dgm-rise,\s*\n\.dgm-fall \{[^}]*stroke-linejoin: round;/)
   })
@@ -1109,10 +1255,15 @@ describe('Trident and Nectar schematics', () => {
     assert.equal(new Set([...nectar.matchAll(/^  (block|drum|bar|post): \{ halfX/gm)].map((m) => m[1])).size, 4)
     assert.match(nectar, /className=\{`dgm-crit \$\{node\.tone\}/)
     assert.match(nectar, /className=\{`dgm-district \$\{district\.tone\}`\}/)
-    // A district letters itself on the board, which is where the three floating
-    // tickets went: CRITERION, UNIT and MAP were pills parked in mid-air naming
-    // payloads a reader had no way to place. The same words are places now.
-    assert.match(nectar, /className="dgm-district-name"/)
+    // NOTHING IS LETTERED. The three floating tickets - CRITERION, UNIT and MAP,
+    // pills parked in mid-air naming payloads a reader had no way to place -
+    // came off first, and the four district names that replaced them came off
+    // after, for the same reason: this is the one plane in the figure that has
+    // to read as a held surface, and a word lying on it is a word between the
+    // reader and the claim. Kind is carried by ink, by solid and by corner,
+    // three times over.
+    assert.doesNotMatch(nectar, /dgm-district-name|district\.mark|EDGE_ANGLE\} \$\{lx\}/)
+    assert.doesNotMatch(DGM_BLOCK, /\.dgm-district-name[\s,{]/)
     assert.doesNotMatch(nectar, /label: '|className=[^>]{0,40}dgm-(ticket|carry|tagbody)/)
     for (const rule of ['.dgm-ticket', '.dgm-carry', '.dgm-liftchip']) {
       assert.doesNotMatch(DGM_BLOCK, new RegExp(`\\${rule}[\\s,{]`))
@@ -1234,12 +1385,36 @@ describe('Trident and Nectar schematics', () => {
       assert.match(body, /--ink: (var\(--accent\)|color-mix\(in srgb, var\(--accent(-strong)?\) \d\d%, var\(--(muted|text)\)\));/)
       assert.doesNotMatch(body, /--governed|--warning|--success|--danger/)
     }
-    // And the wash opens monotonically down the stack, which is what makes four
-    // blues read as four rather than as one blue a reader has to measure.
+    // AND THE WASH IS FLAT, AT THE LIGHTEST TIER'S VALUE. It used to open down
+    // the stack alongside the ink, 27 to 50, so a deeper tier also held more of
+    // its own ink in its skirts. That is the descent drawn twice and the second
+    // drawing cost more than it said: `--wash` is not a hierarchy control, it is
+    // how hard a solid is modelled, so opening it downward modelled each deck
+    // harder than the one above it and the stack came out as four objects of
+    // four different solidities. The ink alone carries the order now.
     const washes = tiers.map((tier) => Number(rule(tier).match(/--wash: (\d+)%/)[1]))
-    assert.deepEqual(washes, [...washes].sort((a, b) => a - b))
-    assert.equal(new Set(washes).size, 4)
-    assert.equal(washes[3] - washes[0] >= 18, true, 'the four tiers are too close in weight to be told apart')
+    assert.equal(new Set(washes).size, 1, 'every Trident tier is modelled at one weight')
+    assert.equal(washes[0], 27, "and it is the proposal tier's own, which was the lightest of the four")
+    // Nothing standing on a deck is modelled as hard as the deck under it, and
+    // every one of them is modelled at the same weight as every other - a bound
+    // field on SCHEMA and a written row on LEDGER are the same object at the
+    // same solidity, which is what they are.
+    const stood = DGM_BLOCK.match(/\.dgm-slide :is\(\.dgm-stand, \.dgm-field, \.dgm-ledgerrow\) \{[^}]*\}/)[0]
+    assert.equal(Number(stood.match(/--wash: (\d+)%/)[1]) < washes[0], true)
+    assert.match(stood, /--shade: \d+%/)
+    // What tells the four apart is the ink, and it deepens all the way down: the
+    // proposal tier is carried toward the neutral, the contract is the house
+    // accent undiluted, and the two below it are carried further into the text
+    // each step. Re-solved off the sources rather than pinned to a literal.
+    const toward = (tier) => {
+      const body = rule(tier)
+      if (/--ink: var\(--accent\);/.test(body)) return 0
+      const mix = body.match(/--ink: color-mix\(in srgb, var\(--accent(-strong)?\) (\d+)%, var\(--(muted|text)\)\)/)
+      return mix[3] === 'text' ? 100 - Number(mix[2]) : Number(mix[2]) - 100
+    }
+    const depth = tiers.map(toward)
+    assert.deepEqual(depth, [...depth].sort((a, b) => a - b), 'the ink has to deepen every step down the stack')
+    assert.equal(new Set(depth).size, 4)
 
     // Blue is the figure default too, which is what the contract deck takes
     // undiluted and what Nectar wants everywhere - its three sites are peers,
@@ -1527,7 +1702,7 @@ describe('Trident and Nectar schematics', () => {
 
   it('leaves the claim readable in the resting state', () => {
     assert.match(trident, /status: 'RECEIPTED'/)
-    assert.match(nectar, /status: 'STEADY', read: 'Structure crosses\. Records do not\.'/)
+    assert.match(nectar, /status: 'STEADY', read: '[^']*Structure crosses; records never do\.'/)
     // The boot transition is killed first, then every ambient clock behind it.
     assert.match(DGM_BLOCK, /@media \(prefers-reduced-motion: reduce\) \{\s*\n\s*\.dgm-svg \{ transition: none; \}\s*\n\s*\n\s*\.dgm-svg :is\(/)
     for (const name of ['dgm-droppath', 'dgm-blade', 'dgm-spark', 'dgm-crit', 'dgm-reachrim', 'dgm-sweep']) {

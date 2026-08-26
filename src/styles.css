@@ -9527,8 +9527,10 @@ html.is-hidden .clinic-node i,
   --ink-deep: var(--accent-strong);
   --ink-soft: var(--accent-soft);
   /* How much of itself a solid carries, and how far its turned face goes.
-     Two numbers for the whole system, inherited, so a tier could override them
-     and none needs to.
+     Two numbers for the whole system, inherited. Nectar takes both as they
+     stand. Trident's four tiers all pull `--wash` down to one lower value of
+     their own, the same one for each of them, and none of the eight solids in
+     either figure touches `--shade`.
 
      They used to be 9% and 16% of ink mixed into a text-into-white neutral,
      which meant nine tenths of every face was a colour with no colour in it -
@@ -9580,11 +9582,25 @@ html.is-hidden .clinic-node i,
    way down, and the deck at the bottom is the darkest thing in the drawing
    because it is the only one nothing can be taken back out of.
 
-   Two numbers carry it. `--ink` deepens, which colours every solid standing on
-   the deck - a field tile, a ledger bar, a landing pad - and `--wash` opens,
-   which is how much of that ink the deck's own skirts hold. Four blues at one
-   wash would have been four decks a reader has to measure against each other;
-   deepening both is what makes the descent legible at a glance.
+   ONE number carries it, and it used to be two. `--ink` deepens, which colours
+   every solid standing on the deck - a field tile, a ledger bar, a landing pad -
+   and for a while `--wash` opened with it, from 27% at the top to 50% at the
+   bottom, so a deeper tier also held more of its own ink in its skirts.
+
+   That was the descent drawn twice, and the second drawing cost more than it
+   said. `--wash` is not a hierarchy control: it is how much body a face has,
+   which is to say how hard the solid is modelled. Opening it down the stack
+   modelled each tier harder than the one above it, so the ledger came out as a
+   heavy block of a thing with steep sides and the proposal tier at the top as a
+   light sheet - four objects at four degrees of solidity, which reads as four
+   materials rather than as one instrument seen at four depths.
+
+   So the wash is flat now, at 27%, which is the value the proposal tier already
+   had: every deck is modelled exactly as lightly as the lightest one was, and
+   the difference between the tiers is left entirely to the ink. That is enough.
+   The ink is in every skirt, every field tile, every ledger bar and every drop
+   on the way down, so the descent still gets visibly heavier three times - it
+   just stops getting more three-dimensional at the same time.
 
    Which keeps the descent as the claim, drawn: a drop is owned by the deck it
    lands on and takes that deck's ink, so the run gets visibly heavier three
@@ -9599,6 +9615,8 @@ html.is-hidden .clinic-node i,
   --ink: color-mix(in srgb, var(--accent) 58%, var(--muted));
   --ink-deep: color-mix(in srgb, var(--accent-strong) 62%, var(--muted));
   --ink-soft: color-mix(in srgb, var(--ink) 22%, var(--surface-solid));
+  /* The reference for the other three. This is the lightest the four tiers were
+     ever modelled, and it is now the only weight any of them is modelled at. */
   --wash: 27%;
 }
 
@@ -9608,21 +9626,51 @@ html.is-hidden .clinic-node i,
   --ink: var(--accent);
   --ink-deep: var(--accent-strong);
   --ink-soft: color-mix(in srgb, var(--ink) 22%, var(--surface-solid));
-  --wash: 34%;
+  --wash: 27%;
 }
 
 .dgm-slide.is-authority {
   --ink: color-mix(in srgb, var(--accent-strong) 88%, var(--text));
   --ink-deep: color-mix(in srgb, var(--accent-strong) 66%, var(--text));
   --ink-soft: color-mix(in srgb, var(--ink) 22%, var(--surface-solid));
-  --wash: 43%;
+  --wash: 27%;
 }
 
 .dgm-slide.is-receipt {
   --ink: color-mix(in srgb, var(--accent-strong) 56%, var(--text));
   --ink-deep: color-mix(in srgb, var(--accent-strong) 34%, var(--text));
   --ink-soft: color-mix(in srgb, var(--ink) 22%, var(--surface-solid));
-  --wash: 50%;
+  --wash: 27%;
+}
+
+/* WHAT STANDS ON A DECK IS MODELLED LIGHTER THAN THE DECK.
+
+   A waiting proposal, a landing pad, a bound contract field and a written
+   ledger row are all built the way their deck is - a plan footprint with two
+   skirt faces under it - and they used to be washed the way their deck is too,
+   at whatever weight the tier was set to. That is right in construction and
+   wrong on the page. A deck skirt is a fifteen-pixel band under a slab three
+   hundred wide, and the same pigment on the four-pixel side of a nine-pixel
+   tile is not the same amount of shading, it is nineteen dark studs in a grid.
+   The schema deck read as a punched plate and the ledger as a stack of bars
+   milled out of something heavier than the deck holding them.
+
+   So the small solids take their own weight, and it is one weight: seventeen
+   and eleven, well under any tier's, identical on all four decks. Two things
+   fall out of that. Nothing standing on a deck is modelled harder than
+   anything standing on any other deck - the tiles on SCHEMA and the rows on
+   LEDGER are the same object at the same solidity, which is what they are - and
+   nothing standing on a deck is modelled harder than the deck under it, so a
+   surface still reads as the heaviest thing in its own band.
+
+   The ink is untouched. Each of these still takes the ink of the deck it stands
+   on, so the descent is as legible as it was; what comes off is the modelling,
+   not the colour. A cap that carries a state - a bound tile, a written row -
+   keeps its own fill, because that is a state and not a side. */
+
+.dgm-slide :is(.dgm-stand, .dgm-field, .dgm-ledgerrow) {
+  --wash: 17%;
+  --shade: 11%;
 }
 
 /* Ambient occlusion, not a cast shadow. There is no light source in an
@@ -9794,10 +9842,25 @@ html.is-hidden .clinic-node i,
    thing inside the barrel: shut has to read as covered and open as through, at
    the size a deck this far down the sheet is actually printed. The floor stays
    lighter than the wall above it, so the shaft has a depth rather than being a
-   flat dark disc. */
+   flat dark disc.
 
-.dgm-shaft.is-bore { fill: color-mix(in srgb, var(--ink-deep) 72%, var(--surface-solid)); }
-.dgm-shaftfloor.is-bore { fill: color-mix(in srgb, var(--ink-deep) 48%, var(--surface-solid)); }
+   It was 72 and 48, and at those the bore was not a hole in the drawing, it was
+   the drawing's one dark object. Measured, its wall came out fifty-odd levels
+   below the darkest skirt on any deck, which put the single heaviest mark in a
+   figure of eight pale solids in the middle of the third one down - so the eye
+   went to APPROVAL and stayed there, and the stack read as three light decks
+   with a machined black disc parked among them.
+
+   52 and 30 keep everything the bore is for and drop that. The wall still sits
+   below the darkest skirt in the figure, so it is still the deepest thing on
+   the sheet and still unmistakably a recess rather than a printed ring; the
+   floor still stays clear of the wall, so the shaft still has a bottom; and the
+   two blades are still by a distance the lightest thing inside the barrel, so
+   shut still reads as covered and open as through. What goes is only the
+   contrast that was making one deck shout. */
+
+.dgm-shaft.is-bore { fill: color-mix(in srgb, var(--ink-deep) 52%, var(--surface-solid)); }
+.dgm-shaftfloor.is-bore { fill: color-mix(in srgb, var(--ink-deep) 30%, var(--surface-solid)); }
 
 /* The intake apron. Three sources land inside one catchment, everything in the
    catchment goes to one throat, and a queue waits its turn in the quadrant
@@ -10282,9 +10345,9 @@ html.is-hidden .clinic-node i,
    mechanism rather than as an animation snapping into place. */
 
 @keyframes dgm-latch {
-  0%, 8% { transform: translateX(calc(var(--side, 1) * var(--shut, -6px))); }
+  0%, 8% { transform: translateX(calc(var(--side, 1) * var(--shut, 0px))); }
   20%, 52% { transform: translateX(calc(var(--side, 1) * var(--open, 24px))); }
-  64%, 100% { transform: translateX(calc(var(--side, 1) * var(--shut, -6px))); }
+  64%, 100% { transform: translateX(calc(var(--side, 1) * var(--shut, 0px))); }
 }
 
 /* The barrel takes each closing the way it takes a load. */
@@ -10323,7 +10386,7 @@ html.is-hidden .clinic-node i,
    Signing runs them out to the stop. */
 
 .dgm-blade {
-  transform: translateX(calc(var(--side, 1) * var(--shut, -6px)));
+  transform: translateX(calc(var(--side, 1) * var(--shut, 0px)));
   transition: transform 620ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -10345,9 +10408,16 @@ html.is-hidden .clinic-node i,
   fill: none;
   /* Heavier than any other edge inside the barrel, because these two lines are
      the mechanism. Every other stroke in the assembly - the rim, the barrel wall,
-     the shaft - is scenery around them. */
+     the shaft - is scenery around them.
+
+     `--seam` is the resting weight of the pair rather than a literal, because
+     the load now runs through the seam instead of through a throw, and a
+     keyframe that hard-coded 1.4 would flatten the held state back to the idle
+     one every time it came round. A state sets `--seam`; the keyframes scale
+     it. */
+  --seam: 1.4px;
   stroke: color-mix(in srgb, var(--text) 62%, transparent);
-  stroke-width: 1.4;
+  stroke-width: var(--seam);
   transition: stroke 300ms ease, stroke-width 300ms ease;
 }
 
@@ -10361,21 +10431,28 @@ html.is-hidden .clinic-node i,
   fill: color-mix(in srgb, var(--ink) 24%, var(--surface-solid));
 }
 
-.dgm-svg.is-hold .dgm-bank:not(.is-clear) .dgm-bladeedge { stroke: var(--ink-deep); stroke-width: 1.9; }
+.dgm-svg.is-hold .dgm-bank:not(.is-clear) .dgm-bladeedge { stroke: var(--ink-deep); --seam: 1.9px; }
 
-/* Something keeps trying the stop, and it keeps holding. Two soft breaths and
-   then one real attempt per cycle, written as one keyframe because a CSS
-   animation does not compose transforms - a second animation on the same
-   property replaces the first outright. */
+/* SOMETHING KEEPS TRYING THE GATE, AND NOTHING ABOUT THE GATE MOVES.
 
-@keyframes dgm-load {
-  0%, 100% { transform: translateX(calc(var(--side, 1) * var(--shut, -6px))); }
-  20% { transform: translateX(calc(var(--side, 1) * (var(--shut, -6px) + 0.8px))); }
-  40% { transform: translateX(calc(var(--side, 1) * var(--shut, -6px))); }
-  60% { transform: translateX(calc(var(--side, 1) * (var(--shut, -6px) + 0.8px))); }
-  84% { transform: translateX(calc(var(--side, 1) * var(--shut, -6px))); }
-  90% { transform: translateX(calc(var(--side, 1) * (var(--shut, -6px) + 2.2px))); }
-  96% { transform: translateX(calc(var(--side, 1) * var(--shut, -6px))); }
+   The blades used to answer a load by travelling a hair further in - 0.8 of a
+   plan unit twice a cycle and 2.2 once - which worked only because they were
+   thrown past each other and had twelve units of overlap to spend. Closed is
+   the centre line now, and past the centre line is through the other blade, so
+   there is no longer anywhere for a loaded blade to go that is not somewhere it
+   must not be. A stop that gives is not a stop.
+
+   So the load is carried where a load is actually carried: the seam holds and
+   the frame takes it. `dgm-seam` deepens the two edges where they meet, on the
+   same clock and at the same beats the throw used to run on, and `dgm-brace`
+   thickens the barrel around them. Nothing here interpolates a colour - only
+   stroke-width - and nothing moves a blade. */
+
+@keyframes dgm-seam {
+  0%, 100% { stroke-width: var(--seam); }
+  20%, 60% { stroke-width: calc(var(--seam) * 1.22); }
+  40%, 84%, 96% { stroke-width: var(--seam); }
+  90% { stroke-width: calc(var(--seam) * 1.64); }
 }
 
 /* The barrel takes the attempt too. Load runs through the whole assembly, not
@@ -10387,27 +10464,25 @@ html.is-hidden .clinic-node i,
   90% { stroke-width: 2; }
 }
 
-.dgm-svg.is-live .dgm-bank:not(.is-clear) .dgm-blade { animation: dgm-load 7.6s ease-in-out infinite; }
+.dgm-svg.is-live .dgm-bank:not(.is-clear) .dgm-bladeedge { animation: dgm-seam 7.6s ease-in-out infinite; }
 .dgm-svg.is-live .dgm-shutter:not(.is-open) .dgm-housing {
   animation: dgm-brace 7.6s ease-in-out infinite;
   vector-effect: non-scaling-stroke;
 }
 
-/* Lean on the approval deck and the same thing happens on demand, harder: the
-   blades strain out along their own sides and come straight back, deepening
-   while they do. Held, the pair overlap by eight; the hardest attempt in this
-   stylesheet moves each of them 2.2 out, which leaves three and a half plan
-   units of overlap - so the stop is strained in every frame of this stylesheet
-   and parted in none of them. A held run is the one moment in this figure where
-   nothing happens on purpose, and a reader who is told that and shown nothing
-   has only been told it. */
+/* Lean on the approval deck and the same thing happens on demand, harder. The
+   seam goes to 3 and the frame with it, and both come straight back. No blade
+   in this stylesheet moves in any frame except the one where the gate opens,
+   which is the whole claim: a held run is the one moment in this figure where
+   nothing happens on purpose, and a reader who is told that and shown a
+   mechanism twitching has been told one thing and shown another. */
 
 @keyframes dgm-take {
-  0%, 100% { transform: translateX(calc(var(--side, 1) * var(--shut, -6px))); }
-  34% { transform: translateX(calc(var(--side, 1) * (var(--shut, -6px) + 2.2px))); }
+  0%, 100% { stroke-width: var(--seam); }
+  34% { stroke-width: calc(var(--seam) * 2.14); }
 }
 
-.dgm-shutter.is-tried .dgm-bank:not(.is-clear) .dgm-blade {
+.dgm-shutter.is-tried .dgm-bank:not(.is-clear) .dgm-bladeedge {
   animation: dgm-take 820ms cubic-bezier(0.2, 0.86, 0.3, 1);
 }
 
@@ -10415,7 +10490,7 @@ html.is-hidden .clinic-node i,
   fill: color-mix(in srgb, var(--ink) 38%, var(--surface-solid));
 }
 
-.dgm-shutter.is-tried .dgm-bank:not(.is-clear) .dgm-bladeedge { stroke: var(--ink-deep); stroke-width: 2.4; }
+.dgm-shutter.is-tried .dgm-bank:not(.is-clear) .dgm-bladeedge { stroke: var(--ink-deep); }
 
 /* The barrel. The bore used to sit on its own in the middle of an empty plate,
    which is why the deck read as unfinished - and then it collected a rebate and
@@ -10865,19 +10940,46 @@ html.is-hidden .clinic-node i,
   opacity: clamp(0, calc((var(--spread, 1) - 0.3) * 2.2), 1);
 }
 
-/* A district letters itself, along the board's own plan axis. Small, tracked
-   open and set in the machine face, the way a board is silkscreened - it is a
-   marking on the surface, not a caption about it. */
+/* PORTS. Where a site's route crosses the plane of the board.
 
-.dgm-district-name {
-  fill: var(--muted);
-  font-family: var(--font-mono);
-  font-size: 8.5px;
-  font-weight: 600;
-  letter-spacing: 0.18em;
+   Drawn as a hole, because it is one: the wall in the board's own dark and the
+   floor a step lighter below it, the same two tones and the same construction
+   as the intake throat on Trident's first deck. Two figures, one part.
+
+   The rim is the board's ink at a hairline, not the near-black the bore in the
+   other figure uses - a port is nine plan units of hole in a three-hundred-unit
+   slab, and at that size a heavy ring is a filled dot. It carries the same
+   opening clamp as every other mark on this board, so a port arrives with the
+   slab it is cut through rather than before it.
+
+   Leaning on a site brightens its port, because a port belongs to a site: it is
+   the one part of the library that is any single site's. */
+
+/* A port runs deeper than the intake throat it shares a construction with. A
+   throat is sixty plan units across and a port is twelve, and the same two tones
+   that read as a shaft at the first size read as a pale ring with nothing in it
+   at the second - which is a pad, and a pad is the one thing this part must not
+   be mistaken for. 42 and 20 put the wall a clear step below the board and the
+   floor a clear step below the wall, so a port has a depth at the size a port is
+   actually printed. */
+
+.dgm-portal .dgm-shaft { fill: color-mix(in srgb, var(--ink-deep) 42%, var(--surface-solid)); }
+.dgm-portal .dgm-shaftfloor { fill: color-mix(in srgb, var(--ink-deep) 20%, var(--surface-solid)); }
+
+.dgm-portrim {
+  fill: none;
+  stroke: color-mix(in srgb, var(--ink-deep) 46%, transparent);
+  stroke-width: 1;
   pointer-events: none;
-  opacity: clamp(0, calc((var(--spread, 1) - 0.5) * 2.6), 1);
+  transition: stroke 260ms ease;
 }
+
+.dgm-portal {
+  opacity: clamp(0, calc((var(--spread, 1) - 0.4) * 2.4), 1);
+  pointer-events: none;
+}
+
+.dgm-portal.is-hot .dgm-portrim { stroke: var(--ink-deep); }
 
 /* BOARD TRACES. What crosses between two kinds of definition.
 
@@ -11503,7 +11605,7 @@ html.is-hidden .clinic-node i,
 @media (prefers-reduced-motion: reduce) {
   .dgm-svg { transition: none; }
 
-  .dgm-svg :is(.dgm-droppath, .dgm-dropflow, .dgm-dropnode, .dgm-spark, .dgm-fieldtile, .dgm-queue, .dgm-face-top, .dgm-holerim, .dgm-blade, .dgm-bladeface, .dgm-bladeedge, .dgm-bank, .dgm-loopflow, .dgm-side, .dgm-sidefact, .dgm-read, .dgm-tagbody, .dgm-node, .dgm-link, .dgm-district, .dgm-tracepath, .dgm-tracerun, .dgm-via, .dgm-junction, .dgm-reachfill, .dgm-reachrim, .dgm-sweep, .dgm-wallmark, .dgm-status, .dgm-statustext, .dgm-deck, .dgm-plate, .dgm-site, .dgm-ident, .dgm-catch, .dgm-throat, .dgm-ledgerchain, .dgm-ledgerbar, .dgm-ledgerhash, .dgm-slide, .dgm-housing, .dgm-pad, .dgm-intakepath, .dgm-intake, .dgm-ledgerflow, .dgm-ledgerseal, .dgm-library, .dgm-seat, .dgm-riser, .dgm-tine, .dgm-orbit, .dgm-reach, .dgm-crit, .dgm-stand, .dgm-field, .dgm-face-left, .dgm-face-right, .dgm-mast, .dgm-masthead, .dgm-channel, .dgm-trace, .dgm-lift, .dgm-rise, .dgm-fall, .dgm-second, .dgm-steady, .dgm-draw, .dgm-hand, .dgm-ledgeraudit) {
+  .dgm-svg :is(.dgm-droppath, .dgm-dropflow, .dgm-dropnode, .dgm-spark, .dgm-fieldtile, .dgm-queue, .dgm-face-top, .dgm-holerim, .dgm-blade, .dgm-bladeface, .dgm-bladeedge, .dgm-bank, .dgm-loopflow, .dgm-side, .dgm-sidefact, .dgm-read, .dgm-tagbody, .dgm-node, .dgm-link, .dgm-district, .dgm-tracepath, .dgm-tracerun, .dgm-via, .dgm-junction, .dgm-portal, .dgm-portrim, .dgm-reachfill, .dgm-reachrim, .dgm-sweep, .dgm-wallmark, .dgm-status, .dgm-statustext, .dgm-deck, .dgm-plate, .dgm-site, .dgm-ident, .dgm-catch, .dgm-throat, .dgm-ledgerchain, .dgm-ledgerbar, .dgm-ledgerhash, .dgm-slide, .dgm-housing, .dgm-pad, .dgm-intakepath, .dgm-intake, .dgm-ledgerflow, .dgm-ledgerseal, .dgm-library, .dgm-seat, .dgm-riser, .dgm-tine, .dgm-orbit, .dgm-reach, .dgm-crit, .dgm-stand, .dgm-field, .dgm-face-left, .dgm-face-right, .dgm-mast, .dgm-masthead, .dgm-channel, .dgm-trace, .dgm-lift, .dgm-rise, .dgm-fall, .dgm-second, .dgm-steady, .dgm-draw, .dgm-hand, .dgm-ledgeraudit) {
     transition: none;
     animation: none;
   }

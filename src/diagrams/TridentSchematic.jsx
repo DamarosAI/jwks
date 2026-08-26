@@ -20,7 +20,7 @@ import { useScrollRun } from './useScrollPhase'
  * hides beneath the other. A connector hanging in the space between two things
  * is a connector that is not connected to either.
  *
- * The approval deck carries a shutter set in a barrel. It is shut - two blades
+ * The approval deck carries a gate set in a barrel. It is closed - two blades
  * overlapped across the bore - and the descent halts on it. Nothing about it is
  * a status light: the blades are across the hole, and when a named person at the
  * site signs they run out along the deck's own axis and the way through opens
@@ -29,13 +29,13 @@ import { useScrollRun } from './useScrollPhase'
  * Every deck runs its own mechanism, and runs it unattended. The plates ride
  * over the intake and keep proposing; the intake keeps drawing the queue down
  * its runs and swallowing them; the contract keeps walking its nineteen fields
- * in the order it checks them; something keeps trying the shutter and the two
+ * in the order it checks them; something keeps trying the gate and the two
  * blades keep holding it; and the ledger keeps posting, each hash travelling to
  * the row it commits. That is the difference between a machine and a diagram of
  * one, and it is the whole reason the pointer is no longer load-bearing: what a
  * reader does with the cursor is lean on a mechanism that is already running -
  * the intake carries a second mark, the contract re-checks from the first field,
- * the ledger lights its chain, the shutter gives and holds. Nothing is hidden
+ * the ledger lights its chain, the gate braces and holds. Nothing is hidden
  * behind a hover, because nothing was ever worth hiding behind a four-pixel
  * target.
  *
@@ -287,18 +287,29 @@ const BARREL = planCyl(0, 0, SHUT_FRAME, HOUSE_RISE)
 const LEAVES = [-1, 1]
 const LEAF_HALF = 40
 
-// Shut is six plan units past the centre line each way, so the pair overlap by
-// twelve and the seal is light-tight the way a two-leaf shutter's is. Both
-// leading edges stay inside the bore, which is what makes shut read as two
-// blades meeting rather than as one rule across a hole - and it is why the
-// fills are laid down before either edge is drawn, since the blade on top would
-// otherwise paint the other blade's edge out of the picture.
+// Closed is nought: each blade runs up to the centre line and stops on it, so
+// the two leading edges land on the same line and the pair meets there.
 //
-// Twelve is a floor, not a preference. The bore is fifty-six plan units across
-// and comes out about forty-eight pixels wide at the size this figure is read
-// at, so the gap between the two edges is a tenth of the opening. Any less and
-// the pair reads as one line drawn twice by accident.
-const LEAF_SHUT = -6
+// They used to be thrown six plan units past it each way, on the reasoning that
+// a two-leaf shutter seals by overlapping and an overlap is what makes a seal
+// light-tight. Both of those are true of the hardware and neither survives the
+// drawing. What an overlap looks like from directly above is two edges twelve
+// units apart with a band of doubled blade between them - which is not a pair
+// of blades meeting, it is a pair of blades that have gone past each other, and
+// the one thing this mechanism has to say at a glance is that the way through
+// is closed by two parts arriving at the same place.
+//
+// Nought also takes a whole class of accident out of the assembly. With no
+// overlap there is no blade lying on top of another blade, so neither can paint
+// the other's leading edge out and neither needs to be drawn twice to get it
+// back: one pass, one face and one edge per blade, and the seam down the middle
+// is the two edges landing on the same line rather than a gap between them.
+//
+// It is also why nothing moves the blades any more except opening. See the
+// stylesheet: a load that pushed them a hair further in had somewhere to go
+// while they overlapped and has nowhere to go now, because past the centre line
+// is through the other blade.
+const LEAF_SHUT = 0
 
 // Open parks each blade a few units inside its own side of the bore, so a
 // sliver of each stays in the drawing. A blade that clears the opening entirely
@@ -349,10 +360,10 @@ const DROPS = LAYERS.slice(1).map((deck, index) => {
 })
 
 const PHASES = [
-  { span: 2.4, drops: 0, bound: 0, gate: 'shut', receipt: false, tone: 'run', status: 'PROPOSING' },
-  { span: 1.2, drops: 1, bound: 11, gate: 'shut', receipt: false, tone: 'run', status: 'VALIDATING' },
-  { span: 1.2, drops: 1, bound: 19, gate: 'shut', receipt: false, tone: 'valid', status: 'BOUND' },
-  { span: 3.2, drops: 2, bound: 19, gate: 'shut', receipt: false, tone: 'hold', status: 'HELD' },
+  { span: 2.4, drops: 0, bound: 0, gate: 'closed', receipt: false, tone: 'run', status: 'PROPOSING' },
+  { span: 1.2, drops: 1, bound: 11, gate: 'closed', receipt: false, tone: 'run', status: 'VALIDATING' },
+  { span: 1.2, drops: 1, bound: 19, gate: 'closed', receipt: false, tone: 'valid', status: 'BOUND' },
+  { span: 3.2, drops: 2, bound: 19, gate: 'closed', receipt: false, tone: 'hold', status: 'HELD' },
   { span: 1.4, drops: 3, bound: 19, gate: 'open', receipt: false, tone: 'signed', status: 'SIGNED' },
   { span: 2.2, drops: 3, bound: 19, gate: 'open', receipt: true, tone: 'signed', status: 'RECEIPTED' },
 ]
@@ -370,7 +381,7 @@ const READS = {
   AUTOMATION: { tone: 'run', pill: 'PROPOSER', read: 'A scheduled job drafts it, and gets no more authority than a person would.' },
   surface: { tone: 'run', pill: 'INTAKE', read: 'Anything can propose. A proposal is a request, and a request is not a decision.' },
   contract: { tone: 'valid', pill: 'CHECKED', read: 'Task contract T-07 v3. Nineteen named fields, each checked before anything moves.' },
-  authority: { tone: 'hold', pill: 'GATED', read: 'The shutter is shut. It opens for a signature from the site, and for nothing else.' },
+  authority: { tone: 'hold', pill: 'GATED', read: 'The gate is closed. It opens for a signature from the site, and for nothing else.' },
   receipt: { tone: 'signed', pill: 'LEDGER', read: 'One row per committed run, each one chained to the row above it by its hash.' },
 }
 
@@ -390,7 +401,7 @@ const READS = {
  *
  * Everything else a deck does, it does on its own: the intake keeps drawing
  * proposals off the queue, the contract keeps walking its fields, the ledger
- * keeps posting rows, and the shutter keeps taking the load. None of that was
+ * keeps posting rows, and the gate keeps taking the load. None of that was
  * ever worth hiding behind a four-pixel target, and a mechanism that only moves
  * when a cursor finds it is not a machine, it is a tooltip.
  */
@@ -567,8 +578,8 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
   // Every deck runs on its own. Pointing at one leans on the mechanism it is
   // already running rather than opening a panel about it: the intake pulls a
   // second mark down every run, the contract re-checks its fields from the
-  // first, the ledger lights the chain that holds it together, and the shutter
-  // gives a hair against its bolts and comes straight back to shut. The deck is
+  // first, the ledger lights the chain that holds it together, and the gate
+  // takes the load in its frame without either blade giving. The deck is
   // the target because the deck is the size of a thing a reader can point at -
   // a queue chip and a ledger row are four pixels of nothing anybody would aim
   // for, which is why the mechanisms that used to hide behind them now run
@@ -593,7 +604,7 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
   const facts = {
     surface: source ? `SOURCE ${source}` : 'ANY OF THREE',
     contract: 'T-07 V3',
-    authority: open ? 'SIGNED A. VOSS 09:41Z' : 'SHUT - NEEDS A SIGNATURE',
+    authority: open ? 'SIGNED A. VOSS 09:41Z' : 'CLOSED - NEEDS A SIGNATURE',
     receipt: state.receipt ? LEDGER[LEDGER.length - 1].rev : 'NOT YET WRITTEN',
   }
 
@@ -610,7 +621,7 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
           ref={figure}
           viewBox="0 0 620 700"
           role="img"
-          aria-label="Three kinds of proposal source - a model, an agent loop and a scheduled job - sit above one site, drawn identically because any of them can be swapped for another. A proposal lands on an intake deck, drops to a schema contract deck of nineteen named fields, and drops again to an approval deck whose aperture stays shut until a named person at the site signs. Only then does it reach the receipt ledger, where every row is chained to the row above it by its hash."
+          aria-label="Three kinds of proposal source - a model, an agent loop and a scheduled job - sit above one site, drawn identically because any of them can be swapped for another. A proposal lands on an intake deck, drops to a schema contract deck of nineteen named fields, and drops again to an approval deck whose gate stays closed until a named person at the site signs. Only then does it reach the receipt ledger, where every row is chained to the row above it by its hash."
         >
           <defs>
             <pattern id="tr-grain" width="16" height="16" patternUnits="userSpaceOnUse">
@@ -751,11 +762,13 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
               <Faces shape={AUTHORITY} className="dgm-solid" />
               <Drop leg={DROPS[1]} drops={state.drops} />
               <g transform={planSpace(CX, AUTHORITY.cy)}>
-                {/* The stop. Shut is drawn shut - two blades overlapped across
-                    the bore - so the claim survives with every colour removed.
-                    Push on it with the pointer and it answers the way the
-                    mechanism would: the blades strain a hair against each other
-                    and come straight back, without ever parting. */}
+                {/* The stop. Closed is drawn closed - two blades run up to the
+                    centre line of the bore and meeting on it - so the claim
+                    survives with every colour removed. Push on it with the
+                    pointer and it answers the way a stop answers: the frame
+                    takes the load and the seam thickens, and neither blade
+                    moves, because there is nowhere for a closed blade to go
+                    that is not through the other one. */}
                 {/* Open is carried on the group, not inferred, so the frame can
                     stop bracing against something nobody is holding any more. */}
                 <g className={`dgm-shutter${open ? ' is-open' : ''}${tried ? ' is-tried' : ''}`}>
@@ -786,12 +799,16 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
                           turns a rectangle into a blade: all a reader ever sees
                           of one is the edge it lays across the bore.
 
-                          Fills first, then both edges over both fills. Held, the
-                          blades overlap by eight plan units, so drawing each one
-                          complete in turn would let the second paint the first
-                          one's leading edge out - and the whole point of this
-                          mechanism is that a reader can see two of them. The
-                          second pass puts both edges back.
+                          One pass now, face and edge together. The pair used to
+                          be thrown past each other and had to be drawn in two
+                          passes because of it - every fill first, then every
+                          edge - since the blade lying on top would otherwise
+                          paint the other one's leading edge out and leave a
+                          mechanism whose whole point is that there are two of
+                          them looking like one rule across a hole. With both
+                          blades stopping on the centre line nothing lies on
+                          anything, so each is drawn complete in turn and the
+                          seam is simply where the two edges land.
 
                           The two throws travel with the assembly as custom
                           properties rather than being written into the
@@ -808,10 +825,6 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
                         {LEAVES.map((side) => (
                           <g className="dgm-blade" key={side} style={{ '--side': side }}>
                             <rect className="dgm-bladeface" x={side < 0 ? -LEAF_HALF : 0} y={-LEAF_HALF} width={LEAF_HALF} height={LEAF_HALF * 2} />
-                          </g>
-                        ))}
-                        {LEAVES.map((side) => (
-                          <g className="dgm-blade" key={`edge${side}`} style={{ '--side': side }}>
                             <rect className="dgm-bladeedge" x={side < 0 ? -LEAF_HALF : 0} y={-LEAF_HALF} width={LEAF_HALF} height={LEAF_HALF * 2} vectorEffect="non-scaling-stroke" />
                           </g>
                         ))}
