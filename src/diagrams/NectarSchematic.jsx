@@ -11,9 +11,9 @@ import { useScrollRun } from './useScrollPhase'
  * Trident is one site seen in section: decks piled on one plan, arriving closed
  * and opening out. Nectar is a federation seen in plan - two slabs, one held
  * above the other. Below: three peer sites standing on one ground, each inside
- * its own reach. Above: the shared execution model, a slab with a thickness to
- * it, and on that slab a board of definitions - so coverage is the part of it
- * that has lit up rather than a number in a box.
+ * its own reach. Above: the shared execution intelligence, a slab with a
+ * thickness to it, and on that slab a board of definitions - so coverage is
+ * the part of it that has lit up rather than a number in a box.
  *
  * A site is the same kind of object as a Trident deck - a rounded plan square,
  * extruded, drawn by the same component. The three are deliberately not the
@@ -24,7 +24,7 @@ import { useScrollRun } from './useScrollPhase'
  * Two things travel here and one thing never does. Structure goes up: a site
  * runs the task on its own records and publishes the definition it used. And
  * structure comes back down: once a definition binds, any site can take it and
- * run it. That second direction is the whole product - a library nobody can
+ * run it. That second direction is the whole product - intelligence nobody can
  * read back out of is a filing cabinet - and the figure used to assert it in a
  * caption while drawing three arrows that all pointed the same way.
  *
@@ -34,21 +34,22 @@ import { useScrollRun } from './useScrollPhase'
  * claim was never that the site is one-way. It is that the record is nowhere.
  *
  * Binding is elevation, and a definition is a solid rather than a dot. Unbound,
- * it lies flat on the slab; one the library has bound is standing on that same
- * footprint with its sides under it, as high as it is connected - so coverage
- * compounding is a skyline growing, the hubs are the tall buildings, and the
- * weight of the library is visible without a legend. The index underneath stays
+ * it lies flat on the slab; one the intelligence has bound is standing on that
+ * same footprint with its sides under it, as high as it is connected - so
+ * coverage compounding is a skyline growing, the hubs are the tall buildings,
+ * and the weight of the intelligence is visible without a legend. The index
+ * underneath stays
  * printed on the slab, because that lattice is the index and the solids are
  * what the index is holding.
  *
- * THE SLAB IS A BOARD, AND THAT IS THE WHOLE OF WHAT MAKES IT A LIBRARY.
+ * THE SLAB IS A BOARD, NOT A HEAP, AND THAT IS WHAT MAKES IT INTELLIGENCE.
  *
  * It was one jittered lattice across the whole plane: forty-two solids in three
  * state colours and two shapes, positioned by a bricked grid with the grid
  * beaten out of it. Every one of those decisions was defensible and the sum was
- * a heap. A reader could see that the library held a lot of things and could not
- * see that it held KINDS of thing, which is the entire difference between a
- * library and a pile.
+ * a heap. A reader could see that it held a lot of things and could not see
+ * that it held KINDS of thing, which is the entire difference between
+ * intelligence and a heap of it.
  *
  * Four districts now - criteria, units, mappings, endpoints - one to each corner
  * of the plan square, each in its own ink and built as its own solid: a block, a
@@ -64,8 +65,8 @@ import { useScrollRun } from './useScrollPhase'
  * both figures already runs at, which is what puts a run on the board rather
  * than over it.
  *
- * Nothing here is nailed down, and none of it is scattered either. The library
- * drifts on one slow clock and drops its shade on the federation below it; each
+ * Nothing here is nailed down, and none of it is scattered either. The
+ * intelligence drifts on one slow clock and drops its shade on the federation below it; each
  * site orbits its own footprint on a clock of its own - a true plan circle
  * carried through the projection, so the three of them move in the ground
  * rather than bobbing in the air.
@@ -85,7 +86,7 @@ import { useScrollRun } from './useScrollPhase'
  * it as a system rather than as forty-two accidents.
  *
  * A channel with no definition crossing it still creeps its dashes toward the
- * library, because a site that is not publishing this second is still
+ * intelligence, because a site that is not publishing this second is still
  * reporting - the same quiet layer the other figure runs on its idle tines, at
  * the scale this drawing works at.
  *
@@ -119,7 +120,7 @@ import { useScrollRun } from './useScrollPhase'
  *
  * Nothing on the route is a line. The standing route is a run of dots, and what
  * travels it is a packet of three or four more, so an exchange between a site
- * and the library is a signal rather than a pipe with something sliding down
+ * and the intelligence is a signal rather than a pipe with something sliding down
  * it. Three solid arcs across the middle of the sheet were the heaviest ink in
  * the drawing and said the wrong thing besides: a federation is not plumbed
  * together, it is in contact.
@@ -135,35 +136,21 @@ import { useScrollRun } from './useScrollPhase'
  * Boundary behaviour only, no internals (ADR-0001).
  */
 
-// LIBRARY IS THE CODE NAME. THE MODEL IS THE COPY NAME.
-//
-// The slab is `LIBRARY` here, its group is `dgm-library`, and its half-width is
-// `LIB_HALF` - and every word a reader ever sees calls it the shared execution
-// model. That is deliberate rather than a leftover. "Library" was the public
-// noun for a long time and it undersold the thing badly: a library is a place
-// you borrow from, and what this holds is the model every site executes
-// against. The identifiers stay because renaming forty call sites, a
-// stylesheet block and a reduced-motion selector list to chase a copy change is
-// how a rename ends up half-applied - and because "the library slab" is still
-// exactly the right handle for the shape in a comment about geometry.
-//
-// So: if it is drawn, it is the library. If it is read, it is the model.
-
 const MESH_Y = 200
 const MESH = project(310, MESH_Y)
 
-// The library is a slab, not a sheet. It used to be one rounded rect with a
+// The intelligence is a slab, not a sheet. It used to be one rounded rect with a
 // hairline round it, which put the two planes of this figure in the same
 // register as the dot field behind them - drawn on the page rather than held
 // over it. Extruded, it is the same object every deck and every site in both
 // drawings is, at the scale of the thing they all publish into.
-const LIB_HALF = 160
-const LIB_WALL = 13
-const LIBRARY = roundedDeck(310, MESH_Y, LIB_HALF, LIB_WALL, 28)
+const INTEL_HALF = 160
+const INTEL_WALL = 13
+const INTEL = roundedDeck(310, MESH_Y, INTEL_HALF, INTEL_WALL, 28)
 
 // A definition is a solid standing on the slab, and how high it stands is how
-// many others of its own kind it is tied to. That is the one thing about a
-// library worth drawing in three dimensions: a hub is not a differently
+// many others of its own kind it is tied to. That is the one thing about
+// intelligence worth drawing in three dimensions: a hub is not a differently
 // coloured dot, it is a taller building, and a reader who has never been told
 // what the index is can still see where its weight sits. The footprint and the
 // floor of that range come from the kind - see `KINDS` below - so a post is
@@ -184,9 +171,9 @@ const GROUND_HALF = 172
 // It was one jittered lattice across the whole slab: forty-two solids in three
 // state colours and two shapes, positioned by a bricked grid with the grid
 // beaten out of it. Every one of those decisions was defensible and the sum was
-// a heap. A reader looking at it could see that the library held a lot of
-// things and could not see that it held KINDS of thing - which is the entire
-// difference between a library and a pile, and the one claim this panel exists
+// a heap. A reader looking at it could see that it held a lot of things and
+// could not see that it held KINDS of thing - which is the entire difference
+// between intelligence and a pile of it, and the one claim this panel exists
 // to make.
 //
 // So the floor is districted. Four kinds of definition, each with a quarter of
@@ -294,7 +281,7 @@ NODES.forEach((node) => {
 })
 
 // Coverage does not grow in reading order - it grows wherever a site happens to
-// contribute, so the library fills in unevenly the way a real one does.
+// contribute, so it fills in unevenly, the way real intelligence does.
 const ORDER = [...NODES].sort((a, b) => a.seed - b.seed)
 ORDER.forEach((node, rank) => { node.rank = rank })
 const TOTAL = NODES.length
@@ -379,7 +366,7 @@ const BY_BAND = DISTRICTS.map((district, band) => ({
 // the screen, and a vertical line in an axonometric is what a riser looks like.
 // A first cut at this used forty-five degree chamfers the way a real board does,
 // and every chamfer came out as a short vertical - three of them, reading as
-// posts standing on the library. The corners are square in plan instead, which
+// posts standing on the intelligence. The corners are square in plan instead, which
 // on screen is the same corner every solid in the drawing already turns.
 //
 // How far a district's ground reaches past the cluster standing on it. It is
@@ -560,11 +547,11 @@ const SITES = [
 const [SITE_042, SITE_103, SITE_018] = SITES
 
 // The mast. A short post standing on the far corner of a site's own roof, with
-// a head on top, and the channel to the library leaves from that head.
+// a head on top, and the channel to the intelligence leaves from that head.
 //
 // It is not decoration. A line springing out of the corner of a solid is a line
 // touching a silhouette, and the moment either end moves - and both ends move
-// here, the site on its orbit and the library on its drift - it parts from the
+// here, the site on its orbit and the intelligence on its drift - it parts from the
 // thing it was supposed to be attached to. A head wide enough to swallow the
 // foot of the channel is what makes the join survive the motion, which is the
 // same repair the plate leaders in Trident needed and for the same reason.
@@ -573,10 +560,10 @@ const MAST_HEAD = 7.5
 
 // WHERE A ROUTE CROSSES THE PLANE OF THE BOARD: A HOLE IN IT.
 //
-// A site and the library are two surfaces at two heights, and everything that
+// A site and the intelligence are two surfaces at two heights, and everything that
 // passes between them has to get from one to the other. For a long time the
 // drawing dodged that. The route ran up from the site, stopped dead on the
-// bottom rim of the library's near skirt, climbed the thirteen pixels of that
+// bottom rim of the intelligence's near skirt, climbed the thirteen pixels of that
 // skirt, and then a separate trace set off across the board - three marks
 // pretending to be one, all of them balanced on the one line in the figure that
 // has to read as an edge, and the corner where they met parked on the boundary
@@ -629,7 +616,7 @@ const r1 = (value) => Math.round(value * 10) / 10
 
 function portFor(site) {
   const reach = site.plan[0] - site.plan[1]
-  const inset = LIB_HALF - PORT_IN
+  const inset = INTEL_HALF - PORT_IN
   if (reach > 40) return { face: 'right', at: [inset, inset - reach], out: [1, 0] }
   if (reach < -40) return { face: 'left', at: [inset + reach, inset], out: [0, 1] }
   return { face: 'corner', at: [PORT_CORNER, PORT_CORNER], out: [1, 1] }
@@ -741,8 +728,8 @@ const JOINED = new Set(
 // closing frame drew one blue field with three sites sunk in it, which is a
 // picture of a merger and not of a federation.
 //
-// `up` is who is publishing and `down` is who is running something the library
-// has bound. A site can be both at once, which is the steady state of a
+// `up` is who is publishing and `down` is who is running something the
+// intelligence has bound. A site can be both at once, which is the steady state of a
 // federation and the frame this run rests on.
 const PHASES = [
   { span: 2.2, bound: 30, reach: 66, up: [], down: [], joined: false, tone: 'run', status: 'LOCAL', read: 'Three sites, three sets of definitions. None of them can run the others.' },
@@ -760,7 +747,7 @@ const READS = {
   'SITE 042': { tone: 'pass', pill: 'PUBLISHER', read: 'Site 042 published the scale it measures on, so a reading taken here is comparable anywhere.' },
   'SITE 103': { tone: 'pass', pill: 'MAPPER', read: 'Site 103 sent a mapping between two vocabularies. The other two can now read its codes.' },
   'SITE 018': { tone: 'valid', pill: 'ORIGIN', read: 'Site 018 wrote the definition the other two are running. One author, three sites executing.' },
-  library: { tone: 'valid', pill: 'SHARED MODEL', read: 'Every definition in the model came up from a site, and any site can take one down and run it.' },
+  intel: { tone: 'valid', pill: 'SHARED INTELLIGENCE', read: 'Every definition in the shared intelligence came up from a site, and any site can take one down and run it.' },
 }
 
 // A shade is stepped rather than blurred, and the steps are a share of the
@@ -769,7 +756,7 @@ const READS = {
 const SEAT_STEPS = [0.1, 0.26, 0.42]
 
 /**
- * The shade the library drops on the federation under it. Two planes held
+ * The shade the intelligence drops on the federation under it. Two planes held
  * apart need something between them saying so, and in a drawing with no light
  * source that something is occlusion: the ground is darker where the slab is
  * over it. Stepped rather than blurred, and inset rather than cast at full
@@ -816,7 +803,7 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
           ref={figure}
           viewBox="0 0 620 700"
           role="img"
-          aria-label="Three peer sites of three different sizes stand well apart on one ground, beneath a shared execution model drawn as a slab held above them with a mesh of criteria on it. Each site runs its task locally and beams the structure it used up a channel from a mast on its own roof - a criterion from one, a unit from another, a mapping from the third. A criterion the model binds stands up off the slab, and any site can take a bound definition back down its channel and run it. Structure crosses in both directions and no record crosses in either: the records inside every site stay under a sealed lid, and the reach of each site grows until they overlap."
+          aria-label="Three peer sites of three different sizes stand well apart on one ground, beneath shared execution intelligence drawn as a slab held above them with a mesh of criteria on it. Each site runs its task locally and beams the structure it used up a channel from a mast on its own roof - a criterion from one, a unit from another, a mapping from the third. A criterion the intelligence binds stands up off the slab, and any site can take a bound definition back down its channel and run it. Structure crosses in both directions and no record crosses in either: the records inside every site stay under a sealed lid, and the reach of each site grows until they overlap."
         >
           <defs>
             <pattern id="nc-grain" width="16" height="16" patternUnits="userSpaceOnUse">
@@ -877,7 +864,7 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
               and it goes on the bare plane, under the reaches, because a shade
               laid over three overlapping coverage fields mutes the one thing in
               this figure that is a claim made by geometry alone. */}
-          <Seat half={LIB_HALF} radius={28} cy={GROUND_Y} kind="library" />
+          <Seat half={INTEL_HALF} radius={28} cy={GROUND_Y} kind="intel" />
 
           <g transform={planSpace(310, GROUND_Y)}>
             <g clipPath="url(#nc-ground)">
@@ -897,12 +884,12 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
           </g>
 
           {/* The channels, drawn before the sites so every foot ends up under
-              the mast head it belongs to - and before the library, so every head
+              the mast head it belongs to - and before the intelligence, so every head
               ends up under the slab it goes into. Each one is a standing route
               that is always there, and two packets running it in opposite
               directions.
 
-              A route no longer stops on the library's rim. It runs to that
+              A route no longer stops on the intelligence's rim. It runs to that
               site's port, which is well inside the plan, so its last stretch
               passes beneath the near skirt and is painted over by the slab. What
               a reader sees is a packet going under the edge and coming up in a
@@ -911,7 +898,7 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
 
               Nothing on a channel is a line. The route is a run of dots and what
               travels it is a short burst of them, so what crosses between a site
-              and the library reads as a signal rather than as something sliding
+              and the intelligence reads as a signal rather than as something sliding
               down a pipe. There used to be a solid two-pixel accent arc under
               all of this, drawn in when a site published - five hundred pixels
               of unbroken stroke, the heaviest single mark in the figure, and the
@@ -919,7 +906,7 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
 
               Both directions carry structure and neither carries a record.
               Drawing only the rising half was the figure asserting in a caption
-              what it would not draw: a library nobody can take anything out of
+              what it would not draw: intelligence nobody can take anything out of
               is a filing cabinet, and the phase that says two sites picked the
               definition up showed nothing at all coming down. */}
           {CHANNELS.map((item) => {
@@ -938,7 +925,7 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
             )
           })}
 
-          {/* THE LIBRARY IS DRAWN AFTER THE CHANNELS, AND THAT IS LOAD-BEARING.
+          {/* THE INTELLIGENCE IS DRAWN AFTER THE CHANNELS, AND THAT IS LOAD-BEARING.
 
               A route from a site goes UNDER this slab and comes up through a
               port cut in it. Nothing about that is a trick of stroke order:
@@ -953,12 +940,12 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
               the slab it publishes into, and the ground and the reaches
               still come before it, so a channel crosses the coverage it
               belongs to rather than hiding beneath it. */}
-          {/* The library, and the mesh that lives on it, drawn as one panel. It
+          {/* The intelligence, and the mesh that lives on it, drawn as one panel. It
               is a slab rather than a sheet, it drifts as one, and it answers a
               pointer as one - over a target the size of the whole plane, because
               a two-pixel node is not something a reader can aim at. */}
-          <g className={`dgm-library${lit('library')}`} {...probe('library')}>
-            <Faces shape={LIBRARY} className="dgm-solid" />
+          <g className={`dgm-intel${lit('intel')}`} {...probe('intel')}>
+            <Faces shape={INTEL} className="dgm-solid" />
             <g transform={planSpace(310, MESH_Y)}>
               <rect className="dgm-planefill" x="-160" y="-160" width="320" height="320" rx="28" fill="url(#nc-grain)" />
               <rect className="dgm-hit" x="-160" y="-160" width="320" height="320" rx="28" />
@@ -1096,7 +1083,7 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
                 ))}
 
                 {/* Binding is elevation, and a definition is a solid rather than
-                    a dot. One the library has not bound is its own footprint
+                    a dot. One the intelligence has not bound is its own footprint
                     lying flat on the slab; one it has is standing on that
                     footprint with its sides under it, as high as it is connected
                     inside its own district. So the board grows a skyline with a
@@ -1106,7 +1093,7 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
 
                     Four kinds, four inks, four footprints, four places. The
                     colour is what kind of definition it is and nothing else: it
-                    used to be red, amber and green - a state the library was in
+                    used to be red, amber and green - a state the intelligence was in
                     about that criterion - which is a second thing for colour to
                     mean on a floor where colour now has to carry the kind, and
                     two meanings on one channel is one meaning nobody reads.

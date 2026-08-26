@@ -217,7 +217,7 @@ describe('Trident and Nectar schematics', () => {
     // channel is period 9 and creeps 27.
     assert.match(DGM_BLOCK, /\.dgm-tine \{[\s\S]*?stroke-dasharray: 3 4;/)
     // A dash of no length under a round cap is a dot of stroke-width across, and
-    // that is what a route between a site and the library is made of. A solid
+    // that is what a route between a site and the intelligence is made of. A solid
     // line between two things is a pipe, and a federation is not plumbed
     // together - it is in contact.
     assert.match(DGM_BLOCK, /\.dgm-channel \{[\s\S]*?stroke-dasharray: 0 9;/)
@@ -470,7 +470,7 @@ describe('Trident and Nectar schematics', () => {
       assert.match(nectar, new RegExp(`'${key}': \\{ tone: '\\w+', pill: '[A-Z]+', read: '`))
     }
     assert.match(nectar, /const cue = READS\[hot\]/)
-    assert.match(nectar, /library: \{ tone: '\w+', pill: '[A-Z ]+', read: '/)
+    assert.match(nectar, /intel: \{ tone: '\w+', pill: '[A-Z ]+', read: '/)
     assert.match(nectar, /<text className="dgm-read" x="164" y="677">\{read\}<\/text>/)
     assert.doesNotMatch(nectar, /Site \d+ holds [\d,]+ records/)
     // Every tone the readout can take has a rule that colours the pill.
@@ -486,7 +486,7 @@ describe('Trident and Nectar schematics', () => {
     // swallows; the contract walks its nineteen fields in the order it checks
     // them; something keeps trying the shutter and the bolts keep taking it;
     // and the ledger posts, each hash travelling the link to the row it commits.
-    // The library above Nectar does the same: it drifts, and every criterion it
+    // The intelligence above Nectar does the same: it drifts, and every criterion it
     // is holding breathes in order across the floor.
     for (const rule of [
       '.dgm-svg.is-live .dgm-plate',
@@ -496,7 +496,7 @@ describe('Trident and Nectar schematics', () => {
       '.dgm-svg.is-live .dgm-fieldtile:not(.is-named)',
       '.dgm-svg.is-live .dgm-bank:not(.is-clear) .dgm-bladeedge',
       '.dgm-svg.is-live .dgm-ledgerflow',
-      '.dgm-svg.is-live .dgm-library',
+      '.dgm-svg.is-live .dgm-intel',
       '.dgm-svg.is-live .dgm-crit.is-bound .dgm-node',
     ]) {
       const escaped = rule.replace(/[.()*:]/g, (c) => `\\${c}`)
@@ -609,18 +609,18 @@ describe('Trident and Nectar schematics', () => {
       assert.doesNotMatch(DGM_BLOCK, new RegExp(`\\${rule}[\\s,{]`))
     }
     // A Nectar site shows the local run crossing its own records, and the
-    // library takes a pointer as one panel over a target the size of the plane.
+    // intelligence takes a pointer as one panel over a target the size of the plane.
     assert.match(DGM_BLOCK, /\.dgm-svg\.is-live \.dgm-site\.is-hot \.dgm-sweep/)
-    assert.match(nectar, /className=\{`dgm-library\$\{lit\('library'\)\}`\} \{\.\.\.probe\('library'\)\}/)
+    assert.match(nectar, /className=\{`dgm-intel\$\{lit\('intel'\)\}`\} \{\.\.\.probe\('intel'\)\}/)
     assert.match(nectar, /<rect className="dgm-hit" x="-160" y="-160" width="320" height="320" rx="28" \/>/)
     // What leaning on the panel does is make the index it holds easier to read -
     // the bound links strengthen and every bound criterion deepens into its own
     // dark. It used to double the traffic on the mesh instead, which is a
     // reasonable answer for a panel that has traffic on it and this one no
     // longer does.
-    assert.match(DGM_BLOCK, /\.dgm-library\.is-hot \.dgm-link\.is-bound \{ stroke: var\(--accent\); \}/)
-    assert.match(DGM_BLOCK, /\.dgm-library\.is-hot \.dgm-crit\.is-bound \.dgm-node \{ fill: var\(--ink-deep\); \}/)
-    // Nothing on a rising arc is a target: its tag crosses the library's own
+    assert.match(DGM_BLOCK, /\.dgm-intel\.is-hot \.dgm-link\.is-bound \{ stroke: var\(--accent\); \}/)
+    assert.match(DGM_BLOCK, /\.dgm-intel\.is-hot \.dgm-crit\.is-bound \.dgm-node \{ fill: var\(--ink-deep\); \}/)
+    // Nothing on a rising arc is a target: its tag crosses the intelligence's own
     // plane, and a pointer sliding over one would drop the panel on the way.
     assert.match(DGM_BLOCK, /\.dgm-lift \{ pointer-events: none; \}/)
   })
@@ -845,7 +845,7 @@ describe('Trident and Nectar schematics', () => {
 
   it('crosses structure both ways and a record in neither', () => {
     // Structure goes up - a site publishes the definition it used - and
-    // structure comes back down, because a library nobody can take anything out
+    // structure comes back down, because intelligence nobody can take anything out
     // of is a filing cabinet. The figure used to assert that second direction in
     // a caption while drawing three arcs that all pointed the same way, so the
     // phase claiming two sites had picked the definition up showed nothing at
@@ -890,7 +890,7 @@ describe('Trident and Nectar schematics', () => {
     assert.doesNotMatch(DGM_BLOCK, /\.dgm-route\.is-back|\.dgm-cross|\.dgm-refused/)
     // Nothing anywhere in either figure is drawn in an alarm colour, and there
     // is nothing left for one to mean. `--danger` had exactly one job - a
-    // criterion the library was not holding good - on a floor where colour now
+    // criterion the intelligence was not holding good - on a floor where colour now
     // carries the KIND of definition rather than a state of it. Two meanings on
     // one channel is one meaning nobody reads, so the state went and the alarm
     // colour went with it. A figure about a system that holds should not have a
@@ -930,7 +930,7 @@ describe('Trident and Nectar schematics', () => {
     assert.match(reads[reads.length - 1], /Structure crosses; records never do\./)
     // Every channel leaves a mast standing on the far corner of a site's own
     // roof, and the head on that mast is what swallows the foot of the arc - the
-    // site orbits and the library drifts, so an endpoint parked on a silhouette
+    // site orbits and the intelligence drifts, so an endpoint parked on a silhouette
     // would part from it on the first frame. Above, there is no join to protect
     // at all: the arc runs to a port well inside the plan and the slab is
     // painted over the last of it, so the one `d` is the mast head and the curve
@@ -961,8 +961,8 @@ describe('Trident and Nectar schematics', () => {
     // coordinates, because pinning would let the next edit to the slab, the
     // districts or the sites quietly put a run back on the boundary.
     const num = (name, source = nectar) => Number(source.match(new RegExp(`const ${name} = (-?[\\d.]+)`))[1])
-    const LIB_HALF = num('LIB_HALF')
-    const LIB_WALL = num('LIB_WALL')
+    const INTEL_HALF = num('INTEL_HALF')
+    const INTEL_WALL = num('INTEL_WALL')
     const MESH_Y = num('MESH_Y')
     const GROUND_Y = num('GROUND_Y')
     const MAST = num('MAST')
@@ -978,7 +978,7 @@ describe('Trident and Nectar schematics', () => {
     // dropped by one wall. Not two half-planes - the plan corners are rounded,
     // so the front corner sits a good five pixels inboard of where the two flat
     // edges would meet, and a half-plane test would call that region safe.
-    const ring = ISO.roundedPlan(LIB_HALF, 28).map(([x, y]) => mesh(x, y))
+    const ring = ISO.roundedPlan(INTEL_HALF, 28).map(([x, y]) => mesh(x, y))
     // `j = i, i += 1`, not `j = i += 1`. The second is what this crossing test
     // was written with, and it assigns j the NEW i - so every edge it tested ran
     // from a point to itself, no ray ever crossed anything, and the containment
@@ -1000,7 +1000,7 @@ describe('Trident and Nectar schematics', () => {
     // in the wall. The whole silhouette, roof and both skirts, is what a control
     // point has to stay out of.
     const onTop = (point) => within(ring, point)
-    const skirt = ring.map(([x, y]) => [x, y + LIB_WALL])
+    const skirt = ring.map(([x, y]) => [x, y + INTEL_WALL])
     const inside = (point) => onTop(point) || within(skirt, point)
 
     // How far a plan point is from the slab's own boundary, and what that is
@@ -1009,13 +1009,13 @@ describe('Trident and Nectar schematics', () => {
     // inboard from a flat face is worth 0.93 of a pixel, and one spent going
     // inboard along the diagonal is worth 0.48.
     const rimGap = ([x, y]) => {
-      const c = LIB_HALF - 28
+      const c = INTEL_HALF - 28
       const ax = Math.abs(x)
       const ay = Math.abs(y)
-      return ax > c && ay > c ? 28 - Math.hypot(ax - c, ay - c) : LIB_HALF - Math.max(ax, ay)
+      return ax > c && ay > c ? 28 - Math.hypot(ax - c, ay - c) : INTEL_HALF - Math.max(ax, ay)
     }
     const rimGapPx = (point) => {
-      const c = LIB_HALF - 28
+      const c = INTEL_HALF - 28
       const ax = Math.abs(point[0])
       const ay = Math.abs(point[1])
       let normal
@@ -1052,7 +1052,7 @@ describe('Trident and Nectar schematics', () => {
       // one route. Two sites resolve onto a flat face; the third, on the plan
       // diagonal, resolves under the front corner.
       const span = site.plan[0] - site.plan[1]
-      const inset = LIB_HALF - PORT_IN
+      const inset = INTEL_HALF - PORT_IN
       const face = span > 40 ? 'right' : span < -40 ? 'left' : 'corner'
       faces.push(face)
       const port = face === 'right' ? [inset, inset - span]
@@ -1142,15 +1142,15 @@ describe('Trident and Nectar schematics', () => {
 
     // THE SLAB IS PAINTED OVER THE CHANNELS, AND THAT IS LOAD-BEARING. The arcs
     // genuinely end inside the plan; the only thing keeping them off the near
-    // skirt is stroke order. Put the library back above them and every route in
+    // skirt is stroke order. Put the intelligence back above them and every route in
     // this figure turns into a wire laid over a photograph.
     assert.ok(
-      nectar.indexOf('{CHANNELS.map((item) => {') < nectar.indexOf('<g className={`dgm-library'),
-      'the library is drawn before the channels, so every route crosses the slab it goes into',
+      nectar.indexOf('{CHANNELS.map((item) => {') < nectar.indexOf('<g className={`dgm-intel'),
+      'the intelligence is drawn before the channels, so every route crosses the slab it goes into',
     )
     // The sites still come after it, so a site is never drawn under the slab it
     // publishes into.
-    assert.ok(nectar.indexOf('<g className={`dgm-library') < nectar.indexOf('const chan = BY_SITE[site.id]'))
+    assert.ok(nectar.indexOf('<g className={`dgm-intel') < nectar.indexOf('const chan = BY_SITE[site.id]'))
 
     // A PORT IS DRAWN AS A HOLE, and as the same hole the other figure's intake
     // throat is: a plan circle for the wall, the same circle a few units further
@@ -1182,7 +1182,7 @@ describe('Trident and Nectar schematics', () => {
     for (const rule of ['.dgm-gate', '.dgm-gatecap', '.dgm-land']) {
       assert.doesNotMatch(DGM_BLOCK, new RegExp(`\\${rule}[\\s,{]`))
     }
-    assert.doesNotMatch(nectar, /^[^/\n]*LIBRARY\.front/m)
+    assert.doesNotMatch(nectar, /^[^/\n]*INTEL\.front/m)
 
     // What the port feeds, on the sheet.
     assert.match(nectar, /className=\{`dgm-trace is-feed\$\{state\.up\.includes\(item\.key\) \? ' is-up' : ''\}\$\{lit\(item\.key\)\}`\}/)
@@ -1192,7 +1192,7 @@ describe('Trident and Nectar schematics', () => {
     // The channels drift with the slab. Three pixels of travel at a joint that
     // has nothing to hide it would show as the route parting from its port;
     // moved to the site end it is swallowed by a mast head built for it.
-    assert.match(DGM_BLOCK, /\.dgm-library,\s*\n\.dgm-lift \{ transform: translateY\(var\(--drift, 0px\)\); \}/)
+    assert.match(DGM_BLOCK, /\.dgm-intel,\s*\n\.dgm-lift \{ transform: translateY\(var\(--drift, 0px\)\); \}/)
     // And a channel turns a corner, so every mark that runs one has to round its
     // joins or the default miter throws a spike as a dash spans it.
     assert.match(DGM_BLOCK, /\.dgm-channel \{[^}]*stroke-linejoin: round;/)
@@ -1257,12 +1257,12 @@ describe('Trident and Nectar schematics', () => {
     }
     assert.match(DGM_BLOCK, /\.dgm-reachrim \{[\s\S]*?transition: r var\(--grow\)/)
 
-    // THE LIBRARY IS A BOARD, NOT A HEAP.
+    // THE INTELLIGENCE IS A BOARD, NOT A HEAP.
     //
     // It was one jittered lattice across the whole slab: forty-two solids in
-    // three state colours and two shapes. A reader could see that the library
+    // three state colours and two shapes. A reader could see that it
     // held a lot of things and could not see that it held KINDS of thing, which
-    // is the entire difference between a library and a pile.
+    // is the entire difference between intelligence and a pile of it.
     //
     // Four districts, each with a quarter of the slab, each in its own ink and
     // built as its own solid - so colour, shape and place all say the same thing
@@ -1318,7 +1318,7 @@ describe('Trident and Nectar schematics', () => {
     // (1, 1) projects to straight down the screen, and a vertical line in an
     // axonometric is what a riser looks like. A first cut used forty-five degree
     // chamfers the way a real board does, and every chamfer came out as a short
-    // vertical post standing on the library.
+    // vertical post standing on the intelligence.
     assert.match(nectar, /function run\(from, to, first\) \{/)
     assert.match(nectar, /const corner = first === 'x' \? \[to\[0\], from\[1\]\] : \[from\[0\], to\[1\]\]/)
     // Re-solved: every leg of every run this file can build keeps one of its two
@@ -1332,12 +1332,12 @@ describe('Trident and Nectar schematics', () => {
     assert.match(nectar, /if \(from\[0\] === to\[0\] \|\| from\[1\] === to\[1\]\) \{/)
 
     // And the criteria still light up as coverage compounds, and still stand up
-    // when the library binds them.
+    // when the intelligence binds them.
     assert.match(nectar, /className=\{`dgm-crit \$\{node\.tone\}\$\{bound \? ' is-bound' : ''\}/)
     assert.match(DGM_BLOCK, /@keyframes dgm-breathe \{[\s\S]*?50% \{ fill-opacity: 0\.42; \}/)
     assert.match(DGM_BLOCK, /\.dgm-svg\.is-live \.dgm-crit\.is-bound \.dgm-node \{\s*\n\s*animation: dgm-breathe 5\.6s ease-in-out infinite;\s*\n\s*animation-delay: calc\(var\(--wave, 0\) \* -5\.6s\);/)
     assert.doesNotMatch(DGM_BLOCK, /dgm-lamp|dgm-lampflick/)
-    // A lamp never goes fully out. One at 0.42 is a definition the library is
+    // A lamp never goes fully out. One at 0.42 is a definition the intelligence is
     // still holding, dimmer; the 0.2 it used to reach was one that had gone off,
     // which is a state this floor no longer has and never needed twice.
     const dim = Number(DGM_BLOCK.match(/@keyframes dgm-breathe \{[\s\S]*?50% \{ fill-opacity: ([\d.]+); \}/)[1])
@@ -1584,16 +1584,16 @@ describe('Trident and Nectar schematics', () => {
     assert.match(DGM_BLOCK, /\.dgm-port\.is-hub \{ fill: none;/)
   })
 
-  it('holds the library above the ground and stands a criterion up when it binds', () => {
-    // The library was one rounded rect with a hairline round it, which put the
+  it('holds the intelligence above the ground and stands a criterion up when it binds', () => {
+    // The intelligence was one rounded rect with a hairline round it, which put the
     // two planes of this figure in the same register as the dot field behind
     // them - drawn on the page rather than held over it. It is the same extruded
     // solid every deck and every site is, and it drops its own shade on the
     // federation below.
-    assert.match(nectar, /const LIBRARY = roundedDeck\(310, MESH_Y, LIB_HALF, LIB_WALL, 28\)/)
-    assert.match(nectar, /<Faces shape=\{LIBRARY\} className="dgm-solid" \/>/)
-    assert.match(nectar, /<Seat half=\{LIB_HALF\} radius=\{28\} cy=\{GROUND_Y\} kind="library" \/>/)
-    assert.match(DGM_BLOCK, /\.dgm-svg\.is-live \.dgm-seat\.is-library \{\s*\n\s*animation-duration: 11s;/)
+    assert.match(nectar, /const INTEL = roundedDeck\(310, MESH_Y, INTEL_HALF, INTEL_WALL, 28\)/)
+    assert.match(nectar, /<Faces shape=\{INTEL\} className="dgm-solid" \/>/)
+    assert.match(nectar, /<Seat half=\{INTEL_HALF\} radius=\{28\} cy=\{GROUND_Y\} kind="intel" \/>/)
+    assert.match(DGM_BLOCK, /\.dgm-svg\.is-live \.dgm-seat\.is-intel \{\s*\n\s*animation-duration: 11s;/)
     // Binding is elevation, and a criterion is a plate rather than a dot. An
     // unbound one is its own footprint lying flat on the slab; a bound one is
     // standing on that footprint with two side faces under it, as high as it is
@@ -1633,7 +1633,7 @@ describe('Trident and Nectar schematics', () => {
     // A DEFINITION ARRIVING LEAVES NOTHING BEHIND TO MARK IT.
     //
     // Two expanding rings used to go out of the criterion it landed on, and four
-    // more went out of criteria the library already held - six circles growing
+    // more went out of criteria the intelligence already held - six circles growing
     // to three times their radius and fading, at all times, over a slab three
     // hundred pixels across. A growing radius claims something is propagating
     // outwards at a uniform rate in every direction, and the lattice it was
@@ -1776,20 +1776,40 @@ describe('Trident and Nectar schematics', () => {
     // with the chips underneath it.
     const nectarCopy = app.match(/<div className="nectar-copy">[\s\S]*?<\/div>/)[0]
     const para = nectarCopy.match(/<p>([^<]*)<\/p>/)[1]
-    assert.match(para, /shared execution model/)
+    assert.match(para, /shared execution intelligence/)
     assert.match(para, /every Damaros site/)
     assert.match(para, /network/)
-    // "Library" was the public noun for a long time and it undersold the thing:
-    // a library is a place you borrow from, and what this holds is the model
-    // every site executes against. It is gone from every word a reader sees -
-    // the copy, the figure's readout, and the figure's description for a screen
-    // reader - and kept only as an identifier in the drawing code, which says so
-    // once at the top of the file.
-    assert.doesNotMatch(para, /library/i)
-    assert.doesNotMatch(nectar.match(/aria-label="[^"]*"/)[0], /library/i)
-    assert.doesNotMatch(nectar.match(/const READS = \{[\s\S]*?\n\}/)[0], /library:.*[Ll]ibrary[^:]/)
-    assert.match(nectar, /pill: 'SHARED MODEL'/)
-    assert.match(nectar, /LIBRARY IS THE CODE NAME\. THE MODEL IS THE COPY NAME\./)
+
+    // NEITHER "LIBRARY" NOR "MODEL" IS THE NOUN. Both were tried and both left
+    // this page. A library is a place you borrow from, which undersold what
+    // Nectar actually is; "model" was the fix, and it collided with the other
+    // half of the page - Trident's whole pitch is that ANY AI MODEL can
+    // propose, so calling Nectar's board a model too made two different things
+    // on the same site answer to one word. "Intelligence" is neither: it names
+    // what the board holds without implying storage, and it does not compete
+    // with the word Trident already owns.
+    //
+    // The drawing code was chased through both changes rather than left behind
+    // either time - `LIBRARY` became `MODEL` became `INTEL`, and `dgm-library`
+    // became `dgm-model` became `dgm-intel` - because a rename that stops at
+    // the copy and never reaches the identifiers is a rename that is still
+    // owed, and it compounds: the second rename would have had to explain a
+    // mismatch that need never have existed. Code and copy call it the same
+    // thing, and neither retired word survives anywhere a reader or a
+    // maintainer would meet it.
+    // "Library" has no legitimate use left anywhere on the site, so it is
+    // banned file-wide. "Model" still has one: Trident's whole pitch is that
+    // ANY AI MODEL can propose, in the headline, the deck fact and the plate
+    // jitter comment in this very stylesheet - so that ban is scoped to the
+    // paragraph and to the Nectar figure, which has no model of its own to
+    // talk about and never did.
+    for (const source of [app, css, mobile, nectar]) assert.doesNotMatch(source, /library/i)
+    assert.doesNotMatch(para, /\bmodels?\b/i)
+    assert.doesNotMatch(nectar, /\bmodels?\b/i)
+    assert.match(nectar, /pill: 'SHARED INTELLIGENCE'/)
+    assert.match(nectar, /const INTEL_HALF = 160/)
+    assert.match(nectar, /const INTEL = roundedDeck\(310, MESH_Y, INTEL_HALF, INTEL_WALL, 28\)/)
+    assert.match(nectar, /className=\{`dgm-intel\$\{lit\('intel'\)\}`\}/)
     // The three facts under it are unchanged, so nothing concrete moved up into
     // the paragraph when the paragraph moved up.
     assert.doesNotMatch(para, /PHI|Coverage compounds|stays at the site/)

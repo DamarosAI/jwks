@@ -9756,11 +9756,11 @@ html.is-hidden .clinic-node i,
    single edge in the stack is strong enough to read as a drawn line. */
 .dgm-seatstep { fill: color-mix(in srgb, var(--text) 6%, transparent); }
 
-/* The library is nearly the size of the ground it is held over, so its shade
+/* The intelligence is nearly the size of the ground it is held over, so its shade
    covers nearly all of it. At a deck's weight that came out as a dirty patch
    across the federation rather than as height, and the three reaches it lies
    under were the casualty. */
-.dgm-seat.is-library .dgm-seatstep { fill: color-mix(in srgb, var(--text) 4.5%, transparent); }
+.dgm-seat.is-intel .dgm-seatstep { fill: color-mix(in srgb, var(--text) 4.5%, transparent); }
 
 @keyframes dgm-seat {
   0%, 100% { opacity: var(--seat-in); transform: scale(1); }
@@ -9788,8 +9788,8 @@ html.is-hidden .clinic-node i,
    its own.
 
    Nectar's criteria used to settle on this clock too. They have their own now -
-   a wander across the floor rather than a breath in place - because a library
-   floor is a floor of plant and plant gets moved about.
+   a wander across the floor rather than a breath in place - because an
+   intelligence floor is a floor of plant and plant gets moved about.
 
    Inside `planSpace` a translate is in plan units, and equal negative steps on
    both axes cancel in x and subtract in y - so this is straight up the screen,
@@ -9812,7 +9812,7 @@ html.is-hidden .clinic-node i,
    it came. Both figures make the same claim with the same mechanism, at the two
    scales they work at: a source that has not proposed this second is still
    attached to the intake, and a site that is not publishing this second is
-   still reporting to the library.
+   still reporting to the intelligence.
 
    The offset is three whole dash periods, not the -200 the travelling marks
    use, so the pattern lands exactly where it started and the loop has no seam
@@ -10816,10 +10816,10 @@ html.is-hidden .clinic-node i,
 .dgm-svg.is-hold .dgm-drop.is-latest .dgm-dropnode { fill: var(--ink-deep); stroke: var(--ink-deep); }
 .dgm-svg.is-live .dgm-dropnode { transition: opacity 300ms ease 400ms, fill 300ms ease, stroke 300ms ease; }
 
-/* Nectar: the library, drawn as a mesh. Coverage is the part of it that has lit
+/* Nectar: the intelligence, drawn as a mesh. Coverage is the part of it that has lit
    up, so compounding is something a reader watches rather than reads. */
 
-/* The library is a plane held above the ground, not printed on the same sheet as
+/* The intelligence is a plane held above the ground, not printed on the same sheet as
    it, so the whole of it drifts - its grain, its edge, the mesh on it, the gates
    on its rim and the chips that land there. One clock, shared and unjittered.
 
@@ -10837,15 +10837,15 @@ html.is-hidden .clinic-node i,
   50% { --drift: -3px; }
 }
 
-.dgm-library,
+.dgm-intel,
 .dgm-lift { transform: translateY(var(--drift, 0px)); }
 
-.dgm-svg.is-live .dgm-library,
+.dgm-svg.is-live .dgm-intel,
 .dgm-svg.is-live .dgm-lift { animation: dgm-drift 11s ease-in-out infinite; }
 
 /* The slab's shade on the federation runs the drift's clock, not a tier's, so
-   the ground darkens as the library settles towards it and lifts as it rises. */
-.dgm-svg.is-live .dgm-seat.is-library {
+   the ground darkens as the intelligence settles towards it and lifts as it rises. */
+.dgm-svg.is-live .dgm-seat.is-intel {
   animation-duration: 11s;
   animation-delay: 0s;
 }
@@ -10897,25 +10897,25 @@ html.is-hidden .clinic-node i,
   animation-delay: calc(var(--life, 0) * -24s);
 }
 
-/* Lean on the plane and the library comes up: the index it holds strengthens
+/* Lean on the plane and the intelligence comes up: the index it holds strengthens
    and every bound criterion deepens into its own dark. Nothing is revealed that
    was hidden - the panel is easier to read while it is being looked at, which is
-   the only honest thing a library can do for a pointer, and nothing anywhere
+   the only honest thing intelligence can do for a pointer, and nothing anywhere
    changes rate, so no mark in flight jumps when the cursor arrives. */
 
-.dgm-library.is-hot .dgm-link.is-bound { stroke: var(--accent); }
+.dgm-intel.is-hot .dgm-link.is-bound { stroke: var(--accent); }
 /* Leaning on the panel deepens every lamp into its own dark, rather than
    repainting the floor one colour. Forty-two solids going blue under a cursor
    would throw away the only state this figure carries. */
-.dgm-library.is-hot .dgm-crit.is-bound .dgm-node { fill: var(--ink-deep); }
-.dgm-library.is-hot .dgm-crit.is-bound :is(.dgm-face-left, .dgm-face-right) {
+.dgm-intel.is-hot .dgm-crit.is-bound .dgm-node { fill: var(--ink-deep); }
+.dgm-intel.is-hot .dgm-crit.is-bound :is(.dgm-face-left, .dgm-face-right) {
   fill: color-mix(in srgb, var(--ink) 48%, var(--surface-solid));
 }
 
 /* Binding is elevation, and a criterion is a plate rather than a dot. Unbound,
    it is its own footprint lying flat on the slab; bound, it is standing on that
    footprint with two side faces under it, as high as it is connected - so the
-   library grows a skyline with a shape to it, the hubs are the tall buildings,
+   intelligence grows a skyline with a shape to it, the hubs are the tall buildings,
    and coverage compounding is something a reader watches happen.
 
    The cap translates and the faces fade on one clock, and `--lift` is the plan
@@ -10936,7 +10936,7 @@ html.is-hidden .clinic-node i,
 
 /* FOUR INKS, AND WHAT THEY MEAN.
 
-   They used to be red, amber and green - the state the library was in about a
+   They used to be red, amber and green - the state the intelligence was in about a
    criterion: holding it good, holding it under review, not holding it. That was
    a reasonable thing for a colour to carry on a floor where nothing else needed
    one. It stopped being reasonable the moment the floor was districted, because
@@ -10980,7 +10980,7 @@ html.is-hidden .clinic-node i,
 /* The ground a district stands on. Faint enough that the solids on it are still
    the subject and present enough that four groups read as four - it is the part
    of the board given over to one kind of definition, which is the difference
-   between a library and forty-two things on a slab.
+   between intelligence and forty-two things on a slab.
 
    It carries the district's own ink at a fifth of the strength of anything
    standing on it, which is what keeps a district from reading as a coloured
@@ -11010,7 +11010,7 @@ html.is-hidden .clinic-node i,
    slab it is cut through rather than before it.
 
    Leaning on a site brightens its port, because a port belongs to a site: it is
-   the one part of the library that is any single site's. */
+   the one part of the intelligence that is any single site's. */
 
 /* A port runs deeper than the intake throat it shares a construction with. A
    throat is sixty plan units across and a port is twelve, and the same two tones
@@ -11217,7 +11217,7 @@ html.is-hidden .clinic-node i,
    riding it is what says which one it is. */
 .dgm-crit.is-new .dgm-node { stroke: var(--ink-deep); stroke-width: 2; }
 
-/* LAMPS. Every criterion the library is holding brightens and dims on the same
+/* LAMPS. Every criterion the intelligence is holding brightens and dims on the same
    period as every other one, at a phase taken from where it stands - so what
    crosses the floor is a second wave, slower than the swell under it and
    travelling the same way.
@@ -11226,11 +11226,11 @@ html.is-hidden .clinic-node i,
    to say it was forty-two lights switching hard at forty-two unrelated moments.
    Switching is right for one lamp and wrong for a floor of them: hard edges at
    random times is a fault board, and what this floor is meant to say is that the
-   library is working. So it eases, and the easing is what makes forty-two of
+   intelligence is working. So it eases, and the easing is what makes forty-two of
    them one thing rather than forty-two things.
 
-   It also never goes fully out. A lamp at 0.42 is a criterion the library is
-   still holding, dimmer; a lamp at 0.2 was one that had gone off, which is a
+   It also never goes fully out. A lamp at 0.42 is a criterion the intelligence
+   is still holding, dimmer; a lamp at 0.2 was one that had gone off, which is a
    state this drawing has a colour for and should not be saying twice.
 
    Nothing interpolates a colour here, and nothing on this floor may. A keyframe
@@ -11274,14 +11274,14 @@ html.is-hidden .clinic-node i,
 
    Structure crosses in both directions here and a record crosses in neither,
    which is a different claim from the one this figure used to make and a truer
-   one: a library nobody can take anything back out of is a filing cabinet.
+   one: intelligence nobody can take anything back out of is a filing cabinet.
 
    There were three layers on each route and the middle one was a solid
    two-pixel accent arc, five hundred pixels long, drawn in the moment its site
    published. It was the heaviest single mark in either figure and it made the
    wrong claim twice: a solid line between two things is a pipe, and three of
    them converging on a slab is plumbing. A federation is not plumbed together.
-   Sites and a library are in contact - intermittently, in both directions, with
+   Sites and the intelligence are in contact - intermittently, in both directions, with
    nothing continuous between them - which is a thing a drawing can say exactly,
    and says with dots.
 
@@ -11294,7 +11294,7 @@ html.is-hidden .clinic-node i,
    saying "and the way is still there behind it". */
 
 /* Nothing on a channel is a target. Its tag is a filled pill that crosses the
-   library's own slab, and a pointer sliding over one would otherwise drop the
+   intelligence's own slab, and a pointer sliding over one would otherwise drop the
    panel's hover on the way past. What lights a channel is pointing at the site
    that owns it. */
 .dgm-lift { pointer-events: none; }
@@ -11400,7 +11400,7 @@ html.is-hidden .clinic-node i,
    itself on the slab it is part of. */
 
 /* Reach. What a site's coverage touches. Three of them, growing with the
-   library, until they overlap - which is the whole of the network effect and
+   intelligence, until they overlap - which is the whole of the network effect and
    the only place in either figure where a claim is made by geometry alone. It
    is clipped to the ground the three of them stand on, because reach that runs
    off the edge of the federation is not reach.
@@ -11456,11 +11456,11 @@ html.is-hidden .clinic-node i,
 /* THERE ARE NO EXPANDING RINGS HERE ANY MORE.
 
    Two of them rang out of a criterion whenever one bound, and four more rang
-   continuously out of criteria the library already held, on clocks scattered so
+   continuously out of criteria the intelligence already held, on clocks scattered so
    no two ever coincided. Six circles growing to three times their radius and
    fading, at all times, over a slab three hundred pixels across.
 
-   They were meant to say the library was thinking. What a growing radius
+   They were meant to say the intelligence was thinking. What a growing radius
    actually says is that something is propagating outwards at a uniform rate in
    every direction - and the lattice it was supposed to be propagating through is
    drawn directly underneath it. The ring crossed links, criteria and empty slab
@@ -11672,7 +11672,7 @@ html.is-hidden .clinic-node i,
 @media (prefers-reduced-motion: reduce) {
   .dgm-svg { transition: none; }
 
-  .dgm-svg :is(.dgm-droppath, .dgm-dropflow, .dgm-dropnode, .dgm-spark, .dgm-fieldtile, .dgm-queue, .dgm-face-top, .dgm-holerim, .dgm-blade, .dgm-bladeface, .dgm-bladeedge, .dgm-bank, .dgm-loopflow, .dgm-side, .dgm-sidefact, .dgm-read, .dgm-tagbody, .dgm-node, .dgm-link, .dgm-district, .dgm-tracepath, .dgm-tracerun, .dgm-via, .dgm-junction, .dgm-portal, .dgm-portrim, .dgm-reachfill, .dgm-reachrim, .dgm-sweep, .dgm-wallmark, .dgm-status, .dgm-statustext, .dgm-deck, .dgm-plate, .dgm-site, .dgm-catch, .dgm-throat, .dgm-ledgerchain, .dgm-ledgerbar, .dgm-ledgerhash, .dgm-slide, .dgm-housing, .dgm-pad, .dgm-intakepath, .dgm-intake, .dgm-ledgerflow, .dgm-ledgerseal, .dgm-library, .dgm-seat, .dgm-riser, .dgm-tine, .dgm-orbit, .dgm-reach, .dgm-crit, .dgm-stand, .dgm-field, .dgm-face-left, .dgm-face-right, .dgm-mast, .dgm-masthead, .dgm-channel, .dgm-trace, .dgm-lift, .dgm-rise, .dgm-fall, .dgm-second, .dgm-steady, .dgm-draw, .dgm-hand, .dgm-ledgeraudit) {
+  .dgm-svg :is(.dgm-droppath, .dgm-dropflow, .dgm-dropnode, .dgm-spark, .dgm-fieldtile, .dgm-queue, .dgm-face-top, .dgm-holerim, .dgm-blade, .dgm-bladeface, .dgm-bladeedge, .dgm-bank, .dgm-loopflow, .dgm-side, .dgm-sidefact, .dgm-read, .dgm-tagbody, .dgm-node, .dgm-link, .dgm-district, .dgm-tracepath, .dgm-tracerun, .dgm-via, .dgm-junction, .dgm-portal, .dgm-portrim, .dgm-reachfill, .dgm-reachrim, .dgm-sweep, .dgm-wallmark, .dgm-status, .dgm-statustext, .dgm-deck, .dgm-plate, .dgm-site, .dgm-catch, .dgm-throat, .dgm-ledgerchain, .dgm-ledgerbar, .dgm-ledgerhash, .dgm-slide, .dgm-housing, .dgm-pad, .dgm-intakepath, .dgm-intake, .dgm-ledgerflow, .dgm-ledgerseal, .dgm-intel, .dgm-seat, .dgm-riser, .dgm-tine, .dgm-orbit, .dgm-reach, .dgm-crit, .dgm-stand, .dgm-field, .dgm-face-left, .dgm-face-right, .dgm-mast, .dgm-masthead, .dgm-channel, .dgm-trace, .dgm-lift, .dgm-rise, .dgm-fall, .dgm-second, .dgm-steady, .dgm-draw, .dgm-hand, .dgm-ledgeraudit) {
     transition: none;
     animation: none;
   }

@@ -1051,7 +1051,7 @@ function NectarSection() {
       <div className="nectar-copy">
         <h2><span>Execution intelligence that crosses site boundaries.</span></h2>
         <p className="section-dek">Patient data that never does.</p>
-        <p>Nectar is the shared execution model every Damaros site runs against. Structure proven at one site becomes capability at all of them. Execution capacity compounds as a property of the network rather than of any single site.</p>
+        <p>Nectar is the shared execution intelligence every Damaros site draws on. Structure proven at one site becomes capability at all of them. Execution capacity compounds as a property of the network rather than of any single site.</p>
         <div className="control-facts">
           <span><ShieldCheck size={18} /> PHI-free by construction</span>
           <span><Graph size={18} /> Coverage compounds</span>
