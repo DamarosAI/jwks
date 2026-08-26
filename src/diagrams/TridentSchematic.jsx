@@ -601,10 +601,23 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
     },
   })
 
+  // What each deck IS, beside its name on the rail.
+  //
+  // The approval deck used to report its own state here - SIGNED A. VOSS 09:41Z
+  // once the site had signed, CLOSED - NEEDS A SIGNATURE until then - which is
+  // the one line on this rail that changed its subject as the run went. The
+  // other three name the deck: what can propose, which contract, which revision.
+  // That one named a moment, and a moment is already drawn: the blades are the
+  // state, they are the largest mechanism in the figure, and a caption reporting
+  // what they have plainly just done is the drawing reading itself aloud.
+  //
+  // So it names the deck too. The gate opens on a site signature - in every
+  // phase, before the signature and after it - which is what the deck is FOR
+  // rather than what it happens to be doing on the frame a reader stopped on.
   const facts = {
     surface: source ? `SOURCE ${source}` : 'ANY OF THREE',
     contract: 'T-07 V3',
-    authority: open ? 'SIGNED A. VOSS 09:41Z' : 'CLOSED - NEEDS A SIGNATURE',
+    authority: 'OPENS ON A SITE SIGNATURE',
     receipt: state.receipt ? LEDGER[LEDGER.length - 1].rev : 'NOT YET WRITTEN',
   }
 

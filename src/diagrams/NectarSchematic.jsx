@@ -11,9 +11,9 @@ import { useScrollRun } from './useScrollPhase'
  * Trident is one site seen in section: decks piled on one plan, arriving closed
  * and opening out. Nectar is a federation seen in plan - two slabs, one held
  * above the other. Below: three peer sites standing on one ground, each inside
- * its own reach. Above: the shared library, a slab with a thickness to it, and
- * on that slab a board of definitions - so coverage is the part of it that has
- * lit up rather than a number in a box.
+ * its own reach. Above: the shared execution model, a slab with a thickness to
+ * it, and on that slab a board of definitions - so coverage is the part of it
+ * that has lit up rather than a number in a box.
  *
  * A site is the same kind of object as a Trident deck - a rounded plan square,
  * extruded, drawn by the same component. The three are deliberately not the
@@ -134,6 +134,20 @@ import { useScrollRun } from './useScrollPhase'
  *
  * Boundary behaviour only, no internals (ADR-0001).
  */
+
+// LIBRARY IS THE CODE NAME. THE MODEL IS THE COPY NAME.
+//
+// The slab is `LIBRARY` here, its group is `dgm-library`, and its half-width is
+// `LIB_HALF` - and every word a reader ever sees calls it the shared execution
+// model. That is deliberate rather than a leftover. "Library" was the public
+// noun for a long time and it undersold the thing badly: a library is a place
+// you borrow from, and what this holds is the model every site executes
+// against. The identifiers stay because renaming forty call sites, a
+// stylesheet block and a reduced-motion selector list to chase a copy change is
+// how a rename ends up half-applied - and because "the library slab" is still
+// exactly the right handle for the shape in a comment about geometry.
+//
+// So: if it is drawn, it is the library. If it is read, it is the model.
 
 const MESH_Y = 200
 const MESH = project(310, MESH_Y)
@@ -502,9 +516,9 @@ const TRACES = [...SIDES, ...SPURS].map((trace) => ({
 //
 // Everything else about a site follows from what it holds.
 const SITES = [
-  { id: 'SITE 042', plan: [35, -105], records: '890', half: 44, wall: 18, bands: 4, grew: 0.96, stagger: 0.08, place: 'right' },
-  { id: 'SITE 103', plan: [-105, 35], records: '614', half: 40, wall: 15, bands: 3, grew: 0.92, stagger: 0.16, place: 'left' },
-  { id: 'SITE 018', plan: [86, 86], records: '1,204', half: 55, wall: 22, bands: 5, grew: 1.04, stagger: 0.26, place: 'below' },
+  { id: 'SITE 042', plan: [35, -105], records: '890', half: 44, wall: 18, bands: 4, grew: 0.96, stagger: 0.08 },
+  { id: 'SITE 103', plan: [-105, 35], records: '614', half: 40, wall: 15, bands: 3, grew: 0.92, stagger: 0.16 },
+  { id: 'SITE 018', plan: [86, 86], records: '1,204', half: 55, wall: 22, bands: 5, grew: 1.04, stagger: 0.26 },
 ].map((site, index) => {
   // Where this site's plan origin meets the ground the three of them share. The
   // solid is drawn one wall above that, because `roundedDeck` builds a roof and
@@ -746,7 +760,7 @@ const READS = {
   'SITE 042': { tone: 'pass', pill: 'PUBLISHER', read: 'Site 042 published the scale it measures on, so a reading taken here is comparable anywhere.' },
   'SITE 103': { tone: 'pass', pill: 'MAPPER', read: 'Site 103 sent a mapping between two vocabularies. The other two can now read its codes.' },
   'SITE 018': { tone: 'valid', pill: 'ORIGIN', read: 'Site 018 wrote the definition the other two are running. One author, three sites executing.' },
-  library: { tone: 'valid', pill: 'LIBRARY', read: 'Every definition here came up from a site, and any site can take one down and run it.' },
+  library: { tone: 'valid', pill: 'SHARED MODEL', read: 'Every definition in the model came up from a site, and any site can take one down and run it.' },
 }
 
 // A shade is stepped rather than blurred, and the steps are a share of the
@@ -771,52 +785,6 @@ function Seat({ half, radius, cy, kind }) {
           return <rect className="dgm-seatstep" key={fraction} x={-half + inset} y={-half + inset} width={(half - inset) * 2} height={(half - inset) * 2} rx={radius} />
         })}
       </g>
-    </g>
-  )
-}
-
-/**
- * What a site holds and what leaves it, set on whichever side of the sheet that
- * site owns. The two outliers hang theirs off a real edge of the solid; the
- * near one carries its own under the plan, where there is room for it.
- *
- * The name is not here any more - it is lettered on the site's own wall, so the
- * margin is left carrying the two facts, which is all a margin was ever good
- * for. Repeating the name in both places would be the figure saying it twice.
- */
-function Ident({ site, lit, probe }) {
-  const below = site.place === 'below'
-  const side = site.place === 'left' ? -1 : 1
-  const anchor = side < 0 ? site.solid.left : site.solid.right
-  const tip = anchor[0] + side * 16
-  const x = below ? site.cx : tip + side * 8
-  // Both lines stand on the leader rather than straddling it. With the name
-  // gone the strip is two lines, and centring two lines on a hairline runs it
-  // straight through the first one.
-  const top = below ? site.solid.front[1] + site.wall + 24 : anchor[1] - 17
-  const align = below ? 'middle' : (side < 0 ? 'end' : 'start')
-  return (
-    <g className={`dgm-ident${lit}`} {...probe}>
-      {/* One hit area for the whole strip: a leader is a hairline and a label
-          is a few characters tall. */}
-      <rect
-        className="dgm-hit"
-        x={below ? site.cx - 76 : (side < 0 ? 8 : anchor[0])}
-        y={top - 14}
-        width={below ? 152 : (side < 0 ? anchor[0] - 8 : 612 - anchor[0])}
-        height="40"
-      />
-      {below ? (
-        <line className="dgm-leader" x1={site.cx} y1={site.solid.front[1] + site.wall + 4} x2={site.cx} y2={top - 11} />
-      ) : (
-        <line className="dgm-leader" x1={anchor[0]} y1={anchor[1]} x2={tip} y2={anchor[1]} />
-      )}
-      <text className="dgm-sidefact" x={x} y={top} textAnchor={align}>{site.records} RECORDS</text>
-      {/* A count, not a slogan. `EGRESS NONE` was a policy word for a figure
-          that now has traffic running both ways over it, and the thing worth
-          saying is the number: of the records this site holds, none moves. Two
-          mono values under each other, which is what the margin is for. */}
-      <text className="dgm-sidefact is-quiet" x={x} y={top + 12} textAnchor={align}>0 LEAVE</text>
     </g>
   )
 }
@@ -848,7 +816,7 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
           ref={figure}
           viewBox="0 0 620 700"
           role="img"
-          aria-label="Three peer sites of three different sizes stand well apart on one ground, beneath a shared execution library drawn as a slab held above them with a mesh of criteria on it. Each site runs its task locally and beams the structure it used up a channel from a mast on its own roof - a criterion from one, a unit from another, a mapping from the third. A criterion the library binds stands up off the slab, and any site can take a bound definition back down its channel and run it. Structure crosses in both directions and no record crosses in either: the records inside every site stay under a sealed lid, and the reach of each site grows until they overlap."
+          aria-label="Three peer sites of three different sizes stand well apart on one ground, beneath a shared execution model drawn as a slab held above them with a mesh of criteria on it. Each site runs its task locally and beams the structure it used up a channel from a mast on its own roof - a criterion from one, a unit from another, a mapping from the third. A criterion the model binds stands up off the slab, and any site can take a bound definition back down its channel and run it. Structure crosses in both directions and no record crosses in either: the records inside every site stay under a sealed lid, and the reach of each site grows until they overlap."
         >
           <defs>
             <pattern id="nc-grain" width="16" height="16" patternUnits="userSpaceOnUse">
@@ -1253,10 +1221,20 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
               built as its own solid - so what crossed is said once, in the
               drawing, by where it landed. */}
 
-          {/* Identities, each on the side of the sheet its site owns. */}
-          {SITES.map((site) => (
-            <Ident key={`id-${site.id}`} site={site} lit={lit(site.id)} probe={probe(site.id)} />
-          ))}
+          {/* NOTHING IS LABELLED IN THE MARGINS.
+
+              Each site used to carry a two-line strip out to the side of the
+              sheet on a leader - "890 RECORDS" over "0 LEAVE" - and before that
+              the same strip said EGRESS NONE. Both were the drawing arguing in
+              the margin about something the drawing already does in the middle:
+              the records sit under a sealed lid inside every wall, the local run
+              sweeps across them without leaving, and not one of the three routes
+              overhead carries anything but a definition. A count printed beside
+              a figure that shows a thing is a figure that does not trust itself.
+
+              A site still names itself, on its own wall, and still answers a
+              pointer - the probe is on the solid, where it always was, so the
+              strip took nothing with it when it went. */}
 
           <line className="dgm-rule" x1="20" y1="648" x2="600" y2="648" />
           <rect className="dgm-status" x="20" y="660" width="130" height="26" rx="13" />

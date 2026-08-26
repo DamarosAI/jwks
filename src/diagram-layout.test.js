@@ -470,7 +470,7 @@ describe('Trident and Nectar schematics', () => {
       assert.match(nectar, new RegExp(`'${key}': \\{ tone: '\\w+', pill: '[A-Z]+', read: '`))
     }
     assert.match(nectar, /const cue = READS\[hot\]/)
-    assert.match(nectar, /library: \{ tone: '\w+', pill: '[A-Z]+', read: '/)
+    assert.match(nectar, /library: \{ tone: '\w+', pill: '[A-Z ]+', read: '/)
     assert.match(nectar, /<text className="dgm-read" x="164" y="677">\{read\}<\/text>/)
     assert.doesNotMatch(nectar, /Site \d+ holds [\d,]+ records/)
     // Every tone the readout can take has a rule that colours the pill.
@@ -667,10 +667,19 @@ describe('Trident and Nectar schematics', () => {
       assert.match(DGM_BLOCK, new RegExp(`\\.${part}[\\s,{]`))
     }
     // The hand-drawn signature stroke is gone. It was the one gag in either
-    // figure, it measured out as overlapping the ring beside it, and what a
-    // named person signed is a fact - so the rail carries it as one.
+    // figure and it measured out as overlapping the ring beside it.
     assert.doesNotMatch(trident, /const SIGNATURE|dgm-sigplate|dgm-sigstroke|dgm-sigrule|dgm-seal|RECEIPT SEALED/)
-    assert.match(trident, /authority: open \? 'SIGNED A\. VOSS \d\d:\d\dZ' : 'CLOSED - NEEDS A SIGNATURE'/)
+    // AND THE APPROVAL RAIL NAMES THE DECK RATHER THAN REPORTING IT. It used to
+    // carry SIGNED A. VOSS 09:41Z once the site had signed and CLOSED - NEEDS A
+    // SIGNATURE until then, which made it the one line on this rail that changed
+    // its subject as the run went: the other three say what can propose, which
+    // contract and which revision, and that one said which moment. The moment is
+    // already drawn, by the largest mechanism in the figure, and a caption
+    // reporting what two blades have plainly just done is the drawing reading
+    // itself aloud.
+    assert.match(trident, /authority: 'OPENS ON A SITE SIGNATURE',/)
+    assert.doesNotMatch(trident, /authority: open \?/)
+    assert.doesNotMatch(trident, /'SIGNED A\. VOSS/)
     for (const rule of ['.dgm-sigplate', '.dgm-sigstroke', '.dgm-sigrule', '.dgm-rebate', '.dgm-gatering', '.dgm-seal', '.dgm-sigbar', '.dgm-sigfill']) {
       assert.doesNotMatch(DGM_BLOCK, new RegExp(`\\${rule}[\\s,{]`))
     }
@@ -889,7 +898,25 @@ describe('Trident and Nectar schematics', () => {
     assert.doesNotMatch(DGM_BLOCK, /var\(--danger/)
     assert.doesNotMatch(DGM_BLOCK, /\.dgm-crit\.is-red[\s,{]/)
     assert.doesNotMatch(nectar, /is-red|lamp:/)
-    assert.match(nectar, />0 LEAVE<\/text>/)
+    // AND IT IS NOT SAID IN THE MARGIN EITHER. Each site used to carry a
+    // two-line strip out to the side of the sheet on a leader - "890 RECORDS"
+    // over "0 LEAVE", and EGRESS NONE before that - which is the drawing arguing
+    // in the margin about something it already does in the middle: the records
+    // sit under a sealed lid inside every wall and not one of the three routes
+    // overhead carries anything but a definition. A count printed beside a figure
+    // that shows a thing is a figure that does not trust itself. The whole strip
+    // went, and its leader and its hit area with it; the probe was always on the
+    // solid, so a site still answers a pointer.
+    assert.doesNotMatch(nectar, />0 LEAVE<\/text>|\{site\.records\} RECORDS|dgm-ident/)
+    assert.doesNotMatch(nectar, /^function Ident\(/m)
+    assert.doesNotMatch(DGM_BLOCK, /\.dgm-ident[\s,{.]|\.dgm-sidefact\.is-quiet/)
+    // `records` stays in the data. It is not printed anywhere - it is the reason
+    // the three sites are three different sizes, and the plan half, the wall
+    // height, the band count and the reach all follow it.
+    assert.match(nectar, /records: '1,204', half: 55/)
+    assert.doesNotMatch(nectar, /\{site\.records\}/)
+    // Trident's rail still uses the same class, so the class stays.
+    assert.match(trident, /className="dgm-sidefact"/)
     // ONE CAPTION CARRIES THE RECORD CLAIM, AND THE OTHER FOUR CARRY CAPABILITY.
     // Every phase used to restate that no record moves - no values in it, no
     // patient in a mapping, nothing has moved - which is four fifths of the
@@ -1740,6 +1767,32 @@ describe('Trident and Nectar schematics', () => {
       assert.doesNotMatch(sheet, /nectar-facts/)
     }
     assert.doesNotMatch(app, /nectar-facts/)
+
+    // AND THE PARAGRAPH STAYS AT ALTITUDE. The three facts beside it carry the
+    // concrete claims, so the copy above them is free to say what Nectar is FOR
+    // rather than what it does - where it sits in Damaros, and what having it
+    // changes about where execution capacity can exist. It is the only place on
+    // the page that gets to be that high up, and it earns that by not competing
+    // with the chips underneath it.
+    const nectarCopy = app.match(/<div className="nectar-copy">[\s\S]*?<\/div>/)[0]
+    const para = nectarCopy.match(/<p>([^<]*)<\/p>/)[1]
+    assert.match(para, /shared execution model/)
+    assert.match(para, /every Damaros site/)
+    assert.match(para, /network/)
+    // "Library" was the public noun for a long time and it undersold the thing:
+    // a library is a place you borrow from, and what this holds is the model
+    // every site executes against. It is gone from every word a reader sees -
+    // the copy, the figure's readout, and the figure's description for a screen
+    // reader - and kept only as an identifier in the drawing code, which says so
+    // once at the top of the file.
+    assert.doesNotMatch(para, /library/i)
+    assert.doesNotMatch(nectar.match(/aria-label="[^"]*"/)[0], /library/i)
+    assert.doesNotMatch(nectar.match(/const READS = \{[\s\S]*?\n\}/)[0], /library:.*[Ll]ibrary[^:]/)
+    assert.match(nectar, /pill: 'SHARED MODEL'/)
+    assert.match(nectar, /LIBRARY IS THE CODE NAME\. THE MODEL IS THE COPY NAME\./)
+    // The three facts under it are unchanged, so nothing concrete moved up into
+    // the paragraph when the paragraph moved up.
+    assert.doesNotMatch(para, /PHI|Coverage compounds|stays at the site/)
   })
 
   it('keeps the panels on the light field and lets the headlines wrap', () => {

@@ -11616,7 +11616,6 @@ html.is-hidden .clinic-node i,
   transition: fill 260ms ease;
 }
 
-.dgm-sidefact.is-quiet { fill: var(--faint); }
 .dgm-rail.is-live .dgm-side { fill: var(--text); }
 .dgm-rail.is-live .dgm-sidefact { fill: var(--ink-deep); }
 
@@ -11627,9 +11626,10 @@ html.is-hidden .clinic-node i,
 /* The plates are not in this list: they are already riding, and a transform an
    animation owns cannot also be transitioned. Pointing at one lights it. */
 
-/* Not `.dgm-ident` - it carries nothing but type and a hairline, and it had a
-   dangling transition on a transform no rule ever set. `.dgm-deck` sets its own
-   transition where `--audit` is declared, because it carries both. */
+/* `.dgm-deck` sets its own transition where `--audit` is declared, because it
+   carries both. `.dgm-ident` used to be excepted here - it carried nothing but
+   type and a hairline and had a dangling transition on a transform no rule ever
+   set - and the whole strip has since come off the figure. */
 .dgm-site { transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1); }
 
 .dgm-deck.is-hot,
@@ -11643,7 +11643,6 @@ html.is-hidden .clinic-node i,
 .dgm-tine.is-hot { stroke: var(--ink-deep); stroke-dasharray: none; }
 .dgm-pad.is-hot { fill: var(--ink-soft); stroke: var(--ink-deep); }
 .dgm-rail.is-hot .dgm-side { fill: var(--text); }
-.dgm-ident.is-hot .dgm-sidefact { fill: var(--accent-strong); }
 
 /* Readout */
 
@@ -11673,7 +11672,7 @@ html.is-hidden .clinic-node i,
 @media (prefers-reduced-motion: reduce) {
   .dgm-svg { transition: none; }
 
-  .dgm-svg :is(.dgm-droppath, .dgm-dropflow, .dgm-dropnode, .dgm-spark, .dgm-fieldtile, .dgm-queue, .dgm-face-top, .dgm-holerim, .dgm-blade, .dgm-bladeface, .dgm-bladeedge, .dgm-bank, .dgm-loopflow, .dgm-side, .dgm-sidefact, .dgm-read, .dgm-tagbody, .dgm-node, .dgm-link, .dgm-district, .dgm-tracepath, .dgm-tracerun, .dgm-via, .dgm-junction, .dgm-portal, .dgm-portrim, .dgm-reachfill, .dgm-reachrim, .dgm-sweep, .dgm-wallmark, .dgm-status, .dgm-statustext, .dgm-deck, .dgm-plate, .dgm-site, .dgm-ident, .dgm-catch, .dgm-throat, .dgm-ledgerchain, .dgm-ledgerbar, .dgm-ledgerhash, .dgm-slide, .dgm-housing, .dgm-pad, .dgm-intakepath, .dgm-intake, .dgm-ledgerflow, .dgm-ledgerseal, .dgm-library, .dgm-seat, .dgm-riser, .dgm-tine, .dgm-orbit, .dgm-reach, .dgm-crit, .dgm-stand, .dgm-field, .dgm-face-left, .dgm-face-right, .dgm-mast, .dgm-masthead, .dgm-channel, .dgm-trace, .dgm-lift, .dgm-rise, .dgm-fall, .dgm-second, .dgm-steady, .dgm-draw, .dgm-hand, .dgm-ledgeraudit) {
+  .dgm-svg :is(.dgm-droppath, .dgm-dropflow, .dgm-dropnode, .dgm-spark, .dgm-fieldtile, .dgm-queue, .dgm-face-top, .dgm-holerim, .dgm-blade, .dgm-bladeface, .dgm-bladeedge, .dgm-bank, .dgm-loopflow, .dgm-side, .dgm-sidefact, .dgm-read, .dgm-tagbody, .dgm-node, .dgm-link, .dgm-district, .dgm-tracepath, .dgm-tracerun, .dgm-via, .dgm-junction, .dgm-portal, .dgm-portrim, .dgm-reachfill, .dgm-reachrim, .dgm-sweep, .dgm-wallmark, .dgm-status, .dgm-statustext, .dgm-deck, .dgm-plate, .dgm-site, .dgm-catch, .dgm-throat, .dgm-ledgerchain, .dgm-ledgerbar, .dgm-ledgerhash, .dgm-slide, .dgm-housing, .dgm-pad, .dgm-intakepath, .dgm-intake, .dgm-ledgerflow, .dgm-ledgerseal, .dgm-library, .dgm-seat, .dgm-riser, .dgm-tine, .dgm-orbit, .dgm-reach, .dgm-crit, .dgm-stand, .dgm-field, .dgm-face-left, .dgm-face-right, .dgm-mast, .dgm-masthead, .dgm-channel, .dgm-trace, .dgm-lift, .dgm-rise, .dgm-fall, .dgm-second, .dgm-steady, .dgm-draw, .dgm-hand, .dgm-ledgeraudit) {
     transition: none;
     animation: none;
   }
