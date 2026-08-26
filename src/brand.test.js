@@ -13,9 +13,9 @@ describe('Damaros brand mark', () => {
     assert.doesNotMatch(app, /<SectionEyebrow>Home<\/SectionEyebrow>/)
     assert.match(app, /<SectionEyebrow>Thesis<\/SectionEyebrow>/)
     assert.match(app, /<SectionEyebrow>Capacity<\/SectionEyebrow>/)
-    assert.match(app, /<SectionEyebrow>Trident<\/SectionEyebrow>/)
+    assert.match(app, /<SectionEyebrow brand>Trident<\/SectionEyebrow>/)
     assert.match(app, /<SectionEyebrow>Control<\/SectionEyebrow>/)
-    assert.match(app, /<SectionEyebrow>Nectar<\/SectionEyebrow>/)
+    assert.match(app, /<SectionEyebrow brand>Nectar<\/SectionEyebrow>/)
     assert.match(app, /\{!about && <SectionEyebrow>Pilot<\/SectionEyebrow>\}/)
     assert.doesNotMatch(app, /<SectionEyebrow>About<\/SectionEyebrow>/)
     assert.doesNotMatch(app, /<SectionEyebrow>Founder<\/SectionEyebrow>/)
@@ -25,6 +25,50 @@ describe('Damaros brand mark', () => {
     assert.match(css, /\.section-eyebrow,[\s\S]*?font-family:\s*var\(--font-ui\);[\s\S]*?font-size:\s*var\(--type-eyebrow\);[\s\S]*?letter-spacing:\s*0\.16em;[\s\S]*?text-transform:\s*uppercase;/)
     assert.match(mobile, /#root \.section-eyebrow,[\s\S]*?font-family:\s*var\(--font-ui\);[\s\S]*?letter-spacing:\s*0\.16em;/)
     assert.doesNotMatch(mobile, /section-eyebrow[^{]*\{[^}]*font-size:\s*0\.72rem/)
+
+    // TRIDENT AND NECTAR ARE NAMES, NOT LABELS. Six sections carry an eyebrow;
+    // four are topics and two are products, and they were all set at fourteen
+    // pixels in weight 400 - so the two things on this site with names of their
+    // own were drawn at the volume of the word "Capacity". Only the two products
+    // carry `brand`, and the other four must not.
+    assert.equal((app.match(/<SectionEyebrow brand>/g) || []).length, 2)
+    for (const topic of ['Thesis', 'Capacity', 'Control', 'Pilot']) {
+      assert.match(app, new RegExp(`<SectionEyebrow>${topic}</SectionEyebrow>`))
+    }
+    assert.match(app, /function SectionEyebrow\(\{ children, brand = false \}\)/)
+    assert.match(app, /className=\{`section-eyebrow\$\{brand \? ' is-brand' : ''\}`\}/)
+
+    // Size AND weight, because either alone reads as an accident, and both are
+    // re-solved here rather than pinned loosely: the brand size has to clear the
+    // label size at every viewport on the 360-to-1600 line the whole sheet runs
+    // on, and the weight has to be the heaviest Switzer ships.
+    assert.match(css, /--type-brand-eyebrow:\s*clamp\(([\d.]+)rem, ([\d.]+)rem \+ ([\d.]+)vw, ([\d.]+)rem\);/)
+    const pick = (name) => css.match(new RegExp(`--type-${name}:\\s*clamp\\(([\\d.]+)rem, ([\\d.]+)rem \\+ ([\\d.]+)vw, ([\\d.]+)rem\\);`)).slice(1).map(Number)
+    const at = ([min, base, slope, max], width) => Math.min(Math.max(base * 16 + (slope / 100) * width, min * 16), max * 16)
+    const label = pick('eyebrow')
+    const brand = pick('brand-eyebrow')
+    for (const width of [360, 768, 1280, 1600]) {
+      assert.ok(at(brand, width) >= at(label, width) * 1.5, `the brand eyebrow is not clearly larger at ${width}px`)
+    }
+    assert.match(css, /\.section-eyebrow\.is-brand,\s*\n#root \.section-eyebrow\.is-brand \{[\s\S]*?font-weight:\s*700;/)
+    assert.match(css, /\.section-eyebrow\.is-brand,[\s\S]*?font-size:\s*var\(--type-brand-eyebrow\);/)
+    // Deeper ink than the labels', so the two names are separated by colour as
+    // well as by weight.
+    assert.match(css, /\.section-eyebrow\.is-brand,[\s\S]*?color:\s*var\(--accent-strong\);/)
+    assert.match(css, /\.section-eyebrow,[\s\S]*?color:\s*var\(--accent\);/)
+    // Tracking comes DOWN. Letterspacing is what makes fourteen pixels of
+    // uppercase legible; at twenty-two it stops a word being a word.
+    const tracking = (rule) => Number(css.match(new RegExp(`${rule}[\\s\\S]*?letter-spacing:\\s*([\\d.]+)em`))[1])
+    assert.ok(tracking('\\.section-eyebrow\\.is-brand,') < tracking('\\.section-eyebrow,'))
+    // And it stays Switzer. Endless ships one weight, 400, with
+    // `font-synthesis: none` set on the eyebrow - so the display face at "bold"
+    // is the display face at 400, which is lighter than the headline beside it.
+    assert.doesNotMatch(css.match(/\.section-eyebrow\.is-brand,[\s\S]*?\n\}/)[0], /font-family/)
+    assert.match(css, /@font-face \{\s*\n\s*font-family: 'Endless';[\s\S]*?font-weight: 400;/)
+    assert.equal((css.match(/font-family: 'Endless';/g) || []).length, 1)
+    // The mobile sheet restates the eyebrow rule at `#root .section-eyebrow`, so
+    // the brand rule has to out-specify it or the phone gets the label treatment.
+    assert.match(css, /#root \.section-eyebrow\.is-brand \{/)
     assert.match(css, /\.page-spine \{[\s\S]*?width:\s*34px;/)
     assert.match(css, /\.site-nav-wrap \{[\s\S]*?z-index:\s*50;[\s\S]*?isolation:\s*isolate;/)
     assert.match(css, /\.thesis-section \{[\s\S]*?align-items:\s*stretch;[\s\S]*?text-align:\s*center;/)

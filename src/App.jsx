@@ -379,8 +379,12 @@ function BrandName() {
   return <>Damaros<sup className="brand-tm">TM</sup></>
 }
 
-function SectionEyebrow({ children }) {
-  return <p className="section-eyebrow">{children}</p>
+// `brand` is for the two eyebrows that are product names rather than section
+// topics. Trident and Nectar are things with names; Thesis, Capacity, Control
+// and Pilot are what the section is about, and drawing all six at one volume
+// meant a reader met the brand as a caption.
+function SectionEyebrow({ children, brand = false }) {
+  return <p className={`section-eyebrow${brand ? ' is-brand' : ''}`}>{children}</p>
 }
 
 function WindowBrand() {
@@ -1001,7 +1005,7 @@ function TridentSection() {
   return (
     <section className="trident-section section-space" id="trident" ref={root}>
       <div className="section-field" ref={field} aria-hidden="true" />
-      <SectionEyebrow>Trident</SectionEyebrow>
+      <SectionEyebrow brand>Trident</SectionEyebrow>
       <div className="trident-copy">
         <h2><span>Any model can propose at the point of care.</span></h2>
         <p className="section-dek">None can decide.</p>
@@ -1040,7 +1044,7 @@ function NectarSection() {
   return (
     <section className="nectar-section section-space" id="nectar" ref={root}>
       <div className="section-field" ref={field} aria-hidden="true" />
-      <SectionEyebrow>Nectar</SectionEyebrow>
+      <SectionEyebrow brand>Nectar</SectionEyebrow>
       <div className="nectar-network">
         <NectarSchematic animate={animate} reduced={reduced} />
       </div>

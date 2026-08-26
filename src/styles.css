@@ -81,6 +81,11 @@
   --type-product-title: 1.48rem;
   --type-product-strong: 0.76rem;
   --type-eyebrow: clamp(0.72rem, 0.662rem + 0.258vw, 0.92rem);
+  /* Two of the six eyebrows are not section labels, they are product names, and
+     for a long time the sheet drew them as though it could not tell the
+     difference. Nineteen to twenty-four pixels on the same 360-to-1600 line
+     every other editorial size runs on. */
+  --type-brand-eyebrow: clamp(1.19rem, 1.097rem + 0.403vw, 1.5rem);
   /* Fluid page scale. Every editorial size is a straight line between a
      360px phone and a 1600px desktop, so a heading grows with the viewport
      instead of jumping at a breakpoint. One design, continuously sized. */
@@ -792,6 +797,39 @@ h2 {
   text-transform: uppercase;
   text-align: left;
   pointer-events: none;
+}
+
+/* TRIDENT AND NECTAR ARE NAMES, NOT LABELS.
+
+   Six sections carry an eyebrow and four of them are topics - Thesis, Capacity,
+   Control, Pilot. Two are products. They were all set identically: fourteen
+   pixels, weight 400, the mid accent - so the two things on this site that have
+   names of their own were drawn at the same volume as the word "Capacity", and
+   a reader scanning the page met the brand as a caption.
+
+   The jump is size and weight together, because either alone reads as an
+   accident. Twenty-two-odd pixels at 700 puts these two in the same typographic
+   register as the wordmark in the nav - Switzer, bold, tight - which is the tie
+   worth making: a product name should look like the company name, not like a
+   section heading's caption.
+
+   Switzer, not the display face. Endless ships one weight, 400, and
+   `font-synthesis: none` is set two rules up - so the display face at "bold" is
+   the display face at 400, which is lighter than the headline beside it and the
+   opposite of prominent. Size could carry it alone there and weight could not,
+   and this needs both.
+
+   Tracking comes DOWN, 0.16em to 0.10em. Letterspacing is what makes fourteen
+   pixels of uppercase legible; at twenty-two it is what makes a word stop being
+   a word. And the ink goes one step deeper than the labels', so the two names
+   are separated from the four topics by colour as well as by weight. */
+
+.section-eyebrow.is-brand,
+#root .section-eyebrow.is-brand {
+  color: var(--accent-strong);
+  font-size: var(--type-brand-eyebrow);
+  font-weight: 700;
+  letter-spacing: 0.1em;
 }
 
 .mobile-preview-frame {
