@@ -1004,14 +1004,37 @@ h2 {
   color: var(--border-strong);
 }
 
+/* ═══════════════════════════════════════════════════════════════════════
+   THE THESIS IS A SHEET NOW, ON THE PAGE'S OWN GROUND.
+
+   It used to be one line of six-inch type, centred, with nothing else in the
+   section - the largest thing on the site saying the least specific thing on
+   it. Scale that big is a promise that what follows is hard to say any other
+   way, and this claim is not hard to say: five stages of one protocol are held
+   apart today and they do not have to be. It is hard to SHOW, which is a
+   different problem and the one the figure solves.
+
+   So the section is built the way the two product sections are built. Same
+   lattice underfoot, same light, same inks, same readout at the foot of the
+   drawing. It is not a dark plate and it does not borrow anybody else's
+   contrast: what makes it land is that the argument is now a mechanism a
+   reader watches run, and mechanisms on this site are drawn on white.
+
+   ONE COLUMN, ONE LEFT EDGE. The eyebrow, the sentence, the figure and the
+   closer all start on the same pixel - see the column width below - so the
+   section reads as a single argument set in a margin rather than as a centred
+   slab with a label stuck to its corner. */
+
 .thesis-section {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   width: 100%;
   margin: 0 auto;
   scroll-margin-top: 82px;
-  text-align: center;
+  isolation: isolate;
+  text-align: left;
 }
 
 .thesis-section > .section-eyebrow,
@@ -1027,70 +1050,93 @@ h2 {
   padding-block: 112px;
 }
 
+/* THE COLUMN IS SOLVED AGAINST THE EYEBROW, NOT EYEBALLED.
+
+   The eyebrow is absolute, at `(W - min(W, 1480)) / 2 + gutter` from the
+   section's own left edge. The column is centred inside a content box that is
+   already `W - 2 * gutter` wide, so for the two left edges to land on the same
+   pixel the column has to be `min(W, 1480) - 2 * gutter` - which is what this
+   is, written in the only units available to it. Change either number and the
+   other follows on its own; nothing here has to be re-measured by eye. */
+
+.thesis-column {
+  display: flex;
+  width: min(100%, calc(1480px - var(--gutter) * 2));
+  flex-direction: column;
+  align-items: stretch;
+  margin-inline: auto;
+  text-align: left;
+}
+
 .thesis-head {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   width: 100%;
   max-width: none;
-  margin-inline: auto;
-  text-align: center;
+  text-align: left;
 }
+
+/* THE SENTENCE IS A DEK NOW.
+
+   `.trident-copy .section-dek` and `.nectar-copy .section-dek` are the two
+   lines on this site that sit over a figure and say what it is about. The
+   thesis line does exactly that job for the drawing below it, so it is set the
+   way they are - left, two statements breaking where the statement turns, in
+   the display face, and on a ramp anchored to the body size rather than to
+   `--fluid-lead`, which bottoms out under it on a phone. */
 
 .thesis-head h2 {
   width: 100%;
-  max-width: none;
-  margin-top: 16px;
-  margin-inline: auto;
-  font-family: 'Endless', sans-serif;
-  font-size: clamp(3rem, 5.5vw, 6.3rem);
+  max-width: 40ch;
+  margin: 0;
+  color: var(--text);
+  font-family: var(--font-display);
   font-weight: 400;
   font-synthesis: none;
-  letter-spacing: -0.01em;
-  line-height: 1;
-  text-align: center;
-  text-wrap: wrap;
+  letter-spacing: -0.014em;
+  line-height: 1.1;
+  text-align: left;
+  text-wrap: balance;
 }
 
 .thesis-head h2 .accent-text {
+  color: var(--accent);
   font-family: inherit;
   font-weight: inherit;
   text-align: inherit;
 }
 
-.thesis-panel {
-  display: grid;
-  gap: 22px;
-  max-width: 920px;
-  margin-top: 56px;
-  padding: 34px 38px;
-  border: 1px solid var(--border-strong);
-  border-radius: 18px;
-  background: var(--surface-solid);
-  box-shadow: var(--shadow);
+/* The figure is not a card. It sits directly on the page field, the way the
+   other two do, and it runs the full width of the column because a chain is a
+   long thing and cropping it to a comfortable measure would be cropping the
+   only claim it makes. */
+
+.thesis-chain {
+  width: 100%;
+  min-width: 0;
+  margin-top: clamp(24px, 2.6vw, 40px);
 }
 
-.thesis-panel p {
-  color: var(--text-soft);
-  font-size: clamp(1.12rem, 1.45vw, 1.32rem);
-  line-height: 1.45;
-}
+/* The answer, under the drawing that earns it. It used to sit directly beneath
+   the sentence, which made the section a claim answered by a slogan; below the
+   figure it is the last line of an argument instead. */
 
 .thesis-closer {
-  max-width: 1280px;
-  margin-top: 28px;
-  margin-inline: auto;
-  text-align: center;
+  max-width: 44ch;
+  margin: clamp(18px, 2.2vw, 32px) 0 0;
   color: var(--accent);
-  font-size: clamp(1.2rem, 1.7vw, 1.65rem);
+  font-size: clamp(1.04rem, 0.94rem + 0.44vw, 1.3rem);
   font-weight: 400;
-  letter-spacing: -0.018em;
-  line-height: 1.2;
+  letter-spacing: -0.012em;
+  line-height: 1.32;
+  text-align: left;
 }
 
 .thesis-closer .brand-tm {
   font-size: 0.42em;
 }
+
 
 /* Bays, not tiles. The list is five and it is not growing, so it sits still and
    fills the panel it is in: one surface cut into five by the grid gap, which
@@ -2934,7 +2980,6 @@ h2 {
 }
 
 /* Final type and source-demo alignment */
-.thesis-head h2,
 .capacity-section .section-heading h2,
 .why-now-title h2,
 .human-outcomes .section-heading h2 {
@@ -3101,8 +3146,7 @@ h2 {
 }
 
 @media (max-width: 640px) {
-  .thesis-head h2,
-.capacity-section .section-heading h2,
+  .capacity-section .section-heading h2,
 .control-copy h2,
 .why-now-title h2,
 .human-outcomes .section-heading h2 {
@@ -4970,22 +5014,9 @@ html { scroll-padding-top: 96px; }
 }
 
 @media (max-width: 900px) {
-  .thesis-panel {
-    max-width: none;
-    margin-top: 44px;
-    padding: 28px 24px;
-  }
 }
 
 @media (max-width: 640px) {
-  .thesis-head h2 {
-    font-size: clamp(2.6rem, 11vw, 4.2rem);
-  }
-
-  .thesis-panel {
-    padding: 24px 20px;
-  }
-
 }
 
 /* Final responsive cascade for the expanded Trident workbench. */
@@ -5399,7 +5430,6 @@ html { scroll-padding-top: 96px; }
   .why-now-lines .why-now-line p { font-size: 0.84rem; }
 }
 
-.thesis-head h2,
 .capacity-section .section-heading h2,
 .why-now-title h2,
 .human-outcomes .section-heading h2 {
@@ -5420,8 +5450,7 @@ html { scroll-padding-top: 96px; }
 }
 
 @media (max-width: 640px) {
-  .thesis-head h2,
-.capacity-section .section-heading h2,
+  .capacity-section .section-heading h2,
 .why-now-title h2,
 .human-outcomes .section-heading h2 {
     font-size: clamp(2.05rem, 9.2vw, 3.25rem);
@@ -9318,6 +9347,17 @@ html.is-hidden .clinic-node i,
   pointer-events: none;
 }
 
+/* The thesis draws a schematic too, so it stands on the same ground - but it is
+   its own sheet, not part of the pair. Faded at BOTH ends rather than at one,
+   so the lattice opens under the figure and closes again before Capacity,
+   which is what keeps Trident and Nectar reading as the two drawings that
+   share a sheet. */
+
+.thesis-section .section-field {
+  -webkit-mask-image: linear-gradient(to bottom, transparent, var(--text) 15%, var(--text) 85%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, var(--text) 15%, var(--text) 85%, transparent);
+}
+
 .trident-section .section-field {
   -webkit-mask-image: linear-gradient(to bottom, transparent, var(--text) 17%, var(--text));
   mask-image: linear-gradient(to bottom, transparent, var(--text) 17%, var(--text));
@@ -11808,7 +11848,6 @@ html.is-hidden .clinic-node i,
 }
 
 #root .section-heading h2,
-#root .thesis-head h2,
 #root .capacity-section .section-heading h2,
 #root .human-outcomes .section-heading h2,
 #root .why-now .why-now-title h2 {
@@ -12171,6 +12210,20 @@ html.is-hidden .clinic-node i,
   }
 }
 
+/* ONE SIZE FOR THE DEK, and it is the deks' own ramp.
+
+   `.trident-copy .section-dek` and `.nectar-copy .section-dek` are the two
+   lines on this site that sit under a heading and say what the figure beside
+   them will not do. The thesis line does exactly that job for the figure below
+   it, so it runs on exactly that ramp - anchored to the body size rather than
+   to `--fluid-lead`, which bottoms out under it on a phone and would invert
+   the two. Set at `#root` because four grouped rules in this sheet used to
+   size this element as a page heading and one of them will try again. */
+
+#root .thesis-head h2 {
+  font-size: clamp(1.34rem, 1.1rem + 1.02vw, 2.05rem);
+}
+
 /* The thesis is two statements, so it breaks where it turns rather than
    wherever the column happens to run out. */
 
@@ -12257,5 +12310,343 @@ html.is-hidden .clinic-node i,
 
   #root .capacity-bento > .metric-card .metric-dots {
     margin-bottom: 22px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   THE FLOOR
+
+   Third sheet, same hand, same light. Every solid on it is the `Faces`
+   component the other two use, every corner is a plan radius carried through
+   the same projection, every ink is the same house blue at the same wash, and
+   the readout at the foot is the same pill and the same line. Nothing here
+   introduces a colour, a radius or a weight of its own.
+
+   What is new is what the geometry is asked to carry. Trident's axis is
+   authority and Nectar's is geography; this one's is the GROUND - what trial
+   execution is standing on today against what it could stand on instead. A
+   reader who has met the other two should recognise the hand immediately and
+   the drawing not at all.
+
+   ONE INK IS THE SURFACE. WHAT IS HELD ABOVE IT HAS NONE.
+
+   The colour rule on this sheet is one sentence: the floor and everything on it
+   is the house blue, and the scattered software overhead is carried toward the
+   neutral - the way Trident carries the one tier of four that is not the site.
+   A paler blue up there would have read as the floor seen through fog, which is
+   the opposite of what it is: it is not this system at a distance, it is not
+   this system at all.
+
+   AND NOTHING ON IT IS LETTERED.
+
+   There is no text anywhere inside this figure except the readout under it.
+   Three districts are told apart by what stands in them and by where they are;
+   the drum is told by being the only round thing at the middle of everything.
+   What a reader wants named, they point at. That is the whole annotation
+   budget, and it buys back the one thing a figure this dense cannot otherwise
+   have, which is air.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── The districts ───────────────────────────────────────────────────────
+
+   The part of the floor given over to one kind of thing - the same device
+   Nectar uses to make forty-two solids read as four kinds. Not a container and
+   not a legend: a place. Dashed and faint until its district has been stood,
+   because a district nothing is running in is a plot of ground, not a place. */
+
+.dgm-zone { cursor: pointer; }
+
+.dgm-zonefill {
+  opacity: calc(0.3 + 0.34 * var(--spread, 1));
+  transition: opacity 520ms ease;
+}
+
+.dgm-zone.is-up .dgm-zonefill { opacity: calc(0.92 * var(--spread, 1)); }
+
+.dgm-zonerim {
+  fill: none;
+  stroke: color-mix(in srgb, var(--ink) 20%, transparent);
+  stroke-width: 1;
+  stroke-dasharray: 4 7;
+  transition: stroke 520ms ease, stroke-dasharray 520ms ease;
+}
+
+.dgm-zone.is-up .dgm-zonerim {
+  stroke: color-mix(in srgb, var(--ink) 42%, transparent);
+  stroke-dasharray: none;
+}
+
+.dgm-zone.is-hot .dgm-zonerim { stroke: var(--ink-deep); }
+
+/* ── The routes ──────────────────────────────────────────────────────────
+
+   A route turns on plan axes only, so every leg lies ON the floor rather than
+   over it, and carries a via wherever it turns - a bend with nothing at it is a
+   line that changed its mind. The route is always drawn, because the floor is
+   always there; what changes is whether anything is moving on it. */
+
+.dgm-runpath {
+  fill: none;
+  stroke: color-mix(in srgb, var(--ink) 32%, transparent);
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-dasharray: 2 5;
+  transition: stroke 520ms ease;
+}
+
+.dgm-run.is-up .dgm-runpath { stroke: color-mix(in srgb, var(--ink) 62%, transparent); }
+
+/* The vias come from Nectar's board, where they sit on a bare slab. Here they
+   sit on a grained floor and need a step more body to survive it. */
+.dgm-run .dgm-via { fill: color-mix(in srgb, var(--ink) 34%, var(--surface-solid)); stroke: color-mix(in srgb, var(--ink) 46%, transparent); stroke-width: 1; vector-effect: non-scaling-stroke; transition: fill 520ms ease; }
+.dgm-run.is-up .dgm-via { fill: color-mix(in srgb, var(--ink) 68%, var(--surface-solid)); }
+
+/* What crosses is a short burst rather than a line sliding down a pipe - the
+   same packet Nectar sends up a channel, on this figure's own clock. */
+
+.dgm-runflow {
+  fill: none;
+  stroke: var(--ink-deep);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-dasharray: 11 89;
+  opacity: 0;
+}
+
+@keyframes dgm-floor-run {
+  to { stroke-dashoffset: -100; }
+}
+
+.dgm-svg.is-live .dgm-run.is-up .dgm-runflow {
+  opacity: var(--run-in, 1);
+  animation: dgm-floor-run calc(4.8s + var(--life, 0) * 2.6s) linear infinite;
+  animation-delay: calc(var(--life, 0) * -4.2s);
+}
+
+/* ── The population ──────────────────────────────────────────────────────
+
+   STANDING UP IS THE CLEAN-UP, DRAWN.
+
+   Every solid on this floor is drawn once and read twice. Before its district
+   is stood, the two skirt faces are held at zero and the cap ring lies flat on
+   the floor: a footprint, which is exactly what a place with the work held
+   somewhere else has in it. After, the skirts come in and the same ring lifts
+   by its own height and becomes a roof.
+
+   It is Nectar's move - a definition standing up off the slab when the shared
+   intelligence binds it - and it is here for the same reason: a thing arriving
+   is more legible as a thing gaining a dimension than as a thing fading in.
+
+   The lift is equal negative steps on BOTH plan axes, which cancel in x and add
+   in -y, so a solid rises straight up the screen instead of sliding along the
+   floor on its way. Inside `planSpace` there is no other way to go up. */
+
+.dgm-plot .dgm-face-left,
+.dgm-plot .dgm-face-right {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 460ms ease;
+}
+
+.dgm-plot.is-up .dgm-face-left,
+.dgm-plot.is-up .dgm-face-right { opacity: 1; }
+
+.dgm-plot .dgm-face-left {
+  fill: color-mix(in srgb, var(--ink) var(--wash, 34%), var(--body-near));
+  stroke: color-mix(in srgb, var(--ink-deep) 44%, transparent);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.dgm-plot .dgm-face-right {
+  fill: color-mix(in srgb, var(--ink-deep) var(--shade, 18%), color-mix(in srgb, var(--ink) var(--wash, 34%), var(--body-far)));
+  stroke: color-mix(in srgb, var(--ink-deep) 50%, transparent);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.dgm-plotcap {
+  fill: var(--ink);
+  fill-opacity: 0.26;
+  stroke: color-mix(in srgb, var(--ink) 44%, transparent);
+  stroke-width: 1;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  transition: fill-opacity 460ms ease, stroke 460ms ease, transform 620ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dgm-plot.is-up .dgm-plotcap {
+  fill-opacity: 1;
+  stroke: var(--ink-deep);
+  transform: translate(calc(var(--lift, 0px) * -1), calc(var(--lift, 0px) * -1));
+}
+
+.dgm-plot.is-hot .dgm-plotcap { stroke: var(--ink-deep); }
+
+/* The floor is alive at rest, and quietly. Nectar's slab breathes as one wave
+   read at a phase taken from where each solid stands, and this does the same -
+   so twenty-seven solids swell and settle as something crossing the floor
+   rather than as twenty-seven accidents. Opacity only, at a fourteen per cent
+   amplitude on a nine-second clock: enough that the floor is never a still
+   photograph, far too little to pull an eye off the sentence beside it. */
+
+@keyframes dgm-floor-breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.86; }
+}
+
+.dgm-svg.is-live .dgm-plot.is-up {
+  animation: dgm-floor-breathe calc(9.2s + var(--life, 0) * 3.8s) ease-in-out infinite;
+  animation-delay: calc(var(--wave, 0) * -8.6s);
+}
+
+/* ── The drum ────────────────────────────────────────────────────────────
+
+   The Damaros mark, built as geometry instead of pasted on as a logo. The
+   monogram is two stacked forms, so this is two stacked plan cylinders with the
+   lower one wider, standing at the exact middle of the floor with every route
+   in the figure passing through it.
+
+   Nothing is written on it and nothing needs to be. It is the only round thing
+   at the centre of everything, which in a drawing with no labels anywhere is a
+   stronger identification than a word would be. */
+
+.dgm-drum {
+  cursor: pointer;
+  opacity: calc(0.3 * var(--spread, 1));
+  transition: opacity 560ms ease;
+}
+
+.dgm-drum.is-up { opacity: 1; }
+
+.dgm-drumhead {
+  fill: color-mix(in srgb, var(--ink) 9%, var(--surface-solid));
+  stroke: color-mix(in srgb, var(--ink-deep) 72%, transparent);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  transition: fill 460ms ease, stroke 460ms ease;
+}
+
+.dgm-drum.is-up .dgm-drumhead { fill: color-mix(in srgb, var(--ink) 24%, var(--surface-solid)); stroke: var(--ink-deep); }
+.dgm-drum.is-hot .dgm-drumhead { stroke: var(--ink-deep); }
+
+/* A head that is turning. It is the one continuously rotating mark on any of
+   the three sheets, and it earns that by being the thing everything else routes
+   through: a surface that is running is the whole claim of the lower half. */
+
+.dgm-drumring {
+  fill: none;
+  stroke: var(--settled);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 30 70;
+  opacity: 0;
+  transition: opacity 560ms ease;
+}
+
+.dgm-drum.is-up .dgm-drumring { opacity: 1; }
+
+@keyframes dgm-drum-turn {
+  to { stroke-dashoffset: -100; }
+}
+
+.dgm-svg.is-live .dgm-drum.is-up .dgm-drumring { animation: dgm-drum-turn 5.6s linear infinite; }
+
+/* ── The fragmented world ────────────────────────────────────────────────
+
+   Nine plates in the air on no shared axis, and NOT the house ink. They are
+   carried toward the neutral exactly the way Trident carries its proposal tier,
+   and for the same reason: they are the one kind of thing in the drawing that
+   is not the site's own system. A paler blue would have read as the floor seen
+   through fog, which is the opposite of what they are.
+
+   They come UP as the figure boots while the floor stands out of itself, so the
+   sheet separates into two layers at two rates rather than being handed to a
+   reader already apart. That is the whole of the depth on this sheet, and it is
+   two flat projected layers on two clocks - which is what an axonometric can do
+   without a third dimension the page has to download. */
+
+.dgm-shard {
+  --ink: color-mix(in srgb, var(--accent) 30%, var(--muted));
+  --ink-deep: color-mix(in srgb, var(--accent-strong) 34%, var(--muted));
+  --wash: 18%;
+  cursor: pointer;
+  opacity: calc(0.24 + 0.76 * var(--spread, 1));
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: translateY(calc((1 - var(--spread, 1)) * 30px + var(--float, 0px)));
+  transition: opacity 640ms ease, transform 720ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dgm-svg.is-live .dgm-shard:not(.is-gone) {
+  animation: dgm-bob calc(7.4s + var(--life, 0) * 4.6s) ease-in-out infinite;
+  animation-delay: calc(var(--life, 0) * -9.8s);
+}
+
+/* Gone, not deleted. A site does not throw out its EHR the day it stops running
+   research inside it, and a figure that vanished these would be telling a story
+   about greenfield sites nobody has. So a ghost is the SAME PLATE at a third of
+   its ink, with nothing left lying on it: still there, still in the way, and
+   empty. It was briefly an unfilled top face in a broken stroke, which turned
+   nine clean solids into nine smudges - a rounded lozenge in a dashed line
+   reads as a cloud rather than as a drawing. */
+
+.dgm-shard.is-gone {
+  opacity: 0.2;
+  transform: translateY(calc((1 - var(--spread, 1)) * 30px + var(--float, 0px))) scale(0.88);
+}
+
+.dgm-shard.is-gone .dgm-inert { opacity: 0; }
+.dgm-shard.is-hot { opacity: 1; }
+
+.dgm-shard :is(.dgm-face-top, .dgm-face-left, .dgm-face-right) {
+  transition: opacity 520ms ease, fill 520ms ease, stroke-dasharray 520ms ease;
+}
+
+/* The hairline down to the place on the ground the work belongs. It is the one
+   mark on the sheet that measures anything: how far from the floor the work is
+   being held. It stays after the plate empties, in the floor's own ink, because
+   the ground point is now where the work actually is. */
+
+.dgm-tether {
+  fill: none;
+  stroke: color-mix(in srgb, var(--muted) 38%, transparent);
+  stroke-width: 1;
+  stroke-dasharray: 1.5 5;
+  transition: stroke 560ms ease, opacity 560ms ease;
+}
+
+.dgm-shard.is-gone .dgm-tether { opacity: 0.22; }
+.dgm-shard.is-hot .dgm-tether { stroke: color-mix(in srgb, var(--muted) 74%, transparent); }
+
+.dgm-tetherfoot {
+  fill: color-mix(in srgb, var(--muted) 44%, transparent);
+  transition: fill 560ms ease;
+}
+
+.dgm-shard.is-gone .dgm-tetherfoot { fill: color-mix(in srgb, var(--ink) 46%, transparent); }
+
+/* What a general-purpose system holds: rows, a sheet of cells, a page. Three
+   marks, because there are only three kinds of thing any of them can hold, and
+   not one of them is something that runs. */
+
+.dgm-inert { transition: opacity 480ms ease; }
+
+.dgm-inertmark {
+  fill: color-mix(in srgb, var(--muted) 46%, transparent);
+  stroke: none;
+}
+
+.dgm-inertmark.is-open {
+  fill: none;
+  stroke: color-mix(in srgb, var(--muted) 44%, transparent);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dgm-svg.is-floor :is(.dgm-shard, .dgm-tether, .dgm-tetherfoot, .dgm-inert, .dgm-plot, .dgm-plotcap, .dgm-zone, .dgm-zonefill, .dgm-zonerim, .dgm-run, .dgm-runpath, .dgm-runflow, .dgm-drum, .dgm-drumhead, .dgm-drumring) {
+    transition: none;
+    animation: none;
   }
 }

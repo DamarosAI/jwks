@@ -303,6 +303,21 @@ body,
 
   #root .dgm-svg { min-width: 500px; }
 
+  /* The floor is a wide, dense sheet and it does not hold at five hundred - at
+     that width its smallest solids are two pixels and its three districts are
+     one smear. It holds at eight-forty and pans, which is what the shared rule
+     above already says a schematic should do rather than simplify. */
+
+  #root .dgm-svg.is-floor { min-width: 840px; }
+
+  #root .thesis-column {
+    width: 100%;
+  }
+
+  #root .thesis-head h2 {
+    max-width: none;
+  }
+
 
   #root .final-cta {
     width: calc(100% - 24px);

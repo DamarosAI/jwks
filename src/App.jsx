@@ -5,6 +5,7 @@ import { easeSectionScroll, sectionScrollDuration, sectionScrollTarget, usePaneS
 import { useDemoPageWheel } from './page-scroll'
 import { PilotButton, PilotProvider } from './PilotInquiry'
 const PrivacyPage = lazy(() => import('./PrivacyPage'))
+import ChainSchematic from './diagrams/ChainSchematic'
 import TridentSchematic from './diagrams/TridentSchematic'
 import NectarSchematic from './diagrams/NectarSchematic'
 import { useScrollSpread } from './diagrams/useScrollPhase'
@@ -565,24 +566,58 @@ function LandingHero() {
   )
 }
 
+/* THE THESIS IS A DIAGRAM NOW, AND THE SENTENCE IS ITS DEK.
+
+   It used to be one line of six-inch type on the page ground, centred, and
+   nothing else - the largest thing on the site saying the least specific thing
+   on it. A claim that scale has to be earned by the claim being hard to draw,
+   and this one is not: five stages of a protocol are held apart today and they
+   do not have to be. So the section states it the way the two product sections
+   state theirs, with the figure carrying the argument and the sentence sitting
+   over it as a dek.
+
+   Everything in it lines up on the eyebrow's own left edge - the wrapper is the
+   same 1480 the eyebrow's offset is solved against - so the dek, the figure and
+   the closer start where the word THESIS starts and the section reads as one
+   column rather than as a centred slab with a label stuck to its corner. */
+
 function ThesisSection() {
   const root = useRef(null)
   const reduced = useReducedMotion()
+  const narrow = useMediaQuery(NARROW_VIEWPORT)
+  const inView = useInView(root)
+  const animate = shouldRunAmbient({ reduced, inView, narrow })
+  const field = useScrollSpread({ reduced, start: 'top bottom', end: 'top 40%' })
 
-  useEnterMotion(root, reduced, () => gsap.from('.thesis-head > *', {
-    opacity: 0,
-    duration: 0.8,
-    stagger: 0.1,
-    ease: 'power2.out',
-    clearProps: 'transform',
-    scrollTrigger: { trigger: root.current, start: 'top 68%', once: true },
-  }))
+  useEnterMotion(root, reduced, () => [
+    gsap.from('.thesis-head > *', {
+      opacity: 0,
+      duration: 0.8,
+      stagger: 0.12,
+      ease: 'power2.out',
+      clearProps: 'transform',
+      scrollTrigger: { trigger: root.current, start: 'top 74%', once: true },
+    }),
+    gsap.from('.thesis-chain', {
+      opacity: 0,
+      duration: 1.2,
+      ease: 'power3.out',
+      clearProps: 'transform',
+      scrollTrigger: { trigger: root.current, start: 'top 68%', once: true },
+    }),
+  ])
 
   return (
     <section className="thesis-section section-space" id="thesis" ref={root}>
       <SectionEyebrow>Thesis</SectionEyebrow>
-      <div className="thesis-head">
-        <h2><span className="thesis-line accent-text">The next generation of medicine</span><span className="thesis-line">cannot run on yesterday's research infrastructure.</span></h2>
+      <div className="section-field" ref={field} aria-hidden="true" />
+      <div className="thesis-column">
+        <div className="thesis-head">
+          <h2><span className="thesis-line accent-text">The next generation of medicine</span><span className="thesis-line">cannot run on yesterday's research infrastructure.</span></h2>
+        </div>
+        <div className="thesis-chain">
+          <ChainSchematic animate={animate} reduced={reduced} />
+        </div>
         <p className="thesis-closer"><BrandName /> is building what comes next.</p>
       </div>
     </section>

@@ -1,5 +1,5 @@
 /**
- * Axonometric helpers for the Trident and Nectar figures.
+ * Axonometric helpers for the Chain, Trident and Nectar figures.
  *
  * A squashed isometric: the horizontal spread is a true 30-degree isometric,
  * the vertical spread is flattened to 0.34 so a stack of decks reads as a
@@ -264,4 +264,48 @@ export function planSpace(cx, cy) {
 export function jitter(index, salt) {
   const value = Math.sin(index * 12.9898 + salt * 78.233) * 43758.5453
   return round(value - Math.floor(value))
+}
+
+/**
+ * A rounded solid centred on screen (cx, cy) whose plan is a RECTANGLE rather
+ * than a square: `roundedDeck` with two half-sizes.
+ *
+ * The two figures that came first are both built over square plans - a Trident
+ * tier and a Nectar slab are as deep as they are wide - so `roundedDeck` never
+ * needed the second number. A chain does: it is long in one plan axis and
+ * narrow in the other, because that is what a run through five stages is.
+ *
+ * It is the same construction and the same corner, sampled by `roundedBox`
+ * instead of `roundedPlan`, so a bay standing on this slab and the slab itself
+ * are cut from one geometry. Returns the same parts `roundedDeck` returns, so
+ * anything that can hang off a deck can hang off this.
+ */
+export function roundedSlab(cx, cy, halfX, halfY, height, radius) {
+  const p = project(cx, cy)
+  const plan = roundedBox(halfX, halfY, radius, 7)
+  const ring = plan.map(([x, y]) => p(x, y))
+  const pick = (score) => plan.reduce((best, point, index) => (score(point) > score(plan[best]) ? index : best), 0)
+  const iRight = pick(([x, y]) => x - y)
+  const iFront = pick(([x, y]) => x + y)
+  const iLeft = pick(([x, y]) => y - x)
+  const iBack = pick(([x, y]) => -x - y)
+
+  const trace = (list) => list.map(([x, y]) => `${x} ${y}`).join(' L ')
+  const skirt = (from, to) => {
+    const face = ring.slice(from, to + 1)
+    const under = face.map(([x, y]) => [x, round(y + height)])
+    return `M ${trace(face)} L ${trace(under.reverse())} Z`
+  }
+
+  return {
+    p,
+    height,
+    top: pts(ring),
+    faceRight: skirt(iRight, iFront),
+    faceLeft: skirt(iFront, iLeft),
+    back: ring[iBack],
+    right: ring[iRight],
+    front: ring[iFront],
+    left: ring[iLeft],
+  }
 }

@@ -89,8 +89,17 @@ describe('Damaros brand mark', () => {
     assert.match(css, /#root \.section-eyebrow\.is-brand \{/)
     assert.match(css, /\.page-spine \{[\s\S]*?width:\s*34px;/)
     assert.match(css, /\.site-nav-wrap \{[\s\S]*?z-index:\s*50;[\s\S]*?isolation:\s*isolate;/)
-    assert.match(css, /\.thesis-section \{[\s\S]*?align-items:\s*stretch;[\s\S]*?text-align:\s*center;/)
-    assert.match(css, /\.thesis-head \{[\s\S]*?align-items:\s*center;[\s\S]*?text-align:\s*center;/)
+    // The thesis section is a left-set column now rather than a centred slab -
+    // the eyebrow, the dek, the figure and the closer all start on one pixel -
+    // so both of these pin the LEFT setting and the alignment they replaced.
+    assert.match(css, /\.thesis-section \{[\s\S]*?align-items:\s*stretch;[\s\S]*?text-align:\s*left;/)
+    assert.match(css, /\.thesis-head \{[\s\S]*?align-items:\s*flex-start;[\s\S]*?text-align:\s*left;/)
+    // And the column width is SOLVED against the eyebrow's own offset rather
+    // than eyeballed: the eyebrow sits at `(W - min(W, 1480)) / 2 + gutter`
+    // from the section edge, and a column centred in a content box already
+    // `W - 2 * gutter` wide lands on that same pixel only at this width. If
+    // either number moves without the other, the section stops lining up.
+    assert.match(css, /\.thesis-column \{[\s\S]*?width:\s*min\(100%, calc\(1480px - var\(--gutter\) \* 2\)\);/)
     assert.match(css, /#root \.thesis-section \.section-eyebrow,[\s\S]*?left:\s*var\(--gutter\);/)
     assert.match(css, /\.thesis-section > \.section-eyebrow,[\s\S]*?align-self:\s*flex-start;[\s\S]*?left:\s*calc\(\(100% - min\(100%, 1480px\)\) \/ 2 \+ var\(--gutter\)\);/)
     assert.match(mobile, /#root \.thesis-section \.section-eyebrow,[\s\S]*?left:\s*var\(--gutter\);/)
@@ -124,7 +133,19 @@ describe('Damaros brand mark', () => {
   it('answers the thesis with the brand mark and even section padding', () => {
     assert.match(app, /<span className="thesis-line accent-text">The next generation of medicine<\/span><span className="thesis-line">cannot run on yesterday's research infrastructure\.<\/span>/)
     assert.match(css, /#root \.thesis-head h2 \.thesis-line \{[^}]*display:\s*block;/)
-    assert.match(app, /className="thesis-closer"><BrandName \/> is building what comes next\./)
+    // The sentence is a DEK over a figure now, not the largest type on the
+    // site. It runs on the same body-anchored ramp the two product deks run
+    // on, and it is pinned at `#root` because four grouped rules in the sheet
+    // used to size this element as a page heading. If any of them is ever
+    // re-added, the thesis line silently goes back to four inches and this is
+    // the thing that notices.
+    assert.match(css, /#root \.thesis-head h2 \{\s*\n\s*font-size:\s*clamp\(1\.34rem, 1\.1rem \+ 1\.02vw, 2\.05rem\);/)
+    assert.doesNotMatch(css, /\.thesis-head h2,\n\.capacity-section \.section-heading h2/)
+    assert.doesNotMatch(css, /#root \.section-heading h2,\n#root \.thesis-head h2/)
+    // And the closer sits UNDER the drawing that earns it rather than directly
+    // beneath the sentence, which made the section a claim answered by a
+    // slogan. Order in the source is the order on the page.
+    assert.match(app, /className="thesis-chain">[\s\S]*?<\/div>\s*\n\s*<p className="thesis-closer"><BrandName \/> is building what comes next\./)
     assert.match(css, /\.thesis-section\.section-space \{[\s\S]*?padding-block:\s*112px;/)
     assert.match(css, /\.landing-hero \{[\s\S]*?padding:\s*clamp\(196px, 22vh, 248px\) var\(--gutter\) 112px;/)
     assert.match(app, /className="hero-scroll-cue"/)
