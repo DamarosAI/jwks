@@ -65,20 +65,25 @@ describe('Damaros brand mark', () => {
     // to the same voice as the sentence it introduces, not to the UI face every
     // caption uses.
     //
-    // Endless ships ONE weight. There is a single @font-face for it, 400, and
-    // `font-synthesis: none` is set on the eyebrow, so a rule here asking for 700
-    // would render at 400 and the sheet would be stating a weight it does not
-    // get. This pins the declared weight to what actually paints, and pins the
-    // fact it rests on: if a second Endless face is ever added, this fails and
-    // the decision gets made again rather than drifting.
+    // Endless ships ONE weight. There is a single @font-face for it, 400, so a
+    // declared 700 only paints as bold if synthesis is allowed to make it - and
+    // the eyebrow base rule turns synthesis OFF. The brand rule asks for 700 and
+    // turns it back on, and BOTH halves are pinned here, because either one
+    // alone is the bug: a 700 with synthesis still off is a weight the sheet
+    // states and does not get, which is exactly what this rule used to avoid by
+    // declaring 400.
     const brandRule = css.match(/\.section-eyebrow\.is-brand,[\s\S]*?\n\}/)[0]
     assert.match(brandRule, /font-family:\s*var\(--font-display\);/)
-    assert.match(brandRule, /font-weight:\s*400;/)
-    assert.doesNotMatch(brandRule, /font-weight:\s*[5-9]00;/)
+    assert.match(brandRule, /font-weight:\s*700;/)
+    assert.match(brandRule, /font-synthesis:\s*weight;/)
     assert.match(css, /--font-display:\s*'Endless'/)
     assert.equal((css.match(/font-family: 'Endless';/g) || []).length, 1)
     assert.match(css, /@font-face \{\s*\n\s*font-family: 'Endless';[\s\S]*?font-weight: 400;/)
+    // Synthesis is turned back on for the two brand eyebrows and NOWHERE else:
+    // the base eyebrow rule still refuses it, so the four topic labels and every
+    // other run of Endless keep painting the one weight that was drawn.
     assert.match(css, /\.section-eyebrow,[\s\S]*?font-synthesis:\s*none;/)
+    assert.equal((css.match(/font-synthesis:\s*weight;/g) || []).length, 1)
     // The mobile sheet restates the eyebrow rule at `#root .section-eyebrow`, so
     // the brand rule has to out-specify it or the phone gets the label treatment.
     assert.match(css, /#root \.section-eyebrow\.is-brand \{/)

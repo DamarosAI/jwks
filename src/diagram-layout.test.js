@@ -1806,7 +1806,7 @@ describe('Trident and Nectar schematics', () => {
     for (const source of [app, css, mobile, nectar]) assert.doesNotMatch(source, /library/i)
     assert.doesNotMatch(para, /\bmodels?\b/i)
     assert.doesNotMatch(nectar, /\bmodels?\b/i)
-    assert.match(nectar, /pill: 'SHARED INTELLIGENCE'/)
+    assert.match(nectar, /pill: 'INTELLIGENCE'/)
     assert.match(nectar, /const INTEL_HALF = 160/)
     assert.match(nectar, /const INTEL = roundedDeck\(310, MESH_Y, INTEL_HALF, INTEL_WALL, 28\)/)
     assert.match(nectar, /className=\{`dgm-intel\$\{lit\('intel'\)\}`\}/)

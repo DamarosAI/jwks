@@ -747,7 +747,7 @@ const READS = {
   'SITE 042': { tone: 'pass', pill: 'PUBLISHER', read: 'Site 042 published the scale it measures on, so a reading taken here is comparable anywhere.' },
   'SITE 103': { tone: 'pass', pill: 'MAPPER', read: 'Site 103 sent a mapping between two vocabularies. The other two can now read its codes.' },
   'SITE 018': { tone: 'valid', pill: 'ORIGIN', read: 'Site 018 wrote the definition the other two are running. One author, three sites executing.' },
-  intel: { tone: 'valid', pill: 'SHARED INTELLIGENCE', read: 'Every definition in the shared intelligence came up from a site, and any site can take one down and run it.' },
+  intel: { tone: 'valid', pill: 'INTELLIGENCE', read: 'Every definition in the shared intelligence came up from a site, and any site can take one down and run it.' },
 }
 
 // A shade is stepped rather than blurred, and the steps are a share of the

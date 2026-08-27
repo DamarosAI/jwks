@@ -24,6 +24,7 @@ import {
   List,
   Power,
   ShieldCheck,
+  WarningCircle,
   X,
 } from '@phosphor-icons/react'
 
@@ -658,7 +659,7 @@ function InlineActionPanel({ open, complete = false, eyebrow = 'ACTION REQUIRED'
   const panelTitle = complete ? successTitle : title
   return (
     <section className={`inline-action-panel ${complete ? 'is-complete' : 'is-required'}`} aria-live="polite" aria-label={panelTitle}>
-      <header>{complete ? <CheckCircle size={18} weight="fill" /> : <span aria-hidden="true">!</span>}<div><small>{complete ? 'ACTION COMPLETE' : eyebrow}</small><h5>{panelTitle}</h5></div></header>
+      <header>{complete ? <CheckCircle size={18} weight="fill" /> : <WarningCircle size={18} />}<div><small>{complete ? 'ACTION COMPLETE' : eyebrow}</small><h5>{panelTitle}</h5></div></header>
       <p>{complete ? successDescription : description}</p>
       <dl>{rows.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
       <footer>{complete ? <button className="button button-primary" type="button" onClick={onClose}>Close</button> : <><button className="button button-secondary" type="button" onClick={onClose}>Back</button><button className="button button-primary" type="button" onClick={onConfirm}>{confirmLabel}</button></>}</footer>

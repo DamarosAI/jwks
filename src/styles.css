@@ -809,21 +809,29 @@ h2 {
    names of their own were drawn at the same volume as the word "Capacity", and
    a reader scanning the page met the brand as a caption.
 
-   THE DISPLAY FACE, AND WHAT THAT COSTS. These are set in Endless, which is
-   what every headline on the site is set in and what the two names should be
+   THE DISPLAY FACE, AND THE WEIGHT IT IS GIVEN. These are set in Endless, which
+   is what every headline on the site is set in and what the two names should be
    set in: a product name belongs to the same voice as the sentence it is
    introducing, not to the UI face every caption uses.
 
    Endless ships one weight. There is a single @font-face for it, 400, and
-   `font-synthesis: none` is set two rules up - so `font-weight: 700` here would
-   render at 400 and the sheet would be stating a weight it does not get. It
-   says 400, which is the truth.
+   `font-synthesis: none` two rules up used to settle the question by making 700
+   unavailable: a rule asking for it would have painted 400 and the sheet would
+   have been stating a weight it did not get, so it asked for 400.
 
-   Which leaves size as the only lever the face gives, so size carries all of
-   it: twenty-three to twenty-nine pixels against a label at twelve to fifteen,
-   a ratio just under two to one at every viewport. That is a wider gap than the
-   weight jump ever bought, and it is why the clamp went up by a fifth when the
-   family changed - the two moves are one move.
+   The two names are wanted bolder than that, and with one face on disk the only
+   honest way to get it is to let the browser synthesise it - so synthesis is
+   turned back on HERE, for these two rules and nothing else, and the weight
+   asks for 700 and gets 700. Scoped rather than lifted on the base rule: every
+   other eyebrow, and every other run of Endless on the site, still paints the
+   one weight that was drawn. If a real bold Endless is ever added, this rule
+   picks it up and the synthesis line stops doing anything - nothing here has to
+   change for that to be an improvement.
+
+   Size still carries most of the separation, because weight on a synthesised
+   face carries less than a drawn bold would: twenty-three to twenty-nine pixels
+   against a label at twelve to fifteen, a ratio just under two to one at every
+   viewport, and it is why the clamp went up by a fifth when the family changed.
 
    Tracking comes DOWN, 0.16em to 0.06em, in two steps for two reasons.
    Letterspacing is what makes fourteen pixels of uppercase legible and at
@@ -837,7 +845,8 @@ h2 {
   color: var(--accent-strong);
   font-family: var(--font-display);
   font-size: var(--type-brand-eyebrow);
-  font-weight: 400;
+  font-weight: 700;
+  font-synthesis: weight;
   letter-spacing: 0.06em;
 }
 
@@ -5142,9 +5151,30 @@ html { scroll-padding-top: 96px; }
 }
 
 .inline-action-panel > header { display: flex; align-items: flex-start; gap: 10px; }
-.inline-action-panel > header > span,
+/* THE REQUIRED BADGE IS A DRAWN ICON, NOT A TYPESET ONE.
+
+   It used to be an "!" in a CSS circle: an 18px box, a 1.5px border, a radius
+   of 50% and `place-items: center`. Two things were wrong with it.
+
+   It never got the type it asked for. Two blanket rules in the product-window
+   block carry #root and so out-specify anything this panel says about itself -
+   one pins every descendant to weight 400, the other floors every small/em/
+   time/b/dt/SPAN at 13px for legibility. The badge is a span, so it was caught
+   by both: it painted 13px/400 where the rule here said 11px/700, which is a
+   large glyph crowding a 15px inner circle. Those rules are right about text
+   and this was not text - it was an icon wearing a span.
+
+   And a centred text box is not a centred glyph. `place-items: center` centres
+   the LINE box; "!" has no descender, so its ink sits high in that box and the
+   mark reads low in the circle no matter what the type is set to.
+
+   Both problems are the same mistake - drawing an icon out of a letter - so the
+   letter goes. WarningCircle is the sibling of the CheckCircle this alternates
+   with, from the same set at the same 18px: centred in its own viewBox by
+   construction, immune to the font rules above, and guaranteed to occupy the
+   identical box in both states so the header cannot shift when it flips. */
+
 .inline-action-panel > header > svg { flex: 0 0 auto; color: var(--warning); }
-.inline-action-panel > header > span { display: grid; width: 18px; height: 18px; place-items: center; border: 1.5px solid currentColor; border-radius: 50%; font-size: .6875rem; font-weight: 700; }
 .inline-action-panel.is-complete > header > svg { color: var(--success); }
 .inline-action-panel header > div { display: grid; gap: 3px; min-width: 0; }
 .inline-action-panel header small { color: var(--warning); font-size: .6875rem; font-weight: 650; letter-spacing: .05em; }
@@ -9338,6 +9368,41 @@ html.is-hidden .clinic-node i,
 
 .nectar-copy .control-facts {
   margin-top: 28px;
+}
+
+/* THE NAME HAS TO REACH THE HEADLINE IT INTRODUCES.
+
+   Both sections are a two-column grid with `align-items: center`, and the
+   figure is the tall item - seven hundred pixels against a copy column of about
+   four hundred. Centring the copy against that pushed the headline more than
+   two hundred pixels below the eyebrow, and the eyebrow is pinned to the
+   section's top-left corner. So the one thing on the page that names the
+   product sat alone in a corner with a quarter of the section between it and
+   the sentence it was introducing, and it read as page furniture rather than as
+   a kicker on that headline.
+
+   The copy comes up to meet it. Not all the way: snapping it to the top of the
+   grid would close the gap to about forty pixels and leave the column hanging
+   off the top of a figure it is meant to sit beside. Starting the column and
+   then paying back part of the slack lands the headline near the middle of that
+   range - the name reads as attached, and the copy still sits against the
+   figure rather than above it.
+
+   ONE RULE FOR THE PAIR, like the dek and the facts above it. Only Trident was
+   reported, but the two sections are the same layout mirrored and a fix to one
+   is a drift in the other.
+
+   Scoped to the two-column layout on purpose. Below 900px these become a flex
+   column, where `align-self` would be the HORIZONTAL axis and would shrink the
+   copy to its content width - so the offset is not something the stacked
+   layout should inherit and then have to undo. */
+
+@media (min-width: 901px) {
+  .trident-copy,
+  .nectar-copy {
+    align-self: start;
+    margin-top: clamp(48px, 5vw, 84px);
+  }
 }
 
 /* -- Trident and Nectar schematics --
