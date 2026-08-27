@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 
 /**
  * Where the pointer is over an element, as two numbers in [-1, 1].
@@ -17,16 +17,23 @@ import { useCallback, useRef } from 'react'
  * already exist, so the whole effect runs on the compositor and nothing in
  * React ever hears about it.
  *
+ * It attaches to a ref the caller already keeps rather than handing back a
+ * callback ref to merge with one. Every section that wants this is already
+ * holding its root for GSAP to scope against, and a merged ref that writes
+ * `root.current` from inside a callback is both harder to read and something
+ * the hooks lint is right to object to.
+ *
  * IT IS OFF WHERE IT WOULD BE A LIE. On a touch screen there is no pointer to
  * follow - a tap would jump the layers and leave them wherever the finger last
  * was - so a coarse pointer never arms it. Reduced motion never arms it either.
  * In both cases the element keeps the zeroes it started with and every
  * expression downstream of them collapses to no offset at all.
  */
-export function usePointerField({ reduced = false } = {}) {
+export function usePointerField(target, { reduced = false } = {}) {
   const frame = useRef(0)
 
-  return useCallback((node) => {
+  useEffect(() => {
+    const node = target.current
     if (!node || reduced) return undefined
     if (typeof window === 'undefined') return undefined
     // A pointer that cannot hover cannot drive a parallax; it can only teleport
@@ -67,5 +74,5 @@ export function usePointerField({ reduced = false } = {}) {
       node.removeEventListener('pointermove', move)
       node.removeEventListener('pointerleave', leave)
     }
-  }, [reduced])
+  }, [reduced, target])
 }

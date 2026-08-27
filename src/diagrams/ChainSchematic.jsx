@@ -69,12 +69,11 @@ const W = 900
 const H = 700
 const CX = 450
 
-// The ground. A wide plan rectangle rather than the square the other two
-// figures are built over: this one is a floor being looked across, not a tier
-// being looked at.
-const PLANE_Y = 500
-const PLANE_X = 292
-const PLANE_Z = 132
+// The ground. Squarer than it was, because the three districts no longer sit in
+// a row down the middle of it and the plan needs depth to put them at.
+const PLANE_Y = 480
+const PLANE_X = 330
+const PLANE_Z = 150
 // A SUBSTRATE, NOT A SHEET. Fifteen units of thickness drew the ground as a
 // tablet lying on the page. Thirty-four gives the bottom of the figure mass and
 // gives the composition a base to stand on - which is the honest reading as
@@ -84,43 +83,83 @@ const PLANE_T = 34
 const PLANE = roundedSlab(CX, PLANE_Y, PLANE_X, PLANE_Z, PLANE_T, 30)
 const PLAN = project(CX, PLANE_Y)
 
-// Three districts, on the plan axis that runs across the sheet. Sponsors at one
-// end, patients at the other, and the site between them - which is not a
-// decorative ordering. The site is where a protocol meets a person, so it is
-// the only one of the three that both of the others have to reach through.
+/* THREE DISTRICTS, AND THE THREE THINGS THAT WERE WRONG WITH THEM.
+
+   They were strung along one plan axis at one plan depth, at one size, on one
+   level. Which is a row of beads on a wire: the plane had a whole second axis
+   and the drawing never used it, so however much air went in above the floor
+   the floor itself stayed one-dimensional and the screen's vertical read had
+   nothing in it but three things side by side.
+
+   All three of the depth cues a parallel projection has are now in use, and
+   each one is doing the same job:
+
+   STAGGERED IN BOTH PLAN AXES. Sponsors sit back and left, the site in the
+   middle, patients forward and right - a diagonal through the plan rather than
+   a line across it. That is a hundred and eighty pixels of screen height
+   between the far district and the near one, where there used to be none.
+
+   SIZED BY DISTANCE. The far district is the smallest and the near one is the
+   largest, so the stagger is confirmed by scale instead of having to be
+   inferred from position alone.
+
+   AND THEY ARE NOT ON ONE LEVEL UNTIL THEY ARE FIXED. See `drop`. */
 const ZONES = [
   {
     key: 'sponsors',
-    at: [-196, -6],
-    r: 96,
+    at: [-236, -40],
+    r: 66,
+    // How far out of true this district sits while the ground is still broken.
+    // Two are sunk and one is heaved, because ground that has failed does not
+    // fail in one direction - and three different offsets is three different
+    // screen heights, which is the whole of what the vertical axis was missing.
+    drop: 22,
     pill: 'SPONSORS',
     before: 'A protocol leaves a sponsor as a document. Every site rebuilds it by hand, differently.',
     after: 'One versioned protocol, executed the same way at every site, with its evidence attached.',
   },
   {
     key: 'sites',
-    at: [0, 4],
-    r: 104,
+    at: [4, 8],
+    r: 100,
+    drop: -16,
     pill: 'SITES',
     before: 'Twenty-odd systems, none built for research, and a person carrying work between them.',
     after: 'Governed agents on ground the site controls. Records stay put; decisions are signed there.',
   },
   {
     key: 'patients',
-    at: [196, -6],
-    r: 96,
+    at: [238, 52],
+    r: 84,
+    drop: 32,
     pill: 'PATIENTS',
     before: 'Whether a patient can join a trial depends on the building they can reach that week.',
     after: 'Participation stops depending on geography. The trial runs where care already happens.',
   },
-]
-
-const BY_ZONE = Object.fromEntries(ZONES.map((zone) => [zone.key, zone]))
+].map((zone) => {
+  const [sx, sy] = PLAN(zone.at[0], zone.at[1])
+  return {
+    ...zone,
+    // Where the district stands on the sheet, and the tile it stands on. Each
+    // district is now its own plate rather than a disc drawn on a shared plane,
+    // which is what lets it sit out of true while the ground is broken and come
+    // level when it is fixed.
+    screen: [sx, sy],
+    tile: roundedSlab(sx, sy, zone.r + 8, zone.r + 8, 13, 24),
+    // Depth order: further along the plan diagonal is nearer the reader.
+    depth: zone.at[0] + zone.at[1],
+  }
+}).sort((a, b) => a.depth - b.depth)
 
 /**
- * A district's population, scattered inside its own disc on a stable pseudo
+ * A district's population, scattered inside its own tile on a stable pseudo
  * random walk rather than on a grid. A grid would read as a table of contents;
  * what this has to read as is a place with things in it.
+ *
+ * The coordinates are LOCAL to the tile now. A district is a plate that stands
+ * out of true until it is fixed, so everything on it has to travel with it -
+ * which it cannot do if its solids are positioned against a plane it is no
+ * longer level with.
  *
  * `kind` is the only thing telling the three districts apart, because nothing
  * here is lettered: sponsors are upright blocks, the site is a dense low works,
@@ -130,50 +169,70 @@ function populate(zone, count, kind, salt) {
   // The site district is drawn round a hole, because the drum stands in it. A
   // district that fills its own centre has nothing at its centre.
   const inner = kind === 'works' ? 0.42 : 0.3
+  // Scale rides with the district, so the far one is small in every particular
+  // rather than being a full-size place drawn further away.
+  const grain = zone.r / 96
   return Array.from({ length: count }, (_, index) => {
     const angle = jitter(index, salt) * Math.PI * 2
-    const radius = (inner + jitter(index, salt + 5) * (0.96 - inner)) * (zone.r - 20)
-    const x = Math.round(zone.at[0] + Math.cos(angle) * radius)
-    const y = Math.round(zone.at[1] + Math.sin(angle) * radius * 0.86)
+    const radius = (inner + jitter(index, salt + 5) * (0.96 - inner)) * (zone.r - 16)
+    const x = Math.round(Math.cos(angle) * radius)
+    const y = Math.round(Math.sin(angle) * radius * 0.88)
     const grade = jitter(index, salt + 11)
-    const tall = Math.round((kind === 'people' ? 15 : 9) + grade * (kind === 'works' ? 15 : 24))
+    // A wider height range than before, so a district has a skyline rather than
+    // an even nap. Uniform stubs are the other half of why the sheet read flat.
+    const tall = Math.round(((kind === 'people' ? 14 : 8) + grade * (kind === 'works' ? 26 : 38)) * grain)
+    const half = Math.round((10 + grade * 7) * grain)
     return {
       key: `${zone.key}-${index}`,
       zone: zone.key,
       kind,
-      x,
-      y,
-      // Depth order on screen, so a solid in front occludes the one behind it
-      // rather than being drawn under it. Forty solids in list order is a pile.
+      // Depth order within the tile, so a solid in front occludes the one
+      // behind it. Nineteen solids in list order is a pile.
       depth: x + y,
-      tall,
       round: kind === 'people',
       solid: kind === 'people'
-        ? planCyl(x, y, Math.round(7 + grade * 5), tall)
-        : planPrism(x, y, Math.round(11 + grade * 7), Math.round(11 + grade * 7), tall, 4),
+        ? planCyl(x, y, Math.round((6 + grade * 5) * grain), tall)
+        : planPrism(x, y, half, half, tall, 4),
       life: jitter(index, salt + 17),
-      wave: Math.round(((x + y + 400) / 900) * 100) / 100,
+      wave: Math.round(((x + y + 200) / 400) * 100) / 100,
+      // How far back inside its own tile the solid stands, for the air.
+      far: 0,
     }
-  })
+  }).sort((a, b) => a.depth - b.depth)
 }
 
-const RAW = [
-  ...populate(ZONES[0], 7, 'blocks', 3),
-  ...populate(ZONES[1], 9, 'works', 19),
-  ...populate(ZONES[2], 9, 'people', 41),
-].sort((a, b) => a.depth - b.depth)
+const COUNTS = { sponsors: 7, sites: 9, patients: 9 }
+const KINDS = { sponsors: 'blocks', sites: 'works', patients: 'people' }
+const SALTS = { sponsors: 3, sites: 19, patients: 41 }
 
-// How far back each solid stands, as a number in [0, 1] solved from the plan
-// rather than assigned by hand - so moving a district moves its air with it.
-// This is what the sheet fades against, and it is the one rule here the other
-// two figures must not have: distance is a fact about a place and not about an
-// instrument.
-const NEAR = RAW[RAW.length - 1].depth
-const BACK = RAW[0].depth
-const POPULATION = RAW.map((item) => ({
-  ...item,
-  far: Math.round(((NEAR - item.depth) / (NEAR - BACK)) * 100) / 100,
+// The air, solved per district rather than across the whole sheet: a solid is
+// faded by how far back it stands inside its own tile, and the tile itself is
+// faded by how far back the district stands on the ground. Two ramps, and they
+// compound - which is what makes the far district read as further away rather
+// than merely smaller.
+const POPULATED = ZONES.map((zone) => {
+  const items = populate(zone, COUNTS[zone.key], KINDS[zone.key], SALTS[zone.key])
+  const near = items[items.length - 1].depth
+  const back = items[0].depth
+  return {
+    ...zone,
+    items: items.map((item) => ({
+      ...item,
+      far: Math.round(((near - item.depth) / (near - back || 1)) * 100) / 100,
+    })),
+    // Zero at the front of the ground, one at the back.
+    haze: 0,
+  }
+})
+
+const FAR = Math.min(...POPULATED.map((zone) => zone.depth))
+const FORE = Math.max(...POPULATED.map((zone) => zone.depth))
+const DISTRICTS = POPULATED.map((zone) => ({
+  ...zone,
+  haze: Math.round(((FORE - zone.depth) / (FORE - FAR)) * 100) / 100,
 }))
+
+const BY_ZONE = Object.fromEntries(DISTRICTS.map((zone) => [zone.key, zone]))
 
 // THE DRUM, AND IT IS THE ONE THING ON THE FLOOR THAT GOES UP.
 //
@@ -209,10 +268,18 @@ function route(from, to, bow) {
   }
 }
 
+// The three legs, solved between the district centres rather than typed against
+// a plane the districts no longer sit in a row on. A leg only carries anything
+// once both ends are level: a route between two pieces of ground at two heights
+// is not a route, which is the whole argument the broken state is making.
+// Two legs, not three. There was a return running the whole way round the
+// outside of the plane, and it cost more than it said: a line that leaves the
+// districts entirely to draw a loop is a line the reader tracks instead of the
+// ground. What is left is the two crossings that happen in the gaps between the
+// tiles, which is the only place a route on this figure can be seen at all.
 const ROUTES = [
-  { key: 'in', zone: 'sponsors', ...route([-150, -6], [-38, 4], -78), life: 0.2 },
-  { key: 'out', zone: 'patients', ...route([38, 4], [150, -6], -78), life: 0.62 },
-  { key: 'back', zone: 'patients', ...route([160, 52], [-160, 52], 66), life: 0.85 },
+  { key: 'in', from: 'sponsors', to: 'sites', ...route([-164, -30], [-72, -2], -48), life: 0.2 },
+  { key: 'out', from: 'sites', to: 'patients', ...route([80, 20], [166, 46], -44), life: 0.62 },
 ]
 
 // THE FRAGMENTED WORLD, in the air.
@@ -238,15 +305,15 @@ const ROUTES = [
 // stylesheet - so the sentence sits inside the space the figure is drawing
 // rather than in a band above it, and nothing here may drift into that corner.
 const SHARDS = [
-  { zone: 'sponsors', to: [-206, -34], at: [472, 74], size: 22, motif: 'page' },
-  { zone: 'sites', to: [-44, -40], at: [744, 96], size: 24, motif: 'rows' },
-  { zone: 'sponsors', to: [-150, 30], at: [614, 140], size: 26, motif: 'rows' },
-  { zone: 'sponsors', to: [-224, 34], at: [352, 198], size: 30, motif: 'cells' },
-  { zone: 'sites', to: [56, -34], at: [810, 212], size: 30, motif: 'rows' },
-  { zone: 'sites', to: [16, 44], at: [556, 248], size: 36, motif: 'cells' },
-  { zone: 'patients', to: [166, -38], at: [688, 300], size: 38, motif: 'cells' },
-  { zone: 'sites', to: [-16, 60], at: [296, 300], size: 40, motif: 'page' },
-  { zone: 'patients', to: [214, 36], at: [446, 322], size: 44, motif: 'rows' },
+  { zone: 'sponsors', to: [-258, -66], at: [472, 74], size: 22, motif: 'page' },
+  { zone: 'sites', to: [-36, -20], at: [744, 96], size: 24, motif: 'rows' },
+  { zone: 'sponsors', to: [-206, -14], at: [614, 140], size: 26, motif: 'rows' },
+  { zone: 'sponsors', to: [-274, -4], at: [352, 198], size: 30, motif: 'cells' },
+  { zone: 'sites', to: [62, 2], at: [810, 212], size: 30, motif: 'rows' },
+  { zone: 'sites', to: [22, 52], at: [556, 248], size: 36, motif: 'cells' },
+  { zone: 'patients', to: [196, 16], at: [688, 300], size: 38, motif: 'cells' },
+  { zone: 'sites', to: [-10, 66], at: [296, 300], size: 40, motif: 'page' },
+  { zone: 'patients', to: [244, 70], at: [446, 322], size: 44, motif: 'rows' },
 ].map((shard, index) => {
   const plate = roundedSlab(shard.at[0], shard.at[1], shard.size, shard.size, 8, 10)
   const [gx, gy] = PLAN(shard.to[0], shard.to[1])
@@ -381,108 +448,135 @@ export default function ChainSchematic({ animate = true, reduced = false }) {
             </g>
           </g>
 
-          <g className="dgm-floor">
+          {/* THE GROUND, AND IT IS BROKEN UNTIL IT IS FIXED.
+
+              The continuous slab is the surface all three districts are meant
+              to be on, and it is not there at the start. It arrives as they
+              come level - a third of it per district - so the last thing to
+              appear in the figure is the thing the whole section is claiming
+              exists. */}
+          <g className="dgm-floor" style={{ '--knit': state.up.length / ZONES.length }}>
             <Faces shape={PLANE} className="dgm-solid" />
 
             <g transform={planSpace(CX, PLANE_Y)}>
               <rect className="dgm-planefill" x={-PLANE_X} y={-PLANE_Z} width={PLANE_X * 2} height={PLANE_Z * 2} rx="30" fill="url(#fl-grain)" />
 
-              {/* Three districts, as three grounds. Not containers and not a
-                  legend: the part of the floor given over to one kind of thing,
-                  which is what lets a reader see three places rather than
-                  twenty-seven solids. */}
-              {ZONES.map((item) => (
-                <g className={`dgm-zone${risen(item.key) ? ' is-up' : ''}${lit(item.key)}`} key={item.key} {...probe(item.key)}>
-                  <ellipse className="dgm-zonefill" cx={item.at[0]} cy={item.at[1]} rx={item.r} ry={item.r * 0.9} fill="url(#fl-fine)" />
-                  <ellipse className="dgm-zonerim" cx={item.at[0]} cy={item.at[1]} rx={item.r} ry={item.r * 0.9} vectorEffect="non-scaling-stroke" />
-                  <ellipse className="dgm-hit" cx={item.at[0]} cy={item.at[1]} rx={item.r} ry={item.r * 0.9} />
-                </g>
-              ))}
-
-              {/* The routes between districts, and what crosses them. A route is
-                  always drawn, because the floor is always there; what changes is
-                  whether anything is moving on it. */}
-              {/* WHAT EACH PLATE PUTS ON THE FLOOR.
-
-                  The single most load-bearing addition to this sheet. Nine
-                  things held in the air over a plane, and until now nothing on
-                  the plane said so - the tether arrived at a dot and the ground
-                  underneath was as clean as if the air were empty. A cast
-                  shadow is the one cue that cannot be read any other way: it
-                  says this is above that, and nine of them say the floor is
-                  UNDER something.
-
-                  Sized by the plate and softened by how far up it is, so a
-                  plate held higher throws a wider, weaker mark - which is what
-                  height looks like from below. They go out with their plates. */}
-              {SHARDS.map((shard) => (
-                <ellipse
-                  className={`dgm-cast${risen(shard.zone) ? ' is-gone' : ''}${lit(shard.zone)}`}
-                  key={`cast-${shard.key}`}
-                  cx={shard.to[0]}
-                  cy={shard.to[1]}
-                  rx={shard.size * (0.72 + shard.haze * 0.5)}
-                  ry={shard.size * (0.72 + shard.haze * 0.5) * 0.92}
-                  style={{ '--haze': shard.haze }}
-                />
-              ))}
-
-              {ROUTES.map((item) => (
-                <g className={`dgm-run${risen(item.zone) ? ' is-up' : ''}${lit(item.zone)}`} key={item.key} style={{ '--life': item.life }}>
-                  <path className="dgm-runpath" d={item.d} vectorEffect="non-scaling-stroke" />
-                  <path className="dgm-runflow" d={item.d} pathLength="100" vectorEffect="non-scaling-stroke" />
-                  {item.vias.map((via) => (
-                    <circle className="dgm-via" key={`${via[0]}:${via[1]}`} cx={via[0]} cy={via[1]} r="3" />
-                  ))}
-                </g>
-              ))}
-
-              {/* THE POPULATION. Every solid is drawn twice over the run: as a
-                  footprint lying on the floor before its district is stood, and
-                  as a solid standing on that same footprint after. Standing up is
-                  the clean-up, drawn - the same move Nectar uses when the shared
-                  intelligence binds a definition and it rises off the slab.
-
-                  Back to front, so a solid in front occludes the one behind it. */}
-              {POPULATION.map((item) => (
-                <g
-                  className={`dgm-plot ${item.kind}${risen(item.zone) ? ' is-up' : ''}${lit(item.zone)}`}
-                  key={item.key}
-                  style={{ '--life': item.life, '--wave': item.wave, '--far': item.far, '--lift': `${item.solid.step}px` }}
-                >
-                  {item.round ? (
-                    <>
-                      <path className="dgm-face-right" d={item.solid.wall} />
-                      <circle className="dgm-plotcap" cx={item.solid.base.cx} cy={item.solid.base.cy} r={item.solid.r} />
-                    </>
-                  ) : (
-                    <>
-                      <path className="dgm-face-left" d={item.solid.faceLeft} />
-                      <path className="dgm-face-right" d={item.solid.faceRight} />
-                      <polygon className="dgm-plotcap" points={item.solid.base} />
-                    </>
-                  )}
-                </g>
-              ))}
-
-              {/* THE DRUM. The mark, built as geometry: two stacked plan
-                  cylinders at the exact middle of the floor, the lower one
-                  wider, with a ring turning on its head once the surface is
-                  running. Nothing is written on it and nothing needs to be -
-                  it is the only round thing at the centre of everything, and
-                  every route in the figure passes through it. */}
-              <g className={`dgm-drum${state.drum ? ' is-up' : ''}${lit('drum')}`} {...probe('drum')}>
-                <path className="dgm-face-right" d={DRUM_BASE.wall} />
-                <circle className="dgm-drumhead is-plinth" cx={DRUM_BASE.top.cx} cy={DRUM_BASE.top.cy} r={DRUM_BASE.r} />
-                <path className="dgm-face-right" d={DRUM_LOW.wall} />
-                <circle className="dgm-drumhead" cx={DRUM_LOW.top.cx} cy={DRUM_LOW.top.cy} r={DRUM_LOW.r} />
-                <path className="dgm-face-right" d={DRUM_TOP.wall} />
-                <circle className="dgm-drumhead" cx={DRUM_CAP.cx} cy={DRUM_CAP.cy} r={DRUM_CAP.r} />
-                <circle className="dgm-drumring" cx={DRUM_CAP.cx} cy={DRUM_CAP.cy} r={DRUM_CAP.r - 6} pathLength="100" vectorEffect="non-scaling-stroke" />
-                <circle className="dgm-hit" cx={DRUM_BASE.base.cx} cy={DRUM_BASE.base.cy} r={DRUM_R + 14} />
-              </g>
+              {/* The legs between districts. A leg only carries anything once
+                  BOTH its ends are level - a route between two pieces of ground
+                  at two different heights is not a route, and saying so is the
+                  whole argument the broken state is making. */}
+              {ROUTES.map((item) => {
+                const joined = risen(item.from) && risen(item.to)
+                return (
+                  <g className={`dgm-run${joined ? ' is-up' : ''}${lit(item.from)}${lit(item.to)}`} key={item.key} style={{ '--life': item.life }}>
+                    <path className="dgm-runpath" d={item.d} vectorEffect="non-scaling-stroke" />
+                    <path className="dgm-runflow" d={item.d} pathLength="100" vectorEffect="non-scaling-stroke" />
+                    {item.vias.map((via) => (
+                      <circle className="dgm-via" key={`${via[0]}:${via[1]}`} cx={via[0]} cy={via[1]} r="3" />
+                    ))}
+                  </g>
+                )
+              })}
             </g>
           </g>
+
+          {/* THE DISTRICTS, EACH ON ITS OWN PLATE.
+
+              They used to be three discs drawn on one plane, strung along one
+              plan axis at one depth, one size and one level - a row of beads on
+              a wire, which is why the sheet had nothing in its vertical read but
+              three things side by side.
+
+              Every depth cue a parallel projection has is now carrying the same
+              statement. They are staggered across BOTH plan axes, so the far one
+              is a hundred and eighty pixels up the sheet from the near one. They
+              are sized by that distance, so the stagger is confirmed by scale
+              rather than inferred from position. And until its district is
+              fixed each plate sits out of true - two sunk, one heaved - so the
+              ground is visibly broken and the fix is visibly a fix.
+
+              Drawn back to front, so a near district occludes the one behind it.
+              Everything a district owns rides inside its own group, because a
+              plate that moves has to take its buildings with it. */}
+          {DISTRICTS.map((zone) => (
+            <g
+              className={`dgm-district-tile${risen(zone.key) ? ' is-level' : ''}${lit(zone.key)}`}
+              key={zone.key}
+              style={{ '--drop': `${zone.drop}px`, '--haze': zone.haze }}
+              {...probe(zone.key)}
+            >
+              <Faces shape={zone.tile} className="dgm-solid" />
+
+              <g transform={planSpace(zone.screen[0], zone.screen[1])}>
+                <rect
+                  className="dgm-tilefill"
+                  x={-zone.r - 8}
+                  y={-zone.r - 8}
+                  width={(zone.r + 8) * 2}
+                  height={(zone.r + 8) * 2}
+                  rx="24"
+                  fill="url(#fl-fine)"
+                />
+                <rect className="dgm-hit" x={-zone.r - 8} y={-zone.r - 8} width={(zone.r + 8) * 2} height={(zone.r + 8) * 2} rx="24" />
+
+                {/* WHAT EACH PLATE OVERHEAD PUTS ON THIS TILE.
+
+                    The one cue that cannot be read any other way - it says this
+                    is above that - and it has to be drawn ON the district,
+                    because a tile stands thirteen units proud of the ground and
+                    a shadow cast onto the floor beneath it is a shadow nobody
+                    can see. Wider and weaker the higher its plate is held,
+                    which is what height looks like from underneath. */}
+                {SHARDS.filter((shard) => shard.zone === zone.key).map((shard) => (
+                  <ellipse
+                    className={`dgm-cast${risen(zone.key) ? ' is-gone' : ''}${lit(zone.key)}`}
+                    key={`cast-${shard.key}`}
+                    cx={shard.to[0] - zone.at[0]}
+                    cy={shard.to[1] - zone.at[1]}
+                    rx={shard.size * (0.72 + shard.haze * 0.5)}
+                    ry={shard.size * (0.72 + shard.haze * 0.5) * 0.92}
+                    style={{ '--haze': shard.haze }}
+                  />
+                ))}
+
+                {zone.items.map((item) => (
+                  <g
+                    className={`dgm-plot ${item.kind}${risen(zone.key) ? ' is-up' : ''}${lit(zone.key)}`}
+                    key={item.key}
+                    style={{ '--life': item.life, '--wave': item.wave, '--far': item.far, '--lift': `${item.solid.step}px` }}
+                  >
+                    {item.round ? (
+                      <>
+                        <path className="dgm-face-right" d={item.solid.wall} />
+                        <circle className="dgm-plotcap" cx={item.solid.base.cx} cy={item.solid.base.cy} r={item.solid.r} />
+                      </>
+                    ) : (
+                      <>
+                        <path className="dgm-face-left" d={item.solid.faceLeft} />
+                        <path className="dgm-face-right" d={item.solid.faceRight} />
+                        <polygon className="dgm-plotcap" points={item.solid.base} />
+                      </>
+                    )}
+                  </g>
+                ))}
+
+                {/* THE DRUM stands in the site district and travels with it,
+                    because it is on that ground and not beside it. */}
+                {zone.key === 'sites' && (
+                  <g className={`dgm-drum${state.drum ? ' is-up' : ''}${lit('drum')}`} {...probe('drum')}>
+                    <path className="dgm-face-right" d={DRUM_BASE.wall} />
+                    <circle className="dgm-drumhead is-plinth" cx={DRUM_BASE.top.cx} cy={DRUM_BASE.top.cy} r={DRUM_BASE.r} />
+                    <path className="dgm-face-right" d={DRUM_LOW.wall} />
+                    <circle className="dgm-drumhead" cx={DRUM_LOW.top.cx} cy={DRUM_LOW.top.cy} r={DRUM_LOW.r} />
+                    <path className="dgm-face-right" d={DRUM_TOP.wall} />
+                    <circle className="dgm-drumhead" cx={DRUM_CAP.cx} cy={DRUM_CAP.cy} r={DRUM_CAP.r} />
+                    <circle className="dgm-drumring" cx={DRUM_CAP.cx} cy={DRUM_CAP.cy} r={DRUM_CAP.r - 6} pathLength="100" vectorEffect="non-scaling-stroke" />
+                    <circle className="dgm-hit" cx={DRUM_BASE.base.cx} cy={DRUM_BASE.base.cy} r={DRUM_R + 14} />
+                  </g>
+                )}
+              </g>
+            </g>
+          ))}
 
           {/* THE FRAGMENTED WORLD. Drawn last, because it is above everything -
               and every leader is drawn before its plate, so a hairline arrives

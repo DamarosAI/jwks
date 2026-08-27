@@ -12454,29 +12454,51 @@ html.is-hidden .clinic-node i,
 .dgm-cast.is-gone { opacity: calc(0.22 * var(--spread, 1)); }
 .dgm-cast.is-hot { fill: color-mix(in srgb, var(--accent) 22%, transparent); }
 
-.dgm-zone { cursor: pointer; }
+/* A DISTRICT IS A PLATE, AND IT IS OUT OF TRUE UNTIL IT IS FIXED.
 
-.dgm-zonefill {
-  opacity: calc(0.3 + 0.34 * var(--spread, 1));
+   Three discs drawn on one plane could only ever be three areas of the same
+   level ground. Three plates can be at three levels, and that is the entire
+   reason for the change: `--drop` puts each one out of true while the ground is
+   broken - two sunk, one heaved, because ground that has failed does not fail
+   in one direction - and the fix brings it to zero. Three offsets is three
+   screen heights, which is what the vertical read had none of.
+
+   It is the sheet's own arrival curve over eight hundred milliseconds, which is
+   slow for a UI transition and right for a slab of ground settling: a thing
+   with a mass does not click into place. */
+
+.dgm-district-tile {
+  cursor: pointer;
+  opacity: calc((0.42 + 0.58 * var(--spread, 1)) * (1 - var(--haze, 0) * 0.16));
+  transform: translateY(var(--drop, 0px));
+  transition: transform 820ms cubic-bezier(0.16, 1, 0.3, 1), opacity 620ms ease;
+}
+
+.dgm-district-tile.is-level { transform: translateY(0); }
+
+/* Broken ground reads as broken at its edge. A tile out of true carries a
+   dashed rim and a thinner body; level, it closes and takes the floor's ink. */
+
+.dgm-district-tile > .dgm-solid > .dgm-face-top { stroke-dasharray: 5 6; }
+.dgm-district-tile.is-level > .dgm-solid > .dgm-face-top { stroke-dasharray: none; }
+.dgm-district-tile.is-hot > .dgm-solid > .dgm-face-top { stroke: var(--ink-deep); }
+
+.dgm-tilefill {
+  opacity: calc(0.34 + 0.3 * var(--spread, 1));
   transition: opacity 520ms ease;
 }
 
-.dgm-zone.is-up .dgm-zonefill { opacity: calc(0.92 * var(--spread, 1)); }
+.dgm-district-tile.is-level .dgm-tilefill { opacity: calc(0.9 * var(--spread, 1)); }
 
-.dgm-zonerim {
-  fill: none;
-  stroke: color-mix(in srgb, var(--ink) 20%, transparent);
-  stroke-width: 1;
-  stroke-dasharray: 4 7;
-  transition: stroke 520ms ease, stroke-dasharray 520ms ease;
-}
+/* THE CONTINUOUS GROUND ARRIVES LAST.
 
-.dgm-zone.is-up .dgm-zonerim {
-  stroke: color-mix(in srgb, var(--ink) 42%, transparent);
-  stroke-dasharray: none;
-}
+   The slab under the three districts is the surface the section is claiming
+   exists, and it is not there at the start - it knits in a third at a time as
+   each district comes level, so the last thing to appear in the figure is the
+   one thing it is arguing for. */
 
-.dgm-zone.is-hot .dgm-zonerim { stroke: var(--ink-deep); }
+.dgm-floor > .dgm-solid { opacity: calc(0.18 + 0.82 * var(--knit, 0)); transition: opacity 760ms ease; }
+.dgm-floor .dgm-planefill { opacity: calc(0.2 + 0.8 * var(--knit, 0)); transition: opacity 760ms ease; }
 
 /* ── The routes ──────────────────────────────────────────────────────────
 
@@ -12487,14 +12509,14 @@ html.is-hidden .clinic-node i,
 
 .dgm-runpath {
   fill: none;
-  stroke: color-mix(in srgb, var(--ink) 32%, transparent);
-  stroke-width: 1.3;
+  stroke: color-mix(in srgb, var(--ink) 46%, transparent);
+  stroke-width: 1.6;
   stroke-linecap: round;
   stroke-dasharray: 2 5;
   transition: stroke 520ms ease;
 }
 
-.dgm-run.is-up .dgm-runpath { stroke: color-mix(in srgb, var(--ink) 62%, transparent); }
+.dgm-run.is-up .dgm-runpath { stroke: color-mix(in srgb, var(--ink) 74%, transparent); }
 
 /* The vias come from Nectar's board, where they sit on a bare slab. Here they
    sit on a grained floor and need a step more body to survive it. */
@@ -12871,7 +12893,7 @@ html.is-hidden .clinic-node i,
   .dgm-readout,
   .dgm-readpill { transition: none; }
 
-  .dgm-svg.is-floor :is(.dgm-air, .dgm-cast, .dgm-shard, .dgm-tether, .dgm-tetherfoot, .dgm-inert, .dgm-plot, .dgm-plotcap, .dgm-zone, .dgm-zonefill, .dgm-zonerim, .dgm-run, .dgm-runpath, .dgm-runflow, .dgm-drum, .dgm-drumhead, .dgm-drumring) {
+  .dgm-svg.is-floor :is(.dgm-air, .dgm-cast, .dgm-district-tile, .dgm-tilefill, .dgm-shard, .dgm-tether, .dgm-tetherfoot, .dgm-inert, .dgm-plot, .dgm-plotcap, .dgm-run, .dgm-runpath, .dgm-runflow, .dgm-drum, .dgm-drumhead, .dgm-drumring) {
     transition: none;
     animation: none;
   }

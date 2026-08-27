@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom'
 import { HERO_STAGE_MS, HERO_TICK_MS, NARROW_VIEWPORT, autoplayIndex, nextStageIndex, shouldFollowDemoSelection, shouldHoldAutoplayFromClick, shouldKeepPreviousStage, shouldPlayAutoplay, shouldRunAmbient, useAutoplayHold, useDocumentVisible, useInView, useMediaQuery, useScrollIdle, useSoftSwap } from './autoplay'
 import { easeSectionScroll, sectionScrollDuration, sectionScrollTarget, usePaneSettle, viewportHeight } from './motion'
@@ -42,24 +42,11 @@ ScrollTrigger.config({ ignoreMobileResize: true })
    is not the only thing a pointer can be for. This is the other one - moving it
    moves what a reader is looking AT, not only what the drawing is saying.
 
-   It is read once, on the section, because `--px` and `--py` inherit: the
+   It is read once, on the section root, because `--px` and `--py` inherit: the
    lattice behind the drawing and the solids held above it both take the same
    two numbers from one listener, and nothing in React re-renders on the way.
-
-   The ref is merged rather than doubled because the section root is already the
-   scope GSAP animates inside. */
-
-function useFieldRoot(root, reduced) {
-  const pointer = usePointerField({ reduced })
-  return useCallback((node) => {
-    root.current = node
-    const detach = pointer(node)
-    return () => {
-      detach?.()
-      root.current = null
-    }
-  }, [pointer, root])
-}
+   `usePointerField` attaches to the ref each section is already keeping for
+   GSAP to scope against, so there is no second ref and nothing to merge. */
 
 function useEnterMotion(root, reduced, setup, query = '(min-width: 901px)') {
   useGSAP(() => {
@@ -616,7 +603,7 @@ function ThesisSection() {
   const inView = useInView(root)
   const animate = shouldRunAmbient({ reduced, inView, narrow })
   const field = useScrollSpread({ reduced, start: 'top bottom', end: 'top 40%' })
-  const sheet = useFieldRoot(root, reduced)
+  usePointerField(root, { reduced })
 
   useEnterMotion(root, reduced, () => [
     gsap.from('.thesis-head > *', {
@@ -637,7 +624,7 @@ function ThesisSection() {
   ])
 
   return (
-    <section className="thesis-section section-space" id="thesis" ref={sheet}>
+    <section className="thesis-section section-space" id="thesis" ref={root}>
       <SectionEyebrow>Thesis</SectionEyebrow>
       <div className="section-field" ref={field} aria-hidden="true" />
       <div className="thesis-column">
@@ -1063,7 +1050,7 @@ function TridentSection() {
   const inView = useInView(root)
   const animate = shouldRunAmbient({ reduced, inView, narrow })
   const field = useScrollSpread({ reduced, start: 'top bottom', end: 'top 40%' })
-  const sheet = useFieldRoot(root, reduced)
+  usePointerField(root, { reduced })
   useEnterMotion(root, reduced, () => [
     gsap.from('.trident-copy > *', {
       opacity: 0, duration: 0.8, stagger: 0.12, clearProps: 'transform',
@@ -1076,7 +1063,7 @@ function TridentSection() {
   ])
 
   return (
-    <section className="trident-section section-space" id="trident" ref={sheet}>
+    <section className="trident-section section-space" id="trident" ref={root}>
       <div className="section-field" ref={field} aria-hidden="true" />
       <SectionEyebrow brand>Trident</SectionEyebrow>
       <div className="trident-copy">
@@ -1103,7 +1090,7 @@ function NectarSection() {
   const inView = useInView(root)
   const animate = shouldRunAmbient({ reduced, inView, narrow })
   const field = useScrollSpread({ reduced, start: 'top bottom', end: 'top 40%' })
-  const sheet = useFieldRoot(root, reduced)
+  usePointerField(root, { reduced })
   useEnterMotion(root, reduced, () => [
     gsap.from('.nectar-copy > *', {
       opacity: 0, duration: 0.8, stagger: 0.12, ease: 'power2.out', clearProps: 'transform',
@@ -1116,7 +1103,7 @@ function NectarSection() {
   ])
 
   return (
-    <section className="nectar-section section-space" id="nectar" ref={sheet}>
+    <section className="nectar-section section-space" id="nectar" ref={root}>
       <div className="section-field" ref={field} aria-hidden="true" />
       <SectionEyebrow brand>Nectar</SectionEyebrow>
       <div className="nectar-network">

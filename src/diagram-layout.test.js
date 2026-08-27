@@ -1958,14 +1958,18 @@ describe('The floor schematic', () => {
     assert.match(css, /\.dgm-tether \{[\s\S]*?stroke: color-mix\(in srgb, var\(--muted\) 62%, transparent\);/)
     // And every plate throws a cast on the floor - the one cue that cannot be
     // read any other way, and the reason the sheet stopped being a floor plan.
-    assert.match(floor, /className=\{`dgm-cast\$\{risen\(shard\.zone\) \? ' is-gone' : ''\}/)
+    // The cast is drawn ON the district it belongs to, not on the ground under
+    // it: a tile stands proud of the floor and is opaque, so a shadow put on
+    // the floor beneath it is a shadow nobody can see.
+    assert.match(floor, /className=\{`dgm-cast\$\{risen\(zone\.key\) \? ' is-gone' : ''\}/)
+    assert.match(floor, /cx=\{shard\.to\[0\] - zone\.at\[0\]\}/)
     assert.match(css, /\.dgm-cast \{[\s\S]*?fill: color-mix\(in srgb, var\(--accent\) calc\(13% - var\(--haze, 0\) \* 6%\), transparent\);/)
     // And the three districts are told apart by SILHOUETTE, not by hue: three
     // populations, three kinds of solid, one ink between them.
     // Three populations, three kinds of solid. The counts are free to move -
     // what is pinned is that there are exactly three and that they differ by
     // SHAPE, since shape is the only thing a sheet with no labels has left.
-    const kinds = [...floor.matchAll(/populate\(ZONES\[\d\], \d+, '(\w+)'/g)].map((match) => match[1])
+    const kinds = [...floor.match(/const KINDS = \{[^}]*\}/)[0].matchAll(/'(\w+)'/g)].map((match) => match[1])
     assert.deepEqual(kinds, ['blocks', 'works', 'people'])
     assert.doesNotMatch(css, /\.dgm-plot\.(blocks|works|people) \{[^}]*--ink:/)
   })
@@ -1975,7 +1979,7 @@ describe('The floor schematic', () => {
     // while the floor stands out of itself off the same number, so a reader
     // arrives to two layers moving rather than to a flat picture of two.
     assert.match(css, /\.dgm-shard \{[\s\S]*?translateY\(calc\(\(1 - var\(--spread, 1\)\) \* 30px \+ var\(--float, 0px\)\)\)/)
-    assert.match(css, /\.dgm-zonefill \{[\s\S]*?opacity: calc\(0\.3 \+ 0\.34 \* var\(--spread, 1\)\);/)
+    assert.match(css, /\.dgm-tilefill \{[\s\S]*?opacity: calc\(0\.34 \+ 0\.3 \* var\(--spread, 1\)\);/)
     // Alive at rest, and quietly: opacity only, on a nine-second clock, read at
     // a phase taken from where each solid stands - so the floor breathes as one
     // wave crossing it rather than as twenty-seven accidents.
@@ -1986,7 +1990,12 @@ describe('The floor schematic', () => {
     // in, because an animation on `opacity` replaces the property outright and
     // a keyframe that forgot the depth would flatten the whole floor every nine
     // seconds.
-    assert.match(floor, /far: Math\.round\(\(\(NEAR - item\.depth\) \/ \(NEAR - BACK\)\) \* 100\) \/ 100/)
+    // Two ramps that compound: a solid is faded by how far back it stands
+    // inside its own district, and the district is faded by how far back it
+    // stands on the ground. Both are solved from the plan rather than assigned,
+    // so moving a district moves its air with it.
+    assert.match(floor, /far: Math\.round\(\(\(near - item\.depth\) \/ \(near - back \|\| 1\)\) \* 100\) \/ 100/)
+    assert.match(floor, /haze: Math\.round\(\(\(FORE - zone\.depth\) \/ \(FORE - FAR\)\) \* 100\) \/ 100/)
     assert.match(css, /\.dgm-plot \{ opacity: calc\(1 - 0\.34 \* var\(--far, 0\)\); \}/)
     assert.match(css, /@keyframes dgm-floor-breathe \{[\s\S]*?0%, 100% \{ opacity: calc\(1 - 0\.34 \* var\(--far, 0\)\); \}[\s\S]*?50% \{ opacity: calc\(\(1 - 0\.34 \* var\(--far, 0\)\) \* 0\.87\); \}/)
     // And it is the only figure with a gradient anywhere in it, because it is
@@ -2075,6 +2084,42 @@ describe('The floor schematic', () => {
     assert.match(css, /\.dgm-readline \{[\s\S]*?max-width: 104ch;/)
   })
 
+  it('breaks the ground and then fixes it, which is the whole section', () => {
+    // THE STAGGER. Three districts used to sit on one plan axis at one depth,
+    // one size and one level - a row of beads on a wire, and the reason the
+    // sheet had nothing in its vertical read but three things side by side.
+    // All three of a parallel projection's depth cues now carry the same
+    // statement, and each one is pinned because each is easy to flatten back.
+    const zones = floor.match(/const ZONES = \[[\s\S]*?\n\]\.map/)[0]
+    const at = [...zones.matchAll(/at: \[(-?\d+), (-?\d+)\]/g)].map((m) => [Number(m[1]), Number(m[2])])
+    assert.equal(at.length, 3)
+    // Staggered across BOTH plan axes, not strung along one of them.
+    const depths = at.map(([x, y]) => x + y)
+    assert.ok(new Set(depths).size === 3, 'three districts, three depths')
+    assert.ok(Math.max(...depths) - Math.min(...depths) > 300, 'the stagger has to be a stagger')
+    // Sized by that distance, so scale confirms position.
+    const radii = [...zones.matchAll(/r: (\d+),/g)].map((m) => Number(m[1]))
+    assert.ok(new Set(radii).size >= 2, 'one size for three distances is one distance')
+    // And out of true until fixed - two sunk, one heaved, because ground that
+    // has failed does not fail in one direction. Three offsets is three screen
+    // heights, which is what the vertical axis had none of.
+    const drops = [...zones.matchAll(/drop: (-?\d+),/g)].map((m) => Number(m[1]))
+    assert.equal(drops.length, 3)
+    assert.ok(drops.some((d) => d > 0) && drops.some((d) => d < 0), 'broken ground fails both ways')
+    assert.match(css, /\.dgm-district-tile \{[\s\S]*?transform: translateY\(var\(--drop, 0px\)\);/)
+    assert.match(css, /\.dgm-district-tile\.is-level \{ transform: translateY\(0\); \}/)
+    // A broken tile reads broken at its edge, and closes when it is level.
+    assert.match(css, /\.dgm-district-tile > \.dgm-solid > \.dgm-face-top \{ stroke-dasharray: 5 6; \}/)
+    // THE CONTINUOUS GROUND ARRIVES LAST: it knits a third at a time as each
+    // district comes level, so the last thing to appear in the figure is the
+    // one thing the section is arguing for.
+    assert.match(floor, /'--knit': state\.up\.length \/ ZONES\.length/)
+    assert.match(css, /\.dgm-floor > \.dgm-solid \{ opacity: calc\(0\.18 \+ 0\.82 \* var\(--knit, 0\)\)/)
+    // A leg only carries once BOTH its ends are level. A route between two
+    // pieces of ground at two heights is not a route.
+    assert.match(floor, /const joined = risen\(item\.from\) && risen\(item\.to\)/)
+  })
+
   it('leaves the claim readable at rest and still without motion', () => {
     const phases = floor.match(/const PHASES = \[[\s\S]*?\n\]/)[0]
     assert.match(phases, /up: \[\][\s\S]*?status: 'FRAGMENTED'/)
@@ -2105,7 +2150,7 @@ describe('The floor schematic', () => {
   })
 
   it('stands the thesis figure on the page field, not in a plate of its own', () => {
-    assert.match(app, /<section className="thesis-section section-space" id="thesis" ref=\{sheet\}>/)
+    assert.match(app, /<section className="thesis-section section-space" id="thesis" ref=\{root\}>/)
     assert.match(app, /<div className="section-field" ref=\{field\} aria-hidden="true" \/>/)
     assert.match(app, /<ChainSchematic animate=\{animate\} reduced=\{reduced\} \/>/)
     assert.doesNotMatch(app, /thesis-plate/)
@@ -2128,8 +2173,6 @@ describe('The floor schematic', () => {
    ═══════════════════════════════════════════════════════════════════════════ */
 
 describe('The pointer field', () => {
-  const pointer = null
-
   it('is read once per section and never through React', () => {
     // Custom properties inherit, so one listener on the section root serves
     // both the lattice behind the drawing and the solids held above it - and a
@@ -2139,8 +2182,11 @@ describe('The pointer field', () => {
     assert.match(field, /node\.style\.setProperty\('--py'/)
     assert.doesNotMatch(field, /useState/)
     assert.match(field, /requestAnimationFrame/)
-    assert.match(app, /const sheet = useFieldRoot\(root, reduced\)/)
-    assert.equal((app.match(/ref=\{sheet\}/g) || []).length, 3)
+    // Attached to the ref each section already keeps for GSAP, so there is no
+    // second ref and nothing to merge - a callback ref writing `root.current`
+    // is both harder to read and something the hooks lint is right to refuse.
+    assert.equal((app.match(/usePointerField\(root, \{ reduced \}\)/g) || []).length, 3)
+    assert.match(field, /export function usePointerField\(target, \{ reduced = false \} = \{\}\)/)
   })
 
   it('is off wherever following a pointer would be a lie', () => {
