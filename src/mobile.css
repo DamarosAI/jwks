@@ -331,6 +331,26 @@ body,
     max-width: none;
   }
 
+  /* THE OVERLAY COMES APART ON A PHONE.
+
+     At three hundred and fifty pixels the dek is three lines of twenty-two
+     characters and the figure is three hundred wide - there is no corner left
+     in the drawing to set type into, and laying one over the other would put a
+     sentence across a district. So the two go back to being stacked, which is
+     what a column this narrow can actually hold. The desktop composition is not
+     a fallback for this one; they are two arrangements of the same two things,
+     each right at its own width. */
+
+  #root .thesis-stage {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  #root .thesis-head {
+    padding-top: 0;
+  }
+
 
   #root .final-cta {
     width: calc(100% - 24px);

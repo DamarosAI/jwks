@@ -1892,7 +1892,7 @@ describe('The floor schematic', () => {
 
   it('is a ground being looked across, not a third portrait of a place', () => {
     assert.match(floor, /const W = 900/)
-    assert.match(floor, /const H = 5\d\d/)
+    assert.match(floor, /const H = 700/)
     assert.doesNotMatch(floor, /viewBox="0 0 620 700"/)
     // A plan RECTANGLE, which is what `roundedSlab` was added for. The other
     // two are square because a tier and a slab are as deep as they are wide.
@@ -1923,7 +1923,12 @@ describe('The floor schematic', () => {
     // Two cylinders, and the upper one standing on the lower one's own top
     // rather than at a height typed in beside it - which is what keeps it a
     // solid built out of the projection instead of two discs stacked by eye.
-    assert.match(floor, /const DRUM_LOW = planCyl\(0, 4, DRUM_R, \d+\)/)
+    // Three stacked cylinders now, not two - a plinth under the pair - and each
+    // stands on the one below it in the projection rather than at a height
+    // typed in beside it, which is what keeps it a solid built out of the
+    // geometry instead of discs stacked by eye.
+    assert.match(floor, /const DRUM_BASE = planCyl\(0, 4, DRUM_R \+ 7, \d+\)/)
+    assert.match(floor, /const DRUM_LOW = planCyl\(DRUM_BASE\.top\.cx, DRUM_BASE\.top\.cy, DRUM_R, \d+\)/)
     assert.match(floor, /const DRUM_TOP = planCyl\(DRUM_LOW\.top\.cx, DRUM_LOW\.top\.cy, DRUM_R - 5, \d+\)/)
     // It is the one continuously turning mark on any of the three sheets, and
     // it takes `--settled` - the same stamp the other two figures commit with.
@@ -1950,7 +1955,11 @@ describe('The floor schematic', () => {
     // not the site - a paler blue would read as the floor seen through fog,
     // which is the opposite of what it is.
     assert.match(css, /\.dgm-shard \{[\s\S]*?--ink: color-mix\(in srgb, var\(--accent\) 30%, var\(--muted\)\);/)
-    assert.match(css, /\.dgm-tether \{[\s\S]*?stroke: color-mix\(in srgb, var\(--muted\) 38%, transparent\);/)
+    assert.match(css, /\.dgm-tether \{[\s\S]*?stroke: color-mix\(in srgb, var\(--muted\) 62%, transparent\);/)
+    // And every plate throws a cast on the floor - the one cue that cannot be
+    // read any other way, and the reason the sheet stopped being a floor plan.
+    assert.match(floor, /className=\{`dgm-cast\$\{risen\(shard\.zone\) \? ' is-gone' : ''\}/)
+    assert.match(css, /\.dgm-cast \{[\s\S]*?fill: color-mix\(in srgb, var\(--accent\) calc\(13% - var\(--haze, 0\) \* 6%\), transparent\);/)
     // And the three districts are told apart by SILHOUETTE, not by hue: three
     // populations, three kinds of solid, one ink between them.
     // Three populations, three kinds of solid. The counts are free to move -
@@ -2006,6 +2015,64 @@ describe('The floor schematic', () => {
     for (const line of prose) {
       assert.doesNotMatch(line, /\b\d+\s*(day|days|week|weeks|hour|hours|month|months|%)/i, line)
     }
+  })
+
+  it('carries its depth in the geometry rather than in a shading trick', () => {
+    // WHY THIS PASS EXISTED. The sheet read flat, and it read flat for three
+    // reasons that are all facts about the drawing rather than about its
+    // colours: all the mass sat in one thin horizontal band, the nine plates
+    // overhead were one size so they read as a pattern on one plane, and the
+    // only vertical marks on the sheet were also the faintest. Each of the
+    // three is pinned here, because each is easy to undo by accident.
+
+    // ONE: the figure has vertical extent. The cloud sits in the top third and
+    // the floor in the bottom, with drawn air between them for a tether to
+    // cross.
+    const cloud = floor.match(/const SHARDS = \[[\s\S]*?\n\]/)[0]
+    const shards = [...cloud.matchAll(/at: \[\d+, (\d+)\]/g)].map((match) => Number(match[1]))
+    assert.equal(shards.length, 9)
+    assert.ok(Math.max(...shards) < 340, 'the cloud stays in the upper half')
+    assert.ok(Number(floor.match(/const PLANE_Y = (\d+)/)[1]) > 460, 'the floor sits low')
+
+    // TWO: size IS distance. Nine plates at nine sizes, ramped with height, and
+    // the ink ramps with them - two cues pointing the same way.
+    const sizes = [...cloud.matchAll(/size: (\d+)/g)].map((match) => Number(match[1]))
+    assert.ok(new Set(sizes).size >= 6, 'nine plates cannot be nine distances at one size')
+    assert.ok(Math.max(...sizes) >= Math.min(...sizes) * 1.8, 'the size ramp has to be a ramp')
+    assert.match(css, /\.dgm-shard \{[\s\S]*?\(1 - var\(--haze, 0\) \* 0\.4\)/)
+
+    // THREE: the ground is a substrate, not a sheet. Fifteen units of thickness
+    // drew a tablet lying on the page.
+    assert.ok(Number(floor.match(/const PLANE_T = (\d+)/)[1]) >= 30)
+  })
+
+  it('sets the sentence into the drawing instead of above it', () => {
+    // The move that makes the section a place rather than a picture: the dek
+    // and the figure share one grid cell, the figure keeps its top-left corner
+    // clear, and the type sits in that corner with the cloud around it.
+    assert.match(app, /<div className="thesis-stage">/)
+    assert.match(css, /\.thesis-stage \{[\s\S]*?display: grid;/)
+    assert.match(css, /\.thesis-stage > \* \{[\s\S]*?grid-area: 1 \/ 1;/)
+    // The head takes no pointer events, or it would swallow hovers meant for
+    // the districts lying underneath it.
+    assert.match(css, /\.thesis-head \{[\s\S]*?pointer-events: none;/)
+    // Nothing in the cloud may drift into the corner the type occupies.
+    const cloud = floor.match(/const SHARDS = \[[\s\S]*?\n\]/)[0]
+    const corner = [...cloud.matchAll(/at: \[(\d+), (\d+)\]/g)]
+      .filter(([, x, y]) => Number(x) < 430 && Number(y) < 170)
+    assert.deepEqual(corner, [], 'the dek corner has to stay clear of the cloud')
+    // And on a phone there is no corner to set type into, so the two stack.
+    assert.match(mobile, /#root \.thesis-stage \{[\s\S]*?flex-direction: column;/)
+  })
+
+  it('keeps every readout to a single line', () => {
+    // A caption that wraps under a figure reads as a paragraph. Every line the
+    // readout can show is under ninety characters, and the measure is wide
+    // enough to set that on one line.
+    const prose = [...floor.matchAll(/(?:read|before|after): '([^']*)'/g)].map((match) => match[1])
+    assert.ok(prose.length >= 11)
+    for (const line of prose) assert.ok(line.length <= 90, `${line.length}: ${line}`)
+    assert.match(css, /\.dgm-readline \{[\s\S]*?max-width: 104ch;/)
   })
 
   it('leaves the claim readable at rest and still without motion', () => {
@@ -2091,7 +2158,7 @@ describe('The pointer field', () => {
     // Fourteen pixels at most on the thesis cloud, and per plate rather than
     // per layer - nine plates at nine rates is what makes it shear rather than
     // slide. Four on a Trident plate, which is furniture on an instrument.
-    assert.match(floor, /sway: Math\.round\(\(6 \+ \(238 - shard\.at\[1\]\) \* 0\.036\) \* 10\) \/ 10/)
+    assert.match(floor, /sway: Math\.round\(\(6 \+ \(326 - shard\.at\[1\]\) \* 0\.03\) \* 10\) \/ 10/)
     assert.match(css, /\.dgm-shard \{[\s\S]*?translate\(calc\(var\(--px, 0\) \* var\(--sway, 8px\)\)/)
     assert.match(css, /\.dgm-plate \{\s*\n\s*transform:\s*\n\s*translate\(calc\(var\(--px, 0\) \* 4px\), calc\(var\(--py, 0\) \* 2\.5px\)\)/)
     // Trident's plates are the one layer in that figure attached to nothing.

@@ -66,16 +66,21 @@ import { useScrollRun } from './useScrollPhase'
  */
 
 const W = 900
-const H = 566
+const H = 700
 const CX = 450
 
 // The ground. A wide plan rectangle rather than the square the other two
 // figures are built over: this one is a floor being looked across, not a tier
 // being looked at.
-const PLANE_Y = 372
+const PLANE_Y = 500
 const PLANE_X = 292
 const PLANE_Z = 132
-const PLANE_T = 15
+// A SUBSTRATE, NOT A SHEET. Fifteen units of thickness drew the ground as a
+// tablet lying on the page. Thirty-four gives the bottom of the figure mass and
+// gives the composition a base to stand on - which is the honest reading as
+// well as the better one, because infrastructure has depth under its surface
+// and a rug does not.
+const PLANE_T = 34
 const PLANE = roundedSlab(CX, PLANE_Y, PLANE_X, PLANE_Z, PLANE_T, 30)
 const PLAN = project(CX, PLANE_Y)
 
@@ -89,24 +94,24 @@ const ZONES = [
     at: [-196, -6],
     r: 96,
     pill: 'SPONSORS',
-    before: 'A protocol leaves a sponsor as a document. Every site that receives it rebuilds it by hand, differently.',
-    after: 'One versioned protocol, executed the same way at every site, with the evidence for each decision attached.',
+    before: 'A protocol leaves a sponsor as a document. Every site rebuilds it by hand, differently.',
+    after: 'One versioned protocol, executed the same way at every site, with its evidence attached.',
   },
   {
     key: 'sites',
     at: [0, 4],
     r: 104,
     pill: 'SITES',
-    before: 'Twenty-odd systems, none of them built for research, and a person carrying work between every pair of them.',
-    after: 'Governed agents running on the site own ground. Records never leave; every decision is signed locally.',
+    before: 'Twenty-odd systems, none built for research, and a person carrying work between them.',
+    after: 'Governed agents on ground the site controls. Records stay put; decisions are signed there.',
   },
   {
     key: 'patients',
     at: [196, -6],
     r: 96,
     pill: 'PATIENTS',
-    before: 'Whether a patient can join a trial depends on which building they can reach on a Tuesday.',
-    after: 'Participation stops depending on geography. The trial runs where the patient already receives care.',
+    before: 'Whether a patient can join a trial depends on the building they can reach that week.',
+    after: 'Participation stops depending on geography. The trial runs where care already happens.',
   },
 ]
 
@@ -124,7 +129,7 @@ const BY_ZONE = Object.fromEntries(ZONES.map((zone) => [zone.key, zone]))
 function populate(zone, count, kind, salt) {
   // The site district is drawn round a hole, because the drum stands in it. A
   // district that fills its own centre has nothing at its centre.
-  const inner = kind === 'works' ? 0.54 : 0.3
+  const inner = kind === 'works' ? 0.42 : 0.3
   return Array.from({ length: count }, (_, index) => {
     const angle = jitter(index, salt) * Math.PI * 2
     const radius = (inner + jitter(index, salt + 5) * (0.96 - inner)) * (zone.r - 20)
@@ -170,13 +175,23 @@ const POPULATION = RAW.map((item) => ({
   far: Math.round(((NEAR - item.depth) / (NEAR - BACK)) * 100) / 100,
 }))
 
-// THE DRUM. The Damaros mark built as geometry instead of pasted on as a logo:
-// the monogram is two stacked forms, so this is two stacked plan cylinders, the
-// lower one wider, standing at the exact middle of the floor. Everything routes
-// through it, which is what the mark is for.
-const DRUM_R = 32
-const DRUM_LOW = planCyl(0, 4, DRUM_R, 19)
-const DRUM_TOP = planCyl(DRUM_LOW.top.cx, DRUM_LOW.top.cy, DRUM_R - 5, 17)
+// THE DRUM, AND IT IS THE ONE THING ON THE FLOOR THAT GOES UP.
+//
+// It is the Damaros mark built as geometry rather than pasted on as a logo: the
+// monogram is two stacked forms, so this is two stacked plan cylinders with the
+// lower one wider, at the exact middle of the floor, with every route in the
+// figure running into its foot.
+//
+// It used to be thirty-six units tall on a sheet with nothing else vertical in
+// it, which is to say a coin lying in the middle of a rug. It now stands on a
+// plinth: fifty-four units against works of twenty-four, so the composition has
+// a vertical axis at its centre and the eye has somewhere to arrive. Narrow
+// rather than broad, because height is what makes an accent and width only made
+// it a tank.
+const DRUM_R = 21
+const DRUM_BASE = planCyl(0, 4, DRUM_R + 7, 10)
+const DRUM_LOW = planCyl(DRUM_BASE.top.cx, DRUM_BASE.top.cy, DRUM_R, 24)
+const DRUM_TOP = planCyl(DRUM_LOW.top.cx, DRUM_LOW.top.cy, DRUM_R - 5, 20)
 const DRUM_CAP = { cx: DRUM_TOP.top.cx, cy: DRUM_TOP.top.cy, r: DRUM_R - 5 }
 
 /**
@@ -211,16 +226,27 @@ const ROUTES = [
 // `motif` is what the plate is holding, and there are only three, because a
 // general-purpose system holds only three kinds of thing: rows, a sheet of
 // cells, or a page. None of them is something that runs.
+// SIZE IS DISTANCE, AND IT IS THE HALF OF THIS THAT WAS MISSING.
+//
+// These were nine plates of roughly one size at nine positions, which is not a
+// depth field - it is a pattern, and a pattern lies flat however far apart you
+// scatter it. They are now nine plates at nine SIZES, ramped with how low each
+// one sits on the sheet: twenty-two units at the back, forty-four at the front,
+// and the ink ramps with the size. Same nine objects, nine distances.
+//
+// The top left is deliberately empty. The dek is set into it - see the section
+// stylesheet - so the sentence sits inside the space the figure is drawing
+// rather than in a band above it, and nothing here may drift into that corner.
 const SHARDS = [
-  { zone: 'sponsors', to: [-206, -34], at: [232, 96], size: 34, motif: 'page' },
-  { zone: 'sponsors', to: [-150, 30], at: [318, 168], size: 28, motif: 'rows' },
-  { zone: 'sponsors', to: [-224, 34], at: [148, 158], size: 30, motif: 'cells' },
-  { zone: 'sites', to: [-44, -40], at: [402, 62], size: 32, motif: 'rows' },
-  { zone: 'sites', to: [16, 44], at: [498, 148], size: 36, motif: 'cells' },
-  { zone: 'sites', to: [-16, 60], at: [356, 214], size: 26, motif: 'page' },
-  { zone: 'sites', to: [56, -34], at: [576, 96], size: 28, motif: 'rows' },
-  { zone: 'patients', to: [166, -38], at: [686, 138], size: 32, motif: 'cells' },
-  { zone: 'patients', to: [214, 36], at: [612, 220], size: 26, motif: 'rows' },
+  { zone: 'sponsors', to: [-206, -34], at: [472, 74], size: 22, motif: 'page' },
+  { zone: 'sites', to: [-44, -40], at: [744, 96], size: 24, motif: 'rows' },
+  { zone: 'sponsors', to: [-150, 30], at: [614, 140], size: 26, motif: 'rows' },
+  { zone: 'sponsors', to: [-224, 34], at: [352, 198], size: 30, motif: 'cells' },
+  { zone: 'sites', to: [56, -34], at: [810, 212], size: 30, motif: 'rows' },
+  { zone: 'sites', to: [16, 44], at: [556, 248], size: 36, motif: 'cells' },
+  { zone: 'patients', to: [166, -38], at: [688, 300], size: 38, motif: 'cells' },
+  { zone: 'sites', to: [-16, 60], at: [296, 300], size: 40, motif: 'page' },
+  { zone: 'patients', to: [214, 36], at: [446, 322], size: 44, motif: 'rows' },
 ].map((shard, index) => {
   const plate = roundedSlab(shard.at[0], shard.at[1], shard.size, shard.size, 8, 10)
   const [gx, gy] = PLAN(shard.to[0], shard.to[1])
@@ -229,10 +255,13 @@ const SHARDS = [
     index,
     key: `shard-${index}`,
     plate,
-    // How far this plate swings against the pointer. Taken from its own height
-    // on the sheet, so the layer shears as a reader crosses it instead of
-    // sliding as one card - nine plates at nine rates, which is the depth.
-    sway: Math.round((6 + (238 - shard.at[1]) * 0.036) * 10) / 10,
+    // How far this plate swings against the pointer, and how far back it reads.
+    // Both come from its own height on the sheet: the ones held highest are the
+    // furthest away, so they swing widest and carry the least ink. Nine plates
+    // at nine rates and nine values is what makes the layer shear as a reader
+    // crosses it rather than slide as one card.
+    sway: Math.round((6 + (326 - shard.at[1]) * 0.03) * 10) / 10,
+    haze: Math.round(((326 - shard.at[1]) / 260) * 100) / 100,
     // The hairline runs from the plate's own front corner to the ground point,
     // never from its middle: a leader that starts inside a solid is a leader
     // drawn over it.
@@ -259,11 +288,11 @@ const MOTIFS = {
 // routes carry, whether the drum is running - so nothing can disagree with
 // anything else.
 const PHASES = [
-  { span: 2.4, up: [], drum: false, tone: 'run', status: 'FRAGMENTED', read: 'Trial execution is spread across systems that were never built to run one. Everything between them is carried by a person.' },
-  { span: 1.5, up: ['sponsors'], drum: false, tone: 'run', status: 'PROTOCOL', read: 'The protocol stops being a document to be rebuilt at every site. It arrives as something that executes.' },
-  { span: 1.6, up: ['sponsors', 'sites'], drum: true, tone: 'pass', status: 'EXECUTION', read: 'The site runs it on its own ground, under governed agents, with every decision signed by a named person.' },
-  { span: 1.6, up: ['sponsors', 'sites', 'patients'], drum: true, tone: 'pass', status: 'REACH', read: 'Participation stops depending on which building a patient can reach. The trial runs where care already happens.' },
-  { span: 2.6, up: ['sponsors', 'sites', 'patients'], drum: true, tone: 'valid', status: 'ONE SURFACE', read: 'Sponsors, sites and patients on one surface and one run - reconstructable end to end, at any site, on demand.' },
+  { span: 2.4, up: [], drum: false, tone: 'run', status: 'FRAGMENTED', read: 'Spread across systems never built to run a trial, with a person carrying every handoff.' },
+  { span: 1.5, up: ['sponsors'], drum: false, tone: 'run', status: 'PROTOCOL', read: 'The protocol stops being a document to re-type. It arrives as something that executes.' },
+  { span: 1.6, up: ['sponsors', 'sites'], drum: true, tone: 'pass', status: 'EXECUTION', read: 'The site runs it on its own ground, under governed agents, signed by a named person.' },
+  { span: 1.6, up: ['sponsors', 'sites', 'patients'], drum: true, tone: 'pass', status: 'REACH', read: 'Participation stops depending on which building a patient can reach on a given week.' },
+  { span: 2.6, up: ['sponsors', 'sites', 'patients'], drum: true, tone: 'valid', status: 'ONE SURFACE', read: 'Sponsors, sites and patients on one surface and one run, reconstructable end to end.' },
 ]
 
 const SEAT_STEPS = [0.12, 0.3, 0.5]
@@ -289,7 +318,7 @@ export default function ChainSchematic({ animate = true, reduced = false }) {
   const tone = drum ? 'valid' : zone ? (risen(zone.key) ? 'pass' : 'run') : state.tone
   const pill = drum ? 'DAMAROS' : zone ? zone.pill : state.status
   const read = drum
-    ? 'One execution surface underneath all three. Everything a trial does crosses it, and every crossing leaves a receipt.'
+    ? 'One execution surface under all three, and every crossing over it leaves a receipt.'
     : zone ? (risen(zone.key) ? zone.after : zone.before) : state.read
 
   return (
@@ -373,6 +402,31 @@ export default function ChainSchematic({ animate = true, reduced = false }) {
               {/* The routes between districts, and what crosses them. A route is
                   always drawn, because the floor is always there; what changes is
                   whether anything is moving on it. */}
+              {/* WHAT EACH PLATE PUTS ON THE FLOOR.
+
+                  The single most load-bearing addition to this sheet. Nine
+                  things held in the air over a plane, and until now nothing on
+                  the plane said so - the tether arrived at a dot and the ground
+                  underneath was as clean as if the air were empty. A cast
+                  shadow is the one cue that cannot be read any other way: it
+                  says this is above that, and nine of them say the floor is
+                  UNDER something.
+
+                  Sized by the plate and softened by how far up it is, so a
+                  plate held higher throws a wider, weaker mark - which is what
+                  height looks like from below. They go out with their plates. */}
+              {SHARDS.map((shard) => (
+                <ellipse
+                  className={`dgm-cast${risen(shard.zone) ? ' is-gone' : ''}${lit(shard.zone)}`}
+                  key={`cast-${shard.key}`}
+                  cx={shard.to[0]}
+                  cy={shard.to[1]}
+                  rx={shard.size * (0.72 + shard.haze * 0.5)}
+                  ry={shard.size * (0.72 + shard.haze * 0.5) * 0.92}
+                  style={{ '--haze': shard.haze }}
+                />
+              ))}
+
               {ROUTES.map((item) => (
                 <g className={`dgm-run${risen(item.zone) ? ' is-up' : ''}${lit(item.zone)}`} key={item.key} style={{ '--life': item.life }}>
                   <path className="dgm-runpath" d={item.d} vectorEffect="non-scaling-stroke" />
@@ -418,12 +472,14 @@ export default function ChainSchematic({ animate = true, reduced = false }) {
                   it is the only round thing at the centre of everything, and
                   every route in the figure passes through it. */}
               <g className={`dgm-drum${state.drum ? ' is-up' : ''}${lit('drum')}`} {...probe('drum')}>
+                <path className="dgm-face-right" d={DRUM_BASE.wall} />
+                <circle className="dgm-drumhead is-plinth" cx={DRUM_BASE.top.cx} cy={DRUM_BASE.top.cy} r={DRUM_BASE.r} />
                 <path className="dgm-face-right" d={DRUM_LOW.wall} />
                 <circle className="dgm-drumhead" cx={DRUM_LOW.top.cx} cy={DRUM_LOW.top.cy} r={DRUM_LOW.r} />
                 <path className="dgm-face-right" d={DRUM_TOP.wall} />
                 <circle className="dgm-drumhead" cx={DRUM_CAP.cx} cy={DRUM_CAP.cy} r={DRUM_CAP.r} />
-                <circle className="dgm-drumring" cx={DRUM_CAP.cx} cy={DRUM_CAP.cy} r={DRUM_CAP.r - 7} pathLength="100" vectorEffect="non-scaling-stroke" />
-                <circle className="dgm-hit" cx={DRUM_LOW.base.cx} cy={DRUM_LOW.base.cy} r={DRUM_R + 8} />
+                <circle className="dgm-drumring" cx={DRUM_CAP.cx} cy={DRUM_CAP.cy} r={DRUM_CAP.r - 6} pathLength="100" vectorEffect="non-scaling-stroke" />
+                <circle className="dgm-hit" cx={DRUM_BASE.base.cx} cy={DRUM_BASE.base.cy} r={DRUM_R + 14} />
               </g>
             </g>
           </g>
@@ -436,7 +492,7 @@ export default function ChainSchematic({ animate = true, reduced = false }) {
             <g
               className={`dgm-shard${risen(shard.zone) ? ' is-gone' : ''}${lit(shard.zone)}`}
               key={shard.key}
-              style={{ '--life': shard.life, '--sway': `${shard.sway}px` }}
+              style={{ '--life': shard.life, '--sway': `${shard.sway}px`, '--haze': shard.haze }}
               {...probe(shard.zone)}
             >
               <path className="dgm-tether" d={shard.leader} />

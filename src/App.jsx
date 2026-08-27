@@ -641,11 +641,18 @@ function ThesisSection() {
       <SectionEyebrow>Thesis</SectionEyebrow>
       <div className="section-field" ref={field} aria-hidden="true" />
       <div className="thesis-column">
-        <div className="thesis-head">
-          <h2><span className="thesis-line accent-text">The next generation of medicine</span><span className="thesis-line">cannot run on yesterday's research infrastructure.</span></h2>
-        </div>
-        <div className="thesis-chain">
-          <ChainSchematic animate={animate} reduced={reduced} />
+        {/* The sentence is set INTO the drawing, not above it. Both sit in one
+            grid cell; the figure keeps its top-left corner empty and the dek
+            occupies it. See the stylesheet - it is the move that makes this
+            section a space a reader is inside rather than a picture they are
+            looking at, and it is the one layout neither product section uses. */}
+        <div className="thesis-stage">
+          <div className="thesis-head">
+            <h2><span className="thesis-line accent-text">The next generation of medicine</span><span className="thesis-line">cannot run on yesterday's research infrastructure.</span></h2>
+          </div>
+          <div className="thesis-chain">
+            <ChainSchematic animate={animate} reduced={reduced} />
+          </div>
         </div>
         <p className="thesis-closer"><BrandName /> is building what comes next.</p>
       </div>

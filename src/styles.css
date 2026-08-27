@@ -1068,12 +1068,45 @@ h2 {
   text-align: left;
 }
 
+/* THE SENTENCE IS SET INTO THE DRAWING.
+
+   It used to sit in a band above the figure, which is the arrangement every
+   diagram on every site has: a caption, then a picture. It reads as looking AT
+   something. This section is trying to do the opposite - to be a place a reader
+   is standing in - and the cheapest, largest move toward that is to stop
+   putting the words outside the space.
+
+   So the head and the figure share one grid cell. The figure keeps its own
+   top-left corner clear - nothing in `SHARDS` is allowed into it - and the dek
+   is set in that corner, with the cloud hanging around and behind it. It is the
+   one layout neither product section uses, and it buys back most of the height
+   the taller figure costs.
+
+   The head takes no pointer events, so the districts underneath it stay
+   reachable: it is type lying in the air, not a panel over the drawing. */
+
+.thesis-stage {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.thesis-stage > * {
+  grid-area: 1 / 1;
+  min-width: 0;
+}
+
 .thesis-head {
+  z-index: 2;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
   width: 100%;
   max-width: none;
+  flex-direction: column;
+  align-items: flex-start;
+  align-self: start;
+  padding-top: clamp(4px, 1vw, 18px);
+  pointer-events: none;
   text-align: left;
 }
 
@@ -1113,9 +1146,9 @@ h2 {
    only claim it makes. */
 
 .thesis-chain {
+  z-index: 1;
   width: 100%;
   min-width: 0;
-  margin-top: clamp(24px, 2.6vw, 40px);
 }
 
 /* The answer, under the drawing that earns it. It used to sit directly beneath
@@ -12396,6 +12429,31 @@ html.is-hidden .clinic-node i,
    not a legend: a place. Dashed and faint until its district has been stood,
    because a district nothing is running in is a plot of ground, not a place. */
 
+/* WHAT A PLATE PUTS ON THE FLOOR.
+
+   The one cue on the sheet that cannot be read any other way. Nine things were
+   held in the air over a plane and nothing on the plane said so - the tether
+   arrived at a dot, and the ground under it was as clean as if the air were
+   empty. Nine casts say the floor is UNDER something, which is the whole
+   difference between a drawing with two layers in it and a drawing of two
+   layers.
+
+   Wider and weaker the higher its plate is held, because that is what height
+   looks like from underneath. It goes out with the plate that throws it. */
+
+.dgm-cast {
+  /* Tinted with the floor's own ink rather than mixed from the text neutral.
+     A grey blob on a sheet drawn entirely in one blue is the only off-palette
+     mark on it, and at fifteen per cent nine of them read as dirt on the plane
+     instead of as nine things standing over it. */
+  fill: color-mix(in srgb, var(--accent) calc(13% - var(--haze, 0) * 6%), transparent);
+  opacity: var(--spread, 1);
+  transition: opacity 620ms ease, fill 520ms ease;
+}
+
+.dgm-cast.is-gone { opacity: calc(0.22 * var(--spread, 1)); }
+.dgm-cast.is-hot { fill: color-mix(in srgb, var(--accent) 22%, transparent); }
+
 .dgm-zone { cursor: pointer; }
 
 .dgm-zonefill {
@@ -12601,6 +12659,11 @@ html.is-hidden .clinic-node i,
 }
 
 .dgm-drum.is-up .dgm-drumhead { fill: color-mix(in srgb, var(--ink) 24%, var(--surface-solid)); stroke: var(--ink-deep); }
+
+/* The plinth is ground, not drum: it carries the floor's own body rather than
+   the head's, so the mark reads as two forms standing on something instead of
+   as three stacked discs. */
+.dgm-drumhead.is-plinth { fill: color-mix(in srgb, var(--ink) 15%, var(--surface-solid)); }
 .dgm-drum.is-hot .dgm-drumhead { stroke: var(--ink-deep); }
 
 /* A head that is turning. It is the one continuously rotating mark on any of
@@ -12644,7 +12707,12 @@ html.is-hidden .clinic-node i,
   --ink-deep: color-mix(in srgb, var(--accent-strong) 34%, var(--muted));
   --wash: 18%;
   cursor: pointer;
-  opacity: calc(0.24 + 0.76 * var(--spread, 1));
+  /* `--haze` is how far back the plate reads, taken from its own height on the
+     sheet. Size already ramps with it in the geometry; this ramps the ink to
+     match, so a plate at the back is small AND thin and one at the front is
+     large AND firm. Two cues pointing the same way is what turns nine positions
+     into nine distances. */
+  opacity: calc((0.24 + 0.76 * var(--spread, 1)) * (1 - var(--haze, 0) * 0.4));
   transform-box: fill-box;
   transform-origin: center;
   /* THE CLOUD TAKES A POINT OF VIEW, AND IT TAKES IT HARDEST.
@@ -12702,9 +12770,14 @@ html.is-hidden .clinic-node i,
 
 .dgm-tether {
   fill: none;
-  stroke: color-mix(in srgb, var(--muted) 38%, transparent);
-  stroke-width: 1;
-  stroke-dasharray: 1.5 5;
+  /* These are the only vertical marks in the figure and they used to be the
+     faintest ones on it, which is why the sheet read flat: nothing drew the gap
+     between what is held up and what it is held over. They are longer now - the
+     cloud sits a third of the sheet above the floor - and they are drawn to be
+     seen crossing that distance. */
+  stroke: color-mix(in srgb, var(--muted) 62%, transparent);
+  stroke-width: 1.1;
+  stroke-dasharray: 2 4.5;
   transition: stroke 560ms ease, opacity 560ms ease;
 }
 
@@ -12782,7 +12855,7 @@ html.is-hidden .clinic-node i,
 
 .dgm-readline {
   min-width: 0;
-  max-width: 82ch;
+  max-width: 104ch;
   align-self: stretch;
   color: var(--text-soft);
   font-size: clamp(0.84rem, 0.79rem + 0.22vw, 0.95rem);
@@ -12798,7 +12871,7 @@ html.is-hidden .clinic-node i,
   .dgm-readout,
   .dgm-readpill { transition: none; }
 
-  .dgm-svg.is-floor :is(.dgm-air, .dgm-shard, .dgm-tether, .dgm-tetherfoot, .dgm-inert, .dgm-plot, .dgm-plotcap, .dgm-zone, .dgm-zonefill, .dgm-zonerim, .dgm-run, .dgm-runpath, .dgm-runflow, .dgm-drum, .dgm-drumhead, .dgm-drumring) {
+  .dgm-svg.is-floor :is(.dgm-air, .dgm-cast, .dgm-shard, .dgm-tether, .dgm-tetherfoot, .dgm-inert, .dgm-plot, .dgm-plotcap, .dgm-zone, .dgm-zonefill, .dgm-zonerim, .dgm-run, .dgm-runpath, .dgm-runflow, .dgm-drum, .dgm-drumhead, .dgm-drumring) {
     transition: none;
     animation: none;
   }
