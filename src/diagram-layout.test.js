@@ -17,8 +17,9 @@ const solid = await readSource(new URL('./diagrams/Solid.jsx', import.meta.url))
 const trident = await readSource(new URL('./diagrams/TridentSchematic.jsx', import.meta.url))
 const nectar = await readSource(new URL('./diagrams/NectarSchematic.jsx', import.meta.url))
 const floor = await readSource(new URL('./diagrams/ChainSchematic.jsx', import.meta.url))
+const field = await readSource(new URL('./diagrams/usePointerField.js', import.meta.url))
 
-const sources = [driver, pan, iso, solid, trident, nectar, floor]
+const sources = [driver, pan, iso, solid, trident, nectar, floor, field]
 // The two figures built over one square plan and one 620x700 sheet. The floor
 // is deliberately neither, so it is held to the language in its own suite below
 // rather than to this pair's geometry.
@@ -334,7 +335,7 @@ describe('Trident and Nectar schematics', () => {
     assert.doesNotMatch(panel[0], /border|background|box-shadow|border-radius/)
     // The dot field belongs to the section, bled to the width of the page.
     assert.match(css, /\.section-field \{[\s\S]*?width: 100vw;/)
-    assert.match(css, /\.section-field \{[\s\S]*?background-image: radial-gradient\(circle at center, color-mix\(in srgb, var\(--accent\)/)
+    assert.match(css, /\.section-field \{[\s\S]*?radial-gradient\(circle at center, color-mix\(in srgb, var\(--accent\)/)
     assert.match(css, /\.trident-section \{[\s\S]*?position: relative;/)
     assert.match(css, /\.nectar-section \{[\s\S]*?position: relative;/)
     // One continuous field across the pair: it fades only at the outer edges.
@@ -342,7 +343,7 @@ describe('Trident and Nectar schematics', () => {
     assert.match(css, /\.nectar-section \.section-field \{[\s\S]*?var\(--text\) 83%, transparent\)/)
     assert.match(app, /<div className="section-field" ref=\{field\} aria-hidden="true" \/>/)
     // And it moves with the same scroll value the figures use.
-    assert.match(css, /\.section-field \{[\s\S]*?background-position: center calc\(var\(--spread, 1\)/)
+    assert.match(css, /\.section-field \{[\s\S]*?center calc\(var\(--spread, 1\)/)
   })
 
   it('lets the drawing be the drawing, with no heading over the top of it', () => {
@@ -1875,9 +1876,10 @@ describe('The floor schematic', () => {
     assert.match(floor, /className="dgm-frame" ref=\{frame\}/)
     assert.match(floor, /className=\{`dgm-svg is-floor is-\$\{tone\}/)
     // Same readout at the foot, built from the same three parts.
-    assert.match(floor, /className="dgm-status"/)
-    assert.match(floor, /className="dgm-statustext"/)
-    assert.match(floor, /className="dgm-read"/)
+    // Same readout, same four tones, same one inversion on settling - it is
+    // simply set as a caption rather than drawn. See the annotation test below.
+    assert.match(floor, /className=\{`dgm-readout is-\$\{tone\}`\}/)
+    assert.match(css, /\.dgm-readout\.is-valid \.dgm-readpill \{ background: var\(--settled, var\(--accent-strong\)\); color: var\(--surface-solid\); \}/)
     // No canvas, no per-frame JavaScript, no window chrome.
     assert.doesNotMatch(floor, /getContext|requestAnimationFrame|<canvas/)
     assert.doesNotMatch(floor, /mac-titlebar|traffic-lights|window-live/)
@@ -1890,7 +1892,7 @@ describe('The floor schematic', () => {
 
   it('is a ground being looked across, not a third portrait of a place', () => {
     assert.match(floor, /const W = 900/)
-    assert.match(floor, /const H = 6\d0/)
+    assert.match(floor, /const H = 5\d\d/)
     assert.doesNotMatch(floor, /viewBox="0 0 620 700"/)
     // A plan RECTANGLE, which is what `roundedSlab` was added for. The other
     // two are square because a tier and a slab are as deep as they are wide.
@@ -1900,17 +1902,19 @@ describe('The floor schematic', () => {
   })
 
   it('letters nothing inside the drawing at all', () => {
-    // THE annotation rule for this sheet, and the one most likely to be
-    // quietly undone by a later edit that "just labels the districts". The
-    // only text elements in the whole figure are the two in the readout under
-    // it; everything else is identified by silhouette, by position, and by
-    // being pointed at.
-    const marks = [...floor.matchAll(/<text\b/g)]
-    assert.equal(marks.length, 2, 'the readout is the entire annotation budget')
-    assert.match(floor, /className="dgm-statustext"/)
-    assert.match(floor, /className="dgm-read"/)
-    // No pasted logo either - the mark is built as geometry below.
+    // THE annotation rule for this sheet, and the one most likely to be quietly
+    // undone by a later edit that "just labels the districts". There is no text
+    // element in the figure AT ALL: everything in it is identified by
+    // silhouette, by position, and by being pointed at.
+    assert.doesNotMatch(floor, /<text\b/)
     assert.doesNotMatch(floor, /<image/)
+    // The readout is a caption in the document underneath instead - which is
+    // what lets it hold its size while the drawing scales, and is why this is
+    // the one figure that does not have to pan on a phone.
+    assert.match(floor, /<figcaption className=\{`dgm-readout is-\$\{tone\}`\}/)
+    assert.match(floor, /className="dgm-readpill"/)
+    assert.match(floor, /className="dgm-readline"/)
+    assert.match(mobile, /#root \.dgm-svg\.is-floor \{ min-width: 0; \}/)
   })
 
   it('builds the mark as geometry rather than pasting it on', () => {
@@ -1961,13 +1965,26 @@ describe('The floor schematic', () => {
     // The whole of the depth on this sheet: the cloud rides up off `--spread`
     // while the floor stands out of itself off the same number, so a reader
     // arrives to two layers moving rather than to a flat picture of two.
-    assert.match(css, /\.dgm-shard \{[\s\S]*?transform: translateY\(calc\(\(1 - var\(--spread, 1\)\) \* 30px \+ var\(--float, 0px\)\)\);/)
+    assert.match(css, /\.dgm-shard \{[\s\S]*?translateY\(calc\(\(1 - var\(--spread, 1\)\) \* 30px \+ var\(--float, 0px\)\)\)/)
     assert.match(css, /\.dgm-zonefill \{[\s\S]*?opacity: calc\(0\.3 \+ 0\.34 \* var\(--spread, 1\)\);/)
     // Alive at rest, and quietly: opacity only, on a nine-second clock, read at
     // a phase taken from where each solid stands - so the floor breathes as one
     // wave crossing it rather than as twenty-seven accidents.
-    assert.match(css, /@keyframes dgm-floor-breathe \{[\s\S]*?50% \{ opacity: 0\.86; \}/)
     assert.match(css, /animation-delay: calc\(var\(--wave, 0\) \* -8\.6s\);/)
+    // AIR: the one rendering rule this sheet has that the other two must not.
+    // Every solid is faded by how far back it stands, on a ramp solved from its
+    // own plan position - and the breathe has to fold the same expression back
+    // in, because an animation on `opacity` replaces the property outright and
+    // a keyframe that forgot the depth would flatten the whole floor every nine
+    // seconds.
+    assert.match(floor, /far: Math\.round\(\(\(NEAR - item\.depth\) \/ \(NEAR - BACK\)\) \* 100\) \/ 100/)
+    assert.match(css, /\.dgm-plot \{ opacity: calc\(1 - 0\.34 \* var\(--far, 0\)\); \}/)
+    assert.match(css, /@keyframes dgm-floor-breathe \{[\s\S]*?0%, 100% \{ opacity: calc\(1 - 0\.34 \* var\(--far, 0\)\); \}[\s\S]*?50% \{ opacity: calc\(\(1 - 0\.34 \* var\(--far, 0\)\) \* 0\.87\); \}/)
+    // And it is the only figure with a gradient anywhere in it, because it is
+    // the only one that is a place rather than an instrument.
+    assert.doesNotMatch(trident, /Gradient/)
+    assert.doesNotMatch(nectar, /Gradient/)
+    assert.match(floor, /<radialGradient id="fl-air"/)
   })
 
   it('answers a pointer with four things and invents no number to do it', () => {
@@ -1979,11 +1996,16 @@ describe('The floor schematic', () => {
     // What each says depends on which side of the change it is on, so the
     // figure never narrates a state it is not currently in.
     assert.match(floor, /risen\(zone\.key\) \? zone\.after : zone\.before/)
-    // NOTHING on this sheet states a duration or a percentage. Every number
-    // this site prints carries a citation under it, and a figure that has to
-    // make one up is a figure that does not trust what it draws.
-    assert.doesNotMatch(floor, /\b\d+\s*(day|days|week|weeks|hour|hours|month|months)\b/i)
-    assert.doesNotMatch(floor, /\b\d+\s*%/)
+    // NOTHING THIS FIGURE SAYS STATES A NUMBER. Every figure this site prints
+    // carries a citation under it, and one that has to make a number up is one
+    // that does not trust what it draws. Checked against the PROSE rather than
+    // the source, so geometry is free to use percentages and the sentences
+    // are not.
+    const prose = [...floor.matchAll(/(?:read|before|after|status|pill): '([^']*)'/g)].map((match) => match[1])
+    assert.ok(prose.length > 12, 'every readout line has to be in this net')
+    for (const line of prose) {
+      assert.doesNotMatch(line, /\b\d+\s*(day|days|week|weeks|hour|hours|month|months|%)/i, line)
+    }
   })
 
   it('leaves the claim readable at rest and still without motion', () => {
@@ -1996,7 +2018,7 @@ describe('The floor schematic', () => {
     assert.equal(spans.length, 5)
     assert.equal(Math.max(...spans), spans[spans.length - 1])
     // Reduced motion stops every clock on this sheet, not just the loud ones.
-    assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{\s*\n\s*\.dgm-svg\.is-floor :is\([^)]*\.dgm-shard[^)]*\.dgm-drumring\)/)
+    assert.match(css, /\.dgm-svg\.is-floor :is\([^)]*\.dgm-shard[^)]*\.dgm-drumring\) \{\s*\n\s*transition: none;\s*\n\s*animation: none;/)
   })
 
   it('holds a legible scale on a phone', () => {
@@ -2004,13 +2026,19 @@ describe('The floor schematic', () => {
     // its smallest solids are two pixels - so it holds wider and pans, which is
     // what the shared rule already says a schematic should do rather than
     // simplify. It centres like the other two, because a floor has a middle.
-    assert.match(mobile, /#root \.dgm-svg\.is-floor \{ min-width: 840px; \}/)
+    // The other two hold a legible width and pan, because they are lettered
+    // throughout and shrinking a sheet until its annotation is six pixels is
+    // not a smaller drawing. This one is written on nowhere, so it simply
+    // fits - a phone gets the whole composition at once rather than forty per
+    // cent of it and a sentence cut in half.
+    assert.match(mobile, /#root \.dgm-svg \{ min-width: 500px; \}/)
+    assert.match(mobile, /#root \.dgm-svg\.is-floor \{ min-width: 0; \}/)
     assert.match(floor, /const frame = useCenterOnOverflow\(\)/)
     assert.doesNotMatch(pan, /useOpenOnStart/)
   })
 
   it('stands the thesis figure on the page field, not in a plate of its own', () => {
-    assert.match(app, /<section className="thesis-section section-space" id="thesis" ref=\{root\}>/)
+    assert.match(app, /<section className="thesis-section section-space" id="thesis" ref=\{sheet\}>/)
     assert.match(app, /<div className="section-field" ref=\{field\} aria-hidden="true" \/>/)
     assert.match(app, /<ChainSchematic animate=\{animate\} reduced=\{reduced\} \/>/)
     assert.doesNotMatch(app, /thesis-plate/)
@@ -2018,5 +2046,69 @@ describe('The floor schematic', () => {
     // Faded at BOTH ends, so Trident and Nectar keep reading as the two
     // drawings that share one sheet.
     assert.match(css, /\.thesis-section \.section-field \{[\s\S]*?mask-image: linear-gradient\(to bottom, transparent, var\(--text\) 15%, var\(--text\) 85%, transparent\);/)
+  })
+})
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   THE POINTER AS A POINT OF VIEW
+
+   All three figures already answer a pointer by READING - hover a deck and its
+   rail loads, hover a district and it hands over its sentence. This is the
+   other half: moving the pointer moves what a reader is looking AT. It is one
+   device, deliberately applied at three different strengths and deliberately
+   not applied to one figure at all, and this suite is here so the exception
+   stays a decision rather than becoming an oversight.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+describe('The pointer field', () => {
+  const pointer = null
+
+  it('is read once per section and never through React', () => {
+    // Custom properties inherit, so one listener on the section root serves
+    // both the lattice behind the drawing and the solids held above it - and a
+    // value that changes every pointer frame must never re-render a tree with
+    // forty solids in it.
+    assert.match(field, /node\.style\.setProperty\('--px'/)
+    assert.match(field, /node\.style\.setProperty\('--py'/)
+    assert.doesNotMatch(field, /useState/)
+    assert.match(field, /requestAnimationFrame/)
+    assert.match(app, /const sheet = useFieldRoot\(root, reduced\)/)
+    assert.equal((app.match(/ref=\{sheet\}/g) || []).length, 3)
+  })
+
+  it('is off wherever following a pointer would be a lie', () => {
+    // On a touch screen there is no pointer to follow: a tap would jump every
+    // layer and leave it wherever the finger last was. Reduced motion is the
+    // same refusal for a different reason. In both cases the element keeps its
+    // zeroes and every expression downstream collapses to no offset at all.
+    assert.match(field, /if \(!node \|\| reduced\) return undefined/)
+    assert.match(field, /any-hover: hover\) and \(pointer: fine/)
+    assert.match(css, /var\(--px, 0\)/)
+    assert.match(css, /var\(--py, 0\)/)
+  })
+
+  it('spends it hardest on the figure that is a place', () => {
+    // Fourteen pixels at most on the thesis cloud, and per plate rather than
+    // per layer - nine plates at nine rates is what makes it shear rather than
+    // slide. Four on a Trident plate, which is furniture on an instrument.
+    assert.match(floor, /sway: Math\.round\(\(6 \+ \(238 - shard\.at\[1\]\) \* 0\.036\) \* 10\) \/ 10/)
+    assert.match(css, /\.dgm-shard \{[\s\S]*?translate\(calc\(var\(--px, 0\) \* var\(--sway, 8px\)\)/)
+    assert.match(css, /\.dgm-plate \{\s*\n\s*transform:\s*\n\s*translate\(calc\(var\(--px, 0\) \* 4px\), calc\(var\(--py, 0\) \* 2\.5px\)\)/)
+    // Trident's plates are the one layer in that figure attached to nothing.
+    // Nothing plumbed moves: a deck is joined to the deck below it by a drop
+    // drawn inside both, and a parallax on a plumbed thing is a drawing that
+    // has come apart.
+    assert.doesNotMatch(css, /\.dgm-slide \{[^}]*var\(--px/)
+    assert.doesNotMatch(css, /\.dgm-drop[a-z]* \{[^}]*var\(--px/)
+  })
+
+  it('leaves Nectar out on purpose, and says why in the sheet', () => {
+    // The obvious counterpart is the intelligence slab, and it cannot move:
+    // three channels pass under its near skirt and come up through ports cut in
+    // its plan, so drifting it by two pixels slides every port off the route
+    // arriving at it. If someone ever adds it, this fails and the reason gets
+    // read again rather than rediscovered.
+    assert.doesNotMatch(css, /\.dgm-intel[^{]*\{[^}]*var\(--px/)
+    assert.match(css, /NECTAR IS DELIBERATELY NOT IN THIS PASS/)
   })
 })

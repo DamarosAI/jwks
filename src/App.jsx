@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom'
 import { HERO_STAGE_MS, HERO_TICK_MS, NARROW_VIEWPORT, autoplayIndex, nextStageIndex, shouldFollowDemoSelection, shouldHoldAutoplayFromClick, shouldKeepPreviousStage, shouldPlayAutoplay, shouldRunAmbient, useAutoplayHold, useDocumentVisible, useInView, useMediaQuery, useScrollIdle, useSoftSwap } from './autoplay'
 import { easeSectionScroll, sectionScrollDuration, sectionScrollTarget, usePaneSettle, viewportHeight } from './motion'
@@ -8,6 +8,7 @@ const PrivacyPage = lazy(() => import('./PrivacyPage'))
 import ChainSchematic from './diagrams/ChainSchematic'
 import TridentSchematic from './diagrams/TridentSchematic'
 import NectarSchematic from './diagrams/NectarSchematic'
+import { usePointerField } from './diagrams/usePointerField'
 import { useScrollSpread } from './diagrams/useScrollPhase'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
@@ -32,6 +33,33 @@ import {
 gsap.registerPlugin(ScrollTrigger, useGSAP)
 ScrollTrigger.config({ ignoreMobileResize: true })
 
+
+/* THE POINTER AS A POINT OF VIEW.
+
+   All three figures already answer a pointer by READING: hover a deck and its
+   rail loads, hover a site and what it published lights, hover a district and
+   it hands over its sentence. That is the right response for a mechanism and it
+   is not the only thing a pointer can be for. This is the other one - moving it
+   moves what a reader is looking AT, not only what the drawing is saying.
+
+   It is read once, on the section, because `--px` and `--py` inherit: the
+   lattice behind the drawing and the solids held above it both take the same
+   two numbers from one listener, and nothing in React re-renders on the way.
+
+   The ref is merged rather than doubled because the section root is already the
+   scope GSAP animates inside. */
+
+function useFieldRoot(root, reduced) {
+  const pointer = usePointerField({ reduced })
+  return useCallback((node) => {
+    root.current = node
+    const detach = pointer(node)
+    return () => {
+      detach?.()
+      root.current = null
+    }
+  }, [pointer, root])
+}
 
 function useEnterMotion(root, reduced, setup, query = '(min-width: 901px)') {
   useGSAP(() => {
@@ -588,6 +616,7 @@ function ThesisSection() {
   const inView = useInView(root)
   const animate = shouldRunAmbient({ reduced, inView, narrow })
   const field = useScrollSpread({ reduced, start: 'top bottom', end: 'top 40%' })
+  const sheet = useFieldRoot(root, reduced)
 
   useEnterMotion(root, reduced, () => [
     gsap.from('.thesis-head > *', {
@@ -608,7 +637,7 @@ function ThesisSection() {
   ])
 
   return (
-    <section className="thesis-section section-space" id="thesis" ref={root}>
+    <section className="thesis-section section-space" id="thesis" ref={sheet}>
       <SectionEyebrow>Thesis</SectionEyebrow>
       <div className="section-field" ref={field} aria-hidden="true" />
       <div className="thesis-column">
@@ -1027,6 +1056,7 @@ function TridentSection() {
   const inView = useInView(root)
   const animate = shouldRunAmbient({ reduced, inView, narrow })
   const field = useScrollSpread({ reduced, start: 'top bottom', end: 'top 40%' })
+  const sheet = useFieldRoot(root, reduced)
   useEnterMotion(root, reduced, () => [
     gsap.from('.trident-copy > *', {
       opacity: 0, duration: 0.8, stagger: 0.12, clearProps: 'transform',
@@ -1039,7 +1069,7 @@ function TridentSection() {
   ])
 
   return (
-    <section className="trident-section section-space" id="trident" ref={root}>
+    <section className="trident-section section-space" id="trident" ref={sheet}>
       <div className="section-field" ref={field} aria-hidden="true" />
       <SectionEyebrow brand>Trident</SectionEyebrow>
       <div className="trident-copy">
@@ -1066,6 +1096,7 @@ function NectarSection() {
   const inView = useInView(root)
   const animate = shouldRunAmbient({ reduced, inView, narrow })
   const field = useScrollSpread({ reduced, start: 'top bottom', end: 'top 40%' })
+  const sheet = useFieldRoot(root, reduced)
   useEnterMotion(root, reduced, () => [
     gsap.from('.nectar-copy > *', {
       opacity: 0, duration: 0.8, stagger: 0.12, ease: 'power2.out', clearProps: 'transform',
@@ -1078,7 +1109,7 @@ function NectarSection() {
   ])
 
   return (
-    <section className="nectar-section section-space" id="nectar" ref={root}>
+    <section className="nectar-section section-space" id="nectar" ref={sheet}>
       <div className="section-field" ref={field} aria-hidden="true" />
       <SectionEyebrow brand>Nectar</SectionEyebrow>
       <div className="nectar-network">

@@ -303,12 +303,25 @@ body,
 
   #root .dgm-svg { min-width: 500px; }
 
-  /* The floor is a wide, dense sheet and it does not hold at five hundred - at
-     that width its smallest solids are two pixels and its three districts are
-     one smear. It holds at eight-forty and pans, which is what the shared rule
-     above already says a schematic should do rather than simplify. */
+  /* THE FLOOR IS THE ONE FIGURE THAT DOES NOT HAVE TO PAN.
 
-  #root .dgm-svg.is-floor { min-width: 840px; }
+     The rule above holds the other two at a legible width because they are
+     lettered throughout, and shrinking a sheet until its annotation is six
+     pixels is not a smaller drawing, it is an unreadable one.
+
+     Nothing is written on this one. Its readout is a caption in the document
+     underneath it, which keeps its own size whatever the drawing does - so the
+     drawing is free to simply fit, and a phone gets the whole composition at
+     once instead of forty per cent of it and a sentence cut in half. That is
+     the first real dividend of the no-labels rule. */
+
+  #root .dgm-svg.is-floor { min-width: 0; }
+
+  #root .dgm-readout {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
 
   #root .thesis-column {
     width: 100%;

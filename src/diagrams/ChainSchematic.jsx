@@ -66,13 +66,13 @@ import { useScrollRun } from './useScrollPhase'
  */
 
 const W = 900
-const H = 640
+const H = 566
 const CX = 450
 
 // The ground. A wide plan rectangle rather than the square the other two
 // figures are built over: this one is a floor being looked across, not a tier
 // being looked at.
-const PLANE_Y = 392
+const PLANE_Y = 372
 const PLANE_X = 292
 const PLANE_Z = 132
 const PLANE_T = 15
@@ -152,11 +152,23 @@ function populate(zone, count, kind, salt) {
   })
 }
 
-const POPULATION = [
+const RAW = [
   ...populate(ZONES[0], 7, 'blocks', 3),
   ...populate(ZONES[1], 9, 'works', 19),
   ...populate(ZONES[2], 9, 'people', 41),
 ].sort((a, b) => a.depth - b.depth)
+
+// How far back each solid stands, as a number in [0, 1] solved from the plan
+// rather than assigned by hand - so moving a district moves its air with it.
+// This is what the sheet fades against, and it is the one rule here the other
+// two figures must not have: distance is a fact about a place and not about an
+// instrument.
+const NEAR = RAW[RAW.length - 1].depth
+const BACK = RAW[0].depth
+const POPULATION = RAW.map((item) => ({
+  ...item,
+  far: Math.round(((NEAR - item.depth) / (NEAR - BACK)) * 100) / 100,
+}))
 
 // THE DRUM. The Damaros mark built as geometry instead of pasted on as a logo:
 // the monogram is two stacked forms, so this is two stacked plan cylinders, the
@@ -217,6 +229,10 @@ const SHARDS = [
     index,
     key: `shard-${index}`,
     plate,
+    // How far this plate swings against the pointer. Taken from its own height
+    // on the sheet, so the layer shears as a reader crosses it instead of
+    // sliding as one card - nine plates at nine rates, which is the depth.
+    sway: Math.round((6 + (238 - shard.at[1]) * 0.036) * 10) / 10,
     // The hairline runs from the plate's own front corner to the ground point,
     // never from its middle: a leader that starts inside a solid is a leader
     // drawn over it.
@@ -293,7 +309,19 @@ export default function ChainSchematic({ animate = true, reduced = false }) {
             <pattern id="fl-fine" width="9" height="9" patternUnits="userSpaceOnUse">
               <circle className="dgm-grain is-fine" cx="1" cy="1" r="0.8" />
             </pattern>
+            {/* The air. One soft field on the sheet under the floor, centred on
+                the drum, so the ground the figure stands on is lit from the
+                middle of the thing that is running rather than being flat
+                paper. It is the only gradient in any of the three figures, and
+                it is here because this is the only one of them that is a place
+                rather than an instrument. */}
+            <radialGradient id="fl-air" cx="50%" cy="50%" r="50%">
+              <stop className="dgm-air-in" offset="0%" />
+              <stop className="dgm-air-out" offset="100%" />
+            </radialGradient>
           </defs>
+
+          <ellipse className="dgm-air" cx={CX} cy={PLANE_Y + 30} rx="430" ry="210" fill="url(#fl-air)" />
 
           {/* THE TWO LAYERS ARRIVE AT TWO RATES.
 
@@ -366,7 +394,7 @@ export default function ChainSchematic({ animate = true, reduced = false }) {
                 <g
                   className={`dgm-plot ${item.kind}${risen(item.zone) ? ' is-up' : ''}${lit(item.zone)}`}
                   key={item.key}
-                  style={{ '--life': item.life, '--wave': item.wave, '--lift': `${item.solid.step}px` }}
+                  style={{ '--life': item.life, '--wave': item.wave, '--far': item.far, '--lift': `${item.solid.step}px` }}
                 >
                   {item.round ? (
                     <>
@@ -408,7 +436,7 @@ export default function ChainSchematic({ animate = true, reduced = false }) {
             <g
               className={`dgm-shard${risen(shard.zone) ? ' is-gone' : ''}${lit(shard.zone)}`}
               key={shard.key}
-              style={{ '--life': shard.life }}
+              style={{ '--life': shard.life, '--sway': `${shard.sway}px` }}
               {...probe(shard.zone)}
             >
               <path className="dgm-tether" d={shard.leader} />
@@ -418,12 +446,26 @@ export default function ChainSchematic({ animate = true, reduced = false }) {
             </g>
           ))}
 
-          <line className="dgm-rule" x1="22" y1="586" x2={W - 22} y2="606" />
-          <rect className="dgm-status" x="22" y="598" width="146" height="26" rx="13" />
-          <text className="dgm-statustext" x="95" y="615" textAnchor="middle">{pill}</text>
-          <text className="dgm-read" x="182" y="615">{read}</text>
         </svg>
       </div>
+
+      {/* THE READOUT IS A CAPTION, NOT PART OF THE DRAWING.
+
+          The other two sheets letter their readout inside the SVG, which is
+          right for figures that are lettered throughout - it is one more label
+          among many, set in the same units as the rest of them.
+
+          Nothing is written on this one. A drawn readout would have been the
+          only text on the sheet AND tied to the drawing's scale, which costs
+          twice on a phone: it shrinks with the figure and it pans away with it.
+          Out here it is ordinary text at an ordinary size, it holds still while
+          the drawing scales, a screen reader gets it as part of the document
+          rather than as a label inside an image, and the SVG is left as what it
+          is - a drawing with nothing written on it. */}
+      <figcaption className={`dgm-readout is-${tone}`} aria-live="polite">
+        <span className="dgm-readpill">{pill}</span>
+        <span className="dgm-readline">{read}</span>
+      </figcaption>
     </figure>
   )
 }

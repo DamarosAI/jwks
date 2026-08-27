@@ -9340,9 +9340,24 @@ html.is-hidden .clinic-node i,
   left: 50%;
   width: 100vw;
   margin-left: -50vw;
-  background-image: radial-gradient(circle at center, color-mix(in srgb, var(--accent) 38%, transparent) 1.1px, transparent 1.4px);
-  background-position: center calc(var(--spread, 1) * -34px);
-  background-size: 26px 26px;
+  /* TWO LAYERS: THE LATTICE, AND WHERE THE READER IS STANDING ON IT.
+
+     The dots are the ground and they have not changed. Over them is one soft
+     wash that follows the pointer across the sheet, at a ninth of the accent -
+     far too little to be a spotlight, just enough that the ground is somewhere
+     a reader is rather than a texture behind them. `--px` and `--py` are
+     written on the section root and inherit down; with no pointer they are
+     zero and the wash sits dead centre, which is where it would have been if
+     nobody had thought to move it. That is the whole fallback. */
+  background-image:
+    radial-gradient(circle 26vmax at calc(50% + var(--px, 0) * 40%) calc(50% + var(--py, 0) * 44%), color-mix(in srgb, var(--accent) 10%, transparent), transparent 64%),
+    radial-gradient(circle at center, color-mix(in srgb, var(--accent) 38%, transparent) 1.1px, transparent 1.4px);
+  background-position:
+    center,
+    center calc(var(--spread, 1) * -34px);
+  background-size:
+    100% 100%,
+    26px 26px;
   opacity: calc(0.34 + 0.66 * var(--spread, 1));
   pointer-events: none;
 }
@@ -10142,7 +10157,34 @@ html.is-hidden .clinic-node i,
   50% { --ride: -2.6px; }
 }
 
-.dgm-plate { transform: translateY(var(--ride, 0px)); }
+/* THE PLATES TAKE A POINT OF VIEW, AND NOTHING ELSE IN TRIDENT DOES.
+
+   Three or four pixels, composed into the ride the plate already has, and it is
+   the whole of the restrained pass on this figure: a proposal surface is the
+   only thing on the sheet held in the air with nothing attached to it, so it is
+   the only thing that can move against the stack without tearing something. The
+   landing pad under it stays exactly where it was, which is what turns four
+   pixels of drift into height.
+
+   The pads, the drops, the rails and the four tiers do not move. A deck is
+   plumbed to the deck below it by a drop drawn inside both of them, and a
+   parallax on a plumbed thing is a drawing that has come apart. */
+
+.dgm-plate {
+  transform:
+    translate(calc(var(--px, 0) * 4px), calc(var(--py, 0) * 2.5px))
+    translateY(var(--ride, 0px));
+}
+
+/* NECTAR IS DELIBERATELY NOT IN THIS PASS.
+
+   The obvious counterpart is its intelligence slab - the one plane in that
+   figure held over the ground. It cannot move. Three channels leave three
+   masts, pass under its near skirt and come up through ports cut in its plan;
+   drifting the slab by even two pixels slides every port off the route arriving
+   at it, and the figure's whole claim is that those routes arrive somewhere.
+   The lattice under the section carries the pointer there instead, which is the
+   half of this device that costs nothing to attach. */
 
 .dgm-svg.is-live .dgm-plate {
   animation: dgm-ride calc(6.8s + var(--life, 0) * 3.4s) ease-in-out infinite;
@@ -12490,15 +12532,46 @@ html.is-hidden .clinic-node i,
    amplitude on a nine-second clock: enough that the floor is never a still
    photograph, far too little to pull an eye off the sentence beside it. */
 
-@keyframes dgm-floor-breathe {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.86; }
-}
-
 .dgm-svg.is-live .dgm-plot.is-up {
   animation: dgm-floor-breathe calc(9.2s + var(--life, 0) * 3.8s) ease-in-out infinite;
   animation-delay: calc(var(--wave, 0) * -8.6s);
 }
+
+/* ── Air ─────────────────────────────────────────────────────────────────
+
+   THE ONE RULE ON THIS SHEET THE OTHER TWO MUST NOT HAVE.
+
+   Trident and Nectar are drawings of instruments: you look AT them, every face
+   at every height is drawn at one strength, and there is no light source
+   anywhere in either of them - which is exactly right, because distance is not
+   a fact about a governed stack or a federation of three.
+
+   This one is a drawing of a PLACE: you look ACROSS it. So it has air in it.
+   Every solid on the floor is faded by how far back it stands, on a ramp solved
+   from its own plan position rather than assigned by hand, and the far end of
+   the floor recedes the way the far end of anything does. It is one third of a
+   stop across the whole plane - small enough that no solid is hard to see, and
+   the single largest reason this sheet reads as somewhere rather than as
+   something.
+
+   The breathe folds the same expression back in, because an animation on
+   `opacity` replaces the property outright: a keyframe that forgot the depth
+   would flatten the whole floor every nine seconds. */
+
+.dgm-plot { opacity: calc(1 - 0.34 * var(--far, 0)); }
+
+@keyframes dgm-floor-breathe {
+  0%, 100% { opacity: calc(1 - 0.34 * var(--far, 0)); }
+  50% { opacity: calc((1 - 0.34 * var(--far, 0)) * 0.87); }
+}
+
+/* The air is drawn as well as applied: one soft field on the sheet under the
+   floor, centred on the drum, so the ground the figure stands on is lit from
+   the middle of the thing that is running rather than being flat paper. */
+
+.dgm-air-in { stop-color: color-mix(in srgb, var(--accent) 20%, transparent); }
+.dgm-air-out { stop-color: transparent; }
+.dgm-air { pointer-events: none; opacity: calc(0.34 + 0.66 * var(--spread, 1)); }
 
 /* ── The drum ────────────────────────────────────────────────────────────
 
@@ -12574,7 +12647,23 @@ html.is-hidden .clinic-node i,
   opacity: calc(0.24 + 0.76 * var(--spread, 1));
   transform-box: fill-box;
   transform-origin: center;
-  transform: translateY(calc((1 - var(--spread, 1)) * 30px + var(--float, 0px)));
+  /* THE CLOUD TAKES A POINT OF VIEW, AND IT TAKES IT HARDEST.
+
+     Trident's plates move four pixels because they are furniture on an
+     instrument. These move up to fourteen, per plate, by how high each one is
+     holding its work - `--sway` is set from the plate's own height on the sheet
+     - so the layer shears as a reader moves across it instead of sliding as one
+     card. Two flat layers at nine different rates is the whole of the depth on
+     this figure, and it is what an axonometric can do without a third dimension
+     the page has to download.
+
+     The hairline travels with its plate. That is deliberate: the tether belongs
+     to the thing it is holding up, and a foot pinned to the floor while its
+     line swung over it would be the one mark on the sheet claiming these
+     systems sit somewhere fixed. They do not. */
+  transform:
+    translate(calc(var(--px, 0) * var(--sway, 8px)), calc(var(--py, 0) * 5px))
+    translateY(calc((1 - var(--spread, 1)) * 30px + var(--float, 0px)));
   transition: opacity 640ms ease, transform 720ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -12593,7 +12682,10 @@ html.is-hidden .clinic-node i,
 
 .dgm-shard.is-gone {
   opacity: 0.2;
-  transform: translateY(calc((1 - var(--spread, 1)) * 30px + var(--float, 0px))) scale(0.88);
+  transform:
+    translate(calc(var(--px, 0) * var(--sway, 8px)), calc(var(--py, 0) * 5px))
+    translateY(calc((1 - var(--spread, 1)) * 30px + var(--float, 0px)))
+    scale(0.88);
 }
 
 .dgm-shard.is-gone .dgm-inert { opacity: 0; }
@@ -12644,8 +12736,69 @@ html.is-hidden .clinic-node i,
   vector-effect: non-scaling-stroke;
 }
 
+/* ── The readout, as a caption ────────────────────────────────────────────
+
+   The other two figures letter their readout inside the SVG, which is right for
+   sheets that are lettered throughout. This one has no type on it at all, so a
+   drawn readout would have been the only text in the figure and would have been
+   tied to the figure's scale - shrinking with it, and panning away with it on a
+   phone. Out here it holds its size whatever the drawing does.
+
+   Same three parts and the same four tones as the drawn one, so the pair still
+   reads as one system: a tinted chip while the run is passing, and the deep
+   blue with the paper written on it once it has settled. That inversion is the
+   only one anywhere in the three figures, which is what makes it mean
+   something. */
+
+.dgm-readout {
+  display: flex;
+  align-items: baseline;
+  gap: clamp(12px, 1.6vw, 20px);
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.dgm-readpill {
+  flex: none;
+  padding: 6px 13px;
+  border-radius: 999px;
+  background: var(--bg-soft);
+  color: var(--muted);
+  font-family: var(--font-ui);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  white-space: nowrap;
+  transition: background 300ms ease, color 300ms ease;
+}
+
+/* `min-width: 0` because a flex child will not wrap below its own max-content
+   width without it, and `align-self: stretch` because the column layout on a
+   phone sets `align-items: flex-start`, which sizes a child to its content and
+   runs a sentence straight off the side of the screen. The measure is capped
+   so the line does not run the full width of a 1352px column either. */
+
+.dgm-readline {
+  min-width: 0;
+  max-width: 82ch;
+  align-self: stretch;
+  color: var(--text-soft);
+  font-size: clamp(0.84rem, 0.79rem + 0.22vw, 0.95rem);
+  font-weight: 500;
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+
+.dgm-readout.is-pass .dgm-readpill { background: var(--accent-soft); color: var(--accent-strong); }
+.dgm-readout.is-valid .dgm-readpill { background: var(--settled, var(--accent-strong)); color: var(--surface-solid); }
+
 @media (prefers-reduced-motion: reduce) {
-  .dgm-svg.is-floor :is(.dgm-shard, .dgm-tether, .dgm-tetherfoot, .dgm-inert, .dgm-plot, .dgm-plotcap, .dgm-zone, .dgm-zonefill, .dgm-zonerim, .dgm-run, .dgm-runpath, .dgm-runflow, .dgm-drum, .dgm-drumhead, .dgm-drumring) {
+  .dgm-readout,
+  .dgm-readpill { transition: none; }
+
+  .dgm-svg.is-floor :is(.dgm-air, .dgm-shard, .dgm-tether, .dgm-tetherfoot, .dgm-inert, .dgm-plot, .dgm-plotcap, .dgm-zone, .dgm-zonefill, .dgm-zonerim, .dgm-run, .dgm-runpath, .dgm-runflow, .dgm-drum, .dgm-drumhead, .dgm-drumring) {
     transition: none;
     animation: none;
   }
