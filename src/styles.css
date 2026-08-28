@@ -12540,16 +12540,6 @@ html.is-hidden .clinic-node i,
 
 .fl-emblem { opacity: 0; }
 
-.fl-emblem .dgm-face-top {
-  fill: color-mix(in srgb, var(--accent) 30%, var(--surface-solid));
-  stroke: color-mix(in srgb, var(--accent-strong) 66%, transparent);
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
-}
-
-.fl-emblem .dgm-face-left { fill: color-mix(in srgb, var(--accent) 52%, var(--surface-solid)); stroke: none; }
-.fl-emblem .dgm-face-right { fill: color-mix(in srgb, var(--accent-strong) 58%, var(--accent)); stroke: none; }
-
 .dgm-svg.is-live .fl-emblem { animation: fl-emblem 14s ease-in-out infinite; }
 
 @keyframes fl-emblem {
@@ -12628,6 +12618,16 @@ html.is-hidden .clinic-node i,
 
 .fl-step:focus-visible .dgm-face-top { stroke: var(--accent-strong); stroke-width: 2.5; }
 
+/* THE LABEL ARRIVES WITH THE PLANE IT NAMES.
+
+   It used to be printed the whole way through, including the fifth of the loop
+   where there is no plane under it - a name held over a scatter is a caption
+   for something that has not happened yet. It rises into place as the six tiles
+   fuse, a beat behind them, and leaves before they do.
+
+   `transform-box: fill-box` because the rise is a transform on a text node, and
+   without it the origin is the whole viewBox. */
+
 .fl-name {
   fill: color-mix(in srgb, var(--accent-strong) 72%, transparent);
   font-family: var(--font-ui);
@@ -12636,7 +12636,205 @@ html.is-hidden .clinic-node i,
   font-synthesis: none;
   letter-spacing: 0.16em;
   pointer-events: none;
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  transform: translateY(10px);
   transition: fill 260ms ease;
+}
+
+.dgm-svg.is-live .fl-name { animation: fl-label 14s ease-out infinite; }
+
+@keyframes fl-label {
+  0%, 34% { opacity: 0; transform: translateY(10px); }
+  52%, 88% { opacity: 1; transform: translateY(0); }
+  96%, 100% { opacity: 0; transform: translateY(10px); }
+}
+
+/* -- THE FIVE MECHANISMS ------------------------------------------------
+
+   Every plane runs one, and every one has a POPULATION and something moving
+   through it. Trident sets this bar: a deck there is not an arrangement, it is
+   a machine that keeps running whether anybody is looking or not.
+
+   They share nothing but the ink. Five different populations, five different
+   moving parts, five different clocks - because the thing each step does is
+   different, and a figure that ran the same loop five times would be saying
+   they are the same step drawn in five places. */
+
+.fl-emblem .dgm-face-top {
+  fill: color-mix(in srgb, var(--accent) 24%, var(--surface-solid));
+  stroke: color-mix(in srgb, var(--accent-strong) 60%, transparent);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.fl-emblem .dgm-face-left { fill: color-mix(in srgb, var(--accent) 46%, var(--surface-solid)); stroke: none; }
+.fl-emblem .dgm-face-right { fill: color-mix(in srgb, var(--accent-strong) 52%, var(--accent)); stroke: none; }
+
+/* PROTOCOL. Twelve criteria walked left to right and locked under one version.
+   A criterion lights when the head reaches it and STAYS lit, because compiling
+   is a thing that finishes - a blade that dimmed again would be saying the
+   protocol keeps coming undone. */
+
+.fl-blade .dgm-face-top { fill: color-mix(in srgb, var(--accent) 12%, var(--surface-solid)); }
+.dgm-svg.is-live .fl-blade {
+  animation: fl-compile 6s ease-out infinite;
+  animation-delay: calc(var(--turn, 0) * 0.3s);
+}
+
+@keyframes fl-compile {
+  0%, 4% { opacity: 0.4; }
+  10%, 88% { opacity: 1; }
+  100% { opacity: 0.4; }
+}
+
+.dgm-svg.is-live .fl-head { animation: fl-walk 6s cubic-bezier(0.4, 0, 0.5, 1) infinite; }
+
+@keyframes fl-walk {
+  0% { transform: translate(0, 0); opacity: 0; }
+  6% { opacity: 1; }
+  74% { transform: translate(var(--span)); opacity: 1; }
+  82%, 100% { transform: translate(var(--span)); opacity: 0; }
+}
+
+.dgm-svg.is-live .fl-lock { animation: fl-seat 6s cubic-bezier(0.3, 1.4, 0.5, 1) infinite; }
+
+@keyframes fl-seat {
+  0%, 76% { opacity: 0; transform: translateY(-16px); }
+  86%, 96% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-16px); }
+}
+
+/* EVIDENCE. One as-of cut descending through resources at every depth. A
+   resource lights when the cut passes it; the tall ones stay dark, because not
+   every criterion is mapped when a snapshot closes. */
+
+.fl-sheet .dgm-face-top {
+  fill: color-mix(in srgb, var(--accent) 16%, var(--surface-solid));
+  stroke: color-mix(in srgb, var(--accent-strong) 44%, transparent);
+}
+
+.dgm-svg.is-live .fl-sheet { animation: fl-cut 7s ease-in-out infinite; }
+
+@keyframes fl-cut {
+  0%, 100% { transform: translateY(-22px); opacity: 0.5; }
+  46%, 78% { transform: translateY(0); opacity: 0.92; }
+}
+
+.fl-pin .dgm-face-top { fill: color-mix(in srgb, var(--accent) 10%, var(--surface-solid)); }
+
+.dgm-svg.is-live .fl-pin {
+  animation: fl-mapped 7s ease-out infinite;
+  animation-delay: calc((11 - var(--turn, 0)) * 0.11s);
+}
+
+@keyframes fl-mapped {
+  0%, 30% { opacity: 0.35; }
+  46%, 80% { opacity: calc(0.4 + var(--under, 0) * 0.6); }
+  100% { opacity: 0.35; }
+}
+
+/* SCREENING. One rail, one splitter, three bins at one, four and three. The
+   pucks do not all go the same way and the bins are not the same size.
+
+   The rail is the only part of any mechanism that does not move, so it is the
+   only one drawn back: it is the track, not a thing on the track, and a track
+   at the same weight as what runs on it is a track the eye keeps mistaking for
+   cargo. */
+
+.fl-rail { opacity: 0.55; }
+.fl-rail .dgm-face-top { fill: color-mix(in srgb, var(--accent) 8%, var(--surface-solid)); }
+
+.dgm-svg.is-live .fl-puck {
+  animation: fl-sort 5s cubic-bezier(0.35, 0, 0.5, 1) infinite;
+  animation-delay: calc(var(--turn, 0) * -0.83s);
+}
+
+@keyframes fl-sort {
+  0% { transform: translate(0, 0); opacity: 0; }
+  8% { opacity: 1; }
+  70% { transform: translate(var(--span)); opacity: 1; }
+  84%, 100% { transform: translate(var(--span)); opacity: 0; }
+}
+
+.dgm-svg.is-live .fl-bin {
+  animation: fl-catch 5s ease-out infinite;
+  animation-delay: calc(var(--turn, 0) * 0.24s + 3.2s);
+}
+
+@keyframes fl-catch {
+  0%, 92% { opacity: 0.72; }
+  4% { opacity: 1; }
+  100% { opacity: 0.72; }
+}
+
+/* RESOLVE. Two readings that disagree, a beam sitting at whichever governs, and
+   a seal that comes down and levels it. Nothing is settled until something
+   presses. */
+
+.dgm-svg.is-live .fl-read.is-high { animation: fl-claim 5.5s ease-in-out infinite; }
+.dgm-svg.is-live .fl-read.is-low { animation: fl-claim 5.5s ease-in-out infinite; animation-delay: -2.75s; }
+
+@keyframes fl-claim {
+  0%, 44%, 100% { opacity: 0.45; }
+  16%, 30% { opacity: 1; }
+}
+
+.dgm-svg.is-live .fl-beam { animation: fl-tip 5.5s ease-in-out infinite; }
+
+@keyframes fl-tip {
+  0%, 18% { transform: translateY(-5px); }
+  40%, 56% { transform: translateY(6px); }
+  76%, 100% { transform: translateY(0); }
+}
+
+.dgm-svg.is-live .fl-seal { animation: fl-press 5.5s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+
+@keyframes fl-press {
+  0%, 58% { transform: translateY(-20px); opacity: 0.4; }
+  72%, 94% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-20px); opacity: 0.4; }
+}
+
+/* REPLAY. Nine events in a ring with a verifier going round them, lighting each
+   event and the link behind it, and closing on where it started.
+
+   Seven point six rather than seven, because Evidence already runs at seven and
+   two mechanisms on the same clock beat together - which reads as one machine
+   with two arms rather than as two machines that happen to be near each
+   other. */
+
+.dgm-svg.is-live .fl-event {
+  animation: fl-verify 7.6s ease-out infinite;
+  animation-delay: calc(var(--turn, 0) * 0.62s);
+}
+
+@keyframes fl-verify {
+  0%, 6% { opacity: 0.4; }
+  12% { opacity: 1; }
+  22%, 90% { opacity: 0.85; }
+  100% { opacity: 0.4; }
+}
+
+.dgm-svg.is-live .fl-link {
+  animation: fl-chain 7.6s ease-out infinite;
+  animation-delay: calc(var(--turn, 0) * 0.62s + 0.3s);
+}
+
+@keyframes fl-chain {
+  0%, 6% { opacity: 0.22; }
+  14%, 90% { opacity: 0.8; }
+  100% { opacity: 0.22; }
+}
+
+/* Pointing at a step holds its name up regardless of where the loop is - the
+   reader asked for it, so it does not go away underneath them. */
+.fl-step:hover .fl-name,
+.fl-step:focus-visible .fl-name {
+  opacity: 1;
+  transform: translateY(0);
+  animation-play-state: paused;
 }
 
 .fl-step:hover .fl-name,
@@ -12706,6 +12904,8 @@ html.is-hidden .clinic-node i,
 @media (prefers-reduced-motion: reduce) {
   .fl-tile,
   .fl-lit,
+  .fl-emblem,
+  .fl-emblem > g,
   .fl-deep,
   .fl-shallow,
   .fl-name,
@@ -12714,4 +12914,14 @@ html.is-hidden .clinic-node i,
     animation: none;
     transition: none;
   }
+
+  /* Nothing runs, so the base state has to be the finished one: the five planes
+     assembled, lettered, with their emblems on them. Anything whose resting
+     value is mid-loop would park the figure in a state that states nothing. */
+  .fl-name {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .fl-emblem { opacity: 1; }
 }

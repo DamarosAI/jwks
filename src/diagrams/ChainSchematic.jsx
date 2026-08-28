@@ -39,9 +39,32 @@ import { useCenterOnOverflow } from './useCenterOnOverflow'
  */
 
 const W = 1200
-const H = 400
+const H = 520
 const CX = 600
-const CY = 232
+// The row sits low, because everything above it belongs to two other things:
+// the sentence, which is set into the top of this same cell, and the scatter,
+// which needs somewhere to be that is not on top of the sentence.
+const CY = 340
+
+/* WHERE THE MESS IS ALLOWED TO BE.
+ *
+ * The scatter used to be a reach and an angle with nothing bounding it, so
+ * tiles ran two hundred and seventy units above their seat - off the top of the
+ * viewBox entirely, and straight through the headline that is set into the top
+ * of this cell. A drawing that collides with its own sentence is a drawing
+ * that has stopped being read.
+ *
+ * So the drift is CLAMPED rather than merely chosen. Reach and angle still
+ * scatter the tiles the way they always did; the clamp only stops one leaving
+ * the box. It is written as a box because that is what it is - the region the
+ * figure is entitled to, with the sentence's own space kept out of it. */
+const KEEP = { top: 168, bottom: 498, left: 62, right: 1138 }
+
+/* The clamp needs a PER-TILE inset, or every tile whose reach overshoots lands
+   on the identical boundary pixel and the edges of the scatter grow clumps -
+   which is the one thing a scatter is not allowed to have. Each tile stops a
+   little short of the wall, by its own amount. */
+const clamp = (value, low, high, slack) => Math.max(low + slack, Math.min(high - slack, value))
 
 /* THE PACKING IS SOLVED, NOT EYEBALLED. A plan rectangle of half-extents
    (hx, hy) projects to a top face 2(hx + hy) * ISO_X wide, and a row stepped by
@@ -69,88 +92,135 @@ const ORDERS = {
 }
 
 
-/* -- WHAT STANDS ON EACH PLANE -------------------------------------------
+/* -- WHAT RUNS ON EACH PLANE --------------------------------------------
 
-   THESE ARE BUILT FROM THE PRODUCT'S OWN RECORD, NOT FROM AN ICON SET.
+   FIVE MECHANISMS, NOT FIVE EMBLEMS.
 
-   The replay chain in the demo says exactly what each step does, and the counts
-   in it are real: a protocol locks at v2.1 with 36 criteria; an evidence
-   snapshot freezes 1,284 resources with 25 of 36 mapped; screening returns one
-   pass, four review and three fail; resolve closes a conflict with a PI
-   signature; replay seals a chain of nine events. So every emblem is that
-   sentence built as a solid, and the proportions in them are those numbers
-   rather than shapes chosen because they balanced.
+   The first attempt put a small arrangement of blocks on each plane and called
+   it done. It was not: an arrangement is a picture of a step, and Trident sets
+   the bar higher than that. Every deck in that figure has a POPULATION and a
+   MECHANISM running through it - a distribution that resamples, a contract that
+   walks its nineteen fields in the order it checks them, a gate whose two
+   blades hold, a ledger that posts each hash to the row it commits. That is the
+   difference between a machine and a diagram of one.
 
-   THEY ALSO HAD TO NOT BE TRIDENT OR NECTAR. Those two are stacked round decks
-   and districts of scattered blocks, so this sheet uses a different vocabulary
-   entirely: BLADES stood on edge, a SHEET cutting across at a height, open
-   BINS at unequal fill, a notched SEAL, and a closed RING. Nothing here is a
-   deck and nothing is a drum.
+   So each plane here carries the same two things, and both are taken from the
+   product's own record rather than invented:
 
-   EVERY PART IS PLACED RELATIVE TO ITS OWN STEP. The first pass built them all
-   against the plan origin, which is the middle of the row - so four of the five
-   emblems were drawn on top of the third one and the other four planes came out
-   bare. An emblem belongs to a plane, so it is solved from that plane's seat.
+   PROTOCOL - twelve criteria stood on edge, a reader head that walks them left
+   to right, and a version bar that drops across all of them once it has. Each
+   criterion lights as the head reaches it and stays lit, because compiling is
+   a thing that finishes.
 
-   A solid's top face sits where it is drawn and its skirt hangs down, so
-   standing something ON the plane means placing its face one height above it.
-   That is what `stand` does, which is why no table below carries an offset
-   anybody had to work out by hand. */
+   EVIDENCE - resources at every depth and one as-of plane descending through
+   them. A resource lights when the cut passes it; the ones standing proud of it
+   stay dark, because not every criterion is mapped when a snapshot closes.
 
-function emblem(key, t) {
-  const stand = (px, py, hx, hy, high, radius = 3) => {
+   SCREENING - a cohort travelling one rail to a splitter that sorts it three
+   ways, into bins at one, four and three. The bins are not the same size and
+   the drawing is not going to pretend they are.
+
+   RESOLVE - two readings that disagree, a beam that sits at whichever one is
+   currently governing, and a seal that comes down and levels it. Nothing is
+   settled until something presses.
+
+   REPLAY - nine events in a ring with a verifier going round them, lighting
+   each event and the link behind it, closing on where it started.
+
+   Every part is solved from its own plane's seat. Built against the plan origin
+   - which is the middle of the row - four of the five draw on top of the third
+   one and the rest come out bare. */
+
+function mechanism(key, t) {
+  const stand = (px, py, hx, hy, high, radius = 2) => {
     const [sx, sy] = PLAN(t + px, -t + py)
     return { depth: px + py, shape: roundedSlab(sx, sy - high, hx, hy, high, radius) }
   }
+  // A plan displacement, expressed as the screen move it actually is. Anything
+  // that travels across a plane has to travel along the plane's own axes or it
+  // is sliding over the top of the projection rather than moving inside it.
+  const glide = (dx, dy) => `${Math.round((dx - dy) * 0.866)}px, ${Math.round((dx + dy) * 0.34)}px`
 
-  const parts = {
-    // 36 criteria, and one version locked across all of them.
-    protocol: () => [
-      ...Array.from({ length: 8 }, (_, i) =>
-        stand(-46 + i * 13, -8, 2.8, 11, 11 + Math.round(jitter(i, 5) * 17), 1.4)),
-      stand(-1, -8, 52, 2.6, 24, 1.4),
-    ],
-    // Resources at every depth, and one as-of plane frozen across them. A few
-    // stand proud of it, because not every criterion is mapped when it closes.
-    evidence: () => [
-      ...Array.from({ length: 11 }, (_, i) => {
-        const a = jitter(i, 11)
-        const b = jitter(i, 29)
-        return stand(-42 + a * 84, -22 + b * 44, 3.2, 3.2, 6 + Math.round(jitter(i, 43) * 20), 1.4)
-      }),
-      stand(0, 0, 47, 24, 15, 3),
-    ],
-    // One cohort, sorted three ways, and the three are not the same size:
-    // one pass, four review, three fail.
-    screening: () => [
-      stand(0, -26, 42, 2.6, 30, 1.4),
-      stand(-26, 6, 10, 11, 8, 1.8),
-      stand(0, 6, 10, 11, 26, 1.8),
-      stand(26, 6, 10, 11, 20, 1.8),
-    ],
-    // Two readings that disagree, and one signature that settles it.
-    resolve: () => [
-      stand(-36, -13, 4, 10, 24, 1.4),
-      stand(-36, 13, 4, 10, 13, 1.4),
-      stand(-13, 0, 18, 2.4, 9, 1.4),
-      stand(22, 0, 13, 13, 17, 2.4),
-      stand(22, 0, 6, 6, 25, 1.6),
-    ],
-    // Nine events, linked, closing back on where they started.
-    replay: () => {
-      const ring = [[-38, -17], [-13, -24], [13, -24], [38, -17], [38, 17], [13, 24], [-13, 24], [-38, 17]]
+  const build = {
+    // Twelve criteria, walked, then locked under one version.
+    protocol: () => {
+      const blades = Array.from({ length: 12 }, (_, i) => ({
+        ...stand(-46 + i * 8.4, -6, 2.2, 12, 9 + Math.round(jitter(i, 5) * 15), 1),
+        cls: 'fl-blade',
+        turn: i,
+      }))
       return [
-        ...ring.map(([px, py], i) => stand(px, py, 4.6, 4.6, i === 0 ? 21 : 9, 1.6)),
-        ...ring.map(([px, py], i) => {
-          const [qx, qy] = ring[(i + 1) % ring.length]
-          return stand((px + qx) / 2, (py + qy) / 2, Math.max(2.2, Math.abs(qx - px) / 2), Math.max(2.2, Math.abs(qy - py) / 2), 4, 1.2)
-        }),
+        ...blades,
+        { ...stand(-52, -6, 2.6, 15, 26, 1), cls: 'fl-head', span: glide(104, 0) },
+        { ...stand(-1, -6, 50, 2.4, 30, 1.2), cls: 'fl-lock' },
       ]
+    },
+    // Resources at every depth, and one as-of cut descending through them.
+    evidence: () => {
+      const pins = Array.from({ length: 14 }, (_, i) => {
+        const high = 5 + Math.round(jitter(i, 43) * 24)
+        return {
+          ...stand(-42 + jitter(i, 11) * 84, -22 + jitter(i, 29) * 44, 2.8, 2.8, high, 1),
+          cls: 'fl-pin',
+          // Its turn is its own height: the cut reaches the tall ones last.
+          turn: Math.round((high / 29) * 11),
+          under: high < 17,
+        }
+      })
+      return [...pins, { ...stand(0, 0, 46, 23, 17, 3), cls: 'fl-sheet' }]
+    },
+    // One cohort, one rail, one splitter, three bins that are not equal.
+    screening: () => {
+      const bins = [
+        { px: -26, high: 8, cls: 'fl-bin' },
+        { px: 0, high: 24, cls: 'fl-bin' },
+        { px: 26, high: 18, cls: 'fl-bin' },
+      ].map((bin, i) => ({ ...stand(bin.px, 10, 9, 10, bin.high, 1.6), cls: bin.cls, turn: i }))
+      const pucks = Array.from({ length: 6 }, (_, i) => {
+        const lane = i % 3
+        return {
+          ...stand(-40, -20, 3.4, 3.4, 26, 1.4),
+          cls: 'fl-puck',
+          turn: i,
+          span: glide(40 + (lane - 1) * 26, 30),
+        }
+      })
+      return [
+        { ...stand(0, -20, 42, 2.2, 24, 1), cls: 'fl-rail' },
+        ...bins,
+        ...pucks,
+      ]
+    },
+    // Two readings that disagree, and a seal that levels them.
+    resolve: () => [
+      { ...stand(-34, -14, 3.6, 9, 26, 1.2), cls: 'fl-read is-high' },
+      { ...stand(-34, 14, 3.6, 9, 12, 1.2), cls: 'fl-read is-low' },
+      { ...stand(-12, 0, 16, 2.2, 19, 1), cls: 'fl-beam' },
+      { ...stand(22, 0, 12, 12, 14, 2.2), cls: 'fl-anvil' },
+      { ...stand(22, 0, 7, 7, 34, 1.6), cls: 'fl-seal' },
+    ],
+    // Nine events in a ring, verified in order, closing on the start.
+    replay: () => {
+      const ring = [[-36, -16], [-12, -23], [12, -23], [36, -16], [36, 16], [12, 23], [-12, 23], [-36, 16]]
+      const events = ring.map(([px, py], i) => ({
+        ...stand(px, py, 4.2, 4.2, i === 0 ? 20 : 9, 1.6),
+        cls: 'fl-event',
+        turn: i,
+      }))
+      const links = ring.map(([px, py], i) => {
+        const [qx, qy] = ring[(i + 1) % ring.length]
+        return {
+          ...stand((px + qx) / 2, (py + qy) / 2, Math.max(1.8, Math.abs(qx - px) / 2), Math.max(1.8, Math.abs(qy - py) / 2), 3.5, 1),
+          cls: 'fl-link',
+          turn: i,
+        }
+      })
+      return [...events, ...links]
     },
   }
 
-  // Back to front, or an emblem is a pile rather than an object.
-  return parts[key]().sort((a, b) => a.depth - b.depth)
+  // Back to front, or a mechanism is a pile rather than an object.
+  return build[key]().sort((a, b) => a.depth - b.depth)
 }
 
 const STEPS = [
@@ -196,7 +266,8 @@ const STEPS = [
       const [sx, sy] = PLAN(px, py)
       const seed = index * 11 + row * COLS + col
       const spin = jitter(seed, 17) * Math.PI * 2
-      const reach = 210 + jitter(seed, 37) * 300
+      const reach = 230 + jitter(seed, 37) * 340
+      const slack = Math.round(jitter(seed, 79) * 74)
       tiles.push({
         key: `${step.key}-${row}-${col}`,
         col,
@@ -212,10 +283,10 @@ const STEPS = [
         // still a mess: tiles that hold perfectly still for a fifth of the loop
         // read as a paused video, and the floating is the part worth watching.
         // So each one wanders between two nearby points before it is called in.
-        driftX: Math.round(Math.cos(spin) * reach),
-        driftY: Math.round(-46 - jitter(seed, 53) * 168 + Math.sin(spin) * 60),
-        swayX: Math.round(Math.cos(spin) * reach + (jitter(seed, 97) - 0.5) * 46),
-        swayY: Math.round(-46 - jitter(seed, 53) * 168 + Math.sin(spin) * 60 + (jitter(seed, 103) - 0.5) * 40),
+        driftX: Math.round(clamp(sx + Math.cos(spin) * reach, KEEP.left, KEEP.right, slack) - sx),
+        driftY: Math.round(clamp(sy - 24 - jitter(seed, 53) * 150 + Math.sin(spin) * 62, KEEP.top, KEEP.bottom, slack * 0.5) - sy),
+        swayX: Math.round(clamp(sx + Math.cos(spin) * reach + (jitter(seed, 97) - 0.5) * 52, KEEP.left, KEEP.right, slack) - sx),
+        swayY: Math.round(clamp(sy - 24 - jitter(seed, 53) * 150 + Math.sin(spin) * 62 + (jitter(seed, 103) - 0.5) * 44, KEEP.top, KEEP.bottom, slack * 0.5) - sy),
         // How far it rises when the plane stands up. Varied, so what comes up
         // is a solid with relief in it rather than a slab on a lift.
         rise: 8 + Math.round(jitter(seed, 71) * 22),
@@ -230,7 +301,7 @@ const STEPS = [
   }
 
   const seat = PLAN(t, -t)
-  return { ...step, index, tiles, seat, emblem: emblem(step.key, t), span: roundedSlab(seat[0], seat[1], (COLS * CELL) / 2, (ROWS * CELL) / 2, 1, 10) }
+  return { ...step, index, tiles, seat, emblem: mechanism(step.key, t), span: roundedSlab(seat[0], seat[1], (COLS * CELL) / 2, (ROWS * CELL) / 2, 1, 10) }
 })
 
 export default function ChainSchematic({ animate = true }) {
@@ -300,7 +371,13 @@ export default function ChainSchematic({ animate = true }) {
                   is a claim about a thing that is not there yet. */}
               <g className="fl-emblem">
                 {item.emblem.map((part, n) => (
-                  <Faces shape={part.shape} className="dgm-solid" key={`${item.key}-e${n}`} />
+                  <g
+                    className={part.cls}
+                    key={`${item.key}-e${n}`}
+                    style={{ '--turn': part.turn ?? 0, '--span': part.span, '--under': part.under ? 1 : 0 }}
+                  >
+                    <Faces shape={part.shape} className="dgm-solid" />
+                  </g>
                 ))}
               </g>
 

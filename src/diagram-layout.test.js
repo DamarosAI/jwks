@@ -1918,22 +1918,45 @@ describe('The floor schematic', () => {
     assert.match(floor, /swayX: Math\.round\(/)
   })
 
-  it('stands something true on each plane, and nothing borrowed', () => {
+  it('runs a mechanism on each plane, not an emblem on it', () => {
     // BUILT FROM THE PRODUCT'S OWN RECORD. The replay chain says what each step
     // does and the counts in it are real - 36 criteria locked at one version,
     // an as-of snapshot with some criteria unmapped, one pass and four review
     // and three fail, a conflict closed by a signature, nine linked events - so
     // the proportions in these emblems are those numbers rather than shapes
     // chosen because they balanced.
-    assert.match(floor, /function emblem\(key, t\)/)
+    // FIVE MECHANISMS, NOT FIVE EMBLEMS. The first attempt put a small
+    // arrangement of blocks on each plane and called it done. An arrangement is
+    // a picture of a step; Trident sets the bar higher, and every deck in that
+    // figure has a POPULATION and something running through it. So does each of
+    // these: twelve criteria walked and locked, resources under a descending
+    // as-of cut, a cohort sorted three ways down one rail, two readings and a
+    // seal that levels them, nine events verified round a ring.
+    assert.match(floor, /function mechanism\(key, t\)/)
+    for (const part of ['fl-blade', 'fl-head', 'fl-lock', 'fl-pin', 'fl-sheet', 'fl-rail', 'fl-bin', 'fl-puck', 'fl-read', 'fl-beam', 'fl-seal', 'fl-event', 'fl-link']) {
+      assert.match(floor, new RegExp(`cls: '${part}`), `${part} is part of a mechanism`)
+      assert.match(css, new RegExp(`\\.${part}\\b`), `${part} has to actually run`)
+    }
+    // Five clocks, because the thing each step does is different and a figure
+    // running one loop five times says they are the same step drawn five times.
+    const clocks = [...css.matchAll(/animation: fl-(?:compile|cut|sort|claim|verify) ([\d.]+)s/g)].map((m) => m[1])
+    assert.equal(new Set(clocks).size, 5, 'five mechanisms, five rates')
+    // Anything travelling a plane travels along the PLANE'S axes, or it is
+    // sliding over the projection rather than moving inside it.
+    assert.match(floor, /const glide = \(dx, dy\) =>/)
     // Solved from the PLANE'S seat, not the plan origin. Built against the
     // origin, four of the five emblems draw on top of the third one and the
     // other four planes come out bare.
     assert.match(floor, /const \[sx, sy\] = PLAN\(t \+ px, -t \+ py\)/)
-    assert.match(floor, /emblem: emblem\(step\.key, t\)/)
+    assert.match(floor, /emblem: mechanism\(step\.key, t\)/)
     for (const key of ['protocol', 'evidence', 'screening', 'resolve', 'replay']) {
       assert.match(floor, new RegExp(`^    ${key}: \\(\\) =>`, 'm'))
     }
+    // The scatter is clamped into a box that keeps the sentence's own space
+    // out of it, with a per-tile inset - or every overshooting tile lands on
+    // the identical boundary pixel and the edges of the mess grow clumps.
+    assert.match(floor, /const KEEP = \{ top: 168/)
+    assert.match(floor, /const clamp = \(value, low, high, slack\)/)
     // AND NOT TRIDENT OR NECTAR. Those are stacked round decks and districts of
     // scattered blocks. Nothing here is a deck and nothing is a drum.
     assert.doesNotMatch(floor, /roundedDeck|planCyl|planPrism|planDrop/)
@@ -1952,6 +1975,9 @@ describe('The floor schematic', () => {
     assert.match(floor, /flat: roundedSlab\(sx, sy, TILE, TILE, 7, 7\)/)
     assert.match(floor, /tall: roundedSlab\(sx, sy, TILE, TILE, 30, 7\)/)
     assert.match(css, /\.fl-step:hover \.fl-tile,[\s\S]*?transform: translateY\(calc\(var\(--rise, 12px\) \* -1\)\);/)
+    // And the label arrives with the plane it names rather than being printed
+    // over a scatter that has not become one yet.
+    assert.match(css, /@keyframes fl-label \{[\s\S]*?0%, 34% \{ opacity: 0; transform: translateY\(10px\); \}/)
     assert.match(css, /\.fl-step:hover \.fl-deep,[\s\S]*?opacity: 1;/)
     assert.match(css, /\.fl-step:hover \.fl-shallow,[\s\S]*?opacity: 0;/)
     // Keyboard reaches it too, and the four you are not on stand down.
