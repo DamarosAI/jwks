@@ -12465,7 +12465,7 @@ html.is-hidden .clinic-node i,
   --ink-deep: color-mix(in srgb, var(--accent-strong) 34%, var(--text));
   --line: color-mix(in srgb, var(--text) 72%, var(--accent-strong));
   --fuse: 0;
-  transition: --fuse 2200ms cubic-bezier(0.32, 0, 0.06, 1);
+  transition: --fuse 2200ms cubic-bezier(0.42, 0.02, 0.08, 1);
 }
 
 .dgm-svg.is-floor.is-fused { --fuse: 1; }
@@ -12592,6 +12592,30 @@ html.is-hidden .clinic-node i,
    meant to count. */
 .fl-grain { opacity: 0.5; }
 
+/* A FLAT FILL IS NOT A MATERIAL.
+
+   Every surface here was one colour edge to edge, which is what a diagram does
+   and not what a panel does: a real one catches more light along the edge
+   nearest the source and less along the far one, and that single fact is most
+   of the difference between a drawing of a thing and a thing.
+
+   One gradient over the top face - a wash of white along the back, nothing
+   through the middle, and a breath of the station's own ink gathering at the
+   front. It is tilted a little off vertical, because the light in an
+   axonometric comes from wherever the projection says up-and-back is. */
+
+.fl-sheen { pointer-events: none; transition: opacity 380ms ease; opacity: 0.92; }
+
+/* Light the plate, do not bleach it. At eighty-two per cent white the back half
+   of every plate went to paper-white and took the paper's own tone with it, so
+   the sheen stopped reading as light on a surface and started reading as the
+   surface fading out. */
+.fl-sheen-back { stop-color: color-mix(in srgb, var(--surface-solid) 54%, transparent); }
+.fl-sheen-mid { stop-color: transparent; }
+.fl-sheen-front { stop-color: color-mix(in srgb, var(--tone) 11%, transparent); }
+
+.is-fused .fl-step.is-hot .fl-sheen { opacity: 1; }
+
 /* ── Pointing at one lifts it ────────────────────────────────────────────
 
    It used to EXTRUDE: the body grew downwards and the plate got thicker, which
@@ -12610,7 +12634,8 @@ html.is-hidden .clinic-node i,
   transform-box: fill-box;
   transform-origin: center;
   transform: translateY(0);
-  transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 540ms cubic-bezier(0.32, 0.72, 0, 1);
+  transition-timing-function: linear(0, 0.006, 0.025 2.8%, 0.101 6.1%, 0.539 18.9%, 0.721 25.3%, 0.849 31.5%, 0.937 38.1%, 0.968 41.8%, 0.991 45.7%, 1.006 50.1%, 1.015 55%, 1.017 63.9%, 1.001 100%);
 }
 
 /* IT WAS READING AS RECESSED, AND THE HALO WAS WHY.
@@ -12637,12 +12662,19 @@ html.is-hidden .clinic-node i,
    plate is directly above it and thinning outward. The gap between the lifted
    plate and this is already the whole elevation cue and does not need help. */
 .fl-caststep {
-  fill: color-mix(in srgb, var(--text) 11%, transparent);
-  opacity: calc(0.64 - var(--n) * 0.16);
+  fill: color-mix(in srgb, var(--text) 13%, transparent);
+  opacity: var(--a);
   transform-box: fill-box;
   transform-origin: center;
-  transform: translateY(0) scale(0.98);
-  transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(0) scale(0.975);
+  /* A SPRING, NOT A ONE-WAY EASE. Everything in this figure decelerated into
+     place on a curve that never passes its target, which is the motion of a
+     thing being positioned rather than of a thing being let go. A plate that
+     rises, overshoots by a per cent and settles is the difference between an
+     animation and a movement. The bezier goes first so a browser without
+     `linear()` still gets the smoother of the two curves. */
+  transition: transform 540ms cubic-bezier(0.32, 0.72, 0, 1);
+  transition-timing-function: linear(0, 0.006, 0.025 2.8%, 0.101 6.1%, 0.539 18.9%, 0.721 25.3%, 0.849 31.5%, 0.937 38.1%, 0.968 41.8%, 0.991 45.7%, 1.006 50.1%, 1.015 55%, 1.017 63.9%, 1.001 100%);
 }
 
 /* Twenty-two, not sixteen. The lettering moved out from over the plates and
@@ -12653,11 +12685,14 @@ html.is-hidden .clinic-node i,
 
 .is-fused .fl-step.is-hot .fl-cast { opacity: 1; }
 
-/* Each step lands two pixels further under the lift and spreads a hair wider,
-   so the stack reads as one shadow softening outward rather than as three
-   outlines walking away from the plate. */
+/* The falloff is QUADRATIC, which is what makes five steps read as one shadow
+   rather than as five. The first two sit almost on the plate's own footprint at
+   half strength - the contact - and the last two are ten and fifteen pixels out
+   at a fifteenth, which is the ambient. Linear steps can only ever draw the
+   first of those, so the old shadow was a hard little smudge with nothing
+   around it. */
 .is-fused .fl-step.is-hot .fl-caststep {
-  transform: translateY(calc(var(--n) * 2px)) scale(calc(0.99 + var(--n) * 0.008));
+  transform: translateY(calc(var(--n) * var(--n) * 0.62px)) scale(calc(0.978 + var(--n) * 0.013));
 }
 
 .is-fused .fl-step.is-hot .fl-plate .dgm-face-top { stroke: var(--line); }
@@ -12731,7 +12766,7 @@ html.is-hidden .clinic-node i,
   font-size: 11px;
   font-weight: 600;
   font-synthesis: none;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   transform-box: fill-box;
   transform-origin: center;
   opacity: var(--in);
@@ -12809,7 +12844,8 @@ html.is-hidden .clinic-node i,
 .fl-plan {
   fill: none;
   stroke: color-mix(in srgb, var(--line) 32%, transparent);
-  stroke-width: 1;
+  /* A hairline, and a hairline is thinner than a line. */
+  stroke-width: 0.9;
   stroke-linecap: round;
   stroke-linejoin: round;
   vector-effect: non-scaling-stroke;

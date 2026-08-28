@@ -1949,7 +1949,7 @@ describe('The floor schematic', () => {
     // mechanism is six things competing with the thing worth reading - so the
     // tiles hand off to a single slab cut from the same geometry at the same
     // thickness. That handoff is the thesis.
-    assert.match(floor, /plate: roundedSlab\(seat\[0\], seat\[1\], HALF_X, HALF_Y, SHEET, 10\)/)
+    assert.match(floor, /plate: roundedSlab\(seat\[0\], seat\[1\], HALF_X, HALF_Y, SHEET, PLATE_R\)/)
     assert.match(css, /\.fl-plate \{ opacity: clamp\(0, calc\(\(var\(--fuse\) - 0\.62\) \/ 0\.16\), 1\); \}/)
     assert.match(css, /\.fl-tiles \{ opacity: clamp\(0, calc\(\(0\.86 - var\(--fuse\)\) \/ 0\.14\), 1\); \}/)
     // THE PLATE IS PAPER AND WHAT STANDS ON IT IS INK. The pass before this
@@ -2027,7 +2027,7 @@ describe('The floor schematic', () => {
     // document hanging in the air past the back-left corner. The plate is a plan
     // rectangle with ROUNDED corners, so a part can be inside the plan bounds
     // and still leave the surface once its own height lifts it.
-    const [HX, HY, R] = [75, 50, 10]
+    const [HX, HY, R] = [75, 50, 12]
     const inPlan = (x, y) => {
       const [ax, ay] = [Math.abs(x), Math.abs(y)]
       if (ax > HX || ay > HY) return false
@@ -2335,8 +2335,12 @@ describe('The floor schematic', () => {
     // The steps NEST rather than march: at five, ten and fifteen pixels apart
     // they came out as three ghost plates trailing under the real one, and three
     // drawn edges is not a soft shadow, it is a stutter.
-    const step = Number(css.match(/\.fl-caststep\)?[\s\S]*?translateY\(calc\(var\(--n\) \* (\d+)px\)\)/)[1])
-    assert.ok(step <= 3, `shadow steps ${step}px apart read as separate plates`)
+    // The falloff is QUADRATIC, which is what makes five steps read as one
+    // shadow rather than as five: the first two sit almost on the footprint at
+    // half strength (the contact) and the last two are ten and fifteen pixels
+    // out at a fifteenth (the ambient). Linear steps can only draw the first.
+    assert.match(css, /transform: translateY\(calc\(var\(--n\) \* var\(--n\) \* [\d.]+px\)\)/)
+    assert.match(css, /\.fl-caststep \{[\s\S]*?opacity: var\(--a\);/)
     assert.match(css, /\.fl-caststep \{[\s\S]*?fill: color-mix\(in srgb, var\(--text\)/)
     // And the lettering does NOT go up with it. The solids float and the type
     // is nailed to the ground, which is what keeps the leader on the datum.
@@ -2350,14 +2354,47 @@ describe('The floor schematic', () => {
     assert.doesNotMatch(css.slice(css.indexOf('THIRTY FRAGMENTS BECOME FIVE SURFACES')), /animation-play-state/)
     assert.match(css, /\.is-fused \.fl-step\.is-hot \.fl-emblem \.dgm-face-top \{/)
     assert.match(css, /\.is-fused \.fl-step\.is-hot \.fl-plan \{/)
+    // A SPRING, NOT A ONE-WAY EASE. Everything decelerated into place on a
+    // curve that never passes its target, which is the motion of a thing being
+    // positioned rather than of a thing being let go. A plate that rises,
+    // overshoots by a per cent and settles is the difference between an
+    // animation and a movement - and the bezier is declared FIRST so a browser
+    // that cannot parse `linear()` still gets the smoother of the two curves
+    // rather than falling all the way back to `ease`.
+    for (const rule of ['\\.fl-body', '\\.fl-caststep']) {
+      const block = css.match(new RegExp(`${rule} \\{[\\s\\S]*?\\n\\}`))[0]
+      assert.match(block, /transition: transform \d+ms cubic-bezier\([^)]+\);/, 'the fallback curve comes first')
+      assert.match(block, /transition-timing-function: linear\(0, [\s\S]*?1\.001 100%\);/, 'and the spring overrides it')
+    }
+
+    // A FLAT FILL IS NOT A MATERIAL. Every surface was one colour edge to edge,
+    // which is what a diagram does and not what a panel does: a real one catches
+    // more light along the edge nearest the source and less along the far one.
+    // The sheen is defined INSIDE the step, so its stops resolve `--tone`
+    // against the station they belong to rather than against the sheet.
+    assert.match(floor, /<linearGradient id=\{`fl-sheen-\$\{item\.key\}`\}/)
+    assert.match(floor, /<polygon className="fl-sheen"[^>]*fill=\{`url\(#fl-sheen-\$\{item\.key\}\)`\}/)
+    assert.match(css, /\.fl-sheen-front \{ stop-color: color-mix\(in srgb, var\(--tone\)/)
+    // Light the plate, do not bleach it: at eighty-two per cent white the back
+    // half went to paper-white and took the paper's own tone with it.
+    const wash = Number(css.match(/\.fl-sheen-back \{ stop-color: color-mix\(in srgb, var\(--surface-solid\) (\d+)%/)[1])
+    assert.ok(wash <= 60, `a ${wash}% wash is the surface fading out, not light on it`)
+
+    // And the corners are sampled finely enough to be corners. `roundedSlab` is
+    // the chain's own primitive - nothing else in the sheet calls it - so at
+    // seven samples the plate's radius came out as a visible run of chords.
+    assert.match(iso, /const plan = roundedBox\(halfX, halfY, radius, 11\)/)
+    assert.match(iso, /export function roundedBox\(halfX, halfY, radius, steps = 5\)/)
+    assert.match(floor, /const PLATE_R = 12/)
+
     // And the halo is not a blur. A Gaussian on five polygons is five
     // full-frame filter passes every frame for a thing invisible on four of
     // them - it ground a headless render to a stop.
     assert.doesNotMatch(floor, /feGaussianBlur/)
-    assert.match(floor, /\[1, 2, 3\]\.map/)
+    assert.match(floor, /\[\[1, 0\.5\], \[2, 0\.33\], \[3, 0\.21\], \[4, 0\.13\], \[5, 0\.07\]\]\.map/)
     // The cast stays on the ground while the plate goes up, so it has to sit
     // outside the group that lifts.
-    assert.match(floor, /<g className="fl-cast">[\s\S]{0,320}<g className="fl-body">/)
+    assert.match(floor, /<g className="fl-cast">[\s\S]{0,900}<g className="fl-body">/)
     // NOTHING IS A TARGET UNTIL THE PLATES ARE DOWN. A hover on a tile still in
     // the air would name a step that does not exist yet, dim four others that
     // are still assembling, and hold a readout open over a scatter.

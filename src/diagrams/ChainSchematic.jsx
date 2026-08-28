@@ -83,6 +83,11 @@ const HALF_Y = 50
    otherwise the handoff between them is a step change in an object that is
    supposed to be continuous. */
 const SHEET = 9
+/* Twelve, not ten. A softer corner is most of what separates a drawn panel from
+   a machined one, and the plate is the largest radius in the figure - every
+   other one is read against it. It stops at twelve because the couplings sit in
+   the two corners it rounds, and past that the corner eats them. */
+const PLATE_R = 12
 
 /* THE RUN, AS A LINE THE FIVE STATIONS ARE REGISTERED TO.
  *
@@ -545,7 +550,7 @@ const STEPS = [
     // The one surface the six tiles become, cut from the same geometry at the
     // same thickness. Its corner is the group's corner, so the handoff changes
     // what the object IS without changing where its edge falls.
-    plate: roundedSlab(seat[0], seat[1], HALF_X, HALF_Y, SHEET, 10),
+    plate: roundedSlab(seat[0], seat[1], HALF_X, HALF_Y, SHEET, PLATE_R),
   }
 })
 
@@ -695,8 +700,14 @@ export default function ChainSchematic({ animate = true }) {
                   shadow drawn with no filter and no ring anywhere. They stay on
                   the ground while the plate goes up. */}
               <g className="fl-cast">
-                {[1, 2, 3].map((n) => (
-                  <polygon key={n} className="fl-caststep" points={item.plate.top} style={{ '--n': n }} />
+                {/* Five steps rather than three, and the falloff is quadratic.
+                    A real shadow is two shadows: a tight dark one where the
+                    object nearly touches the ground, and a wide faint one from
+                    the light the room is full of. Three linear steps could only
+                    draw the first, so a lifted plate had a hard little smudge
+                    under it and nothing around that. */}
+                {[[1, 0.5], [2, 0.33], [3, 0.21], [4, 0.13], [5, 0.07]].map(([n, a]) => (
+                  <polygon key={n} className="fl-caststep" points={item.plate.top} style={{ '--n': n, '--a': a }} />
                 ))}
               </g>
 
@@ -729,7 +740,25 @@ export default function ChainSchematic({ animate = true }) {
                     with one drawn edge, so everything standing on it is the
                     only dark thing in its own band. */}
                 <g className="fl-plate">
+                  {/* A FLAT FILL IS NOT A MATERIAL. Every surface in the figure
+                      was one colour edge to edge, which is what a diagram does
+                      and not what a panel does: a real one catches more light
+                      at the edge nearest the source and less at the far one.
+                      The sheen is one gradient laid over the top face - lighter
+                      along the back, nothing through the middle, and a breath
+                      of the station's own ink gathering at the front.
+                      It is defined INSIDE the step, so its stops resolve
+                      `--tone` against the station they belong to rather than
+                      against the sheet. */}
+                  <defs>
+                    <linearGradient id={`fl-sheen-${item.key}`} x1="0.14" y1="0" x2="0" y2="1">
+                      <stop className="fl-sheen-back" offset="0" />
+                      <stop className="fl-sheen-mid" offset="0.52" />
+                      <stop className="fl-sheen-front" offset="1" />
+                    </linearGradient>
+                  </defs>
                   <Faces shape={item.plate} className="dgm-solid" />
+                  <polygon className="fl-sheen" points={item.plate.top} fill={`url(#fl-sheen-${item.key})`} />
                   <polygon className="fl-grain" points={item.plate.top} fill="url(#fl-grain)" />
                 </g>
 

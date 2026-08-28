@@ -282,7 +282,12 @@ export function jitter(index, salt) {
  */
 export function roundedSlab(cx, cy, halfX, halfY, height, radius) {
   const p = project(cx, cy)
-  const plan = roundedBox(halfX, halfY, radius, 7)
+  // Eleven samples a corner rather than seven. This is the chain's own
+  // primitive - nothing else in the sheet calls it - and at seven the plate's
+  // corners came out as a visible run of short chords at the size the figure
+  // actually prints at. A rounded corner that reads as a polygon is the one
+  // thing a soft radius cannot afford.
+  const plan = roundedBox(halfX, halfY, radius, 11)
   const ring = plan.map(([x, y]) => p(x, y))
   const pick = (score) => plan.reduce((best, point, index) => (score(point) > score(plan[best]) ? index : best), 0)
   const iRight = pick(([x, y]) => x - y)
