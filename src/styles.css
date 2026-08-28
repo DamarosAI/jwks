@@ -12613,7 +12613,12 @@ html.is-hidden .clinic-node i,
   transition: opacity 420ms ease, transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.is-fused .fl-step.is-hot .fl-body { transform: translateY(-22px); }
+/* Sixteen, not twenty-two. THE PLATE HAS TO CLEAR ITS OWN TYPE. At
+   twenty-two the back corner rose past the value line and a held plate covered
+   the number it was holding - the one line a reader leaning in is most likely
+   to be leaning in for. The names moved up eight and the lift came down six,
+   which leaves the type clear at the top of the travel. */
+.is-fused .fl-step.is-hot .fl-body { transform: translateY(-16px); }
 
 .is-fused .fl-step.is-hot .fl-shade { opacity: 1; transform: scale(1.02); }
 
@@ -12757,18 +12762,15 @@ html.is-hidden .clinic-node i,
    and only the lamp changes.
 
    So every population here is SOLID and permanent, and the light on top of it
-   is what moves. One lamp class, five clocks, five orders - because what each
-   step does is different, and a figure running one loop five times is saying
-   they are the same step drawn in five places. */
+   is what moves.
 
-/* AND ITS RESTING VALUE IS THE FINISHED ONE.
-   At zero the lamps are invisible whenever no clock is running - which is a
-   phone, a reader who has asked for less motion, and every screenshot - so the
-   figure came to rest with five populations and no state on any of them: a
-   protocol that had never compiled, records that had never bound, a chain that
-   had never been verified. The still frame has to be the frame that states the
-   claim, so it is the END of each run: compiled, bound but for the two that
-   never map, sorted, signed, intact. */
+   AND ITS RESTING VALUE IS THE FINISHED ONE. At zero the lamps are invisible
+   whenever no clock is running - a phone, a reader who has asked for less
+   motion, every screenshot - so the figure came to rest with five populations
+   and no state on any of them: a protocol that had never compiled, records that
+   had never bound, a chain that had never been verified. The still frame has to
+   be the frame that states the claim. */
+
 .fl-lamp { opacity: calc(1 - var(--idle, 0)); }
 
 /* Except the reading that is not governing. Both readings lit is not a still
@@ -12779,9 +12781,21 @@ html.is-hidden .clinic-node i,
 .fl-lamp .dgm-face-left,
 .fl-lamp .dgm-face-right { fill: var(--ink-deep); }
 
-/* PROTOCOL. Five criteria lit left to right as the head reaches them, and they
-   STAY lit, because compiling is a thing that finishes - one that dimmed again
-   would be saying the protocol keeps coming undone. */
+/* ── PROTOCOL is a gantry ────────────────────────────────────────────────
+
+   Paper at one end, logic at the other, a head riding an overhead rail between
+   them. A criterion lights as the head reaches it and STAYS lit, because
+   compiling is a thing that finishes - one that dimmed again would be saying
+   the protocol keeps coming undone. */
+
+/* The document is paper, so it is drawn as paper: the plate's own value, and
+   the only thing on any plate lighter than the surface it lies on. */
+.fl-sheet .dgm-face-top { fill: color-mix(in srgb, var(--accent) 13%, var(--surface-solid)); }
+.fl-sheet .dgm-face-left { fill: color-mix(in srgb, var(--accent) 26%, var(--surface-solid)); }
+.fl-sheet .dgm-face-right { fill: color-mix(in srgb, var(--accent) 34%, var(--surface-solid)); }
+
+/* The rail is structure, so it holds still and stays back. */
+.fl-gantry { opacity: 0.5; }
 
 .dgm-svg.is-live.is-fused .fl-lamp.is-crit {
   animation: fl-compile 6.2s ease-out infinite;
@@ -12811,13 +12825,38 @@ html.is-hidden .clinic-node i,
   100% { opacity: 0; transform: translateY(-18px); }
 }
 
-/* EVIDENCE. Eight site records bound column by column as one as-of cut crosses
-   them. Two of the eight never bind: a snapshot that mapped everything would be
-   claiming something the product does not claim. */
+/* ── EVIDENCE is a patch bay ─────────────────────────────────────────────
+
+   The pads never move, because the whole claim of this step is that nothing is
+   copied anywhere. What moves is a binder running the spine, and what appears
+   is a tether down to each pad it reaches. One pad is never reached. */
+
+.fl-spine { opacity: 0.72; }
+
+/* A binding is a connection drawn TO a record, not a girder bolted onto one -
+   so a tether is a hairline lying on the plate with almost no body, and it is
+   the darkest thing in the mechanism because it is the thing that was made. */
+.fl-tether { opacity: 0; }
+.fl-tether .dgm-face-top { fill: var(--ink-deep); stroke: none; }
+.fl-tether .dgm-face-left,
+.fl-tether .dgm-face-right { fill: var(--ink-deep); }
+
+.dgm-svg.is-live.is-fused .fl-tether {
+  animation: fl-reach 7.4s ease-out infinite;
+  animation-delay: calc(var(--turn, 0) * 0.5s);
+}
+
+/* A tether that has been made stays made until the snapshot closes, which is
+   what the whole step is claiming about a binding. */
+@keyframes fl-reach {
+  0%, 16% { opacity: 0; }
+  28%, 86% { opacity: 0.9; }
+  100% { opacity: 0; }
+}
 
 .dgm-svg.is-live.is-fused .fl-lamp.is-res {
   animation: fl-bind 7.4s ease-out infinite;
-  animation-delay: calc(var(--turn, 0) * 0.44s);
+  animation-delay: calc(var(--turn, 0) * 0.5s + 0.2s);
 }
 
 @keyframes fl-bind {
@@ -12826,7 +12865,7 @@ html.is-hidden .clinic-node i,
   100% { opacity: 0; }
 }
 
-.dgm-svg.is-live.is-fused .fl-asof { animation: fl-cut 7.4s cubic-bezier(0.4, 0, 0.5, 1) infinite; }
+.dgm-svg.is-live.is-fused .fl-binder { animation: fl-cut 7.4s cubic-bezier(0.4, 0, 0.5, 1) infinite; }
 
 @keyframes fl-cut {
   0% { transform: translate(0, 0); opacity: 0; }
@@ -12835,20 +12874,23 @@ html.is-hidden .clinic-node i,
   84%, 100% { transform: translate(var(--span)); opacity: 0; }
 }
 
-/* SCREENING. One intake rail, three bins at one, four and three, and a cohort
-   that rides the rail to its own bin before dropping into it. TWO MOVES: the
-   pucks used to leave the rail on frame one and cross open plate diagonally,
-   which is a drawing of three things falling past a stick.
+/* ── SCREENING is a hopper ───────────────────────────────────────────────
 
-   The rail is the only part of any mechanism that does not move, so it is the
-   only one drawn back: it is the track, not a thing on the track, and a track
-   at the same weight as its cargo is a track the eye mistakes for cargo. */
+   One round mouth in, three chutes out, three bins at one, four and three. Many
+   in, few through - and the same puck down the same chute every cycle, which is
+   the only way a drawing can say deterministic.
 
-.fl-rail { opacity: 0.62; }
+   The mouth and the chutes are the machine's plumbing, so they sit back: a
+   track at the same weight as its cargo is a track the eye mistakes for
+   cargo. */
+
+.fl-hopper { opacity: 0.72; }
+.fl-hopper .dgm-face-top { fill: color-mix(in srgb, var(--accent) 15%, var(--surface-solid)); }
+.fl-chute { opacity: 0.46; }
 
 .dgm-svg.is-live.is-fused .fl-lamp.is-bin {
   animation: fl-sort 5.6s ease-out infinite;
-  animation-delay: calc(var(--turn, 0) * 0.3s + 2.7s);
+  animation-delay: calc(var(--turn, 0) * 0.3s + 2.9s);
 }
 
 @keyframes fl-sort {
@@ -12862,15 +12904,16 @@ html.is-hidden .clinic-node i,
   transform-origin: center;
 }
 
+/* In through the mouth first, then down its own chute. */
 .dgm-svg.is-live.is-fused .fl-puck {
-  animation: fl-ride 5.6s cubic-bezier(0.4, 0, 0.4, 1) infinite;
+  animation: fl-ride 5.6s cubic-bezier(0.5, 0, 0.6, 1) infinite;
   animation-delay: calc(var(--turn, 0) * -1.55s);
 }
 
 @keyframes fl-ride {
   0% { transform: translate(0, 0); opacity: 0; }
-  8% { opacity: 1; }
-  40%, 92% { transform: translate(var(--span)); opacity: 1; }
+  10% { opacity: 1; }
+  34%, 92% { transform: translate(var(--span)); opacity: 1; }
   98%, 100% { transform: translate(var(--span)); opacity: 0; }
 }
 
@@ -12883,14 +12926,16 @@ html.is-hidden .clinic-node i,
    drop that eased back up would be a puck climbing out of the bin it landed
    in. */
 @keyframes fl-drop {
-  0%, 44% { transform: translate(0, 0); }
+  0%, 40% { transform: translate(0, 0); }
   66%, 97% { transform: translate(var(--drop)); }
   100% { transform: translate(0, 0); }
 }
 
-/* RESOLVE. Two readings that disagree, a beam sitting at whichever governs, and
-   a seal that comes down and levels it. Nothing is settled until something
-   presses. */
+/* ── RESOLVE is a press ──────────────────────────────────────────────────
+
+   Two readings capped at different heights, a carriage that carries the call
+   across to the anvil, and a seal that comes down on it. Nothing is settled
+   until something presses. */
 
 .dgm-svg.is-live.is-fused .fl-lamp.is-read {
   animation: fl-claim 4.8s ease-in-out infinite;
@@ -12902,38 +12947,66 @@ html.is-hidden .clinic-node i,
   14%, 30% { opacity: 1; }
 }
 
-.dgm-svg.is-live.is-fused .fl-beam { animation: fl-tip 4.8s ease-in-out infinite; }
+.dgm-svg.is-live.is-fused .fl-call { animation: fl-carry 4.8s cubic-bezier(0.5, 0, 0.3, 1) infinite; }
 
-@keyframes fl-tip {
-  0%, 18% { transform: translateY(-6px); }
-  40%, 56% { transform: translateY(7px); }
-  76%, 100% { transform: translateY(0); }
+@keyframes fl-carry {
+  0%, 26% { transform: translate(0, 0); opacity: 0; }
+  34% { opacity: 1; }
+  62%, 88% { transform: translate(var(--span)); opacity: 1; }
+  96%, 100% { transform: translate(var(--span)); opacity: 0; }
 }
+
+.fl-beam { opacity: 0.6; }
+.fl-anvil { opacity: 0.8; }
 
 .dgm-svg.is-live.is-fused .fl-seal { animation: fl-press 4.8s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
 
 @keyframes fl-press {
-  0%, 56% { transform: translateY(-20px); opacity: 0; }
-  62% { opacity: 1; }
-  70%, 94% { transform: translateY(0); opacity: 1; }
+  0%, 62% { transform: translateY(-20px); opacity: 0; }
+  68% { opacity: 1; }
+  76%, 94% { transform: translateY(0); opacity: 1; }
   100% { transform: translateY(-20px); opacity: 0; }
 }
 
-/* REPLAY. Six events in a ring with a verifier going round them, closing on
-   where it started. The links do not light: the chain is structure, and
-   structure that keeps switching on is structure a reader is entitled to think
-   might switch off. */
+/* ── REPLAY is a turntable ───────────────────────────────────────────────
 
-.fl-link { opacity: 0.7; }
+   A disc with the events stood round its rim and an arm sweeping the face. The
+   arm turns INSIDE the plan matrix, so what it sweeps is a true plan circle
+   that the projection turns into the right ellipse - a bar rotated in screen
+   space sweeps a circle over an axonometric and reads as a line spinning on top
+   of the picture rather than as an arm running across a face. */
+
+.fl-disc { opacity: 0.5; }
+.fl-disc .dgm-face-top { fill: color-mix(in srgb, var(--accent) 9%, var(--surface-solid)); }
+.fl-hub .dgm-face-top { fill: color-mix(in srgb, var(--ink-deep) 60%, var(--surface-solid)); }
+.fl-hub .dgm-face-right { fill: var(--ink-deep); }
+
+.fl-arm {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.fl-arm rect {
+  fill: color-mix(in srgb, var(--accent-strong) 46%, transparent);
+  stroke: none;
+}
+
+.dgm-svg.is-live.is-fused .fl-arm { animation: fl-sweep 8.2s linear infinite; }
+
+@keyframes fl-sweep {
+  to { transform: rotate(360deg); }
+}
 
 .dgm-svg.is-live.is-fused .fl-lamp.is-event {
   animation: fl-verify 8.2s ease-out infinite;
-  animation-delay: calc(var(--turn, 0) * 0.78s);
+  animation-delay: calc(var(--turn, 0) * 1.36s);
 }
 
+/* Each event lights as the arm reaches it and holds to the end of the turn,
+   because a chain is verified all at once or not at all. */
 @keyframes fl-verify {
-  0%, 6% { opacity: 0; }
-  12%, 90% { opacity: 1; }
+  0%, 4% { opacity: 0; }
+  10%, 84% { opacity: 1; }
   100% { opacity: 0; }
 }
 
@@ -12944,10 +13017,120 @@ html.is-hidden .clinic-node i,
 .fl-event.is-origin .dgm-face-left,
 .fl-event.is-origin .dgm-face-right { fill: var(--ink-deep); }
 
-/* Every part of a held plate holds still, so what a reader has stopped on is a
-   drawing they can actually read rather than a drawing that keeps moving under
-   the question they are asking of it. */
-.is-fused .fl-step.is-hot .fl-emblem > g { animation-play-state: paused; }
+/* ── The sky ─────────────────────────────────────────────────────────────
+
+   The figure had one plane in it and every eye movement it invited ran left to
+   right along a row - no height anywhere, which in an axonometric is the one
+   thing the projection is for.
+
+   So work moves overhead. Each carrier ferries exactly ONE plate-pitch, from
+   the airspace of one step to the airspace of the next, which is the run itself
+   seen from above. Pale, small, and on five long clocks that share no factor,
+   so the sky is never still and never busy. */
+
+.fl-sky {
+  opacity: clamp(0, calc((var(--fuse) - 0.86) / 0.14), 1);
+  pointer-events: none;
+}
+
+.fl-bot { opacity: 0.5; }
+
+.fl-bot .dgm-face-top {
+  fill: color-mix(in srgb, var(--accent) 18%, var(--surface-solid));
+  stroke: color-mix(in srgb, var(--line) 40%, transparent);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.fl-bot .dgm-face-left,
+.fl-bot .dgm-face-right { fill: color-mix(in srgb, var(--accent) 40%, var(--surface-solid)); stroke: none; }
+
+/* The rotor is the part that says this is a machine and not a pebble, so it
+   keeps its own edge and almost no body. */
+.dgm-rotor .dgm-face-top {
+  fill: color-mix(in srgb, var(--accent) 8%, var(--surface-solid));
+  stroke: color-mix(in srgb, var(--line) 46%, transparent);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.dgm-rotor .dgm-face-right { fill: color-mix(in srgb, var(--accent) 26%, var(--surface-solid)); stroke: none; }
+
+/* AND THE SKY IS A DIVIDEND OF A WIDE SCREEN. The sentence grows a line as the
+   column narrows - measured, it runs to 78 at a wide desktop, 86 at 1180 and 95
+   at 980 - and by the time the column is narrow enough to need a fourth line it
+   has taken both the low band and the high one. A carrier crossing a word is
+   worse than no carrier at all. */
+@media (max-width: 1180px) {
+  .fl-sky { display: none; }
+}
+
+.dgm-svg.is-live.is-fused .fl-bot {
+  animation: fl-ferry var(--beat, 20s) linear infinite;
+  animation-delay: calc(var(--lag, 0) * var(--beat, 20s) * -1);
+}
+
+/* One plate-pitch, and it fades at both ends rather than jumping back - a
+   carrier that teleports is a carrier a reader has caught out. */
+@keyframes fl-ferry {
+  0% { transform: translateX(0); opacity: 0; }
+  14%, 82% { opacity: 1; }
+  100% { transform: translateX(236px); opacity: 0; }
+}
+
+.fl-hover {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* And it holds height rather than sitting at one, which is what puts the
+   movement in the plane the row has none of. */
+.dgm-svg.is-live.is-fused .fl-hover {
+  animation: fl-bob calc(var(--beat, 20s) / 5) ease-in-out infinite alternate;
+  animation-delay: calc(var(--lag, 0) * -4s);
+}
+
+@keyframes fl-bob {
+  to { transform: translateY(-5px); }
+}
+
+/* A HELD PLATE KEEPS RUNNING.
+   Pointing at one used to freeze it, on the theory that a reader who has
+   stopped wants a drawing that has stopped. They do not: they have just chosen
+   which machine to watch, and the one thing a machine should not do when
+   somebody leans in is stop being a machine. What a hover buys is CONTRAST -
+   the plate lifts, the ground darkens under it, a halo comes up behind it and
+   every solid on it deepens - and none of that costs the motion. */
+
+.fl-aura { opacity: 0; pointer-events: none; transition: opacity 380ms ease; }
+
+/* Four steps at twelve per cent rather than three at twenty. Stacked they ramp
+   from about twelve at the rim to forty in the middle, and no single edge in
+   the stack is strong enough to read as a drawn line - which is the whole
+   difference between a halo and a second outline. */
+.fl-aurastep {
+  fill: color-mix(in srgb, var(--accent) 12%, transparent);
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(1);
+  transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.is-fused .fl-step.is-hot .fl-aura { opacity: 1; }
+.is-fused .fl-step.is-hot .fl-aurastep { transform: scale(var(--step, 1)); }
+
+/* The mechanism gains a step of ink with the halo, so the plate a reader is on
+   is the darkest thing on the sheet as well as the highest. */
+.is-fused .fl-step.is-hot .fl-emblem .dgm-face-top {
+  fill: color-mix(in srgb, var(--accent) 56%, var(--surface-solid));
+  stroke: var(--line);
+}
+
+.is-fused .fl-step.is-hot .fl-lamp .dgm-face-top { fill: var(--ink-deep); }
+
+.is-fused .fl-step.is-hot .fl-plate .dgm-face-top { stroke-width: 1.4; }
+
+.fl-emblem .dgm-face-top { transition: fill 300ms ease, stroke 300ms ease; }
 
 /* ── The readout ─────────────────────────────────────────────────────────
 
@@ -13015,8 +13198,18 @@ html.is-hidden .clinic-node i,
   .fl-tile,
   .fl-drift,
   .fl-emblem > g,
+  .fl-arm,
+  .fl-hop,
+  .fl-bot,
+  .fl-hover,
   .fl-step,
   .fl-name,
   .fl-fact,
   .fl-readpill { animation: none; transition: none; }
+
+  /* The tethers and the sky are the two things whose resting value is nothing,
+     so they have to be given the finished one by hand: the bindings are made,
+     and the carriers are in the air. */
+  .fl-tether { opacity: 0.9; }
+  .fl-sky { opacity: 1; }
 }

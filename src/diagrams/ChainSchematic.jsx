@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 
-import { jitter, project, roundedSlab } from './iso'
+import { jitter, planSpace, project, roundedCylinder, roundedSlab } from './iso'
 import { Faces } from './Solid'
 import { useCenterOnOverflow } from './useCenterOnOverflow'
 
@@ -96,48 +96,50 @@ const SHEET = 9
 
 /* -- WHAT RUNS ON EACH PLATE --------------------------------------------
 
-   FIVE MECHANISMS, AND FEWER PARTS THAN BEFORE.
+   FIVE MACHINES, AND FIVE DIFFERENT KINDS OF MACHINE.
 
-   The last pass put twelve criteria, fourteen resources and a nine-event ring
-   on plates two hundred pixels wide. Every one of those was three to five
-   pixels across, which is under the size at which a solid reads as a solid -
-   so five machines came out as five smudges. Trident's smallest legible object
-   is a contract field at about nine pixels and there are nineteen of them in
-   one ordered grid, not twenty-six scattered around.
+   The pass before this gave every plate the same vocabulary - a population of
+   rounded boxes with a rounded box travelling past them - and five different
+   arrangements of one object is not five machines, it is one machine drawn five
+   ways. Trident does not work like that: a proposal surface is a dish with a
+   hub sunk into it, a schema is a lattice of standing tiles, an approval is a
+   BARREL with two blades across its bore, and a ledger is a stack of rows. Four
+   decks, four form languages, and a reader can tell them apart with the labels
+   covered.
 
-   So each plate now carries between five and nine substantial parts, none
-   smaller than about eighteen pixels on screen, and every one of them is a
-   thing rather than a mark:
+   So can these, now:
 
-   PROTOCOL - five criteria stood on edge, a carriage that rides along their
-   tops, and a version bar that comes down across them once it has passed. A
-   criterion lights as the carriage reaches it and STAYS lit, because compiling
-   is a thing that finishes.
+   PROTOCOL is a GANTRY. A stack of loose sheets at one end, four criteria stood
+   on edge at the other, and a head that rides an overhead rail from the paper
+   to the logic - lighting each criterion as it reaches it, and leaving a version
+   bar clamped across all four. Prose in, executable criteria out, under one
+   version. Nothing else here is orthogonal like this.
 
-   EVIDENCE - eight site records in a plan grid and one as-of cut travelling
-   across them. A record binds as the cut passes its column; two never bind,
-   because not every criterion is mapped when a snapshot closes.
+   EVIDENCE is a PATCH BAY. The records are round pads standing where they
+   already stand, and they never move, because the whole claim of this step is
+   that nothing is copied anywhere. What moves is a binder running a spine, and
+   what appears is a TETHER down to each pad it reaches. One pad is never
+   reached, because not every criterion is mapped when a snapshot closes.
 
-   SCREENING - one intake rail, three bins at one, four and three, and a cohort
-   that rides the rail to its own bin before it drops into it. Many in, few
-   through.
+   SCREENING is a HOPPER. One round mouth takes the cohort in, three chutes run
+   out of it, and three bins stand at one, four and three. Many in, few through -
+   and the same path every cycle, which is the only way to draw determinism.
 
-   RESOLVE - two readings that disagree, a beam that sits at whichever is
-   governing, and a seal that comes down and levels it.
+   RESOLVE is a PRESS. Two readings capped at different heights, a carriage that
+   carries the call across, and a round seal that comes down onto a round anvil.
+   Nothing is settled until something presses.
 
-   REPLAY - six events in a ring with a verifier going round them, closing on
-   where it started. The links do not light: the chain is structure.
-
-   AND STATE IS A LAMP, NOT AN OPACITY. Every population here keeps its body and
-   wears a light, because a half-opaque solid in an axonometric is not a dim
-   solid - it is a hole, and you see the plate's lattice through a record that
-   has simply not been reached yet.
+   REPLAY is a TURNTABLE. A disc with the events stood round its rim and an arm
+   sweeping the whole face, drawn inside the plan matrix so the sweep is a true
+   plan circle rather than a screen one - which is the difference between a
+   record being read and a line spinning on top of a picture.
 
    Every part is solved from its own plate's seat. Built against the plan origin
    - which is the middle of the row - four of the five draw on top of the third
    one and the rest come out bare. */
 
 function mechanism(key, t) {
+  const [seatX, seatY] = PLAN(t, -t)
   // `base` is what the part is standing ON. Without it everything in a
   // mechanism has its feet on the plate, so a bar that clamps a row of fins has
   // to be drawn beside them instead of across their tops - which is a drawing
@@ -145,6 +147,14 @@ function mechanism(key, t) {
   const stand = (px, py, hx, hy, high, radius = 2, base = 0) => {
     const [sx, sy] = PLAN(t + px, -t + py)
     return { depth: px + py, shape: roundedSlab(sx, sy - base - high, hx, hy, high, radius) }
+  }
+  // The same thing with a round plan. A source, a mouth, a pan and a seal are
+  // not milled parts and should not be drawn as though they were: half of what
+  // makes Trident's four decks tell themselves apart is that two of them are
+  // built out of circles.
+  const drum = (px, py, r, high, base = 0) => {
+    const [sx, sy] = PLAN(t + px, -t + py)
+    return { depth: px + py, round: true, shape: roundedCylinder(sx, sy - base - high, r, high) }
   }
   // A plan displacement, expressed as the screen move it actually is. Anything
   // that travels across a plate has to travel along the plate's own axes or it
@@ -173,89 +183,139 @@ function mechanism(key, t) {
     },
   ]
 
+  // The round one wears a round lamp, or a disc comes back with a square cap on
+  // it and stops being a disc.
+  const litDrum = (kind, px, py, r, high, turn, extra = {}) => [
+    { ...drum(px, py, r, high), cls: `fl-${kind}`, turn, ...extra },
+    { ...drum(px, py, Math.max(1.6, r - 2.4), 2.4, high), cls: `fl-lamp is-${kind}`, turn, ...extra },
+  ]
+
   const build = {
-    // Five criteria stood on edge, a carriage that rides along their tops, and
-    // a version bar that comes down ACROSS them once it has passed.
-    //
-    // The reader used to be a full-height blade, which made it the largest and
-    // darkest object on the plate: the population vanished behind the thing
-    // reading it. A read head is a small thing riding a large thing, so it is
-    // drawn as one - and the bar lands on the fins rather than beside them,
-    // which is the difference between a clamp and a stick.
+    // A GANTRY. Paper at one end, logic at the other, a head riding between.
     protocol: () => [
-      ...[0, 1, 2, 3, 4].flatMap((i) => lit('crit', -36 + i * 18, 0, 4, 22, 17, 1.2, i)),
-      { ...stand(-50, 0, 6, 6, 9, 1.5, 20), cls: 'fl-head', span: glide(100, 0), depth: OVER },
-      { ...stand(0, 0, 36, 4, 5, 1.5, 21), cls: 'fl-lock', depth: OVER + 1 },
+      // The document, as it arrives: three loose sheets, stacked and offset.
+      ...[0, 1, 2].map((i) => ({
+        ...stand(-48 + i * 3, 2 - i * 3, 19, 22, 3, 2, i * 3),
+        cls: 'fl-sheet',
+      })),
+      // Four criteria, stood on edge, lit in the order they compile.
+      ...[0, 1, 2, 3].flatMap((i) => lit('crit', 2 + i * 17, 0, 4, 24, 16, 1.2, i)),
+      // The rail the head rides. It spans the whole travel, so the head is
+      // carried rather than floating - a head on nothing is a cursor.
+      { ...stand(2, -20, 40, 2, 2.5, 1, 22), cls: 'fl-gantry' },
+      { ...stand(-38, -20, 5, 5, 7, 1.5, 15), cls: 'fl-head', span: glide(80, 0), depth: OVER },
+      { ...stand(28, 0, 30, 3, 4, 1.5, 17), cls: 'fl-lock', depth: OVER + 1 },
     ],
-    // Eight records, bound column by column as one as-of cut crosses them.
+    // A PATCH BAY. The pads never move; the tethers reach them.
     evidence: () => {
-      const records = []
-      ;[-45, -15, 15, 45].forEach((px, col) => {
-        ;[-18, 18].forEach((py, row) => {
-          records.push(...lit('res', px, py, 11, 11, row === 0 ? 8 : 13, 2, col, {
-            // Two of the eight never bind. A snapshot that mapped everything
-            // would be claiming something the product does not claim.
-            idle: (col === 3 && row === 0) || (col === 2 && row === 1),
-          }))
-        })
-      })
-      return [...records, { ...stand(-62, 0, 2.5, 32, 22, 1), cls: 'fl-asof', span: glide(124, 0), depth: OVER }]
+      const at = [-46, -15, 15, 46]
+      const high = [9, 14, 8, 12]
+      return [
+        // The spine: the criteria asking for evidence, along the back edge.
+        { ...stand(0, -32, 46, 2.5, 7, 1.2), cls: 'fl-spine' },
+        // The tethers. One per pad, and the fourth pad never gets one.
+        ...at.slice(0, 3).map((px, i) => ({
+          ...stand(px, -12, 1.4, 17, 1.6, 0.7),
+          cls: 'fl-tether',
+          turn: i,
+        })),
+        // The records themselves, round because they are sources rather than
+        // parts, standing at the depths they happen to stand at.
+        ...at.flatMap((px, i) => litDrum('res', px, 16, 11, high[i], i, { idle: i === 3 })),
+        { ...stand(-50, -32, 5, 5, 6, 1.5, 7), cls: 'fl-binder', span: glide(100, 0), depth: OVER },
+      ]
     },
-    // One intake rail, three bins at one, four and three, and a cohort that
-    // rides the rail to its own bin before it drops into it.
-    //
-    // The pucks used to leave the rail on frame one and cross open plate on a
-    // diagonal, which is a drawing of three things falling past a stick. A
-    // sort is a thing that happens ON a track, so the travel is two moves: the
-    // ride along the rail, then the drop off it.
+    // A HOPPER. One mouth in, three chutes out, three bins that are not equal.
     screening: () => [
-      { ...stand(0, -26, 46, 3, 5, 1.5), cls: 'fl-rail' },
-      ...[[-32, 7], [0, 28], [32, 21]].flatMap(([px, high], i) => lit('bin', px, 20, 13, 11, high, 2, i)),
-      ...[-32, 0, 32].map((bx, i) => ({
-        ...stand(-46, -26, 5, 5, 9, 1.6),
+      { ...drum(0, -24, 21, 12), cls: 'fl-hopper' },
+      ...[-26, 0, 26].map((px, i) => ({ ...stand(px, 13, 2.5, 11, 3, 1), cls: 'fl-chute', turn: i })),
+      ...[[-26, 7], [0, 26], [26, 19]].flatMap(([px, high], i) => lit('bin', px, 36, 11, 9, high, 2, i)),
+      // In through the mouth, then down its own chute. Two moves, because a
+      // sort is a thing that happens on a path and not a thing that flies.
+      ...[-26, 0, 26].map((px, i) => ({
+        ...stand(0, -24, 5, 5, 8, 1.5, 26),
         cls: 'fl-puck',
         turn: i,
-        span: glide(bx + 46, 0),
-        drop: glide(0, 46),
+        span: '0px, 24px',
+        drop: glide(px, 60),
         depth: OVER,
       })),
     ],
-    // Two readings that disagree, and a seal that levels them. Neither is
-    // taller than the plate can carry: at thirty-two they broke the silhouette
-    // upward and ran into the line of type naming the step.
+    // A PRESS. Two readings, a call carried across, a seal that lands.
     resolve: () => [
-      ...lit('read', -46, -20, 9, 9, 26, 2, 0),
-      ...lit('read', -46, 20, 9, 9, 14, 2, 1),
-      { ...stand(-8, 0, 22, 4, 16, 1.5), cls: 'fl-beam' },
-      { ...stand(42, 0, 15, 15, 9, 2.5), cls: 'fl-anvil' },
-      { ...stand(42, 0, 9, 9, 24, 2), cls: 'fl-seal', depth: OVER },
+      ...litDrum('read', -42, -22, 11, 26, 0),
+      ...litDrum('read', -42, 22, 11, 13, 1),
+      // The beam. Without it the two readings are two lone posts rather than
+      // two sides of one question, and a disagreement nobody has drawn a
+      // connection across is not a disagreement.
+      { ...stand(-42, 0, 5, 26, 3, 1.2, 13), cls: 'fl-beam' },
+      { ...stand(-42, 0, 5, 5, 8, 1.5, 16), cls: 'fl-call', span: glide(80, 0), depth: OVER },
+      { ...drum(38, 0, 17, 6), cls: 'fl-anvil' },
+      { ...drum(38, 0, 9, 23), cls: 'fl-seal', depth: OVER + 1 },
     ],
-    // Six events in a ring, verified in order, closing on the start. The links
-    // do not light: the chain is structure, and structure that keeps switching
-    // on is structure a reader is entitled to think might switch off.
+    // A TURNTABLE. A disc, six events round its rim, and an arm across the face.
     replay: () => {
-      const ring = [[46, 0], [23, 26], [-23, 26], [-46, 0], [-23, -26], [23, -26]]
-      const events = ring.flatMap(([px, py], i) => {
-        const pair = lit('event', px, py, 7, 7, i === 0 ? 20 : 13, 2, i)
-        // The one it closes on, marked by its own ink rather than by position.
-        if (i === 0) pair[0].cls = 'fl-event is-origin'
-        return pair
-      })
-      const links = ring.map(([px, py], i) => {
-        const [qx, qy] = ring[(i + 1) % ring.length]
-        return {
-          ...stand((px + qx) / 2, (py + qy) / 2, Math.max(2.5, Math.abs(qx - px) / 2 - 7), Math.max(2.5, Math.abs(qy - py) / 2 - 7), 5, 1.2),
-          cls: 'fl-link',
-          turn: i,
-        }
-      })
-      return [...links, ...events]
+      const ring = [[44, 0], [22, 25], [-22, 25], [-44, 0], [-22, -25], [22, -25]]
+      return [
+        { ...drum(0, 0, 46, 3), cls: 'fl-disc', depth: -999 },
+        // The sweep is drawn INSIDE the plan matrix, so a rotation of it is a
+        // true plan circle that the projection turns into the right ellipse. A
+        // bar rotated in screen space sweeps a circle over an axonometric and
+        // reads as a line spinning on top of the picture rather than as an arm
+        // running across a face. It is a full diameter so its own centre is the
+        // plan origin, which is what it has to turn about.
+        { sweep: planSpace(seatX, seatY - 4), depth: -998 },
+        ...ring.flatMap(([px, py], i) => lit('event', px, py, 6, 6, i === 0 ? 19 : 12, 1.8, i)),
+        { ...drum(0, 0, 9, 9), cls: 'fl-hub', depth: OVER },
+      ]
     },
   }
 
   // Back to front, or a mechanism is a pile rather than an object.
   return build[key]().sort((a, b) => a.depth - b.depth)
 }
+
+/* -- THE SKY ------------------------------------------------------------
+
+   The figure had one plane in it and the whole drawing sat on that plane, so
+   everything a reader's eye could do was run left to right along a row. There
+   was no height in it anywhere - which in an axonometric is the one thing the
+   projection is for.
+
+   So work moves overhead. Each carrier ferries exactly ONE plate-pitch, from
+   the airspace of one step to the airspace of the next, which is the run
+   itself seen from above: nothing here is decoration flying about. They are
+   small, pale, and on five long clocks that share no factor, so the sky is
+   never still and never busy.
+
+   They keep out of the sentence's band. A drawing that collides with its own
+   headline is a drawing that has stopped being read, and that is as true at
+   the top of the cell as it was for the scatter. */
+
+/* THE SKY IS TWO-TIER, AND THE SENTENCE IS WHY.
+   Measured, the headline runs to 78 at a wide desktop and 86 at 1180 - it grows
+   a line as the column narrows - and the first step name starts at 120. Under
+   the sentence's own column that leaves about thirty units of air, which is not
+   enough altitude to be worth drawing: five carriers at one height is a row,
+   and a row is the one thing this figure already had too many of.
+   But the sentence is a left-hand column and it ends around 850. To the RIGHT
+   of it the air runs all the way to the top of the cell. So the carriers over
+   the last two steps fly high and the three over the sentence fly low, which is
+   both the only safe arrangement and the one that actually puts height in the
+   drawing. Below 1180 the sentence takes the whole band and the sky is turned
+   off in the sheet: a carrier crossing a word is worse than no carrier. */
+const SKY = [[250, 110], [450, 106], [660, 112], [900, 70], [1050, 86]].map(([x, y], i) => ({
+  key: `sky-${i}`,
+  // A hull, a mast and a rotor. A disc with a block on it came out as a
+  // thumbtack; what makes a small thing read as a craft at twenty pixels is
+  // the GAP - a plate held above a body on a post, which nothing standing on
+  // the ground in this figure has.
+  hull: roundedCylinder(x, y, 6, 3),
+  mast: roundedSlab(x, y - 4, 1.3, 1.3, 3.5, 0.6),
+  rotor: roundedCylinder(x, y - 7.8, 8, 1.1),
+  beat: [17, 21, 26, 19, 23][i],
+  lag: jitter(i, 41),
+}))
 
 const STEPS = [
   {
@@ -354,6 +414,25 @@ const STEPS = [
   }
 })
 
+/**
+ * A ROUND SOLID, IN THE SAME THREE FACES.
+ *
+ * `Faces` draws the flat-plan solids and this draws the round ones, and both
+ * hand out the same three class names - so one set of ink rules dresses a
+ * criterion fin and a record pad alike, and a machine built out of both is one
+ * object rather than two drawings sharing a plate. A plan circle lands as an
+ * axis-aligned ellipse in this projection, so the top is an ordinary <ellipse>
+ * and only the wall has to be solved.
+ */
+function Drum({ shape, className }) {
+  return (
+    <g className={className}>
+      <path className="dgm-face-right" d={shape.wall} />
+      <ellipse className="dgm-face-top" cx={shape.cx} cy={shape.cy} rx={shape.rx} ry={shape.ry} />
+    </g>
+  )
+}
+
 export default function ChainSchematic({ animate = true }) {
   const frame = useCenterOnOverflow()
   const root = useRef(null)
@@ -414,6 +493,20 @@ export default function ChainSchematic({ animate = true }) {
             </pattern>
           </defs>
 
+          {/* WORK MOVING OVERHEAD. Behind the row, because it is above the
+              plates in the world and further from the reader on the page. */}
+          <g className="fl-sky" aria-hidden="true">
+            {SKY.map((bot) => (
+              <g className="fl-bot" key={bot.key} style={{ '--beat': `${bot.beat}s`, '--lag': bot.lag }}>
+                <g className="fl-hover">
+                  <Drum shape={bot.hull} className="dgm-solid" />
+                  <Faces shape={bot.mast} className="dgm-solid" />
+                  <Drum shape={bot.rotor} className="dgm-rotor" />
+                </g>
+              </g>
+            ))}
+          </g>
+
           {STEPS.map((item) => (
             <g
               className={`fl-step is-${item.key}${hot === item.key ? ' is-hot' : ''}`}
@@ -433,6 +526,21 @@ export default function ChainSchematic({ animate = true }) {
               <polygon className="fl-shade" points={item.plate.top} />
 
               <g className="fl-body">
+                {/* THE HALO, AND WHY IT IS NOT A BLUR.
+                    A Gaussian on five polygons is five full-frame filter passes
+                    every frame, for a thing that is invisible on four of them -
+                    it ground a headless render to a stop, and it would cost a
+                    real reader the same on every scroll. Trident already
+                    answers this: three steps at a low alpha each, which ramp
+                    from the rim inward and leave no single edge strong enough to
+                    read as a drawn line. Same answer here, no filter, and it
+                    lifts with the plate rather than staying on the page. */}
+                <g className="fl-aura">
+                  {[1.2, 1.14, 1.09, 1.045].map((step) => (
+                    <polygon key={step} className="fl-aurastep" points={item.plate.top} style={{ '--step': step }} />
+                  ))}
+                </g>
+
                 {/* THE FRAGMENTS. They travel, they seat, and then they are
                     gone: six seams under a mechanism is six things competing
                     with the thing worth reading. */}
@@ -470,7 +578,16 @@ export default function ChainSchematic({ animate = true }) {
                     a surface that has not landed is a claim about a thing that
                     is not there yet. */}
                 <g className="fl-emblem">
-                  {item.emblem.map((part, n) => (
+                  {item.emblem.map((part, n) => (part.sweep ? (
+                    <g className="fl-face" key={`${item.key}-e${n}`} transform={part.sweep}>
+                      {/* Turned inside the projection, so the arm sweeps a true
+                          plan circle. A full diameter, so its own bounding box
+                          is centred on the plan origin it has to turn about. */}
+                      <g className="fl-arm">
+                        <rect x="-46" y="-2.4" width="92" height="4.8" rx="2.4" />
+                      </g>
+                    </g>
+                  ) : (
                     <g
                       className={part.cls}
                       key={`${item.key}-e${n}`}
@@ -480,17 +597,19 @@ export default function ChainSchematic({ animate = true }) {
                           ride a rail and come off it. */}
                       {part.drop ? (
                         <g className="fl-hop"><Faces shape={part.shape} className="dgm-solid" /></g>
+                      ) : part.round ? (
+                        <Drum shape={part.shape} className="dgm-solid" />
                       ) : (
                         <Faces shape={part.shape} className="dgm-solid" />
                       )}
                     </g>
-                  ))}
+                  )))}
                 </g>
               </g>
 
               {/* Above the plate, and it does not travel with it: the solids
                   float and the type does not. */}
-              <text className="fl-name" x={item.seat[0]} y={item.plate.back[1] - 30} textAnchor="middle">
+              <text className="fl-name" x={item.seat[0]} y={item.plate.back[1] - 38} textAnchor="middle">
                 {item.label}
               </text>
               {/* THE VALUE UNDER THE NAME. Trident letters every deck with a
@@ -499,13 +618,13 @@ export default function ChainSchematic({ animate = true }) {
                   as an illustration. These are the product's own counts, taken
                   off the replay chain the section is about - the same numbers
                   the mechanism above is drawn from. */}
-              <text className="fl-fact" x={item.seat[0]} y={item.plate.back[1] - 14} textAnchor="middle">
+              <text className="fl-fact" x={item.seat[0]} y={item.plate.back[1] - 22} textAnchor="middle">
                 {item.fact}
               </text>
               <rect
                 className="fl-hit"
                 x={item.seat[0] - 130}
-                y={item.plate.back[1] - 50}
+                y={item.plate.back[1] - 58}
                 width="260"
                 height={item.plate.front[1] - item.plate.back[1] + 96}
               />
