@@ -735,25 +735,7 @@ export default function ChainSchematic({ animate = true }) {
                     with one drawn edge, so everything standing on it is the
                     only dark thing in its own band. */}
                 <g className="fl-plate">
-                  {/* A FLAT FILL IS NOT A MATERIAL. Every surface in the figure
-                      was one colour edge to edge, which is what a diagram does
-                      and not what a panel does: a real one catches more light
-                      at the edge nearest the source and less at the far one.
-                      The sheen is one gradient laid over the top face - lighter
-                      along the back, nothing through the middle, and a breath
-                      of the station's own ink gathering at the front.
-                      It is defined INSIDE the step, so its stops resolve
-                      `--tone` against the station they belong to rather than
-                      against the sheet. */}
-                  <defs>
-                    <linearGradient id={`fl-sheen-${item.key}`} x1="0.14" y1="0" x2="0" y2="1">
-                      <stop className="fl-sheen-back" offset="0" />
-                      <stop className="fl-sheen-mid" offset="0.52" />
-                      <stop className="fl-sheen-front" offset="1" />
-                    </linearGradient>
-                  </defs>
                   <Faces shape={item.plate} className="dgm-solid" />
-                  <polygon className="fl-sheen" points={item.plate.top} fill={`url(#fl-sheen-${item.key})`} />
                   <polygon className="fl-grain" points={item.plate.top} fill="url(#fl-grain)" />
                 </g>
 

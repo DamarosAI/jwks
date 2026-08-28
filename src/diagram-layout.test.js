@@ -62,32 +62,18 @@ describe('Trident and Nectar schematics', () => {
     }
   })
 
-  it('lights the surfaces and springs the motion in all three figures', () => {
-    // A FLAT FILL IS NOT A MATERIAL. Every top face on this sheet was one
-    // colour edge to edge, which is what a diagram does and not what a panel
-    // does: a real one catches more light along the edge nearest the source and
-    // less along the far one, and that single fact is most of the difference
-    // between a drawing of a thing and a thing.
-    assert.match(solid, /export function Sheen\(\{ shape, id \}\)/)
-    assert.match(css, /\.dgm-sheen-front \{ stop-color: color-mix\(in srgb, var\(--ink\)/)
-    // The gradient is declared INSIDE the solid rather than in a shared defs,
-    // so its stops resolve `--ink` against whichever deck it is rendered in: a
-    // violet tier and a green one are lit in their own colour, not a grey.
-    assert.match(solid, /<defs>\s*<linearGradient id=\{id\}/)
-    // Only the large surfaces carry it. A sheen on a nine-pixel contract field
-    // is a gradient nobody can see costing a paint nobody asked for.
-    // The big surfaces, and ONLY those. A sheen on a thing the size of a tile is
-    // a gradient nobody reads on an object that then looks wet - so Trident's
-    // four decks carry it and its three proposal plates do not, and Nectar's
-    // intake slab carries it and its sites do not.
-    for (const [figure, count] of [[trident, 4], [nectar, 1]]) {
-      assert.equal((figure.match(/<Sheen shape=/g) || []).length, count, 'the big surfaces, and only those')
-    }
-    // And it is a lit surface rather than a surface under glass: the wash tuned
-    // on the chain's large pale plates sat on a Trident deck as a film.
-    const wash = Number(css.match(/\.dgm-sheen-back \{ stop-color: color-mix\(in srgb, var\(--surface-solid\) (\d+)%/)[1])
-    assert.ok(wash <= 30, `a ${wash}% wash on a deck carrying a mechanism is glass over it`)
-    assert.doesNotMatch(solid, /Sheen[\s\S]*?export function Faces/)
+  it('keeps the top faces flat and springs the motion in all three figures', () => {
+    // NO SHEEN ANYWHERE. A gradient was laid over every large top face on the
+    // theory that a real panel catches more light along the edge nearest the
+    // source. The theory is sound and the drawing it produced was not: on a
+    // Trident deck or a Nectar slab it sat on the surface as a FILM the
+    // mechanism then had to be read through, and on the chain's plates it read
+    // as the paper fading out rather than as light on it. A top face here is a
+    // flat near-white fill and that is the whole of it.
+    assert.doesNotMatch(solid, /Sheen|sheen/)
+    assert.doesNotMatch(css, /sheen/)
+    for (const figure of [trident, nectar, floor]) assert.doesNotMatch(figure, /Sheen|sheen/)
+    assert.match(css, /\.dgm-face-top \{\s*fill: color-mix\(in srgb, var\(--ink\) 8%, var\(--surface-solid\)\);/)
 
     // ONE SPRING FOR ALL THREE. Everything decelerated into place on a curve
     // that never passes its target, which is the motion of a thing being
@@ -115,7 +101,7 @@ describe('Trident and Nectar schematics', () => {
     assert.match(solid, /<path className="dgm-face-left" d=\{shape\.faceLeft\} \/>/)
     assert.match(solid, /export function Faces\(\{ shape, className \}\)/)
     for (const source of figures) {
-      assert.match(source, /import \{ Faces, Sheen \} from '\.\/Solid'/)
+      assert.match(source, /import \{ Faces \} from '\.\/Solid'/)
       assert.match(source, /<Faces shape=\{/)
       // Sharp-cornered polygon decks are gone from both figures, and neither
       // one carries its own copy of the component.
@@ -2176,7 +2162,7 @@ describe('The floor schematic', () => {
     assert.match(css, /\.fl-lamp \{ opacity: calc\(1 - var\(--idle, 0\)\); \}/)
     assert.match(css, /\.fl-lamp\.is-read \{ opacity: calc\(1 - var\(--turn, 0\)\); \}/)
     for (const kind of ['crit', 'res', 'bin', 'read']) {
-      assert.match(css, new RegExp(`\\.fl-lamp\\.is-${kind} \\{`), `${kind} reports through a lamp`)
+      assert.match(css, new RegExp(`\\.fl-lamp\\.is-${kind}[ .]`), `${kind} reports through a lamp`)
     }
     // Every plate is printed before anything stands on it, in PLAN, inside the
     // projection - so a printed lane and the thing that runs down it are solved
@@ -2234,7 +2220,8 @@ describe('The floor schematic', () => {
     // And a lit cap has to beat its own body. At full tone against a body drawn
     // at more than half the same tone the two sat a step apart, which is enough
     // for a cool hue and not for a warm one.
-    assert.match(css, /\.fl-lamp \.dgm-face-top \{ fill: color-mix\(in srgb, var\(--tone\) \d+%, var\(--text\)\)/)
+    assert.match(css, /--lamp: color-mix\(in srgb, var\(--tone\) \d+%, var\(--text\)\);/)
+    assert.match(css, /\.fl-lamp \.dgm-face-top \{ fill: var\(--lamp\);/)
 
     // FIVE PLATES IN A ROW ARE NOT A RUN, THEY ARE FIVE ISLANDS. Nothing said
     // the output of one station was the input of the next; the datum underneath
@@ -2295,6 +2282,36 @@ describe('The floor schematic', () => {
       }
     }
     assert.match(css, /@keyframes fl-drop \{/)
+
+    // NO SEAM ANYWHERE. A cycle whose last frame is not its first frame does
+    // not loop, it RESTARTS: the lever snapped back across its whole arc
+    // between two frames, the die teleported up, the mark and the bites jumped
+    // a value. Each of those is a moment where a reader is told the drawing is
+    // a recording. Every cycle returns through the motion it went out on now,
+    // and this walks all of them.
+    for (const [, name, body] of css.matchAll(/@keyframes (fl-[a-z]+) \{([\s\S]*?)\n\}/g)) {
+      const frames = {}
+      for (const [, stops, decl] of body.matchAll(/([\d%,\s]+)\{([^}]*)\}/g)) {
+        for (const stop of stops.split(',').map((x) => x.trim()).filter(Boolean)) frames[stop] = decl.trim()
+      }
+      // `alternate` clocks declare only `to`, and run back down by definition.
+      if (frames['0%'] === undefined) continue
+      assert.equal(frames['100%'], frames['0%'], `${name} ends somewhere it does not start, so it restarts`)
+    }
+
+    // AND NO LAMP GOES OUT. Fading to nothing at the end of a cycle only to
+    // fade up at the start of the next one is a blink - a reader sees the loop
+    // turn over even when the two frames match. The populations stay lit, which
+    // is also the honest resting state of a step that has happened, and what
+    // travels through them is a deepening in the station's own ink.
+    for (const clock of ['fl-compile', 'fl-bind', 'fl-sort']) {
+      const body = css.match(new RegExp(`@keyframes ${clock} \\{([\\s\\S]*?)\\n\\}`))[1]
+      assert.match(body, /fill: var\(--lamp\)/, `${clock} has to return to a lit lamp`)
+      assert.doesNotMatch(body, /opacity: 0[;\s]/, `${clock} puts a lamp out`)
+    }
+    // A binding that has been made stays made, and nine of nine stay standing.
+    assert.match(css, /\.fl-route \{[\s\S]*?opacity: 1;/)
+    assert.doesNotMatch(css.match(/@keyframes fl-lift \{([\s\S]*?)\n\}/)[1], /opacity/)
     assert.match(css, /@keyframes fl-punch \{/)
     assert.match(css, /@keyframes fl-lift \{/)
 
@@ -2313,7 +2330,7 @@ describe('The floor schematic', () => {
     // nothing about the step. Every lamp on the held plate comes up and STAYS
     // up, out of the cycle it was taking its turn in - four criteria compiled,
     // every record bound, every bin counted, nine bands of nine recovered.
-    assert.match(css, /\.dgm-svg\.is-floor\.is-fused \.fl-step\.is-hot \.fl-lamp \{\s*animation: none;/)
+    assert.match(css, /\.dgm-svg\.is-floor\.is-fused \.fl-step\.is-hot \.fl-lamp \.dgm-face-top \{\s*animation: none;\s*fill: var\(--deep\);/)
     // And the RUN lights through it, so the answer to what a step does includes
     // where it sits. Five plates near each other become a run with a reader's
     // finger somewhere in it, which the datum alone could never say.
@@ -2425,18 +2442,12 @@ describe('The floor schematic', () => {
       assert.match(block, /transition-timing-function: linear\(0, [\s\S]*?1\.001 100%\);/, 'and the spring overrides it')
     }
 
-    // A FLAT FILL IS NOT A MATERIAL. Every surface was one colour edge to edge,
-    // which is what a diagram does and not what a panel does: a real one catches
-    // more light along the edge nearest the source and less along the far one.
-    // The sheen is defined INSIDE the step, so its stops resolve `--tone`
-    // against the station they belong to rather than against the sheet.
-    assert.match(floor, /<linearGradient id=\{`fl-sheen-\$\{item\.key\}`\}/)
-    assert.match(floor, /<polygon className="fl-sheen"[^>]*fill=\{`url\(#fl-sheen-\$\{item\.key\}\)`\}/)
-    assert.match(css, /\.fl-sheen-front \{ stop-color: color-mix\(in srgb, var\(--tone\)/)
-    // Light the plate, do not bleach it: at eighty-two per cent white the back
-    // half went to paper-white and took the paper's own tone with it.
-    const wash = Number(css.match(/\.fl-sheen-back \{ stop-color: color-mix\(in srgb, var\(--surface-solid\) (\d+)%/)[1])
-    assert.ok(wash <= 60, `a ${wash}% wash is the surface fading out, not light on it`)
+    // NO SHEEN. A gradient over every top face was laid on the theory that a
+    // real panel catches more light along the edge nearest the source. The
+    // theory is sound and the drawing was not: it read as the paper fading out
+    // rather than as light on it. A top face is a flat near-white fill.
+    assert.doesNotMatch(floor, /sheen/)
+    assert.match(css, /\.fl-plate \.dgm-face-top \{\s*fill: color-mix\(in srgb, var\(--tone\) \d+%, var\(--surface-solid\)\);/)
 
     // And the corners are sampled finely enough to be corners. `roundedSlab` is
     // the chain's own primitive - nothing else in the sheet calls it - so at

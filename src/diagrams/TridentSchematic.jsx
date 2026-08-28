@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 import { jitter, planCyl, planDrop, planPrism, planSpace, roundedDeck } from './iso'
-import { Faces, Sheen } from './Solid'
+import { Faces } from './Solid'
 import { useCenterOnOverflow } from './useCenterOnOverflow'
 import { useScrollRun } from './useScrollPhase'
 
@@ -689,7 +689,6 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
           <g className="dgm-slide is-receipt" style={{ '--lift': `${RECEIPT.lift}px`, '--life': RECEIPT.life }}>
             <g className={`dgm-deck${state.receipt ? ' is-live' : ''}${lit('receipt')}`} {...probe('receipt')}>
               <Faces shape={RECEIPT} className="dgm-solid" />
-<Sheen shape={RECEIPT} id="td-sheen-receipt" />
               <Drop leg={DROPS[2]} drops={state.drops} />
               <g transform={planSpace(CX, RECEIPT.cy)}>
                 {/* The chain is drawn a link at a time rather than as one rule
@@ -774,7 +773,6 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
           <g className="dgm-slide is-authority" style={{ '--lift': `${AUTHORITY.lift}px`, '--life': AUTHORITY.life }}>
             <g className={`dgm-deck${open ? ' is-live' : ''}${lit('authority')}`} {...probe('authority')}>
               <Faces shape={AUTHORITY} className="dgm-solid" />
-<Sheen shape={AUTHORITY} id="td-sheen-authority" />
               <Drop leg={DROPS[1]} drops={state.drops} />
               <g transform={planSpace(CX, AUTHORITY.cy)}>
                 {/* The stop. Closed is drawn closed - two blades run up to the
@@ -859,7 +857,6 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
           <g className="dgm-slide is-contract" style={{ '--lift': `${CONTRACT.lift}px`, '--life': CONTRACT.life }}>
             <g className={`dgm-deck${state.bound > 0 ? ' is-live' : ''}${lit('contract')}`} {...probe('contract')}>
               <Faces shape={CONTRACT} className="dgm-solid" />
-<Sheen shape={CONTRACT} id="td-sheen-contract" />
               <Drop leg={DROPS[0]} drops={state.drops} />
               <g transform={planSpace(CX, CONTRACT.cy)}>
                 {/* Nineteen solids on a deck. A bound field is standing on its
@@ -937,7 +934,6 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
 
             <g className={`dgm-deck is-live${lit('surface')}`} {...probe('surface')}>
               <Faces shape={SURFACE} className="dgm-solid" />
-<Sheen shape={SURFACE} id="td-sheen-surface" />
               <g transform={planSpace(CX, SURFACE.cy)}>
                 <rect className="dgm-planefill" x={-HALF + 10} y={-HALF + 10} width={HALF * 2 - 20} height={HALF * 2 - 20} rx="14" fill="url(#tr-grain)" />
                 {/* Everything that lands on this deck lands inside one

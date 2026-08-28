@@ -9641,35 +9641,6 @@ html.is-hidden .clinic-node i,
   transition: stroke 300ms ease, fill 300ms ease;
 }
 
-/* A FLAT FILL IS NOT A MATERIAL.
-
-   Every top face on this sheet was one colour edge to edge, which is what a
-   diagram does and not what a panel does: a real one catches more light along
-   the edge nearest the source and less along the far one, and that single fact
-   is most of the difference between a drawing of a thing and a thing.
-
-   One gradient over the face - a wash of white along the back, nothing through
-   the middle, and a breath of the surface's OWN ink gathering at the front. It
-   is tilted off vertical because the light in an axonometric comes from
-   wherever the projection says up-and-back is, and the stops resolve `--ink`
-   against whichever deck the gradient is declared inside, so a violet tier and
-   a green one are lit in their own colour rather than in a shared grey.
-
-   Only the large surfaces carry it. A sheen on a nine-pixel contract field is a
-   gradient nobody can see costing a paint nobody asked for. */
-
-.dgm-sheen { pointer-events: none; }
-
-/* LESS GLASS. Tuned on the chain - whose plates are large, pale and nearly
-   empty - the same wash on a Trident deck or a Nectar slab sat on top of the
-   surface as a FILM rather than as light on it: those are smaller, darker, and
-   each carries a mechanism the film then had to be read through. Halved, and
-   the front kept to a whisper, it is a lit surface again rather than a surface
-   under glass. */
-.dgm-sheen-back { stop-color: color-mix(in srgb, var(--surface-solid) 26%, transparent); }
-.dgm-sheen-mid { stop-color: transparent; }
-.dgm-sheen-front { stop-color: color-mix(in srgb, var(--ink) 8%, transparent); }
-
 .dgm-face-left {
   fill: color-mix(in srgb, var(--ink) var(--wash, 34%), var(--body-near));
   stroke: color-mix(in srgb, var(--ink-deep) 50%, transparent);
@@ -12655,29 +12626,6 @@ html.is-hidden .clinic-node i,
    meant to count. */
 .fl-grain { opacity: 0.5; }
 
-/* A FLAT FILL IS NOT A MATERIAL.
-
-   Every surface here was one colour edge to edge, which is what a diagram does
-   and not what a panel does: a real one catches more light along the edge
-   nearest the source and less along the far one, and that single fact is most
-   of the difference between a drawing of a thing and a thing.
-
-   One gradient over the top face - a wash of white along the back, nothing
-   through the middle, and a breath of the station's own ink gathering at the
-   front. It is tilted a little off vertical, because the light in an
-   axonometric comes from wherever the projection says up-and-back is. */
-
-.fl-sheen { pointer-events: none; transition: opacity 380ms ease; opacity: 0.92; }
-
-/* Light the plate, do not bleach it. At eighty-two per cent white the back half
-   of every plate went to paper-white and took the paper's own tone with it, so
-   the sheen stopped reading as light on a surface and started reading as the
-   surface fading out. */
-.fl-sheen-back { stop-color: color-mix(in srgb, var(--surface-solid) 54%, transparent); }
-.fl-sheen-mid { stop-color: transparent; }
-.fl-sheen-front { stop-color: color-mix(in srgb, var(--tone) 11%, transparent); }
-
-.is-fused .fl-step.is-hot .fl-sheen { opacity: 1; }
 
 /* ── Pointing at one lifts it ────────────────────────────────────────────
 
@@ -12985,6 +12933,11 @@ html.is-hidden .clinic-node i,
      Written as a mix of two mid-tones it came out mid-toned, and every dark
      object in the figure went pale at once. */
   --deep: color-mix(in srgb, var(--tone) 38%, var(--text));
+  /* And the value a lit cap rests at, so a pulse has something to return to. A
+     lamp that goes OUT between passes is a lamp whose resting state is a step
+     that has not happened; the population stays lit and what travels through it
+     is a deepening. */
+  --lamp: color-mix(in srgb, var(--tone) 80%, var(--text));
 }
 
 /* HOW FAR EACH ONE IS MIXED BACK INTO THE BLUE IS NOT ONE NUMBER.
@@ -13082,7 +13035,7 @@ html.is-hidden .clinic-node i,
    disappeared into their amber stacks. Carried most of the way into the page's
    text colour instead, every lamp is the most saturated and the darkest mark on
    its own plate whatever hue the station works in. */
-.fl-lamp .dgm-face-top { fill: color-mix(in srgb, var(--tone) 80%, var(--text)); stroke: none; }
+.fl-lamp .dgm-face-top { fill: var(--lamp); stroke: none; transition: fill 300ms ease; }
 .fl-lamp .dgm-face-left,
 .fl-lamp .dgm-face-right { fill: var(--deep); }
 
@@ -13110,6 +13063,15 @@ html.is-hidden .clinic-node i,
 .fl-die .dgm-face-left,
 .fl-die .dgm-face-right { fill: var(--deep); }
 
+/* NO SEAM ANYWHERE. A cycle whose last frame is not its first frame does not
+   loop, it RESTARTS: the lever snapped back across its whole arc between two
+   frames, the die teleported up, the mark and the bites jumped a value. Every
+   one of those is a moment where a reader is told the drawing is a recording.
+   So each cycle now RETURNS through the same motion it went out on, and the
+   return is part of the work rather than the price of it - a lever swings over
+   and swings back, a die presses and lifts. The endpoints match on all of them
+   and the spec walks every keyframe in the sheet to be sure. */
+
 .dgm-svg.is-live.is-fused .fl-die { animation: fl-punch 6.2s cubic-bezier(0.5, 0, 0.2, 1) infinite; }
 
 /* One stroke, held, and back. A press is a thing that happens at a moment,
@@ -13126,19 +13088,25 @@ html.is-hidden .clinic-node i,
 .dgm-svg.is-live.is-fused .fl-bite { animation: fl-bitten 6.2s ease-out infinite; }
 
 @keyframes fl-bitten {
-  0%, 48% { opacity: 0.3; }
-  62%, 100% { opacity: 1; }
+  0%, 44% { opacity: 1; }
+  52%, 58% { opacity: 0.3; }
+  68%, 100% { opacity: 1; }
 }
 
-.dgm-svg.is-live.is-fused .fl-lamp.is-crit {
-  animation: fl-compile 6.2s ease-out infinite;
+.dgm-svg.is-live.is-fused .fl-lamp.is-crit .dgm-face-top {
+  animation: fl-compile 6.2s ease-in-out infinite;
   animation-delay: calc(var(--turn, 0) * 0.24s + 3.4s);
 }
 
+/* IT NEVER GOES OUT. Every lamp used to fade to nothing and come back, and
+   fading out at the end of a cycle only to fade up at the start of the next one
+   is a BLINK - a reader sees the loop turn over even when the two frames match.
+   The population stays lit, which is also the honest resting state of a step
+   that has happened, and what travels through it is a deepening. */
 @keyframes fl-compile {
-  0%, 6% { opacity: 0; }
-  14%, 88% { opacity: 1; }
-  100% { opacity: 0; }
+  0%, 10% { fill: var(--lamp); }
+  22%, 38% { fill: var(--deep); }
+  58%, 100% { fill: var(--lamp); }
 }
 
 /* ── EVIDENCE SINKS ──────────────────────────────────────────────────────
@@ -13160,13 +13128,15 @@ html.is-hidden .clinic-node i,
 .fl-record.is-cold .dgm-face-top { fill: color-mix(in srgb, var(--tone) 30%, var(--surface-solid)); }
 .fl-record.is-cold .dgm-face-right { fill: color-mix(in srgb, var(--tone) 52%, var(--surface-solid)); }
 
-/* A BINDING IS DRAWN, NOT BUILT. It used to be a slab lying on the plate, which
-   made the one thing this step produces the same kind of object as the records
-   it connects. */
+/* A BINDING IS DRAWN, NOT BUILT - and once made it STAYS made, which is what
+   this step claims and what the drawing spent three passes contradicting: the
+   route drew itself, held, and vanished, so the resting frame of the plate was
+   a snapshot with nothing bound in it. It is drawn permanently now and the pass
+   through it is a weight rather than an existence. */
 .fl-route {
   stroke: var(--deep);
-  stroke-width: 1.4;
-  opacity: 0;
+  stroke-width: 1.3;
+  opacity: 1;
 }
 
 /* Except the one that is never made. It stays open on the bed: the bay is wired
@@ -13186,20 +13156,20 @@ html.is-hidden .clinic-node i,
 /* A route that has been made stays made until the snapshot closes, which is
    what the whole step is claiming about a binding. */
 @keyframes fl-reach {
-  0%, 14% { opacity: 0; }
-  26%, 86% { opacity: 1; }
-  100% { opacity: 0; }
+  0%, 14% { stroke-width: 1.3; }
+  28%, 44% { stroke-width: 2.6; }
+  64%, 100% { stroke-width: 1.3; }
 }
 
-.dgm-svg.is-live.is-fused .fl-lamp.is-res {
-  animation: fl-bind 7.4s ease-out infinite;
+.dgm-svg.is-live.is-fused .fl-lamp.is-res .dgm-face-top {
+  animation: fl-bind 7.4s ease-in-out infinite;
   animation-delay: calc(var(--turn, 0) * 0.5s + 0.2s);
 }
 
 @keyframes fl-bind {
-  0%, 20% { opacity: 0; }
-  34%, 84% { opacity: 1; }
-  100% { opacity: 0; }
+  0%, 16% { fill: var(--lamp); }
+  30%, 46% { fill: var(--deep); }
+  66%, 100% { fill: var(--lamp); }
 }
 
 /* ── SCREENING DROPS ─────────────────────────────────────────────────────
@@ -13228,15 +13198,15 @@ html.is-hidden .clinic-node i,
 .fl-unit.is-alt .dgm-face-top { fill: color-mix(in srgb, var(--tone) 30%, var(--surface-solid)); }
 .fl-unit.is-alt .dgm-face-left { fill: color-mix(in srgb, var(--tone) 62%, var(--surface-solid)); }
 
-.dgm-svg.is-live.is-fused .fl-lamp.is-bin {
-  animation: fl-sort 5.6s ease-out infinite;
+.dgm-svg.is-live.is-fused .fl-lamp.is-bin .dgm-face-top {
+  animation: fl-sort 5.6s ease-in-out infinite;
   animation-delay: calc(var(--turn, 0) * 0.3s + 2.9s);
 }
 
 @keyframes fl-sort {
-  0%, 4% { opacity: 0; }
-  12%, 92% { opacity: 1; }
-  100% { opacity: 0; }
+  0%, 8% { fill: var(--lamp); }
+  20%, 36% { fill: var(--deep); }
+  56%, 100% { fill: var(--lamp); }
 }
 
 .fl-faller .dgm-face-top { fill: color-mix(in srgb, var(--deep) 76%, var(--surface-solid)); stroke: var(--line); }
@@ -13255,13 +13225,17 @@ html.is-hidden .clinic-node i,
    for as long as it moved. Height is the one axis here that cannot lie. */
 @keyframes fl-drop {
   0%, 6% { transform: translateY(-30px); opacity: 0; }
+  /* The last frame is the first frame: at zero opacity the return costs
+     nothing to look at, but a loop whose endpoints differ is a loop a browser
+     has to jump, and a jump is what a restart looks like. */
   /* Solid the whole way down. It used to fade as it descended, and a
      half-opaque solid in an axonometric is not a fading solid - it is a hole,
      which on a plate that draws real holes is the worst thing it could be
      mistaken for. It goes out only once it is inside the throat, where being
      hard to see is what is actually happening to it. */
   14%, 68% { transform: translateY(-16px); opacity: 1; }
-  84%, 100% { transform: translateY(11px); opacity: 0; }
+  84%, 96% { transform: translateY(11px); opacity: 0; }
+  100% { transform: translateY(-30px); opacity: 0; }
 }
 
 /* ── RESOLVE IS PULLED ───────────────────────────────────────────────────
@@ -13286,8 +13260,9 @@ html.is-hidden .clinic-node i,
 .dgm-svg.is-live.is-fused .fl-lever { animation: fl-claim 4.8s cubic-bezier(0.6, 0, 0.3, 1.4) infinite; }
 
 @keyframes fl-claim {
-  0%, 30% { transform: rotate(26deg); }
-  46%, 100% { transform: rotate(-26deg); }
+  0%, 26% { transform: rotate(26deg); }
+  42%, 74% { transform: rotate(-26deg); }
+  92%, 100% { transform: rotate(26deg); }
 }
 
 .dgm-svg.is-live.is-fused .fl-lamp.is-read {
@@ -13306,7 +13281,8 @@ html.is-hidden .clinic-node i,
 
 @keyframes fl-press {
   0%, 34% { transform: translateY(-26px); }
-  52%, 100% { transform: translateY(0); }
+  52%, 80% { transform: translateY(0); }
+  96%, 100% { transform: translateY(-26px); }
 }
 
 /* THE IMPRESSION, AND IT DOES NOT LIFT WITH THE PRESS. A signature that
@@ -13322,7 +13298,8 @@ html.is-hidden .clinic-node i,
 
 @keyframes fl-mark {
   0%, 44% { opacity: 0.34; }
-  56%, 100% { opacity: 1; }
+  56%, 84% { opacity: 1; }
+  100% { opacity: 0.34; }
 }
 
 /* ── REPLAY LIFTS ────────────────────────────────────────────────────────
@@ -13359,16 +13336,19 @@ html.is-hidden .clinic-node i,
 }
 
 .dgm-svg.is-live.is-fused .fl-band {
-  animation: fl-lift 8.2s cubic-bezier(0.22, 1, 0.3, 1) infinite;
+  animation: fl-lift 8.2s ease-in-out infinite;
   animation-delay: calc(var(--turn, 0) * 0.3s);
 }
 
-/* Band by band out of the hole, bottom first, and then it holds - which is
-   nine of nine recovered rather than nine of nine going round. */
+/* NINE OF NINE, ALWAYS. The bands used to fade in bottom-first and fade out
+   again, so the resting frame of the plate whose value line reads CHAIN INTACT
+   9 / 9 was a core with nothing in it. They stand permanently and the recovery
+   is a RIPPLE running up them - staggered per band, which is a chain checked
+   link by link rather than a stack rebuilt every eight seconds. */
 @keyframes fl-lift {
-  0%, 6% { opacity: 0; transform: translateY(9px); }
-  20%, 90% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(9px); }
+  0%, 10% { transform: translateY(0); }
+  26%, 40% { transform: translateY(-3px); }
+  64%, 100% { transform: translateY(0); }
 }
 
 /* POINTING AT A STATION FINISHES IT.
@@ -13391,9 +13371,9 @@ html.is-hidden .clinic-node i,
    plates near each other become a run with a reader's finger somewhere in it.
    That is the one thing the datum underneath could never say on its own. */
 
-.dgm-svg.is-floor.is-fused .fl-step.is-hot .fl-lamp {
+.dgm-svg.is-floor.is-fused .fl-step.is-hot .fl-lamp .dgm-face-top {
   animation: none;
-  opacity: calc(1 - var(--idle, 0));
+  fill: var(--deep);
 }
 
 .fl-link { transition: stroke 320ms ease, stroke-width 320ms ease; }
@@ -13483,6 +13463,10 @@ html.is-hidden .clinic-node i,
   .fl-drift,
   .fl-emblem > g,
   .fl-route,
+  /* The lamp pulse moved onto the face when it stopped being an opacity blink,
+     so the reset has to follow it there or it keeps running for a reader who
+     asked for less motion. */
+  .fl-lamp .dgm-face-top,
   .fl-stamp,
   .fl-bite,
   .fl-band,
