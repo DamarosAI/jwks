@@ -309,17 +309,18 @@ body,
      lettered throughout, and shrinking a sheet until its annotation is six
      pixels is not a smaller drawing, it is an unreadable one.
 
-     Nothing is written on this one, and it is one object rather than a spread
-     of them, so it simply fits: a phone gets the whole composition at once
-     instead of forty per cent of it. That is the dividend of the no-labels
-     rule, and it came back the moment the landscape did not.
+     It fitted, once. That rule was written for a figure that was ONE deck
+     assembling - no labels, one object, so a phone got the whole composition at
+     once instead of forty per cent of it.
 
-     It briefly had to pan, while the figure was a camera flying over three
-     districts on a plane half again as wide. There is no camera and no
-     landscape now - one deck, assembling - so there is nothing to pan across
-     and no reason to make a reader drag for it. */
+     It is five plates in a row now, and five of anything across three hundred
+     and fifty pixels is not a composition, it is a row of stamps: each plate
+     lands about eighty pixels wide, which is under the size at which its own
+     name fits over it, let alone the mechanism running on it. So the floor pans
+     again, and it opens centred - which puts SCREENING, the middle of the run,
+     under the reader's thumb, with two steps either side of it. */
 
-  #root .dgm-svg.is-floor { min-width: 0; }
+  #root .dgm-svg.is-floor { min-width: 820px; }
 
   #root .dgm-readout {
     flex-direction: column;

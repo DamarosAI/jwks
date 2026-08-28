@@ -12420,430 +12420,534 @@ html.is-hidden .clinic-node i,
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   FIVE PLANES, ASSEMBLED OUT OF ONE SCATTER
+   THIRTY FRAGMENTS BECOME FIVE SURFACES, ONCE
 
-   The loop is the one that worked - tiles off every axis drawing together and
-   setting down flush into a plane - and what changed is where they land. One
-   plane was an abstraction; a rectangle is not a shape this business makes. The
-   scatter resolves into FIVE, and the five are the product.
+   The figure opens as a mess, the reader arrives, and the mess resolves into
+   five plates in a row. THAT IS THE END OF IT. It ran on a fourteen-second
+   loop and the loop was the mistake: a claim you can watch come undone every
+   fourteen seconds is not a claim, it is a screensaver, and a reader who looks
+   away for ten seconds comes back to the argument in pieces again.
 
-   Three things happen on this sheet and they are on three separate clocks, so
-   none of them has to wait for another: the ASSEMBLY, which loops; the CHARGE,
-   which crosses each plane at its own rate and in its own order; and the
-   POINTER, which stands a plane up into a solid whenever it is asked.
+   So one registered number runs the whole entrance. `--fuse` goes 0 to 1
+   exactly once, latched by the reader reaching the figure, and every calc()
+   downstream eases on that single timeline: the tiles travel to their seats,
+   the six seams in each group close into one plate, the name rises under it,
+   and the mechanism on top comes on last. Nothing can scrub it and nothing
+   puts it back.
+
+   THE PLATE IS PAPER AND WHAT STANDS ON IT IS INK. The previous pass drew the
+   surface in blue and the machine on it in blue an eighth of a step apart, and
+   a reader could not tell where one stopped and the other started. Trident does
+   not have that problem because a deck there is nearly white with a hard edge.
+   Same rule here.
    ═══════════════════════════════════════════════════════════════════════ */
+
+/* The one number. Registered, so a single class flip transitions every
+   expression reading it - the same device the Trident boot runs on, and the
+   reason none of this needs a frame loop or a re-render. */
+@property --fuse {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
 
 .dgm-svg.is-floor {
   --ink: var(--accent);
-  --ink-deep: var(--accent-strong);
+  /* THE BRIEF SAID BLACK LINES, AND THIS SHEET HAD NONE.
+     Every edge in the figure was a tint of the accent on a tint of the accent,
+     which is why five machines came out as one blue haze - there was no value
+     in the drawing that the page ground was not already most of the way to.
+     Trident does not have that problem: its deepest tier is `accent-strong`
+     carried a third of the way into the text colour, which is very nearly
+     black, and that is where the whole figure gets its weight.
+     So this sheet gets a line colour of its own. The solids stay Damaros blue;
+     every edge that defines one is drawn in near-black. */
+  --ink-deep: color-mix(in srgb, var(--accent-strong) 34%, var(--text));
+  --line: color-mix(in srgb, var(--text) 72%, var(--accent-strong));
+  --fuse: 0;
+  transition: --fuse 2200ms cubic-bezier(0.32, 0, 0.06, 1);
 }
 
-.fl-step { cursor: pointer; }
+.dgm-svg.is-floor.is-fused { --fuse: 1; }
+
+/* NOTHING IS A TARGET UNTIL THE PLATES ARE DOWN. A hover on a tile still in
+   the air is a hover on nothing: it would name a step that does not exist yet,
+   dim four others that are still assembling, and hold a readout open over a
+   scatter. The hit rect is the only pointer surface in the figure and it is
+   inert until the fuse has run. */
+.fl-step { transition: opacity 260ms ease; }
 .fl-step:focus { outline: none; }
-.fl-hit { fill: none; pointer-events: all; }
+.fl-hit,
+.fl-tiles,
+.fl-plate,
+.fl-emblem,
+.fl-shade,
+.fl-name,
+.fl-fact { pointer-events: none; }
+.fl-hit { fill: none; }
+.is-fused .fl-hit { pointer-events: all; cursor: pointer; }
 
-/* ── The tiles ───────────────────────────────────────────────────────────
+/* ONE SOURCE OF TRUTH FOR WHICH STEP IS BEING READ.
+   The drawing used to style off `:hover` while the readout underneath rendered
+   off React state, which is two answers to one question - and on a touch screen
+   `:hover` sticks after the finger has gone, so the plate stayed lifted under a
+   caption that had moved on. The pointer lands on the hit rect, the rect sets
+   the state, and the state letters the plate AND the readout. `:focus-visible`
+   comes along for the ring, because that is a rendering of the focus ring and
+   not of the reading. */
 
-   Built at their seat, so the assembled plane is a true plan grid with every
-   seam landing on every other seam. Scatter is an offset from that - the same
-   object in two places rather than two pretending to be one, which is why the
-   whole assembly is a compositor move with nothing recomputed on any frame. */
+/* ── The fragments ───────────────────────────────────────────────────────
+
+   Built at their seats, so the assembled group is a true plan grid with every
+   seam landing on every other seam - which is what lets six tiles hand off to
+   one plate without the outline moving. Scatter is an offset from that: the
+   same object in two places rather than two pretending to be one, so the whole
+   travel is a compositor transform with nothing recomputed on any frame.
+
+   `--own` is this tile's slice of the fuse. One number staggered per tile is
+   what makes thirty objects arrive as a flock rather than as a block, and it
+   costs one clamp rather than thirty animations. Every tile is seated by 0.72,
+   which is well before the seams start closing at 0.86 - nothing may still be
+   travelling when the surface it belongs to arrives. */
 
 .fl-tile {
+  --own: clamp(0, calc((var(--fuse) - var(--lag, 0) * 0.26) / 0.46), 1);
+  --away: calc(1 - var(--own));
   transform-box: fill-box;
   transform-origin: center;
-  transform: translate(0, 0);
-  transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
+  transform:
+    translate(calc(var(--drift-x, 0px) * var(--away)), calc(var(--drift-y, 0px) * var(--away)))
+    scale(calc(1 - 0.32 * var(--away)));
 }
 
+.fl-tiles { opacity: clamp(0, calc((0.86 - var(--fuse)) / 0.14), 1); }
+
 .fl-tile .dgm-face-top {
-  fill: color-mix(in srgb, var(--accent) 12%, var(--surface-solid));
-  stroke: color-mix(in srgb, var(--accent-strong) 54%, transparent);
+  fill: color-mix(in srgb, var(--accent) 11%, var(--surface-solid));
+  stroke: color-mix(in srgb, var(--line) 34%, transparent);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
 
-.fl-tile .dgm-face-left {
-  fill: color-mix(in srgb, var(--accent) 30%, var(--surface-solid));
-  stroke: none;
+.fl-tile .dgm-face-left { fill: color-mix(in srgb, var(--accent) 26%, var(--surface-solid)); stroke: none; }
+.fl-tile .dgm-face-right { fill: color-mix(in srgb, var(--accent-strong) 30%, var(--accent)); stroke: none; }
+
+/* THE MESS IS NOT A PAUSE. Tiles holding perfectly still before the fuse read
+   as a video that has not started, so each one wanders a few pixels off its
+   drift on its own long clock. It stops the instant the fuse is latched: the
+   tile is travelling several hundred pixels at that moment, so a wander of
+   thirty ending is not something anybody sees, and a surface that is still
+   breathing after it has landed is not a base you can build on. */
+
+.fl-drift {
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
-.fl-tile .dgm-face-right {
-  fill: color-mix(in srgb, var(--accent-strong) 34%, var(--accent));
-  stroke: none;
+.dgm-svg.is-live .fl-drift {
+  animation: fl-adrift calc(6.5s + var(--life, 0) * 5s) ease-in-out infinite alternate;
+  animation-delay: calc(var(--life, 0) * -7s);
 }
 
-.fl-grain { opacity: 0.45; pointer-events: none; }
-
-/* THE DEPTH IS ALWAYS DRAWN AND USUALLY NOT SHOWN.
-
-   Two shapes per tile, one top face: a shallow body and a deep one. Flat is
-   what a step looks like from outside; the pointer brings the deep one up. The
-   top face never moves between them, so the surface holds still and only what
-   is under it changes - which is what makes it read as the plane gaining depth
-   rather than as a different object arriving. */
-
-.fl-deep { opacity: 0; transition: opacity 320ms ease; }
-.fl-shallow { opacity: 1; transition: opacity 320ms ease; }
-
-/* ── The assembly ────────────────────────────────────────────────────────
-
-   Fourteen seconds, and the shape of it is the whole point: a fifth of it is
-   the mess, then the fuse, then a long assembled hold.
-
-   THE MESS IS NOT A PAUSE. The first attempt at this gave the scatter three
-   dead seconds and it read as a video that had not started; the correction
-   after that cut it to nothing, which threw away the part worth watching.
-   Neither was right. The mess now gets a real fifth of the loop AND wanders
-   while it has it - each tile drifting between two nearby points - so there is
-   always something moving and there is still something to arrive.
-
-   Then thirty tiles fuse into FIVE groups of six. They do not converge on a
-   point; every tile has a seat in a particular plane, and a plane is only a
-   plane once all six of its tiles are in it. */
-
-.dgm-svg.is-live .fl-tile {
-  animation: fl-gather 14s cubic-bezier(0.45, 0, 0.15, 1) infinite;
-  animation-delay: calc(var(--lag, 0) * -0.9s);
+@keyframes fl-adrift {
+  to { transform: translate(var(--sway-x, 0px), var(--sway-y, 0px)); }
 }
 
-@keyframes fl-gather {
-  0% {
-    transform: translate(var(--drift-x, 0px), var(--drift-y, 0px)) scale(0.62);
-    opacity: 0.5;
-  }
-  11% {
-    transform: translate(var(--sway-x, 0px), var(--sway-y, 0px)) scale(0.66);
-    opacity: 0.58;
-  }
-  21% {
-    transform: translate(var(--drift-x, 0px), var(--drift-y, 0px)) scale(0.62);
-    opacity: 0.5;
-  }
-  44%, 91% {
-    transform: translate(0, 0) scale(1);
-    opacity: 1;
-  }
-  100% {
-    transform: translate(var(--drift-x, 0px), var(--drift-y, 0px)) scale(0.62);
-    opacity: 0.5;
-  }
+.dgm-svg.is-fused .fl-drift { animation: none; }
+
+/* ── The surface they become ─────────────────────────────────────────────
+
+   One sheet of the page's own paper with a single drawn edge. It is the widest
+   thing in its own band and the palest, so everything standing on it is the
+   only dark object there - which is the entire separation between the base and
+   the machine, and it is done with value rather than with outlines.
+
+   Six per cent, not the thirty-eight the tiles used to carry. A base that is
+   coloured competes with what it is a base for. */
+
+.fl-plate { opacity: clamp(0, calc((var(--fuse) - 0.62) / 0.16), 1); }
+
+.fl-plate .dgm-face-top {
+  fill: color-mix(in srgb, var(--accent) 6%, var(--surface-solid));
+  stroke: color-mix(in srgb, var(--line) 40%, transparent);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  transition: stroke 300ms ease;
 }
 
-/* ── The emblem ──────────────────────────────────────────────────────────
+.fl-plate .dgm-face-left { fill: color-mix(in srgb, var(--accent) 20%, var(--surface-solid)); stroke: none; }
+.fl-plate .dgm-face-right { fill: color-mix(in srgb, var(--accent) 30%, var(--surface-solid)); stroke: none; }
 
-   What the step actually does, stood up on its own plane and built out of the
-   product's own record rather than an icon set. It belongs to the assembled
-   plane, so it is not there while the plane is still a scatter - an emblem
-   floating over tiles that have not arrived is a claim about a thing that does
-   not exist yet. */
+/* The plan ruling that says this is a measured surface rather than a coloured
+   shape. Faint, because it is the paper's texture and not a grid anybody is
+   meant to count. */
+.fl-grain { opacity: 0.5; }
 
-.fl-emblem { opacity: 0; }
+/* ── Pointing at one lifts it ────────────────────────────────────────────
 
-.dgm-svg.is-live .fl-emblem { animation: fl-emblem 14s ease-in-out infinite; }
+   It used to EXTRUDE: the body grew downwards and the plate got thicker, which
+   reads as a slab swelling rather than as a slab being picked up, and it put
+   thirty pixels of dark side under a mechanism that was already fighting the
+   surface for contrast.
 
-@keyframes fl-emblem {
-  0%, 30% { opacity: 0; }
-  50%, 88% { opacity: 1; }
-  96%, 100% { opacity: 0; }
+   A held plate now rises off the ground as one object - plate, mechanism and
+   all, because they are one thing - and DARKENS THE GROUND UNDER IT. That is
+   the only cue an axonometric has for height, it is what both other figures
+   already use, and it separates the plate from the ground without either of
+   them changing colour. The name stays down: the solids float and the type
+   does not. */
+
+.fl-body {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: translateY(0);
+  transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.fl-step:hover .fl-emblem,
-.fl-step:focus-visible .fl-emblem {
-  opacity: 1;
-  animation-play-state: paused;
-}
-
-/* ── The charge ──────────────────────────────────────────────────────────
-
-   One keyframe, five orders, five rates. The difference between the steps is
-   entirely in the delays, which is where a difference of this kind belongs: the
-   order a plane lights in is a fact about what that step does, not a pattern
-   picked to look busy.
-
-   Screening is the one step where most of what goes in does not come through,
-   so only its last column holds the light. */
-
-.fl-lit {
-  fill: var(--accent-strong);
+.fl-shade {
+  fill: color-mix(in srgb, var(--text) 11%, transparent);
   opacity: 0;
-  pointer-events: none;
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(0.97);
+  transition: opacity 420ms ease, transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.dgm-svg.is-live .fl-lit {
-  animation: fl-turn var(--beat, 4s) ease-in-out infinite;
-  animation-delay: calc(var(--turn, 0) * var(--beat, 4s) / 7);
-}
+.is-fused .fl-step.is-hot .fl-body { transform: translateY(-22px); }
 
-@keyframes fl-turn {
-  0%, 8% { opacity: 0; }
-  16% { opacity: 0.46; }
-  34%, 100% { opacity: 0; }
-}
+.is-fused .fl-step.is-hot .fl-shade { opacity: 1; transform: scale(1.02); }
 
-.dgm-svg.is-live .fl-tile.is-holds .fl-lit { animation-name: fl-hold; }
+.is-fused .fl-step.is-hot .fl-plate .dgm-face-top { stroke: var(--line); }
 
-@keyframes fl-hold {
-  0%, 8% { opacity: 0; }
-  16% { opacity: 0.6; }
-  40%, 88% { opacity: 0.24; }
-  100% { opacity: 0; }
-}
+.fl-step:focus-visible .fl-plate .dgm-face-top { stroke-width: 2; }
 
-/* ── The pointer stands the plane up ─────────────────────────────────────
+/* The four you are not on stand down, so the one being read is the one in
+   focus. */
+.dgm-svg.is-floor.is-fused:has(.fl-step.is-hot) .fl-step:not(.is-hot) { opacity: 0.36; }
 
-   Flat is the step seen from outside. Hovered, it EXTRUDES: every tile takes
-   its full depth and rises by its own amount, so what comes up is a solid with
-   relief in it rather than a slab on a lift. It is the same move Trident and
-   Nectar make with their decks, made on demand - and it is the reward for being
-   curious, which is the whole reason there is anything to be curious about.
+/* THE NAME ARRIVES WITH THE PLATE IT NAMES, and then it stays. A name held
+   over a scatter is a caption for something that has not happened yet; a name
+   that leaves again is a label on a machine that keeps being dismantled.
 
-   The lift is a transform on the tile, so it composes with the one the assembly
-   loop is already writing every frame rather than being overwritten by it. */
+   `transform-box: fill-box` because the rise is a transform on a text node,
+   and without it the origin is the whole viewBox. */
 
-.fl-step:hover .fl-tile,
-.fl-step:focus-visible .fl-tile {
-  transform: translateY(calc(var(--rise, 12px) * -1));
-  animation-play-state: paused;
-}
-
-.fl-step:hover .fl-deep,
-.fl-step:focus-visible .fl-deep { opacity: 1; }
-
-.fl-step:hover .fl-shallow,
-.fl-step:focus-visible .fl-shallow { opacity: 0; }
-
-.fl-step:hover .fl-lit,
-.fl-step:focus-visible .fl-lit { opacity: 0.3; animation: none; }
-
-.fl-step:focus-visible .dgm-face-top { stroke: var(--accent-strong); stroke-width: 2.5; }
-
-/* THE LABEL ARRIVES WITH THE PLANE IT NAMES.
-
-   It used to be printed the whole way through, including the fifth of the loop
-   where there is no plane under it - a name held over a scatter is a caption
-   for something that has not happened yet. It rises into place as the six tiles
-   fuse, a beat behind them, and leaves before they do.
-
-   `transform-box: fill-box` because the rise is a transform on a text node, and
-   without it the origin is the whole viewBox. */
+.fl-step { --in: clamp(0, calc((var(--fuse) - 0.86) / 0.14), 1); }
 
 .fl-name {
-  fill: color-mix(in srgb, var(--accent-strong) 72%, transparent);
+  fill: color-mix(in srgb, var(--accent-strong) 74%, transparent);
   font-family: var(--font-ui);
   font-size: 14px;
   font-weight: 700;
   font-synthesis: none;
   letter-spacing: 0.16em;
-  pointer-events: none;
   transform-box: fill-box;
   transform-origin: center;
-  opacity: 0;
-  transform: translateY(10px);
+  opacity: var(--in);
+  transform: translateY(calc((1 - var(--in)) * 12px));
   transition: fill 260ms ease;
 }
 
-.dgm-svg.is-live .fl-name { animation: fl-label 14s ease-out infinite; }
+.is-fused .fl-step.is-hot .fl-name { fill: var(--accent-strong); }
 
-@keyframes fl-label {
-  0%, 34% { opacity: 0; transform: translateY(10px); }
-  52%, 88% { opacity: 1; transform: translateY(0); }
-  96%, 100% { opacity: 0; transform: translateY(10px); }
+/* THE VALUE UNDER THE NAME. Every Trident deck carries a name and the one
+   number it is currently holding, and that pairing is most of why that figure
+   reads as an instrument rather than as an illustration. Set in the machine
+   face, because a machine produced these: they are the product's own counts,
+   read off the replay chain this section is about.
+
+   ASCII only - the display face ships U+0020 to U+007E and nothing else, so a
+   middot here would come out as a missing glyph on the one line whose whole
+   job is to look exact. */
+
+.fl-fact {
+  fill: color-mix(in srgb, var(--muted) 88%, transparent);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  opacity: var(--in);
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: translateY(calc((1 - var(--in)) * 12px));
+  transition: fill 260ms ease;
 }
+
+.is-fused .fl-step.is-hot .fl-fact { fill: var(--accent-strong); }
 
 /* -- THE FIVE MECHANISMS ------------------------------------------------
 
-   Every plane runs one, and every one has a POPULATION and something moving
-   through it. Trident sets this bar: a deck there is not an arrangement, it is
-   a machine that keeps running whether anybody is looking or not.
+   FEWER PARTS, AND EVERY ONE OF THEM A THING.
 
-   They share nothing but the ink. Five different populations, five different
-   moving parts, five different clocks - because the thing each step does is
-   different, and a figure that ran the same loop five times would be saying
-   they are the same step drawn in five places. */
+   The last pass put twelve criteria, fourteen resources and a nine-event ring
+   on plates two hundred pixels wide. Every part was three to five pixels
+   across, under the size at which a solid reads as a solid, so five machines
+   came out as five smudges. Trident's smallest legible object is a contract
+   field at about nine pixels, and there are nineteen of them in one ordered
+   grid rather than twenty-six scattered about.
+
+   Five to nine parts each now, none under about eighteen pixels on screen, and
+   all of them in the one ink that the pale plate exists to hold. They share
+   nothing else: five populations, five moving parts, five clocks - because the
+   thing each step does is different, and a figure running one loop five times
+   is saying they are the same step drawn in five places.
+
+   Nothing runs until the plate is under it. `.is-fused` gates every clock, so
+   the surface lands and then the system starts, rather than arriving busy. */
+
+.fl-emblem { opacity: var(--in); }
 
 .fl-emblem .dgm-face-top {
-  fill: color-mix(in srgb, var(--accent) 24%, var(--surface-solid));
-  stroke: color-mix(in srgb, var(--accent-strong) 60%, transparent);
+  fill: color-mix(in srgb, var(--accent) 44%, var(--surface-solid));
+  stroke: color-mix(in srgb, var(--line) 74%, transparent);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
 
-.fl-emblem .dgm-face-left { fill: color-mix(in srgb, var(--accent) 46%, var(--surface-solid)); stroke: none; }
-.fl-emblem .dgm-face-right { fill: color-mix(in srgb, var(--accent-strong) 52%, var(--accent)); stroke: none; }
+.fl-emblem .dgm-face-left { fill: color-mix(in srgb, var(--accent) 74%, var(--surface-solid)); stroke: none; }
+.fl-emblem .dgm-face-right { fill: color-mix(in srgb, var(--ink-deep) 26%, var(--accent-strong)); stroke: none; }
 
-/* PROTOCOL. Twelve criteria walked left to right and locked under one version.
-   A criterion lights when the head reaches it and STAYS lit, because compiling
-   is a thing that finishes - a blade that dimmed again would be saying the
-   protocol keeps coming undone. */
+/* THE THING DOING THE WORK IS NOT MADE OF THE SAME STUFF AS THE WORK.
+   A reader head and an as-of cut are instruments passing through a population,
+   and drawn in the population's own ink they came out as the largest, darkest
+   object on the plate - a wall with the records hidden behind it. They are
+   glass now: the plate's own pale body with the drawing's hardest edge, so a
+   traveller reads as an instrument crossing the records rather than as one more
+   record that happens to be moving. */
 
-.fl-blade .dgm-face-top { fill: color-mix(in srgb, var(--accent) 12%, var(--surface-solid)); }
-.dgm-svg.is-live .fl-blade {
-  animation: fl-compile 6s ease-out infinite;
-  animation-delay: calc(var(--turn, 0) * 0.3s);
+.fl-asof .dgm-face-top {
+  fill: color-mix(in srgb, var(--accent) 9%, var(--surface-solid));
+  stroke: var(--line);
+}
+
+.fl-asof .dgm-face-left { fill: color-mix(in srgb, var(--accent) 22%, var(--surface-solid)); }
+.fl-asof .dgm-face-right { fill: color-mix(in srgb, var(--accent) 36%, var(--surface-solid)); }
+
+/* A CARRIAGE IS NOT CARGO AND NOT A WALL. The read head and the three pucks
+   are small things riding large ones, so they take the opposite treatment to
+   the cut: they are the darkest marks on their plates, and the population is
+   what stands pale under them. Without it a puck is the same blue at the same
+   size as the bin it is heading for, and screening reads as five cubes. */
+.fl-head .dgm-face-top,
+.fl-puck .dgm-face-top { fill: color-mix(in srgb, var(--ink-deep) 76%, var(--surface-solid)); stroke: var(--line); }
+.fl-head .dgm-face-left,
+.fl-head .dgm-face-right,
+.fl-puck .dgm-face-left,
+.fl-puck .dgm-face-right { fill: var(--ink-deep); }
+
+/* The version lock is a lid, so it is drawn as one: enough body to be a solid
+   over the four lines it closes, and not so much that it hides them. */
+.fl-lock .dgm-face-top { fill: color-mix(in srgb, var(--ink-deep) 62%, var(--surface-solid)); }
+.fl-lock .dgm-face-left { fill: var(--ink-deep); }
+.fl-lock .dgm-face-right { fill: var(--ink-deep); }
+
+/* The seal is the signature, and a signature is the heaviest mark on a
+   document. It is the darkest solid in the figure. */
+.fl-seal .dgm-face-top { fill: color-mix(in srgb, var(--ink-deep) 68%, var(--surface-solid)); }
+.fl-seal .dgm-face-left { fill: var(--ink-deep); }
+.fl-seal .dgm-face-right { fill: var(--ink-deep); }
+
+
+/* THE STATE IS A LAMP, NOT A HOLE.
+
+   Every mechanism used to report state by fading its own solids, and in an
+   axonometric a half-opaque solid is not a dim solid - it is a hole. The plate
+   lattice and whatever stood behind showed straight through a record that had
+   simply not been reached yet, so five machines read as five sets of ghosts.
+   Trident does not do this: a criterion there keeps its body and wears a lamp,
+   and only the lamp changes.
+
+   So every population here is SOLID and permanent, and the light on top of it
+   is what moves. One lamp class, five clocks, five orders - because what each
+   step does is different, and a figure running one loop five times is saying
+   they are the same step drawn in five places. */
+
+/* AND ITS RESTING VALUE IS THE FINISHED ONE.
+   At zero the lamps are invisible whenever no clock is running - which is a
+   phone, a reader who has asked for less motion, and every screenshot - so the
+   figure came to rest with five populations and no state on any of them: a
+   protocol that had never compiled, records that had never bound, a chain that
+   had never been verified. The still frame has to be the frame that states the
+   claim, so it is the END of each run: compiled, bound but for the two that
+   never map, sorted, signed, intact. */
+.fl-lamp { opacity: calc(1 - var(--idle, 0)); }
+
+/* Except the reading that is not governing. Both readings lit is not a still
+   frame of a disagreement, it is a drawing of two answers being true at once. */
+.fl-lamp.is-read { opacity: calc(1 - var(--turn, 0)); }
+
+.fl-lamp .dgm-face-top { fill: var(--accent-strong); stroke: none; }
+.fl-lamp .dgm-face-left,
+.fl-lamp .dgm-face-right { fill: var(--ink-deep); }
+
+/* PROTOCOL. Five criteria lit left to right as the head reaches them, and they
+   STAY lit, because compiling is a thing that finishes - one that dimmed again
+   would be saying the protocol keeps coming undone. */
+
+.dgm-svg.is-live.is-fused .fl-lamp.is-crit {
+  animation: fl-compile 6.2s ease-out infinite;
+  animation-delay: calc(var(--turn, 0) * 0.42s);
 }
 
 @keyframes fl-compile {
-  0%, 4% { opacity: 0.4; }
-  10%, 88% { opacity: 1; }
-  100% { opacity: 0.4; }
+  0%, 8% { opacity: 0; }
+  16%, 88% { opacity: 1; }
+  100% { opacity: 0; }
 }
 
-.dgm-svg.is-live .fl-head { animation: fl-walk 6s cubic-bezier(0.4, 0, 0.5, 1) infinite; }
+.dgm-svg.is-live.is-fused .fl-head { animation: fl-walk 6.2s cubic-bezier(0.4, 0, 0.5, 1) infinite; }
 
 @keyframes fl-walk {
   0% { transform: translate(0, 0); opacity: 0; }
-  6% { opacity: 1; }
-  74% { transform: translate(var(--span)); opacity: 1; }
+  8% { opacity: 1; }
+  72% { transform: translate(var(--span)); opacity: 1; }
   82%, 100% { transform: translate(var(--span)); opacity: 0; }
 }
 
-.dgm-svg.is-live .fl-lock { animation: fl-seat 6s cubic-bezier(0.3, 1.4, 0.5, 1) infinite; }
+.dgm-svg.is-live.is-fused .fl-lock { animation: fl-seat 6.2s cubic-bezier(0.3, 1.4, 0.5, 1) infinite; }
 
 @keyframes fl-seat {
-  0%, 76% { opacity: 0; transform: translateY(-16px); }
+  0%, 74% { opacity: 0; transform: translateY(-18px); }
   86%, 96% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-16px); }
+  100% { opacity: 0; transform: translateY(-18px); }
 }
 
-/* EVIDENCE. One as-of cut descending through resources at every depth. A
-   resource lights when the cut passes it; the tall ones stay dark, because not
-   every criterion is mapped when a snapshot closes. */
+/* EVIDENCE. Eight site records bound column by column as one as-of cut crosses
+   them. Two of the eight never bind: a snapshot that mapped everything would be
+   claiming something the product does not claim. */
 
-.fl-sheet .dgm-face-top {
-  fill: color-mix(in srgb, var(--accent) 16%, var(--surface-solid));
-  stroke: color-mix(in srgb, var(--accent-strong) 44%, transparent);
+.dgm-svg.is-live.is-fused .fl-lamp.is-res {
+  animation: fl-bind 7.4s ease-out infinite;
+  animation-delay: calc(var(--turn, 0) * 0.44s);
 }
 
-.dgm-svg.is-live .fl-sheet { animation: fl-cut 7s ease-in-out infinite; }
+@keyframes fl-bind {
+  0%, 20% { opacity: 0; }
+  34%, 84% { opacity: calc(1 - var(--idle, 0)); }
+  100% { opacity: 0; }
+}
+
+.dgm-svg.is-live.is-fused .fl-asof { animation: fl-cut 7.4s cubic-bezier(0.4, 0, 0.5, 1) infinite; }
 
 @keyframes fl-cut {
-  0%, 100% { transform: translateY(-22px); opacity: 0.5; }
-  46%, 78% { transform: translateY(0); opacity: 0.92; }
-}
-
-.fl-pin .dgm-face-top { fill: color-mix(in srgb, var(--accent) 10%, var(--surface-solid)); }
-
-.dgm-svg.is-live .fl-pin {
-  animation: fl-mapped 7s ease-out infinite;
-  animation-delay: calc((11 - var(--turn, 0)) * 0.11s);
-}
-
-@keyframes fl-mapped {
-  0%, 30% { opacity: 0.35; }
-  46%, 80% { opacity: calc(0.4 + var(--under, 0) * 0.6); }
-  100% { opacity: 0.35; }
-}
-
-/* SCREENING. One rail, one splitter, three bins at one, four and three. The
-   pucks do not all go the same way and the bins are not the same size.
-
-   The rail is the only part of any mechanism that does not move, so it is the
-   only one drawn back: it is the track, not a thing on the track, and a track
-   at the same weight as what runs on it is a track the eye keeps mistaking for
-   cargo. */
-
-.fl-rail { opacity: 0.55; }
-.fl-rail .dgm-face-top { fill: color-mix(in srgb, var(--accent) 8%, var(--surface-solid)); }
-
-.dgm-svg.is-live .fl-puck {
-  animation: fl-sort 5s cubic-bezier(0.35, 0, 0.5, 1) infinite;
-  animation-delay: calc(var(--turn, 0) * -0.83s);
-}
-
-@keyframes fl-sort {
   0% { transform: translate(0, 0); opacity: 0; }
   8% { opacity: 1; }
-  70% { transform: translate(var(--span)); opacity: 1; }
+  74% { transform: translate(var(--span)); opacity: 1; }
   84%, 100% { transform: translate(var(--span)); opacity: 0; }
 }
 
-.dgm-svg.is-live .fl-bin {
-  animation: fl-catch 5s ease-out infinite;
-  animation-delay: calc(var(--turn, 0) * 0.24s + 3.2s);
+/* SCREENING. One intake rail, three bins at one, four and three, and a cohort
+   that rides the rail to its own bin before dropping into it. TWO MOVES: the
+   pucks used to leave the rail on frame one and cross open plate diagonally,
+   which is a drawing of three things falling past a stick.
+
+   The rail is the only part of any mechanism that does not move, so it is the
+   only one drawn back: it is the track, not a thing on the track, and a track
+   at the same weight as its cargo is a track the eye mistakes for cargo. */
+
+.fl-rail { opacity: 0.62; }
+
+.dgm-svg.is-live.is-fused .fl-lamp.is-bin {
+  animation: fl-sort 5.6s ease-out infinite;
+  animation-delay: calc(var(--turn, 0) * 0.3s + 2.7s);
 }
 
-@keyframes fl-catch {
-  0%, 92% { opacity: 0.72; }
-  4% { opacity: 1; }
-  100% { opacity: 0.72; }
+@keyframes fl-sort {
+  0%, 4% { opacity: 0; }
+  12%, 92% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.fl-hop {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.dgm-svg.is-live.is-fused .fl-puck {
+  animation: fl-ride 5.6s cubic-bezier(0.4, 0, 0.4, 1) infinite;
+  animation-delay: calc(var(--turn, 0) * -1.55s);
+}
+
+@keyframes fl-ride {
+  0% { transform: translate(0, 0); opacity: 0; }
+  8% { opacity: 1; }
+  40%, 92% { transform: translate(var(--span)); opacity: 1; }
+  98%, 100% { transform: translate(var(--span)); opacity: 0; }
+}
+
+.dgm-svg.is-live.is-fused .fl-hop {
+  animation: fl-drop 5.6s cubic-bezier(0.5, 0, 0.3, 1) infinite;
+  animation-delay: calc(var(--turn, 0) * -1.55s);
+}
+
+/* Back to nothing at the very end, where the puck is already invisible - a
+   drop that eased back up would be a puck climbing out of the bin it landed
+   in. */
+@keyframes fl-drop {
+  0%, 44% { transform: translate(0, 0); }
+  66%, 97% { transform: translate(var(--drop)); }
+  100% { transform: translate(0, 0); }
 }
 
 /* RESOLVE. Two readings that disagree, a beam sitting at whichever governs, and
    a seal that comes down and levels it. Nothing is settled until something
    presses. */
 
-.dgm-svg.is-live .fl-read.is-high { animation: fl-claim 5.5s ease-in-out infinite; }
-.dgm-svg.is-live .fl-read.is-low { animation: fl-claim 5.5s ease-in-out infinite; animation-delay: -2.75s; }
-
-@keyframes fl-claim {
-  0%, 44%, 100% { opacity: 0.45; }
-  16%, 30% { opacity: 1; }
+.dgm-svg.is-live.is-fused .fl-lamp.is-read {
+  animation: fl-claim 4.8s ease-in-out infinite;
+  animation-delay: calc(var(--turn, 0) * -2.4s);
 }
 
-.dgm-svg.is-live .fl-beam { animation: fl-tip 5.5s ease-in-out infinite; }
+@keyframes fl-claim {
+  0%, 44%, 100% { opacity: 0; }
+  14%, 30% { opacity: 1; }
+}
+
+.dgm-svg.is-live.is-fused .fl-beam { animation: fl-tip 4.8s ease-in-out infinite; }
 
 @keyframes fl-tip {
-  0%, 18% { transform: translateY(-5px); }
-  40%, 56% { transform: translateY(6px); }
+  0%, 18% { transform: translateY(-6px); }
+  40%, 56% { transform: translateY(7px); }
   76%, 100% { transform: translateY(0); }
 }
 
-.dgm-svg.is-live .fl-seal { animation: fl-press 5.5s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+.dgm-svg.is-live.is-fused .fl-seal { animation: fl-press 4.8s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
 
 @keyframes fl-press {
-  0%, 58% { transform: translateY(-20px); opacity: 0.4; }
-  72%, 94% { transform: translateY(0); opacity: 1; }
-  100% { transform: translateY(-20px); opacity: 0.4; }
+  0%, 56% { transform: translateY(-20px); opacity: 0; }
+  62% { opacity: 1; }
+  70%, 94% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-20px); opacity: 0; }
 }
 
-/* REPLAY. Nine events in a ring with a verifier going round them, lighting each
-   event and the link behind it, and closing on where it started.
+/* REPLAY. Six events in a ring with a verifier going round them, closing on
+   where it started. The links do not light: the chain is structure, and
+   structure that keeps switching on is structure a reader is entitled to think
+   might switch off. */
 
-   Seven point six rather than seven, because Evidence already runs at seven and
-   two mechanisms on the same clock beat together - which reads as one machine
-   with two arms rather than as two machines that happen to be near each
-   other. */
+.fl-link { opacity: 0.7; }
 
-.dgm-svg.is-live .fl-event {
-  animation: fl-verify 7.6s ease-out infinite;
-  animation-delay: calc(var(--turn, 0) * 0.62s);
+.dgm-svg.is-live.is-fused .fl-lamp.is-event {
+  animation: fl-verify 8.2s ease-out infinite;
+  animation-delay: calc(var(--turn, 0) * 0.78s);
 }
 
 @keyframes fl-verify {
-  0%, 6% { opacity: 0.4; }
-  12% { opacity: 1; }
-  22%, 90% { opacity: 0.85; }
-  100% { opacity: 0.4; }
+  0%, 6% { opacity: 0; }
+  12%, 90% { opacity: 1; }
+  100% { opacity: 0; }
 }
 
-.dgm-svg.is-live .fl-link {
-  animation: fl-chain 7.6s ease-out infinite;
-  animation-delay: calc(var(--turn, 0) * 0.62s + 0.3s);
-}
+/* The event the chain closes on, marked by its own ink rather than by
+   position. One dark solid per plate is what stops five drawings in one colour
+   from averaging into a single grey. */
+.fl-event.is-origin .dgm-face-top { fill: color-mix(in srgb, var(--ink-deep) 64%, var(--surface-solid)); }
+.fl-event.is-origin .dgm-face-left,
+.fl-event.is-origin .dgm-face-right { fill: var(--ink-deep); }
 
-@keyframes fl-chain {
-  0%, 6% { opacity: 0.22; }
-  14%, 90% { opacity: 0.8; }
-  100% { opacity: 0.22; }
-}
-
-/* Pointing at a step holds its name up regardless of where the loop is - the
-   reader asked for it, so it does not go away underneath them. */
-.fl-step:hover .fl-name,
-.fl-step:focus-visible .fl-name {
-  opacity: 1;
-  transform: translateY(0);
-  animation-play-state: paused;
-}
-
-.fl-step:hover .fl-name,
-.fl-step:focus-visible .fl-name { fill: var(--accent-strong); }
-
-/* The four you are not on stand down, so the one being read is the one in
-   focus. */
-.dgm-svg.is-floor:has(.fl-step:hover) .fl-step:not(:hover) { opacity: 0.4; }
-.fl-step { transition: opacity 260ms ease; }
+/* Every part of a held plate holds still, so what a reader has stopped on is a
+   drawing they can actually read rather than a drawing that keeps moving under
+   the question they are asking of it. */
+.is-fused .fl-step.is-hot .fl-emblem > g { animation-play-state: paused; }
 
 /* ── The readout ─────────────────────────────────────────────────────────
 
@@ -12896,32 +13000,23 @@ html.is-hidden .clinic-node i,
 
 /* ── Still, and still true ───────────────────────────────────────────────
 
-   With reduced motion nothing loops: the figure rests as the five planes,
-   assembled and lettered, which is the frame that states the claim. The
-   pointer still stands one up, because a hover is a thing a reader asked for
-   rather than a thing moving at them. */
+   With reduced motion the fuse does not run - it is already finished. The
+   figure rests as the five plates, assembled and lettered, with their
+   mechanisms on them, which is the frame that states the claim. The pointer
+   still lifts one, because a hover is a thing a reader asked for rather than a
+   thing moving at them. */
 
 @media (prefers-reduced-motion: reduce) {
-  .fl-tile,
-  .fl-lit,
-  .fl-emblem,
-  .fl-emblem > g,
-  .fl-deep,
-  .fl-shallow,
-  .fl-name,
-  .fl-step,
-  .fl-readpill {
-    animation: none;
+  .dgm-svg.is-floor {
+    --fuse: 1;
     transition: none;
   }
 
-  /* Nothing runs, so the base state has to be the finished one: the five planes
-     assembled, lettered, with their emblems on them. Anything whose resting
-     value is mid-loop would park the figure in a state that states nothing. */
-  .fl-name {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .fl-emblem { opacity: 1; }
+  .fl-tile,
+  .fl-drift,
+  .fl-emblem > g,
+  .fl-step,
+  .fl-name,
+  .fl-fact,
+  .fl-readpill { animation: none; transition: none; }
 }
