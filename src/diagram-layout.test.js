@@ -1871,106 +1871,108 @@ describe('Trident and Nectar schematics', () => {
 describe('The floor schematic', () => {
   it('is drawn in the same hand as the other two figures', () => {
     assert.match(floor, /from '\.\/iso'/)
-    assert.match(floor, /roundedSlab\(sx, sy, HALF, HALF, 13, 15\)/)
-    assert.match(floor, /<Faces shape=\{item\.shape\} className="dgm-solid" \/>/)
-    // Marks lie in the tile's own plan space, so they are ON the surface rather
-    // than drawn over it.
-    assert.match(floor, /planSpace\(item\.screen\[0\], item\.screen\[1\]\)/)
+    assert.match(floor, /roundedSlab\(sx, sy, TILE, TILE, 7, 7\)/)
+    assert.doesNotMatch(floor, /<text\b[^>]*>\{(?!item\.label)/)
   })
 
-  it('resolves into the five steps, in the order the work moves', () => {
-    // WHAT THIS REPLACED. Twenty-eight identical plates assembling into a
-    // rectangle: the assembly read well and the rectangle meant nothing.
-    // Twenty-eight is not a number about this business, a rectangle is not a
-    // shape it makes, and a plate with nothing on it is a plate nobody has a
-    // reason to look at. It was a beautiful animation of an abstraction.
+  it('fuses thirty tiles into five planes, not one', () => {
+    // One plane was an abstraction: a rectangle is not a shape this business
+    // makes, and a plate with nothing on it is a plate nobody has a reason to
+    // look at. The scatter resolves into FIVE, and the five are the product.
     //
-    // The five steps ARE the product, per ADR-0001, so they are what the figure
-    // resolves into - and the order carries real information, which is the one
-    // condition under which a sequence may be drawn as one.
+    // They do not converge on a point either. Every tile has a seat in a
+    // particular plane, and a plane is only a plane once all six of its tiles
+    // are in it.
     const steps = floor.match(/const STEPS = \[[\s\S]*?\n\]\.map/)[0]
     assert.deepEqual([...steps.matchAll(/label: '([A-Z]+)'/g)].map((m) => m[1]),
       ['PROTOCOL', 'EVIDENCE', 'SCREENING', 'RESOLVE', 'REPLAY'])
-    // Five different marks, or five plates is one plate drawn five times.
-    const motifs = [...steps.matchAll(/motif: '(\w+)'/g)].map((m) => m[1])
-    assert.equal(new Set(motifs).size, 5, 'five steps, five marks')
-    for (const motif of motifs) assert.match(floor, new RegExp(`^  ${motif}:`, 'm'))
+    assert.match(floor, /const COLS = 3/)
+    assert.match(floor, /const ROWS = 2/)
+    assert.match(floor, /const \[sx, sy\] = PLAN\(px, py\)/)
   })
 
-  it('packs the row so no tile ever lands on its neighbour', () => {
-    // SOLVED, NOT EYEBALLED. A plan square of half H projects to a top face
-    // 3.464H wide, and a row stepped by (+t, -t) advances 1.732t - so the tiles
-    // overlap unless t > 2H. The first pass did not satisfy it and five tiles
-    // ran into each other exactly the way the old figure did.
-    const half = Number(floor.match(/const HALF = (\d+)/)[1])
+  it('packs the row so no plane ever lands on its neighbour', () => {
+    // A plan rectangle of half-extents (hx, hy) projects 2(hx + hy) * ISO_X
+    // wide, and a row stepped by (+t, -t) advances 2t * ISO_X - so planes
+    // collide unless t exceeds hx + hy. The row also runs along the axis that
+    // projects FLAT, because stepping plan x alone sends it down and to the
+    // right and puts every label exactly where the next plane is.
+    const cell = Number(floor.match(/const CELL = (\d+)/)[1])
     const step = Number(floor.match(/const STEP = (\d+)/)[1])
-    assert.ok(step > 2 * half, `a step of ${step} against a half of ${half} overlaps`)
-    // And the row runs along the axis that projects FLAT, so it reads as a row
-    // and each label has empty space above it. Stepping plan x alone sends the
-    // row down and to the right, which puts every label where the next tile is.
-    assert.match(floor, /const \[sx, sy\] = PLAN\(t, -t\)/)
-    assert.match(floor, /y=\{item\.shape\.back\[1\] - 18\}/)
+    const half = (3 * cell) / 2 + (2 * cell) / 2
+    assert.ok(step > half, `a step of ${step} against a half-extent of ${half} overlaps`)
+    assert.match(floor, /const seat = PLAN\(t, -t\)/)
   })
 
-  it('loops the mess, not the steps', () => {
-    // The steps are always there, always solid, always legible. What cycles is
-    // the scatter: fragments fade in off-axis, travel, and are ABSORBED into
-    // the step that owns them - they shrink into the tile and go out as they
-    // land. Nothing accumulates, because the claim is not that the steps
-    // collect things, it is that they resolve them.
+  it('gives the mess real time, and keeps it alive while it has it', () => {
+    // THE MESS IS NOT A PAUSE. One pass gave the scatter three dead seconds and
+    // it read as a video that had not started; the correction after that cut it
+    // to nothing and threw away the part worth watching. It gets a fifth of the
+    // loop now AND wanders while it has it - each tile drifting between two
+    // nearby points - so something is always moving and something is still to
+    // arrive.
+    assert.match(css, /\.dgm-svg\.is-live \.fl-tile \{[\s\S]*?animation: fl-gather 14s/)
+    const gather = css.match(/@keyframes fl-gather \{[\s\S]*?\n\}/)[0]
+    assert.match(gather, /11% \{[\s\S]*?var\(--sway-x, 0px\), var\(--sway-y, 0px\)/)
+    assert.match(gather, /44%, 91% \{/)
+    assert.match(floor, /swayX: Math\.round\(/)
+  })
+
+  it('stands something true on each plane, and nothing borrowed', () => {
+    // BUILT FROM THE PRODUCT'S OWN RECORD. The replay chain says what each step
+    // does and the counts in it are real - 36 criteria locked at one version,
+    // an as-of snapshot with some criteria unmapped, one pass and four review
+    // and three fail, a conflict closed by a signature, nine linked events - so
+    // the proportions in these emblems are those numbers rather than shapes
+    // chosen because they balanced.
+    assert.match(floor, /function emblem\(key, t\)/)
+    // Solved from the PLANE'S seat, not the plan origin. Built against the
+    // origin, four of the five emblems draw on top of the third one and the
+    // other four planes come out bare.
+    assert.match(floor, /const \[sx, sy\] = PLAN\(t \+ px, -t \+ py\)/)
+    assert.match(floor, /emblem: emblem\(step\.key, t\)/)
+    for (const key of ['protocol', 'evidence', 'screening', 'resolve', 'replay']) {
+      assert.match(floor, new RegExp(`^    ${key}: \\(\\) =>`, 'm'))
+    }
+    // AND NOT TRIDENT OR NECTAR. Those are stacked round decks and districts of
+    // scattered blocks. Nothing here is a deck and nothing is a drum.
+    assert.doesNotMatch(floor, /roundedDeck|planCyl|planPrism|planDrop/)
+    // Back to front, or an emblem is a pile rather than an object.
+    assert.match(floor, /\.sort\(\(a, b\) => a\.depth - b\.depth\)/)
+  })
+
+  it('stands a whole plane up when it is pointed at', () => {
+    // Flat is the step seen from outside. Hovered, it EXTRUDES: every tile
+    // takes its full depth and rises by its own amount, so what comes up is a
+    // solid with relief in it rather than a slab on a lift.
     //
-    // A figure whose subject disappears for half its own loop is unreadable to
-    // half the people who see it, which is the practical half of the argument.
-    assert.match(css, /\.dgm-svg\.is-live \.fl-shard \{[\s\S]*?animation: fl-absorb 12s/)
-    assert.doesNotMatch(css, /\.dgm-svg\.is-live \.fl-step \{[\s\S]*?animation:/)
-    const absorb = css.match(/@keyframes fl-absorb \{[\s\S]*?\n\}/)[0]
-    assert.match(absorb, /54%, 100% \{ transform: translate\(0, 0\) scale\(0\.2\); opacity: 0; \}/)
-    // Built AT the step they belong to, so the resting place is exact and the
-    // scatter is an offset from it - one object in two places.
-    assert.match(floor, /roundedSlab\(step\.screen\[0\], step\.screen\[1\], size, size, 6, 6\)/)
-  })
-
-  it('pulses down the row and leaves no wake', () => {
-    // THE WAKE IS GONE. The charge used to leave a tint behind it, so the deck
-    // ended every cycle a different colour from the one it started in and the
-    // front was hard to find. Each step lights, hands on, and returns to where
-    // it was: five quick beats down the row.
-    const pulse = css.match(/@keyframes fl-pulse \{[\s\S]*?\n\}/)[0]
-    assert.match(pulse, /0%, 52% \{ opacity: 0; \}/)
-    assert.match(pulse, /64%, 100% \{ opacity: 0; \}/, 'it has to come back to nothing, or it is a wake')
-    // A real position down the row rather than a list index, so the pulse
-    // crosses at a constant speed instead of stepping down a queue.
-    assert.match(css, /animation-delay: calc\(var\(--wave, 0\) \* 1\.15s\)/)
-    assert.match(floor, /wave: Math\.round\(\(index \/ 4\) \* 100\) \/ 100/)
-  })
-
-  it('invites a pointer and gives the curiosity somewhere to go', () => {
-    // The whole reason the tiles are five named things instead of twenty-eight
-    // anonymous ones: there is now something to be curious about. A step lifts,
-    // lights its mark, and the other four stand down - and the readout
-    // underneath answers the question the hover just raised.
-    assert.match(floor, /onMouseEnter=\{\(\) => setHot\(item\.key\)\}/)
+    // Two shapes per tile and ONE top face, so the surface never moves between
+    // them - which is what makes it read as the plane gaining depth rather than
+    // as a different object arriving.
+    assert.match(floor, /flat: roundedSlab\(sx, sy, TILE, TILE, 7, 7\)/)
+    assert.match(floor, /tall: roundedSlab\(sx, sy, TILE, TILE, 30, 7\)/)
+    assert.match(css, /\.fl-step:hover \.fl-tile,[\s\S]*?transform: translateY\(calc\(var\(--rise, 12px\) \* -1\)\);/)
+    assert.match(css, /\.fl-step:hover \.fl-deep,[\s\S]*?opacity: 1;/)
+    assert.match(css, /\.fl-step:hover \.fl-shallow,[\s\S]*?opacity: 0;/)
+    // Keyboard reaches it too, and the four you are not on stand down.
     assert.match(floor, /tabIndex=\{0\}/)
-    assert.match(css, /\.fl-step:hover \.fl-tile,\s*\n\.fl-step:focus-visible \.fl-tile \{ transform: translateY\(-14px\); \}/)
-    assert.match(css, /\.fl-row:has\(\.fl-step:hover\) \.fl-step:not\(:hover\) \{ opacity: 0\.45; \}/)
     assert.match(css, /\.fl-step:focus-visible \.dgm-face-top \{/)
-    // The readout is prose in the document, so it holds its size while the
-    // figure scales and a screen reader gets it as text.
-    assert.match(floor, /<figcaption className=\{`fl-readout\$\{step \? ' is-hot' : ''\}`\} aria-live="polite">/)
-    const lines = [...floor.matchAll(/read: '([^']*)'/g)].map((m) => m[1])
-    assert.equal(lines.length, 5)
-    for (const line of lines) assert.ok(line.length <= 95, `${line.length}: ${line}`)
+    assert.match(css, /:has\(\.fl-step:hover\) \.fl-step:not\(:hover\) \{ opacity: 0\.4; \}/)
   })
 
-  it('rests as the five steps when nothing is allowed to move', () => {
-    // The still frame is what most people see, so it has to be the frame that
-    // makes the argument: the five steps, lettered and marked, with no scatter
-    // around them. The pointer still works, because a hover is a thing a reader
-    // asked for rather than a thing moving at them.
-    const quiet = css.slice(css.indexOf('Still, and still true'))
-    assert.match(quiet, /@media \(prefers-reduced-motion: reduce\) \{[\s\S]*?\.fl-shard,\s*\n\s*\.fl-lit \{[\s\S]*?display: none;/)
-    // The steps carry no animation of their own, so there is nothing to stop.
-    assert.match(css, /\.fl-lit \{[\s\S]*?opacity: 0;/)
+  it('runs each plane on its own clock, in its own order', () => {
+    // One keyframe, five orders, five rates. The difference between the steps
+    // is entirely in the delays, which is where a difference of this kind
+    // belongs: the order a plane lights in is a fact about what that step does.
+    // Screening is the one where most of what goes in does not come through, so
+    // only its last column holds the light.
+    assert.match(floor, /const ORDERS = \{/)
+    const beats = [...floor.matchAll(/beat: ([\d.]+)/g)].map((m) => Number(m[1]))
+    assert.equal(beats.length, 5)
+    assert.equal(new Set(beats).size, 5, 'five planes, five rates')
+    assert.match(css, /animation: fl-turn var\(--beat, 4s\)/)
+    assert.match(css, /\.fl-tile\.is-holds \.fl-lit \{ animation-name: fl-hold; \}/)
+    assert.match(floor, /holds: step\.key !== 'screening' \|\| col === COLS - 1/)
   })
 
   it('holds a legible scale on a phone', () => {
@@ -1992,8 +1994,11 @@ describe('The floor schematic', () => {
     assert.match(app, /<ChainSchematic animate=\{animate\} \/>/)
     assert.match(app, /<div className="section-field" ref=\{field\} aria-hidden="true" \/>/)
     assert.match(app, /const animate = shouldRunAmbient\(\{ reduced, inView, narrow \}\)/)
-    assert.match(floor, /className=\{`dgm-svg is-floor\$\{animate \? ' is-live' : ''\}`\}/)
     assert.doesNotMatch(app, /usePinnedRun|thesis-pin/)
+    // Nothing loops when the reader has asked for less motion, and the figure
+    // rests assembled - but the pointer still stands a plane up, because a
+    // hover is a thing a reader asked for rather than a thing moving at them.
+    assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{[\s\S]*?\.fl-tile,[\s\S]*?animation: none;/)
   })
 })
 
@@ -2016,7 +2021,10 @@ describe('The pointer field', () => {
     // continuous loop of its own, so a second motion answering the cursor would
     // be two clocks on one drawing.
     assert.equal((app.match(/usePointerField\(root, \{ reduced \}\)/g) || []).length, 2)
-    assert.doesNotMatch(floor, /usePointerField|--px|--sway/)
+    // `--sway` means something else on this sheet now - it is where a scattered
+    // tile wanders to while it is still a mess - so the check is for the
+    // pointer-field variables themselves rather than a name that got reused.
+    assert.doesNotMatch(floor, /usePointerField|--px\b|--py\b/)
     assert.match(field, /export function usePointerField\(target, \{ reduced = false \} = \{\}\)/)
   })
 

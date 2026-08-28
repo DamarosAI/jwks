@@ -12420,21 +12420,17 @@ html.is-hidden .clinic-node i,
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   THE FIVE STEPS, AND THE MESS THAT KEEPS ARRIVING AT THEM
+   FIVE PLANES, ASSEMBLED OUT OF ONE SCATTER
 
-   What was here was twenty-eight identical plates assembling into a rectangle.
-   The assembly read well and the rectangle meant nothing: twenty-eight is not a
-   number about this business, a rectangle is not a shape it makes, and a plate
-   with nothing on it is a plate nobody has a reason to look at.
+   The loop is the one that worked - tiles off every axis drawing together and
+   setting down flush into a plane - and what changed is where they land. One
+   plane was an abstraction; a rectangle is not a shape this business makes. The
+   scatter resolves into FIVE, and the five are the product.
 
-   The five steps ARE the product, so they are what the figure resolves into -
-   and they are always there. What loops is the scatter: fragments fade in
-   off-axis, travel, and are absorbed into the step they belong to, then a pulse
-   runs the row confirming the five are one run. Work does not arrive once and
-   get tidied; it keeps arriving, and the system keeps taking it.
-
-   A figure whose subject disappears for half its own loop is also unreadable to
-   half the people who see it, which is the practical half of the same argument.
+   Three things happen on this sheet and they are on three separate clocks, so
+   none of them has to wait for another: the ASSEMBLY, which loops; the CHARGE,
+   which crosses each plane at its own rate and in its own order; and the
+   POINTER, which stands a plane up into a solid whenever it is asked.
    ═══════════════════════════════════════════════════════════════════════ */
 
 .dgm-svg.is-floor {
@@ -12442,76 +12438,141 @@ html.is-hidden .clinic-node i,
   --ink-deep: var(--accent-strong);
 }
 
-.fl-row { filter: drop-shadow(0 22px 30px color-mix(in srgb, var(--accent-strong) 10%, transparent)); }
-
-/* ── The five ────────────────────────────────────────────────────────────
-
-   Solid, lettered, and never animated away. The only thing the loop does to
-   them is the pulse. */
-
 .fl-step { cursor: pointer; }
 .fl-step:focus { outline: none; }
+.fl-hit { fill: none; pointer-events: all; }
 
-.fl-tile { transition: transform 240ms cubic-bezier(0.16, 1, 0.3, 1); }
+/* ── The tiles ───────────────────────────────────────────────────────────
 
-.fl-step .dgm-face-top {
-  fill: color-mix(in srgb, var(--accent) 13%, var(--surface-solid));
-  stroke: color-mix(in srgb, var(--accent-strong) 58%, transparent);
+   Built at their seat, so the assembled plane is a true plan grid with every
+   seam landing on every other seam. Scatter is an offset from that - the same
+   object in two places rather than two pretending to be one, which is why the
+   whole assembly is a compositor move with nothing recomputed on any frame. */
+
+.fl-tile {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: translate(0, 0);
+  transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fl-tile .dgm-face-top {
+  fill: color-mix(in srgb, var(--accent) 12%, var(--surface-solid));
+  stroke: color-mix(in srgb, var(--accent-strong) 54%, transparent);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
 
-.fl-step .dgm-face-left {
+.fl-tile .dgm-face-left {
   fill: color-mix(in srgb, var(--accent) 30%, var(--surface-solid));
   stroke: none;
 }
 
-.fl-step .dgm-face-right {
+.fl-tile .dgm-face-right {
   fill: color-mix(in srgb, var(--accent-strong) 34%, var(--accent));
   stroke: none;
 }
 
-.fl-grain { opacity: 0.5; pointer-events: none; }
+.fl-grain { opacity: 0.45; pointer-events: none; }
 
-/* What each step holds. The marks lie in the tile's own plan space, so they are
-   ON the surface rather than over it. */
+/* THE DEPTH IS ALWAYS DRAWN AND USUALLY NOT SHOWN.
 
-.fl-mark {
-  fill: color-mix(in srgb, var(--accent-strong) 26%, transparent);
-  transition: fill 240ms ease;
+   Two shapes per tile, one top face: a shallow body and a deep one. Flat is
+   what a step looks like from outside; the pointer brings the deep one up. The
+   top face never moves between them, so the surface holds still and only what
+   is under it changes - which is what makes it read as the plane gaining depth
+   rather than as a different object arriving. */
+
+.fl-deep { opacity: 0; transition: opacity 320ms ease; }
+.fl-shallow { opacity: 1; transition: opacity 320ms ease; }
+
+/* ── The assembly ────────────────────────────────────────────────────────
+
+   Fourteen seconds, and the shape of it is the whole point: a fifth of it is
+   the mess, then the fuse, then a long assembled hold.
+
+   THE MESS IS NOT A PAUSE. The first attempt at this gave the scatter three
+   dead seconds and it read as a video that had not started; the correction
+   after that cut it to nothing, which threw away the part worth watching.
+   Neither was right. The mess now gets a real fifth of the loop AND wanders
+   while it has it - each tile drifting between two nearby points - so there is
+   always something moving and there is still something to arrive.
+
+   Then thirty tiles fuse into FIVE groups of six. They do not converge on a
+   point; every tile has a seat in a particular plane, and a plane is only a
+   plane once all six of its tiles are in it. */
+
+.dgm-svg.is-live .fl-tile {
+  animation: fl-gather 14s cubic-bezier(0.45, 0, 0.15, 1) infinite;
+  animation-delay: calc(var(--lag, 0) * -0.9s);
 }
 
-.fl-mark.is-set { fill: color-mix(in srgb, var(--accent-strong) 68%, transparent); }
-
-.fl-line,
-.fl-ring {
-  fill: none;
-  stroke: color-mix(in srgb, var(--accent-strong) 32%, transparent);
-  stroke-width: 5;
-  stroke-linecap: round;
-  transition: stroke 240ms ease;
+@keyframes fl-gather {
+  0% {
+    transform: translate(var(--drift-x, 0px), var(--drift-y, 0px)) scale(0.62);
+    opacity: 0.5;
+  }
+  11% {
+    transform: translate(var(--sway-x, 0px), var(--sway-y, 0px)) scale(0.66);
+    opacity: 0.58;
+  }
+  21% {
+    transform: translate(var(--drift-x, 0px), var(--drift-y, 0px)) scale(0.62);
+    opacity: 0.5;
+  }
+  44%, 91% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--drift-x, 0px), var(--drift-y, 0px)) scale(0.62);
+    opacity: 0.5;
+  }
 }
 
-.fl-name {
-  fill: color-mix(in srgb, var(--accent-strong) 76%, transparent);
-  font-family: var(--font-ui);
-  font-size: 15px;
-  font-weight: 700;
-  font-synthesis: none;
-  letter-spacing: 0.15em;
-  transition: fill 240ms ease;
+/* ── The emblem ──────────────────────────────────────────────────────────
+
+   What the step actually does, stood up on its own plane and built out of the
+   product's own record rather than an icon set. It belongs to the assembled
+   plane, so it is not there while the plane is still a scatter - an emblem
+   floating over tiles that have not arrived is a claim about a thing that does
+   not exist yet. */
+
+.fl-emblem { opacity: 0; }
+
+.fl-emblem .dgm-face-top {
+  fill: color-mix(in srgb, var(--accent) 30%, var(--surface-solid));
+  stroke: color-mix(in srgb, var(--accent-strong) 66%, transparent);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
 }
 
-/* ── The pulse ───────────────────────────────────────────────────────────
+.fl-emblem .dgm-face-left { fill: color-mix(in srgb, var(--accent) 52%, var(--surface-solid)); stroke: none; }
+.fl-emblem .dgm-face-right { fill: color-mix(in srgb, var(--accent-strong) 58%, var(--accent)); stroke: none; }
 
-   Five quick beats down the row, in order, and NO WAKE. The charge used to
-   leave a tint behind it, so the deck ended every cycle a different colour from
-   the one it started in and the front was hard to find. Each step lights, hands
-   on, and returns to where it was.
+.dgm-svg.is-live .fl-emblem { animation: fl-emblem 14s ease-in-out infinite; }
 
-   The delay is a real position down the row rather than a list index, so the
-   pulse crosses at a constant speed; it is positive and far shorter than the
-   period, so it phase-shifts inside the loop rather than desynchronising it. */
+@keyframes fl-emblem {
+  0%, 30% { opacity: 0; }
+  50%, 88% { opacity: 1; }
+  96%, 100% { opacity: 0; }
+}
+
+.fl-step:hover .fl-emblem,
+.fl-step:focus-visible .fl-emblem {
+  opacity: 1;
+  animation-play-state: paused;
+}
+
+/* ── The charge ──────────────────────────────────────────────────────────
+
+   One keyframe, five orders, five rates. The difference between the steps is
+   entirely in the delays, which is where a difference of this kind belongs: the
+   order a plane lights in is a fact about what that step does, not a pattern
+   picked to look busy.
+
+   Screening is the one step where most of what goes in does not come through,
+   so only its last column holds the light. */
 
 .fl-lit {
   fill: var(--accent-strong);
@@ -12520,83 +12581,76 @@ html.is-hidden .clinic-node i,
 }
 
 .dgm-svg.is-live .fl-lit {
-  animation: fl-pulse 12s ease-in-out infinite;
-  animation-delay: calc(var(--wave, 0) * 1.15s);
+  animation: fl-turn var(--beat, 4s) ease-in-out infinite;
+  animation-delay: calc(var(--turn, 0) * var(--beat, 4s) / 7);
 }
 
-@keyframes fl-pulse {
-  0%, 52% { opacity: 0; }
-  57% { opacity: 0.5; }
-  64%, 100% { opacity: 0; }
+@keyframes fl-turn {
+  0%, 8% { opacity: 0; }
+  16% { opacity: 0.46; }
+  34%, 100% { opacity: 0; }
 }
 
-/* ── The mess ────────────────────────────────────────────────────────────
+.dgm-svg.is-live .fl-tile.is-holds .fl-lit { animation-name: fl-hold; }
 
-   Fragments fade in at a scatter, travel to the step that owns them, and are
-   ABSORBED - they shrink into the tile and go out as they land. Nothing
-   accumulates, because the claim is not that the steps collect things, it is
-   that they resolve them. */
-
-.fl-shard {
-  transform-box: fill-box;
-  transform-origin: center;
-  transform: translate(var(--drift-x, 0px), var(--drift-y, 0px)) scale(1);
-  opacity: 0;
-  pointer-events: none;
+@keyframes fl-hold {
+  0%, 8% { opacity: 0; }
+  16% { opacity: 0.6; }
+  40%, 88% { opacity: 0.24; }
+  100% { opacity: 0; }
 }
 
-.fl-shard .dgm-face-top {
-  fill: color-mix(in srgb, var(--accent) 8%, var(--surface-solid));
-  stroke: color-mix(in srgb, var(--accent-strong) 34%, transparent);
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
-}
+/* ── The pointer stands the plane up ─────────────────────────────────────
 
-.fl-shard .dgm-face-left { fill: color-mix(in srgb, var(--accent) 22%, var(--surface-solid)); stroke: none; }
-.fl-shard .dgm-face-right { fill: color-mix(in srgb, var(--accent-strong) 26%, var(--accent)); stroke: none; }
+   Flat is the step seen from outside. Hovered, it EXTRUDES: every tile takes
+   its full depth and rises by its own amount, so what comes up is a solid with
+   relief in it rather than a slab on a lift. It is the same move Trident and
+   Nectar make with their decks, made on demand - and it is the reward for being
+   curious, which is the whole reason there is anything to be curious about.
 
-.dgm-svg.is-live .fl-shard {
-  animation: fl-absorb 12s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  animation-delay: calc(var(--lag, 0) * -1.6s);
-}
-
-@keyframes fl-absorb {
-  0% { transform: translate(var(--drift-x, 0px), var(--drift-y, 0px)) scale(1); opacity: 0; }
-  10% { opacity: 0.7; }
-  46% { transform: translate(0, 0) scale(0.5); opacity: 0.58; }
-  54%, 100% { transform: translate(0, 0) scale(0.2); opacity: 0; }
-}
-
-/* ── The pointer ─────────────────────────────────────────────────────────
-
-   The reason the tiles are five named things instead of twenty-eight anonymous
-   ones: there is now something to be curious about, and the readout underneath
-   is where the curiosity goes. A step lifts, lights its mark, and the other
-   four stand down so the one being read is the one in focus. */
+   The lift is a transform on the tile, so it composes with the one the assembly
+   loop is already writing every frame rather than being overwritten by it. */
 
 .fl-step:hover .fl-tile,
-.fl-step:focus-visible .fl-tile { transform: translateY(-14px); }
+.fl-step:focus-visible .fl-tile {
+  transform: translateY(calc(var(--rise, 12px) * -1));
+  animation-play-state: paused;
+}
 
-.fl-step:hover .fl-mark,
-.fl-step:focus-visible .fl-mark { fill: color-mix(in srgb, var(--accent-strong) 74%, transparent); }
+.fl-step:hover .fl-deep,
+.fl-step:focus-visible .fl-deep { opacity: 1; }
 
-.fl-step:hover :is(.fl-line, .fl-ring),
-.fl-step:focus-visible :is(.fl-line, .fl-ring) { stroke: var(--accent-strong); }
+.fl-step:hover .fl-shallow,
+.fl-step:focus-visible .fl-shallow { opacity: 0; }
+
+.fl-step:hover .fl-lit,
+.fl-step:focus-visible .fl-lit { opacity: 0.3; animation: none; }
+
+.fl-step:focus-visible .dgm-face-top { stroke: var(--accent-strong); stroke-width: 2.5; }
+
+.fl-name {
+  fill: color-mix(in srgb, var(--accent-strong) 72%, transparent);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 700;
+  font-synthesis: none;
+  letter-spacing: 0.16em;
+  pointer-events: none;
+  transition: fill 260ms ease;
+}
 
 .fl-step:hover .fl-name,
 .fl-step:focus-visible .fl-name { fill: var(--accent-strong); }
 
-.fl-step:focus-visible .dgm-face-top { stroke: var(--accent-strong); stroke-width: 2.5; }
-
-.fl-row { transition: opacity 240ms ease; }
-.fl-row:has(.fl-step:hover) .fl-step:not(:hover) { opacity: 0.45; }
-.fl-step { transition: opacity 240ms ease; }
+/* The four you are not on stand down, so the one being read is the one in
+   focus. */
+.dgm-svg.is-floor:has(.fl-step:hover) .fl-step:not(:hover) { opacity: 0.4; }
+.fl-step { transition: opacity 260ms ease; }
 
 /* ── The readout ─────────────────────────────────────────────────────────
 
-   Prose in the document rather than type inside the drawing: it holds its size
-   while the figure scales, a screen reader gets it as text, and it is the one
-   place on this page that answers the question a hover just raised. */
+   Prose in the document, so it holds its size while the figure scales and a
+   screen reader gets it as text rather than as a label inside an image. */
 
 .fl-readout {
   display: flex;
@@ -12644,23 +12698,20 @@ html.is-hidden .clinic-node i,
 
 /* ── Still, and still true ───────────────────────────────────────────────
 
-   With reduced motion nothing loops. The figure rests as the five steps,
-   lettered and marked, with no scatter around them - which is the finished
-   state and the one that states the claim. The pointer still works, because a
-   hover is a thing a reader asked for rather than a thing moving at them. */
+   With reduced motion nothing loops: the figure rests as the five planes,
+   assembled and lettered, which is the frame that states the claim. The
+   pointer still stands one up, because a hover is a thing a reader asked for
+   rather than a thing moving at them. */
 
 @media (prefers-reduced-motion: reduce) {
-  .fl-shard,
-  .fl-lit {
-    animation: none;
-    display: none;
-  }
-
   .fl-tile,
-  .fl-mark,
-  .fl-line,
-  .fl-ring,
+  .fl-lit,
+  .fl-deep,
+  .fl-shallow,
   .fl-name,
   .fl-step,
-  .fl-readpill { transition: none; }
+  .fl-readpill {
+    animation: none;
+    transition: none;
+  }
 }
