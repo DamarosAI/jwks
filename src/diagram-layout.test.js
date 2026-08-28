@@ -1958,8 +1958,8 @@ describe('The floor schematic', () => {
     // started. The gap is now a real one, and it is a gap in VALUE rather than
     // in outline weight - which is how Trident holds a deck apart from the
     // nineteen solids standing on it.
-    const paper = Number(css.match(/\.fl-plate \.dgm-face-top \{\s*fill: color-mix\(in srgb, var\(--accent\) (\d+)%/)[1])
-    const ink = Number(css.match(/\.fl-emblem \.dgm-face-top \{\s*fill: color-mix\(in srgb, var\(--accent\) (\d+)%/)[1])
+    const paper = Number(css.match(/\.fl-plate \.dgm-face-top \{\s*fill: color-mix\(in srgb, var\(--tone\) (\d+)%/)[1])
+    const ink = Number(css.match(/\.fl-emblem \.dgm-face-top \{\s*fill: color-mix\(in srgb, var\(--tone\) (\d+)%/)[1])
     assert.ok(paper <= 8, `a base at ${paper}% competes with what it is a base for`)
     assert.ok(ink - paper >= 24, `${ink}% on ${paper}% is not a figure standing on a ground`)
     // And nothing pulses on the base. The charge that used to cross every
@@ -2146,6 +2146,83 @@ describe('The floor schematic', () => {
     // Back to front, or a mechanism is a pile rather than an object.
     assert.match(floor, /\.sort\(\(a, b\) => a\.depth - b\.depth\)/)
     assert.match(floor, /const OVER = 999/)
+  })
+
+  it('gives each station its own ink, and couples the row into one run', () => {
+    // FIVE HUES, AND THE REASON TRIDENT CANNOT HAVE THEM IS THE REASON THIS CAN.
+    //
+    // That figure tried exactly this - violet for the machine tier, blue for the
+    // contract, amber for the one holding, green for the one that had committed
+    // - and threw it out, because four saturated hues STACKED OVER ONE PLAN read
+    // as four unrelated objects: the warm two sat forward of the cool two and
+    // the middle of the stack bowed out of the page.
+    //
+    // None of that transfers to a ROW. These five are not one instrument seen in
+    // section, they are five stations side by side on one datum, and the whole
+    // argument of the section is that they are different steps. There is no
+    // depth axis for a warm hue to advance along and nothing is stacked over
+    // anything. What failed as a stack is right as a bench.
+    for (const step of ['protocol', 'evidence', 'screening', 'resolve', 'replay']) {
+      assert.match(css, new RegExp(`\\.fl-step\\.is-${step} \\{ --tone:`), `${step} works in its own ink`)
+    }
+    // Each one comes out of the product's own state palette, in the order the
+    // run passes through it, and every one is built on the house blue.
+    const tones = [...css.matchAll(/\.fl-step\.is-[a-z]+ \{ --tone: ([^;]+);/g)].map((m) => m[1])
+    assert.equal(tones.length, 5)
+    assert.equal(new Set(tones).size, 5, 'five stations, five inks')
+    for (const tone of tones) {
+      assert.ok(/var\(--(accent|accent-strong|governed|warning|danger|success)\)/.test(tone),
+        `${tone} is not in the product's palette`)
+    }
+    // HOW FAR EACH IS MIXED BACK INTO THE BLUE IS NOT ONE NUMBER. Violet and
+    // green are the blue's NEIGHBOURS, so mixing them through it deepens them.
+    // Amber and crimson are its COMPLEMENTS, and mixing a complement through a
+    // colour cancels it rather than tying it to anything - at sixty per cent the
+    // amber came out as mud and the crimson as mauve.
+    const pull = (name) => Number(css.match(new RegExp(`\\.fl-step\\.is-${name} \\{ --tone: color-mix\\(in srgb, var\\(--[a-z]+\\) (\\d+)%`))[1])
+    assert.ok(pull('screening') > pull('protocol'), 'a complement mixed as far as a neighbour is mud')
+    assert.ok(pull('resolve') > pull('protocol'), 'a complement mixed as far as a neighbour is mud')
+    // The paper, the line work, the lettering and the shadow stay neutral: the
+    // sheet's own tokens cannot be written in terms of a variable that only
+    // exists on a step inside it, which is what collapsed the whole line system
+    // to unset the first time this was tried.
+    const tokens = css.match(/\.dgm-svg\.is-floor \{[\s\S]*?\n\}/)[0]
+    assert.doesNotMatch(tokens, /var\(--tone\)|var\(--deep\)/)
+    assert.match(css, /--line: color-mix\(in srgb, var\(--text\) 72%, var\(--accent-strong\)\)/)
+    assert.match(css, /\.fl-plate \.dgm-face-left \{ fill: color-mix\(in srgb, var\(--accent\)/)
+    assert.match(css, /\.fl-tile \.dgm-face-top \{[\s\S]*?var\(--accent\)/)
+    // And a lit cap has to beat its own body. At full tone against a body drawn
+    // at more than half the same tone the two sat a step apart, which is enough
+    // for a cool hue and not for a warm one.
+    assert.match(css, /\.fl-lamp \.dgm-face-top \{ fill: color-mix\(in srgb, var\(--tone\) \d+%, var\(--text\)\)/)
+
+    // FIVE PLATES IN A ROW ARE NOT A RUN, THEY ARE FIVE ISLANDS. Nothing said
+    // the output of one station was the input of the next; the datum underneath
+    // was doing all the work of saying so on its own.
+    assert.match(floor, /cls: 'fl-couple'/)
+    assert.match(floor, /const LINK_X = Math\.round\(\(66 \+ 41\) \* 0\.866 \* 10\) \/ 10/)
+    assert.match(floor, /<g className="fl-links"/)
+    assert.match(css, /\.fl-links \{[\s\S]*?opacity: var\(--in\);/)
+    // Four links for five plates, and each one is solved from the coupling's own
+    // plan position rather than measured off a screenshot.
+    assert.match(floor, /STEPS\.slice\(1\)\.map\(\(item, i\) => \(/)
+    assert.match(floor, /x1=\{STEPS\[i\]\.seat\[0\] \+ LINK_X\}/)
+    assert.match(floor, /x2=\{item\.seat\[0\] - LINK_X\}/)
+
+    // THE HALF-PIXEL EVERY SOLID MOVES. Trident runs a second, quieter layer
+    // under everything else - nineteen contract fields and four waiting
+    // proposals settling on their own long clocks, half a pixel at a time - and
+    // it is most of why that figure reads as a system that happens to be drawn
+    // rather than as a drawing that happens to loop. This one had nothing like
+    // it: every solid was either working or perfectly still.
+    assert.match(css, /\.dgm-svg\.is-live\.is-fused \.fl-settle \{[\s\S]*?animation: fl-breathe calc\(11s/)
+    assert.match(css, /@keyframes fl-breathe \{\s*to \{ transform: translateY\(-0\.7px\); \}/)
+    // It sits on an INNER group, so it composes with whatever the part is
+    // already doing: a die can be falling and settling at once.
+    assert.match(floor, /<g className="fl-core">\s*<g className="fl-settle">/)
+    assert.match(floor, /\.map\(\(part, index\) => \(\{ \.\.\.part, life: jitter\(index, 23\) \}\)\)/)
+    // And it is one of the clocks that only runs once the plate is under it.
+    assert.deepEqual([...css.matchAll(/\.dgm-svg\.is-live (\.fl-[a-z]+)/g)].map((m) => m[1]), ['.fl-drift'])
   })
 
   it('puts work in the air, and flies it under the sentence', () => {

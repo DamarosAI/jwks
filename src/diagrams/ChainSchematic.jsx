@@ -237,8 +237,8 @@ function mechanism(key, t) {
         // plate that is bigger than the machine working it.
         { ...stand(-46, 10, 22, 22, 4, 3), cls: 'fl-sheet' },
         printed(-35, 'fl-print fl-ruled', [
-          ...[-15, -9, -3, 3, 9, 15].map((u) => (
-            <line key={u} x1={-46 + u - 9} y1={10 + u + 9} x2={-46 + u + 9} y2={10 + u - 9} />
+          ...[-11, -6.6, -2.2, 2.2, 6.6, 11].map((u) => (
+            <line key={u} x1={-46 + u - 8} y1={10 + u + 8} x2={-46 + u + 8} y2={10 + u - 8} />
           )),
         ]),
         // Four bites punched clean through it. This is the step, drawn once.
@@ -404,9 +404,32 @@ function mechanism(key, t) {
     },
   }
 
-  // Back to front, or a mechanism is a pile rather than an object.
-  return build[key]().sort((a, b) => a.depth - b.depth)
+  /* THE COUPLING. Five plates in a row are not a run, they are five islands -
+     nothing in the drawing said the output of one station was the input of the
+     next, and the datum underneath was doing all the work of saying so on its
+     own. Every plate carries one at each of the two plan corners where it comes
+     nearest its neighbours, and a hairline run passes between them outside. It
+     is the only part every plate has in common, which is what lets it read as
+     the interface rather than as a sixth mechanism. */
+  const couple = [
+    { ...stand(-66, 41, 5, 5, 4, 1.5), cls: 'fl-couple', depth: -1200 },
+    { ...stand(66, -41, 5, 5, 4, 1.5), cls: 'fl-couple', depth: -1200 },
+  ]
+
+  // Back to front, or a mechanism is a pile rather than an object - and every
+  // solid gets its own phase in the settle, so a plate breathes as a population
+  // of separate things rather than as one object going up and down.
+  return [...couple, ...build[key]()]
+    .sort((a, b) => a.depth - b.depth)
+    .map((part, index) => ({ ...part, life: jitter(index, 23) }))
 }
+
+/* WHERE THE RUN CROSSES BETWEEN PLATES. The coupling sits at plan (66, -41),
+   which the projection puts 92.7 to the right of its seat and 8.5 down; its
+   mirror is the same distance the other way. Solved rather than measured, so
+   the run still lands on both couplings if the plate ever changes size. */
+const LINK_X = Math.round((66 + 41) * 0.866 * 10) / 10
+const LINK_Y = Math.round((66 - 41) * 0.34 * 10) / 10
 
 /* -- THE SKY ------------------------------------------------------------
 
@@ -622,6 +645,22 @@ export default function ChainSchematic({ animate = true }) {
               same timeline as everything else - it draws itself left to right
               as the plates land, so the line arrives WITH the row rather than
               waiting under an empty stage. */}
+          {/* THE RUN BETWEEN THE STATIONS. Four hairlines, each from one
+              plate's downstream coupling to the next plate's upstream one, so
+              what the row is doing carries across the gaps instead of stopping
+              at every plate edge. */}
+          <g className="fl-links" aria-hidden="true">
+            {STEPS.slice(1).map((item, i) => (
+              <line
+                key={item.key}
+                x1={STEPS[i].seat[0] + LINK_X}
+                y1={STEPS[i].seat[1] + LINK_Y}
+                x2={item.seat[0] - LINK_X}
+                y2={item.seat[1] - LINK_Y}
+              />
+            ))}
+          </g>
+
           <line
             className="fl-datum"
             x1={KEEP.left}
@@ -764,17 +803,25 @@ export default function ChainSchematic({ animate = true }) {
                       <g
                         className={part.cls}
                         key={`${item.key}-e${n}`}
-                        style={{ '--turn': part.turn ?? 0, '--span': part.span, '--idle': part.idle ? 1 : 0 }}
+                        style={{ '--turn': part.turn ?? 0, '--span': part.span, '--idle': part.idle ? 1 : 0, '--life': part.life }}
                       >
                         {/* The core lifts inside its own group, because the
                             band is placed at its depth in the section and the
-                            whole column comes up as one thing. */}
+                            whole column comes up as one thing - and the settle
+                            sits inside THAT, so a band can be rising out of a
+                            borehole and breathing at the same time. */}
                         {part.core ? (
-                          <g className="fl-core"><Faces shape={part.shape} className="dgm-solid" /></g>
-                        ) : part.round ? (
-                          <Drum shape={part.shape} className="dgm-solid" />
+                          <g className="fl-core">
+                            <g className="fl-settle"><Faces shape={part.shape} className="dgm-solid" /></g>
+                          </g>
                         ) : (
-                          <Faces shape={part.shape} className="dgm-solid" />
+                          <g className="fl-settle">
+                            {part.round ? (
+                              <Drum shape={part.shape} className="dgm-solid" />
+                            ) : (
+                              <Faces shape={part.shape} className="dgm-solid" />
+                            )}
+                          </g>
                         )}
                       </g>
                     )

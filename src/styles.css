@@ -12571,13 +12571,19 @@ html.is-hidden .clinic-node i,
 .fl-plate { opacity: clamp(0, calc((var(--fuse) - 0.62) / 0.16), 1); }
 
 .fl-plate .dgm-face-top {
-  fill: color-mix(in srgb, var(--accent) 6%, var(--surface-solid));
+  fill: color-mix(in srgb, var(--tone) 6%, var(--surface-solid));
   stroke: color-mix(in srgb, var(--line) 40%, transparent);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
   transition: stroke 300ms ease;
 }
 
+/* THE PLATE STAYS PAPER. Its two skirt faces took the station's ink along with
+   everything else and at twenty and thirty per cent of a saturated hue they
+   came out as the most colourful thing in the figure - which inverts the one
+   rule this sheet is built on, that the surface is paper and only what stands
+   on it is ink. The top face keeps a whisper of the station so a plate is not
+   orphaned from its machine; the sides go back to the house blue. */
 .fl-plate .dgm-face-left { fill: color-mix(in srgb, var(--accent) 20%, var(--surface-solid)); stroke: none; }
 .fl-plate .dgm-face-right { fill: color-mix(in srgb, var(--accent) 30%, var(--surface-solid)); stroke: none; }
 
@@ -12783,14 +12789,14 @@ html.is-hidden .clinic-node i,
 .fl-emblem { opacity: var(--in); }
 
 .fl-emblem .dgm-face-top {
-  fill: color-mix(in srgb, var(--accent) 44%, var(--surface-solid));
+  fill: color-mix(in srgb, var(--tone) 58%, var(--surface-solid));
   stroke: color-mix(in srgb, var(--line) 74%, transparent);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
 
-.fl-emblem .dgm-face-left { fill: color-mix(in srgb, var(--accent) 74%, var(--surface-solid)); stroke: none; }
-.fl-emblem .dgm-face-right { fill: color-mix(in srgb, var(--ink-deep) 26%, var(--accent-strong)); stroke: none; }
+.fl-emblem .dgm-face-left { fill: color-mix(in srgb, var(--tone) 82%, var(--surface-solid)); stroke: none; }
+.fl-emblem .dgm-face-right { fill: color-mix(in srgb, var(--deep) 42%, var(--tone)); stroke: none; }
 
 /* ── The plate's own plan ───────────────────────────────────────
 
@@ -12837,14 +12843,116 @@ html.is-hidden .clinic-node i,
    side, the floor under it, and the rim itself as the one hard edge. Three
    shapes, no filter, legible at any size. */
 
-.fl-wall { fill: color-mix(in srgb, var(--accent) 20%, var(--surface-solid)); stroke: none; }
-.fl-floor { fill: color-mix(in srgb, var(--accent) 34%, var(--surface-solid)); stroke: none; }
+.fl-wall { fill: color-mix(in srgb, var(--tone) 20%, var(--surface-solid)); stroke: none; }
+.fl-floor { fill: color-mix(in srgb, var(--tone) 34%, var(--surface-solid)); stroke: none; }
 
 .fl-rim {
   fill: none;
   stroke: color-mix(in srgb, var(--line) 66%, transparent);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
+}
+
+/* ── The ink each station works in ───────────────────────────────────────
+
+   FIVE HUES, AND THE REASON TRIDENT CANNOT HAVE THEM IS THE REASON THIS CAN.
+
+   That figure tried exactly this - violet for the machine tier, blue for the
+   contract, amber for the one holding, green for the one that had committed -
+   and threw it out, because four saturated hues STACKED OVER ONE PLAN read as
+   four unrelated objects: the warm two sat forward of the cool two and the
+   middle of the stack bowed out of the page. A governed stack that reads as
+   four things bolted together argues against its own claim.
+
+   None of that transfers to a ROW. These five are not one instrument seen in
+   section, they are five stations side by side on one datum, and the whole
+   argument of the section is that they are different steps. There is no depth
+   axis for a warm hue to advance along and nothing here is stacked over
+   anything. What failed as a stack is exactly right as a bench.
+
+   So each station works in the ink of the state it produces, taken from the
+   product's own palette in the order the run passes through it: a protocol
+   GOVERNS, evidence is the ground everything else refers to and keeps the house
+   colour, a screen HOLDS things for review, a resolve is the exception a person
+   has to take, and a replay is COMMITTED. Every one of them is mixed back into
+   Damaros blue by more than half, so the row reads as one accent bent five ways
+   rather than as five colours - and the paper, the line work, the lettering and
+   the shadow stay exactly as neutral as they were. */
+
+.fl-step {
+  --tone: var(--accent);
+  /* The station's darkest ink: its own hue carried most of the way into the
+     page's text colour, so the heavy solids stay nearly black and only cast.
+     Written as a mix of two mid-tones it came out mid-toned, and every dark
+     object in the figure went pale at once. */
+  --deep: color-mix(in srgb, var(--tone) 38%, var(--text));
+}
+
+/* HOW FAR EACH ONE IS MIXED BACK INTO THE BLUE IS NOT ONE NUMBER.
+   Violet and green are the blue's NEIGHBOURS, so mixing them through it deepens
+   them and ties them to the house colour. Amber and crimson are its
+   COMPLEMENTS, and mixing a complement through a colour does not tie it to
+   anything - it cancels it. At sixty per cent the amber came out as mud and the
+   crimson as mauve, which is how two of the five stations ended up looking
+   dirty rather than coloured. So the neighbours are carried most of the way
+   home and the complements only far enough to lose their brightness. */
+.fl-step.is-protocol { --tone: color-mix(in srgb, var(--governed) 56%, var(--accent-strong)); }
+.fl-step.is-evidence { --tone: var(--accent); }
+.fl-step.is-screening { --tone: color-mix(in srgb, var(--warning) 88%, var(--accent-strong)); }
+.fl-step.is-resolve { --tone: color-mix(in srgb, var(--danger) 76%, var(--accent-strong)); }
+.fl-step.is-replay { --tone: color-mix(in srgb, var(--success) 86%, var(--accent-strong)); }
+
+/* ── The couplings, and the run between them ─────────────────────────────
+
+   FIVE PLATES IN A ROW ARE NOT A RUN, THEY ARE FIVE ISLANDS.
+
+   Nothing in the drawing said the output of one station was the input of the
+   next - the datum lettered them as a sequence and the figure above it showed
+   five unconnected machines. So each plate carries a coupling at the two plan
+   corners where it comes nearest its neighbours, and a hairline run passes
+   between them. The row is a machine now rather than five machines standing
+   near each other, and the couplings are the only part every plate has in
+   common, which is what makes them read as the interface rather than as
+   another mechanism. */
+
+.fl-couple .dgm-face-top { fill: color-mix(in srgb, var(--deep) 62%, var(--surface-solid)); }
+.fl-couple .dgm-face-left,
+.fl-couple .dgm-face-right { fill: var(--deep); }
+
+.fl-links {
+  fill: none;
+  stroke: color-mix(in srgb, var(--text) 26%, transparent);
+  stroke-width: 1.4;
+  vector-effect: non-scaling-stroke;
+  opacity: var(--in);
+}
+
+/* ── The half-pixel every solid moves ────────────────────────────────────
+
+   Trident runs a second, quieter layer under everything else: nineteen contract
+   fields, four waiting proposals and three landing pads all settling on their
+   own long clocks, half a pixel at a time. It is most of why that figure reads
+   as a system that happens to be drawn rather than as a drawing that happens to
+   loop, and this one had nothing like it - every solid here was either working
+   or perfectly still.
+
+   So everything standing on a plate breathes, on a clock between eleven and
+   eighteen seconds that shares no factor with any mechanism, phased per part.
+   It composes with whatever the part is already doing because it sits on an
+   inner group: a die can be falling and settling at once. */
+
+.fl-settle {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.dgm-svg.is-live.is-fused .fl-settle {
+  animation: fl-breathe calc(11s + var(--life, 0) * 7s) ease-in-out infinite alternate;
+  animation-delay: calc(var(--life, 0) * -9s);
+}
+
+@keyframes fl-breathe {
+  to { transform: translateY(-0.7px); }
 }
 
 /* ── The state a part is in ──────────────────────────────────────────────
@@ -12867,9 +12975,15 @@ html.is-hidden .clinic-node i,
    frame of a disagreement, it is a drawing of two answers being true at once. */
 .fl-lamp.is-read { opacity: calc(1 - var(--turn, 0)); }
 
-.fl-lamp .dgm-face-top { fill: var(--accent-strong); stroke: none; }
+/* A LIT CAP HAS TO BEAT ITS OWN BODY. At full tone against a body drawn at
+   fifty-eight per cent of the same tone the two sat a step apart, which is
+   enough for a cool hue and not for a warm one - Screening's amber caps
+   disappeared into their amber stacks. Carried most of the way into the page's
+   text colour instead, every lamp is the most saturated and the darkest mark on
+   its own plate whatever hue the station works in. */
+.fl-lamp .dgm-face-top { fill: color-mix(in srgb, var(--tone) 80%, var(--text)); stroke: none; }
 .fl-lamp .dgm-face-left,
-.fl-lamp .dgm-face-right { fill: var(--ink-deep); }
+.fl-lamp .dgm-face-right { fill: var(--deep); }
 
 /* ── PROTOCOL CUTS ───────────────────────────────────────────────────────
 
@@ -12880,20 +12994,20 @@ html.is-hidden .clinic-node i,
 
 /* The document is paper, so it is drawn as paper: the only thing on any plate
    lighter than the surface it lies on. */
-.fl-sheet .dgm-face-top { fill: color-mix(in srgb, var(--accent) 12%, var(--surface-solid)); }
-.fl-sheet .dgm-face-left { fill: color-mix(in srgb, var(--accent) 24%, var(--surface-solid)); }
-.fl-sheet .dgm-face-right { fill: color-mix(in srgb, var(--accent) 32%, var(--surface-solid)); }
+.fl-sheet .dgm-face-top { fill: color-mix(in srgb, var(--tone) 12%, var(--surface-solid)); }
+.fl-sheet .dgm-face-left { fill: color-mix(in srgb, var(--tone) 24%, var(--surface-solid)); }
+.fl-sheet .dgm-face-right { fill: color-mix(in srgb, var(--tone) 32%, var(--surface-solid)); }
 
 /* A bite goes through the sheet and stops on the plate, so what shows at the
    bottom of one is the plate's own paper. That is what makes it read as
    material removed rather than as a dark spot printed on. */
-.fl-bite .fl-floor { fill: color-mix(in srgb, var(--accent) 9%, var(--surface-solid)); }
-.fl-bite .fl-wall { fill: color-mix(in srgb, var(--accent) 26%, var(--surface-solid)); }
+.fl-bite .fl-floor { fill: color-mix(in srgb, var(--tone) 9%, var(--surface-solid)); }
+.fl-bite .fl-wall { fill: color-mix(in srgb, var(--tone) 26%, var(--surface-solid)); }
 
 /* The die is a tool, and a tool is the heaviest thing on the plate it works. */
-.fl-die .dgm-face-top { fill: color-mix(in srgb, var(--ink-deep) 60%, var(--surface-solid)); }
+.fl-die .dgm-face-top { fill: color-mix(in srgb, var(--deep) 60%, var(--surface-solid)); }
 .fl-die .dgm-face-left,
-.fl-die .dgm-face-right { fill: var(--ink-deep); }
+.fl-die .dgm-face-right { fill: var(--deep); }
 
 .dgm-svg.is-live.is-fused .fl-die { animation: fl-punch 6.2s cubic-bezier(0.5, 0, 0.2, 1) infinite; }
 
@@ -12933,23 +13047,23 @@ html.is-hidden .clinic-node i,
    is moved and nothing is copied. What is above the surface is the plug: a
    reference, not a record. */
 
-.fl-socket .fl-floor { fill: color-mix(in srgb, var(--accent) 16%, var(--surface-solid)); }
+.fl-socket .fl-floor { fill: color-mix(in srgb, var(--tone) 16%, var(--surface-solid)); }
 
 /* A record, seen down a socket. It is drawn INSIDE the bore and nowhere else,
    which is this step's claim made as geometry rather than as a caption. */
-.fl-record .dgm-face-top { fill: color-mix(in srgb, var(--ink-deep) 54%, var(--surface-solid)); stroke: none; }
-.fl-record .dgm-face-right { fill: var(--ink-deep); }
+.fl-record .dgm-face-top { fill: color-mix(in srgb, var(--deep) 54%, var(--surface-solid)); stroke: none; }
+.fl-record .dgm-face-right { fill: var(--deep); }
 
 /* Except the one nothing has reached. It is still down there and still a
    record; what it has not got is a plug in the socket above it. */
-.fl-record.is-cold .dgm-face-top { fill: color-mix(in srgb, var(--accent) 30%, var(--surface-solid)); }
-.fl-record.is-cold .dgm-face-right { fill: color-mix(in srgb, var(--accent) 52%, var(--surface-solid)); }
+.fl-record.is-cold .dgm-face-top { fill: color-mix(in srgb, var(--tone) 30%, var(--surface-solid)); }
+.fl-record.is-cold .dgm-face-right { fill: color-mix(in srgb, var(--tone) 52%, var(--surface-solid)); }
 
 /* A BINDING IS DRAWN, NOT BUILT. It used to be a slab lying on the plate, which
    made the one thing this step produces the same kind of object as the records
    it connects. */
 .fl-route {
-  stroke: var(--ink-deep);
+  stroke: var(--deep);
   stroke-width: 1.4;
   opacity: 0;
 }
@@ -12987,9 +13101,9 @@ html.is-hidden .clinic-node i,
   100% { opacity: 0; }
 }
 
-.fl-binder .dgm-face-top { fill: color-mix(in srgb, var(--ink-deep) 74%, var(--surface-solid)); stroke: var(--line); }
+.fl-binder .dgm-face-top { fill: color-mix(in srgb, var(--deep) 74%, var(--surface-solid)); stroke: var(--line); }
 .fl-binder .dgm-face-left,
-.fl-binder .dgm-face-right { fill: var(--ink-deep); }
+.fl-binder .dgm-face-right { fill: var(--deep); }
 
 .dgm-svg.is-live.is-fused .fl-binder { animation: fl-cut 7.4s cubic-bezier(0.4, 0, 0.5, 1) infinite; }
 
@@ -13007,15 +13121,15 @@ html.is-hidden .clinic-node i,
    count that went through it. */
 
 .fl-mouth { opacity: 0.72; }
-.fl-mouth .dgm-face-top { fill: color-mix(in srgb, var(--accent) 15%, var(--surface-solid)); }
+.fl-mouth .dgm-face-top { fill: color-mix(in srgb, var(--tone) 15%, var(--surface-solid)); }
 
 /* NO BOTTOM YOU CAN SEE. What goes down a throat does not stop inside the
    plate, and the difference between a throat and a bin is whether a reader can
    find a floor in it - so this one is drawn almost flush with its own rim in
    the darkest ink in the figure, which is what a hole with nothing at the
    bottom of it looks like from above. */
-.fl-throat .fl-floor { fill: color-mix(in srgb, var(--ink-deep) 84%, var(--accent-strong)); }
-.fl-throat .fl-wall { fill: color-mix(in srgb, var(--ink-deep) 60%, var(--accent-strong)); }
+.fl-throat .fl-floor { fill: var(--deep); }
+.fl-throat .fl-wall { fill: color-mix(in srgb, var(--deep) 66%, var(--tone)); }
 
 /* THE COUNT IS THE DRAWING. The value line under this plate reads 1 PASS -
    4 REVIEW - 3 FAIL, and the drawing above it used to say nothing of the kind:
@@ -13023,8 +13137,8 @@ html.is-hidden .clinic-node i,
    read off it. Each unit steps in half a plan unit as it goes up, which leaves
    every one a visible rim, so the pile can be counted rather than estimated.
    Nothing else in the figure is built out of repeated parts. */
-.fl-unit.is-alt .dgm-face-top { fill: color-mix(in srgb, var(--accent) 30%, var(--surface-solid)); }
-.fl-unit.is-alt .dgm-face-left { fill: color-mix(in srgb, var(--accent) 62%, var(--surface-solid)); }
+.fl-unit.is-alt .dgm-face-top { fill: color-mix(in srgb, var(--tone) 30%, var(--surface-solid)); }
+.fl-unit.is-alt .dgm-face-left { fill: color-mix(in srgb, var(--tone) 62%, var(--surface-solid)); }
 
 .dgm-svg.is-live.is-fused .fl-lamp.is-bin {
   animation: fl-sort 5.6s ease-out infinite;
@@ -13037,9 +13151,9 @@ html.is-hidden .clinic-node i,
   100% { opacity: 0; }
 }
 
-.fl-faller .dgm-face-top { fill: color-mix(in srgb, var(--ink-deep) 76%, var(--surface-solid)); stroke: var(--line); }
+.fl-faller .dgm-face-top { fill: color-mix(in srgb, var(--deep) 76%, var(--surface-solid)); stroke: var(--line); }
 .fl-faller .dgm-face-left,
-.fl-faller .dgm-face-right { fill: var(--ink-deep); }
+.fl-faller .dgm-face-right { fill: var(--deep); }
 
 .dgm-svg.is-live.is-fused .fl-faller {
   animation: fl-fall 5.6s cubic-bezier(0.45, 0, 0.7, 1) infinite;
@@ -13071,8 +13185,8 @@ html.is-hidden .clinic-node i,
   transform-box: view-box;
 }
 
-.fl-throw { fill: var(--ink-deep); stroke: none; }
-.fl-grip { fill: var(--accent-strong); stroke: none; }
+.fl-throw { fill: var(--deep); stroke: none; }
+.fl-grip { fill: var(--tone); stroke: none; }
 
 .dgm-svg.is-live.is-fused .fl-lever { animation: fl-claim 4.8s cubic-bezier(0.6, 0, 0.3, 1.4) infinite; }
 
@@ -13105,7 +13219,7 @@ html.is-hidden .clinic-node i,
    one - so the mark is printed into the plate, its resting value is present,
    and the clock only takes it back to a trace before the next stroke lands. */
 .fl-stamp {
-  stroke: color-mix(in srgb, var(--ink-deep) 72%, transparent);
+  stroke: color-mix(in srgb, var(--deep) 72%, transparent);
   stroke-width: 1.4;
 }
 
@@ -13123,7 +13237,7 @@ html.is-hidden .clinic-node i,
    the one drawing that says a past state was recovered INTACT and can be
    counted band by band, and there is nothing rotating anywhere in it. */
 
-.fl-bore .fl-floor { fill: color-mix(in srgb, var(--accent) 40%, var(--surface-solid)); }
+.fl-bore .fl-floor { fill: color-mix(in srgb, var(--tone) 40%, var(--surface-solid)); }
 
 /* The log the core is read against. Hairline, in the page's ink, and stepped
    long-short so nine bands can be counted off it without counting the ticks. */
@@ -13135,14 +13249,14 @@ html.is-hidden .clinic-node i,
   opacity: var(--in);
 }
 
-.fl-band.is-alt .dgm-face-top { fill: color-mix(in srgb, var(--accent) 28%, var(--surface-solid)); }
-.fl-band.is-alt .dgm-face-left { fill: color-mix(in srgb, var(--accent) 60%, var(--surface-solid)); }
+.fl-band.is-alt .dgm-face-top { fill: color-mix(in srgb, var(--tone) 28%, var(--surface-solid)); }
+.fl-band.is-alt .dgm-face-left { fill: color-mix(in srgb, var(--tone) 60%, var(--surface-solid)); }
 
 /* The band the chain closes on. One dark solid per plate is what stops five
    drawings in one colour from averaging into a single grey. */
-.fl-band.is-latest .dgm-face-top { fill: color-mix(in srgb, var(--ink-deep) 62%, var(--surface-solid)); }
+.fl-band.is-latest .dgm-face-top { fill: color-mix(in srgb, var(--deep) 62%, var(--surface-solid)); }
 .fl-band.is-latest .dgm-face-left,
-.fl-band.is-latest .dgm-face-right { fill: var(--ink-deep); }
+.fl-band.is-latest .dgm-face-right { fill: var(--deep); }
 
 .fl-core {
   transform-box: fill-box;
@@ -13241,11 +13355,11 @@ html.is-hidden .clinic-node i,
 /* The machine gains a step of ink as it rises, so the plate a reader is on is
    the darkest thing on the sheet as well as the highest. */
 .is-fused .fl-step.is-hot .fl-emblem .dgm-face-top {
-  fill: color-mix(in srgb, var(--accent) 56%, var(--surface-solid));
+  fill: color-mix(in srgb, var(--tone) 68%, var(--surface-solid));
   stroke: var(--line);
 }
 
-.is-fused .fl-step.is-hot .fl-lamp .dgm-face-top { fill: var(--ink-deep); }
+.is-fused .fl-step.is-hot .fl-lamp .dgm-face-top { fill: var(--deep); }
 
 .is-fused .fl-step.is-hot .fl-plate .dgm-face-top { stroke-width: 1.4; }
 
