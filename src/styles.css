@@ -9622,6 +9622,29 @@ html.is-hidden .clinic-node i,
   transition: stroke 300ms ease, fill 300ms ease;
 }
 
+/* A FLAT FILL IS NOT A MATERIAL.
+
+   Every top face on this sheet was one colour edge to edge, which is what a
+   diagram does and not what a panel does: a real one catches more light along
+   the edge nearest the source and less along the far one, and that single fact
+   is most of the difference between a drawing of a thing and a thing.
+
+   One gradient over the face - a wash of white along the back, nothing through
+   the middle, and a breath of the surface's OWN ink gathering at the front. It
+   is tilted off vertical because the light in an axonometric comes from
+   wherever the projection says up-and-back is, and the stops resolve `--ink`
+   against whichever deck the gradient is declared inside, so a violet tier and
+   a green one are lit in their own colour rather than in a shared grey.
+
+   Only the large surfaces carry it. A sheen on a nine-pixel contract field is a
+   gradient nobody can see costing a paint nobody asked for. */
+
+.dgm-sheen { pointer-events: none; }
+
+.dgm-sheen-back { stop-color: color-mix(in srgb, var(--surface-solid) 52%, transparent); }
+.dgm-sheen-mid { stop-color: transparent; }
+.dgm-sheen-front { stop-color: color-mix(in srgb, var(--ink) 14%, transparent); }
+
 .dgm-face-left {
   fill: color-mix(in srgb, var(--ink) var(--wash, 34%), var(--body-near));
   stroke: color-mix(in srgb, var(--ink-deep) 50%, transparent);
@@ -9790,8 +9813,18 @@ html.is-hidden .clinic-node i,
      black is exactly what turns a hue into a grey. */
   --body-near: var(--surface-solid);
   --body-far: color-mix(in srgb, var(--text) 5%, var(--surface-solid));
+  /* ONE SPRING FOR ALL THREE FIGURES.
+     Everything on this sheet decelerated into place on a curve that never
+     passes its target, which is the motion of a thing being POSITIONED rather
+     than of a thing being let go. A deck that rises, overshoots by a per cent
+     and settles is the difference between an animation and a movement, and it
+     is the single change that makes three drawn instruments feel handled.
+     Only what MOVES gets it. Colour and opacity still ease, because a fill that
+     overshoots is a fill that is briefly the wrong colour. */
+  --dgm-spring: linear(0, 0.006, 0.025 2.8%, 0.101 6.1%, 0.539 18.9%, 0.721 25.3%, 0.849 31.5%, 0.937 38.1%, 0.968 41.8%, 0.991 45.7%, 1.006 50.1%, 1.015 55%, 1.017 63.9%, 1.001 100%);
   opacity: calc(0.62 + 0.38 * var(--charge, 1));
-  transition: --spread 1150ms cubic-bezier(0.16, 1, 0.3, 1), --charge 1450ms 200ms cubic-bezier(0.33, 1, 0.68, 1);
+  transition: --spread 1150ms cubic-bezier(0.32, 0.72, 0, 1), --charge 1450ms 200ms cubic-bezier(0.33, 1, 0.68, 1);
+  transition-timing-function: var(--dgm-spring), cubic-bezier(0.33, 1, 0.68, 1);
 }
 
 .dgm-svg.is-booted {
@@ -10457,7 +10490,8 @@ html.is-hidden .clinic-node i,
   stroke-width: 1;
   cursor: pointer;
   vector-effect: non-scaling-stroke;
-  transition: fill 320ms ease, fill-opacity 320ms ease, stroke 320ms ease, transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: fill 320ms ease, fill-opacity 320ms ease, stroke 320ms ease, transform 460ms cubic-bezier(0.32, 0.72, 0, 1);
+  transition-timing-function: ease, ease, ease, var(--dgm-spring);
 }
 
 .dgm-fieldtile.is-bound { transform: translate(calc(var(--lift, 0px) * -1), calc(var(--lift, 0px) * -1)); }
@@ -10655,7 +10689,8 @@ html.is-hidden .clinic-node i,
 
 .dgm-blade {
   transform: translateX(calc(var(--side, 1) * var(--shut, 0px)));
-  transition: transform 620ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 700ms cubic-bezier(0.32, 0.72, 0, 1);
+  transition-timing-function: var(--dgm-spring);
 }
 
 .dgm-bank.is-clear .dgm-blade { transform: translateX(calc(var(--side, 1) * var(--open, 24px))); }
@@ -10923,7 +10958,10 @@ html.is-hidden .clinic-node i,
   initial-value: 0;
 }
 
-.dgm-deck { transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1), --audit 260ms ease; }
+.dgm-deck {
+  transition: transform 440ms cubic-bezier(0.32, 0.72, 0, 1), --audit 260ms ease;
+  transition-timing-function: var(--dgm-spring), ease;
+}
 .dgm-deck.is-hot { --audit: 1; }
 
 @keyframes dgm-verify {
@@ -12482,6 +12520,7 @@ html.is-hidden .clinic-node i,
 .fl-plate,
 .fl-emblem,
 .fl-cast,
+.fl-air,
 .fl-datum,
 .fl-leader,
 .fl-station,
@@ -13312,73 +13351,73 @@ html.is-hidden .clinic-node i,
   100% { opacity: 0; transform: translateY(9px); }
 }
 
-/* ── The sky ─────────────────────────────────────────────────────────────
+/* ── The airspace over each station ──────────────────────────────────────
 
-   The figure had one plane in it and every eye movement it invited ran left to
-   right along a row - no height anywhere, which in an axonometric is the one
-   thing the projection is for.
+   FIVE IDENTICAL CRAFT FERRYING ACROSS IS ONE IDEA, NOT FIVE. The band carried
+   five copies of the same hull, and a row of identical things moving the same
+   way says only that something is moving - which the couplings now say better,
+   and say about the run rather than about the air.
 
-   So work moves overhead. Each carrier ferries exactly ONE plate-pitch, from
-   the airspace of one step to the airspace of the next, which is the run itself
-   seen from above. Pale, small, and on five long clocks that share no factor,
-   so the sky is never still and never busy. */
+   Each station's own thing hangs there instead: what arrives at it or what it
+   sends on. It is drawn inside the step, so it takes that station's ink, dims
+   with it, and deepens with it under the pointer. */
 
-.fl-sky {
-  opacity: clamp(0, calc((var(--fuse) - 0.86) / 0.14), 1);
+.fl-air {
+  opacity: var(--in);
   pointer-events: none;
 }
 
-.fl-bot { opacity: 0.5; }
+/* A reference is the one thing in the figure that is a pointer and not a thing,
+   so it is the one object drawn as an outline. */
+.fl-airring {
+  fill: none;
+  stroke: color-mix(in srgb, var(--tone) 62%, transparent);
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
+}
 
-.fl-bot .dgm-face-top {
-  fill: color-mix(in srgb, var(--accent) 18%, var(--surface-solid));
-  stroke: color-mix(in srgb, var(--line) 40%, transparent);
+.fl-airtick {
+  fill: none;
+  stroke: color-mix(in srgb, var(--tone) 54%, transparent);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.fl-air .dgm-face-top {
+  fill: color-mix(in srgb, var(--tone) 40%, var(--surface-solid));
+  stroke: color-mix(in srgb, var(--line) 52%, transparent);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
 
-.fl-bot .dgm-face-left,
-.fl-bot .dgm-face-right { fill: color-mix(in srgb, var(--accent) 40%, var(--surface-solid)); stroke: none; }
+.fl-air .dgm-face-left { fill: color-mix(in srgb, var(--tone) 62%, var(--surface-solid)); stroke: none; }
+.fl-air .dgm-face-right { fill: color-mix(in srgb, var(--tone) 78%, var(--surface-solid)); stroke: none; }
 
-/* The rotor is the part that says this is a machine and not a pebble, so it
-   keeps its own edge and almost no body. */
-.dgm-rotor .dgm-face-top {
-  fill: color-mix(in srgb, var(--accent) 8%, var(--surface-solid));
-  stroke: color-mix(in srgb, var(--line) 46%, transparent);
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
+/* What ties it down without a leader. A thing in the air over a plate darkens
+   the plate; that is the only cue this projection has, and it is the same one
+   a held plate uses. */
+.fl-airshade {
+  fill: color-mix(in srgb, var(--text) 7%, transparent);
+  transition: opacity 380ms ease;
 }
 
-.dgm-rotor .dgm-face-right { fill: color-mix(in srgb, var(--accent) 26%, var(--surface-solid)); stroke: none; }
-
-.dgm-svg.is-live.is-fused .fl-bot {
-  animation: fl-ferry var(--beat, 20s) linear infinite;
-  animation-delay: calc(var(--lag, 0) * var(--beat, 20s) * -1);
-}
-
-/* One plate-pitch, and it fades at both ends rather than jumping back - a
-   carrier that teleports is a carrier a reader has caught out. */
-@keyframes fl-ferry {
-  0% { transform: translateX(0); opacity: 0; }
-  14%, 82% { opacity: 1; }
-  100% { transform: translateX(236px); opacity: 0; }
-}
-
-.fl-hover {
+.fl-airbob {
   transform-box: fill-box;
   transform-origin: center;
 }
 
-/* And it holds height rather than sitting at one, which is what puts the
-   movement in the plane the row has none of. */
-.dgm-svg.is-live.is-fused .fl-hover {
-  animation: fl-bob calc(var(--beat, 20s) / 5) ease-in-out infinite alternate;
-  animation-delay: calc(var(--lag, 0) * -4s);
+/* Its own long clock, so the five are never in step. */
+.dgm-svg.is-live.is-fused .fl-airbob {
+  animation: fl-hang calc(9s + var(--life, 0) * 6s) ease-in-out infinite alternate;
+  animation-delay: calc(var(--life, 0) * -7s);
 }
 
-@keyframes fl-bob {
-  to { transform: translateY(-5px); }
+@keyframes fl-hang {
+  to { transform: translateY(-6px); }
 }
+
+.is-fused .fl-step.is-hot .fl-airshade { opacity: 1.4; }
 
 /* A HELD PLATE KEEPS RUNNING.
    Pointing at one used to freeze it, on the theory that a reader who has
@@ -13472,8 +13511,8 @@ html.is-hidden .clinic-node i,
   .fl-bite,
   .fl-band,
   .fl-lever,
-  .fl-bot,
-  .fl-hover,
+  .fl-airbob,
+  .fl-settle,
   .fl-step,
   .fl-name,
   .fl-fact,
@@ -13485,5 +13524,4 @@ html.is-hidden .clinic-node i,
      so they have to be given the finished one by hand: the bindings are made,
      and the carriers are in the air. */
   .fl-route { opacity: 1; }
-  .fl-sky { opacity: 1; }
 }

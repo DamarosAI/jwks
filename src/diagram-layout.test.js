@@ -62,6 +62,38 @@ describe('Trident and Nectar schematics', () => {
     }
   })
 
+  it('lights the surfaces and springs the motion in all three figures', () => {
+    // A FLAT FILL IS NOT A MATERIAL. Every top face on this sheet was one
+    // colour edge to edge, which is what a diagram does and not what a panel
+    // does: a real one catches more light along the edge nearest the source and
+    // less along the far one, and that single fact is most of the difference
+    // between a drawing of a thing and a thing.
+    assert.match(solid, /export function Sheen\(\{ shape, id \}\)/)
+    assert.match(css, /\.dgm-sheen-front \{ stop-color: color-mix\(in srgb, var\(--ink\)/)
+    // The gradient is declared INSIDE the solid rather than in a shared defs,
+    // so its stops resolve `--ink` against whichever deck it is rendered in: a
+    // violet tier and a green one are lit in their own colour, not a grey.
+    assert.match(solid, /<defs>\s*<linearGradient id=\{id\}/)
+    // Only the large surfaces carry it. A sheen on a nine-pixel contract field
+    // is a gradient nobody can see costing a paint nobody asked for.
+    for (const [figure, count] of [[trident, 5], [nectar, 2]]) {
+      assert.equal((figure.match(/<Sheen shape=/g) || []).length, count, 'the big surfaces, and only those')
+    }
+    assert.doesNotMatch(solid, /Sheen[\s\S]*?export function Faces/)
+
+    // ONE SPRING FOR ALL THREE. Everything decelerated into place on a curve
+    // that never passes its target, which is the motion of a thing being
+    // POSITIONED rather than of a thing being let go.
+    assert.match(css, /--dgm-spring: linear\(0, [\s\S]*?1\.001 100%\);/)
+    assert.match(css, /\.dgm-deck \{[\s\S]*?transition-timing-function: var\(--dgm-spring\), ease;/)
+    assert.match(css, /transition: --spread 1150ms cubic-bezier[\s\S]*?transition-timing-function: var\(--dgm-spring\),/)
+    // Only what MOVES gets it: a fill that overshoots is a fill that is briefly
+    // the wrong colour, so colour and opacity still ease.
+    const spring = css.match(/transition-timing-function: [^;]*var\(--dgm-spring\)[^;]*;/g)
+    assert.ok(spring.length >= 3, 'the spring is used where things move')
+    for (const rule of spring) assert.doesNotMatch(rule, /^transition-timing-function: var\(--dgm-spring\), var/)
+  })
+
   it('rounds the solids in plan, not on screen', () => {
     // A Damaros corner is a plan corner carried through the projection: the
     // silhouette is sampled from a rounded plan square and the skirt is cut at
@@ -75,7 +107,7 @@ describe('Trident and Nectar schematics', () => {
     assert.match(solid, /<path className="dgm-face-left" d=\{shape\.faceLeft\} \/>/)
     assert.match(solid, /export function Faces\(\{ shape, className \}\)/)
     for (const source of figures) {
-      assert.match(source, /import \{ Faces \} from '\.\/Solid'/)
+      assert.match(source, /import \{ Faces, Sheen \} from '\.\/Solid'/)
       assert.match(source, /<Faces shape=\{/)
       // Sharp-cornered polygon decks are gone from both figures, and neither
       // one carries its own copy of the component.
@@ -2225,42 +2257,43 @@ describe('The floor schematic', () => {
     assert.deepEqual([...css.matchAll(/\.dgm-svg\.is-live (\.fl-[a-z]+)/g)].map((m) => m[1]), ['.fl-drift'])
   })
 
-  it('puts work in the air, and flies it under the sentence', () => {
-    // The figure had one plane in it and every eye movement it invited ran left
-    // to right along a row - no height anywhere, which in an axonometric is the
-    // one thing the projection is for. So work moves overhead: each carrier
-    // ferries exactly ONE plate-pitch, from the airspace of one step to the
-    // airspace of the next, which is the run itself seen from above.
-    assert.match(floor, /const SKY = \[\[/)
-    assert.match(floor, /hull: roundedCylinder/)
-    assert.match(floor, /rotor: roundedCylinder/)
-    assert.match(css, /@keyframes fl-ferry \{[\s\S]*?translateX\(236px\)/)
-    assert.match(css, /@keyframes fl-bob \{/)
-    // Five long clocks that share no factor, so the sky is never still and
-    // never busy.
-    const beats = floor.match(/beat: \[([\d, ]+)\]\[i\]/)[1].split(',').map(Number)
-    assert.equal(new Set(beats).size, 5)
-    // AND THEY FLY UNDER THE SENTENCE, NOT THROUGH IT.
-    //
-    // Measured, the headline occupies viewBox y 13 to 77 at a wide desktop, 85
-    // at 1200 and 94 at 1000 - and one carrier was parked at 70, which is inside
-    // that band. It read as a piece of punctuation floating in the middle of the
-    // claim. The whole flight band now sits below the deepest line the sentence
-    // ever reaches and above the tallest thing standing on a plate, which is the
-    // one strip of the cell nothing else was using - and that also retires the
-    // two-tier arrangement and the width gate it needed, because there is now
-    // nowhere on the sheet a carrier and a word can meet.
-    const sky = floor.match(/const SKY = (\[\[[\d, [\]]+\])\.map/)[1]
-    const bots = JSON.parse(sky)
-    const cy = Number(floor.match(/const CY = (\d+)/)[1])
-    assert.equal(bots.length, 5)
-    for (const [x, y] of bots) {
-      assert.ok(y > 100, `a carrier at ${x},${y} is in the sentence's own band`)
-      assert.ok(y < cy - (75 + 50) * 0.34 - 8, `a carrier at ${x},${y} lands on a plate`)
+  it('gives each station its own airspace instead of five identical craft', () => {
+    // FIVE IDENTICAL CRAFT FERRYING ACROSS IS ONE IDEA, NOT FIVE. The band
+    // carried five copies of the same little hull, and a row of identical
+    // things moving in the same direction says only that something is moving -
+    // which the couplings under them now say better, and say about the run
+    // rather than about the air. Meanwhile the one band in the cell nothing
+    // else was using had nothing in it belonging to any station.
+    assert.doesNotMatch(floor, /const SKY|fl-bot|fl-ferry/)
+    assert.doesNotMatch(css, /\.fl-sky|\.fl-bot|fl-ferry/)
+    assert.match(floor, /function overhead\(key, cx\)/)
+    // What arrives at each station, or what it sends on: a study descending, a
+    // reference ring, a cohort queued, a seal on a hook, a wireframe core.
+    for (const key of ['protocol', 'evidence', 'screening', 'resolve']) {
+      assert.match(floor, new RegExp(`case '${key}':`), `${key} needs its own airspace`)
     }
-    assert.ok(new Set(bots.map(([, y]) => y)).size >= 4, 'five carriers at one height is another row')
-    assert.ok(Math.max(...bots.map(([, y]) => y)) - Math.min(...bots.map(([, y]) => y)) >= 20, 'the sky needs altitude in it')
-    assert.doesNotMatch(css, /@media \(max-width: 1180px\) \{\s*\.fl-sky/)
+    // A reference is the one thing here that is a pointer and not a thing, so
+    // it is the one object in the figure drawn as an outline.
+    assert.match(css, /\.fl-airring \{\s*fill: none;/)
+    // Drawn INSIDE the step, so it takes that station's ink, dims with it, and
+    // deepens with it under the pointer - and OUTSIDE `.fl-body`, because it is
+    // already in the air and does not lift when the plate does.
+    assert.match(floor, /<g className="fl-air"[\s\S]{0,400}<\/g>\s*\n\s*\{\/\* THE STATION/)
+    assert.match(css, /\.fl-air \{\s*opacity: var\(--in\);/)
+    // The shade under it is what ties it down: five dashed tethers would have
+    // been five more marks in the quietest part of the sheet.
+    assert.match(floor, /className="fl-airshade"/)
+    assert.match(css, /\.fl-airshade \{\s*fill: color-mix\(in srgb, var\(--text\)/)
+    // And each bobs on its own long clock, so the band is never in step.
+    assert.match(css, /@keyframes fl-hang \{/)
+    const life = JSON.parse(floor.match(/const AIR_LIFE = (\[[\d., ]+\])/)[1])
+    assert.equal(new Set(life).size, 5, 'five stations, five clocks')
+    // It flies clear of the sentence, which runs to 94 at the narrowest width
+    // this figure is drawn at, and clear of the plates under it.
+    const air = Number(floor.match(/const AIR = (\d+)/)[1])
+    const cy = Number(floor.match(/const CY = (\d+)/)[1])
+    assert.ok(air > 100, `an airspace at ${air} is in the sentence's own band`)
+    assert.ok(air < cy - (75 + 50) * 0.34, `an airspace at ${air} lands on a plate`)
   })
 
   it('letters the run underneath it, in ink, off one datum', () => {

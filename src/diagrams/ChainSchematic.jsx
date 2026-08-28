@@ -436,32 +436,77 @@ function mechanism(key, t) {
 const LINK_X = Math.round((66 + 41) * 0.866 * 10) / 10
 const LINK_Y = Math.round((66 - 41) * 0.34 * 10) / 10
 
-/* -- THE SKY ------------------------------------------------------------
+/* -- WHAT FLIES OVER EACH STATION ---------------------------------------
 
-   Work moves overhead: each carrier ferries exactly ONE plate-pitch, from the
-   airspace of one step to the airspace of the next, which is the run itself
-   seen from above.
+   FIVE IDENTICAL CRAFT FERRYING ACROSS IS ONE IDEA, NOT FIVE.
 
-   AND IT FLIES UNDER THE SENTENCE, NOT THROUGH IT. Measured, the headline
-   occupies viewBox y 13 to 77 at a wide desktop, 85 at 1200 and 94 at 1000 -
-   and one carrier was parked at 70, which is inside that band. It read as a
-   piece of punctuation floating in the middle of the claim. The whole flight
-   band now sits between 116 and 142: clear of the deepest line the sentence
-   ever reaches, clear of the plates, and in the one strip of the cell that
-   nothing else was using. That also retires the two-tier arrangement and the
-   width gate it needed, because there is no longer anywhere on the sheet where
-   a carrier and a word can meet. */
-const SKY = [[250, 138], [450, 120], [660, 142], [900, 116], [1050, 132]].map(([x, y], i) => ({
-  key: `sky-${i}`,
-  // A hull, a mast and a rotor. What makes a small thing read as a craft at
-  // twenty pixels is the GAP - a plate held above a body on a post, which
-  // nothing standing on the ground in this figure has.
-  hull: roundedCylinder(x, y, 6, 3),
-  mast: roundedSlab(x, y - 4, 1.3, 1.3, 3.5, 0.6),
-  rotor: roundedCylinder(x, y - 7.8, 8, 1.1),
-  beat: [17, 21, 26, 19, 23][i],
-  lag: jitter(i, 41),
-}))
+   The airspace carried five copies of the same little hull, and a row of
+   identical things moving in the same direction says only that something is
+   moving - which the couplings under them now say better, and say about the
+   run rather than about the air. Meanwhile the one band in the cell that
+   nothing else was using had nothing in it that belonged to any station.
+
+   So each station gets its own thing overhead: what arrives at it, or what it
+   sends on. A study descending on Protocol. A reference ring hanging over
+   Evidence - the only outlined object in the figure, because a reference is the
+   one thing here that is not a solid. A cohort queued in the air over
+   Screening. A seal on a hook over Resolve. And over Replay a wireframe of the
+   core standing under it: the record as a projection rather than as a thing.
+
+   Each is drawn INSIDE its own step, so it takes that station's ink, dims with
+   it when a reader is on another one, and deepens with it under the pointer.
+   Each drops a small shade on the plate beneath, which is what ties it down
+   without a leader line - five dashed tethers would have been five more marks
+   in the quietest part of the sheet. And each bobs on its own long clock, so
+   the band is never still and never in step. */
+const AIR = 128
+const AIR_LIFE = [0.14, 0.62, 0.31, 0.85, 0.47]
+
+function overhead(key, cx) {
+  const at = (dx, dy) => [cx + dx, AIR + dy]
+  const slab = (dx, dy, hx, hy, high, r) => roundedSlab(cx + dx, AIR + dy, hx, hy, high, r)
+  switch (key) {
+    // THE STUDY, ARRIVING. Two sheets out of step, because a protocol turns up
+    // as a document and not as a block.
+    case 'protocol':
+      return [
+        <Faces key="a" shape={slab(-5, 3, 10, 8, 2.4, 2)} className="dgm-solid" />,
+        <Faces key="b" shape={slab(3, -4, 10, 8, 2.4, 2)} className="dgm-solid" />,
+      ]
+    // THE REFERENCE. Outlined rather than solid, because it is the one thing in
+    // this figure that is a pointer and not a thing - and it hangs over the
+    // sockets whose records never leave the floor.
+    case 'evidence':
+      return [
+        <ellipse key="o" className="fl-airring" cx={cx} cy={AIR} rx="15" ry="6" />,
+        <ellipse key="i" className="fl-airring" cx={cx} cy={AIR} rx="7" ry="2.8" />,
+        ...[-9, 0, 9].map((dx) => (
+          <line key={dx} className="fl-airtick" x1={cx + dx} y1={AIR + 5} x2={cx + dx} y2={AIR + 11} />
+        )),
+      ]
+    // THE COHORT, WAITING. Many, identical, and none of them screened yet.
+    case 'screening':
+      return [0, 1, 2, 3, 4].map((i) => (
+        <Faces key={i} shape={slab(-16 + i * 8, ((i % 2) - 0.5) * 5, 3.4, 3.4, 2.6, 1.2)} className="dgm-solid" />
+      ))
+    // THE SEAL, ON ITS HOOK. Nothing else in the figure hangs.
+    case 'resolve':
+      return [
+        <path
+          key="hook"
+          className="fl-airtick"
+          d={`M ${cx - 1} ${AIR - 13} L ${cx - 1} ${AIR - 4} a 5 5 0 1 0 10 0`}
+        />,
+        <Drum key="seal" shape={roundedCylinder(cx, AIR + 4, 9, 4)} className="dgm-solid" />,
+      ]
+    // THE RECONSTRUCTION. A wireframe of the core standing under it, because a
+    // replay is a past state projected rather than a thing you can pick up.
+    default:
+      return [0, 1, 2].map((i) => (
+        <ellipse key={i} className="fl-airring" cx={at(0, -8 + i * 8)[0]} cy={at(0, -8 + i * 8)[1]} rx="13" ry="5.2" />
+      ))
+  }
+}
 
 const STEPS = [
   {
@@ -632,24 +677,6 @@ export default function ChainSchematic({ animate = true }) {
             </pattern>
           </defs>
 
-          {/* WORK MOVING OVERHEAD. Behind the row, because it is above the
-              plates in the world and further from the reader on the page. */}
-          <g className="fl-sky" aria-hidden="true">
-            {SKY.map((bot) => (
-              <g className="fl-bot" key={bot.key} style={{ '--beat': `${bot.beat}s`, '--lag': bot.lag }}>
-                <g className="fl-hover">
-                  <Drum shape={bot.hull} className="dgm-solid" />
-                  <Faces shape={bot.mast} className="dgm-solid" />
-                  <Drum shape={bot.rotor} className="dgm-rotor" />
-                </g>
-              </g>
-            ))}
-          </g>
-
-          {/* THE DATUM. One rule the whole run is registered to, drawn on the
-              same timeline as everything else - it draws itself left to right
-              as the plates land, so the line arrives WITH the row rather than
-              waiting under an empty stage. */}
           {/* THE RUN BETWEEN THE STATIONS. Four hairlines, each from one
               plate's downstream coupling to the next plate's upstream one, so
               what the row is doing carries across the gaps instead of stopping
@@ -760,6 +787,12 @@ export default function ChainSchematic({ animate = true }) {
                   <Faces shape={item.plate} className="dgm-solid" />
                   <polygon className="fl-sheen" points={item.plate.top} fill={`url(#fl-sheen-${item.key})`} />
                   <polygon className="fl-grain" points={item.plate.top} fill="url(#fl-grain)" />
+                  {/* WHAT THE THING OVERHEAD DARKENS. A shade belongs to the
+                      surface it falls on rather than to the object casting it,
+                      so this rides with the plate: lifting one used to leave
+                      its shade behind on the page, which is a shadow of
+                      something that is no longer above it. */}
+                  <ellipse className="fl-airshade" cx={item.seat[0]} cy={item.plate.back[1] + 20} rx="17" ry="6" />
                 </g>
 
                 {/* THE PLAN OF THE WORK, AND THE WORK STANDING IN IT. Printed
@@ -856,6 +889,16 @@ export default function ChainSchematic({ animate = true }) {
                     )
                   })}
                 </g>
+              </g>
+
+              {/* WHAT FLIES OVER THIS STATION. Inside the step, so it takes
+                  that station's ink and dims with it - and outside `.fl-body`,
+                  because it is already in the air and does not lift when the
+                  plate does. The shade under it is what ties it down: five
+                  dashed tethers would have been five more marks in the
+                  quietest part of the sheet. */}
+              <g className="fl-air" style={{ '--life': AIR_LIFE[item.index] }}>
+                <g className="fl-airbob">{overhead(item.key, item.seat[0])}</g>
               </g>
 
               {/* THE STATION, AND ITS NAME UNDER IT. Below the plate, on the

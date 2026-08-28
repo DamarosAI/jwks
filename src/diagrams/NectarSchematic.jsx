@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 import { EDGE_ANGLE, ISO_X, ISO_Y, jitter, planCyl, planPrism, planSpace, project, roundedDeck } from './iso'
-import { Faces } from './Solid'
+import { Faces, Sheen } from './Solid'
 import { useCenterOnOverflow } from './useCenterOnOverflow'
 import { useScrollRun } from './useScrollPhase'
 
@@ -946,6 +946,7 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
               a two-pixel node is not something a reader can aim at. */}
           <g className={`dgm-intel${lit('intel')}`} {...probe('intel')}>
             <Faces shape={INTEL} className="dgm-solid" />
+<Sheen shape={INTEL} id="nc-sheen-intel" />
             <g transform={planSpace(310, MESH_Y)}>
               <rect className="dgm-planefill" x="-160" y="-160" width="320" height="320" rx="28" fill="url(#nc-grain)" />
               <rect className="dgm-hit" x="-160" y="-160" width="320" height="320" rx="28" />
@@ -1152,6 +1153,7 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
               >
                 <g className="dgm-orbit">
                   <Faces shape={site.solid} className="dgm-solid" />
+<Sheen shape={site.solid} id={`nc-sheen-${site.key}`} />
                   {/* Stencilled on the wall, along it, the way a number is put
                       on the side of the thing it belongs to. */}
                   <text
