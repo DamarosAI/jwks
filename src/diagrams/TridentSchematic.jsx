@@ -1039,7 +1039,6 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
                 {...pick(item.key)}
               >
                 <Faces shape={item.plate} className="dgm-solid" />
-<Sheen shape={item.plate} id={`td-sheen-${item.key}`} />
                 <g className="dgm-motif" transform={planSpace(item.cx, item.y)}>{MOTIFS[item.key]}</g>
                 {/* The plate rides and its name does not. Two offsets to undo
                     here rather than one - the plate's own ride, and the bob of

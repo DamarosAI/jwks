@@ -76,9 +76,17 @@ describe('Trident and Nectar schematics', () => {
     assert.match(solid, /<defs>\s*<linearGradient id=\{id\}/)
     // Only the large surfaces carry it. A sheen on a nine-pixel contract field
     // is a gradient nobody can see costing a paint nobody asked for.
-    for (const [figure, count] of [[trident, 5], [nectar, 2]]) {
+    // The big surfaces, and ONLY those. A sheen on a thing the size of a tile is
+    // a gradient nobody reads on an object that then looks wet - so Trident's
+    // four decks carry it and its three proposal plates do not, and Nectar's
+    // intake slab carries it and its sites do not.
+    for (const [figure, count] of [[trident, 4], [nectar, 1]]) {
       assert.equal((figure.match(/<Sheen shape=/g) || []).length, count, 'the big surfaces, and only those')
     }
+    // And it is a lit surface rather than a surface under glass: the wash tuned
+    // on the chain's large pale plates sat on a Trident deck as a film.
+    const wash = Number(css.match(/\.dgm-sheen-back \{ stop-color: color-mix\(in srgb, var\(--surface-solid\) (\d+)%/)[1])
+    assert.ok(wash <= 30, `a ${wash}% wash on a deck carrying a mechanism is glass over it`)
     assert.doesNotMatch(solid, /Sheen[\s\S]*?export function Faces/)
 
     // ONE SPRING FOR ALL THREE. Everything decelerated into place on a curve
@@ -2019,7 +2027,7 @@ describe('The floor schematic', () => {
     // Five verbs, and each plate names the parts only it has.
     const own = {
       protocol: ['fl-sheet', 'fl-bite', 'fl-die'],
-      evidence: ['fl-socket', 'fl-record', 'fl-binder'],
+      evidence: ['fl-socket', 'fl-record', 'fl-route'],
       screening: ['fl-throat', 'fl-unit', 'fl-faller'],
       resolve: ['fl-post', 'fl-throw', 'fl-stamp'],
       replay: ['fl-bore', 'fl-band', 'fl-scale'],
@@ -2130,7 +2138,7 @@ describe('The floor schematic', () => {
     const throat = JSON.parse(floor.match(/const throat = (\[\[[-\d, [\]]+\])/)[1])
     const fact = floor.match(/fact: '(\d+) PASS - (\d+) REVIEW - (\d+) FAIL'/).slice(1).map(Number)
     assert.deepEqual(throat.map(([, , n]) => n), fact, 'the tally and the value line are the same three numbers')
-    assert.match(css, /@keyframes fl-fall \{[\s\S]*?translate\(var\(--span\)\) translateY\(/)
+    assert.match(css, /@keyframes fl-drop \{[\s\S]*?translateY\(11px\); opacity: 0/)
 
     // RESOLVE IS PULLED. Every other plate runs unattended; this is the only
     // step whose actor is a person, so it is the only one with a control on it
@@ -2155,7 +2163,7 @@ describe('The floor schematic', () => {
 
     // Five clocks, because the thing each step does is different and a figure
     // running one loop five times says they are the same step five times.
-    const clocks = [...css.matchAll(/animation: fl-(?:punch|reach|fall|claim|lift) ([\d.]+)s/g)].map((m) => m[1])
+    const clocks = [...css.matchAll(/animation: fl-(?:punch|reach|drop|claim|lift) ([\d.]+)s/g)].map((m) => m[1])
     assert.equal(new Set(clocks).size, 5, 'five instruments, five rates')
     // None runs until the plate is under it. The one clock allowed before the
     // fuse is the wander in the mess, which has to be alive while it is a mess.
@@ -2257,43 +2265,60 @@ describe('The floor schematic', () => {
     assert.deepEqual([...css.matchAll(/\.dgm-svg\.is-live (\.fl-[a-z]+)/g)].map((m) => m[1]), ['.fl-drift'])
   })
 
-  it('gives each station its own airspace instead of five identical craft', () => {
-    // FIVE IDENTICAL CRAFT FERRYING ACROSS IS ONE IDEA, NOT FIVE. The band
-    // carried five copies of the same little hull, and a row of identical
-    // things moving in the same direction says only that something is moving -
-    // which the couplings under them now say better, and say about the run
-    // rather than about the air. Meanwhile the one band in the cell nothing
-    // else was using had nothing in it belonging to any station.
-    assert.doesNotMatch(floor, /const SKY|fl-bot|fl-ferry/)
-    assert.doesNotMatch(css, /\.fl-sky|\.fl-bot|fl-ferry/)
-    assert.match(floor, /function overhead\(key, cx\)/)
-    // What arrives at each station, or what it sends on: a study descending, a
-    // reference ring, a cohort queued, a seal on a hook, a wireframe core.
-    for (const key of ['protocol', 'evidence', 'screening', 'resolve']) {
-      assert.match(floor, new RegExp(`case '${key}':`), `${key} needs its own airspace`)
+  it('moves nothing sideways, and floats nothing over the row', () => {
+    // HEIGHT IS THE ONE AXIS IN AN AXONOMETRIC THAT CANNOT LIE.
+    //
+    // Three solids used to ride a `glide` helper that turned a plan
+    // displacement into the screen move it makes: a head along a rail, a binder
+    // along a spine, a subject across to a throat. Every one was a solid
+    // TRANSLATING through a depth-sorted scene while keeping the draw order it
+    // had been sorted into - so a traveller passed in front of things it was
+    // behind and behind things it was in front of, and the projection came
+    // apart for as long as it moved.
+    //
+    // The helper being gone is the proof. Everything that moves now moves
+    // straight up or straight down, or turns in place: a die falls, a subject
+    // drops down a throat, a core rises out of a borehole, a lever swings in
+    // its own vertical plane. None of it needs a resort.
+    assert.doesNotMatch(floor, /const glide|glide\(/)
+    assert.doesNotMatch(floor, /'--span'|span:/)
+    assert.doesNotMatch(css, /var\(--span\)/)
+    // The one sideways move left is the WANDER in the mess, and it is allowed:
+    // a tile before the fuse is in the air with no plate under it and nothing
+    // to be sorted against, so there is no depth relationship for it to break.
+    // Everything from the moment a plate exists moves on screen y alone.
+    const moves = [...css.matchAll(/@keyframes (fl-[a-z]+) \{([\s\S]*?)\n\}/g)]
+      .filter(([, name]) => name !== 'fl-adrift')
+    for (const [, name, frames] of moves) {
+      for (const move of frames.match(/translate\([^)]*\)/g) || []) {
+        assert.match(move, /^translate\(0, 0\)$/, `${name} carries a solid sideways: ${move}`)
+      }
     }
-    // A reference is the one thing here that is a pointer and not a thing, so
-    // it is the one object in the figure drawn as an outline.
-    assert.match(css, /\.fl-airring \{\s*fill: none;/)
-    // Drawn INSIDE the step, so it takes that station's ink, dims with it, and
-    // deepens with it under the pointer - and OUTSIDE `.fl-body`, because it is
-    // already in the air and does not lift when the plate does.
-    assert.match(floor, /<g className="fl-air"[\s\S]{0,400}<\/g>\s*\n\s*\{\/\* THE STATION/)
-    assert.match(css, /\.fl-air \{\s*opacity: var\(--in\);/)
-    // The shade under it is what ties it down: five dashed tethers would have
-    // been five more marks in the quietest part of the sheet.
-    assert.match(floor, /className="fl-airshade"/)
-    assert.match(css, /\.fl-airshade \{\s*fill: color-mix\(in srgb, var\(--text\)/)
-    // And each bobs on its own long clock, so the band is never in step.
-    assert.match(css, /@keyframes fl-hang \{/)
-    const life = JSON.parse(floor.match(/const AIR_LIFE = (\[[\d., ]+\])/)[1])
-    assert.equal(new Set(life).size, 5, 'five stations, five clocks')
-    // It flies clear of the sentence, which runs to 94 at the narrowest width
-    // this figure is drawn at, and clear of the plates under it.
-    const air = Number(floor.match(/const AIR = (\d+)/)[1])
-    const cy = Number(floor.match(/const CY = (\d+)/)[1])
-    assert.ok(air > 100, `an airspace at ${air} is in the sentence's own band`)
-    assert.ok(air < cy - (75 + 50) * 0.34, `an airspace at ${air} lands on a plate`)
+    assert.match(css, /@keyframes fl-drop \{/)
+    assert.match(css, /@keyframes fl-punch \{/)
+    assert.match(css, /@keyframes fl-lift \{/)
+
+    // AND NOTHING HANGS OVER THE ROW. Two passes put things in the band above
+    // the plates - five identical carriers ferrying across, then one hanging
+    // object per station - and both were decoration with a rationale attached.
+    // The carriers said only that something was moving, which the couplings say
+    // better; the hanging objects were static shapes in the quietest part of
+    // the sheet, and a thing that hangs in the air without doing anything is
+    // there to be looked at rather than read.
+    assert.doesNotMatch(floor, /const SKY|const AIR|fl-bot|fl-ferry|function overhead|fl-air/)
+    assert.doesNotMatch(css, /\.fl-sky|\.fl-bot|fl-ferry|\.fl-air|fl-hang/)
+
+    // POINTING AT A STATION FINISHES IT. A hover used to re-weight the drawing
+    // and nothing more, which is presentation: it says "this one" and says
+    // nothing about the step. Every lamp on the held plate comes up and STAYS
+    // up, out of the cycle it was taking its turn in - four criteria compiled,
+    // every record bound, every bin counted, nine bands of nine recovered.
+    assert.match(css, /\.dgm-svg\.is-floor\.is-fused \.fl-step\.is-hot \.fl-lamp \{\s*animation: none;/)
+    // And the RUN lights through it, so the answer to what a step does includes
+    // where it sits. Five plates near each other become a run with a reader's
+    // finger somewhere in it, which the datum alone could never say.
+    assert.match(floor, /className=\{`fl-link\$\{hot === item\.key \|\| hot === STEPS\[i\]\.key \? ' is-live' : ''\}`\}/)
+    assert.match(css, /\.is-fused \.fl-link\.is-live \{[\s\S]*?stroke-width: 2;/)
   })
 
   it('letters the run underneath it, in ink, off one datum', () => {
@@ -2460,6 +2485,19 @@ describe('The floor schematic', () => {
   })
 
   it('sets the sentence into the drawing instead of above it', () => {
+    // THE DRAWING BREAKS THE COLUMN AND THE TYPE DOES NOT. Nothing inside the
+    // figure can make it bigger - the plates already span ninety-six per cent
+    // of their own viewBox - but the column's width is SOLVED against the
+    // eyebrow's offset, so widening it would take the whole section out of
+    // alignment to make one drawing larger. The figure steps out instead, which
+    // is the better composition: this is the one section whose subject is a run
+    // read left to right, and the one shape on the site that wants the width of
+    // the screen rather than a reading measure.
+    assert.match(css, /\.thesis-column \{[\s\S]*?width: min\(100%, calc\(1480px - var\(--gutter\) \* 2\)\);/)
+    const bleed = Number(css.match(/\.thesis-chain \{[\s\S]*?margin-inline: clamp\(-(\d+)px/)[1])
+    assert.ok(bleed >= 100, `a ${bleed}px break-out is not a break-out`)
+    // And never on a narrow screen: the clamp's other end is zero.
+    assert.match(css, /\.thesis-chain \{[\s\S]*?margin-inline: clamp\(-\d+px, calc\(\(1480px - 100vw\) \/ 2\), 0px\);/)
     assert.match(app, /<div className="thesis-stage">/)
     assert.match(css, /\.thesis-stage \{[\s\S]*?display: grid;/)
     assert.match(css, /\.thesis-stage > \* \{[\s\S]*?grid-area: 1 \/ 1;/)

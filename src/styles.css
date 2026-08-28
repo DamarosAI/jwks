@@ -1154,10 +1154,29 @@ h2 {
    long thing and cropping it to a comfortable measure would be cropping the
    only claim it makes. */
 
+/* THE DRAWING BREAKS THE COLUMN. THE TYPE DOES NOT.
+
+   The plates already span ninety-six per cent of their own viewBox, so nothing
+   inside the figure can make it bigger: the only lever is the box it is drawn
+   into. But the column's width is SOLVED, not chosen - the eyebrow sits at
+   (W - min(W, 1480)) / 2 + gutter from the section edge, and a column centred
+   in a content box already W - 2 * gutter wide lands on that same pixel only at
+   1480. Widening it would take the whole section out of alignment to make one
+   drawing larger.
+
+   So the drawing steps out of the column and the type stays in it. That is the
+   better composition anyway: this is the one section whose subject is a RUN -
+   five stations on one datum, read left to right - and it is the one shape on
+   the site that wants the width of the screen rather than a reading measure.
+   A figure that breaks the grid on purpose reads as emphasis; a column that
+   quietly got wider reads as a mistake. It only breaks out once there is room
+   to, and never on a narrow screen. */
+
 .thesis-chain {
   z-index: 1;
-  width: 100%;
+  width: auto;
   min-width: 0;
+  margin-inline: clamp(-136px, calc((1480px - 100vw) / 2), 0px);
 }
 
 /* The answer, under the drawing that earns it. It used to sit directly beneath
@@ -9641,9 +9660,15 @@ html.is-hidden .clinic-node i,
 
 .dgm-sheen { pointer-events: none; }
 
-.dgm-sheen-back { stop-color: color-mix(in srgb, var(--surface-solid) 52%, transparent); }
+/* LESS GLASS. Tuned on the chain - whose plates are large, pale and nearly
+   empty - the same wash on a Trident deck or a Nectar slab sat on top of the
+   surface as a FILM rather than as light on it: those are smaller, darker, and
+   each carries a mechanism the film then had to be read through. Halved, and
+   the front kept to a whisper, it is a lit surface again rather than a surface
+   under glass. */
+.dgm-sheen-back { stop-color: color-mix(in srgb, var(--surface-solid) 26%, transparent); }
 .dgm-sheen-mid { stop-color: transparent; }
-.dgm-sheen-front { stop-color: color-mix(in srgb, var(--ink) 14%, transparent); }
+.dgm-sheen-front { stop-color: color-mix(in srgb, var(--ink) 8%, transparent); }
 
 .dgm-face-left {
   fill: color-mix(in srgb, var(--ink) var(--wash, 34%), var(--body-near));
@@ -12520,7 +12545,6 @@ html.is-hidden .clinic-node i,
 .fl-plate,
 .fl-emblem,
 .fl-cast,
-.fl-air,
 .fl-datum,
 .fl-leader,
 .fl-station,
@@ -13002,6 +13026,8 @@ html.is-hidden .clinic-node i,
   opacity: var(--in);
 }
 
+.fl-links line { vector-effect: non-scaling-stroke; }
+
 /* ── The half-pixel every solid moves ────────────────────────────────────
 
    Trident runs a second, quieter layer under everything else: nineteen contract
@@ -13176,19 +13202,6 @@ html.is-hidden .clinic-node i,
   100% { opacity: 0; }
 }
 
-.fl-binder .dgm-face-top { fill: color-mix(in srgb, var(--deep) 74%, var(--surface-solid)); stroke: var(--line); }
-.fl-binder .dgm-face-left,
-.fl-binder .dgm-face-right { fill: var(--deep); }
-
-.dgm-svg.is-live.is-fused .fl-binder { animation: fl-cut 7.4s cubic-bezier(0.4, 0, 0.5, 1) infinite; }
-
-@keyframes fl-cut {
-  0% { transform: translate(0, 0); opacity: 0; }
-  8% { opacity: 1; }
-  74% { transform: translate(var(--span)); opacity: 1; }
-  84%, 100% { transform: translate(var(--span)); opacity: 0; }
-}
-
 /* ── SCREENING DROPS ─────────────────────────────────────────────────────
 
    Three throats are cut through the plate and each subject goes down whichever
@@ -13231,17 +13244,24 @@ html.is-hidden .clinic-node i,
 .fl-faller .dgm-face-right { fill: var(--deep); }
 
 .dgm-svg.is-live.is-fused .fl-faller {
-  animation: fl-fall 5.6s cubic-bezier(0.45, 0, 0.7, 1) infinite;
+  animation: fl-drop 5.6s cubic-bezier(0.4, 0, 0.85, 1) infinite;
   animation-delay: calc(var(--turn, 0) * -1.87s);
 }
 
-/* Across, then down and gone. The going is the point: a subject that stopped on
-   the rim would be a subject that had not been screened. */
-@keyframes fl-fall {
-  0% { transform: translate(0, 0); opacity: 0; }
-  10% { opacity: 1; }
-  54% { transform: translate(var(--span)); opacity: 1; }
-  70%, 100% { transform: translate(var(--span)) translateY(20px); opacity: 0; }
+/* STRAIGHT DOWN, AND GONE. It used to slide from the mouth across to the throat
+   and then descend, and a solid translating through a depth-sorted scene keeps
+   the draw order it was sorted into - so it passed in front of things it was
+   behind and behind things it was in front of, and the projection came apart
+   for as long as it moved. Height is the one axis here that cannot lie. */
+@keyframes fl-drop {
+  0%, 6% { transform: translateY(-30px); opacity: 0; }
+  /* Solid the whole way down. It used to fade as it descended, and a
+     half-opaque solid in an axonometric is not a fading solid - it is a hole,
+     which on a plate that draws real holes is the worst thing it could be
+     mistaken for. It goes out only once it is inside the throat, where being
+     hard to see is what is actually happening to it. */
+  14%, 68% { transform: translateY(-16px); opacity: 1; }
+  84%, 100% { transform: translateY(11px); opacity: 0; }
 }
 
 /* ── RESOLVE IS PULLED ───────────────────────────────────────────────────
@@ -13351,81 +13371,37 @@ html.is-hidden .clinic-node i,
   100% { opacity: 0; transform: translateY(9px); }
 }
 
-/* ── The airspace over each station ──────────────────────────────────────
+/* POINTING AT A STATION FINISHES IT.
 
-   FIVE IDENTICAL CRAFT FERRYING ACROSS IS ONE IDEA, NOT FIVE. The band carried
-   five copies of the same hull, and a row of identical things moving the same
-   way says only that something is moving - which the couplings now say better,
-   and say about the run rather than about the air.
+   A hover used to re-weight the drawing and nothing more: the plate rose, the
+   ink deepened, the other four stood down. All of that is presentation - it
+   says "this one" and it does not say anything about the step. A reader who
+   leans on Screening learns that Screening is the one they are leaning on.
 
-   Each station's own thing hangs there instead: what arrives at it or what it
-   sends on. It is drawn inside the step, so it takes that station's ink, dims
-   with it, and deepens with it under the pointer. */
+   So the pointer now COMPLETES the station. Every lamp on the held plate comes
+   up and STAYS up, out of the cycle it was taking its turn in, which is the
+   finished state of that step: four criteria compiled, every record bound,
+   every bin counted, the call made, nine bands of nine recovered. The ambient
+   machine keeps running underneath - a machine that stops when somebody leans
+   in is not a machine - but what a reader is shown is the step having got
+   there rather than the step going round.
 
-.fl-air {
-  opacity: var(--in);
-  pointer-events: none;
+   And the RUN lights through it. The two links either side of the held station
+   carry, so the answer to "what does this step do" includes where it sits: five
+   plates near each other become a run with a reader's finger somewhere in it.
+   That is the one thing the datum underneath could never say on its own. */
+
+.dgm-svg.is-floor.is-fused .fl-step.is-hot .fl-lamp {
+  animation: none;
+  opacity: calc(1 - var(--idle, 0));
 }
 
-/* A reference is the one thing in the figure that is a pointer and not a thing,
-   so it is the one object drawn as an outline. */
-.fl-airring {
-  fill: none;
-  stroke: color-mix(in srgb, var(--tone) 62%, transparent);
-  stroke-width: 1.2;
-  vector-effect: non-scaling-stroke;
+.fl-link { transition: stroke 320ms ease, stroke-width 320ms ease; }
+
+.is-fused .fl-link.is-live {
+  stroke: color-mix(in srgb, var(--accent-strong) 78%, var(--text));
+  stroke-width: 2;
 }
-
-.fl-airtick {
-  fill: none;
-  stroke: color-mix(in srgb, var(--tone) 54%, transparent);
-  stroke-width: 1.2;
-  stroke-linecap: round;
-  vector-effect: non-scaling-stroke;
-}
-
-.fl-air .dgm-face-top {
-  fill: color-mix(in srgb, var(--tone) 40%, var(--surface-solid));
-  stroke: color-mix(in srgb, var(--line) 52%, transparent);
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
-}
-
-.fl-air .dgm-face-left { fill: color-mix(in srgb, var(--tone) 62%, var(--surface-solid)); stroke: none; }
-.fl-air .dgm-face-right { fill: color-mix(in srgb, var(--tone) 78%, var(--surface-solid)); stroke: none; }
-
-/* What ties it down without a leader. A thing in the air over a plate darkens
-   the plate; that is the only cue this projection has, and it is the same one
-   a held plate uses. */
-.fl-airshade {
-  fill: color-mix(in srgb, var(--text) 7%, transparent);
-  transition: opacity 380ms ease;
-}
-
-.fl-airbob {
-  transform-box: fill-box;
-  transform-origin: center;
-}
-
-/* Its own long clock, so the five are never in step. */
-.dgm-svg.is-live.is-fused .fl-airbob {
-  animation: fl-hang calc(9s + var(--life, 0) * 6s) ease-in-out infinite alternate;
-  animation-delay: calc(var(--life, 0) * -7s);
-}
-
-@keyframes fl-hang {
-  to { transform: translateY(-6px); }
-}
-
-.is-fused .fl-step.is-hot .fl-airshade { opacity: 1.4; }
-
-/* A HELD PLATE KEEPS RUNNING.
-   Pointing at one used to freeze it, on the theory that a reader who has
-   stopped wants a drawing that has stopped. They do not: they have just chosen
-   which machine to watch, and the one thing a machine should not do when
-   somebody leans in is stop being a machine. What a hover buys is HEIGHT and
-   CONTRAST - the plate rises, its shadow drops away underneath it, and every
-   solid on it deepens - and none of that costs the motion. */
 
 /* The machine gains a step of ink as it rises, so the plate a reader is on is
    the darkest thing on the sheet as well as the highest. */
@@ -13511,7 +13487,6 @@ html.is-hidden .clinic-node i,
   .fl-bite,
   .fl-band,
   .fl-lever,
-  .fl-airbob,
   .fl-settle,
   .fl-step,
   .fl-name,

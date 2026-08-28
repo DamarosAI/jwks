@@ -45,12 +45,12 @@ const W = 1200
    frame, the sentence ended at 62 and the first label started at 261 - two
    hundred units of blank between the claim and the thing that proves it. The
    frame is cut to what the figure, the run's datum and the sentence occupy. */
-const H = 318
+const H = 286
 const CX = 600
 // The row sits low, because everything above it belongs to two other things:
 // the sentence, which is set into the top of this same cell, and the scatter,
 // which needs somewhere to be that is not on top of the sentence.
-const CY = 204
+const CY = 178
 
 /* WHERE THE MESS IS ALLOWED TO BE.
  *
@@ -60,7 +60,7 @@ const CY = 204
  * of this cell. A drawing that collides with its own sentence is a drawing
  * that has stopped being read. The floor of the box is the plate row's own
  * foot, because the band under that belongs to the lettering now. */
-const KEEP = { top: 74, bottom: 250, left: 62, right: 1138 }
+const KEEP = { top: 96, bottom: 224, left: 62, right: 1138 }
 
 /* The clamp needs a PER-TILE inset, or every tile whose reach overshoots lands
    on the identical boundary pixel and the edges of the scatter grow clumps -
@@ -102,7 +102,7 @@ const PLATE_R = 12
  * down onto it, and five names in near-black at ten pixels. The type is the
  * last thing you read rather than the first, which is what it is for. */
 const FOOT = Math.round(CY + (HALF_X + HALF_Y) * ISO_Y) + SHEET + 4
-const DATUM = 276
+const DATUM = 244
 const NAME_Y = DATUM + 16
 const FACT_Y = DATUM + 29
 
@@ -202,7 +202,22 @@ function mechanism(key, t) {
     }
   }
 
-  const glide = (dx, dy) => `${Math.round((dx - dy) * 0.866)}px, ${Math.round((dx + dy) * 0.34)}px`
+  /* NOTHING TRAVELS ALONG A PLAN AXIS ANY MORE, AND THAT IS THE FIX.
+
+     A `glide` helper stood here, turning a plan displacement into the screen
+     move it makes, and three solids rode it: a head along a rail, a binder
+     along a spine, a subject across to a throat. Every one was a solid
+     TRANSLATING through a depth-sorted scene while keeping the draw order it
+     was sorted into - so a traveller passed in front of things it was behind
+     and behind things it was in front of, and the projection came apart for as
+     long as it moved. That is what was breaking the perspective, and the helper
+     going unused is the proof it is gone.
+
+     Height is the one axis in an axonometric that cannot lie: it is screen y
+     and nothing else is. So everything that moves here now moves straight up or
+     straight down, or turns in place. A die falls, a subject drops down a
+     throat, a core rises out of a borehole, a lever swings in its own vertical
+     plane. None of it needs a resort and all of it occludes what it should. */
   const OVER = 999
   const printed = (depth, cls, mark) => ({ depth, plan: FACE, cls: `fl-plan ${cls}`, mark })
 
@@ -302,7 +317,6 @@ function mechanism(key, t) {
         // down the hole - so it is small, it is on the surface, and it never
         // covers the thing it points at.
         ...socket.flatMap(([px, py], i) => (i === 3 ? [] : lit('res', px - 16, py - 16, 5, 5, 4, 1.5, i))),
-        { ...stand(-52, -40, 5, 5, 7, 1.5, 0), cls: 'fl-binder', span: glide(104, 0), depth: OVER },
       ]
     },
     // SCREENING DROPS. Three throats, and what is left standing is the count.
@@ -337,15 +351,24 @@ function mechanism(key, t) {
         // the difference between a bin and a throat, and the reason this plate
         // can say many arrive and few come out anywhere.
         ...throat.map(([px, py]) => ({ ...well(px, py, 13, 4), cls: 'fl-throat' })),
-        // One subject down each, forever, and always the same one down the same
-        // throat: the same protocol against the same evidence reaches the same
-        // result, and that is the only way a drawing can say deterministic.
+        // One subject down each throat, forever, and always the same one down
+        // the same throat: the same protocol against the same evidence reaches
+        // the same result, which is the only way a drawing can say
+        // deterministic.
+        //
+        // IT DROPS. It used to slide from the mouth to the throat and then go
+        // down, and a solid translating ACROSS a depth-sorted scene keeps the
+        // draw order it was sorted into - so a subject crossing the plate
+        // passed in front of things it was behind and behind things it was in
+        // front of, and the projection came apart for as long as it moved.
+        // Straight down is the one direction in an axonometric that cannot lie:
+        // height is screen y and nothing else is, so a falling thing needs no
+        // resort and occludes exactly what it should.
         ...throat.map(([px, py], i) => ({
-          ...stand(-46, -24, 5, 5, 7, 1.5, 0),
+          ...stand(px, py, 5, 5, 7, 1.5, 0),
           cls: 'fl-faller',
           turn: i,
-          span: glide(px + 46, py + 24),
-          depth: OVER,
+          depth: px + py + 0.2,
         })),
       ]
     },
@@ -436,77 +459,15 @@ function mechanism(key, t) {
 const LINK_X = Math.round((66 + 41) * 0.866 * 10) / 10
 const LINK_Y = Math.round((66 - 41) * 0.34 * 10) / 10
 
-/* -- WHAT FLIES OVER EACH STATION ---------------------------------------
+/* NOTHING FLIES OVER THE ROW ANY MORE.
 
-   FIVE IDENTICAL CRAFT FERRYING ACROSS IS ONE IDEA, NOT FIVE.
-
-   The airspace carried five copies of the same little hull, and a row of
-   identical things moving in the same direction says only that something is
-   moving - which the couplings under them now say better, and say about the
-   run rather than about the air. Meanwhile the one band in the cell that
-   nothing else was using had nothing in it that belonged to any station.
-
-   So each station gets its own thing overhead: what arrives at it, or what it
-   sends on. A study descending on Protocol. A reference ring hanging over
-   Evidence - the only outlined object in the figure, because a reference is the
-   one thing here that is not a solid. A cohort queued in the air over
-   Screening. A seal on a hook over Resolve. And over Replay a wireframe of the
-   core standing under it: the record as a projection rather than as a thing.
-
-   Each is drawn INSIDE its own step, so it takes that station's ink, dims with
-   it when a reader is on another one, and deepens with it under the pointer.
-   Each drops a small shade on the plate beneath, which is what ties it down
-   without a leader line - five dashed tethers would have been five more marks
-   in the quietest part of the sheet. And each bobs on its own long clock, so
-   the band is never still and never in step. */
-const AIR = 128
-const AIR_LIFE = [0.14, 0.62, 0.31, 0.85, 0.47]
-
-function overhead(key, cx) {
-  const at = (dx, dy) => [cx + dx, AIR + dy]
-  const slab = (dx, dy, hx, hy, high, r) => roundedSlab(cx + dx, AIR + dy, hx, hy, high, r)
-  switch (key) {
-    // THE STUDY, ARRIVING. Two sheets out of step, because a protocol turns up
-    // as a document and not as a block.
-    case 'protocol':
-      return [
-        <Faces key="a" shape={slab(-5, 3, 10, 8, 2.4, 2)} className="dgm-solid" />,
-        <Faces key="b" shape={slab(3, -4, 10, 8, 2.4, 2)} className="dgm-solid" />,
-      ]
-    // THE REFERENCE. Outlined rather than solid, because it is the one thing in
-    // this figure that is a pointer and not a thing - and it hangs over the
-    // sockets whose records never leave the floor.
-    case 'evidence':
-      return [
-        <ellipse key="o" className="fl-airring" cx={cx} cy={AIR} rx="15" ry="6" />,
-        <ellipse key="i" className="fl-airring" cx={cx} cy={AIR} rx="7" ry="2.8" />,
-        ...[-9, 0, 9].map((dx) => (
-          <line key={dx} className="fl-airtick" x1={cx + dx} y1={AIR + 5} x2={cx + dx} y2={AIR + 11} />
-        )),
-      ]
-    // THE COHORT, WAITING. Many, identical, and none of them screened yet.
-    case 'screening':
-      return [0, 1, 2, 3, 4].map((i) => (
-        <Faces key={i} shape={slab(-16 + i * 8, ((i % 2) - 0.5) * 5, 3.4, 3.4, 2.6, 1.2)} className="dgm-solid" />
-      ))
-    // THE SEAL, ON ITS HOOK. Nothing else in the figure hangs.
-    case 'resolve':
-      return [
-        <path
-          key="hook"
-          className="fl-airtick"
-          d={`M ${cx - 1} ${AIR - 13} L ${cx - 1} ${AIR - 4} a 5 5 0 1 0 10 0`}
-        />,
-        <Drum key="seal" shape={roundedCylinder(cx, AIR + 4, 9, 4)} className="dgm-solid" />,
-      ]
-    // THE RECONSTRUCTION. A wireframe of the core standing under it, because a
-    // replay is a past state projected rather than a thing you can pick up.
-    default:
-      return [0, 1, 2].map((i) => (
-        <ellipse key={i} className="fl-airring" cx={at(0, -8 + i * 8)[0]} cy={at(0, -8 + i * 8)[1]} rx="13" ry="5.2" />
-      ))
-  }
-}
+   Two passes put things in the band above the plates: five identical carriers
+   ferrying across, then one hanging object per station. Both were decoration
+   with a rationale attached. The carriers said only that something was moving,
+   which the couplings say better; the hanging objects were static shapes in the
+   quietest part of the sheet, and a thing that hangs in the air without doing
+   anything is a thing that is there to be looked at rather than read. The band
+   is gone with them, and the figure is the closer for it. */
 
 const STEPS = [
   {
@@ -684,6 +645,13 @@ export default function ChainSchematic({ animate = true }) {
           <g className="fl-links" aria-hidden="true">
             {STEPS.slice(1).map((item, i) => (
               <line
+                /* THE RUN LIGHTS THROUGH THE STATION A READER IS ON. Pointing
+                   at a step used to change only that step, which made five
+                   plates that happen to be near each other rather than a run
+                   with a reader's finger somewhere in it. The two links either
+                   side of the held station carry now, so the answer to "what
+                   does this step do" includes where it sits. */
+                className={`fl-link${hot === item.key || hot === STEPS[i].key ? ' is-live' : ''}`}
                 key={item.key}
                 x1={STEPS[i].seat[0] + LINK_X}
                 y1={STEPS[i].seat[1] + LINK_Y}
@@ -787,12 +755,6 @@ export default function ChainSchematic({ animate = true }) {
                   <Faces shape={item.plate} className="dgm-solid" />
                   <polygon className="fl-sheen" points={item.plate.top} fill={`url(#fl-sheen-${item.key})`} />
                   <polygon className="fl-grain" points={item.plate.top} fill="url(#fl-grain)" />
-                  {/* WHAT THE THING OVERHEAD DARKENS. A shade belongs to the
-                      surface it falls on rather than to the object casting it,
-                      so this rides with the plate: lifting one used to leave
-                      its shade behind on the page, which is a shadow of
-                      something that is no longer above it. */}
-                  <ellipse className="fl-airshade" cx={item.seat[0]} cy={item.plate.back[1] + 20} rx="17" ry="6" />
                 </g>
 
                 {/* THE PLAN OF THE WORK, AND THE WORK STANDING IN IT. Printed
@@ -865,7 +827,7 @@ export default function ChainSchematic({ animate = true }) {
                       <g
                         className={part.cls}
                         key={`${item.key}-e${n}`}
-                        style={{ '--turn': part.turn ?? 0, '--span': part.span, '--idle': part.idle ? 1 : 0, '--life': part.life }}
+                        style={{ '--turn': part.turn ?? 0, '--idle': part.idle ? 1 : 0, '--life': part.life }}
                       >
                         {/* The core lifts inside its own group, because the
                             band is placed at its depth in the section and the
@@ -889,16 +851,6 @@ export default function ChainSchematic({ animate = true }) {
                     )
                   })}
                 </g>
-              </g>
-
-              {/* WHAT FLIES OVER THIS STATION. Inside the step, so it takes
-                  that station's ink and dims with it - and outside `.fl-body`,
-                  because it is already in the air and does not lift when the
-                  plate does. The shade under it is what ties it down: five
-                  dashed tethers would have been five more marks in the
-                  quietest part of the sheet. */}
-              <g className="fl-air" style={{ '--life': AIR_LIFE[item.index] }}>
-                <g className="fl-airbob">{overhead(item.key, item.seat[0])}</g>
               </g>
 
               {/* THE STATION, AND ITS NAME UNDER IT. Below the plate, on the

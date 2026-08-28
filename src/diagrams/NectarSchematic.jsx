@@ -1153,7 +1153,6 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
               >
                 <g className="dgm-orbit">
                   <Faces shape={site.solid} className="dgm-solid" />
-<Sheen shape={site.solid} id={`nc-sheen-${site.key}`} />
                   {/* Stencilled on the wall, along it, the way a number is put
                       on the side of the thing it belongs to. */}
                   <text
