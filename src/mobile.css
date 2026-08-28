@@ -309,19 +309,17 @@ body,
      lettered throughout, and shrinking a sheet until its annotation is six
      pixels is not a smaller drawing, it is an unreadable one.
 
-     THE FLOOR USED TO BE THE EXCEPTION, AND IT STOPPED BEING ONE. Nothing is
-     written on it, so for a long time it could simply fit: a phone got the
-     whole composition at once instead of forty per cent of it, which was the
-     first real dividend of the no-labels rule.
+     Nothing is written on this one, and it is one object rather than a spread
+     of them, so it simply fits: a phone gets the whole composition at once
+     instead of forty per cent of it. That is the dividend of the no-labels
+     rule, and it came back the moment the landscape did not.
 
-     That held while the world was compact. It is not any more - the camera
-     needs somewhere to fly, so the three districts are now spread down a long
-     diagonal on a plane half again as wide - and fitting all of that into three
-     hundred and fifty pixels puts its solids back under three pixels each. So
-     it pans like the other two, and `useCenterOnOverflow` opens it on the
-     middle, which is where the site stands. */
+     It briefly had to pan, while the figure was a camera flying over three
+     districts on a plane half again as wide. There is no camera and no
+     landscape now - one deck, assembling - so there is nothing to pan across
+     and no reason to make a reader drag for it. */
 
-  #root .dgm-svg.is-floor { min-width: 780px; }
+  #root .dgm-svg.is-floor { min-width: 0; }
 
   #root .dgm-readout {
     flex-direction: column;
