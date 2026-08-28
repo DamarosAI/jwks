@@ -1969,84 +1969,182 @@ describe('The floor schematic', () => {
   })
 
   it('gives each plate its own kind of machine, not one machine five times', () => {
-    // FIVE MACHINES, AND FIVE DIFFERENT KINDS OF MACHINE. The pass before this
-    // gave every plate the same vocabulary - a population of rounded boxes with
-    // a rounded box travelling past them - and five arrangements of one object
-    // is one machine drawn five ways. Trident does not work like that: a
-    // proposal surface is a dish with a hub sunk into it, a schema is a lattice
-    // of standing tiles, an approval is a barrel with two blades across its
-    // bore, a ledger is a stack of rows. Four decks, four form languages, and a
-    // reader can tell them apart with the labels covered.
+    // FIVE MACHINES, AND FIVE DIFFERENT KINDS OF MACHINE. One pass gave every
+    // plate the same vocabulary - a population of rounded boxes with a rounded
+    // box travelling past them - and five arrangements of one object is one
+    // machine drawn five ways. The pass after it gave them five topologies but
+    // built all five out of the same two solids on five BLANK sheets, and a
+    // solid balanced on a blank sheet is a sticker.
     assert.match(floor, /function mechanism\(key, t\)/)
     for (const key of ['protocol', 'evidence', 'screening', 'resolve', 'replay']) {
       assert.match(floor, new RegExp(`^    ${key}: \\(\\) =>`, 'm'))
     }
-    // A gantry, a patch bay, a hopper, a press and a turntable. Each names the
-    // parts only it has.
+    // A gantry, a patch bay, a tally, a press and a dial. Each names the parts
+    // only it has.
     const own = {
-      protocol: ['fl-sheet', 'fl-gantry', 'fl-lock'],
-      evidence: ['fl-spine', 'fl-tether', 'fl-binder'],
-      screening: ['fl-hopper', 'fl-chute', 'fl-puck'],
-      resolve: ['fl-beam', 'fl-call', 'fl-anvil', 'fl-seal'],
+      protocol: ['fl-sheet', 'fl-gantry', 'fl-head', 'fl-lock'],
+      evidence: ['fl-spine', 'fl-binder'],
+      screening: ['fl-hopper', 'fl-unit', 'fl-puck'],
+      resolve: ['fl-anvil', 'fl-call', 'fl-seal'],
       replay: ['fl-disc', 'fl-hub'],
     }
     for (const [key, parts] of Object.entries(own)) {
       for (const part of parts) {
-        assert.match(floor, new RegExp(`cls: '${part}'`), `${key} needs its ${part}`)
+        assert.match(floor, new RegExp(`cls: .fl-\\{?[^']*${part.slice(3)}`), `${key} needs its ${part}`)
         assert.match(css, new RegExp(`\\.${part}\\b`), `${part} has to be dressed`)
       }
     }
-    // AND THEY ARE NOT ALL BOXES. Half of what lets Trident's decks tell
-    // themselves apart is that two of them are built out of circles, so a
-    // source, a mouth, a pan and a face are drawn round here rather than
-    // milled square. Three of the five carry round solids.
-    assert.match(floor, /const drum = \(px, py, r, high, base = 0\) =>/)
-    assert.match(floor, /roundedCylinder\(sx, sy - base - high, r, high\)/)
-    assert.match(floor, /function Drum\(\{ shape, className \}\)/)
-    const rounds = ['screening', 'resolve', 'replay'].filter((key) => {
-      const body = floor.slice(floor.indexOf(`    ${key}: () =>`), floor.indexOf(`    ${key}: () =>`) + 900)
-      return /drum\(|litDrum\(/.test(body)
+
+    // EVERY PLATE IS PRINTED BEFORE ANYTHING STANDS ON IT. The ink goes down in
+    // PLAN, inside the projection, so a printed lane and the puck that runs
+    // down it are solved from the same two numbers and cannot drift apart.
+    assert.match(floor, /const FACE = planSpace\(seatX, seatY\)/)
+    assert.match(floor, /const printed = \(depth, cls, mark\) => \(\{ depth, plan: FACE, cls: `fl-plan \$\{cls\}`, mark \}\)/)
+    assert.match(css, /\.fl-plan \{[\s\S]*?vector-effect: non-scaling-stroke;/)
+    assert.match(floor, /if \(part\.plan\) \{/)
+    // All five carry one, and the ink goes down BEFORE the solids do - except
+    // the dial, which is printed on a disc and has to be laid after it.
+    const beds = [...floor.matchAll(/printed\((-?\d+), '([^']+)'/g)].map((m) => [Number(m[1]), m[2]])
+    assert.equal(beds.length, 5, 'five plates, five printed plans')
+    assert.ok(beds.every(([depth]) => depth < -700), 'the plan goes down under the machine')
+    assert.match(floor, /printed\(-990, 'fl-print fl-dial'/)
+    assert.match(floor, /\{ \.\.\.drum\(0, 0, 45, 3\), cls: 'fl-disc', depth: -999 \}/)
+
+    // AND NOTHING STANDS OFF ITS OWN PLATE.
+    //
+    // This is the bug that produced a document hanging in the air past the
+    // back-left corner and a gantry rail lying beside the figure. The plate is
+    // a plan rectangle with ROUNDED corners, and its back edge slopes UP as it
+    // goes left on screen - so a part can be inside the plan bounds and still
+    // leave the surface once its own height lifts it. Height is what overhangs.
+    const HX = 75
+    const HY = 50
+    const R = 10
+    const inPlan = (x, y) => {
+      const [ax, ay] = [Math.abs(x), Math.abs(y)]
+      if (ax > HX || ay > HY) return false
+      if (ax <= HX - R || ay <= HY - R) return true
+      return (ax - (HX - R)) ** 2 + (ay - (HY - R)) ** 2 <= R * R + 0.01
+    }
+    const num = '(-?[\\d.]+)'
+    const off = []
+    for (const m of floor.matchAll(new RegExp(`(?<![A-Za-z])stand\\(${num}, ${num}, ${num}, ${num}, `, 'g'))) {
+      const [px, py, hx, hy] = m.slice(1).map(Number)
+      for (const [sx, sy] of [[1, 1], [1, -1], [-1, 1], [-1, -1]]) {
+        if (!inPlan(px + sx * hx, py + sy * hy)) off.push(`stand at ${px},${py}`)
+      }
+    }
+    for (const m of floor.matchAll(new RegExp(`(?<![A-Za-z])drum\\(${num}, ${num}, ${num}, `, 'g'))) {
+      const [px, py, r] = m.slice(1).map(Number)
+      for (let a = 0; a < 24; a += 1) {
+        const t = (a / 24) * Math.PI * 2
+        if (!inPlan(px + Math.cos(t) * r, py + Math.sin(t) * r)) off.push(`drum at ${px},${py}`)
+      }
+    }
+    assert.equal(off.length, 0, `off the plate: ${[...new Set(off)].join(', ')}`)
+
+    // A PLAN RECTANGLE IS AS WIDE AS ITS PERIMETER, WHICHEVER WAY IT FACES:
+    // 2(hx + hy) * ISO_X, always. So a thin blade is exactly as wide on screen
+    // as the fat block with the same half-sum, and the four criteria that were
+    // half (4, 24) stepped seventeen apart were forty-eight pixels wide sitting
+    // fifteen apart - not a comb, a smear. Everything on a plate is compact in
+    // plan and tall in HEIGHT, which is the axis that costs nothing on ground.
+    const X = 0.866
+    const sized = [...floor.matchAll(/(?:stand|lit)\((?:'[a-z]+', )?[^,]+, [^,]+, ([\d.]+), ([\d.]+), /g)]
+      .map((m) => 2 * (Number(m[1]) + Number(m[2])) * X)
+    const round = [...floor.matchAll(/(?<![A-Za-z])drum\((?:'[a-z]+', )?[^,]+, [^,]+, ([\d.]+), /g)]
+      .map((m) => 2 * Number(m[1]) * X * Math.SQRT2)
+    assert.ok(sized.length >= 10 && round.length >= 4, 'the machines are solved, not drawn by hand')
+    assert.ok(Math.min(...sized, ...round) >= 17, `a ${Math.round(Math.min(...sized, ...round))}px part is a mark, not a thing`)
+    // And a population does not run into itself. The criteria step twenty-two
+    // plan units, which is nineteen on screen against a seventeen-pixel post.
+    const at = floor.match(/const at = \[(-?\d+, -?\d+, -?\d+, -?\d+)\]/)[1].split(', ').map(Number)
+    for (let i = 1; i < at.length; i += 1) {
+      assert.ok((at[i] - at[i - 1]) * X > 2 * 10 * X, 'two criteria at the same place are one criterion')
+    }
+
+    // THE COUNT IS THE DRAWING. The value line under Screening reads
+    // 1 PASS - 4 REVIEW - 3 FAIL, and the drawing above it used to say nothing
+    // of the kind: three blocks at three arbitrary heights is a bar chart of
+    // numbers nobody can read off it. The bays hold units now, and there are
+    // exactly as many of them as the line claims.
+    const bays = JSON.parse(floor.match(/const bays = (\[\[[-\d, [\]]+\])/)[1])
+    const fact = floor.match(/fact: '(\d+) PASS - (\d+) REVIEW - (\d+) FAIL'/).slice(1).map(Number)
+    assert.deepEqual(bays.map(([, , n]) => n), fact, 'the tally and the value line are the same three numbers')
+    // Stepped on BOTH plan axes, because one is not enough: three bays walked
+    // along plan x alone sit 27 screen pixels apart under 38-pixel footprints.
+    for (let i = 1; i < bays.length; i += 1) {
+      const gap = Math.abs((bays[i][0] - bays[i][1]) - (bays[i - 1][0] - bays[i - 1][1])) * X
+      assert.ok(gap > 2 * 11 * X, `bays ${gap.toFixed(0)}px apart carry 38px footprints`)
+    }
+    assert.match(floor, /cls: `fl-unit\$\{j % 2 \? ' is-alt' : ''\}`/)
+
+    // THE PATCH BAY CROSSES. Which criterion needs which record is not the
+    // order either of them happens to be in, and routes that never cross are a
+    // rake rather than a bay. And a binding is DRAWN, not built: it used to be
+    // a slab lying on the plate, which made the one thing this step produces
+    // the same kind of object as the records it connects.
+    const wire = JSON.parse(floor.match(/const wire = (\[[\d, ]+\])/)[1])
+    assert.ok(wire.some((p, i) => wire.slice(i + 1).some((q, j) => (p - q) * (i - (i + 1 + j)) < 0)),
+      'nothing crosses, so this is a rake')
+    assert.match(css, /\.fl-route \{\s*stroke: var\(--ink-deep\);/)
+    assert.match(css, /\.fl-route\.is-open \{[\s\S]*?stroke-dasharray: 3 4;/)
+    assert.doesNotMatch(floor, /fl-tether/)
+
+    // THE DIAL IS FLAT, AND THAT IS THE WHOLE FIX. Nine posts eleven pixels
+    // tall on a ring bunch into each other at the two places the projected
+    // ellipse flattens, because height runs straight up the screen while the
+    // ring there does not - two of the nine came out fused.
+    const ring = Array.from({ length: 9 }, (_, k) => {
+      const a = ((k * 40 - 90) * Math.PI) / 180
+      return [Math.round(Math.cos(a) * 42), Math.round(Math.sin(a) * 42)]
     })
-    assert.equal(rounds.length, 3, 'three of the five are built round')
-    // The turntable's arm turns INSIDE the plan matrix, so what it sweeps is a
-    // true plan circle that the projection turns into the right ellipse. A bar
+    const high = Number(floor.match(/lit\('event', px, py, 5, 5, k === 0 \? \d+ : (\d+), /)[1])
+    const box = ring.map(([px, py], k) => {
+      const [cx, cy] = [(px - py) * X, (px + py) * 0.34]
+      const tall = k === 0 ? high + 8 : high
+      return { x0: cx - 8.66, x1: cx + 8.66, y0: cy - tall - 3.4, y1: cy + 3.4 }
+    })
+    for (let i = 0; i < 9; i += 1) {
+      for (let j = i + 1; j < 9; j += 1) {
+        const [a, b] = [box[i], box[j]]
+        const clear = Math.min(a.x1, b.x1) <= Math.max(a.x0, b.x0) || Math.min(a.y1, b.y1) <= Math.max(a.y0, b.y0)
+        assert.ok(clear, `events ${i} and ${j} are fused at a height of ${high}`)
+      }
+    }
+    // The sweep is drawn INSIDE the plan matrix, so what it sweeps is a true
+    // plan circle that the projection turns into the right ellipse. A bar
     // rotated in screen space sweeps a circle over an axonometric and reads as
     // a line spinning on top of the picture.
     assert.match(floor, /sweep: planSpace\(seatX, seatY - 4\)/)
     assert.match(css, /\.fl-arm \{\s*transform-box: fill-box;/)
     assert.match(css, /@keyframes fl-sweep \{\s*to \{ transform: rotate\(360deg\); \}/)
-    // Nothing smaller than about eighteen pixels on screen. A plan rectangle of
-    // half-extents (hx, hy) projects 2(hx + hy) * ISO_X wide; a plan circle of
-    // radius r projects 2r * ISO_X * root two.
-    const sized = [...floor.matchAll(/(?:stand|lit)\((?:'[a-z]+', )?[^,]+, [^,]+, ([\d.]+), ([\d.]+), /g)]
-      .map((m) => 2 * (Number(m[1]) + Number(m[2])) * 0.866)
-    const round = [...floor.matchAll(/(?:^|[^t])drum\((?:'[a-z]+', )?[^,]+, [^,]+, ([\d.]+), /g)]
-      .map((m) => 2 * Number(m[1]) * 0.866 * Math.SQRT2)
-    assert.ok(sized.length >= 10 && round.length >= 4, 'the machines are solved, not drawn by hand')
-    assert.ok(Math.min(...sized, ...round) >= 17, `a ${Math.round(Math.min(...sized, ...round))}px part is a mark, not a thing`)
+
     // THE STATE IS A LAMP, NOT A HOLE. In an axonometric a half-opaque solid is
-    // not a dim solid - it is a hole, and the plate's lattice shows through a
+    // not a dim solid - it is a hole, and the plate's own plan shows through a
     // record that has simply not been reached yet.
-    assert.match(floor, /const lit = \(kind, px, py, hx, hy, high, radius, turn, extra = \{\}\) => \[/)
+    assert.match(floor, /const lit = \(kind, px, py, hx, hy, high, radius, turn, base = 0, extra = \{\}\) => \[/)
     assert.match(floor, /const litDrum = \(kind, px, py, r, high, turn, extra = \{\}\) => \[/)
     assert.match(css, /\.fl-lamp \{ opacity: calc\(1 - var\(--idle, 0\)\); \}/)
     assert.match(css, /\.fl-lamp\.is-read \{ opacity: calc\(1 - var\(--turn, 0\)\); \}/)
     for (const kind of ['crit', 'res', 'bin', 'read', 'event']) {
       assert.match(css, new RegExp(`\\.fl-lamp\\.is-${kind} \\{`), `${kind} reports through a lamp`)
     }
+    // AND A SIGNATURE DOES NOT LIFT WITH THE PRESS. One that vanishes when the
+    // seal goes back up is not a signature, it is an animation of one.
+    assert.match(css, /@keyframes fl-mark \{\s*0%, 66% \{ opacity: 0\.34; \}/)
+
     // Five clocks, because the thing each step does is different and a figure
     // running one loop five times says they are the same step drawn five times.
     const clocks = [...css.matchAll(/animation: fl-(?:compile|bind|sort|claim|verify) ([\d.]+)s/g)].map((m) => m[1])
     assert.equal(new Set(clocks).size, 5, 'five mechanisms, five rates')
-    // None of them runs until the plate is under it: the surface lands and then
-    // the system starts, rather than arriving already busy. The one clock
-    // allowed to run before the fuse is the wander in the mess, which is the
-    // part that has to be alive while it is still a mess.
+    // None runs until the plate is under it. The one clock allowed before the
+    // fuse is the wander in the mess, which has to be alive while it is a mess.
     assert.ok((css.match(/\.dgm-svg\.is-live\.is-fused \.fl-/g) || []).length >= 12)
     assert.deepEqual([...css.matchAll(/\.dgm-svg\.is-live (\.fl-[a-z]+)/g)].map((m) => m[1]), ['.fl-drift'])
-    // A sort happens ON a path. One transform cannot both go in through a mouth
-    // and come down a chute, so a puck carries two moves in two groups.
-    assert.match(floor, /drop: glide\(px, 60\)/)
+    // A sort happens ON a path. One transform cannot both ride a lane and come
+    // off it, so a puck carries two moves in two groups.
+    assert.match(floor, /drop: '0px, 13px'/)
     assert.match(floor, /part\.drop \? \(/)
     assert.match(css, /@keyframes fl-drop \{/)
     // Anything travelling a plate travels along the PLATE'S axes, or it is
@@ -2056,13 +2154,13 @@ describe('The floor schematic', () => {
     assert.match(floor, /const \[sx, sy\] = PLAN\(t \+ px, -t \+ py\)/)
     assert.match(floor, /emblem: mechanism\(step\.key, t\)/)
     // The scatter is clamped into a box that keeps the sentence's own space out
-    // of it, with a per-tile inset.
+    // of it, with a per-tile inset - and its floor is the plate row's foot,
+    // because the band under that belongs to the lettering now.
     const keep = floor.match(/const KEEP = \{ top: (\d+), bottom: (\d+), left: (\d+), right: (\d+) \}/)
     const cy = Number(floor.match(/const CY = (\d+)/)[1])
-    const frame = Number(floor.match(/const H = (\d+)/)[1])
     assert.ok(keep, 'the mess needs a box it is allowed to be in')
     assert.ok(Number(keep[1]) > 0 && Number(keep[1]) < cy, 'the box clears the sentence and stops above the row')
-    assert.ok(Number(keep[2]) <= frame, 'and it ends inside the frame')
+    assert.ok(Number(keep[2]) < Number(floor.match(/const DATUM = (\d+)/)[1]), 'and it stays out of the lettering')
     assert.match(floor, /const clamp = \(value, low, high, slack\)/)
     // Back to front, or a mechanism is a pile rather than an object - and a
     // traveller is drawn last whatever its plan position, because it crosses
@@ -2108,36 +2206,84 @@ describe('The floor schematic', () => {
     assert.match(css, /@media \(max-width: 1180px\) \{\s*\.fl-sky \{ display: none; \}/)
   })
 
+  it('letters the run underneath it, in ink, off one datum', () => {
+    // THE LETTERING WAS THE LOUDEST THING IN THE FIGURE. Fourteen pixels, seven
+    // hundred weight, tracked out a sixth of an em, set in the ACCENT, and hung
+    // above every plate - so the first thing a reader met was five blue words
+    // floating in the scatter's own airspace, and the machines they named came
+    // second. It was also the fourth different job the accent was doing on a
+    // sheet that has one colour.
+    //
+    // A survey does not letter a station over the top of it. It runs a datum
+    // under the whole line, ticks each station on it, and hangs the name
+    // beneath in the quietest ink on the sheet.
+    const datum = Number(floor.match(/const DATUM = (\d+)/)[1])
+    const nameY = Number(floor.match(/const NAME_Y = DATUM \+ (\d+)/)[1]) + datum
+    const factY = Number(floor.match(/const FACT_Y = DATUM \+ (\d+)/)[1]) + datum
+    const foot = Number(floor.match(/const CY = (\d+)/)[1]) + (75 + 50) * 0.34 + 9
+    assert.ok(datum > foot, `a datum at ${datum} runs through a row whose foot is at ${Math.round(foot)}`)
+    assert.ok(nameY > datum && factY > nameY, 'the name hangs under the rule and the value under the name')
+    assert.ok(factY + 12 <= Number(floor.match(/const H = (\d+)/)[1]), 'and the value line stays inside the frame')
+    assert.match(floor, /className="fl-name" x=\{item\.seat\[0\]\} y=\{NAME_Y\}/)
+    assert.match(floor, /className="fl-leader" x1=\{item\.seat\[0\]\} y1=\{FOOT\} x2=\{item\.seat\[0\]\} y2=\{DATUM\}/)
+    assert.match(floor, /className="fl-station" cx=\{item\.seat\[0\]\} cy=\{DATUM\}/)
+    // IN INK, AND QUIETLY. Ten pixels against the fourteen it was, and no rule
+    // in the lettering may reach for the accent - hover takes it to full black
+    // instead, because this sheet spends its one colour on the solids.
+    const size = Number(css.match(/\.fl-name \{[\s\S]*?font-size: ([\d.]+)px/)[1])
+    assert.ok(size <= 11, `${size}px caps over a 216px plate is a headline, not a label`)
+    assert.match(css, /\.fl-name \{[\s\S]*?fill: var\(--text-soft\);/)
+    assert.match(css, /\.fl-fact \{[\s\S]*?fill: var\(--faint\);/)
+    assert.match(css, /\.is-fused \.fl-step\.is-hot \.fl-name \{ fill: var\(--text\); \}/)
+    const letters = css
+      .slice(css.indexOf('The run, and the names that hang off it'), css.indexOf('-- THE FIVE MECHANISMS'))
+      .replace(/^[\s\S]*?\*\//, '')
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+    assert.doesNotMatch(letters, /accent/, 'the lettering does not spend the sheet\'s one colour')
+    // THE RULE DRAWS WITH A TRANSFORM, NOT WITH A DASH. A normalised pathLength
+    // under a non-scaling stroke came out three quarters of the way along and
+    // stopped - the rule ended between Resolve and Replay, which on a line
+    // whose whole job is to say these five are one run is the worst single mark
+    // in the figure.
+    assert.match(css, /\.fl-datum \{[\s\S]*?transform: scaleX\(var\(--in\)\);/)
+    assert.doesNotMatch(css.slice(css.indexOf('THIRTY FRAGMENTS BECOME FIVE SURFACES')), /stroke-dashoffset/)
+    assert.doesNotMatch(floor, /pathLength/)
+    // It arrives on the same one-shot timeline as everything else, so the run
+    // shows up WITH the row rather than waiting under an empty stage.
+    assert.match(css, /\.dgm-svg\.is-floor \{ --in: clamp\(0, calc\(\(var\(--fuse\) - 0\.86\) \/ 0\.14\), 1\); \}/)
+    assert.match(css, /\.fl-name \{[\s\S]*?opacity: var\(--in\);/)
+    assert.doesNotMatch(css, /@keyframes fl-label/)
+  })
+
   it('lifts a plate off the ground rather than thickening it', () => {
     // It used to EXTRUDE: the body grew downwards and the plate got thicker,
     // which reads as a slab swelling rather than as a slab being picked up, and
     // it put thirty pixels of dark side under a mechanism that was already
     // fighting the surface for contrast.
     //
-    // A held plate rises as ONE object - plate, mechanism and all, because they
+    // A held plate rises as ONE object - plate, machine and all, because they
     // are one thing - and darkens the ground under it. That is the only cue an
     // axonometric has for height and it is what both other figures use.
     assert.doesNotMatch(floor, /tall: roundedSlab|fl-deep|fl-shallow/)
-    // THE PLATE HAS TO CLEAR ITS OWN TYPE. At twenty-two the back corner rose
-    // past the value line and a held plate covered the number it was holding.
-    const lift = Number(css.match(/\.is-fused \.fl-step\.is-hot \.fl-body \{ transform: translateY\(-(\d+)px\); \}/)[1])
-    const factOff = Number(floor.match(/className="fl-fact"[\s\S]*?back\[1\] - (\d+)/)[1])
-    assert.ok(lift < factOff, `a ${lift}px lift runs into type set ${factOff} above the plate`)
+    assert.match(css, /\.is-fused \.fl-step\.is-hot \.fl-body \{ transform: translateY\(-\d+px\); \}/)
     assert.match(css, /\.is-fused \.fl-step\.is-hot \.fl-shade \{ opacity: 1;/)
+    // And the lettering does NOT go up with it. The solids float and the type
+    // is nailed to the ground, which is what keeps the leader on the datum.
+    assert.match(floor, /<\/g>\s*\n\s*\{\/\* THE STATION[\s\S]*?<line className="fl-leader"/)
     // A HELD PLATE KEEPS RUNNING. Pointing at one used to freeze it, on the
     // theory that a reader who has stopped wants a drawing that has stopped.
     // They have just chosen which machine to watch, and the one thing a machine
     // should not do when somebody leans in is stop being a machine. What a
-    // hover buys is contrast: a halo behind it, and a step of ink on every
-    // solid standing on it.
+    // hover buys is contrast: a halo behind it, a step of ink on every solid,
+    // and the plate's own printed plan coming up with them.
     assert.doesNotMatch(css.slice(css.indexOf('THIRTY FRAGMENTS BECOME FIVE SURFACES')), /animation-play-state/)
     assert.match(css, /\.is-fused \.fl-step\.is-hot \.fl-aura \{ opacity: 1; \}/)
     assert.match(css, /\.is-fused \.fl-step\.is-hot \.fl-aurastep \{ transform: scale\(var\(--step, 1\)\); \}/)
     assert.match(css, /\.is-fused \.fl-step\.is-hot \.fl-emblem \.dgm-face-top \{/)
+    assert.match(css, /\.is-fused \.fl-step\.is-hot \.fl-plan \{/)
     // And the halo is not a blur. A Gaussian on five polygons is five
     // full-frame filter passes every frame for a thing invisible on four of
-    // them - it ground a headless render to a stop. Trident already answers
-    // this: three steps at a low alpha each, ramping from the rim inward.
+    // them - it ground a headless render to a stop.
     assert.doesNotMatch(floor, /feGaussianBlur/)
     assert.match(floor, /\[1\.2, 1\.14, 1\.09, 1\.045\]\.map/)
     // The shade stays on the ground while the plate goes up, so it has to sit
@@ -2155,11 +2301,6 @@ describe('The floor schematic', () => {
     // plate stayed lifted under a caption that had moved on.
     assert.doesNotMatch(css.slice(css.indexOf('THIRTY FRAGMENTS BECOME FIVE SURFACES')), /\.fl-step:hover/)
     assert.match(floor, /onMouseEnter=\{\(\) => setHot\(item\.key\)\}/)
-    // And the name arrives with the plate it names, then STAYS - a label that
-    // leaves again is a label on a machine that keeps being dismantled.
-    assert.match(css, /\.fl-step \{ --in: clamp\(0, calc\(\(var\(--fuse\) - 0\.86\) \/ 0\.14\), 1\); \}/)
-    assert.match(css, /\.fl-name \{[\s\S]*?opacity: var\(--in\);/)
-    assert.doesNotMatch(css, /@keyframes fl-label/)
   })
 
   it('holds a legible scale on a phone', () => {

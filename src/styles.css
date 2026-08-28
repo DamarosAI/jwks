@@ -12482,6 +12482,9 @@ html.is-hidden .clinic-node i,
 .fl-plate,
 .fl-emblem,
 .fl-shade,
+.fl-datum,
+.fl-leader,
+.fl-station,
 .fl-name,
 .fl-fact { pointer-events: none; }
 .fl-hit { fill: none; }
@@ -12630,54 +12633,103 @@ html.is-hidden .clinic-node i,
    focus. */
 .dgm-svg.is-floor.is-fused:has(.fl-step.is-hot) .fl-step:not(.is-hot) { opacity: 0.36; }
 
-/* THE NAME ARRIVES WITH THE PLATE IT NAMES, and then it stays. A name held
-   over a scatter is a caption for something that has not happened yet; a name
-   that leaves again is a label on a machine that keeps being dismantled.
+/* ── The run, and the names that hang off it ─────────────────────────
 
-   `transform-box: fill-box` because the rise is a transform on a text node,
-   and without it the origin is the whole viewBox. */
+   THE LETTERING WAS THE LOUDEST THING IN THE FIGURE. Fourteen pixels, seven
+   hundred weight, tracked out a sixth of an em, set in the accent, and hung
+   ABOVE every plate - so the first thing a reader met was five blue words
+   floating in the scatter's own airspace, and the machines they named came
+   second. It was also the fourth different job the accent was doing on a sheet
+   that has one colour.
 
-.fl-step { --in: clamp(0, calc((var(--fuse) - 0.86) / 0.14), 1); }
+   A survey does not letter a station over the top of it. It runs a datum under
+   the whole line, ticks each station on it, and hangs the name beneath in the
+   quietest ink on the sheet. Ten pixels, six hundred, near-black, under the
+   rule, with the value in the machine face below that. Pointing at one takes it
+   to full black rather than to a colour: the accent is spent on the solids.
 
-.fl-name {
-  fill: color-mix(in srgb, var(--accent-strong) 74%, transparent);
-  font-family: var(--font-ui);
-  font-size: 14px;
-  font-weight: 700;
-  font-synthesis: none;
-  letter-spacing: 0.16em;
-  transform-box: fill-box;
-  transform-origin: center;
+   And the rule DRAWS ITSELF on the same one-shot timeline as everything else,
+   so the run arrives with the row rather than waiting under an empty stage. */
+
+.dgm-svg.is-floor { --in: clamp(0, calc((var(--fuse) - 0.86) / 0.14), 1); }
+
+/* IT DRAWS WITH A TRANSFORM, NOT WITH A DASH. A normalised pathLength under a
+   non-scaling stroke came out three quarters of the way along and stopped -
+   the rule ended between Resolve and Replay, which on a line whose whole job is
+   to say these five are one run is the worst single mark in the figure. A
+   scaleX off the same one number cannot be got wrong, and it composites. */
+.fl-datum {
+  fill: none;
+  stroke: color-mix(in srgb, var(--text) 24%, transparent);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  transform-box: view-box;
+  transform-origin: var(--from) var(--at);
+  transform: scaleX(var(--in));
+}
+
+/* The leader is what ties a name to the plate it names, and it is the faintest
+   drawn line in the figure on purpose: a reader should register it, not follow
+   it. */
+.fl-leader {
+  fill: none;
+  stroke: color-mix(in srgb, var(--text) 18%, transparent);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
   opacity: var(--in);
-  transform: translateY(calc((1 - var(--in)) * 12px));
+  transition: stroke 260ms ease;
+}
+
+.fl-station {
+  fill: color-mix(in srgb, var(--text) 40%, transparent);
+  opacity: var(--in);
   transition: fill 260ms ease;
 }
 
-.is-fused .fl-step.is-hot .fl-name { fill: var(--accent-strong); }
+.fl-name {
+  fill: var(--text-soft);
+  font-family: var(--font-ui);
+  /* Eleven, not ten. The sheet is a 1200-unit viewBox that renders at about
+     1100 on a wide desktop, so type inside it lands a tenth SMALLER than the
+     number says - and ten came out at nine device pixels, which is under the
+     size at which tracked caps stay caps. */
+  font-size: 11px;
+  font-weight: 600;
+  font-synthesis: none;
+  letter-spacing: 0.14em;
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: var(--in);
+  transform: translateY(calc((1 - var(--in)) * 8px));
+  transition: fill 260ms ease;
+}
 
 /* THE VALUE UNDER THE NAME. Every Trident deck carries a name and the one
    number it is currently holding, and that pairing is most of why that figure
    reads as an instrument rather than as an illustration. Set in the machine
-   face, because a machine produced these: they are the product's own counts,
-   read off the replay chain this section is about.
+   face, because a machine produced these - and on Screening the drawing above
+   is these exact three numbers, stacked so they can be counted.
 
-   ASCII only - the display face ships U+0020 to U+007E and nothing else, so a
-   middot here would come out as a missing glyph on the one line whose whole
-   job is to look exact. */
+   ASCII only: the display face ships U+0020 to U+007E and nothing else, so a
+   middot here would come out as a missing glyph on the one line whose whole job
+   is to look exact. */
 
 .fl-fact {
-  fill: color-mix(in srgb, var(--muted) 88%, transparent);
+  fill: var(--faint);
   font-family: var(--font-mono);
   font-size: 9px;
-  letter-spacing: 0.04em;
-  opacity: var(--in);
+  letter-spacing: 0.02em;
   transform-box: fill-box;
   transform-origin: center;
-  transform: translateY(calc((1 - var(--in)) * 12px));
+  opacity: var(--in);
+  transform: translateY(calc((1 - var(--in)) * 8px));
   transition: fill 260ms ease;
 }
 
-.is-fused .fl-step.is-hot .fl-fact { fill: var(--accent-strong); }
+.is-fused .fl-step.is-hot .fl-name { fill: var(--text); }
+.is-fused .fl-step.is-hot .fl-fact { fill: var(--ink-deep); }
+.is-fused .fl-step.is-hot .fl-leader { stroke: color-mix(in srgb, var(--text) 50%, transparent); }
+.is-fused .fl-step.is-hot .fl-station { fill: var(--text); }
 
 /* -- THE FIVE MECHANISMS ------------------------------------------------
 
@@ -12711,21 +12763,60 @@ html.is-hidden .clinic-node i,
 .fl-emblem .dgm-face-left { fill: color-mix(in srgb, var(--accent) 74%, var(--surface-solid)); stroke: none; }
 .fl-emblem .dgm-face-right { fill: color-mix(in srgb, var(--ink-deep) 26%, var(--accent-strong)); stroke: none; }
 
-/* THE THING DOING THE WORK IS NOT MADE OF THE SAME STUFF AS THE WORK.
-   A reader head and an as-of cut are instruments passing through a population,
-   and drawn in the population's own ink they came out as the largest, darkest
-   object on the plate - a wall with the records hidden behind it. They are
-   glass now: the plate's own pale body with the drawing's hardest edge, so a
-   traveller reads as an instrument crossing the records rather than as one more
-   record that happens to be moving. */
+/* ── The plate's own plan ───────────────────────────────────────
 
-.fl-asof .dgm-face-top {
-  fill: color-mix(in srgb, var(--accent) 9%, var(--surface-solid));
-  stroke: var(--line);
+   EVERY PLATE IS PRINTED BEFORE ANYTHING STANDS ON IT.
+
+   A solid balanced on a blank sheet is a sticker: nothing about the surface
+   says the thing standing there belongs to it, and five machines on five blank
+   sheets is why this figure kept reading as objects that had been PLACED rather
+   than as machines that had been built. Trident does not have this problem
+   because a plate there carries a motif drawn into its own face.
+
+   The ink goes down in PLAN, inside the projection, so a printed lane and the
+   puck that runs down it cannot drift apart - they are solved from the same two
+   numbers. Hairline, non-scaling, near-black at low alpha: a drawing under a
+   drawing, which is what a machine bed is. */
+
+.fl-plan {
+  fill: none;
+  stroke: color-mix(in srgb, var(--line) 32%, transparent);
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  transition: stroke 300ms ease;
 }
 
-.fl-asof .dgm-face-left { fill: color-mix(in srgb, var(--accent) 22%, var(--surface-solid)); }
-.fl-asof .dgm-face-right { fill: color-mix(in srgb, var(--accent) 36%, var(--surface-solid)); }
+.fl-plan * { vector-effect: non-scaling-stroke; }
+
+/* The dial is printed on a disc rather than on the paper, so it carries less.
+   Ink on ink at the same weight is a smudge. */
+.fl-dial { stroke: color-mix(in srgb, var(--line) 24%, transparent); }
+
+/* A held plate's plan comes up with it, or the machine gains contrast and the
+   bed it stands in stays where it was. */
+.is-fused .fl-step.is-hot .fl-plan { stroke: color-mix(in srgb, var(--line) 52%, transparent); }
+.is-fused .fl-step.is-hot .fl-dial { stroke: color-mix(in srgb, var(--line) 38%, transparent); }
+
+/* A BINDING IS DRAWN, NOT BUILT. It used to be a slab lying on the plate, which
+   made the one thing this step actually produces the same kind of object as the
+   records it connects. It is a line now - the only printed thing heavier than
+   the bed it lies in, because it is the only printed thing that was MADE. */
+.fl-route {
+  stroke: var(--ink-deep);
+  stroke-width: 1.4;
+  opacity: 0;
+}
+
+/* Except the one that is never made. It stays open on the bed: the bay is wired
+   for thirty-six criteria and twenty-five of them have evidence. */
+.fl-route.is-open {
+  stroke: color-mix(in srgb, var(--line) 38%, transparent);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+  opacity: 1;
+}
 
 /* A CARRIAGE IS NOT CARGO AND NOT A WALL. The read head and the three pucks
    are small things riding large ones, so they take the opposite treatment to
@@ -12833,24 +12924,18 @@ html.is-hidden .clinic-node i,
 
 .fl-spine { opacity: 0.72; }
 
-/* A binding is a connection drawn TO a record, not a girder bolted onto one -
-   so a tether is a hairline lying on the plate with almost no body, and it is
-   the darkest thing in the mechanism because it is the thing that was made. */
-.fl-tether { opacity: 0; }
-.fl-tether .dgm-face-top { fill: var(--ink-deep); stroke: none; }
-.fl-tether .dgm-face-left,
-.fl-tether .dgm-face-right { fill: var(--ink-deep); }
-
-.dgm-svg.is-live.is-fused .fl-tether {
+/* The routes are drawn on the plate rather than built on it - the ink is in the
+   printed plan above. What this says is only WHEN each one is made. */
+.dgm-svg.is-live.is-fused .fl-route:not(.is-open) {
   animation: fl-reach 7.4s ease-out infinite;
   animation-delay: calc(var(--turn, 0) * 0.5s);
 }
 
-/* A tether that has been made stays made until the snapshot closes, which is
+/* A route that has been made stays made until the snapshot closes, which is
    what the whole step is claiming about a binding. */
 @keyframes fl-reach {
-  0%, 16% { opacity: 0; }
-  28%, 86% { opacity: 0.9; }
+  0%, 14% { opacity: 0; }
+  26%, 86% { opacity: 1; }
   100% { opacity: 0; }
 }
 
@@ -12886,7 +12971,15 @@ html.is-hidden .clinic-node i,
 
 .fl-hopper { opacity: 0.72; }
 .fl-hopper .dgm-face-top { fill: color-mix(in srgb, var(--accent) 15%, var(--surface-solid)); }
-.fl-chute { opacity: 0.46; }
+/* THE COUNT IS THE DRAWING. The value line under this plate reads 1 PASS -
+   4 REVIEW - 3 FAIL, and the drawing above it used to say nothing of the kind:
+   three blocks at three arbitrary heights is a bar chart of numbers nobody can
+   read off it. The bays hold UNITS now - one, four and three - and each one
+   steps in half a plan unit as it goes up, which leaves every unit a visible
+   rim so the pile can actually be counted. Nothing else in the figure is built
+   out of repeated parts, and nothing else in it can be counted. */
+.fl-unit.is-alt .dgm-face-top { fill: color-mix(in srgb, var(--accent) 30%, var(--surface-solid)); }
+.fl-unit.is-alt .dgm-face-left { fill: color-mix(in srgb, var(--accent) 62%, var(--surface-solid)); }
 
 .dgm-svg.is-live.is-fused .fl-lamp.is-bin {
   animation: fl-sort 5.6s ease-out infinite;
@@ -12956,8 +13049,23 @@ html.is-hidden .clinic-node i,
   96%, 100% { transform: translate(var(--span)); opacity: 0; }
 }
 
-.fl-beam { opacity: 0.6; }
 .fl-anvil { opacity: 0.8; }
+
+/* THE IMPRESSION, AND IT DOES NOT LIFT WITH THE PRESS. A signature that
+   vanishes when the seal goes back up is not a signature, it is an animation of
+   one. The mark is printed into the plate, its resting value is present, and
+   the clock only takes it back to a trace before the next press lands. */
+.fl-stamp {
+  stroke: color-mix(in srgb, var(--ink-deep) 72%, transparent);
+  stroke-width: 1.4;
+}
+
+.dgm-svg.is-live.is-fused .fl-stamp { animation: fl-mark 4.8s ease-out infinite; }
+
+@keyframes fl-mark {
+  0%, 66% { opacity: 0.34; }
+  74%, 100% { opacity: 1; }
+}
 
 .dgm-svg.is-live.is-fused .fl-seal { animation: fl-press 4.8s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
 
@@ -13198,6 +13306,8 @@ html.is-hidden .clinic-node i,
   .fl-tile,
   .fl-drift,
   .fl-emblem > g,
+  .fl-route,
+  .fl-stamp,
   .fl-arm,
   .fl-hop,
   .fl-bot,
@@ -13205,11 +13315,13 @@ html.is-hidden .clinic-node i,
   .fl-step,
   .fl-name,
   .fl-fact,
+  .fl-leader,
+  .fl-station,
   .fl-readpill { animation: none; transition: none; }
 
-  /* The tethers and the sky are the two things whose resting value is nothing,
+  /* The routes and the sky are the two things whose resting value is nothing,
      so they have to be given the finished one by hand: the bindings are made,
      and the carriers are in the air. */
-  .fl-tether { opacity: 0.9; }
+  .fl-route { opacity: 1; }
   .fl-sky { opacity: 1; }
 }
