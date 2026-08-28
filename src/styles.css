@@ -12898,3 +12898,298 @@ html.is-hidden .clinic-node i,
     animation: none;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   THE LATTICE
+
+   A PERSPECTIVE SHEET, AND THAT IS THE WHOLE POINT OF IT.
+
+   Trident and Nectar are axonometric - a parallel projection, no vanishing
+   point, every solid the same size wherever it stands. That is right for an
+   instrument you look AT, and three attempts proved it is wrong for a place you
+   are meant to be INSIDE: a projection with no depth axis can only ever arrange
+   objects on a tray, and no amount of staggering objects on a tray makes a tray
+   into a space.
+
+   So this sheet converges. It has a horizon, it is denser and fainter with
+   distance, and it runs off three sides of the frame, because a surface that
+   stops inside the frame is a picture of a surface. It shares no part of the
+   solid vocabulary - no faces, no plan projection, no prisms - and it keeps the
+   three things that are actually the brand: the house blue, the dot grain, and
+   one ink for everything.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.ltc {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  margin: 0;
+}
+
+.ltc-frame { min-width: 0; }
+
+.ltc-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  /* Two numbers run the entrance, registered so the browser can interpolate
+     them: the surface arrives, and then the light comes up on it. */
+  --spread: 0;
+  --charge: 0;
+  --run-in: clamp(0, calc((var(--charge, 1) - 0.42) * 2.4), 1);
+  opacity: calc(0.55 + 0.45 * var(--charge, 1));
+  transition: --spread 1150ms cubic-bezier(0.16, 1, 0.3, 1), --charge 1450ms 200ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.ltc-svg.is-booted { --spread: 1; --charge: 1; }
+
+/* The ground behind the lattice: the same dot grain the rest of the site uses,
+   so the sheet is recognisably on this page and not imported from another one. */
+
+.ltc-grain { fill: color-mix(in srgb, var(--accent) 26%, transparent); }
+.ltc-sky { opacity: calc(0.5 * var(--spread, 1)); pointer-events: none; }
+
+/* THE HORIZON TAKES THE SURFACE, rather than the surface stopping at it. One
+   mask over everything, so the lattice thins into the paper instead of ending
+   on a line - which is the difference between a drawing that continues past the
+   frame and one that was cut out and pasted on. */
+
+/* White, not black: an SVG mask reads LUMINANCE, so a black stop at any alpha
+   is a stop that hides everything under it. */
+.ltc-fade-far { stop-color: rgb(255 255 255 / 0); }
+.ltc-fade-mid { stop-color: rgb(255 255 255 / 0.66); }
+.ltc-fade-near { stop-color: rgb(255 255 255 / 1); }
+
+/* ── The surface ─────────────────────────────────────────────────────────
+
+   Every cell is drawn or it is not there. A hole is an ABSENCE rather than a
+   shape, which is what leaves its edge ragged without a single edge having to
+   be drawn - and what makes the repair a cell coming back rather than a patch
+   arriving over one.
+
+   Aerial perspective is the depth cue a parallel projection cannot have at all:
+   the far end of a real surface is fainter, and here that costs nothing because
+   the distance is already in the geometry. */
+
+.ltc-cell {
+  fill: color-mix(in srgb, var(--accent) calc(9% - var(--haze, 0) * 5%), transparent);
+  stroke: color-mix(in srgb, var(--accent) calc(66% - var(--haze, 0) * 44%), transparent);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  opacity: var(--spread, 1);
+  transition: opacity 620ms ease, fill 420ms ease, stroke 420ms ease;
+}
+
+.ltc-cell.is-gone { opacity: 0; }
+.ltc-cell.is-hot { stroke: var(--accent-strong); }
+
+/* The near band of a closed surface carries a slow wave along it, so a lattice
+   at rest is a thing that is running rather than a photograph of one. Opacity
+   only, at a tenth, and only where a reader is actually looking. */
+
+@keyframes ltc-wake {
+  0%, 100% { opacity: var(--spread, 1); }
+  50% { opacity: calc(var(--spread, 1) * 0.88); }
+}
+
+.ltc-svg.is-live .ltc-cell:not(.is-gone) {
+  animation: ltc-wake calc(7s + var(--wake, 0) * 3s) ease-in-out infinite;
+  animation-delay: calc(var(--wake, 0) * -6s);
+}
+
+/* ── The pieces that came out ────────────────────────────────────────────
+
+   Each shard is the same polygon as the hole it left, drawn again above it, and
+   it falls back into exactly those coordinates when its band closes. Same
+   shape, same place: the only way a repair reads as a repair rather than as
+   something new arriving over the damage.
+
+   The lift is scaled by the cell's own distance, so a near shard drifts further
+   than a far one - which is what perspective does to equal heights, and what
+   makes the drift itself read as depth. */
+
+.ltc-shard {
+  fill: color-mix(in srgb, var(--muted) 14%, transparent);
+  stroke: color-mix(in srgb, var(--muted) calc(74% - var(--haze, 0) * 36%), transparent);
+  stroke-width: 1;
+  stroke-dasharray: 4 4;
+  vector-effect: non-scaling-stroke;
+  opacity: calc(0.9 * var(--spread, 1));
+  transform: translateY(calc(var(--lift, 0px) * -1 * var(--spread, 1)));
+  transition: transform 900ms cubic-bezier(0.16, 1, 0.3, 1), opacity 640ms ease;
+}
+
+@keyframes ltc-adrift {
+  0%, 100% { transform: translateY(calc(var(--lift, 0px) * -1)); }
+  50% { transform: translateY(calc(var(--lift, 0px) * -1.14)); }
+}
+
+.ltc-svg.is-live .ltc-shard:not(.is-home) {
+  animation: ltc-adrift calc(6.4s + var(--life, 0) * 3.6s) ease-in-out infinite;
+  animation-delay: calc(var(--life, 0) * -8s);
+}
+
+/* Home, and gone: the cell underneath is back, so the piece has nothing left to
+   be. Anything still drawn over a closed surface would be damage the figure is
+   claiming it has repaired. */
+
+.ltc-shard.is-home {
+  opacity: 0;
+  transform: translateY(0);
+}
+
+.ltc-shard.is-hot { stroke: color-mix(in srgb, var(--muted) 88%, transparent); }
+
+/* ── The run ─────────────────────────────────────────────────────────────
+
+   One path from the far anchor to the near one, and it does not exist until the
+   whole surface does. A signal crossing a torn lattice would be the drawing
+   contradicting the sentence underneath it. */
+
+.ltc-signal { opacity: 0; transition: opacity 700ms ease; }
+.ltc-svg.is-whole .ltc-signal { opacity: 1; }
+
+.ltc-signalpath {
+  fill: none;
+  stroke: color-mix(in srgb, var(--accent) 62%, transparent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 3 5;
+}
+
+.ltc-signalrun {
+  fill: none;
+  stroke: var(--accent-strong);
+  stroke-width: 3.4;
+  stroke-linecap: round;
+  stroke-dasharray: 12 88;
+}
+
+@keyframes ltc-carry {
+  to { stroke-dashoffset: -100; }
+}
+
+.ltc-svg.is-live.is-whole .ltc-signalrun {
+  opacity: var(--run-in, 1);
+  animation: ltc-carry 3.4s linear infinite;
+}
+
+/* ── The anchors ─────────────────────────────────────────────────────────
+
+   Three constituencies at three distances, and the ONLY reason they are three
+   sizes is that they are three distances. Every previous version of this figure
+   had to arrange that by hand and never quite convinced; a projection with a
+   vanishing point gives it for nothing, which is most of the argument for
+   changing projection.
+
+   The mark is here in this sheet's own terms. The monogram is two stacked
+   forms, so an anchor carries two rings on its mast - not a logo pasted onto a
+   drawing that has no other raster in it. */
+
+.ltc-anchor {
+  cursor: pointer;
+  opacity: calc((0.34 + 0.66 * var(--spread, 1)) * (1 - var(--haze, 0) * 0.3));
+  transition: opacity 560ms ease;
+}
+
+.ltc-anchor.is-hot { opacity: 1; }
+
+.ltc-halo {
+  fill: color-mix(in srgb, var(--accent) 13%, transparent);
+  stroke: none;
+  opacity: 0;
+  transition: opacity 620ms ease;
+}
+
+.ltc-anchor.is-lit .ltc-halo { opacity: 1; }
+
+.ltc-ring {
+  fill: none;
+  stroke: color-mix(in srgb, var(--accent) 46%, transparent);
+  stroke-width: 1.4;
+  vector-effect: non-scaling-stroke;
+  transition: stroke 520ms ease;
+}
+
+.ltc-anchor.is-lit .ltc-ring { stroke: var(--accent-strong); }
+
+.ltc-mast {
+  stroke: color-mix(in srgb, var(--accent) 34%, transparent);
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
+  transition: stroke 520ms ease;
+}
+
+.ltc-anchor.is-lit .ltc-mast { stroke: color-mix(in srgb, var(--accent-strong) 78%, transparent); }
+
+.ltc-head {
+  fill: color-mix(in srgb, var(--accent) 12%, var(--surface-solid));
+  stroke: color-mix(in srgb, var(--accent) 58%, transparent);
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
+  transition: fill 520ms ease, stroke 520ms ease;
+}
+
+.ltc-anchor.is-lit .ltc-head {
+  fill: color-mix(in srgb, var(--accent) 30%, var(--surface-solid));
+  stroke: var(--accent-strong);
+}
+
+.ltc-anchor.is-lit .ltc-head.is-cap { fill: var(--accent-strong); }
+
+.ltc-hit { fill: none; pointer-events: all; }
+
+/* ── The readout ─────────────────────────────────────────────────────────
+
+   A caption in the document, not type inside the drawing: it holds its size
+   while the figure scales, a screen reader gets it as text rather than as a
+   label inside an image, and the sheet is left with nothing written on it. */
+
+.ltc-readout {
+  display: flex;
+  align-items: baseline;
+  gap: clamp(12px, 1.6vw, 20px);
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.ltc-pill {
+  flex: none;
+  padding: 6px 13px;
+  border-radius: 999px;
+  background: var(--bg-soft);
+  color: var(--muted);
+  font-family: var(--font-ui);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  white-space: nowrap;
+  transition: background 300ms ease, color 300ms ease;
+}
+
+.ltc-line {
+  min-width: 0;
+  max-width: 104ch;
+  align-self: stretch;
+  color: var(--text-soft);
+  font-size: clamp(0.84rem, 0.79rem + 0.22vw, 0.95rem);
+  font-weight: 500;
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+
+.ltc-readout.is-pass .ltc-pill { background: var(--accent-soft); color: var(--accent-strong); }
+.ltc-readout.is-valid .ltc-pill { background: var(--accent-strong); color: var(--surface-solid); }
+
+@media (prefers-reduced-motion: reduce) {
+  .ltc-svg,
+  .ltc-readout,
+  .ltc-pill,
+  .ltc-svg :is(.ltc-cell, .ltc-shard, .ltc-signal, .ltc-signalrun, .ltc-anchor, .ltc-halo, .ltc-ring, .ltc-mast, .ltc-head, .ltc-sky) {
+    transition: none;
+    animation: none;
+  }
+}
