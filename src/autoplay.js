@@ -9,6 +9,21 @@ export const STAGE_FADE_MS = 240
 export const SCROLL_IDLE_MS = 640
 export const NARROW_VIEWPORT = '(max-width: 640px)'
 
+/**
+ * Where a figure stops having room to be pinned.
+ *
+ * 901px is already this site's line for "the drawing gets its full treatment" -
+ * it is what `useEnterMotion` scopes to and what the product container queries
+ * turn on at - so the thesis uses the same one rather than inventing a second.
+ *
+ * HEIGHT COUNTS TOO, and it is the half that is easy to miss. A pinned figure
+ * is bound by height first: the drawing, its sentence and its readout have to
+ * fit one screen, so the width is only ever what is left over. A wide but short
+ * window passes the first test and still leaves the camera nothing to fly
+ * across. Below either, the section rejoins the flow of the page.
+ */
+export const UNPINNED_VIEWPORT = '(max-width: 900px), (max-height: 700px)'
+
 export function isAutoplayToggle(target) {
   return Boolean(target?.closest?.('[data-autoplay-toggle]'))
 }

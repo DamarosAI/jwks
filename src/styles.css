@@ -1059,6 +1059,121 @@ h2 {
    is, written in the only units available to it. Change either number and the
    other follows on its own; nothing here has to be re-measured by eye. */
 
+/* THE PINNED SHEET, AND IT IS NOT A SHEET.
+
+   Exactly one viewport tall, because that is what being pinned means: taller
+   and the figure scrolls under its own pin, shorter and the page shows around a
+   takeover. `svh` rather than `vh` - on a phone the two differ by the height of
+   the browser chrome, and the short unit is the one that is always there.
+
+   NOTHING IN IT IS FRAMED. The figure used to sit in a fixed-aspect box in the
+   middle of the section with paper down both sides, which is a picture hung on
+   a wall: the reader is outside it by construction, and no amount of camera
+   movement inside a visible frame undoes that. So the drawing fills the pin
+   edge to edge, covers rather than fits, and DISSOLVES at all four edges
+   instead of ending at them. There is no line anywhere saying where the world
+   stops - which is the only honest way to draw a ground, because a ground does
+   not stop. */
+
+.thesis-pin {
+  position: relative;
+  display: flex;
+  height: 100svh;
+  flex-direction: column;
+  padding: clamp(64px, 8vh, 96px) var(--gutter) clamp(18px, 2.6vh, 32px);
+  overflow: hidden;
+}
+
+.thesis-section > .thesis-pin > .section-eyebrow,
+#root .thesis-section > .thesis-pin > .section-eyebrow {
+  top: clamp(24px, 4vh, 44px);
+  left: var(--gutter);
+  right: auto;
+  width: max-content;
+  text-align: left;
+}
+
+/* The figure takes every pixel the sentence and the caption have not already
+   claimed, in both axes. */
+
+.thesis-pin .thesis-column,
+.thesis-pin .thesis-stage,
+.thesis-pin .thesis-chain,
+.thesis-pin .dgm {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+}
+
+/* The stage is a grid so the sentence and the drawing share one cell, and a
+   grid row sizes to its tallest child unless it is told otherwise - which is
+   how an SVG asking for its intrinsic height pushed the whole pin sixty pixels
+   past the viewport and took the caption off the bottom of the screen with it.
+   `minmax(0, 1fr)` is what lets the row give back what it does not need. */
+
+.thesis-pin .thesis-stage {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.thesis-pin .thesis-stage > * { min-height: 0; }
+
+.thesis-pin .dgm-frame {
+  min-height: 0;
+  flex: 1;
+  width: 100%;
+}
+
+.thesis-pin .dgm-svg {
+  width: 100%;
+  height: 100%;
+  /* THE DISSOLVE. Two gradients intersected, so all four edges fade rather than
+     one pair - a single gradient fades a strip, and a strip is still an edge.
+     The stops are asymmetric because the composition is: the ground runs off
+     the bottom and the sides hard, and the top is mostly air the sentence sits
+     in, so it needs the softest hand. */
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0%, #000 9%, #000 91%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent 0%, #000 9%, #000 91%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%);
+  mask-composite: intersect;
+}
+
+/* The caption loses its rule for the same reason. A line above it was drawing a
+   floor under the figure, and the figure has no floor - it fades out. */
+
+.thesis-pin .dgm-readout {
+  margin-top: 0;
+  padding-top: clamp(10px, 1.6vh, 18px);
+  border-top: none;
+}
+
+@media (max-width: 900px), (max-height: 700px) {
+  .thesis-pin {
+    height: auto;
+    padding: clamp(56px, 9vw, 88px) var(--gutter) clamp(24px, 4vw, 40px);
+    overflow: visible;
+  }
+
+  .thesis-pin .thesis-stage { display: flex; }
+
+  /* On a phone the figure holds its scale and pans, so it cannot also be told
+     to fill a box - and a mask on something a reader is dragging sideways hides
+     the very edge they are dragging toward. */
+  .thesis-pin .dgm-svg {
+    width: auto;
+    height: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .thesis-pin .dgm-frame { flex: none; }
+}
+
 .thesis-column {
   display: flex;
   width: min(100%, calc(1480px - var(--gutter) * 2));
@@ -9534,6 +9649,22 @@ html.is-hidden .clinic-node i,
 
 .dgm-grain { fill: color-mix(in srgb, var(--accent) 30%, transparent); }
 .dgm-grain.is-fine { fill: color-mix(in srgb, var(--accent) 44%, transparent); }
+
+/* The two grounds that are not made of dots. A sponsor's is ruled - few, wide,
+   parallel, the texture of a document. A patient's is open rings, scattered and
+   mostly empty. Neither is decoration: they are the third cue telling the
+   districts apart, after silhouette and clock. */
+.dgm-rule {
+  fill: none;
+  stroke: color-mix(in srgb, var(--accent) 30%, transparent);
+  stroke-width: 0.7;
+}
+
+.dgm-grainring {
+  fill: none;
+  stroke: color-mix(in srgb, var(--accent) 40%, transparent);
+  stroke-width: 0.8;
+}
 .dgm-planefill { stroke: none; opacity: 0.55; pointer-events: none; }
 
 /* Plane edges name their own ground, lying along the edge the way a plan does
@@ -9896,6 +10027,132 @@ html.is-hidden .clinic-node i,
    the element: an animated opacity would otherwise paint four shades on top of
    each other while the stack is still closed. */
 
+/* ── THE CAMERA ──────────────────────────────────────────────────────────
+
+   The thesis figure is the only one of the three that MOVES THE FRAME. Trident
+   and Nectar are instruments on a bench and a bench does not travel; the thesis
+   is a place, and the only way a page can say "you are in this" is to stop
+   holding you outside it.
+
+   One translate and one scale on one group, eased between stops rather than
+   scrubbed. A scrubbed camera stalls when the reader stops turning the wheel
+   and runs backwards when they scroll up, which is a camera on a string. This
+   one moves at its own pace toward the stop the beat asks for, so the flight
+   arrives whatever the reader does with the wheel.
+
+   `transform-box: view-box` is what makes the origin a point in the drawing's
+   own coordinates rather than in the box the browser measured around the paths
+   that happen to be in it - which drifts every time anything in the figure
+   moves, and takes the whole world with it. */
+
+.fl-cam {
+  transform-box: view-box;
+  transform-origin: 600px 370px;
+  transform: translate(var(--cam-x, 0px), var(--cam-y, 0px)) scale(var(--cam-k, 1));
+  /* NO TRANSITION. The section writes this on every scroll frame off the raw
+     progress value, so an easing here would be a second, slower clock fighting
+     the reader's own - which is precisely what made the flight feel unmoored
+     from the wheel. The interpolation lives in `cameraAt`, where it belongs:
+     between the stops, not between the gesture and the frame. */
+  will-change: transform;
+}
+
+/* ── THE CONDUIT AND THE CARRY ───────────────────────────────────────────
+
+   Two states of one fact, and they are drawn as two different KINDS of object
+   rather than as the same object in two colours.
+
+   While the ground is broken there is no conduit at all - only an arc through
+   the air with a parcel on it, moving in the rhythm of something being picked
+   up, carried and set down: a wait, a haul, a wait. It is the one curve in the
+   figure and the one thing that leaves the floor.
+
+   Once both ends are level the arc stops and a real span appears in the ground,
+   built out of the same skirts and top face as every other solid here, with the
+   run flowing along its centre without pause. Nothing is picked up. */
+
+.fl-span {
+  --ink: var(--accent);
+  --ink-deep: var(--accent-strong);
+  opacity: 0;
+  transition: opacity 620ms ease calc(var(--life, 0) * 200ms);
+}
+
+.fl-span.is-up { opacity: 1; }
+
+.fl-span .dgm-face-top {
+  fill: color-mix(in srgb, var(--accent) 26%, var(--surface-solid));
+  stroke: color-mix(in srgb, var(--accent-strong) 52%, transparent);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.fl-span .dgm-face-right {
+  fill: color-mix(in srgb, var(--accent-strong) 34%, var(--accent));
+  stroke: none;
+}
+
+.fl-flow {
+  fill: none;
+  stroke: var(--surface-solid);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 9 13;
+  opacity: 0.9;
+}
+
+.dgm-svg.is-live .fl-span.is-up .fl-flow {
+  animation: fl-run 1400ms linear infinite;
+}
+
+@keyframes fl-run {
+  to { stroke-dashoffset: -22; }
+}
+
+.fl-span.is-hot .dgm-face-top { fill: color-mix(in srgb, var(--accent) 44%, var(--surface-solid)); }
+
+/* The carry. It exists only while the ground under it does not. */
+
+.fl-carry { transition: opacity 520ms ease; }
+.fl-carry.is-done { opacity: 0; pointer-events: none; }
+
+.fl-carrypath {
+  fill: none;
+  stroke: color-mix(in srgb, var(--accent-strong) 46%, transparent);
+  stroke-width: 1.4;
+  stroke-dasharray: 5 7;
+  vector-effect: non-scaling-stroke;
+}
+
+.dgm-svg.is-live .fl-carry:not(.is-done) .fl-carrypath {
+  animation: fl-haul 2600ms linear infinite;
+}
+
+@keyframes fl-haul {
+  to { stroke-dashoffset: -24; }
+}
+
+.fl-parcel {
+  fill: var(--accent-strong);
+  stroke: var(--surface-solid);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.fl-corner {
+  fill: var(--surface-solid);
+  stroke: color-mix(in srgb, var(--accent-strong) 58%, transparent);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.fl-carry.is-done .fl-corner { opacity: 0; }
+
+.dgm-svg:not(.is-live) .fl-parcel { display: none; }
+
+.fl-carry.is-hot .fl-carrypath { stroke: color-mix(in srgb, var(--accent) 74%, transparent); }
+
 .dgm-seat {
   --seat-in: clamp(0, calc((var(--spread, 1) - 0.5) * 2.4), 1);
   opacity: var(--seat-in);
@@ -9914,6 +10171,13 @@ html.is-hidden .clinic-node i,
    across the federation rather than as height, and the three reaches it lies
    under were the casualty. */
 .dgm-seat.is-intel .dgm-seatstep { fill: color-mix(in srgb, var(--text) 4.5%, transparent); }
+
+/* The floor's plane is the widest surface in any of the three figures, so three
+   steps at a deck's weight stack into a smear the size of the drawing rather
+   than into height under it. Occlusion is a hint that something is held above
+   something else; past a certain area it stops being read as shadow and starts
+   being read as dirt. */
+.dgm-seat.is-floor .dgm-seatstep { fill: color-mix(in srgb, var(--text) 2.6%, transparent); }
 
 @keyframes dgm-seat {
   0%, 100% { opacity: var(--seat-in); transform: scale(1); }
@@ -12645,6 +12909,68 @@ html.is-hidden .clinic-node i,
   50% { opacity: calc((1 - 0.34 * var(--far, 0)) * 0.87); }
 }
 
+/* ── THREE DISTRICTS, THREE CLOCKS ───────────────────────────────────────
+
+   One breathe across the whole floor made twenty-eight solids into a single
+   organism, which is a beautiful effect and the wrong statement: it says these
+   three places are the same kind of place running at the same rate. They are
+   not, and the difference is most of what the section is arguing.
+
+   So each population keeps its own clock, and the clock is a fact about the
+   population rather than a way of telling them apart:
+
+   TOWERS breathe on a fourteen-second swell and move a few pixels. Very large
+   institutions change slowly, and tall things read wrong when they twitch.
+
+   WORKS flicker on a two-second stagger, and it is the busiest thing on the
+   sheet. That is not decoration - a site really is running twenty-odd systems
+   at once in one building, and the drawing is allowed to look like it.
+
+   PODS sit dim and come up one at a time on a seven-second round. Most are
+   unlit at any moment, because coverage that depends on the building somebody
+   can reach is exactly that: intermittent, and mostly off.
+
+   Every one folds the depth expression back in, because animating `opacity`
+   replaces the property outright and a keyframe that forgot the air would
+   flatten its whole district every cycle. */
+
+.dgm-svg.is-live .dgm-plot.is-up.towers {
+  animation: fl-tower calc(13s + var(--life, 0) * 6s) ease-in-out infinite;
+  animation-delay: calc(var(--wave, 0) * -12s);
+}
+
+@keyframes fl-tower {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3.5px); }
+}
+
+.dgm-svg.is-live .dgm-plot.is-up.works {
+  animation: fl-works calc(2.1s + var(--life, 0) * 1.6s) ease-in-out infinite;
+  animation-delay: calc(var(--life, 0) * -3.4s);
+}
+
+@keyframes fl-works {
+  0%, 100% { opacity: calc(1 - 0.34 * var(--far, 0)); }
+  44% { opacity: calc((1 - 0.34 * var(--far, 0)) * 0.66); }
+}
+
+.dgm-svg.is-live .dgm-plot.is-up.pods {
+  animation: fl-pod calc(6.6s + var(--life, 0) * 4.2s) ease-in-out infinite;
+  animation-delay: calc(var(--life, 0) * -7.4s);
+}
+
+@keyframes fl-pod {
+  0%, 66%, 100% { opacity: calc((1 - 0.34 * var(--far, 0)) * 0.5); }
+  82% { opacity: calc(1 - 0.34 * var(--far, 0)); }
+}
+
+/* Pointing at a district speeds nothing up and lights everything: the reader
+   gets the whole population at full strength while they are looking at it, and
+   the clocks carry on underneath. A hover that changes a rate is a hover that
+   changes what the drawing is claiming. */
+
+.dgm-svg.is-live .dgm-plot.is-up.is-hot { animation-play-state: paused; opacity: calc(1 - 0.34 * var(--far, 0)); }
+
 /* The air is drawn as well as applied: one soft field on the sheet under the
    floor, centred on the drum, so the ground the figure stands on is lit from
    the middle of the thing that is running rather than being flat paper. */
@@ -12757,10 +13083,59 @@ html.is-hidden .clinic-node i,
   transition: opacity 640ms ease, transform 720ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.dgm-svg.is-live .dgm-shard:not(.is-gone) {
+/* THREE POSITIONS, ONE OBJECT.
+
+   Scattered is where the plate was built, so it is the identity transform.
+   Ranked and landed are OFFSETS from it, which is what keeps a plate the same
+   object in three places rather than three objects pretending to be one - and
+   it is why the sort and the landing can both be a compositor transform with no
+   geometry recomputed on either.
+
+   The stagger runs off the plate's own index, so nine plates do not sort in
+   unison: the rank assembles over about half a second, which is long enough to
+   be watched and short enough that the first scroll has visibly done something
+   before the reader's thumb has stopped. */
+
+.dgm-shard {
+  transition: opacity 640ms ease, transform 880ms cubic-bezier(0.22, 1, 0.28, 1);
+  transition-delay: 0ms, calc(var(--order, 0) * 42ms);
+}
+
+.dgm-shard.is-rank {
+  transform:
+    translate(calc(var(--px, 0) * var(--sway, 8px) * 0.3), calc(var(--py, 0) * 2px))
+    translate(var(--rank-x, 0px), var(--rank-y, 0px));
+}
+
+/* Landing is the moment the thing overhead stops being separate from the
+   ground. It goes INTO the tile - not out of frame, and not to nothing - and
+   shrinks as it arrives, because what lands is not the plate, it is what the
+   plate was holding. */
+
+.dgm-shard.is-landed {
+  opacity: 0;
+  transform:
+    translate(var(--land-x, 0px), var(--land-y, 0px))
+    scale(0.42);
+  transition-duration: 640ms, 760ms;
+  transition-delay: calc(var(--order, 0) * 46ms), calc(var(--order, 0) * 46ms);
+}
+
+/* Only the scattered state drifts. Once a plate has been sorted it holds
+   station, because the whole point of the beat is that it stopped wandering. */
+
+.dgm-svg.is-live .dgm-shard.is-scatter {
   animation: dgm-bob calc(7.4s + var(--life, 0) * 4.6s) ease-in-out infinite;
   animation-delay: calc(var(--life, 0) * -9.8s);
 }
+
+/* The tether measures how far the work is being held from where it belongs, so
+   it is only true while the plate is still wandering. Once the rank forms, the
+   plate has been claimed by a district and the distance it is being held at
+   stops being the point. */
+
+.dgm-shard:not(.is-scatter) .dgm-tether,
+.dgm-shard:not(.is-scatter) .dgm-tetherfoot { opacity: 0; }
 
 /* Gone, not deleted. A site does not throw out its EHR the day it stops running
    research inside it, and a figure that vanished these would be telling a story
@@ -12770,15 +13145,6 @@ html.is-hidden .clinic-node i,
    nine clean solids into nine smudges - a rounded lozenge in a dashed line
    reads as a cloud rather than as a drawing. */
 
-.dgm-shard.is-gone {
-  opacity: 0.2;
-  transform:
-    translate(calc(var(--px, 0) * var(--sway, 8px)), calc(var(--py, 0) * 5px))
-    translateY(calc((1 - var(--spread, 1)) * 30px + var(--float, 0px)))
-    scale(0.88);
-}
-
-.dgm-shard.is-gone .dgm-inert { opacity: 0; }
 .dgm-shard.is-hot { opacity: 1; }
 
 .dgm-shard :is(.dgm-face-top, .dgm-face-left, .dgm-face-right) {
@@ -12803,7 +13169,6 @@ html.is-hidden .clinic-node i,
   transition: stroke 560ms ease, opacity 560ms ease;
 }
 
-.dgm-shard.is-gone .dgm-tether { opacity: 0.22; }
 .dgm-shard.is-hot .dgm-tether { stroke: color-mix(in srgb, var(--muted) 74%, transparent); }
 
 .dgm-tetherfoot {
@@ -12811,7 +13176,6 @@ html.is-hidden .clinic-node i,
   transition: fill 560ms ease;
 }
 
-.dgm-shard.is-gone .dgm-tetherfoot { fill: color-mix(in srgb, var(--ink) 46%, transparent); }
 
 /* What a general-purpose system holds: rows, a sheet of cells, a page. Three
    marks, because there are only three kinds of thing any of them can hold, and
@@ -12854,20 +13218,31 @@ html.is-hidden .clinic-node i,
   border-top: 1px solid var(--border);
 }
 
+/* THE CAPTION IS THE ONLY WRITING ANYWHERE NEAR THIS FIGURE, so it has to be
+   read at a glance from across a room. It was a grey chip and a grey sentence
+   sitting under a large drawing, which is the weight you give a footnote - and
+   this is not a footnote, it is the only thing on the sheet that says in words
+   what the reader is looking at. The state is set at the size of a heading and
+   in the ink of whatever the figure is currently doing; the sentence beside it
+   is body copy rather than caption copy. */
+
 .dgm-readpill {
   flex: none;
-  padding: 6px 13px;
+  min-width: 13ch;
+  padding: 7px 15px;
+  border: 1px solid color-mix(in srgb, var(--muted) 34%, transparent);
   border-radius: 999px;
-  background: var(--bg-soft);
-  color: var(--muted);
+  color: var(--text);
   font-family: var(--font-ui);
-  font-size: 0.62rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.15em;
   line-height: 1;
+  text-align: center;
   white-space: nowrap;
-  transition: background 300ms ease, color 300ms ease;
+  transition: background 320ms ease, color 320ms ease, border-color 320ms ease;
 }
+
 
 /* `min-width: 0` because a flex child will not wrap below its own max-content
    width without it, and `align-self: stretch` because the column layout on a
@@ -12879,10 +13254,11 @@ html.is-hidden .clinic-node i,
   min-width: 0;
   max-width: 104ch;
   align-self: stretch;
-  color: var(--text-soft);
-  font-size: clamp(0.84rem, 0.79rem + 0.22vw, 0.95rem);
+  color: var(--text);
+  font-size: clamp(0.95rem, 0.87rem + 0.36vw, 1.18rem);
   font-weight: 500;
-  line-height: 1.45;
+  letter-spacing: -0.004em;
+  line-height: 1.4;
   text-wrap: pretty;
 }
 
@@ -12894,353 +13270,6 @@ html.is-hidden .clinic-node i,
   .dgm-readpill { transition: none; }
 
   .dgm-svg.is-floor :is(.dgm-air, .dgm-cast, .dgm-district-tile, .dgm-tilefill, .dgm-shard, .dgm-tether, .dgm-tetherfoot, .dgm-inert, .dgm-plot, .dgm-plotcap, .dgm-run, .dgm-runpath, .dgm-runflow, .dgm-drum, .dgm-drumhead, .dgm-drumring) {
-    transition: none;
-    animation: none;
-  }
-}
-
-/* ═══════════════════════════════════════════════════════════════════════
-   THE LATTICE
-
-   A PERSPECTIVE SHEET, AND THAT IS THE WHOLE POINT OF IT.
-
-   Trident and Nectar are axonometric - a parallel projection, no vanishing
-   point, every solid the same size wherever it stands. That is right for an
-   instrument you look AT, and three attempts proved it is wrong for a place you
-   are meant to be INSIDE: a projection with no depth axis can only ever arrange
-   objects on a tray, and no amount of staggering objects on a tray makes a tray
-   into a space.
-
-   So this sheet converges. It has a horizon, it is denser and fainter with
-   distance, and it runs off three sides of the frame, because a surface that
-   stops inside the frame is a picture of a surface. It shares no part of the
-   solid vocabulary - no faces, no plan projection, no prisms - and it keeps the
-   three things that are actually the brand: the house blue, the dot grain, and
-   one ink for everything.
-   ═══════════════════════════════════════════════════════════════════════ */
-
-.ltc {
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  margin: 0;
-}
-
-.ltc-frame { min-width: 0; }
-
-.ltc-svg {
-  display: block;
-  width: 100%;
-  height: auto;
-  overflow: visible;
-  /* Two numbers run the entrance, registered so the browser can interpolate
-     them: the surface arrives, and then the light comes up on it. */
-  --spread: 0;
-  --charge: 0;
-  --run-in: clamp(0, calc((var(--charge, 1) - 0.42) * 2.4), 1);
-  opacity: calc(0.55 + 0.45 * var(--charge, 1));
-  transition: --spread 1150ms cubic-bezier(0.16, 1, 0.3, 1), --charge 1450ms 200ms cubic-bezier(0.33, 1, 0.68, 1);
-}
-
-.ltc-svg.is-booted { --spread: 1; --charge: 1; }
-
-/* The ground behind the lattice: the same dot grain the rest of the site uses,
-   so the sheet is recognisably on this page and not imported from another one. */
-
-.ltc-grain { fill: color-mix(in srgb, var(--accent) 26%, transparent); }
-.ltc-sky { opacity: calc(0.5 * var(--spread, 1)); pointer-events: none; }
-
-/* THE HORIZON TAKES THE SURFACE, rather than the surface stopping at it. One
-   mask over everything, so the lattice thins into the paper instead of ending
-   on a line - which is the difference between a drawing that continues past the
-   frame and one that was cut out and pasted on. */
-
-/* White, not black: an SVG mask reads LUMINANCE, so a black stop at any alpha
-   is a stop that hides everything under it. */
-.ltc-fade-far { stop-color: rgb(255 255 255 / 0); }
-.ltc-fade-mid { stop-color: rgb(255 255 255 / 0.66); }
-.ltc-fade-near { stop-color: rgb(255 255 255 / 1); }
-
-/* ── The surface ─────────────────────────────────────────────────────────
-
-   Every cell is drawn or it is not there. A hole is an ABSENCE rather than a
-   shape, which is what leaves its edge ragged without a single edge having to
-   be drawn - and what makes the repair a cell coming back rather than a patch
-   arriving over one.
-
-   Aerial perspective is the depth cue a parallel projection cannot have at all:
-   the far end of a real surface is fainter, and here that costs nothing because
-   the distance is already in the geometry. */
-
-.ltc-cell {
-  fill: color-mix(in srgb, var(--accent) calc(9% - var(--haze, 0) * 5%), transparent);
-  stroke: color-mix(in srgb, var(--accent) calc(66% - var(--haze, 0) * 44%), transparent);
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
-  opacity: var(--spread, 1);
-  transition: opacity 620ms ease, fill 420ms ease, stroke 420ms ease;
-}
-
-.ltc-cell.is-gone { opacity: 0; }
-.ltc-cell.is-hot { stroke: var(--accent-strong); }
-
-/* The near band of a closed surface carries a slow wave along it, so a lattice
-   at rest is a thing that is running rather than a photograph of one. Opacity
-   only, at a tenth, and only where a reader is actually looking. */
-
-@keyframes ltc-wake {
-  0%, 100% { opacity: var(--spread, 1); }
-  50% { opacity: calc(var(--spread, 1) * 0.88); }
-}
-
-.ltc-svg.is-live .ltc-cell:not(.is-gone) {
-  animation: ltc-wake calc(7s + var(--wake, 0) * 3s) ease-in-out infinite;
-  animation-delay: calc(var(--wake, 0) * -6s);
-}
-
-/* ── The pieces that came out ────────────────────────────────────────────
-
-   Each shard is the same polygon as the hole it left, drawn again above it, and
-   it falls back into exactly those coordinates when its band closes. Same
-   shape, same place: the only way a repair reads as a repair rather than as
-   something new arriving over the damage.
-
-   The lift is scaled by the cell's own distance, so a near shard drifts further
-   than a far one - which is what perspective does to equal heights, and what
-   makes the drift itself read as depth. */
-
-.ltc-shard {
-  fill: color-mix(in srgb, var(--muted) 14%, transparent);
-  stroke: color-mix(in srgb, var(--muted) calc(74% - var(--haze, 0) * 36%), transparent);
-  stroke-width: 1;
-  stroke-dasharray: 4 4;
-  vector-effect: non-scaling-stroke;
-  opacity: calc(0.9 * var(--spread, 1));
-  transform: translateY(calc(var(--lift, 0px) * -1 * var(--spread, 1)));
-  transition: transform 900ms cubic-bezier(0.16, 1, 0.3, 1), opacity 640ms ease;
-}
-
-@keyframes ltc-adrift {
-  0%, 100% { transform: translateY(calc(var(--lift, 0px) * -1)); }
-  50% { transform: translateY(calc(var(--lift, 0px) * -1.14)); }
-}
-
-.ltc-svg.is-live .ltc-shard:not(.is-home) {
-  animation: ltc-adrift calc(6.4s + var(--life, 0) * 3.6s) ease-in-out infinite;
-  animation-delay: calc(var(--life, 0) * -8s);
-}
-
-/* Home, and gone: the cell underneath is back, so the piece has nothing left to
-   be. Anything still drawn over a closed surface would be damage the figure is
-   claiming it has repaired. */
-
-.ltc-shard.is-home {
-  opacity: 0;
-  transform: translateY(0);
-}
-
-.ltc-shard.is-hot { stroke: color-mix(in srgb, var(--muted) 88%, transparent); }
-
-/* ── The run ─────────────────────────────────────────────────────────────
-
-   One path from the far anchor to the near one, and it does not exist until the
-   whole surface does. A signal crossing a torn lattice would be the drawing
-   contradicting the sentence underneath it. */
-
-.ltc-signal { opacity: 0; transition: opacity 700ms ease; }
-.ltc-svg.is-whole .ltc-signal { opacity: 1; }
-
-.ltc-signalpath {
-  fill: none;
-  stroke: color-mix(in srgb, var(--accent-strong) 52%, transparent);
-  stroke-width: 2.6;
-  stroke-linecap: round;
-  stroke-dasharray: 4 6;
-}
-
-.ltc-signalrun {
-  fill: none;
-  stroke: var(--accent-strong);
-  stroke-width: 4.4;
-  stroke-linecap: round;
-  stroke-dasharray: 12 88;
-}
-
-@keyframes ltc-carry {
-  to { stroke-dashoffset: -100; }
-}
-
-.ltc-svg.is-live.is-whole .ltc-signalrun {
-  opacity: var(--run-in, 1);
-  animation: ltc-carry 3.4s linear infinite;
-}
-
-/* ── What stands on the surface ──────────────────────────────────────────
-
-   The first perspective pass drew the lattice and three markers on it, and it
-   was an empty floor with three pins in it - a wireframe placeholder rather
-   than a figure. Changing projection fixed the depth; it did not put anything
-   in the frame worth looking at, and this is what does.
-
-   Three populations, three silhouettes, one ink. Sponsors are tall slender
-   towers at the far end, the site is a dense low works in the middle, patients
-   are small round pods near - and a reader tells them apart by shape and by
-   where they stand, which is the rule this sheet has always run on. Every one
-   is a WORLD height, so a tower at the horizon is genuinely shorter on the page
-   than a pod at your feet: the cue three axonometric versions had to fake by
-   hand and never convincingly.
-
-   NOTHING IS UP UNTIL ITS GROUND IS. A building rises out of the surface as its
-   band closes, so the repair is something a reader watches happen rather than a
-   state they are handed. */
-
-.ltc-block,
-.ltc-pod,
-.ltc-drum {
-  cursor: pointer;
-  opacity: 0;
-  transform: translateY(14px);
-  transition: opacity 620ms ease, transform 820ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.ltc-block.is-up,
-.ltc-pod.is-up,
-.ltc-drum.is-up {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.ltc-block.is-hot,
-.ltc-pod.is-hot,
-.ltc-drum.is-hot { opacity: 1; }
-
-/* A footing, so a solid is standing on the ground rather than lying over it. */
-
-.ltc-foot {
-  fill: color-mix(in srgb, var(--accent) 20%, transparent);
-  stroke: none;
-}
-
-/* Three faces, three weights of one ink. The whole range is pulled toward the
-   paper with distance - a near block carries its full body and a tower at the
-   horizon carries a third of it - which is aerial perspective doing in colour
-   what the projection is already doing in size. */
-
-.ltc-roof {
-  fill: color-mix(in srgb, var(--accent) calc(34% - var(--haze, 0) * 18%), var(--surface-solid));
-  stroke: color-mix(in srgb, var(--accent-strong) calc(100% - var(--haze, 0) * 46%), transparent);
-  stroke-width: 1;
-  stroke-linejoin: round;
-  vector-effect: non-scaling-stroke;
-}
-
-.ltc-face {
-  fill: color-mix(in srgb, var(--accent) calc(64% - var(--haze, 0) * 34%), var(--surface-solid));
-  stroke: color-mix(in srgb, var(--accent-strong) calc(74% - var(--haze, 0) * 34%), transparent);
-  stroke-width: 1;
-  stroke-linejoin: round;
-  vector-effect: non-scaling-stroke;
-}
-
-.ltc-side {
-  fill: color-mix(in srgb, var(--accent) calc(84% - var(--haze, 0) * 44%), var(--surface-solid));
-  stroke: color-mix(in srgb, var(--accent-strong) calc(66% - var(--haze, 0) * 30%), transparent);
-  stroke-width: 1;
-  stroke-linejoin: round;
-  vector-effect: non-scaling-stroke;
-}
-
-/* The far towers carry less ink than the near works, because they are further
-   away and the air is between you. */
-
-/* ── The mark ────────────────────────────────────────────────────────────
-
-   The monogram is two stacked forms, so the drum is two stacked drums, standing
-   at the middle of the works: the one round thing in a district of blocks, at
-   the middle distance, with the run passing through it. Built out of the
-   projection like everything else here rather than pasted on. */
-
-.ltc-drumwall {
-  fill: color-mix(in srgb, var(--accent) 88%, var(--surface-solid));
-  stroke: var(--accent-strong);
-  stroke-width: 1.2;
-  vector-effect: non-scaling-stroke;
-}
-
-.ltc-drumhead {
-  fill: color-mix(in srgb, var(--accent) 44%, var(--surface-solid));
-  stroke: var(--accent-strong);
-  stroke-width: 1.2;
-  vector-effect: non-scaling-stroke;
-}
-
-.ltc-drumhead.is-cap { fill: var(--accent-strong); }
-
-.ltc-podwall {
-  fill: color-mix(in srgb, var(--accent) 50%, var(--surface-solid));
-  stroke: color-mix(in srgb, var(--accent-strong) 72%, transparent);
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
-}
-
-.ltc-podcap {
-  fill: color-mix(in srgb, var(--accent) 24%, var(--surface-solid));
-  stroke: var(--accent-strong);
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
-}
-
-.ltc-hit { fill: none; pointer-events: all; }
-
-/* ── The readout ─────────────────────────────────────────────────────────
-
-   A caption in the document, not type inside the drawing: it holds its size
-   while the figure scales, a screen reader gets it as text rather than as a
-   label inside an image, and the sheet is left with nothing written on it. */
-
-.ltc-readout {
-  display: flex;
-  align-items: baseline;
-  gap: clamp(12px, 1.6vw, 20px);
-  margin-top: 14px;
-  padding-top: 14px;
-  border-top: 1px solid var(--border);
-}
-
-.ltc-pill {
-  flex: none;
-  padding: 6px 13px;
-  border-radius: 999px;
-  background: var(--bg-soft);
-  color: var(--muted);
-  font-family: var(--font-ui);
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  line-height: 1;
-  white-space: nowrap;
-  transition: background 300ms ease, color 300ms ease;
-}
-
-.ltc-line {
-  min-width: 0;
-  max-width: 104ch;
-  align-self: stretch;
-  color: var(--text-soft);
-  font-size: clamp(0.84rem, 0.79rem + 0.22vw, 0.95rem);
-  font-weight: 500;
-  line-height: 1.45;
-  text-wrap: pretty;
-}
-
-.ltc-readout.is-pass .ltc-pill { background: var(--accent-soft); color: var(--accent-strong); }
-.ltc-readout.is-valid .ltc-pill { background: var(--accent-strong); color: var(--surface-solid); }
-
-@media (prefers-reduced-motion: reduce) {
-  .ltc-svg,
-  .ltc-readout,
-  .ltc-pill,
-  .ltc-svg :is(.ltc-cell, .ltc-shard, .ltc-signal, .ltc-signalrun, .ltc-block, .ltc-pod, .ltc-drum, .ltc-sky) {
     transition: none;
     animation: none;
   }

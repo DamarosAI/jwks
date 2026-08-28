@@ -1,15 +1,15 @@
-import { lazy, Suspense, useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom'
-import { HERO_STAGE_MS, HERO_TICK_MS, NARROW_VIEWPORT, autoplayIndex, nextStageIndex, shouldFollowDemoSelection, shouldHoldAutoplayFromClick, shouldKeepPreviousStage, shouldPlayAutoplay, shouldRunAmbient, useAutoplayHold, useDocumentVisible, useInView, useMediaQuery, useScrollIdle, useSoftSwap } from './autoplay'
+import { HERO_STAGE_MS, HERO_TICK_MS, NARROW_VIEWPORT, UNPINNED_VIEWPORT, autoplayIndex, nextStageIndex, shouldFollowDemoSelection, shouldHoldAutoplayFromClick, shouldKeepPreviousStage, shouldPlayAutoplay, shouldRunAmbient, useAutoplayHold, useDocumentVisible, useInView, useMediaQuery, useScrollIdle, useSoftSwap } from './autoplay'
 import { easeSectionScroll, sectionScrollDuration, sectionScrollTarget, usePaneSettle, viewportHeight } from './motion'
 import { useDemoPageWheel } from './page-scroll'
 import { PilotButton, PilotProvider } from './PilotInquiry'
 const PrivacyPage = lazy(() => import('./PrivacyPage'))
-import LatticeSchematic from './diagrams/LatticeSchematic'
+import ChainSchematic, { CHAIN_PHASES, cameraAt } from './diagrams/ChainSchematic'
 import TridentSchematic from './diagrams/TridentSchematic'
 import NectarSchematic from './diagrams/NectarSchematic'
 import { usePointerField } from './diagrams/usePointerField'
-import { useScrollSpread } from './diagrams/useScrollPhase'
+import { usePinnedRun, useScrollSpread } from './diagrams/useScrollPhase'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -596,52 +596,74 @@ function LandingHero() {
    the closer start where the word THESIS starts and the section reads as one
    column rather than as a centred slab with a label stuck to its corner. */
 
+/* THE PAGE STOPS HERE, AND THAT IS WHAT LETS THE CAMERA MOVE.
+
+   Every other section on this site describes an instrument, and an instrument
+   is a thing you look at from outside. This one describes the GROUND, and the
+   figure answers by flying across it - wide over the broken world, down into
+   the sponsors, along to the site, on to the patients, and back out over
+   something that has been repaired while the reader was inside it.
+
+   That flight cannot happen in the flow of the page. A camera crossing a
+   landscape while the landscape is itself sliding up the screen is two motions
+   competing for one pair of eyes, and the reader reads neither. So the section
+   pins: the page holds still, and scroll stops meaning "leave" and starts
+   meaning "travel". */
+
 function ThesisSection() {
-  const root = useRef(null)
   const reduced = useReducedMotion()
   const narrow = useMediaQuery(NARROW_VIEWPORT)
+  // One question, asked once: is there room to hold the page still? A pinned
+  // figure is bound by height as much as by width, so a wide-but-short window
+  // fails it too - and below it the section rejoins the page and the same beats
+  // play as it goes by.
+  const unpinned = useMediaQuery(UNPINNED_VIEWPORT)
+  // THE CAMERA IS DRIVEN FROM HERE, ON EVERY SCROLL FRAME, AND NEVER THROUGH
+  // REACT. The section owns the scroll, so the section writes the transform -
+  // straight onto the group as two custom properties, with no state in between
+  // and no transition on the way out. A value that changes sixty times a second
+  // must not re-render a tree with fifty solids in it, and a camera with a
+  // spring between the finger and the frame is what "out of sync" actually is.
+  const camera = useRef(null)
+  const scrub = useCallback((progress) => {
+    const node = camera.current
+    if (!node) return
+    const shot = cameraAt(progress)
+    node.style.setProperty('--cam-x', `${shot.x}px`)
+    node.style.setProperty('--cam-y', `${shot.y}px`)
+    node.style.setProperty('--cam-k', shot.k)
+  }, [])
+  const [root, pin, phase, booted] = usePinnedRun(CHAIN_PHASES, { reduced, narrow: unpinned, onScrub: scrub })
   const inView = useInView(root)
   const animate = shouldRunAmbient({ reduced, inView, narrow })
-  const field = useScrollSpread({ reduced, start: 'top bottom', end: 'top 40%' })
+  // The cloud still answers the pointer. The camera moves the WORLD; this moves
+  // the reader's head - nine plates at nine rates shearing against the ground
+  // they are held over - and the two compose rather than compete, because one
+  // is a property of the beat and the other is a property of where the cursor
+  // happens to be.
   usePointerField(root, { reduced })
 
-  useEnterMotion(root, reduced, () => [
-    gsap.from('.thesis-head > *', {
-      opacity: 0,
-      duration: 0.8,
-      stagger: 0.12,
-      ease: 'power2.out',
-      clearProps: 'transform',
-      scrollTrigger: { trigger: root.current, start: 'top 74%', once: true },
-    }),
-    gsap.from('.thesis-chain', {
-      opacity: 0,
-      duration: 1.2,
-      ease: 'power3.out',
-      clearProps: 'transform',
-      scrollTrigger: { trigger: root.current, start: 'top 68%', once: true },
-    }),
-  ])
-
   return (
-    <section className="thesis-section section-space" id="thesis" ref={root}>
-      <SectionEyebrow>Thesis</SectionEyebrow>
-      <div className="section-field" ref={field} aria-hidden="true" />
-      <div className="thesis-column">
-        {/* The sentence is set INTO the drawing, not above it. Both sit in one
-            grid cell; the figure keeps its top-left corner empty and the dek
-            occupies it. See the stylesheet - it is the move that makes this
-            section a space a reader is inside rather than a picture they are
-            looking at, and it is the one layout neither product section uses. */}
-        <div className="thesis-stage">
-          <div className="thesis-head">
-            <h2><span className="thesis-line accent-text">The next generation of medicine</span><span className="thesis-line">cannot run on yesterday's research infrastructure.</span></h2>
+    <section className="thesis-section" id="thesis" ref={root}>
+      <div className="thesis-pin" ref={pin}>
+        <SectionEyebrow>Thesis</SectionEyebrow>
+        <div className="thesis-column">
+          {/* The sentence is set INTO the drawing, not above it. Both sit in one
+              grid cell; the figure keeps its top-left corner empty and the dek
+              occupies it - which is the move that makes this section a space a
+              reader is inside rather than a picture they are looking at, and it
+              is the one layout neither product section uses. The camera keeps
+              that corner clear at every stop. */}
+          <div className="thesis-stage">
+            <div className="thesis-head">
+              <h2><span className="thesis-line accent-text">The next generation of medicine</span><span className="thesis-line">cannot run on yesterday's research infrastructure.</span></h2>
+            </div>
+            <div className="thesis-chain">
+              <ChainSchematic phase={phase} booted={booted} animate={animate} camera={camera} />
+            </div>
           </div>
-          <div className="thesis-chain">
-            <LatticeSchematic animate={animate} reduced={reduced} />
-          </div>
+          <p className="thesis-closer"><BrandName /> is building what comes next.</p>
         </div>
-        <p className="thesis-closer"><BrandName /> is building what comes next.</p>
       </div>
     </section>
   )
