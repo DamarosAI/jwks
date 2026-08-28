@@ -1988,12 +1988,27 @@ describe('The lattice schematic', () => {
   })
 
   it('gets its depth from the projection rather than from arrangement', () => {
-    // THREE ANCHORS AT THREE DISTANCES, AND THAT IS WHY THEY ARE THREE SIZES.
-    // Every axonometric version of this figure had to arrange that by hand and
-    // never quite convinced; a vanishing point gives it for nothing, which is
-    // most of the argument for changing projection.
-    assert.match(lattice, /const scale = K \/ band\.anchor\[1\]/)
-    assert.match(lattice, /r: round\(scale \* 0\.\d+\)/)
+    // A CITY, NOT THREE MARKERS. The first perspective pass drew the lattice and
+    // three pins on it, which is a wireframe placeholder rather than a figure:
+    // changing projection fixes depth, it does not put anything in the frame
+    // worth looking at. Three populations and three silhouettes do.
+    assert.match(lattice, /const TOWERS = \[/)
+    assert.match(lattice, /const WORKS = \[/)
+    assert.match(lattice, /const PODS = \[/)
+    // Raising a point is taking the camera height back out of K. That one line
+    // is what lets the sheet carry real solids rather than markers.
+    assert.match(lattice, /return \[round\(CX \+ lateralOf\(col\) \* \(K \/ w\) \* SPREAD\), round\(HORIZON \+ \(K - high\) \/ w\)\]/)
+    // Every height is a WORLD height and every pod radius is a world radius, so
+    // a tower at the horizon is genuinely shorter on the page than a pod at
+    // your feet. Scaling either by distance would make everything the same size
+    // on screen, which is the exact cue this projection was adopted for.
+    assert.match(lattice, /\]\.map\(\(\[u, w\]\) => \[u, w, 0\.072, 190\]\)/)
+    // Placed by where they stand in the world rather than by which lattice cell
+    // they land on: cells are a texture on the ground, a city is not laid out
+    // on them.
+    assert.match(lattice, /function block\(u, w, du, dw, high\)/)
+    // Back to front, or twenty-two solids is a pile rather than a skyline.
+    assert.match(lattice, /\.sort\(\(a, b\) => b\.w - a\.w\)/)
     // Aerial perspective - the far end of a surface is fainter - is the depth
     // cue a parallel projection cannot have at all, and here it is free because
     // the distance is already in the geometry.

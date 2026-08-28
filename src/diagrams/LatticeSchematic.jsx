@@ -83,6 +83,56 @@ function at(col, row) {
   return [round(CX + lateralOf(col) * scale * SPREAD), round(HORIZON + scale)]
 }
 
+/**
+ * The same point, `high` world units off the ground.
+ *
+ * Camera height is already baked into K, so raising a point is simply taking it
+ * out again: a thing at height h projects at (K - h) over distance, and its
+ * lateral position does not change at all. That one line is what lets this
+ * sheet carry real buildings rather than markers - and it is why they get their
+ * size from where they stand for nothing, which is the whole reason the figure
+ * changed projection.
+ */
+function up(col, row, high) {
+  const w = depthOf(row)
+  return [round(CX + lateralOf(col) * (K / w) * SPREAD), round(HORIZON + (K - high) / w)]
+}
+
+/** A lateral position that is not on a column line, for things placed freely. */
+function atU(u, w, high = 0) {
+  return [round(CX + u * (K / w) * SPREAD), round(HORIZON + (K - high) / w)]
+}
+
+const quad = (points) => points.map(([x, y]) => `${x},${y}`).join(' ')
+
+/**
+ * A block standing on the lattice, in perspective.
+ *
+ * Placed by where it stands in the world - lateral position and distance -
+ * rather than by which lattice cell it happens to sit on. Cells are a texture
+ * on the ground; a city is not laid out on them.
+ *
+ * Four ground corners and the same four raised, drawn as the two lateral faces,
+ * then the near face, then the roof. Nothing is hidden by hand: an opaque near
+ * face covers the far one, and the roof covers the tops of all of them, which
+ * is what a solid does. `high` is a WORLD height, so the same building is
+ * shorter on screen the further back it stands.
+ */
+function block(u, w, du, dw, high) {
+  const g = [atU(u - du, w - dw), atU(u + du, w - dw), atU(u + du, w + dw), atU(u - du, w + dw)]
+  const t = [
+    atU(u - du, w - dw, high), atU(u + du, w - dw, high),
+    atU(u + du, w + dw, high), atU(u - du, w + dw, high),
+  ]
+  return {
+    foot: quad(g),
+    roof: quad(t),
+    near: quad([g[0], g[1], t[1], t[0]]),
+    left: quad([g[0], g[3], t[3], t[0]]),
+    right: quad([g[1], g[2], t[2], t[1]]),
+  }
+}
+
 const GRID = Array.from({ length: ROWS }, (_, row) => Array.from({ length: COLS }, (_, col) => at(col, row)))
 
 // Three bands of the surface, far to near, and the constituency standing in
@@ -94,7 +144,6 @@ const BANDS = [
     key: 'sponsors',
     from: 18,
     to: ROWS - 2,
-    anchor: [-0.74, 12.4],
     pill: 'SPONSORS',
     before: 'A protocol leaves a sponsor as a document. Every site rebuilds it by hand, differently.',
     after: 'One versioned protocol, executed the same way at every site, with its evidence attached.',
@@ -103,7 +152,6 @@ const BANDS = [
     key: 'sites',
     from: 9,
     to: 17,
-    anchor: [0.16, 7.2],
     pill: 'SITES',
     before: 'Twenty-odd systems, none built for research, and a person carrying work between them.',
     after: 'Governed agents on ground the site controls. Records stay put; decisions are signed there.',
@@ -112,26 +160,91 @@ const BANDS = [
     key: 'patients',
     from: 0,
     to: 8,
-    anchor: [0.92, 4.3],
     pill: 'PATIENTS',
     before: 'Whether a patient can join a trial depends on the building they can reach that week.',
     after: 'Participation stops depending on geography. The trial runs where care already happens.',
   },
-].map((band) => {
-  const scale = K / band.anchor[1]
-  return {
-    ...band,
-    // An anchor is drawn at the size its distance gives it. Three depths, three
-    // sizes, and neither number had to be chosen - which is the whole reason
-    // for changing projection.
-    scale: round(scale),
-    at: [round(CX + band.anchor[0] * scale * SPREAD), round(HORIZON + scale)],
-    r: round(scale * 0.088),
-  }
-})
+]
 
 const BY_BAND = Object.fromEntries(BANDS.map((band) => [band.key, band]))
 const bandOf = (row) => BANDS.find((band) => row >= band.from && row <= band.to) ?? BANDS[0]
+
+/**
+ * WHAT STANDS ON THE SURFACE.
+ *
+ * The first perspective pass drew the lattice and three markers on it, and it
+ * was an empty floor with three pins in it - a wireframe placeholder rather
+ * than a figure. A projection change fixes depth; it does not put anything in
+ * the frame worth looking at, and this is what does.
+ *
+ * Three populations, three silhouettes, and nothing is lettered: sponsors are
+ * tall slender towers at the far end, the site is a dense low works in the
+ * middle, patients are small round pods near. A reader tells them apart by
+ * shape and by where they stand, which is the same rule the sheet has always
+ * run on - it is only the projection underneath that changed.
+ *
+ * Every one is a WORLD height rather than a screen height, so a tower at the
+ * horizon is genuinely shorter on the page than a pod at your feet. That is the
+ * cue three axonometric versions of this figure had to fake by hand and never
+ * convincingly; here it is arithmetic.
+ */
+const TOWERS = [
+  [-1.42, 17.4, 1180], [-1.05, 15.2, 940], [-0.72, 18.1, 1420], [-0.34, 14.6, 1060],
+  [0.02, 16.8, 1320], [0.36, 14.1, 880], [0.71, 17.2, 1180], [1.04, 15.0, 1020],
+  [1.38, 18.0, 1300], [-0.9, 12.9, 820], [0.58, 12.6, 900], [1.24, 13.2, 760],
+].map(([u, w, high], index) => ({
+  key: `t${index}`, band: 'sponsors', w, kind: 'tower', ...block(u, w, 0.115, 0.42, high),
+}))
+
+const WORKS = [
+  [-1.34, 9.4, 620], [-0.98, 10.6, 480], [-0.62, 8.8, 700], [-0.3, 10.2, 430],
+  [0.42, 9.1, 640], [0.78, 10.5, 470], [1.12, 8.6, 720], [1.42, 10.1, 520],
+  [-1.1, 7.6, 400], [1.0, 7.3, 440],
+].map(([u, w, high], index) => ({
+  key: `w${index}`, band: 'sites', w, kind: 'works', ...block(u, w, 0.17, 0.4, high),
+}))
+
+const PODS = [
+  [-1.44, 4], [-0.92, 3.5], [-0.46, 4.7], [0.1, 3.7], [0.62, 4.4], [1.16, 3.6],
+  [-1.18, 5.6], [0.34, 5.7], [1.38, 5.2], [-0.2, 6.4], [0.9, 6.2],
+].map(([u, w]) => [u, w, 0.072, 190]).map(([u, w, r, high], index) => {
+  const rx = round(r * (K / w) * SPREAD)
+  return {
+    key: `p${index}`,
+    band: 'patients',
+    w,
+    kind: 'pod',
+    rx,
+    // A circle lying on the ground is very flat from a low camera. A quarter is
+    // slightly rounder than the exact foreshortening and is what keeps a pod
+    // legible as a solid rather than as a line.
+    ry: round(rx * 0.26),
+    base: atU(u, w),
+    cap: atU(u, w, high),
+  }
+})
+
+// THE DRUM, in this sheet's terms. The monogram is two stacked forms, so the
+// mark is two stacked drums standing at the middle of the site works - the one
+// round thing in a district of blocks, at the middle distance, with the run
+// passing through it. In scale with what it stands among: a mark that dwarfs
+// the city it is in is a logo dropped on a drawing, which is exactly what the
+// first attempt at it looked like.
+const DRUM_W = 7.9
+const DRUM_U = 0.04
+const DRUM_R = 0.2
+const DRUM_RX = round(DRUM_R * (K / DRUM_W) * SPREAD)
+const DRUM = {
+  rx: DRUM_RX,
+  ry: round(DRUM_RX * 0.26),
+  base: atU(DRUM_U, DRUM_W),
+  waist: atU(DRUM_U, DRUM_W, 620),
+  cap: atU(DRUM_U, DRUM_W, 1080),
+}
+
+// Back to front, so a nearer solid occludes the one behind it. Twenty-eight
+// buildings in list order is a pile; in depth order it is a skyline.
+const BUILT = [...TOWERS, ...WORKS].sort((a, b) => b.w - a.w)
 
 /**
  * Where the surface has failed.
@@ -188,7 +301,11 @@ const SHARDS = CELLS.filter((cell) => cell.gone && jitter(cell.col * 5 + cell.ro
  * whole claim is that it does not stop, and it does not exist at all until
  * every band is closed.
  */
-const RUN = `M ${BANDS[0].at[0]} ${BANDS[0].at[1]} Q ${round((BANDS[0].at[0] + BANDS[1].at[0]) / 2 - 34)} ${round((BANDS[0].at[1] + BANDS[1].at[1]) / 2)} ${BANDS[1].at[0]} ${BANDS[1].at[1]} Q ${round((BANDS[1].at[0] + BANDS[2].at[0]) / 2 + 30)} ${round((BANDS[1].at[1] + BANDS[2].at[1]) / 2)} ${BANDS[2].at[0]} ${BANDS[2].at[1]}`
+const RUN_A = atU(-0.42, 16.6)
+const RUN_B = atU(-0.06, 11.4)
+const RUN_C = atU(0.2, 8.2)
+const RUN_D = atU(0.62, 4.6)
+const RUN = `M ${RUN_A[0]} ${RUN_A[1]} Q ${RUN_B[0]} ${RUN_B[1]} ${RUN_C[0]} ${RUN_C[1]} T ${RUN_D[0]} ${RUN_D[1]}`
 
 // `closed` is which bands have been repaired, far to near. Everything else on
 // the sheet reads off it - which cells are back, which shards have fallen, which
@@ -287,28 +404,68 @@ export default function LatticeSchematic({ animate = true, reduced = false }) {
               <path className="ltc-signalrun" d={RUN} pathLength="100" />
             </g>
 
-            {/* THE ANCHORS. Three constituencies at three distances, and the
-                only reason they are three sizes is that they are three
-                distances. In the projection this figure replaced, that had to
-                be arranged by hand and never quite convinced. */}
-            {BANDS.map((band) => (
-              <g
-                className={`ltc-anchor${shut(band.key) ? ' is-lit' : ''}${lit(band.key)}`}
-                key={band.key}
-                style={{ '--r': `${band.r}px`, '--haze': Math.round((1 - band.scale / (K / NEAR)) * 100) / 100 }}
-                {...probe(band.key)}
-              >
-                <ellipse className="ltc-halo" cx={band.at[0]} cy={band.at[1]} rx={band.r * 2.6} ry={band.r * 2.6 * 0.36} />
-                <ellipse className="ltc-ring" cx={band.at[0]} cy={band.at[1]} rx={band.r * 1.7} ry={band.r * 1.7 * 0.36} />
-                <line className="ltc-mast" x1={band.at[0]} y1={band.at[1]} x2={band.at[0]} y2={band.at[1] - band.r * 2.1} />
-                {/* The mark, in this figure's own terms: the monogram is two
-                    stacked forms, so an anchor carries two rings on its mast
-                    rather than a logo pasted onto the sheet. */}
-                <ellipse className="ltc-head" cx={band.at[0]} cy={band.at[1] - band.r * 1.5} rx={band.r * 0.82} ry={band.r * 0.82 * 0.42} />
-                <ellipse className="ltc-head is-cap" cx={band.at[0]} cy={band.at[1] - band.r * 2.1} rx={band.r * 0.58} ry={band.r * 0.58 * 0.42} />
-                <ellipse className="ltc-hit" cx={band.at[0]} cy={band.at[1] - band.r} rx={band.r * 3} ry={band.r * 2.4} />
-              </g>
-            ))}
+            {/* WHAT STANDS ON IT.
+
+                Nothing is up until its ground is. A building rises out of the
+                surface as its band closes, which makes the repair something a
+                reader watches happen rather than a state they are handed - and
+                it is the same move in a different projection as a solid gaining
+                a dimension, which is what this figure has always done.
+
+                Back to front, so a nearer solid occludes the one behind it. */}
+            <g className="ltc-built">
+              {BUILT.map((item) => (
+                <g
+                  className={`ltc-block is-${item.kind}${shut(item.band) ? ' is-up' : ''}${lit(item.band)}`}
+                  key={item.key}
+                  style={{ '--haze': Math.round(((item.w - NEAR) / (FAR - NEAR)) * 100) / 100 }}
+                  {...probe(item.band)}
+                >
+                  <polygon className="ltc-foot" points={item.foot} />
+                  <polygon className="ltc-side" points={item.left} />
+                  <polygon className="ltc-side" points={item.right} />
+                  <polygon className="ltc-face" points={item.near} />
+                  <polygon className="ltc-roof" points={item.roof} />
+                </g>
+              ))}
+            </g>
+
+            {/* THE DRUM. The monogram is two stacked forms, so the mark is two
+                stacked drums standing at the middle of the works - the one round
+                thing in a district of blocks, with the run passing through it. */}
+            <g className={`ltc-drum${shut('sites') ? ' is-up' : ''}${lit('sites')}`} {...probe('sites')}>
+              <path
+                className="ltc-drumwall"
+                d={`M ${DRUM.base[0] - DRUM.rx} ${DRUM.base[1]} L ${DRUM.waist[0] - DRUM.rx} ${DRUM.waist[1]} A ${DRUM.rx} ${DRUM.ry} 0 0 0 ${DRUM.waist[0] + DRUM.rx} ${DRUM.waist[1]} L ${DRUM.base[0] + DRUM.rx} ${DRUM.base[1]} A ${DRUM.rx} ${DRUM.ry} 0 0 1 ${DRUM.base[0] - DRUM.rx} ${DRUM.base[1]} Z`}
+              />
+              <ellipse className="ltc-drumhead" cx={DRUM.waist[0]} cy={DRUM.waist[1]} rx={DRUM.rx} ry={DRUM.ry} />
+              <path
+                className="ltc-drumwall"
+                d={`M ${DRUM.waist[0] - DRUM.rx * 0.76} ${DRUM.waist[1]} L ${DRUM.cap[0] - DRUM.rx * 0.76} ${DRUM.cap[1]} A ${DRUM.rx * 0.76} ${DRUM.ry * 0.76} 0 0 0 ${DRUM.cap[0] + DRUM.rx * 0.76} ${DRUM.cap[1]} L ${DRUM.waist[0] + DRUM.rx * 0.76} ${DRUM.waist[1]} A ${DRUM.rx * 0.76} ${DRUM.ry * 0.76} 0 0 1 ${DRUM.waist[0] - DRUM.rx * 0.76} ${DRUM.waist[1]} Z`}
+              />
+              <ellipse className="ltc-drumhead is-cap" cx={DRUM.cap[0]} cy={DRUM.cap[1]} rx={DRUM.rx * 0.76} ry={DRUM.ry * 0.76} />
+              <ellipse className="ltc-hit" cx={DRUM.base[0]} cy={DRUM.base[1] - 20} rx={DRUM.rx * 2} ry={40} />
+            </g>
+
+            {/* The patients, nearest and roundest: small pods rather than
+                blocks, because the third population has to be told from the
+                other two by silhouette alone. */}
+            <g className="ltc-pods">
+              {PODS.map((pod) => (
+                <g
+                  className={`ltc-pod${shut('patients') ? ' is-up' : ''}${lit('patients')}`}
+                  key={pod.key}
+                  {...probe('patients')}
+                >
+                  <path
+                    className="ltc-podwall"
+                    d={`M ${pod.base[0] - pod.rx} ${pod.base[1]} L ${pod.cap[0] - pod.rx} ${pod.cap[1]} A ${pod.rx} ${pod.ry} 0 0 0 ${pod.cap[0] + pod.rx} ${pod.cap[1]} L ${pod.base[0] + pod.rx} ${pod.base[1]} A ${pod.rx} ${pod.ry} 0 0 1 ${pod.base[0] - pod.rx} ${pod.base[1]} Z`}
+                  />
+                  <ellipse className="ltc-podcap" cx={pod.cap[0]} cy={pod.cap[1]} rx={pod.rx} ry={pod.ry} />
+                </g>
+              ))}
+            </g>
+
           </g>
         </svg>
       </div>

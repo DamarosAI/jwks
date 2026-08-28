@@ -13052,16 +13052,16 @@ html.is-hidden .clinic-node i,
 
 .ltc-signalpath {
   fill: none;
-  stroke: color-mix(in srgb, var(--accent) 62%, transparent);
-  stroke-width: 2;
+  stroke: color-mix(in srgb, var(--accent-strong) 52%, transparent);
+  stroke-width: 2.6;
   stroke-linecap: round;
-  stroke-dasharray: 3 5;
+  stroke-dasharray: 4 6;
 }
 
 .ltc-signalrun {
   fill: none;
   stroke: var(--accent-strong);
-  stroke-width: 3.4;
+  stroke-width: 4.4;
   stroke-linecap: round;
   stroke-dasharray: 12 88;
 }
@@ -13075,68 +13075,120 @@ html.is-hidden .clinic-node i,
   animation: ltc-carry 3.4s linear infinite;
 }
 
-/* ── The anchors ─────────────────────────────────────────────────────────
+/* ── What stands on the surface ──────────────────────────────────────────
 
-   Three constituencies at three distances, and the ONLY reason they are three
-   sizes is that they are three distances. Every previous version of this figure
-   had to arrange that by hand and never quite convinced; a projection with a
-   vanishing point gives it for nothing, which is most of the argument for
-   changing projection.
+   The first perspective pass drew the lattice and three markers on it, and it
+   was an empty floor with three pins in it - a wireframe placeholder rather
+   than a figure. Changing projection fixed the depth; it did not put anything
+   in the frame worth looking at, and this is what does.
 
-   The mark is here in this sheet's own terms. The monogram is two stacked
-   forms, so an anchor carries two rings on its mast - not a logo pasted onto a
-   drawing that has no other raster in it. */
+   Three populations, three silhouettes, one ink. Sponsors are tall slender
+   towers at the far end, the site is a dense low works in the middle, patients
+   are small round pods near - and a reader tells them apart by shape and by
+   where they stand, which is the rule this sheet has always run on. Every one
+   is a WORLD height, so a tower at the horizon is genuinely shorter on the page
+   than a pod at your feet: the cue three axonometric versions had to fake by
+   hand and never convincingly.
 
-.ltc-anchor {
+   NOTHING IS UP UNTIL ITS GROUND IS. A building rises out of the surface as its
+   band closes, so the repair is something a reader watches happen rather than a
+   state they are handed. */
+
+.ltc-block,
+.ltc-pod,
+.ltc-drum {
   cursor: pointer;
-  opacity: calc((0.34 + 0.66 * var(--spread, 1)) * (1 - var(--haze, 0) * 0.3));
-  transition: opacity 560ms ease;
-}
-
-.ltc-anchor.is-hot { opacity: 1; }
-
-.ltc-halo {
-  fill: color-mix(in srgb, var(--accent) 13%, transparent);
-  stroke: none;
   opacity: 0;
-  transition: opacity 620ms ease;
+  transform: translateY(14px);
+  transition: opacity 620ms ease, transform 820ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.ltc-anchor.is-lit .ltc-halo { opacity: 1; }
+.ltc-block.is-up,
+.ltc-pod.is-up,
+.ltc-drum.is-up {
+  opacity: 1;
+  transform: translateY(0);
+}
 
-.ltc-ring {
-  fill: none;
-  stroke: color-mix(in srgb, var(--accent) 46%, transparent);
-  stroke-width: 1.4;
+.ltc-block.is-hot,
+.ltc-pod.is-hot,
+.ltc-drum.is-hot { opacity: 1; }
+
+/* A footing, so a solid is standing on the ground rather than lying over it. */
+
+.ltc-foot {
+  fill: color-mix(in srgb, var(--accent) 20%, transparent);
+  stroke: none;
+}
+
+/* Three faces, three weights of one ink. The whole range is pulled toward the
+   paper with distance - a near block carries its full body and a tower at the
+   horizon carries a third of it - which is aerial perspective doing in colour
+   what the projection is already doing in size. */
+
+.ltc-roof {
+  fill: color-mix(in srgb, var(--accent) calc(34% - var(--haze, 0) * 18%), var(--surface-solid));
+  stroke: color-mix(in srgb, var(--accent-strong) calc(100% - var(--haze, 0) * 46%), transparent);
+  stroke-width: 1;
+  stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
-  transition: stroke 520ms ease;
 }
 
-.ltc-anchor.is-lit .ltc-ring { stroke: var(--accent-strong); }
-
-.ltc-mast {
-  stroke: color-mix(in srgb, var(--accent) 34%, transparent);
-  stroke-width: 1.2;
+.ltc-face {
+  fill: color-mix(in srgb, var(--accent) calc(64% - var(--haze, 0) * 34%), var(--surface-solid));
+  stroke: color-mix(in srgb, var(--accent-strong) calc(74% - var(--haze, 0) * 34%), transparent);
+  stroke-width: 1;
+  stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
-  transition: stroke 520ms ease;
 }
 
-.ltc-anchor.is-lit .ltc-mast { stroke: color-mix(in srgb, var(--accent-strong) 78%, transparent); }
-
-.ltc-head {
-  fill: color-mix(in srgb, var(--accent) 12%, var(--surface-solid));
-  stroke: color-mix(in srgb, var(--accent) 58%, transparent);
-  stroke-width: 1.2;
+.ltc-side {
+  fill: color-mix(in srgb, var(--accent) calc(84% - var(--haze, 0) * 44%), var(--surface-solid));
+  stroke: color-mix(in srgb, var(--accent-strong) calc(66% - var(--haze, 0) * 30%), transparent);
+  stroke-width: 1;
+  stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
-  transition: fill 520ms ease, stroke 520ms ease;
 }
 
-.ltc-anchor.is-lit .ltc-head {
-  fill: color-mix(in srgb, var(--accent) 30%, var(--surface-solid));
+/* The far towers carry less ink than the near works, because they are further
+   away and the air is between you. */
+
+/* ── The mark ────────────────────────────────────────────────────────────
+
+   The monogram is two stacked forms, so the drum is two stacked drums, standing
+   at the middle of the works: the one round thing in a district of blocks, at
+   the middle distance, with the run passing through it. Built out of the
+   projection like everything else here rather than pasted on. */
+
+.ltc-drumwall {
+  fill: color-mix(in srgb, var(--accent) 88%, var(--surface-solid));
   stroke: var(--accent-strong);
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
 }
 
-.ltc-anchor.is-lit .ltc-head.is-cap { fill: var(--accent-strong); }
+.ltc-drumhead {
+  fill: color-mix(in srgb, var(--accent) 44%, var(--surface-solid));
+  stroke: var(--accent-strong);
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
+}
+
+.ltc-drumhead.is-cap { fill: var(--accent-strong); }
+
+.ltc-podwall {
+  fill: color-mix(in srgb, var(--accent) 50%, var(--surface-solid));
+  stroke: color-mix(in srgb, var(--accent-strong) 72%, transparent);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.ltc-podcap {
+  fill: color-mix(in srgb, var(--accent) 24%, var(--surface-solid));
+  stroke: var(--accent-strong);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
 
 .ltc-hit { fill: none; pointer-events: all; }
 
@@ -13188,7 +13240,7 @@ html.is-hidden .clinic-node i,
   .ltc-svg,
   .ltc-readout,
   .ltc-pill,
-  .ltc-svg :is(.ltc-cell, .ltc-shard, .ltc-signal, .ltc-signalrun, .ltc-anchor, .ltc-halo, .ltc-ring, .ltc-mast, .ltc-head, .ltc-sky) {
+  .ltc-svg :is(.ltc-cell, .ltc-shard, .ltc-signal, .ltc-signalrun, .ltc-block, .ltc-pod, .ltc-drum, .ltc-sky) {
     transition: none;
     animation: none;
   }
