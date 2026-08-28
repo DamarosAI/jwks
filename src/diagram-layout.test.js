@@ -1928,25 +1928,60 @@ describe('The floor schematic', () => {
     assert.doesNotMatch(floor, /useScrollRun|usePinnedRun|ScrollTrigger|onScrub|phase/)
     assert.doesNotMatch(app, /usePinnedRun|thesis-pin/)
     assert.doesNotMatch(driver, /export function usePinnedRun/)
-    assert.match(css, /\.dgm-svg\.is-live \.fl-plate \{[\s\S]*?animation: fl-assemble 22s/)
-    // The assembled state is the LONGEST single stretch of the cycle, because
-    // it is the only frame that states the claim: a reader who glances at this
-    // section for two seconds should have better than even odds of catching it.
+    assert.match(css, /\.dgm-svg\.is-live \.fl-plate \{[\s\S]*?animation: fl-assemble 15s/)
+    // IT STARTS ALMOST AT ONCE. The loop used to spend three seconds scattered
+    // before anything moved, which is fine for a reader who has settled in
+    // front of it and useless for the far more common one scrolling past. The
+    // scattered stretch is now under half a second, so what a passer-by meets
+    // is the assembly already underway.
     const held = css.match(/@keyframes fl-assemble \{[\s\S]*?\n\}/)[0]
-    assert.match(held, /40%, 74% \{/)
+    assert.match(held, /0%, 3% \{/)
+    assert.match(held, /32%, 88% \{/)
     // And the lag is subtracted, so no plate ever waits to start - they arrive
     // at slightly different moments, which is a flock rather than a lockstep.
-    assert.match(css, /animation-delay: calc\(var\(--lag, 0\) \* -0\.85s\)/)
+    assert.match(css, /animation-delay: calc\(var\(--lag, 0\) \* -0\.7s\)/)
   })
 
-  it('lets the run exist only while there is one surface to run on', () => {
-    // A signal crossing twenty-eight scattered plates would be the drawing
-    // contradicting itself, so the run is timed to the held stretch and nowhere
-    // else - and it is the single blue mark in the figure.
-    assert.match(floor, /const RUN = /)
-    const show = css.match(/@keyframes fl-run-show \{[\s\S]*?\n\}/)[0]
-    assert.match(show, /0%, 42% \{ opacity: 0; \}/)
-    assert.match(show, /48%, 70% \{ opacity: 1; \}/)
+  it('proves the surface by conducting across it, not by drawing a line on it', () => {
+    // THERE WAS A LINE HERE AND IT DID NOTHING. One thin diagonal that drew
+    // itself once the plates had landed - the right job, and a stroke cannot
+    // carry it: a line laid over a surface is a mark ON the drawing rather than
+    // something happening TO it, and a diagonal that appears and stops is not
+    // an event anybody has a reason to watch.
+    //
+    // What proves a surface is one surface is that a charge put in at one end
+    // arrives at the other. So every plate lights in turn, in the order a
+    // signal would actually reach it, and the light crosses the whole deck
+    // corner to corner. Nothing is drawn over anything.
+    assert.doesNotMatch(floor, /const RUN|fl-run/)
+    assert.doesNotMatch(css, /\.fl-run\b/)
+    assert.match(floor, /wave: Math\.round\(\(\(px \+ py \+ SPAN\) \/ \(SPAN \* 2\)\) \* 1000\) \/ 1000/)
+    assert.match(css, /\.dgm-svg\.is-live \.fl-lit \{[\s\S]*?animation: fl-charge 15s/)
+    // The offset is a real DISTANCE along the deck rather than a list index, so
+    // the front moves at a constant speed across the surface instead of
+    // stepping plate by plate down a queue.
+    assert.match(css, /animation-delay: calc\(var\(--wave, 0\) \* 2\.9s\)/)
+    // Positive and shorter than the period, so it phase-shifts the light INSIDE
+    // the loop rather than desynchronising the plate it belongs to: every plate
+    // still assembles and disperses with the rest, and only its charge is late.
+    const charge = css.match(/@keyframes fl-charge \{[\s\S]*?\n\}/)[0]
+    assert.match(charge, /49% \{ opacity: 0\.8; \}/)
+    assert.match(charge, /62%, 100% \{ opacity: 0\.13; \}/)
+  })
+
+  it('answers a pointer, because its whole subject is a surface', () => {
+    // The figure had no way of being touched, which is a strange property for a
+    // drawing about a surface. Hovering a plate lifts it and lights it, and the
+    // rest of the deck stands down while the reader is on one - the same claim
+    // the charge makes on a clock, made on demand instead.
+    //
+    // The lift is on the INNER group, so it composes with the transform the
+    // loop is already writing on the outer one every frame rather than being
+    // overwritten by it.
+    assert.match(floor, /<g className="fl-tile">/)
+    assert.match(css, /\.fl-tile:hover \{ transform: translateY\(-9px\); \}/)
+    assert.match(css, /\.fl-tile:hover \.fl-lit \{[\s\S]*?animation: none;/)
+    assert.match(css, /\.fl-deck:has\(\.fl-tile:hover\) \.fl-plate:not\(:hover\) \{ opacity: 0\.62; \}/)
   })
 
   it('rests assembled, so the still frame is the one that states the claim', () => {
@@ -1957,11 +1992,11 @@ describe('The floor schematic', () => {
     // The still frame is what most people see, so it has to be the frame that
     // makes the argument. Scatter now exists only inside the keyframes.
     assert.match(css, /\.fl-plate \{[\s\S]*?transform: translate\(0, 0\) scale\(1\);[\s\S]*?opacity: 1;\s*\n\}/)
-    assert.match(css, /\.fl-run \{ opacity: 1; \}/)
-    assert.match(css, /\.fl-run-live \{[\s\S]*?stroke-dashoffset: 0;/)
-    // And nothing runs at all when the reader has asked for less motion.
+    // And nothing runs at all when the reader has asked for less motion - the
+    // figure parks assembled with the charge already through it.
     const quiet = css.slice(css.indexOf('STILL, AND STILL TRUE'))
-    assert.match(quiet, /@media \(prefers-reduced-motion: reduce\) \{\s*\n\s*\.fl-plate,\s*\n\s*\.fl-run,\s*\n\s*\.fl-run-live \{ animation: none; \}/)
+    assert.match(quiet, /@media \(prefers-reduced-motion: reduce\) \{[\s\S]*?animation: none;/)
+    assert.match(quiet, /\.fl-lit \{ opacity: 0\.16; \}/)
   })
 
   it('holds a legible scale on a phone', () => {

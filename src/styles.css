@@ -12501,79 +12501,115 @@ html.is-hidden .clinic-node i,
 
 .fl-grain { opacity: 0.5; pointer-events: none; }
 
-/* THE CYCLE.
+/* THE CYCLE, AND IT STARTS ALMOST AT ONCE.
 
-   Twenty-two seconds, and the shape of it is the argument: a quarter of it
-   scattered, a long quiet third assembled, and two travels in between. The
-   held state is deliberately the longest single stretch - it is the only frame
-   that states the claim, and a reader who glances at this section for two
-   seconds should have better than even odds of catching it.
+   Fifteen seconds, and only the first half-second of it is scattered. That is
+   the whole correction from the last pass: the loop used to spend three seconds
+   sitting still before anything moved, which is fine for a reader who has
+   settled in front of it and useless for the far more common one who is
+   scrolling past. The section restarts the loop when it comes into view, so
+   what a passer-by meets is the assembly already underway.
+
+   The shape of the rest is: assemble, settle, conduct, hold, disperse. The
+   conducting stretch is the longest single thing in it, because it is the only
+   part that states the claim.
 
    The lag runs from the middle of the deck outward, so the surface grows from
-   its centre and retreats back into it rather than sweeping across like a wipe.
-   It is subtracted from the delay rather than added, so no plate ever waits to
-   start - they simply arrive at slightly different moments. */
+   its centre and retreats back into it rather than sweeping like a wipe. It is
+   subtracted, so no plate ever waits to start - they simply arrive at slightly
+   different moments. */
 
 .dgm-svg.is-live .fl-plate {
-  animation: fl-assemble 22s cubic-bezier(0.5, 0, 0.2, 1) infinite;
-  animation-delay: calc(var(--lag, 0) * -0.85s);
+  animation: fl-assemble 15s cubic-bezier(0.45, 0, 0.15, 1) infinite;
+  animation-delay: calc(var(--lag, 0) * -0.7s);
 }
 
 @keyframes fl-assemble {
-  0%, 14% {
+  0%, 3% {
     transform: translate(var(--drift-x, 0px), var(--drift-y, 0px)) scale(var(--loose, 0.6));
     opacity: 0.52;
   }
-  40%, 74% {
+  32%, 88% {
     transform: translate(0, 0) scale(1);
     opacity: 1;
   }
-  97%, 100% {
+  99%, 100% {
     transform: translate(var(--drift-x, 0px), var(--drift-y, 0px)) scale(var(--loose, 0.6));
     opacity: 0.52;
   }
 }
 
-/* THE RUN. It exists only while there is one surface to run on, so it is timed
-   to the held stretch and nowhere else - a signal crossing twenty-eight
-   scattered plates would be the drawing contradicting itself. */
+/* THE CHARGE.
 
-/* Visible at rest for the same reason: the run across one surface IS the
-   claim, so it is what a still figure shows. It is hidden only by the loop,
-   during the part of the loop where there is no one surface to run on. */
+   One narrow bright window per plate, on the same fifteen-second period, offset
+   by where that plate sits along the plan diagonal. Twenty-eight windows opening
+   in order is a wavefront crossing the deck - and because the offset is a real
+   distance rather than an index, the light moves at a constant speed across the
+   surface rather than plate by plate in a queue.
 
-.fl-run { opacity: 1; }
+   The delay is POSITIVE and smaller than the period, so it phase-shifts within
+   the loop instead of desynchronising it: every plate still assembles and
+   disperses with the rest, and only its light is late. The window is placed so
+   the last plate to light still does so well inside the held stretch. */
 
-.fl-run-live {
-  fill: none;
-  stroke: var(--accent-strong);
-  stroke-width: 4;
-  stroke-linecap: round;
-  stroke-dasharray: 100;
-  stroke-dashoffset: 0;
+.fl-lit {
+  fill: var(--accent-strong);
+  opacity: 0;
+  pointer-events: none;
 }
 
-.dgm-svg.is-live .fl-run { animation: fl-run-show 22s linear infinite; }
-.dgm-svg.is-live .fl-run-live { animation: fl-run-draw 22s ease-in-out infinite; }
-
-@keyframes fl-run-show {
-  0%, 42% { opacity: 0; }
-  48%, 70% { opacity: 1; }
-  76%, 100% { opacity: 0; }
+.dgm-svg.is-live .fl-lit {
+  animation: fl-charge 15s ease-in-out infinite;
+  animation-delay: calc(var(--wave, 0) * 2.9s);
 }
 
-@keyframes fl-run-draw {
-  0%, 44% { stroke-dashoffset: 100; }
-  62%, 72% { stroke-dashoffset: 0; }
-  80%, 100% { stroke-dashoffset: -100; }
+@keyframes fl-charge {
+  0%, 40% { opacity: 0; }
+  49% { opacity: 0.8; }
+  62%, 100% { opacity: 0.13; }
 }
 
-/* STILL, AND STILL TRUE. With reduced motion nothing runs and the figure is
-   parked ASSEMBLED - one surface with the run laid across it, which is the
-   single frame that states the whole claim without any of it having to move. */
+/* THE SURFACE ANSWERS A POINTER.
+
+   The figure had no way of being touched, which is a strange thing for a
+   drawing whose entire subject is a surface. Hovering a plate lifts it and
+   lights it, and the rest of the deck stands down while you are on one - so the
+   reader can put a finger anywhere on it and watch the thing respond as one
+   piece. It is the same claim as the charge, made on demand instead of on a
+   clock.
+
+   The lift is on the INNER group, so it composes with the transform the loop is
+   writing on the outer one rather than being overwritten by it every frame. */
+
+.fl-tile {
+  transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fl-tile:hover { transform: translateY(-9px); }
+
+.fl-tile:hover .fl-lit {
+  opacity: 0.5;
+  animation: none;
+}
+
+.fl-deck:has(.fl-tile:hover) .fl-plate:not(:hover) { opacity: 0.62; }
+.fl-deck .fl-plate { transition: opacity 260ms ease; }
+
+/* STILL, AND STILL TRUE.
+
+   With reduced motion nothing runs, and the figure is parked ASSEMBLED with the
+   charge already through it - one surface that has been proved to be one, which
+   is the single frame that states the whole claim without any of it having to
+   happen. The resting state elsewhere in this block is the same frame, for the
+   same reason: it is what most people see. */
 
 @media (prefers-reduced-motion: reduce) {
   .fl-plate,
-  .fl-run,
-  .fl-run-live { animation: none; }
+  .fl-lit,
+  .fl-tile {
+    animation: none;
+    transition: none;
+  }
+
+  .fl-lit { opacity: 0.16; }
 }

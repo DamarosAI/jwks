@@ -68,6 +68,8 @@ const ROWS = 4
 const PITCH = 128
 const HALF = 64
 const PLAN = project(CX, CY)
+// The half-length of the plan diagonal, which is the axis the charge runs down.
+const SPAN = ((COLS - 1) / 2 + (ROWS - 1) / 2) * PITCH
 
 /**
  * A plate: where it belongs, and where it is when it does not belong anywhere.
@@ -112,19 +114,33 @@ const PLATES = Array.from({ length: COLS * ROWS }, (_, index) => {
     // and leave last, so the surface grows outward from its centre and retreats
     // back into it rather than sweeping across like a wipe.
     lag: Math.round((Math.abs(px) / (PITCH * 3) * 0.6 + Math.abs(py) / (PITCH * 2) * 0.4) * 100) / 100,
+    // WHERE IT SITS ALONG THE CURRENT. Zero at the far corner, one at the near
+    // one, measured down the plan diagonal - which is the axis a signal would
+    // actually cross this deck on. It is what staggers the light, and it is the
+    // whole payoff: a charge that reaches every plate in order is the only
+    // proof available that this is one surface and not twenty-eight.
+    wave: Math.round(((px + py + SPAN) / (SPAN * 2)) * 1000) / 1000,
     life: jitter(index, 61),
   }
 }).sort((a, b) => a.depth - b.depth)
 
-// THE RUN. One path down the long axis of the seated deck, and it exists for
-// the same reason the deck does: a signal that crosses the whole thing is the
-// only proof that the whole thing is one thing. It is drawn from plan
-// coordinates like everything else, so it lies ON the surface rather than over
-// it, and it is the single blue mark in the figure.
-const RUN_FROM = PLAN(-(COLS - 1) / 2 * PITCH - 40, -(ROWS - 1) / 2 * PITCH + 18)
-const RUN_TO = PLAN((COLS - 1) / 2 * PITCH + 40, (ROWS - 1) / 2 * PITCH - 18)
-const RUN_MID = PLAN(0, 0)
-const RUN = `M ${RUN_FROM[0]} ${RUN_FROM[1]} Q ${RUN_MID[0]} ${RUN_MID[1] - 26} ${RUN_TO[0]} ${RUN_TO[1]}`
+/* WHAT REPLACED THE LINE.
+
+   There was a run here: one path down the long axis of the deck that drew
+   itself in once the plates had landed. It was doing the right job and it could
+   not carry it - a stroke laid over a surface is a mark ON the drawing, not
+   something happening TO it, and a thin diagonal that appears and stops is not
+   an event a reader has any reason to look at.
+
+   What proves a surface is one surface is that a charge put in at one end
+   arrives at the other. So the deck CONDUCTS: every plate lights in turn, in
+   the order a signal would actually reach it, and the light crosses the whole
+   thing corner to corner. Nothing is drawn over anything - the surface itself
+   is what changes - and it is the same claim made by the thing rather than
+   about it.
+
+   It is also the only colour event in the figure, which is why it can be quiet
+   and still be the payoff. */
 
 export default function ChainSchematic({ animate = true }) {
   const frame = useCenterOnOverflow()
@@ -136,7 +152,7 @@ export default function ChainSchematic({ animate = true }) {
           className={`dgm-svg is-floor${animate ? ' is-live' : ''}`}
           viewBox={`0 0 ${W} ${H}`}
           role="img"
-          aria-label="Twenty-eight surfaces seen in axonometric projection, scattered in the air at no shared height and on no shared axis. They sort, travel and set down flush into one continuous deck, and a single run then crosses the whole of it from one end to the other - which is only possible because it has become one surface. The sequence comes apart and repeats."
+          aria-label="Twenty-eight surfaces seen in axonometric projection, scattered in the air at no shared height and on no shared axis. They sort, travel and set down flush into one continuous deck. A charge then crosses the whole of it, lighting every plate in turn from one corner to the other - which is only possible because it has become one surface. The sequence comes apart and repeats."
         >
           <defs>
             <pattern id="fl-grain" width="15" height="15" patternUnits="userSpaceOnUse">
@@ -156,19 +172,23 @@ export default function ChainSchematic({ animate = true }) {
                   '--drift-y': `${plate.driftY}px`,
                   '--loose': plate.scale,
                   '--lag': plate.lag,
+                  '--wave': plate.wave,
                   '--life': plate.life,
                 }}
               >
-                <Faces shape={plate.shape} className="dgm-solid" />
-                <polygon className="fl-grain" points={plate.shape.top} fill="url(#fl-grain)" />
+                {/* The tile is a second group inside the travelling one, so the
+                    pointer can lift a plate without fighting the transform the
+                    loop is already writing on its parent. Two transforms, two
+                    jobs, and neither has to know about the other. */}
+                <g className="fl-tile">
+                  <Faces shape={plate.shape} className="dgm-solid" />
+                  <polygon className="fl-grain" points={plate.shape.top} fill="url(#fl-grain)" />
+                  <polygon className="fl-lit" points={plate.shape.top} />
+                </g>
               </g>
             ))}
           </g>
 
-          {/* The run, and it only exists while there is one surface to run on. */}
-          <g className="fl-run">
-            <path className="fl-run-live" d={RUN} pathLength="100" vectorEffect="non-scaling-stroke" />
-          </g>
         </svg>
       </div>
     </figure>
