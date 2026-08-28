@@ -12420,26 +12420,21 @@ html.is-hidden .clinic-node i,
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   THE FLOOR - ONE SURFACE, ASSEMBLING, ON A LOOP
+   THE FIVE STEPS, AND THE MESS THAT KEEPS ARRIVING AT THEM
 
-   The figure that was here drew a landscape: three district plates with towers
-   on one, a tiered drum and a field of blocks on the next, cylinders on the
-   third, a conduit joining them, and a camera scrubbed off a pinned scroll.
-   Every one of those was added to explain the last one, which is how a diagram
-   becomes a model village - not by one bad decision but by nine reasonable
-   ones. It is gone, and about four hundred lines of stylesheet went with it.
+   What was here was twenty-eight identical plates assembling into a rectangle.
+   The assembly read well and the rectangle meant nothing: twenty-eight is not a
+   number about this business, a rectangle is not a shape it makes, and a plate
+   with nothing on it is a plate nobody has a reason to look at.
 
-   What is left is one primitive repeated. Twenty-eight of the house slab,
-   scattered at no shared height and on no shared axis, sorting and setting down
-   flush into a single continuous deck, with one run crossing the whole of it -
-   which is only possible because it has become one thing. Then it comes apart
-   and does it again.
+   The five steps ARE the product, so they are what the figure resolves into -
+   and they are always there. What loops is the scatter: fragments fade in
+   off-axis, travel, and are absorbed into the step they belong to, then a pulse
+   runs the row confirming the five are one run. Work does not arrive once and
+   get tidied; it keeps arriving, and the system keeps taking it.
 
-   IT RUNS ON ITS OWN CLOCK. No pin, no scrub, no scroll: one keyframe set, one
-   duration, and a per-plate lag in `animation-delay` so twenty-eight solids
-   converge as a flock rather than in lockstep. The assembled state is held long
-   enough that every plate is home at the same time in the middle of it, which
-   is the whole point and the one frame that has to be true.
+   A figure whose subject disappears for half its own loop is also unreadable to
+   half the people who see it, which is the practical half of the same argument.
    ═══════════════════════════════════════════════════════════════════════ */
 
 .dgm-svg.is-floor {
@@ -12447,110 +12442,76 @@ html.is-hidden .clinic-node i,
   --ink-deep: var(--accent-strong);
 }
 
-/* The deck's own shade, so twenty-eight solids read as held over paper rather
-   than printed on it. */
+.fl-row { filter: drop-shadow(0 22px 30px color-mix(in srgb, var(--accent-strong) 10%, transparent)); }
 
-.fl-deck { filter: drop-shadow(0 26px 34px color-mix(in srgb, var(--accent-strong) 9%, transparent)); }
+/* ── The five ────────────────────────────────────────────────────────────
 
-/* A PLATE, IN TWO PLACES.
+   Solid, lettered, and never animated away. The only thing the loop does to
+   them is the pulse. */
 
-   Built once at the seated position, so the assembled deck is a true plan grid
-   with every seam landing on every other seam. Scatter is an offset applied as
-   a transform - the same object in both states rather than two pretending to be
-   one, and the reason the whole cycle is a compositor move with nothing
-   recomputed on any frame of it.
+.fl-step { cursor: pointer; }
+.fl-step:focus { outline: none; }
 
-   `transform-box: fill-box` so the scale is about the plate's own middle. Left
-   at the default the origin is the whole viewBox and every plate flies to the
-   corner of the sheet instead of shrinking in place. */
+.fl-tile { transition: transform 240ms cubic-bezier(0.16, 1, 0.3, 1); }
 
-/* THE RESTING STATE IS THE ASSEMBLED ONE, AND THAT IS NOT A DETAIL.
-
-   It was the scattered one, which meant that any time the loop was not running
-   - off screen, on a narrow viewport, under reduced motion, or on any machine
-   where the ambient gate said no - the figure sat as twenty-eight strewn plates
-   and read as nothing at all. A drawing's still frame has to be the frame that
-   states the claim, because the still frame is what most people see.
-
-   So the plate rests where it belongs. Scatter exists only inside the keyframes
-   and only while the animation is actually playing. */
-
-.fl-plate {
-  transform-box: fill-box;
-  transform-origin: center;
-  transform: translate(0, 0) scale(1);
-  opacity: 1;
-}
-
-.fl-plate .dgm-face-top {
-  fill: color-mix(in srgb, var(--accent) 11%, var(--surface-solid));
-  stroke: color-mix(in srgb, var(--accent-strong) 46%, transparent);
+.fl-step .dgm-face-top {
+  fill: color-mix(in srgb, var(--accent) 13%, var(--surface-solid));
+  stroke: color-mix(in srgb, var(--accent-strong) 58%, transparent);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
 
-.fl-plate .dgm-face-left {
+.fl-step .dgm-face-left {
   fill: color-mix(in srgb, var(--accent) 30%, var(--surface-solid));
   stroke: none;
 }
 
-.fl-plate .dgm-face-right {
+.fl-step .dgm-face-right {
   fill: color-mix(in srgb, var(--accent-strong) 34%, var(--accent));
   stroke: none;
 }
 
 .fl-grain { opacity: 0.5; pointer-events: none; }
 
-/* THE CYCLE, AND IT STARTS ALMOST AT ONCE.
+/* What each step holds. The marks lie in the tile's own plan space, so they are
+   ON the surface rather than over it. */
 
-   Fifteen seconds, and only the first half-second of it is scattered. That is
-   the whole correction from the last pass: the loop used to spend three seconds
-   sitting still before anything moved, which is fine for a reader who has
-   settled in front of it and useless for the far more common one who is
-   scrolling past. The section restarts the loop when it comes into view, so
-   what a passer-by meets is the assembly already underway.
-
-   The shape of the rest is: assemble, settle, conduct, hold, disperse. The
-   conducting stretch is the longest single thing in it, because it is the only
-   part that states the claim.
-
-   The lag runs from the middle of the deck outward, so the surface grows from
-   its centre and retreats back into it rather than sweeping like a wipe. It is
-   subtracted, so no plate ever waits to start - they simply arrive at slightly
-   different moments. */
-
-.dgm-svg.is-live .fl-plate {
-  animation: fl-assemble 15s cubic-bezier(0.45, 0, 0.15, 1) infinite;
-  animation-delay: calc(var(--lag, 0) * -0.7s);
+.fl-mark {
+  fill: color-mix(in srgb, var(--accent-strong) 26%, transparent);
+  transition: fill 240ms ease;
 }
 
-@keyframes fl-assemble {
-  0%, 3% {
-    transform: translate(var(--drift-x, 0px), var(--drift-y, 0px)) scale(var(--loose, 0.6));
-    opacity: 0.52;
-  }
-  32%, 88% {
-    transform: translate(0, 0) scale(1);
-    opacity: 1;
-  }
-  99%, 100% {
-    transform: translate(var(--drift-x, 0px), var(--drift-y, 0px)) scale(var(--loose, 0.6));
-    opacity: 0.52;
-  }
+.fl-mark.is-set { fill: color-mix(in srgb, var(--accent-strong) 68%, transparent); }
+
+.fl-line,
+.fl-ring {
+  fill: none;
+  stroke: color-mix(in srgb, var(--accent-strong) 32%, transparent);
+  stroke-width: 5;
+  stroke-linecap: round;
+  transition: stroke 240ms ease;
 }
 
-/* THE CHARGE.
+.fl-name {
+  fill: color-mix(in srgb, var(--accent-strong) 76%, transparent);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  font-weight: 700;
+  font-synthesis: none;
+  letter-spacing: 0.15em;
+  transition: fill 240ms ease;
+}
 
-   One narrow bright window per plate, on the same fifteen-second period, offset
-   by where that plate sits along the plan diagonal. Twenty-eight windows opening
-   in order is a wavefront crossing the deck - and because the offset is a real
-   distance rather than an index, the light moves at a constant speed across the
-   surface rather than plate by plate in a queue.
+/* ── The pulse ───────────────────────────────────────────────────────────
 
-   The delay is POSITIVE and smaller than the period, so it phase-shifts within
-   the loop instead of desynchronising it: every plate still assembles and
-   disperses with the rest, and only its light is late. The window is placed so
-   the last plate to light still does so well inside the held stretch. */
+   Five quick beats down the row, in order, and NO WAKE. The charge used to
+   leave a tint behind it, so the deck ended every cycle a different colour from
+   the one it started in and the front was hard to find. Each step lights, hands
+   on, and returns to where it was.
+
+   The delay is a real position down the row rather than a list index, so the
+   pulse crosses at a constant speed; it is positive and far shorter than the
+   period, so it phase-shifts inside the loop rather than desynchronising it. */
 
 .fl-lit {
   fill: var(--accent-strong);
@@ -12559,57 +12520,147 @@ html.is-hidden .clinic-node i,
 }
 
 .dgm-svg.is-live .fl-lit {
-  animation: fl-charge 15s ease-in-out infinite;
-  animation-delay: calc(var(--wave, 0) * 2.9s);
+  animation: fl-pulse 12s ease-in-out infinite;
+  animation-delay: calc(var(--wave, 0) * 1.15s);
 }
 
-@keyframes fl-charge {
-  0%, 40% { opacity: 0; }
-  49% { opacity: 0.8; }
-  62%, 100% { opacity: 0.13; }
+@keyframes fl-pulse {
+  0%, 52% { opacity: 0; }
+  57% { opacity: 0.5; }
+  64%, 100% { opacity: 0; }
 }
 
-/* THE SURFACE ANSWERS A POINTER.
+/* ── The mess ────────────────────────────────────────────────────────────
 
-   The figure had no way of being touched, which is a strange thing for a
-   drawing whose entire subject is a surface. Hovering a plate lifts it and
-   lights it, and the rest of the deck stands down while you are on one - so the
-   reader can put a finger anywhere on it and watch the thing respond as one
-   piece. It is the same claim as the charge, made on demand instead of on a
-   clock.
+   Fragments fade in at a scatter, travel to the step that owns them, and are
+   ABSORBED - they shrink into the tile and go out as they land. Nothing
+   accumulates, because the claim is not that the steps collect things, it is
+   that they resolve them. */
 
-   The lift is on the INNER group, so it composes with the transform the loop is
-   writing on the outer one rather than being overwritten by it every frame. */
-
-.fl-tile {
-  transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
+.fl-shard {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: translate(var(--drift-x, 0px), var(--drift-y, 0px)) scale(1);
+  opacity: 0;
+  pointer-events: none;
 }
 
-.fl-tile:hover { transform: translateY(-9px); }
-
-.fl-tile:hover .fl-lit {
-  opacity: 0.5;
-  animation: none;
+.fl-shard .dgm-face-top {
+  fill: color-mix(in srgb, var(--accent) 8%, var(--surface-solid));
+  stroke: color-mix(in srgb, var(--accent-strong) 34%, transparent);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
 }
 
-.fl-deck:has(.fl-tile:hover) .fl-plate:not(:hover) { opacity: 0.62; }
-.fl-deck .fl-plate { transition: opacity 260ms ease; }
+.fl-shard .dgm-face-left { fill: color-mix(in srgb, var(--accent) 22%, var(--surface-solid)); stroke: none; }
+.fl-shard .dgm-face-right { fill: color-mix(in srgb, var(--accent-strong) 26%, var(--accent)); stroke: none; }
 
-/* STILL, AND STILL TRUE.
+.dgm-svg.is-live .fl-shard {
+  animation: fl-absorb 12s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation-delay: calc(var(--lag, 0) * -1.6s);
+}
 
-   With reduced motion nothing runs, and the figure is parked ASSEMBLED with the
-   charge already through it - one surface that has been proved to be one, which
-   is the single frame that states the whole claim without any of it having to
-   happen. The resting state elsewhere in this block is the same frame, for the
-   same reason: it is what most people see. */
+@keyframes fl-absorb {
+  0% { transform: translate(var(--drift-x, 0px), var(--drift-y, 0px)) scale(1); opacity: 0; }
+  10% { opacity: 0.7; }
+  46% { transform: translate(0, 0) scale(0.5); opacity: 0.58; }
+  54%, 100% { transform: translate(0, 0) scale(0.2); opacity: 0; }
+}
+
+/* ── The pointer ─────────────────────────────────────────────────────────
+
+   The reason the tiles are five named things instead of twenty-eight anonymous
+   ones: there is now something to be curious about, and the readout underneath
+   is where the curiosity goes. A step lifts, lights its mark, and the other
+   four stand down so the one being read is the one in focus. */
+
+.fl-step:hover .fl-tile,
+.fl-step:focus-visible .fl-tile { transform: translateY(-14px); }
+
+.fl-step:hover .fl-mark,
+.fl-step:focus-visible .fl-mark { fill: color-mix(in srgb, var(--accent-strong) 74%, transparent); }
+
+.fl-step:hover :is(.fl-line, .fl-ring),
+.fl-step:focus-visible :is(.fl-line, .fl-ring) { stroke: var(--accent-strong); }
+
+.fl-step:hover .fl-name,
+.fl-step:focus-visible .fl-name { fill: var(--accent-strong); }
+
+.fl-step:focus-visible .dgm-face-top { stroke: var(--accent-strong); stroke-width: 2.5; }
+
+.fl-row { transition: opacity 240ms ease; }
+.fl-row:has(.fl-step:hover) .fl-step:not(:hover) { opacity: 0.45; }
+.fl-step { transition: opacity 240ms ease; }
+
+/* ── The readout ─────────────────────────────────────────────────────────
+
+   Prose in the document rather than type inside the drawing: it holds its size
+   while the figure scales, a screen reader gets it as text, and it is the one
+   place on this page that answers the question a hover just raised. */
+
+.fl-readout {
+  display: flex;
+  width: 100%;
+  align-items: baseline;
+  gap: clamp(12px, 1.6vw, 22px);
+  margin-top: clamp(10px, 1.6vh, 20px);
+  padding-top: clamp(10px, 1.4vh, 16px);
+  border-top: 1px solid var(--border);
+}
+
+.fl-readpill {
+  flex: none;
+  min-width: 11ch;
+  padding: 7px 15px;
+  border: 1px solid color-mix(in srgb, var(--muted) 34%, transparent);
+  border-radius: 999px;
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  transition: background 260ms ease, color 260ms ease, border-color 260ms ease;
+}
+
+.fl-readout.is-hot .fl-readpill {
+  border-color: var(--accent-strong);
+  background: var(--accent-strong);
+  color: var(--surface-solid);
+}
+
+.fl-readline {
+  width: 100%;
+  min-width: 0;
+  color: var(--text);
+  font-size: clamp(0.95rem, 0.87rem + 0.36vw, 1.16rem);
+  font-weight: 500;
+  letter-spacing: -0.004em;
+  line-height: 1.4;
+  text-wrap: pretty;
+}
+
+/* ── Still, and still true ───────────────────────────────────────────────
+
+   With reduced motion nothing loops. The figure rests as the five steps,
+   lettered and marked, with no scatter around them - which is the finished
+   state and the one that states the claim. The pointer still works, because a
+   hover is a thing a reader asked for rather than a thing moving at them. */
 
 @media (prefers-reduced-motion: reduce) {
-  .fl-plate,
-  .fl-lit,
-  .fl-tile {
+  .fl-shard,
+  .fl-lit {
     animation: none;
-    transition: none;
+    display: none;
   }
 
-  .fl-lit { opacity: 0.16; }
+  .fl-tile,
+  .fl-mark,
+  .fl-line,
+  .fl-ring,
+  .fl-name,
+  .fl-step,
+  .fl-readpill { transition: none; }
 }

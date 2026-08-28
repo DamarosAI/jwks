@@ -1,149 +1,201 @@
-import { jitter, project, roundedSlab } from './iso'
+import { useState } from 'react'
+
+import { jitter, planSpace, project, roundedSlab } from './iso'
 import { Faces } from './Solid'
 import { useCenterOnOverflow } from './useCenterOnOverflow'
 
 /**
- * ONE SURFACE, ASSEMBLING. On a loop, forever, whether anybody scrolls or not.
+ * THE FIVE STEPS, AND THE MESS THAT KEEPS ARRIVING AT THEM.
  *
- * WHAT WAS HERE BEFORE, AND WHY IT WENT.
+ * What was here was twenty-eight identical plates assembling into a rectangle.
+ * The assembly read well and the rectangle meant nothing: twenty-eight is not a
+ * number about this business, a rectangle is not a shape it makes, and a plate
+ * with nothing on it is a plate nobody has a reason to look at. It was a
+ * beautiful animation of an abstraction.
  *
- * A landscape: three district plates with towers on one, a tiered drum and a
- * field of blocks on the next, cylinders on the third, and a straight conduit
- * joining them - flown over by a camera scrubbed off a pinned scroll.
+ * The five steps ARE the product - Protocol, Evidence, Screening, Resolve,
+ * Replay, in that order, per ADR-0001 - so they are what the figure resolves
+ * into. Order carries real information here, which is the one condition under
+ * which a sequence is allowed to be drawn as one.
  *
- * Every one of those was a thing added to explain the last thing. The drum
- * needed a district to stand in; the district needed buildings so it was not
- * empty; the buildings needed a road so they were not unrelated; and the road
- * needed a camera to be worth looking at. That is how a diagram turns into a
- * toy town - not by one bad decision but by nine reasonable ones - and no
- * amount of ink discipline saves a drawing whose subject is a model village.
+ * WHAT LOOPS IS THE MESS, NOT THE STEPS.
  *
- * WHAT IT DRAWS NOW, AND IT IS ONE THING.
+ * The steps are always there, always solid, always legible. What cycles is the
+ * scatter: fragments fade in off-axis, travel, and are absorbed into the step
+ * they belong to - then a pulse runs the length of the row confirming the five
+ * are one run, and it happens again. That is the honest shape of the claim.
+ * Work does not arrive once and get tidied; it keeps arriving, and the system
+ * keeps taking it. A figure whose subject disappears for half its own loop is
+ * also a figure that is unreadable to half the people who see it.
  *
- * Twenty-eight plates. Scattered - at no shared height, on no shared axis,
- * every one of them a perfectly good surface and not one of them level with the
- * next. Then they sort, travel, and set down flush into a single continuous
- * deck. A run crosses the whole of it end to end, which is only possible
- * because it is now one surface. Then it comes apart and does it again.
+ * NO WAKE. The charge used to leave a tint behind it, which meant the deck
+ * ended every cycle a different colour from the one it started in and the
+ * front was hard to find. It is a short pulse now: each step lights, hands on,
+ * and returns. Five quick beats down the row.
  *
- * That is the thesis with nothing else in the frame: research is not short of
- * surfaces, it is short of ONE. The figure has a single primitive - the house
- * slab, the same solid Trident stacks and Nectar stands things on - repeated,
- * and it earns its whole effect from where those slabs are rather than from
- * what else got put on top of them.
- *
- * IT RUNS ON ITS OWN CLOCK.
- *
- * No pin, no scrub, no scroll. The section is an ordinary section again. Tying
- * this to scroll meant it only ever played at the rate a reader happened to
- * turn a wheel, and on a live page where the pin misbehaved it did not play at
- * all. A mechanism that needs to be operated to be seen working is not a
- * mechanism a visitor sees working. Trident and Nectar both run unattended;
- * this now does too, and it is the only one of the three whose entire content
- * is a single continuous move.
- *
- * The whole cycle is CSS. One keyframe set, one duration, and a per-plate lag
- * baked into `animation-delay` - so twenty-eight solids converge as a flock
- * rather than in lockstep, and the assembled state is held long enough that
- * every one of them is home at the same time in the middle of it.
+ * THE POINTER IS THE POINT. Every step lifts under the cursor and says what it
+ * does in the readout underneath. That is the whole reason the tiles are five
+ * named things instead of twenty-eight anonymous ones - there is now something
+ * to be curious about, and somewhere for the curiosity to go.
  */
 
 const W = 1200
-const H = 700
+/* The frame is cut to what the drawing needs: room above the row for the mess
+   arriving into it, and only the depth of a tile below. A viewBox with a
+   hundred and seventy empty units under the subject is a hundred and seventy
+   units of the section's height spent on nothing. */
+const H = 380
 const CX = 600
-const CY = 430
+const CY = 268
 
-// The deck. Seven by four, because a rectangle wide enough to need crossing is
-// what makes the run across it mean anything - and because an odd count on the
-// long axis gives the run a middle plate to pass over rather than a seam.
-const COLS = 7
-const ROWS = 4
-// FLUSH, AND THIN. Pitch equal to the full plate width, so the seated plates
-// touch on every edge instead of leaving a gap - and thin, because the skirt is
-// what shows between two solids standing side by side. A thick slab in a grid
-// puts a wall between every plate and its neighbour, which is precisely the
-// overlapping-boxes mess this figure was built to get away from. At six units
-// the seam is a line rather than a wall, and twenty-eight of them read as one
-// paved surface.
-const PITCH = 128
+/* THE ROW RUNS ALONG THE HORIZONTAL AXIS OF THE ISOMETRIC, NOT DOWN IT.
+ *
+ * Stepping the row along plan x alone sends it down and to the right, which
+ * costs twice: each step's label lands exactly where the next step's tile is,
+ * and the composition becomes a long diagonal with two empty corners.
+ *
+ * Stepping (+t, -t) instead moves along the one ground direction that projects
+ * flat - screen y is (x + y) times a constant, so equal and opposite is zero -
+ * and the row comes out horizontal while every tile stays a properly projected
+ * solid. It is still isometric; it is just the axis that suits a wide frame and
+ * a reading order. */
+/* THE PACKING IS SOLVED, NOT EYEBALLED.
+ *
+ * A plan square of half H projects to a top face 3.464H wide on screen, and a
+ * row stepped by (+t, -t) advances 1.732t. So the tiles overlap unless
+ * t > 2H - which the first pass did not satisfy, and five tiles ran into each
+ * other exactly the way the old figure did. At 142 against a half of 64 there
+ * are twenty-four pixels of daylight between each pair, and the five of them
+ * come to a shade over eleven hundred: a row that fills a twelve hundred frame
+ * without touching its edges. */
+const STEP = 142
 const HALF = 64
 const PLAN = project(CX, CY)
-// The half-length of the plan diagonal, which is the axis the charge runs down.
-const SPAN = ((COLS - 1) / 2 + (ROWS - 1) / 2) * PITCH
 
-/**
- * A plate: where it belongs, and where it is when it does not belong anywhere.
- *
- * The geometry is built ONCE, at the seated position, so the assembled deck is
- * a true plan grid with no accumulated error in it - every seam lands on every
- * other seam. Scatter is an offset from that, applied as a transform, which is
- * why a plate is the same object in both states rather than two objects
- * pretending to be one. It is also why the whole cycle is a compositor move:
- * nothing is recomputed on any frame of it.
- */
-const PLATES = Array.from({ length: COLS * ROWS }, (_, index) => {
-  const col = index % COLS
-  const row = Math.floor(index / COLS)
-  const px = (col - (COLS - 1) / 2) * PITCH
-  const py = (row - (ROWS - 1) / 2) * PITCH
-  const [sx, sy] = PLAN(px, py)
+/* THE FIVE, IN ORDER. The order is the argument - one piece of work passing
+   through five places, in sequence - so it is drawn as a row and lettered, and
+   the lettering is the one place this figure spends words. */
 
-  // Thickness varies a little, so the seated deck has relief in it rather than
-  // reading as one flat sheet somebody scored into squares.
-  const thick = 7 + Math.round(jitter(index, 7) * 4)
-
-  // WHERE IT IS WHEN IT IS NOT PART OF ANYTHING. Spread wide and mostly HIGH:
-  // held above where it belongs is the honest picture, because none of these
-  // systems is missing - every one of them exists and works, at its own level,
-  // answering to nobody else's.
-  const spin = jitter(index, 19) * Math.PI * 2
-  const reach = 210 + jitter(index, 31) * 330
+const STEPS = [
+  {
+    key: 'protocol',
+    label: 'PROTOCOL',
+    motif: 'rules',
+    read: 'The study arrives as something that executes, with its criteria as logic rather than prose.',
+  },
+  {
+    key: 'evidence',
+    label: 'EVIDENCE',
+    motif: 'cells',
+    read: 'Site records bind to the criteria that need them, and stay where they already are.',
+  },
+  {
+    key: 'screening',
+    label: 'SCREENING',
+    motif: 'sift',
+    read: 'Deterministic. The same protocol against the same evidence reaches the same result.',
+  },
+  {
+    key: 'resolve',
+    label: 'RESOLVE',
+    motif: 'fork',
+    read: 'Where the answer needs judgement, a named person makes the call and signs it.',
+  },
+  {
+    key: 'replay',
+    label: 'REPLAY',
+    motif: 'loop',
+    read: 'Any decision reconstructs cold: protocol version, evidence as of then, and who decided.',
+  },
+].map((step, index) => {
+  const t = (index - 2) * STEP
+  const [sx, sy] = PLAN(t, -t)
   return {
-    key: `p${index}`,
+    ...step,
     index,
-    // Depth order, so a nearer plate occludes the one behind it. Twenty-eight
-    // slabs in list order is a pile; in plan order it is a floor.
-    depth: px + py,
-    shape: roundedSlab(sx, sy, HALF, HALF, thick, 12),
-    driftX: Math.round(Math.cos(spin) * reach),
-    driftY: Math.round(-52 - jitter(index, 43) * 178 + Math.sin(spin) * 64),
-    // Further out reads smaller, which is the only depth cue a parallel
-    // projection will give for free.
-    scale: Math.round((0.52 + jitter(index, 53) * 0.34) * 100) / 100,
-    // Its place in the flock. Plates near the middle of the deck settle first
-    // and leave last, so the surface grows outward from its centre and retreats
-    // back into it rather than sweeping across like a wipe.
-    lag: Math.round((Math.abs(px) / (PITCH * 3) * 0.6 + Math.abs(py) / (PITCH * 2) * 0.4) * 100) / 100,
-    // WHERE IT SITS ALONG THE CURRENT. Zero at the far corner, one at the near
-    // one, measured down the plan diagonal - which is the axis a signal would
-    // actually cross this deck on. It is what staggers the light, and it is the
-    // whole payoff: a charge that reaches every plate in order is the only
-    // proof available that this is one surface and not twenty-eight.
-    wave: Math.round(((px + py + SPAN) / (SPAN * 2)) * 1000) / 1000,
-    life: jitter(index, 61),
+    screen: [sx, sy],
+    shape: roundedSlab(sx, sy, HALF, HALF, 13, 15),
+    // Where the charge reaches it. A real position down the row rather than an
+    // index, so the pulse crosses at a constant speed.
+    wave: Math.round((index / 4) * 100) / 100,
   }
-}).sort((a, b) => a.depth - b.depth)
+})
 
-/* WHAT REPLACED THE LINE.
+/* WHAT EACH STEP HOLDS.
 
-   There was a run here: one path down the long axis of the deck that drew
-   itself in once the plates had landed. It was doing the right job and it could
-   not carry it - a stroke laid over a surface is a mark ON the drawing, not
-   something happening TO it, and a thin diagonal that appears and stops is not
-   an event a reader has any reason to look at.
+   Five marks, drawn in the tile's own plan space so they lie ON the surface
+   rather than over it - and each one is the shape of the thing it names rather
+   than a picture of it. A protocol is ruled lines. Evidence is a field of
+   records. Screening is a sort: many in, few through. Resolve is two readings
+   meeting at one decision. Replay is a closed circuit back to the start.
 
-   What proves a surface is one surface is that a charge put in at one end
-   arrives at the other. So the deck CONDUCTS: every plate lights in turn, in
-   the order a signal would actually reach it, and the light crosses the whole
-   thing corner to corner. Nothing is drawn over anything - the surface itself
-   is what changes - and it is the same claim made by the thing rather than
-   about it.
+   None of them is a logo and none is an icon set. They are the smallest marks
+   that make five blank plates into five different things. */
 
-   It is also the only colour event in the figure, which is why it can be quiet
-   and still be the payoff. */
+const MOTIFS = {
+  rules: [
+    <rect className="fl-ring" key="sheet" x={-46} y={-52} width="92" height="104" rx="12" />,
+    ...[-28, -8, 12].map((y) => <rect className="fl-mark" key={y} x={-30} y={y - 3} width="60" height="6" rx="3" />),
+    <rect className="fl-mark is-set" key="seal" x={-30} y={30} width="26" height="8" rx="4" />,
+  ],
+  cells: [-28, 0, 28].flatMap((y) => [-28, 0, 28].map((x) => (
+    <rect className={`fl-mark${(x + y) % 56 === 0 ? ' is-set' : ''}`} key={`${x}:${y}`} x={x - 11} y={y - 11} width="22" height="22" rx="5" />
+  ))),
+  sift: [
+    ...[-46, -24, -2].map((y, i) => (
+      <rect className="fl-mark" key={y} x={-(50 - i * 16)} y={y - 4} width={(50 - i * 16) * 2} height="8" rx="4" />
+    )),
+    <path className="fl-line" key="throat" d="M -18 12 L 0 30 L 18 12" />,
+    <rect className="fl-mark is-set" key="out" x={-11} y={36} width="22" height="22" rx="6" />,
+  ],
+  fork: [
+    <path className="fl-line" key="a" d="M -44 -34 L 0 4" />,
+    <path className="fl-line" key="b" d="M 44 -34 L 0 4" />,
+    <rect className="fl-mark is-set" key="seal" x={-13} y={10} width="26" height="26" rx="6" />,
+  ],
+  loop: [
+    <rect className="fl-ring" key="outer" x={-44} y={-38} width="88" height="76" rx="20" />,
+    <rect className="fl-ring" key="inner" x={-24} y={-20} width="48" height="40" rx="12" />,
+    <rect className="fl-mark is-set" key="head" x={-38} y={-6} width="12" height="12" rx="3" />,
+  ],
+}
+
+/* THE MESS THAT KEEPS ARRIVING.
+
+   Six fragments per step, off every axis, fading in at a scatter and travelling
+   into the step that will absorb them. They are the same house slab at a
+   fraction of the size, because what arrives is not a different KIND of thing
+   from what it becomes - it is the same work, unplaced.
+
+   They are absorbed rather than parked: each one shrinks into the tile and goes
+   out as it lands. Nothing accumulates, because the claim is not that the steps
+   collect things, it is that they resolve them. */
+
+const SHARDS = STEPS.flatMap((step) =>
+  Array.from({ length: 6 }, (_, n) => {
+    const seed = step.index * 7 + n
+    const spin = jitter(seed, 13) * Math.PI * 2
+    const reach = 190 + jitter(seed, 29) * 260
+    const size = 20 + Math.round(jitter(seed, 41) * 16)
+    return {
+      key: `${step.key}-${n}`,
+      step: step.key,
+      // Built AT the step it belongs to, so its resting place is exact and the
+      // scatter is an offset from it. The same reason the plates were built
+      // seated: one object in two places, not two pretending to be one.
+      shape: roundedSlab(step.screen[0], step.screen[1], size, size, 6, 6),
+      driftX: Math.round(Math.cos(spin) * reach),
+      driftY: Math.round(-40 - jitter(seed, 53) * 150 + Math.sin(spin) * 58),
+      // Staggered arrival, so six fragments land as six events rather than one.
+      lag: Math.round(jitter(seed, 67) * 100) / 100,
+    }
+  }),
+)
 
 export default function ChainSchematic({ animate = true }) {
   const frame = useCenterOnOverflow()
+  const [hot, setHot] = useState(null)
+  const step = STEPS.find((item) => item.key === hot) ?? null
 
   return (
     <figure className="dgm">
@@ -152,7 +204,7 @@ export default function ChainSchematic({ animate = true }) {
           className={`dgm-svg is-floor${animate ? ' is-live' : ''}`}
           viewBox={`0 0 ${W} ${H}`}
           role="img"
-          aria-label="Twenty-eight surfaces seen in axonometric projection, scattered in the air at no shared height and on no shared axis. They sort, travel and set down flush into one continuous deck. A charge then crosses the whole of it, lighting every plate in turn from one corner to the other - which is only possible because it has become one surface. The sequence comes apart and repeats."
+          aria-label="Five surfaces in a row, seen in axonometric projection and lettered Protocol, Evidence, Screening, Resolve and Replay. Each carries a mark for the work it does: ruled lines, a field of records, a sort that narrows, two readings meeting at one signed decision, and a closed circuit back to the start. Fragments fade in off-axis around them, travel, and are absorbed into the step they belong to, after which a pulse runs the length of the row from Protocol to Replay. The sequence repeats."
         >
           <defs>
             <pattern id="fl-grain" width="15" height="15" patternUnits="userSpaceOnUse">
@@ -160,37 +212,68 @@ export default function ChainSchematic({ animate = true }) {
             </pattern>
           </defs>
 
-          {/* The plates. Back to front, on one clock, each a little behind the
-              one inside it. */}
-          <g className="fl-deck">
-            {PLATES.map((plate) => (
+          {/* The mess, under the steps, so a fragment passes BEHIND the thing
+              that is about to absorb it rather than over its face. */}
+          <g className="fl-mess">
+            {SHARDS.map((shard) => (
               <g
-                className="fl-plate"
-                key={plate.key}
-                style={{
-                  '--drift-x': `${plate.driftX}px`,
-                  '--drift-y': `${plate.driftY}px`,
-                  '--loose': plate.scale,
-                  '--lag': plate.lag,
-                  '--wave': plate.wave,
-                  '--life': plate.life,
-                }}
+                className="fl-shard"
+                key={shard.key}
+                style={{ '--drift-x': `${shard.driftX}px`, '--drift-y': `${shard.driftY}px`, '--lag': shard.lag }}
               >
-                {/* The tile is a second group inside the travelling one, so the
-                    pointer can lift a plate without fighting the transform the
-                    loop is already writing on its parent. Two transforms, two
-                    jobs, and neither has to know about the other. */}
-                <g className="fl-tile">
-                  <Faces shape={plate.shape} className="dgm-solid" />
-                  <polygon className="fl-grain" points={plate.shape.top} fill="url(#fl-grain)" />
-                  <polygon className="fl-lit" points={plate.shape.top} />
-                </g>
+                <Faces shape={shard.shape} className="dgm-solid" />
               </g>
             ))}
           </g>
 
+          <g className="fl-row">
+            {STEPS.map((item) => (
+              <g
+                className={`fl-step${hot === item.key ? ' is-hot' : ''}`}
+                key={item.key}
+                style={{ '--wave': item.wave, '--order': item.index }}
+                onMouseEnter={() => setHot(item.key)}
+                onMouseLeave={() => setHot((current) => (current === item.key ? null : current))}
+                onFocus={() => setHot(item.key)}
+                onBlur={() => setHot(null)}
+                tabIndex={0}
+                role="button"
+                aria-label={`${item.label} - ${item.read}`}
+              >
+                <g className="fl-tile">
+                  <Faces shape={item.shape} className="dgm-solid" />
+                  <polygon className="fl-grain" points={item.shape.top} fill="url(#fl-grain)" />
+                  <polygon className="fl-lit" points={item.shape.top} />
+                  {/* Scaled inside the tile's own plan space, so a mark keeps
+                      its proportions and its projection while fitting the plate
+                      it lies on. */}
+                  <g className="fl-motif" transform={`${planSpace(item.screen[0], item.screen[1])} scale(0.74)`}>
+                    {MOTIFS[item.motif]}
+                  </g>
+                </g>
+                {/* Above the tile, at its back corner, because the space under
+                    a tile in a row like this belongs to the tile's own skirt
+                    and the space beside it belongs to its neighbour. Above it
+                    there is nothing at all. */}
+                <text className="fl-name" x={item.screen[0]} y={item.shape.back[1] - 18} textAnchor="middle">
+                  {item.label}
+                </text>
+              </g>
+            ))}
+          </g>
         </svg>
       </div>
+
+      {/* The readout is prose in the document rather than type inside the
+          drawing: it holds its size while the figure scales, a screen reader
+          gets it as text, and it is where the curiosity a hover creates has
+          somewhere to go. */}
+      <figcaption className={`fl-readout${step ? ' is-hot' : ''}`} aria-live="polite">
+        <span className="fl-readpill">{step ? step.label : 'FIVE STEPS'}</span>
+        <span className="fl-readline">
+          {step ? step.read : 'One protocol, executed the same way at every site, and reconstructable end to end.'}
+        </span>
+      </figcaption>
     </figure>
   )
 }
