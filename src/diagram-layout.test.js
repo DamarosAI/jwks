@@ -2842,26 +2842,30 @@ describe('The floor schematic', () => {
     // figure clinical research already has for visiting every site and
     // moving the paperwork along, drawn once, deliberately unnamed in
     // anything a reader sees (the christening is the company's), and
-    // working ONLY the workflow sheet. THE BODY IS THE MARK BUILT AS A
-    // SOLID: the two favicon trapezoids twice over - a depth copy in the
-    // old deep ink thrown down-right, the face copies in the house blue -
-    // with white eyes, pupils, glints, a blink, and a blinking accent tip.
+    // working ONLY the workflow sheet. THE BODY IS THE MARK AND NOTHING
+    // ELSE: the two favicon trapezoids, flat and solid in the house blue,
+    // fat round stroke as the plumpness, a floor shadow for grounding -
+    // and the cute carried by MOTION, a jelly squash-and-stretch
+    // phase-locked to the hover bob. A face, a fake extrusion and an
+    // antenna were all tried and all came off, so they are BANNED, not
+    // just absent.
     assert.match(floor, /import \{ Scout \} from '\.\/Scout'/)
     assert.match(scout, /M 104\.82 74\.50[\s\S]*?M 158\.62 284\.50/)
-    assert.match(scout, /className="scout-shape"/)
-    assert.equal((scout.match(/className="scout-flank"/g) || []).length, 2, 'the body needs its depth copy, both trapezoids')
-    assert.match(scout, /className="scout-flank" d=\{MARK\[0\]\} transform=\{`translate\(/)
-    assert.ok((scout.match(/className="scout-eye"/g) || []).length >= 2, 'a character has eyes')
-    assert.ok((scout.match(/className="scout-pupil"/g) || []).length >= 2, 'eyes need pupils')
-    assert.ok((scout.match(/className="scout-glint"/g) || []).length >= 2, 'a glint is what makes an eye wet')
+    assert.equal((scout.match(/className="scout-shape"/g) || []).length, 2, 'the body is the two mark shapes')
+    assert.equal((scout.match(/<path/g) || []).length, 2, 'the body is the mark - two paths and nothing else')
+    assert.doesNotMatch(scout, /<circle|<line|<rect/, 'no face, no antenna, no dressing - the silhouette is the costume')
+    for (const retired of ['scout-eye', 'scout-pupil', 'scout-glint', 'scout-flank', 'scout-blink', 'scout-antenna', 'scout-tip', 'scout-wink', 'scout-sway']) {
+      assert.doesNotMatch(scout, new RegExp(retired), `${retired} came off the character`)
+      assert.doesNotMatch(css, new RegExp(retired), `${retired} came off the character`)
+    }
+    assert.match(floor, /className="fl-monitorshade"/)
     assert.match(css, /\.scout-shape \{\s*\n\s*fill: var\(--accent\);/)
     assert.match(css, /\.scout-shape \{[\s\S]*?stroke-width: 33;/)
-    assert.match(css, /\.scout-flank \{\s*\n\s*fill: color-mix\(in srgb, var\(--accent-strong\) 58%, var\(--text\)\);/)
-    assert.match(css, /\.scout-flank \{[\s\S]*?stroke-width: 33;/)
-    assert.match(css, /@keyframes scout-blink/)
-    assert.match(css, /\.dgm-svg\.is-live \.scout-eyes \{ animation: scout-blink/)
-    assert.match(css, /\.dgm-svg\.is-live \.scout-trunk \{ animation: scout-sway/)
-    assert.match(css, /\.scout-tip \{ fill: var\(--accent\); \}/)
+    // The jelly and the bob must share one clock and one alternate ease,
+    // or the squash lands off the bounce it belongs to.
+    assert.match(css, /\.dgm-svg\.is-live \.scout-trunk \{ animation: scout-jelly 3\.4s ease-in-out infinite alternate; \}/)
+    assert.match(css, /\.dgm-svg\.is-live \.fl-hover \{ animation: fl-hovering 3\.4s ease-in-out infinite alternate; \}/)
+    assert.match(css, /@keyframes scout-jelly \{\s*\n\s*from \{ transform: rotate\(-?[\d.]+deg\) scale\([\d.]+, [\d.]+\); \}/)
     assert.match(floor, /className=\{`fl-watch\$\{shy \? ' is-shy' : ''\}`\} aria-hidden="true"/)
     assert.match(floor, /className="fl-monitor" onClick=\{\(\) => setShy\(true\)\}/)
     assert.match(floor, /if \(event\.animationName === 'fl-flee'\) setShy\(false\)/)

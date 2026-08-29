@@ -13779,16 +13779,15 @@ html.is-hidden .clinic-node i,
 .dgm-svg.is-live .fl-watch { opacity: 1; }
 .dgm-svg.is-live .fl-monitor { pointer-events: all; cursor: pointer; }
 
-/* The character itself. THE BODY IS THE MARK, BUILT AS A SOLID: the two
-   trapezoids drawn twice - a depth copy thrown down-right in the mark's
-   old deep ink, the face copies over it in the house blue - so the
-   character has a lit face and a shaded flank exactly like the row's own
-   drums, instead of reading as a flat black sticker. Both layers keep the
-   favicon's fat round stroke, because the plump silhouette IS the stroke.
-   The eyes are white with dropped pupils and a glint; the antenna tip is
-   the accent and blinks like an instrument light; and the whole trunk
-   sways a couple of degrees against the hover bob, which is what makes a
-   drawing float instead of slide. */
+/* The character itself. THE BODY IS THE MARK AND NOTHING ELSE: the two
+   trapezoids flat and solid in the house blue, the favicon's fat round
+   stroke supplying the plumpness. A face, a fake extrusion and an
+   antenna were all tried and all came off - the silhouette is the whole
+   costume, and the cute is carried by MOTION instead: a jelly
+   squash-and-stretch on the trunk, phase-locked to the hover bob (same
+   3.4s, same alternate ease), so the body squashes wide at the bottom of
+   every bob and stretches tall at the top the way anything soft and
+   floaty does. The floor shadow riding the round does the grounding. */
 .scout-shape {
   fill: var(--accent);
   stroke: var(--accent);
@@ -13798,60 +13797,16 @@ html.is-hidden .clinic-node i,
   vector-effect: none;
 }
 
-.scout-flank {
-  fill: color-mix(in srgb, var(--accent-strong) 58%, var(--text));
-  stroke: color-mix(in srgb, var(--accent-strong) 58%, var(--text));
-  stroke-width: 33;
-  stroke-linejoin: round;
-  stroke-linecap: round;
-  vector-effect: none;
-}
-
-.scout-eye { fill: var(--surface-solid); }
-.scout-pupil { fill: color-mix(in srgb, var(--accent-strong) 58%, var(--text)); }
-.scout-glint { fill: var(--surface-solid); }
-
-.scout-eyes {
-  transform-box: fill-box;
-  transform-origin: center;
-}
-
-.dgm-svg.is-live .scout-eyes { animation: scout-blink 5.4s ease-in-out infinite; }
-
-@keyframes scout-blink {
-  0%, 92.5% { transform: scaleY(1); }
-  94.5% { transform: scaleY(0.12); }
-  96.5%, 100% { transform: scaleY(1); }
-}
-
 .scout-trunk {
   transform-box: fill-box;
-  transform-origin: 50% 82%;
+  transform-origin: 50% 88%;
 }
 
-.dgm-svg.is-live .scout-trunk { animation: scout-sway 3.4s ease-in-out infinite alternate; }
+.dgm-svg.is-live .scout-trunk { animation: scout-jelly 3.4s ease-in-out infinite alternate; }
 
-@keyframes scout-sway {
-  from { transform: rotate(-2.2deg); }
-  to { transform: rotate(2.2deg); }
-}
-
-.scout-antenna {
-  stroke: color-mix(in srgb, var(--accent-strong) 70%, transparent);
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
-}
-
-.scout-tip { fill: var(--accent); }
-
-/* The tip BLINKS - sharp on, sharp off, the way a beacon does - rather
-   than breathing. */
-.dgm-svg.is-live .scout-tip { animation: scout-wink 2.6s linear infinite; }
-
-@keyframes scout-wink {
-  0%, 42% { opacity: 0.2; }
-  50%, 60% { opacity: 1; }
-  68%, 100% { opacity: 0.2; }
+@keyframes scout-jelly {
+  from { transform: rotate(-2deg) scale(1.06, 0.93); }
+  to { transform: rotate(2deg) scale(0.96, 1.05); }
 }
 
 .fl-beam {
