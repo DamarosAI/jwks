@@ -260,7 +260,7 @@ function PageReset() {
 
 function PageMeta({ title, description, path = '/' }) {
   useEffect(() => {
-    document.title = 'Damaros™'
+    document.title = 'Damaros'
     const absolute = `https://www.damaros.ai${path}`
     const descriptionTag = document.querySelector('meta[name="description"]')
     if (descriptionTag) descriptionTag.setAttribute('content', description)
@@ -393,7 +393,9 @@ function usePageScrollFlow(root, reduced) {
 }
 
 function BrandName() {
-  return <>Damaros<sup className="brand-tm">TM</sup></>
+  // Plain now: Damaros is incorporated, and an incorporated name does not
+  // need to claim itself - the TM went with the pre-incorporation era.
+  return 'Damaros'
 }
 
 // `brand` is for the eyebrows set at the volume of a name rather than a label.
@@ -468,7 +470,7 @@ function Footer() {
         <a href="mailto:team@damaros.ai">Email</a>
       </div>
       <div className="footer-bottom">
-        <span>2026 <BrandName /></span>
+        <span>2026 <BrandName /> Inc</span>
         <span>Clinical efficacy claims are outside platform scope.</span>
       </div>
     </footer>
@@ -490,10 +492,12 @@ function MiniRun() {
   const [evidenceLocked, setEvidenceLocked] = useState(false)
   const [evidenceActed, setEvidenceActed] = useState({})
   const { held: pointerHeld, hold, clearHold } = useAutoplayHold(reduced)
-  // A click inside the demo parks the tour for a while; the run-bar control
-  // parks it until the same control starts it again. Pause means pause.
+  // Guided is the resting state. The first click anywhere in the demo hands
+  // the visitor the controls for good - manual mode, said plainly by the pill
+  // on the run bar - and only that pill starts the tour again.
   const [parked, setParked] = useState(false)
   const held = pointerHeld || parked
+  const manual = held
   const visible = useDocumentVisible()
   const { fading, swap } = useSoftSwap(reduced)
   const steps = ['Protocol', 'Evidence', 'Screening', 'Resolve', 'Replay']
@@ -521,7 +525,7 @@ function MiniRun() {
   }
 
   return (
-    <div className="hero-workspace" ref={root} aria-label="Live synthetic Damaros workspace preview" onClickCapture={(event) => { if (shouldHoldAutoplayFromClick(event.target)) hold() }}>
+    <div className="hero-workspace" ref={root} aria-label="Live synthetic Damaros workspace preview" onClickCapture={(event) => { if (shouldHoldAutoplayFromClick(event.target)) { hold(); setParked(true) } }}>
         <div className="mac-titlebar">
           <div className="traffic-lights" aria-hidden="true"><i /><i /><i /></div>
           <span className="window-breadcrumb"><WindowBrand /><span>DMR-204</span><span>Site 018</span></span>
@@ -566,17 +570,17 @@ function MiniRun() {
           <span className="run-fact">PROTOCOL <code>v2.1</code> <code>aead45cf</code></span>
         </div>
         <div className="run-statusbar-mode">
-          {reduced ? (
-            <span className="run-mode-chip is-static"><i aria-hidden="true" />Manual control</span>
-          ) : (
-            <button className="run-mode-chip" type="button" data-autoplay-toggle aria-pressed={playing} title={playing ? 'Pause the guided run' : 'Resume the guided run'} onClick={() => { if (playing) { setParked(true) } else { setParked(false); clearHold() } }}>
-              <i aria-hidden="true" />{playing ? 'Guided run' : 'Manual control'}
-            </button>
-          )}
           <span className="run-stage-meter" aria-hidden="true">
             {steps.map((step, index) => <i key={step} className={index === active ? 'is-active' : index < active ? 'is-done' : ''} />)}
           </span>
           <code className="run-stage-count" aria-hidden="true">{active + 1}/5</code>
+          {reduced ? (
+            <span className="run-mode-chip is-static"><i aria-hidden="true" />Manual</span>
+          ) : (
+            <button className={`run-mode-chip${manual ? ' is-manual' : ''}`} type="button" data-autoplay-toggle aria-pressed={!manual} title={manual ? 'Resume the guided run' : 'Switch to manual control'} onClick={() => { if (manual) { setParked(false); clearHold() } else { setParked(true) } }}>
+              <i aria-hidden="true" />{manual ? 'Manual' : 'Guided'}
+            </button>
+          )}
         </div>
       </footer>
     </div>

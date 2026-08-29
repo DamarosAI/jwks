@@ -80,12 +80,15 @@ describe('demo controls', () => {
   it('closes the window with a run bar that tells the truth about the tour', () => {
     assert.match(app, /className="run-statusbar"/)
     assert.match(app, /data-autoplay-toggle/)
-    assert.match(app, /aria-pressed=\{playing\}/)
-    assert.match(app, /\{playing \? 'Guided run' : 'Manual control'\}/)
-    // The run-bar pause is a park, not the click-hold's expiring timer.
-    assert.match(app, /setParked\(true\)/)
+    // Guided is the resting state; the first click anywhere hands over the
+    // controls for good, and only the pill starts the tour again.
+    assert.match(app, /if \(shouldHoldAutoplayFromClick\(event\.target\)\) \{ hold\(\); setParked\(true\) \}/)
+    assert.match(app, /aria-pressed=\{!manual\}/)
+    assert.match(app, /\{manual \? 'Manual' : 'Guided'\}/)
+    assert.match(app, /setParked\(false\); clearHold\(\)/)
     assert.match(css, /\.run-statusbar \{/)
     assert.match(css, /\.run-stage-meter i\.is-active \{/)
+    assert.match(css, /\.run-mode-chip\.is-manual \{/)
   })
 
   it('counts each step on the rail and grounds it with the site card', () => {

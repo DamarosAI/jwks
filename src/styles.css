@@ -274,23 +274,6 @@ h2 {
   line-height: 1;
 }
 
-.brand-tm {
-  margin-left: 0.16em;
-  color: var(--accent);
-  font-size: 0.48em;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  line-height: 0;
-  vertical-align: super;
-}
-
-.footer-mark .brand-tm {
-  font-size: 0.22em;
-}
-
-.footer-bottom .brand-tm {
-  font-size: 0.7em;
-}
 
 .desktop-nav-links {
   display: flex;
@@ -8852,7 +8835,7 @@ html.is-hidden .clinic-node i,
 
 /* Endless ships as one unhinted Regular face. Compact chrome needs optical
    spacing, grayscale AA, and no browser kerning. Keep this contract last. */
-#root :is(button, .button, [role='button'], input[type='button'], input[type='submit'], .wordmark, .brand-tm, .desktop-nav-links a, .mobile-menu > a, .footer-mark, .footer-mark p, .footer-links) {
+#root :is(button, .button, [role='button'], input[type='button'], input[type='submit'], .wordmark, .desktop-nav-links a, .mobile-menu > a, .footer-mark, .footer-mark p, .footer-links) {
   font-weight: 400;
   font-kerning: none;
   font-variant-ligatures: none;
@@ -14654,4 +14637,19 @@ html.is-hidden .clinic-node i,
 #root .landing-source-demo .evidence-action-receipt button {
   min-height: 34px;
   margin-top: 8px;
+}
+
+/* Pass 5: guided is the resting state. The first click in the demo drops it
+   into manual for good, and the pill at the bar's right end is the one clean
+   indicator of which hand is on the wheel - slate when it is the visitor's,
+   pulsing when the tour drives. Only the pill hands the tour back. */
+
+#root .hero-workspace .run-mode-chip.is-manual {
+  border-color: var(--border-strong);
+  background: var(--surface-strong);
+  color: var(--text);
+}
+
+#root .hero-workspace .run-mode-chip.is-manual i {
+  background: var(--muted);
 }
