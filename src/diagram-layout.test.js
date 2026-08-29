@@ -2015,7 +2015,7 @@ describe('The floor schematic', () => {
       protocol: ['fl-sheet', 'fl-bite', 'fl-ruled'],
       evidence: ['fl-socket', 'fl-record', 'fl-route'],
       screening: ['fl-throat', 'fl-unit', 'fl-faller'],
-      resolve: ['fl-post', 'fl-throw', 'fl-stamp'],
+      resolve: ['fl-post', 'fl-lever', 'fl-stamp'],
       replay: ['fl-bore', 'fl-band', 'fl-scale'],
     }
     for (const [key, parts] of Object.entries(own)) {
@@ -2129,7 +2129,7 @@ describe('The floor schematic', () => {
     // RESOLVE IS PULLED. Every other plate runs unattended; this is the only
     // step whose actor is a person, so it is the only one with a control on it
     // that a hand has to work - and the only thing in the figure that turns.
-    assert.match(floor, /if \(part\.pivot\) \{/)
+    assert.match(floor, /if \(part\.arm\) \{/)
     assert.match(css, /@keyframes fl-claim \{\s*0%, \d+% \{ transform: rotate\(-?\d+deg\); \}/)
     assert.doesNotMatch(css, /@keyframes fl-sweep/)
     assert.doesNotMatch(floor, /planSpace\(seatX, seatY - 4\)/)
@@ -2300,6 +2300,12 @@ describe('The floor schematic', () => {
       // A dash cycle over exactly one period is seamless by construction: an
       // offset of a hundred against a 13/87 pattern on a pathLength of a
       // hundred is the same picture as an offset of nought.
+      // A FULL TURN ENDS WHERE IT STARTS. Zero degrees and three hundred and
+      // sixty are the same picture - what differs is the text, not the frame -
+      // and a crank that stops short of a full turn to satisfy a string
+      // comparison would be a crank that jerks.
+      const turn = (f) => Number((f.match(/rotate\((-?[\d.]+)deg\)/) || [])[1])
+      if (Number.isFinite(turn(frames['0%'])) && Math.abs(turn(frames['100%']) - turn(frames['0%'])) === 360) continue
       if (/stroke-dashoffset/.test(frames['0%'])) {
         assert.match(css, new RegExp(`\\.${name.replace('fl-', 'fl-')} \\{[\\s\\S]*?stroke-dasharray: 13 87;`))
         continue
@@ -2331,6 +2337,25 @@ describe('The floor schematic', () => {
     // direction. Each plate takes a different KIND now, and this checks the
     // kinds rather than counting rates: a scale, a flow along a line, a fall,
     // a rotation, and a differential expansion.
+    // RESOLVE WAS THE ONLY STATION ANYBODY LIKED, AND THE REASON WAS THE LEVER.
+    // Not its geometry: a lever is a thing a person can picture their hand on.
+    // The other four had no agent at all - a hole scaling, a dash creeping, a
+    // stack breathing three pixels - and a property changing is not a machine
+    // being worked. Every plate has an instrument with a handle now, hinged and
+    // swinging in the vertical plane, and each is the tool that step actually
+    // is: a guillotine, a cover over the records, a tipping chute, the lever,
+    // and a crank that winds a section out of a borehole.
+    for (const tool of ['fl-blade', 'fl-cover', 'fl-chute', 'fl-lever', 'fl-crank']) {
+      assert.match(floor, new RegExp(`arm\\('${tool}'`), `${tool} is an instrument a hand can work`)
+      assert.match(css, new RegExp(`\\.${tool}[ ,.{]`), `${tool} has to be dressed`)
+    }
+    assert.match(floor, /const arm = \(cls, px, py, base, reach, thick, extra = \{\}\) =>/)
+    assert.match(css, /\.fl-limb \{ fill: var\(--deep\)/)
+    assert.match(css, /\.fl-grip \{ fill: var\(--tone\)/)
+    // And pointing at one puts a hand on it: the instrument works faster under
+    // the pointer, which is a station being OPERATED rather than highlighted.
+    assert.match(css, /\.is-fused \.fl-step\.is-hot \.fl-blade,[\s\S]*?animation-duration: [\d.]+s;/)
+
     const kind = {
       'fl-cut': /transform: scale\(/,
       'fl-flow': /stroke-dashoffset:/,

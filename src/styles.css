@@ -13261,15 +13261,125 @@ html.is-hidden .clinic-node i,
   transform-box: view-box;
 }
 
-.fl-throw { fill: var(--deep); stroke: none; }
+/* ── The instruments ─────────────────────────────────────────────────────
+
+   RESOLVE WAS THE ONLY STATION ANYBODY LIKED, AND THE REASON WAS THE LEVER.
+
+   Not its geometry and not its palette: a lever is a thing a person can picture
+   their hand on. The other four plates had no agent at all - a hole scaling, a
+   dash creeping along a hairline, a stack of bands breathing three pixels. Those
+   are properties changing, and a property changing is not a machine being
+   worked. At reading size most of them could not even be seen to move.
+
+   So every plate has an instrument with a handle now, and each is the tool that
+   step actually is: a GUILLOTINE whose blade comes down across the document, a
+   COVER lifted off the socket bank to look at records without taking them, a
+   CHUTE that tips a subject down one throat or another, the LEVER, and a CRANK
+   that winds a section up out of a borehole. All hinged, all swinging in the
+   vertical plane - the one motion in an axonometric that needs no depth sort
+   and the one a hand already knows how to make.
+
+   They share one body so the five read as one kit of tools: a limb in the
+   station's darkest ink and a grip in its own colour, because the grip is the
+   part a hand goes on and it should be the thing a reader's eye lands on. */
+
+.fl-limb { fill: var(--deep); stroke: none; }
 .fl-grip { fill: var(--tone); stroke: none; }
+
+.fl-blade,
+.fl-cover,
+.fl-chute,
+.fl-crank,
+.fl-lever { transform-box: view-box; }
+
+/* THE COVER IS A LID, NOT A BAR. It is the one instrument wide enough to hide
+   what it covers, so it is drawn as the plate's own paper with a hard edge -
+   a thing you would lift, rather than a thing that would crush what is under
+   it. */
+.fl-cover .fl-limb {
+  fill: color-mix(in srgb, var(--tone) 22%, var(--surface-solid));
+  stroke: var(--line);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+/* PROTOCOL CUTS. Hinged at the sheet's far corner, down across the paper and
+   back up. Resting raised, because a blade resting ON the document is a
+   document nobody can see. */
+.fl-blade { transform: rotate(-48deg); }
+
+.dgm-svg.is-live.is-fused .fl-blade { animation: fl-chop 6.2s cubic-bezier(0.45, 0, 0.3, 1) infinite; }
+
+@keyframes fl-chop {
+  0%, 22% { transform: rotate(-48deg); }
+  40%, 52% { transform: rotate(-3deg); }
+  76%, 100% { transform: rotate(-48deg); }
+}
+
+/* EVIDENCE OPENS. The records are under the lid, you look at them, you put it
+   back, and nothing is taken out - which is the most literal statement this
+   figure makes. Resting OPEN, because a closed bank is a snapshot nobody has
+   read. */
+.fl-cover { transform: rotate(-22deg); }
+
+.dgm-svg.is-live.is-fused .fl-cover { animation: fl-open 7.4s cubic-bezier(0.4, 0, 0.3, 1) infinite; }
+
+@keyframes fl-open {
+  0%, 30% { transform: rotate(-22deg); }
+  50%, 64% { transform: rotate(-1deg); }
+  84%, 100% { transform: rotate(-22deg); }
+}
+
+/* SCREENING TIPS. A sort is a thing somebody does by tipping a tray one way or
+   the other, which is why every coin sorter and every set of railway points
+   looks like this. */
+.fl-chute { transform: rotate(14deg); }
+
+.dgm-svg.is-live.is-fused .fl-chute { animation: fl-tip 5.6s cubic-bezier(0.5, 0, 0.4, 1) infinite; }
+
+@keyframes fl-tip {
+  0%, 14% { transform: rotate(14deg); }
+  34%, 48% { transform: rotate(30deg); }
+  68%, 86% { transform: rotate(3deg); }
+  100% { transform: rotate(14deg); }
+}
+
+/* REPLAY WINDS. The only agent here that goes all the way round, and the only
+   one whose motion is continuous rather than a stroke - a reader can watch it
+   driving the section open. A full turn ends where it starts by definition. */
+.dgm-svg.is-live.is-fused .fl-crank { animation: fl-wind 8.2s linear infinite; }
+
+@keyframes fl-wind {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* AND POINTING AT ONE PUTS A HAND ON IT. The instrument swings further and
+   works faster under the pointer - which is a station being OPERATED rather
+   than a station being highlighted, and it is the change a hover was missing.
+   The duration change re-times the cycle rather than restarting it, so leaning
+   in never makes the drawing jump. */
+.is-fused .fl-step.is-hot .fl-blade,
+.is-fused .fl-step.is-hot .fl-cover,
+.is-fused .fl-step.is-hot .fl-chute,
+.is-fused .fl-step.is-hot .fl-lever { animation-duration: 2.4s; }
+
+.is-fused .fl-step.is-hot .fl-crank { animation-duration: 3.2s; }
+
+.is-fused .fl-step.is-hot .fl-grip { fill: var(--deep); }
 
 .dgm-svg.is-live.is-fused .fl-lever { animation: fl-claim 4.8s cubic-bezier(0.6, 0, 0.3, 1.4) infinite; }
 
+/* The lever is drawn on the same horizontal arm as the other four and then
+   stood UP, because a throw is a thing done side to side with a bar that
+   stands - the only agent here that swings about vertical rather than about
+   the ground. */
+.fl-lever { transform: rotate(-64deg); }
+
 @keyframes fl-claim {
-  0%, 26% { transform: rotate(26deg); }
-  42%, 74% { transform: rotate(-26deg); }
-  92%, 100% { transform: rotate(26deg); }
+  0%, 26% { transform: rotate(-116deg); }
+  42%, 74% { transform: rotate(-64deg); }
+  92%, 100% { transform: rotate(-116deg); }
 }
 
 .dgm-svg.is-live.is-fused .fl-lamp.is-read {
@@ -13473,6 +13583,11 @@ html.is-hidden .clinic-node i,
   .fl-bite,
   .fl-band,
   .fl-lever,
+  .fl-blade,
+  .fl-cover,
+  .fl-chute,
+  .fl-crank,
+  .fl-flow,
   .fl-settle,
   .fl-step,
   .fl-name,

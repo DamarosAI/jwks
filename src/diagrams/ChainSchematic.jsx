@@ -220,6 +220,18 @@ function mechanism(key, t) {
      plane. None of it needs a resort and all of it occludes what it should. */
   const OVER = 999
   const printed = (depth, cls, mark) => ({ depth, plan: FACE, cls: `fl-plan ${cls}`, mark })
+  /* An instrument with a handle, hinged at a plan point and swinging in the
+     vertical plane. `reach` is signed, so an arm can open to the left or the
+     right of its own hinge without the caller doing the arithmetic. */
+  const arm = (cls, px, py, base, reach, thick, extra = {}) => ({
+    arm: PLAN(t + px, -t + py),
+    base,
+    reach,
+    thick,
+    cls,
+    depth: OVER + 2,
+    ...extra,
+  })
 
   /* A SOLID AND THE LAMP THAT REPORTS ITS STATE. State used to be the solid's
      own opacity, and in an axonometric a half-opaque solid is not a dim solid -
@@ -267,6 +279,12 @@ function mechanism(key, t) {
         // rail: a press is a thing that happens at a moment.
         // And what came out of the bites, standing separately.
         ...at.flatMap((px, i) => lit('crit', px, 10, 5, 5, rise[i], 1.5, i)),
+        // THE BLADE. A guillotine is the instrument this step actually is - a
+        // document goes under it and comes out in pieces - and it is a thing a
+        // reader has stood in front of. Hinged at the sheet's far corner, it
+        // comes down across the paper and lifts, and a criterion is standing
+        // beside the sheet that was not there before.
+        arm('fl-blade', -68, 32, 9, 64, 6.5, { knob: 5 }),
       ]
     },
     // EVIDENCE SINKS. The records are under the floor and stay there.
@@ -326,6 +344,12 @@ function mechanism(key, t) {
         // down the hole - so it is small, it is on the surface, and it never
         // covers the thing it points at.
         ...socket.flatMap(([px, py], i) => (i === 3 ? [] : lit('res', px - 16, py - 16, 5, 5, 4, 1.5, i))),
+        // THE COVER. One hinged lid over the whole socket bank, and it is the
+        // most literal statement this figure makes: the records are UNDER it,
+        // you open it to look at them, and you put it back. Nothing is taken
+        // out. It rests open, because the resting frame of this figure is the
+        // finished one and a closed bank is a snapshot nobody has read.
+        arm('fl-cover', -46, 32, 12, 106, 15, { radius: 4 }),
       ]
     },
     // SCREENING DROPS. Three throats, and what is left standing is the count.
@@ -379,6 +403,11 @@ function mechanism(key, t) {
           turn: i,
           depth: px + py + 0.2,
         })),
+        // THE CHUTE, AND IT TIPS. A sort is a thing somebody does by tipping a
+        // tray one way or the other, which is why every coin sorter and every
+        // set of railway points looks like this. It rocks between the throats
+        // and a subject goes down whichever one it is pointing at.
+        arm('fl-chute', -46, -24, 14, 50, 6, { knob: 4.4 }),
       ]
     },
     // RESOLVE IS PULLED. The only plate here with a hand on it.
@@ -408,7 +437,10 @@ function mechanism(key, t) {
       // control on it that only a hand can work. It is also the only part in
       // the drawing that turns, now that Replay has stopped being a clock.
       { ...stand(-4, 4, 5, 5, 30, 1.5), cls: 'fl-post' },
-      { pivot: PLAN(t - 4, -t + 4), lift: 30, depth: OVER },
+      // The lever, in the same vocabulary as the other four now. It was the
+      // one instrument in the figure and it had its own bespoke branch; four
+      // more agents is four more reasons for them all to be one kind of thing.
+      arm('fl-lever', -4, 4, 30, 30, 5.4, { knob: 5.4 }),
       // And the die it drops.
       { ...stand(32, 28, 11, 11, 22, 2, 4), cls: 'fl-die is-seal', depth: OVER + 1 },
     ],
@@ -437,6 +469,12 @@ function mechanism(key, t) {
           core: true,
           depth: OVER,
         })),
+        // THE CRANK. A replay is a thing you WIND BACK, and a handle beside a
+        // borehole with a section coming up out of it is the picture of that.
+        // It is the only agent in the figure that goes all the way round, and
+        // the only one whose motion is continuous rather than a stroke - a
+        // reader can see it driving the core open.
+        arm('fl-crank', 26, -12, 22, 25, 6, { knob: 6 }),
       ]
     },
   }
@@ -754,22 +792,43 @@ export default function ChainSchematic({ animate = true }) {
                         turns. It swings in the vertical plane about the top of
                         its own post, which is a screen rotation because that is
                         what a lever's plane is here. */}
-                    if (part.pivot) {
+                    {/* A HINGED AGENT, AND EVERY PLATE NOW HAS ONE.
+                        Resolve was the only station a reader liked and the
+                        reason was not its geometry - it was that a LEVER is a
+                        thing a person can picture their hand on. The other four
+                        had no agent at all: a hole scaling, a dash creeping, a
+                        stack breathing three pixels. Those are properties
+                        changing, not a machine being worked. Each plate has an
+                        instrument with a handle now, hinged and swinging in the
+                        vertical plane, which is the one motion in an
+                        axonometric that needs no depth sort and the one a hand
+                        already knows how to make. */}
+                    if (part.arm) {
+                      const [ax, ay] = part.arm
+                      const y = ay - part.base
+                      const x = part.reach < 0 ? ax + part.reach : ax
                       return (
                         <g
-                          className="fl-lever"
+                          className={part.cls}
                           key={`${item.key}-e${n}`}
-                          style={{ transformOrigin: `${part.pivot[0]}px ${part.pivot[1] - part.lift}px` }}
+                          style={{ transformOrigin: `${ax}px ${y}px`, '--turn': part.turn ?? 0 }}
                         >
                           <rect
-                            className="fl-throw"
-                            x={part.pivot[0] - 2.6}
-                            y={part.pivot[1] - part.lift - 26}
-                            width="5.2"
-                            height="28"
-                            rx="2.6"
+                            className="fl-limb"
+                            x={x}
+                            y={y - part.thick / 2}
+                            width={Math.abs(part.reach)}
+                            height={part.thick}
+                            rx={part.radius ?? Math.min(part.thick, Math.abs(part.reach)) / 2}
                           />
-                          <circle className="fl-grip" cx={part.pivot[0]} cy={part.pivot[1] - part.lift - 24} r="5" />
+                          {part.knob ? (
+                            <circle
+                              className="fl-grip"
+                              cx={ax + part.reach - Math.sign(part.reach) * part.knob}
+                              cy={y}
+                              r={part.knob}
+                            />
+                          ) : null}
                         </g>
                       )
                     }
