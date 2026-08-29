@@ -2012,7 +2012,7 @@ describe('The floor schematic', () => {
     }
     // Five verbs, and each plate names the parts only it has.
     const own = {
-      protocol: ['fl-sheet', 'fl-bite', 'fl-ruled'],
+      protocol: ['fl-sheet', 'fl-bite', 'fl-plunge'],
       evidence: ['fl-socket', 'fl-record', 'fl-route'],
       screening: ['fl-throat', 'fl-unit', 'fl-faller'],
       resolve: ['fl-post', 'fl-lever', 'fl-stamp'],
@@ -2278,8 +2278,17 @@ describe('The floor schematic', () => {
     const moves = [...css.matchAll(/@keyframes (fl-[a-z]+) \{([\s\S]*?)\n\}/g)]
       .filter(([, name]) => name !== 'fl-adrift')
     for (const [, name, frames] of moves) {
-      for (const move of frames.match(/translate\([^)]*\)/g) || []) {
-        assert.match(move, /^translate\(0, 0\)$/, `${name} carries a solid sideways: ${move}`)
+      for (const move of frames.match(/translate\((-?[\d.]+)px, (-?[\d.]+)px\)/g) || []) {
+        const [, dx, dy] = move.match(/translate\((-?[\d.]+)px, (-?[\d.]+)px\)/).map(Number)
+        if (dx === 0 && dy === 0) continue
+        // TRAVEL ALONG A PLAN AXIS IS TRAVEL INSIDE THE DRAWING. A solid moving
+        // on any other bearing is sliding over the top of the projection, which
+        // is what broke the perspective when three of them did it. The ratio is
+        // ISO_Y over ISO_X and nothing else will do.
+        assert.ok(
+          Math.abs(Math.abs(dy / dx) - 0.34 / 0.866) < 0.01,
+          `${name} moves ${dx},${dy} - not along a plan axis, so it slides over the projection`,
+        )
       }
     }
     assert.match(css, /@keyframes fl-drop \{/)
@@ -2337,40 +2346,46 @@ describe('The floor schematic', () => {
     // direction. Each plate takes a different KIND now, and this checks the
     // kinds rather than counting rates: a scale, a flow along a line, a fall,
     // a rotation, and a differential expansion.
-    // RESOLVE WAS THE ONLY STATION ANYBODY LIKED, AND THE REASON WAS THE LEVER.
-    // Not its geometry: a lever is a thing a person can picture their hand on.
-    // The other four had no agent at all - a hole scaling, a dash creeping, a
-    // stack breathing three pixels - and a property changing is not a machine
-    // being worked. Every plate has an instrument with a handle now, hinged and
-    // swinging in the vertical plane, and each is the tool that step actually
-    // is: a guillotine, a cover over the records, a tipping chute, the lever,
-    // and a crank that winds a section out of a borehole.
-    for (const tool of ['fl-blade', 'fl-cover', 'fl-chute', 'fl-lever', 'fl-crank']) {
-      assert.match(floor, new RegExp(`arm\\('${tool}'`), `${tool} is an instrument a hand can work`)
-      assert.match(css, new RegExp(`\\.${tool}[ ,.{]`), `${tool} has to be dressed`)
+    // FIVE LEVERS IS THE SAME MISTAKE AS FIVE CUBES.
+    //
+    // Resolve was the one station that worked and the lesson taken from it was
+    // "hinged bars are good", so a shared helper placed one on every plate and
+    // guaranteed all five would be the same object: a guillotine, a cover, a
+    // chute, a lever and a crank, every one a bar rotating about a pivot in the
+    // vertical plane. Third time this figure had been five arrangements of one
+    // idea, and the helper is what made it inevitable.
+    //
+    // The lesson was never the hinge. It was that a lever is a thing a person
+    // can picture their hand on, and a hand knows more than one gesture. Every
+    // plate keeps an agent and they differ in KINEMATICS, which is the thing a
+    // shape cannot disguise - so this checks the kinematics and caps the hinges
+    // at one.
+    assert.equal((floor.match(/arm\('fl-/g) || []).length, 1, 'more than one hinge is one kit again')
+    // The one hinge is Resolve's lever - the station that worked, and the one
+    // that earned it. Copying it onto the other four was the error, not having
+    // it here.
+    assert.match(floor, /arm\('fl-lever'/)
+    for (const agent of ['fl-card', 'fl-iris', 'fl-plunge']) {
+      assert.match(floor, new RegExp(agent), `${agent} is an instrument a hand can work`)
+      assert.match(css, new RegExp(`\\.${agent}[ ,.{]`), `${agent} has to be dressed`)
     }
-    assert.match(floor, /const arm = \(cls, px, py, base, reach, thick, extra = \{\}\) =>/)
-    assert.match(css, /\.fl-limb \{ fill: var\(--deep\)/)
-    assert.match(css, /\.fl-grip \{ fill: var\(--tone\)/)
     // And pointing at one puts a hand on it: the instrument works faster under
     // the pointer, which is a station being OPERATED rather than highlighted.
-    assert.match(css, /\.is-fused \.fl-step\.is-hot \.fl-blade,[\s\S]*?animation-duration: [\d.]+s;/)
+    assert.match(css, /\.is-fused \.fl-step\.is-hot \.fl-lever,[\s\S]*?animation-duration: [\d.]+s;/)
 
     const kind = {
-      'fl-cut': /transform: scale\(/,
-      'fl-flow': /stroke-dashoffset:/,
-      'fl-drop': /transform: translateY\(-?\d+px\)/,
+      'fl-punch': /transform: translateY\(\d+px\)/,
+      'fl-draw': /transform: translate\(/,
+      'fl-dilate': /transform: scale\(/,
       'fl-claim': /transform: rotate\(/,
       'fl-lift': /transform: translateY\(calc\(var\(--turn/,
     }
     for (const [clock, shape] of Object.entries(kind)) {
       const body = css.match(new RegExp(`@keyframes ${clock} \\{([\\s\\S]*?)\\n\\}`))[1]
-      assert.match(body, shape, `${clock} is not the kind of motion its plate was given`)
+      assert.match(body, shape, `${clock} is not the kinematic its plate was given`)
     }
-    // And no two plates share one. `fl-press` is the linkage the lever drives,
-    // so Resolve is the only plate with a block that travels in y at all.
-    const verticals = Object.keys(kind).filter((c) => /translateY/.test(css.match(new RegExp(`@keyframes ${c} \\{([\\s\\S]*?)\\n\\}`))[1]))
-    assert.deepEqual(verticals, ['fl-drop', 'fl-lift'], 'more than one plate moves a block up and down')
+    // No two agents share a kinematic, which is what the helper made impossible.
+    assert.equal(new Set(Object.values(kind).map(String)).size, 5, 'two plates move the same way')
 
     // AND NOTHING HANGS OVER THE ROW. Two passes put things in the band above
     // the plates - five identical carriers ferrying across, then one hanging

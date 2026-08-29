@@ -284,7 +284,13 @@ function mechanism(key, t) {
         // reader has stood in front of. Hinged at the sheet's far corner, it
         // comes down across the paper and lifts, and a criterion is standing
         // beside the sheet that was not there before.
-        arm('fl-blade', -68, 32, 9, 64, 6.5, { knob: 5 }),
+        // THE PUNCH. A press with a knob on it, straight down onto the document
+        // - which is what actually makes a hole in a sheet of paper, and it
+        // leaves the one hinge in this figure to the plate a hand really does
+        // throw a lever on.
+        { ...stand(-46, 10, 14, 14, 5, 3, 34), cls: 'fl-plunge is-head', depth: OVER },
+        { ...stand(-46, 10, 5, 5, 16, 2, 39), cls: 'fl-plunge is-shaft', depth: OVER + 1 },
+        { ...drum(-46, 10, 9, 4.5, 55), cls: 'fl-plunge is-knob', depth: OVER + 2 },
       ]
     },
     // EVIDENCE SINKS. The records are under the floor and stay there.
@@ -349,7 +355,14 @@ function mechanism(key, t) {
         // you open it to look at them, and you put it back. Nothing is taken
         // out. It rests open, because the resting frame of this figure is the
         // finished one and a closed bank is a snapshot nobody has read.
-        arm('fl-cover', -46, 32, 12, 106, 15, { radius: 4 }),
+        // THE CARD. What Damaros holds is the reference, not the record - so
+        // the thing a hand pulls out of this bank is a CARD, and the records
+        // stay in their sockets while it travels. It slides along the bank's
+        // own plan axis, which is the one direction a solid can travel here
+        // without leaving the projection, and it is drawn above everything so
+        // what it occludes is never in doubt.
+        { ...stand(-52, -20, 20, 6, 3.5, 2, 2), cls: 'fl-card', depth: OVER },
+        { ...stand(-32, -20, 3, 7, 6, 2, 2), cls: 'fl-cardtab', depth: OVER + 1 },
       ]
     },
     // SCREENING DROPS. Three throats, and what is left standing is the count.
@@ -359,9 +372,13 @@ function mechanism(key, t) {
         printed(-800, 'fl-print', [
           ...throat.map(([px, py]) => <line key={px} x1="-46" y1="-24" x2={px} y2={py} />),
           ...throat.map(([px, py]) => <circle key={`r${px}`} cx={px - 14} cy={py - 14} r="13" />),
+          <circle className="fl-iris" key="iris" cx="-46" cy="-24" r="15" />,
         ]),
         // Where the cohort comes in. One mouth, and everything goes through it.
-        { ...drum(-46, -24, 11, 8), cls: 'fl-mouth' },
+        // THE APERTURE. A sort begins by letting exactly one thing through at
+        // a time, and an iris is the mechanism that does it - the only part of
+        // this figure that opens by CHANGING SIZE rather than by moving.
+        { ...well(-46, -24, 15, 6), cls: 'fl-gate' },
         // THE TALLY, STANDING BEHIND ITS OWN THROAT. The value line under this
         // plate reads 1 PASS - 4 REVIEW - 3 FAIL and these are those three
         // numbers: each unit steps in half a plan unit as it goes up so every
@@ -407,7 +424,7 @@ function mechanism(key, t) {
         // tray one way or the other, which is why every coin sorter and every
         // set of railway points looks like this. It rocks between the throats
         // and a subject goes down whichever one it is pointing at.
-        arm('fl-chute', -46, -24, 14, 50, 6, { knob: 4.4 }),
+
       ]
     },
     // RESOLVE IS PULLED. The only plate here with a hand on it.
@@ -436,10 +453,14 @@ function mechanism(key, t) {
       // step where a named person decides, so this is the one plate with a
       // control on it that only a hand can work. It is also the only part in
       // the drawing that turns, now that Replay has stopped being a clock.
-      { ...stand(-4, 4, 5, 5, 30, 1.5), cls: 'fl-post' },
+
       // The lever, in the same vocabulary as the other four now. It was the
       // one instrument in the figure and it had its own bespoke branch; four
       // more agents is four more reasons for them all to be one kind of thing.
+      // THE LEVER, AND IT STAYS. This is the one station that works, and it
+      // works because a lever is a thing a person can picture their hand on.
+      // What went wrong was copying it onto the other four, not having it here.
+      { ...stand(-4, 4, 5, 5, 30, 1.5), cls: 'fl-post' },
       arm('fl-lever', -4, 4, 30, 30, 5.4, { knob: 5.4 }),
       // And the die it drops.
       { ...stand(32, 28, 11, 11, 22, 2, 4), cls: 'fl-die is-seal', depth: OVER + 1 },
@@ -474,7 +495,11 @@ function mechanism(key, t) {
         // It is the only agent in the figure that goes all the way round, and
         // the only one whose motion is continuous rather than a stroke - a
         // reader can see it driving the core open.
-        arm('fl-crank', 26, -12, 22, 25, 6, { knob: 6 }),
+        // THE HANDLE. The core opens by being PULLED, and the handle travels
+        // furthest of anything on the plate because it is what the top band
+        // hangs from - an extension, which is the one kinematic left and the
+        // only honest picture of a section being taken apart to be read.
+        { ...drum(-14, 14, 11, 4, bands * 4.4 + 3), cls: 'fl-band is-handle', turn: bands, core: true, depth: OVER + 1 },
       ]
     },
   }

@@ -13247,134 +13247,105 @@ html.is-hidden .clinic-node i,
 
 /* ── RESOLVE IS PULLED ───────────────────────────────────────────────────
 
-   Every other plate here runs unattended. This one has a LEVER on it, because
+   Every other plate here runs unattended. This one is worked by hand, because
    this is the only step whose actor is a person: two readings stand at two
-   heights and disagree, a hand throws the lever, and a die comes down and
-   stamps the plate. Nothing about a lever is ambient. */
-
-.fl-post { opacity: 0.8; }
-
-.fl-lever {
-  /* Thrown, at rest. The still frame of this figure is a run that has been
-     decided, so the lever is over and the die is down. */
-  transform: rotate(-26deg);
-  transform-box: view-box;
-}
+   heights and disagree, a thumb comes down on the stamp, and the plate is
+   signed. Nothing about that is ambient. */
 
 /* ── The instruments ─────────────────────────────────────────────────────
 
-   RESOLVE WAS THE ONLY STATION ANYBODY LIKED, AND THE REASON WAS THE LEVER.
+   FIVE LEVERS IS THE SAME MISTAKE AS FIVE CUBES.
 
-   Not its geometry and not its palette: a lever is a thing a person can picture
-   their hand on. The other four plates had no agent at all - a hole scaling, a
-   dash creeping along a hairline, a stack of bands breathing three pixels. Those
-   are properties changing, and a property changing is not a machine being
-   worked. At reading size most of them could not even be seen to move.
+   Resolve was the one station that worked and the lesson I took from it was
+   "hinged bars are good", so I wrote a shared helper that placed one on every
+   plate and guaranteed all five would be the same object: a guillotine, a
+   cover, a chute, a lever and a crank, every one of them a bar rotating about
+   a pivot in the vertical plane. That is the third time this figure has been
+   five arrangements of one idea, and the helper is what made it inevitable.
 
-   So every plate has an instrument with a handle now, and each is the tool that
-   step actually is: a GUILLOTINE whose blade comes down across the document, a
-   COVER lifted off the socket bank to look at records without taking them, a
-   CHUTE that tips a subject down one throat or another, the LEVER, and a CRANK
-   that winds a section up out of a borehole. All hinged, all swinging in the
-   vertical plane - the one motion in an axonometric that needs no depth sort
-   and the one a hand already knows how to make.
+   The lesson was never the hinge. It was that a LEVER IS A THING A PERSON CAN
+   PICTURE THEIR HAND ON - and a hand knows more than one gesture. So each plate
+   keeps an agent and they now differ in KINEMATICS, which is the thing a shape
+   cannot disguise:
 
-   They share one body so the five read as one kit of tools: a limb in the
-   station's darkest ink and a grip in its own colour, because the grip is the
-   part a hand goes on and it should be the thing a reader's eye lands on. */
+     PROTOCOL  a punch that PLUNGES             straight down, by its knob
+     EVIDENCE  a card that SLIDES               travel along a plan axis
+     SCREENING an aperture that DILATES         change of size, no travel at all
+     RESOLVE   a lever that HINGES              rotation about a fixed pivot
+     REPLAY    a section that EXTENDS           differential, opening on a pull
+
+   One hinge left in the figure, and it is on the plate that earned it. */
 
 .fl-limb { fill: var(--deep); stroke: none; }
 .fl-grip { fill: var(--tone); stroke: none; }
 
-.fl-blade,
-.fl-cover,
-.fl-chute,
-.fl-crank,
-.fl-lever { transform-box: view-box; }
+/* PROTOCOL PLUNGES. A press with a knob on it, straight down onto the document
+   - which is what actually makes a hole in a sheet of paper. It rests raised,
+   because a head sitting on the paper is a document nobody can read. */
+.fl-plunge .dgm-face-top { fill: color-mix(in srgb, var(--deep) 58%, var(--surface-solid)); }
+.fl-plunge .dgm-face-left,
+.fl-plunge .dgm-face-right { fill: var(--deep); }
+.fl-plunge.is-knob .dgm-face-top { fill: var(--tone); }
 
-/* THE COVER IS A LID, NOT A BAR. It is the one instrument wide enough to hide
-   what it covers, so it is drawn as the plate's own paper with a hard edge -
-   a thing you would lift, rather than a thing that would crush what is under
-   it. */
-.fl-cover .fl-limb {
-  fill: color-mix(in srgb, var(--tone) 22%, var(--surface-solid));
+.dgm-svg.is-live.is-fused .fl-plunge { animation: fl-punch 6.2s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
+
+@keyframes fl-punch {
+  0%, 26% { transform: translateY(0); }
+  44%, 54% { transform: translateY(26px); }
+  76%, 100% { transform: translateY(0); }
+}
+
+/* EVIDENCE SLIDES. The card is the reference and the records stay in their
+   sockets while it travels, which is the step's whole claim carried by the one
+   part that moves. It runs along the bank's own plan axis - a solid travelling
+   here has to move along an axis of the projection or it is sliding over the
+   top of it - and it is drawn above everything, so what it occludes on the way
+   out is never in doubt. */
+.fl-card .dgm-face-top { fill: color-mix(in srgb, var(--tone) 18%, var(--surface-solid)); }
+.fl-cardtab .dgm-face-top { fill: color-mix(in srgb, var(--deep) 64%, var(--surface-solid)); }
+.fl-cardtab .dgm-face-left,
+.fl-cardtab .dgm-face-right { fill: var(--deep); }
+
+.dgm-svg.is-live.is-fused .fl-card,
+.dgm-svg.is-live.is-fused .fl-cardtab { animation: fl-draw 7.4s cubic-bezier(0.4, 0, 0.3, 1) infinite; }
+
+/* Thirty plan units out along +x, which the projection puts at 26 across and
+   10.2 down: the ratio is ISO_Y over ISO_X, so this is travel INSIDE the
+   drawing rather than across it. */
+@keyframes fl-draw {
+  0%, 20% { transform: translate(0, 0); }
+  42%, 62% { transform: translate(26px, 10.2px); }
+  86%, 100% { transform: translate(0, 0); }
+}
+
+/* SCREENING DILATES. A sort begins by letting exactly one thing through at a
+   time, and an iris is the mechanism that does it: the only part of this figure
+   that opens by changing SIZE rather than by moving anywhere. */
+.fl-iris {
+  fill: color-mix(in srgb, var(--tone) 34%, var(--surface-solid));
   stroke: var(--line);
   stroke-width: 1;
+  transform-origin: -46px -24px;
   vector-effect: non-scaling-stroke;
 }
 
-/* PROTOCOL CUTS. Hinged at the sheet's far corner, down across the paper and
-   back up. Resting raised, because a blade resting ON the document is a
-   document nobody can see. */
-.fl-blade { transform: rotate(-48deg); }
+.dgm-svg.is-live.is-fused .fl-iris { animation: fl-dilate 5.6s cubic-bezier(0.5, 0, 0.4, 1) infinite; }
 
-.dgm-svg.is-live.is-fused .fl-blade { animation: fl-chop 6.2s cubic-bezier(0.45, 0, 0.3, 1) infinite; }
-
-@keyframes fl-chop {
-  0%, 22% { transform: rotate(-48deg); }
-  40%, 52% { transform: rotate(-3deg); }
-  76%, 100% { transform: rotate(-48deg); }
+@keyframes fl-dilate {
+  0%, 16% { transform: scale(1); }
+  34%, 50% { transform: scale(0.12); }
+  72%, 100% { transform: scale(1); }
 }
 
-/* EVIDENCE OPENS. The records are under the lid, you look at them, you put it
-   back, and nothing is taken out - which is the most literal statement this
-   figure makes. Resting OPEN, because a closed bank is a snapshot nobody has
-   read. */
-.fl-cover { transform: rotate(-22deg); }
-
-.dgm-svg.is-live.is-fused .fl-cover { animation: fl-open 7.4s cubic-bezier(0.4, 0, 0.3, 1) infinite; }
-
-@keyframes fl-open {
-  0%, 30% { transform: rotate(-22deg); }
-  50%, 64% { transform: rotate(-1deg); }
-  84%, 100% { transform: rotate(-22deg); }
-}
-
-/* SCREENING TIPS. A sort is a thing somebody does by tipping a tray one way or
-   the other, which is why every coin sorter and every set of railway points
-   looks like this. */
-.fl-chute { transform: rotate(14deg); }
-
-.dgm-svg.is-live.is-fused .fl-chute { animation: fl-tip 5.6s cubic-bezier(0.5, 0, 0.4, 1) infinite; }
-
-@keyframes fl-tip {
-  0%, 14% { transform: rotate(14deg); }
-  34%, 48% { transform: rotate(30deg); }
-  68%, 86% { transform: rotate(3deg); }
-  100% { transform: rotate(14deg); }
-}
-
-/* REPLAY WINDS. The only agent here that goes all the way round, and the only
-   one whose motion is continuous rather than a stroke - a reader can watch it
-   driving the section open. A full turn ends where it starts by definition. */
-.dgm-svg.is-live.is-fused .fl-crank { animation: fl-wind 8.2s linear infinite; }
-
-@keyframes fl-wind {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* AND POINTING AT ONE PUTS A HAND ON IT. The instrument swings further and
-   works faster under the pointer - which is a station being OPERATED rather
-   than a station being highlighted, and it is the change a hover was missing.
-   The duration change re-times the cycle rather than restarting it, so leaning
-   in never makes the drawing jump. */
-.is-fused .fl-step.is-hot .fl-blade,
-.is-fused .fl-step.is-hot .fl-cover,
-.is-fused .fl-step.is-hot .fl-chute,
-.is-fused .fl-step.is-hot .fl-lever { animation-duration: 2.4s; }
-
-.is-fused .fl-step.is-hot .fl-crank { animation-duration: 3.2s; }
-
-.is-fused .fl-step.is-hot .fl-grip { fill: var(--deep); }
+/* RESOLVE HINGES, AND IT IS THE ONLY THING HERE THAT DOES. This is the station
+   that works, and it works because a lever is a thing a person can picture
+   their hand on. What went wrong was copying it onto the other four, not having
+   it here. Thrown at rest: the still frame of this figure is a run that has
+   been decided. */
+.fl-post { opacity: 0.8; }
+.fl-lever { transform-box: view-box; transform: rotate(-64deg); }
 
 .dgm-svg.is-live.is-fused .fl-lever { animation: fl-claim 4.8s cubic-bezier(0.6, 0, 0.3, 1.4) infinite; }
-
-/* The lever is drawn on the same horizontal arm as the other four and then
-   stood UP, because a throw is a thing done side to side with a bar that
-   stands - the only agent here that swings about vertical rather than about
-   the ground. */
-.fl-lever { transform: rotate(-64deg); }
 
 @keyframes fl-claim {
   0%, 26% { transform: rotate(-116deg); }
@@ -13382,25 +13353,18 @@ html.is-hidden .clinic-node i,
   92%, 100% { transform: rotate(-116deg); }
 }
 
-.dgm-svg.is-live.is-fused .fl-lamp.is-read {
-  animation: fl-weigh 4.8s ease-in-out infinite;
-  animation-delay: calc(var(--turn, 0) * -2.4s);
-}
+/* AND POINTING AT ONE PUTS A HAND ON IT. The instrument works faster under the
+   pointer - a station being OPERATED rather than highlighted, which is the
+   change a hover was missing. The duration changes rather than the animation,
+   so leaning in never makes the drawing jump. */
+.is-fused .fl-step.is-hot .fl-lever,
+.is-fused .fl-step.is-hot .fl-card,
+.is-fused .fl-step.is-hot .fl-cardtab,
+.is-fused .fl-step.is-hot .fl-iris,
+.is-fused .fl-step.is-hot .fl-plunge,
+.is-fused .fl-step.is-hot .fl-die.is-seal { animation-duration: 2.4s; }
 
-/* One reading lit at a time: two answers true at once is not a disagreement,
-   it is a drawing of one. */
-@keyframes fl-weigh {
-  0%, 44%, 100% { opacity: 0; }
-  10%, 34% { opacity: 1; }
-}
-
-.dgm-svg.is-live.is-fused .fl-die.is-seal { animation: fl-press 4.8s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
-
-@keyframes fl-press {
-  0%, 34% { transform: translateY(-26px); }
-  52%, 80% { transform: translateY(0); }
-  96%, 100% { transform: translateY(-26px); }
-}
+.is-fused .fl-step.is-hot .fl-grip { fill: var(--deep); }
 
 /* THE IMPRESSION, AND IT DOES NOT LIFT WITH THE PRESS. A signature that
    vanishes when the die goes back up is not a signature, it is an animation of
@@ -13583,10 +13547,10 @@ html.is-hidden .clinic-node i,
   .fl-bite,
   .fl-band,
   .fl-lever,
-  .fl-blade,
-  .fl-cover,
-  .fl-chute,
-  .fl-crank,
+  .fl-card,
+  .fl-cardtab,
+  .fl-iris,
+  .fl-plunge,
   .fl-flow,
   .fl-settle,
   .fl-step,
