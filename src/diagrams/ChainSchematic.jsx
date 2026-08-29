@@ -671,21 +671,21 @@ function mechanism(key, t) {
         // and at forty-two this station stood thirty-six pixels taller than
         // every other one. A bench of five reads as a bench.
         //
-        // THE JOINERY ORDER IS THE PERSPECTIVE. The beam RESTS ON the posts,
-        // so it must paint over both post caps - each post right after the
-        // last thing that genuinely stands behind it (the deepest pile cell
-        // at -86 for the left, the bed cell at 30 for the right), and the
-        // beam immediately after the nearer post. Drawn at -600 the beam
-        // went down first and both posts painted over its ends, which read
-        // as a rail threaded THROUGH its own supports.
+        // THE JOINERY IS THE PERSPECTIVE. The beam spans EXACTLY post centre
+        // to post centre (-58 to 64), so each rounded end lands on its own
+        // cap with no overshoot nub - and it paints after both posts, so it
+        // visibly RESTS on them. The right post stands out at 64, clear of
+        // the bed's last column, so no cell ever crowds its footing; its
+        // natural depth already follows everything behind it. The left post
+        // draws right after the deepest pile cells at -86.
         { ...stand(-58, -20, 5, 5, 30, 4.5), cls: 'fl-rig is-post', depth: -85 },
-        { ...stand(56, -20, 5, 5, 30, 4.5), cls: 'fl-rig is-post', depth: 32 },
-        { ...stand(-1, -20, 60, 3.5, 4, 3.5, 30), cls: 'fl-rig is-beam', depth: 33 },
+        { ...stand(64, -20, 5, 5, 30, 4.5), cls: 'fl-rig is-post' },
+        { ...stand(3, -20, 61, 3.5, 4, 3.5, 30), cls: 'fl-rig is-beam', depth: 45 },
         // The beam is ruled along its own top the way a protofilament is
         // drawn - segmented - so the track the carriage rides reads as grown
         // structure rather than rolled steel. A raised print at the beam's own
         // roof (base 30 + high 4), in the same plan units as the beam.
-        printed(33.5, 'fl-print', [-54, -42, -30, -18, -6, 6, 18, 30, 42, 54].map((x) => (
+        printed(45.5, 'fl-print', [-54, -42, -30, -18, -6, 6, 18, 30, 42, 54].map((x) => (
           <line className="fl-ruled" key={x} x1={x} y1="-23" x2={x} y2="-17" />
         )), 34),
         ...pile.map(([px, py, high, base], i) => cell(px, py, null, high, base, { turn: i })),
@@ -1421,6 +1421,23 @@ export default function ChainSchematic({ animate = true }) {
                 onAnimationEnd={(event) => { if (event.animationName === 'fl-flee') setShy(false) }}
               >
                 <g className="fl-duck">
+                  {/* THE SPEED LINES. Three short strokes trailing the body
+                      whenever it flies a leg - the cartoon word for motion,
+                      which is exactly the register this character lives in.
+                      One set trails left for the working legs (they all run
+                      rightward), the mirrored set trails right for the ride
+                      home, and both ride inside the dip wrapper so they
+                      follow every move the body makes. */}
+                  <g className="fl-whoosh is-go">
+                    <line x1={CALLS[0] - 25} y1="75" x2={CALLS[0] - 16} y2="75" />
+                    <line x1={CALLS[0] - 29} y1="80.5" x2={CALLS[0] - 17} y2="80.5" />
+                    <line x1={CALLS[0] - 24} y1="86" x2={CALLS[0] - 16} y2="86" />
+                  </g>
+                  <g className="fl-whoosh is-home">
+                    <line x1={CALLS[0] + 16} y1="75" x2={CALLS[0] + 25} y2="75" />
+                    <line x1={CALLS[0] + 17} y1="80.5" x2={CALLS[0] + 29} y2="80.5" />
+                    <line x1={CALLS[0] + 16} y1="86" x2={CALLS[0] + 24} y2="86" />
+                  </g>
                   {/* Each drum rides in a parcel wrapper: startled, the
                       courier drops what it carries - the wrapper fades
                       whatever the cargo clock says. */}

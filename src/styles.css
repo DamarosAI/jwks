@@ -13161,7 +13161,10 @@ html.is-hidden .clinic-node i,
 .fl-rig .dgm-face-top { fill: color-mix(in srgb, var(--tone) 62%, var(--surface-solid)); }
 .fl-rig .dgm-face-left,
 .fl-rig .dgm-face-right { fill: var(--deep); }
-.fl-rig.is-beam .dgm-face-top { fill: color-mix(in srgb, var(--tone) 78%, var(--surface-solid)); }
+/* The beam's roof sits a step LIGHTER than the carriage head riding it,
+   so the head reads as a separate solid hanging on the rail instead of
+   the rail thickening where the carriage happens to be. */
+.fl-rig.is-beam .dgm-face-top { fill: color-mix(in srgb, var(--tone) 52%, var(--surface-solid)); }
 
 .fl-claw .dgm-face-top { fill: color-mix(in srgb, var(--tone) 34%, var(--surface-solid)); }
 .fl-claw .dgm-face-left,
@@ -14003,6 +14006,42 @@ html.is-hidden .clinic-node i,
   56.6%, 67.2% { opacity: 0; }
   68%, 69.6% { opacity: 0.6; }
   70.6%, 100% { opacity: 0; }
+}
+
+/* THE SPEED LINES. The cartoon word for motion: three short strokes that
+   light up behind the body only while it is actually flying a leg, and
+   behind the other shoulder for the ride home - where they run straight
+   through the victory spin, which is the joke landing. Opacity only;
+   position is inherited from the dip wrapper like everything else the
+   courier owns. */
+.fl-whoosh {
+  opacity: 0;
+  stroke: color-mix(in srgb, var(--accent) 72%, transparent);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+
+.fl-whoosh line { vector-effect: non-scaling-stroke; }
+
+.dgm-svg.is-live.is-floor .fl-whoosh.is-go { animation: fl-zoom 33.6s linear infinite; }
+.dgm-svg.is-live.is-floor .fl-whoosh.is-home { animation: fl-zoomhome 33.6s linear infinite; }
+
+@keyframes fl-zoom {
+  0%, 8.4% { opacity: 0; }
+  9.6%, 12.4% { opacity: 0.85; }
+  13.6%, 18.4% { opacity: 0; }
+  19.4%, 23.2% { opacity: 0.85; }
+  24.4%, 43.2% { opacity: 0; }
+  44.2%, 47% { opacity: 0.85; }
+  48%, 63.2% { opacity: 0; }
+  64%, 66.2% { opacity: 0.85; }
+  67.2%, 100% { opacity: 0; }
+}
+
+@keyframes fl-zoomhome {
+  0%, 79.6% { opacity: 0; }
+  80.8%, 90.6% { opacity: 0.85; }
+  92%, 100% { opacity: 0; }
 }
 
 /* THE CARGO. Two drums drawn once each at the home anchor, riding inside
