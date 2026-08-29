@@ -30,7 +30,7 @@ describe('one responsive design', () => {
     assert.doesNotMatch(mobile, /#root \.hero-copy > p \{[^}]*font-size:/)
     assert.doesNotMatch(mobile, /#root \.about-hero-copy h1 \{[^}]*font-size:/)
     assert.doesNotMatch(mobile, /#root \.final-cta h2 \{[^}]*font-size:/)
-    assert.doesNotMatch(mobile, /\.thesis-head h2[^{]*\{[^}]*font-size:/)
+    assert.doesNotMatch(mobile, /\.thesis-closer[^{]*\{[^}]*font-size:/)
     assert.doesNotMatch(mobile, /--mobile-display/)
   })
 

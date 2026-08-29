@@ -2057,7 +2057,7 @@ describe('The floor schematic', () => {
     const own = {
       protocol: ['fl-board', 'fl-toggle', 'fl-seat', 'fl-issue'],
       evidence: ['fl-rig', 'fl-claw', 'fl-carry', 'fl-pick', 'fl-lay', 'fl-ship', 'fl-dock'],
-      screening: ['fl-hole', 'fl-throat', 'fl-faller', 'fl-sunk', 'fl-join', 'fl-golgi', 'fl-handoff'],
+      screening: ['fl-hole', 'fl-throat', 'fl-faller', 'fl-shunt', 'fl-sunk', 'fl-join', 'fl-golgi', 'fl-handoff'],
       resolve: ['fl-ram', 'fl-pivot', 'fl-lever', 'fl-index', 'fl-feed', 'fl-pushed'],
       replay: ['fl-tape', 'fl-reel', 'fl-head', 'fl-frame', 'fl-spin'],
     }
@@ -2110,18 +2110,46 @@ describe('The floor schematic', () => {
     assert.equal(new Set(hole.map(([, py]) => py)).size, 1, 'three verdicts off one plan axis is a bent plate')
     const across = hole.map(([px, py, v]) => [(px - py) * 0.866, v]).sort((a, b) => a[0] - b[0])
     assert.deepEqual(across.map(([, v]) => v), ['pass', 'fail', 'hold'])
-    assert.match(floor, /hole\.slice\(0, 2\)\.map\(\(\[px, py, v\], i\) => \(\{\s*\n\s*\.\.\.well\(px, py, 14, 8\)/)
-    // A cell APPROACHES its pore - one plan-axis step in from the bed side -
-    // and sinks. Material that materialises in the air over a mouth is not
-    // material arriving anywhere.
-    assert.match(floor, /cls: 'fl-blk fl-faller'/)
-    assert.match(css, /@keyframes fl-drop \{\s*\n\s*0%, 10% \{ transform: translate\(0px, 0px\); opacity: 1; \}/)
-    // THE SWALLOW IS DRAWN, NOT IMPLIED. Each terminal pore carries the cell
-    // it is swallowing: a stained cell standing inside the bore, clipped to
-    // the opening's own interior - the far-wall path - appearing on the beat
-    // the approach cell fades at the rim and descending to nothing. What the
-    // pore swallows, it has ruled: the sunk cell wears the pore's stain.
-    assert.match(floor, /swallow: cell\(px, py, null, 5, -6\)/)
+    assert.match(floor, /hole\.slice\(0, 2\)\.map\(\(\[px, py, v\], i\) => \(\{\s*\n\s*\.\.\.well\(px, py, 11\.9, 8\)/)
+    // THE PORES KEEP CLEAR OF THE WALL. The collar rides at 1.18r and the
+    // vessel's inner face stands t inside the plan edge; a collar touching
+    // that face reads as a hole cut through the FOUNDATION rather than the
+    // plate's floor. Derived from the same numbers the parts are built with,
+    // so shrinking the bore is held to what the shrink bought.
+    const poreR = Number(floor.match(/\.\.\.well\(px, py, ([\d.]+), 8\)/)[1])
+    const dishWall = floor.match(/const DISH = \{ hx: [\d.]+, hy: ([\d.]+), r: \d+, t: (\d+)/).slice(1).map(Number)
+    assert.ok(hole[0][1] - 1.18 * poreR >= -(dishWall[0] - dishWall[1]) + 2,
+      'a pore collar within two plan units of the inner wall face touches the shell')
+    // THE BED FEEDS THE GREEN PORE AS A LINE, on one 5.6s clock: the cell on
+    // the pore's own column slides one pure -y step onto the mouth
+    // (fl-drop), the entry-seat cell shunts one column over to take its
+    // place (fl-shunt), and the cell arriving through the back gate takes
+    // the entry seat (fl-join). Drawn as three cells on TWO seats - join and
+    // shunt share the entry seat - which is what lets every handover be a
+    // crossfade between coincident cells at rest instead of a materialise.
+    assert.match(floor, /\{ \.\.\.cell\(wait\[0\]\[0\], wait\[0\]\[1\], null, 5\), cls: 'fl-blk fl-join' \},\s*\n\s*\{ \.\.\.cell\(wait\[0\]\[0\], wait\[0\]\[1\], null, 5\), cls: 'fl-blk fl-shunt' \},\s*\n\s*\{ \.\.\.cell\(wait\[1\]\[0\], wait\[1\]\[1\], null, 5\), cls: 'fl-blk fl-faller' \}/)
+    // The feed seat stands on the green pore's own plan x, so the feed is
+    // one pure plan-axis travel - and both travels are exactly seat-to-seat,
+    // re-derived here from the seats' own numbers.
+    const waitCols = JSON.parse(floor.match(/\[2, 24\]\.flatMap\(\(py\) => (\[[^\]]+\])/)[1])
+    const waitRow = 2
+    assert.equal(waitCols[1], hole[0][0], 'the feed column must stand on the green pore x')
+    assert.match(css, /@keyframes fl-drop \{\s*\n\s*0%, 8% \{ transform: translate\(0px, 0px\); opacity: 1; \}/)
+    const dropTravel = css.match(/@keyframes fl-drop \{[\s\S]*?translate\(([\d.]+)px, (-[\d.]+)px\)/).slice(1).map(Number)
+    const feedPlan = waitRow - hole[0][1]
+    assert.ok(Math.abs(dropTravel[0] - feedPlan * 0.866) < 0.05 && Math.abs(dropTravel[1] + feedPlan * 0.34) < 0.05,
+      'the feed must travel exactly from its seat to the mouth')
+    const shuntTravel = css.match(/@keyframes fl-shunt \{[\s\S]*?translate\((?!0px)([\d.]+)px, ([\d.]+)px\)/).slice(1).map(Number)
+    const colPitch = waitCols[1] - waitCols[0]
+    assert.ok(Math.abs(shuntTravel[0] - colPitch * 0.866) < 0.05 && Math.abs(shuntTravel[1] - colPitch * 0.34) < 0.05,
+      'the shunt must travel exactly one bed column')
+    // THE SWALLOW IS DRAWN, NOT IMPLIED - and only the GREEN pore is fed.
+    // The sunk cell is a stained cell standing inside the bore, clipped to
+    // the opening, appearing on the beat the feed cell fades at the rim and
+    // descending to nothing. The red pore stands open and ringed but takes
+    // no loop of its own: one line into the green mouth is the story, and a
+    // second faller was a second thing to watch on one plate.
+    assert.match(floor, /\.\.\.\(v === 'pass' \? \{ swallow: cell\(px, py, null, 5, -6\) \} : \{\}\)/)
     assert.match(floor, /clipPath id=\{bore\}/)
     assert.match(floor, /className=\{`fl-blk is-\$\{part\.stain\} fl-sunk`\}/)
     assert.match(css, /@keyframes fl-swallow \{/)
@@ -2152,13 +2180,29 @@ describe('The floor schematic', () => {
     assert.match(floor, /cls: 'fl-blk fl-join'/)
     assert.match(css, /\.fl-ship \{ animation: fl-ship 5\.6s/)
     assert.match(css, /\.fl-join \{ animation: fl-join 5\.6s/)
-    // Protocol ships its transcript on EVIDENCE'S 7.4s clock - the claw's
-    // own - and the tablet wears the protocol's violet on both plates, so
-    // the thing docking at the gantry is visibly the thing the nucleus
-    // exported. Structure, not life: it is faceted and carries no nucleus.
-    assert.match(css, /\.fl-issue \{ animation: fl-issue 7\.4s/)
-    assert.match(css, /\.fl-dock \{ animation: fl-dock 7\.4s/)
-    assert.match(css, /\.fl-script \.dgm-face-top \{\s*\n\s*fill: color-mix\(in srgb, var\(--governed\)/)
+    // EVIDENCE RUNS END TO END ON ONE CLOCK NOW. The claw keeps the
+    // shipment's 5.6s period, so the subject is one cell across the whole
+    // plate: the pile cell RISES with the claw before the carried cell takes
+    // over (a crossfade at grip height inside the closed jaws, not a
+    // teleport), is set down INTO the first socket at floor level, slides up
+    // the printed lane to the staging seat, and ships on the next beat. The
+    // laid cell's travel is exactly socket-to-seat, re-derived here.
+    assert.match(css, /\.fl-claw,\s*\n\.dgm-svg\.is-live\.is-fused \.fl-carry \{\s*\n\s*animation: fl-fetch 5\.6s/)
+    assert.match(css, /@keyframes fl-picked \{\s*\n\s*0%, 22% \{ transform: translateY\(0px\); opacity: 1; \}\s*\n\s*30% \{ transform: translateY\(-14px\); opacity: 1; \}/)
+    const laidTravel = css.match(/@keyframes fl-laid \{[\s\S]*?translate\(([\d.]+)px, (-[\d.]+)px\)/).slice(1).map(Number)
+    assert.ok(Math.abs(laidTravel[0] - 16 * 0.866) < 0.05 && Math.abs(laidTravel[1] + 16 * 0.34) < 0.05,
+      'the laid cell must slide exactly from its socket at (4,-20) to the staging seat at (4,-36)')
+    // Protocol ships its transcript on EVIDENCE'S clock - the claw's own,
+    // which is now the shipment's too - and the document crosses in the
+    // run's own vessel: a round cell wearing the protocol's violet on both
+    // plates, the ink and not the silhouette saying this one is the
+    // document. The old faceted tablet was a second animation grammar at
+    // the first seam a reader meets.
+    assert.match(css, /\.fl-issue \{ animation: fl-issue 5\.6s/)
+    assert.match(css, /\.fl-dock \{ animation: fl-dock 5\.6s/)
+    assert.match(css, /\.fl-blk\.is-script \.dgm-face-top \{ fill: color-mix\(in srgb, var\(--governed\)/)
+    assert.match(css, /\.fl-blk\.is-script \.fl-core \{ fill: var\(--governed\); \}/)
+    assert.doesNotMatch(floor, /fl-script/)
     const issued = css.match(/@keyframes fl-issue \{([\s\S]*?)\n\}/)[1]
     assert.ok(Number(issued.match(/(\d+)% \{ transform: translate\(22\.52px, -8\.84px\); opacity: 0/)[1]) <= 84,
       'the transcript has to be gone before it docks next door')
@@ -2350,8 +2394,10 @@ describe('The floor schematic', () => {
     // A gate also has to be SEEN: Evidence's used to sit exactly in the
     // screen shadow of the right gantry post, and Protocol's crowded its own
     // corner arc - both live in clear ground now, and both clear their cargo.
-    assert.match(floor, /stand\(42, -39, 5\.5, 4\.5, 4, 2\), cls: 'fl-script fl-issue'/)
-    assert.match(floor, /stand\(-65, 18, 5\.5, 4\.5, 4, 2\), cls: 'fl-script fl-dock'/)
+    // The transcript crosses as a violet cell in the run's own vessel, so
+    // the cargo clearance it needs is the cell radius like everything else.
+    assert.match(floor, /cell\(42, -39, null, 5\), cls: 'fl-blk is-script fl-issue'/)
+    assert.match(floor, /cell\(-65, 18, null, 5\), cls: 'fl-blk is-script fl-dock'/)
     assert.ok(gates[0] <= 42 - 7 && gates[1] >= 42 + 7, 'the export gate has to clear the transcript lane')
     assert.ok(gates[2] <= 18 - 7 && gates[3] >= 18 + 7, 'the dock gate has to clear where the transcript rests')
     const shipSeat = floor.match(/cell\(4, -36, null, 5\), cls: 'fl-blk fl-ship'/)
@@ -2366,6 +2412,21 @@ describe('The floor schematic', () => {
     assert.match(floor, /if \(lit\) \{\s*\n\s*parts\.push\(\{ d: `M \$\{at\(oPt, h\)\}/)
     assert.equal((floor.match(/'far', true\]/g) || []).length, 1, 'a far gate lights its low-x flank')
     assert.equal((floor.match(/'back', true\]/g) || []).length, 1, 'a back gate lights its low-y flank')
+    // AND THE JAMBS SORT BY THEIR OWN GEOMETRY, not by the half that owns
+    // their wall. Cargo crosses BETWEEN a gate's two posts, so the far jamb
+    // - the lit face and its pylon - is painted before the plate's contents
+    // and the near jamb's pylon after them: one post behind the crossing
+    // cell and one in front of it, which is what passing through an opening
+    // looks like. The lit flag is the same normal argument, so it is the
+    // sort key.
+    assert.match(floor, /\[\.\.\.backCuts, \.\.\.frontCuts\]\.forEach\(/)
+    assert.match(floor, /\(lit \? back : front\)\.push\(\.\.\.mouth\(oPt, nPt, edge, lit\)\)/)
+    // And nothing rides at OVER to cross a wall any more - a traveller drawn
+    // over the whole plate paints over the near pylon it should pass behind,
+    // and over material resting nearer the viewer than its own seat.
+    for (const rider of ['fl-issue', 'fl-ship', 'fl-handoff']) {
+      assert.doesNotMatch(floor, new RegExp(`${rider}', depth: OVER`), `${rider} must cross its gate at its seat's own depth`)
+    }
     const joinRow = 2
     assert.ok(gates[6] <= joinRow - 7 && gates[7] >= joinRow + 7, 'the entry gate has to clear the bed row it feeds')
     const holdSeat = [...floor.match(/^ +const hole = (\[.*\])$/m)[1].matchAll(/\[(-?\d+), (-?\d+), '(\w+)'\]/g)]
@@ -2608,6 +2669,17 @@ describe('The floor schematic', () => {
         assert.match(frames['100%'], /opacity: 1/, 'the block replacing the one pushed off has to be there by the seam')
         continue
       }
+      // A RELAY LEG ENDS WHERE THE NEXT LEG BEGINS. The laid cell and the
+      // bed shunt finish their cycles AWAY from home - at the seat the next
+      // clock takes over from - and both seats are covered at the seam by
+      // the cells drawn there (the shipment reappearing at staging, the join
+      // resting on the entry seat), so the loop's jump happens between
+      // frames in which the traveller cannot be seen. The walk holds them to
+      // exactly that: invisible at the seam, or they restart in plain sight.
+      if (name === 'fl-laid' || name === 'fl-shunt') {
+        assert.match(frames['100%'], /opacity: 0/, `${name} must be gone at the seam it hands over on`)
+        continue
+      }
       assert.equal(frames['100%'], frames['0%'], `${name} ends somewhere it does not start, so it restarts`)
     }
 
@@ -2617,7 +2689,7 @@ describe('The floor schematic', () => {
     // allowed to reach zero opacity are the blocks that are genuinely absent
     // for part of the cycle: one in flight from the catapult, and one being
     // pushed off the line. Everything standing on a plate stays standing.
-    const vanish = ['fl-handoff', 'fl-swallow', 'fl-ship', 'fl-join', 'fl-issue', 'fl-dock', 'fl-shove', 'fl-drop', 'fl-borne', 'fl-picked', 'fl-laid', 'fl-arrive']
+    const vanish = ['fl-handoff', 'fl-swallow', 'fl-ship', 'fl-join', 'fl-issue', 'fl-dock', 'fl-shove', 'fl-drop', 'fl-shunt', 'fl-borne', 'fl-picked', 'fl-laid', 'fl-arrive']
     for (const [, name, body] of css.matchAll(/@keyframes (fl-[a-z]+) \{([\s\S]*?)\n\}/g)) {
       if (vanish.includes(name)) continue
       assert.doesNotMatch(body, /opacity: 0[;\s]/, `${name} blinks something out and back`)
@@ -2645,9 +2717,10 @@ describe('The floor schematic', () => {
       // A claw crosses on a plan axis and drops on the screen's own y, and the
       // two are written separately because they are two different honest moves.
       'fl-fetch': /transform: translate\([\d.]+px, [\d.]+px\) translateY\(\d+px\)/,
-      // A cell approaches its pore on a plan axis and hands off at the rim;
-      // the descent is fl-swallow's, straight down inside the bore.
-      'fl-drop': /transform: translate\(12\.12px, -4\.76px\)/,
+      // The bed's feed cell slides one pure -y column onto the green mouth
+      // and hands off at the rim; the descent is fl-swallow's, straight
+      // down inside the bore.
+      'fl-drop': /transform: translate\(25\.98px, -10\.2px\)/,
       // A ram lies flat and travels across the lane, which is the one motion
       // here that goes to the LEFT along a plan axis.
       'fl-stroke': /transform: translate\(-[\d.]+px, [\d.]+px\)/,
@@ -2658,9 +2731,17 @@ describe('The floor schematic', () => {
       const body = css.match(new RegExp(`@keyframes ${clock} \\{([\\s\\S]*?)\\n\\}`))[1]
       assert.match(body, shape, `${clock} is not the motion its station was given`)
     }
-    // Five clocks that share no factor, so the row never turns over together.
-    const rates = [...css.matchAll(/animation: fl-(?:flip|fetch|drop|claim|run) ([\d.]+)s/g)].map((m) => m[1])
-    assert.equal(new Set(rates).size, 5, 'five stations, five rates')
+    // THE MATERIAL LINE SHARES ONE BEAT, AND THE REST SHARE NONE. The claw
+    // and the green feed both run the shipment's 5.6s period BY DESIGN: one
+    // subject flows Protocol -> Evidence -> Screening on one clock, leg by
+    // leg, and that phase lock is the whole argument of the seam work. The
+    // board, the ram and the transport keep their own rates, so the row
+    // still never turns over all at once.
+    const rate = (clock) => css.match(new RegExp(`animation: ${clock} ([\\d.]+)s`))[1]
+    assert.equal(rate('fl-fetch'), rate('fl-ship'), 'the claw must keep the shipment period')
+    assert.equal(rate('fl-drop'), rate('fl-ship'), 'the green feed must keep the shipment period')
+    const rates = ['fl-flip', 'fl-fetch', 'fl-claim', 'fl-run'].map(rate)
+    assert.equal(new Set(rates).size, 4, 'the board, the material line, the ram and the transport keep four distinct rates')
 
     // AND NOTHING HANGS OVER THE ROW. Two passes put things in the band above
     // the plates - five identical carriers ferrying across, then one hanging
@@ -2846,7 +2927,7 @@ describe('The floor schematic', () => {
     assert.match(css, /\.fl-blk\.is-fail \.dgm-face-right \{ fill: var\(--fail\); \}/)
   })
 
-  it('sets the sentence into the drawing instead of above it', () => {
+  it('breaks the drawing out of the column, and closes with the sentence', () => {
     // THE DRAWING BREAKS THE COLUMN AND THE TYPE DOES NOT. Nothing inside the
     // figure can make it bigger - the plates already span ninety-six per cent
     // of their own viewBox - but the column's width is SOLVED against the
@@ -2860,11 +2941,17 @@ describe('The floor schematic', () => {
     assert.ok(bleed >= 100, `a ${bleed}px break-out is not a break-out`)
     // And never on a narrow screen: the clamp's other end is zero.
     assert.match(css, /\.thesis-chain \{[\s\S]*?margin-inline: clamp\(-\d+px, calc\(\(1480px - 100vw\) \/ 2\), 0px\);/)
-    assert.match(app, /<div className="thesis-stage">/)
-    assert.match(css, /\.thesis-stage \{[\s\S]*?display: grid;/)
-    assert.match(css, /\.thesis-stage > \* \{[\s\S]*?grid-area: 1 \/ 1;/)
-    assert.match(css, /\.thesis-head \{[\s\S]*?pointer-events: none;/)
-    assert.match(mobile, /#root \.thesis-stage \{[\s\S]*?flex-direction: column;/)
+    // THE SENTENCE COMES LAST. The section opens with the figure's own name
+    // at brand volume - WORKFLOW - and the one sentence it keeps sits UNDER
+    // the drawing in the closer's seat, a conclusion rather than a caption.
+    // The stage grid that used to hold a dek over the figure went with the
+    // dek, so nothing shares the drawing's cell and nothing needs to refuse
+    // pointer events over it.
+    assert.match(app, /<SectionEyebrow brand>Workflow<\/SectionEyebrow>/)
+    assert.match(app, /className="thesis-chain">[\s\S]*?<\/div>\s*\n\s*<h2 className="thesis-closer">/)
+    assert.doesNotMatch(app, /thesis-stage|thesis-head/)
+    assert.doesNotMatch(css, /thesis-stage|thesis-head/)
+    assert.doesNotMatch(mobile, /thesis-stage|thesis-head/)
   })
 
   it('stands the thesis figure on the page field, not in a plate of its own', () => {

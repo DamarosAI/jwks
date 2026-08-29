@@ -163,7 +163,7 @@ const INTEGRATIONS = [
   ['REDCap', '/assets/vendor/redcap.png'],
 ]
 
-const HOME_SPINE = [['home', 'Home', 'Damaros'], ['thesis', 'Thesis', 'Why now'], ['capacity', 'Capacity', 'Deployment'], ['trident', 'Trident', 'Harness'], ['nectar', 'Nectar', 'Intelligence'], ['pilot', 'Pilot', 'Start here']]
+const HOME_SPINE = [['home', 'Home', 'Damaros'], ['thesis', 'Workflow', 'Why now'], ['capacity', 'Capacity', 'Deployment'], ['trident', 'Trident', 'Harness'], ['nectar', 'Nectar', 'Intelligence'], ['pilot', 'Pilot', 'Start here']]
 const ABOUT_SPINE = [['about-top', 'About', 'Damaros'], ['founder', 'Founder', 'Origin'], ['why-now', 'Why now', 'Constraint'], ['people', 'People', 'Ownership'], ['pilot', 'Pilot', 'Start here']]
 
 function BiomarkerRain() {
@@ -396,10 +396,11 @@ function BrandName() {
   return <>Damaros<sup className="brand-tm">TM</sup></>
 }
 
-// `brand` is for the two eyebrows that are product names rather than section
-// topics. Trident and Nectar are things with names; Thesis, Capacity, Control
-// and Pilot are what the section is about, and drawing all six at one volume
-// meant a reader met the brand as a caption.
+// `brand` is for the eyebrows set at the volume of a name rather than a label.
+// Trident and Nectar are things with names, and WORKFLOW joins them because
+// what its figure draws is the product's own shape, not a topic about it.
+// Control and Pilot are what their sections are about and stay at label
+// volume; Capacity carries no eyebrow at all - its heading does the work.
 function SectionEyebrow({ children, brand = false }) {
   return <p className={`section-eyebrow${brand ? ' is-brand' : ''}`}>{children}</p>
 }
@@ -624,20 +625,23 @@ function LandingHero() {
   )
 }
 
-/* THE THESIS IS A DIAGRAM NOW, AND THE SENTENCE IS ITS DEK.
+/* THE WORKFLOW SECTION IS THE FIGURE, AND THE SENTENCE IS ITS LAST LINE.
 
-   It used to be one line of six-inch type on the page ground, centred, and
-   nothing else - the largest thing on the site saying the least specific thing
-   on it. A claim that scale has to be earned by the claim being hard to draw,
-   and this one is not: five stages of a protocol are held apart today and they
-   do not have to be. So the section states it the way the two product sections
-   state theirs, with the figure carrying the argument and the sentence sitting
-   over it as a dek.
+   This carried a headline once - one line of six-inch type, then a dek set
+   over the drawing - and both were the section explaining itself before it
+   had shown anything. The figure is the argument: five stations, one run,
+   every seam plumbed. So the section opens the way the two product sections
+   open, with a NAME - WORKFLOW, set at the brand eyebrows' own volume,
+   because what the five plates draw is the product's shape - and the one
+   sentence the section keeps has moved to where a conclusion belongs: under
+   the drawing that earns it, in the closer's seat, replacing the slogan that
+   used to sit there.
 
-   Everything in it lines up on the eyebrow's own left edge - the wrapper is the
-   same 1480 the eyebrow's offset is solved against - so the dek, the figure and
-   the closer start where the word THESIS starts and the section reads as one
-   column rather than as a centred slab with a label stuck to its corner. */
+   Everything in it lines up on the eyebrow's own left edge - the wrapper is
+   the same 1480 the eyebrow's offset is solved against - so the figure and
+   the closer start where the word WORKFLOW starts and the section reads as
+   one column rather than as a centred slab with a label stuck to its
+   corner. */
 
 /* THE FIGURE RUNS ITSELF, SO THE SECTION IS AN ORDINARY SECTION AGAIN.
 
@@ -667,14 +671,6 @@ function ThesisSection() {
   usePointerField(root, { reduced })
 
   useEnterMotion(root, reduced, () => [
-    gsap.from('.thesis-head > *', {
-      opacity: 0,
-      duration: 0.8,
-      stagger: 0.12,
-      ease: 'power2.out',
-      clearProps: 'transform',
-      scrollTrigger: { trigger: root.current, start: 'top 74%', once: true },
-    }),
     gsap.from('.thesis-chain', {
       opacity: 0,
       duration: 1.2,
@@ -682,22 +678,24 @@ function ThesisSection() {
       clearProps: 'transform',
       scrollTrigger: { trigger: root.current, start: 'top 68%', once: true },
     }),
+    gsap.from('.thesis-closer', {
+      opacity: 0,
+      duration: 0.8,
+      ease: 'power2.out',
+      clearProps: 'transform',
+      scrollTrigger: { trigger: root.current, start: 'top 45%', once: true },
+    }),
   ])
 
   return (
     <section className="thesis-section section-space" id="thesis" ref={root}>
-      <SectionEyebrow>Thesis</SectionEyebrow>
+      <SectionEyebrow brand>Workflow</SectionEyebrow>
       <div className="section-field" ref={field} aria-hidden="true" />
       <div className="thesis-column">
-        <div className="thesis-stage">
-          <div className="thesis-head">
-            <h2><span className="thesis-line accent-text">The next generation of medicine</span><span className="thesis-line">cannot run on yesterday's research infrastructure.</span></h2>
-          </div>
-          <div className="thesis-chain">
-            <ChainSchematic animate={animate} />
-          </div>
+        <div className="thesis-chain">
+          <ChainSchematic animate={animate} />
         </div>
-        <p className="thesis-closer"><BrandName /> is building what comes next.</p>
+        <h2 className="thesis-closer"><span className="thesis-line accent-text">The next generation of medicine</span><span className="thesis-line">cannot run on yesterday's research infrastructure.</span></h2>
       </div>
     </section>
   )
@@ -722,7 +720,6 @@ function CapacityBento() {
 
   return (
     <section className="capacity-section section-space" id="capacity" ref={root}>
-      <SectionEyebrow>Capacity</SectionEyebrow>
       <div className="section-heading centered-heading">
         <h2><span className="capacity-title-line">A research department,</span><span className="capacity-title-line">deployed like software.</span></h2>
         <p>Disease-agnostic by design. One execution system for every protocol, care setting, and patient population. Each protocol adds reusable coverage. Every decision keeps human accountability and local control.</p>

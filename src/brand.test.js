@@ -11,8 +11,13 @@ describe('Damaros brand mark', () => {
     assert.match(app, /<span>\{String\(index \+ 1\)\.padStart\(2, '0'\)\}<\/span>/)
     assert.doesNotMatch(app, /<strong>\{label\}<\/strong>/)
     assert.doesNotMatch(app, /<SectionEyebrow>Home<\/SectionEyebrow>/)
-    assert.match(app, /<SectionEyebrow>Thesis<\/SectionEyebrow>/)
-    assert.match(app, /<SectionEyebrow>Capacity<\/SectionEyebrow>/)
+    // The thesis section opens with the figure's NAME now - WORKFLOW, at the
+    // brand eyebrows' own volume - and Capacity carries no eyebrow at all:
+    // its centred heading does that work, and a label over a heading was two
+    // signposts for one road.
+    assert.match(app, /<SectionEyebrow brand>Workflow<\/SectionEyebrow>/)
+    assert.doesNotMatch(app, /<SectionEyebrow[^>]*>Thesis</)
+    assert.doesNotMatch(app, /<SectionEyebrow[^>]*>Capacity</)
     assert.match(app, /<SectionEyebrow brand>Trident<\/SectionEyebrow>/)
     assert.match(app, /<SectionEyebrow>Control<\/SectionEyebrow>/)
     assert.match(app, /<SectionEyebrow brand>Nectar<\/SectionEyebrow>/)
@@ -26,13 +31,13 @@ describe('Damaros brand mark', () => {
     assert.match(mobile, /#root \.section-eyebrow,[\s\S]*?font-family:\s*var\(--font-ui\);[\s\S]*?letter-spacing:\s*0\.16em;/)
     assert.doesNotMatch(mobile, /section-eyebrow[^{]*\{[^}]*font-size:\s*0\.72rem/)
 
-    // TRIDENT AND NECTAR ARE NAMES, NOT LABELS. Six sections carry an eyebrow;
-    // four are topics and two are products, and they were all set at fourteen
-    // pixels in weight 400 - so the two things on this site with names of their
-    // own were drawn at the volume of the word "Capacity". Only the two products
-    // carry `brand`, and the other four must not.
-    assert.equal((app.match(/<SectionEyebrow brand>/g) || []).length, 2)
-    for (const topic of ['Thesis', 'Capacity', 'Control', 'Pilot']) {
+    // TRIDENT, NECTAR AND WORKFLOW ARE NAMES, NOT LABELS. Five sections carry
+    // an eyebrow; two are topics - Control and Pilot - and three are names:
+    // the two products, and the workflow figure whose drawing is the
+    // product's own shape. Names at name volume, labels at label volume, and
+    // exactly three of the first kind.
+    assert.equal((app.match(/<SectionEyebrow brand>/g) || []).length, 3)
+    for (const topic of ['Control', 'Pilot']) {
       assert.match(app, new RegExp(`<SectionEyebrow>${topic}</SectionEyebrow>`))
     }
     assert.match(app, /function SectionEyebrow\(\{ children, brand = false \}\)/)
@@ -84,16 +89,18 @@ describe('Damaros brand mark', () => {
     // other run of Endless keep painting the one weight that was drawn.
     assert.match(css, /\.section-eyebrow,[\s\S]*?font-synthesis:\s*none;/)
     assert.equal((css.match(/font-synthesis:\s*weight;/g) || []).length, 1)
-    // The mobile sheet restates the eyebrow rule at `#root .section-eyebrow`, so
-    // the brand rule has to out-specify it or the phone gets the label treatment.
-    assert.match(css, /#root \.section-eyebrow\.is-brand \{/)
+    // The mobile sheet restates the eyebrow rule at `#root .section-eyebrow`
+    // AND at `#root .thesis-section .section-eyebrow`, so the brand rule has
+    // to out-specify both or a name gets the label treatment - WORKFLOW is
+    // the one brand eyebrow living in a section the phone sheet names.
+    assert.match(css, /#root \.section-eyebrow\.is-brand,\s*\n#root \.thesis-section \.section-eyebrow\.is-brand \{/)
     assert.match(css, /\.page-spine \{[\s\S]*?width:\s*34px;/)
     assert.match(css, /\.site-nav-wrap \{[\s\S]*?z-index:\s*50;[\s\S]*?isolation:\s*isolate;/)
     // The thesis section is a left-set column now rather than a centred slab -
-    // the eyebrow, the dek, the figure and the closer all start on one pixel -
-    // so both of these pin the LEFT setting and the alignment they replaced.
+    // the eyebrow, the figure and the closer all start on one pixel - so both
+    // of these pin the LEFT setting and the alignment they replaced.
     assert.match(css, /\.thesis-section \{[\s\S]*?align-items:\s*stretch;[\s\S]*?text-align:\s*left;/)
-    assert.match(css, /\.thesis-head \{[\s\S]*?align-items:\s*flex-start;[\s\S]*?text-align:\s*left;/)
+    assert.match(css, /\.thesis-closer \{[\s\S]*?text-align:\s*left;/)
     // And the column width is SOLVED against the eyebrow's own offset rather
     // than eyeballed: the eyebrow sits at `(W - min(W, 1480)) / 2 + gutter`
     // from the section edge, and a column centred in a content box already
@@ -130,22 +137,27 @@ describe('Damaros brand mark', () => {
     assert.doesNotMatch(css, /\.landing-source-view \.workspace-view \{[\s\S]*?min-height:\s*789px/)
   })
 
-  it('answers the thesis with the brand mark and even section padding', () => {
-    assert.match(app, /<span className="thesis-line accent-text">The next generation of medicine<\/span><span className="thesis-line">cannot run on yesterday's research infrastructure\.<\/span>/)
-    assert.match(css, /#root \.thesis-head h2 \.thesis-line \{[^}]*display:\s*block;/)
-    // The sentence is a DEK over a figure now, not the largest type on the
-    // site. It runs on the same body-anchored ramp the two product deks run
-    // on, and it is pinned at `#root` because four grouped rules in the sheet
-    // used to size this element as a page heading. If any of them is ever
-    // re-added, the thesis line silently goes back to four inches and this is
-    // the thing that notices.
-    assert.match(css, /#root \.thesis-head h2 \{\s*\n\s*font-size:\s*clamp\(1\.34rem, 1\.1rem \+ 1\.02vw, 2\.05rem\);/)
-    assert.doesNotMatch(css, /\.thesis-head h2,\n\.capacity-section \.section-heading h2/)
-    assert.doesNotMatch(css, /#root \.section-heading h2,\n#root \.thesis-head h2/)
-    // And the closer sits UNDER the drawing that earns it rather than directly
-    // beneath the sentence, which made the section a claim answered by a
-    // slogan. Order in the source is the order on the page.
-    assert.match(app, /className="thesis-chain">[\s\S]*?<\/div>\s*\n\s*<p className="thesis-closer"><BrandName \/> is building what comes next\./)
+  it('closes the thesis with its own sentence and even section padding', () => {
+    // THE HEADLINE IS THE CLOSER NOW. The slogan that sat under the figure
+    // answered a claim the reader had already met twice; the claim itself
+    // moved down instead - the section's one sentence, under the drawing
+    // that earns it, still breaking where the statement turns and keeping
+    // the accent on the first statement. It is the section's one heading,
+    // so it is an h2.
+    assert.match(app, /<h2 className="thesis-closer"><span className="thesis-line accent-text">The next generation of medicine<\/span><span className="thesis-line">cannot run on yesterday's research infrastructure\.<\/span><\/h2>/)
+    assert.doesNotMatch(app, /is building what comes next/)
+    assert.match(css, /#root \.thesis-closer \.thesis-line \{[^}]*display:\s*block;/)
+    // The sentence runs on the same body-anchored ramp the two product deks
+    // run on, pinned at `#root` because four grouped rules in the sheet used
+    // to size this element as a page heading. If any of them is ever
+    // re-added, the thesis line silently goes back to four inches and this
+    // is the thing that notices.
+    assert.match(css, /#root \.thesis-closer \{\s*\n\s*font-size:\s*clamp\(1\.34rem, 1\.1rem \+ 1\.02vw, 2\.05rem\);/)
+    assert.doesNotMatch(css, /\.thesis-closer,\n\.capacity-section \.section-heading h2/)
+    assert.doesNotMatch(css, /#root \.section-heading h2,\n#root \.thesis-closer/)
+    // And it sits UNDER the drawing. Order in the source is the order on the
+    // page.
+    assert.match(app, /className="thesis-chain">[\s\S]*?<\/div>\s*\n\s*<h2 className="thesis-closer">/)
     assert.match(css, /\.thesis-section\.section-space \{[\s\S]*?padding-block:\s*112px;/)
     assert.match(css, /\.landing-hero \{[\s\S]*?padding:\s*clamp\(196px, 22vh, 248px\) var\(--gutter\) 112px;/)
     assert.match(app, /className="hero-scroll-cue"/)

@@ -801,13 +801,14 @@ h2 {
   pointer-events: none;
 }
 
-/* TRIDENT AND NECTAR ARE NAMES, NOT LABELS.
+/* TRIDENT, NECTAR AND WORKFLOW ARE NAMES, NOT LABELS.
 
-   Six sections carry an eyebrow and four of them are topics - Thesis, Capacity,
-   Control, Pilot. Two are products. They were all set identically: fourteen
-   pixels, weight 400, the mid accent - so the two things on this site that have
-   names of their own were drawn at the same volume as the word "Capacity", and
-   a reader scanning the page met the brand as a caption.
+   Five sections carry an eyebrow and two of them are topics - Control and
+   Pilot. Two are products, and the third name is WORKFLOW, over the figure
+   that draws the product's own shape; Capacity carries no eyebrow at all, its
+   heading does that work. The names were all once set identically with the
+   labels: fourteen pixels, weight 400, the mid accent - so the things on this
+   site with names of their own were drawn at the volume of a caption.
 
    THE DISPLAY FACE, AND THE WEIGHT IT IS GIVEN. These are set in Endless, which
    is what every headline on the site is set in and what the two names should be
@@ -840,8 +841,14 @@ h2 {
    suggests. The ink goes one step deeper than the labels', so the two names are
    separated from the four topics by colour as well as by scale. */
 
+/* The third selector exists because the phone sheet restates the eyebrow
+   family at `#root .thesis-section .section-eyebrow` - a tie the later file
+   wins - and WORKFLOW is the one brand eyebrow that lives in a section the
+   phone sheet names. One step more specific, or the name paints as a label
+   the moment the viewport narrows. */
 .section-eyebrow.is-brand,
-#root .section-eyebrow.is-brand {
+#root .section-eyebrow.is-brand,
+#root .thesis-section .section-eyebrow.is-brand {
   color: var(--accent-strong);
   font-family: var(--font-display);
   font-size: var(--type-brand-eyebrow);
@@ -1077,77 +1084,15 @@ h2 {
   text-align: left;
 }
 
-/* THE SENTENCE IS SET INTO THE DRAWING.
+/* THE SENTENCE COMES LAST.
 
-   It used to sit in a band above the figure, which is the arrangement every
-   diagram on every site has: a caption, then a picture. It reads as looking AT
-   something. This section is trying to do the opposite - to be a place a reader
-   is standing in - and the cheapest, largest move toward that is to stop
-   putting the words outside the space.
-
-   So the head and the figure share one grid cell. The figure keeps its own
-   top-left corner clear - nothing in `SHARDS` is allowed into it - and the dek
-   is set in that corner, with the cloud hanging around and behind it. It is the
-   one layout neither product section uses, and it buys back most of the height
-   the taller figure costs.
-
-   The head takes no pointer events, so the districts underneath it stay
-   reachable: it is type lying in the air, not a panel over the drawing. */
-
-.thesis-stage {
-  display: grid;
-  width: 100%;
-  min-width: 0;
-  grid-template-columns: minmax(0, 1fr);
-}
-
-.thesis-stage > * {
-  grid-area: 1 / 1;
-  min-width: 0;
-}
-
-.thesis-head {
-  z-index: 2;
-  display: flex;
-  width: 100%;
-  max-width: none;
-  flex-direction: column;
-  align-items: flex-start;
-  align-self: start;
-  padding-top: clamp(4px, 1vw, 18px);
-  pointer-events: none;
-  text-align: left;
-}
-
-/* THE SENTENCE IS A DEK NOW.
-
-   `.trident-copy .section-dek` and `.nectar-copy .section-dek` are the two
-   lines on this site that sit over a figure and say what it is about. The
-   thesis line does exactly that job for the drawing below it, so it is set the
-   way they are - left, two statements breaking where the statement turns, in
-   the display face, and on a ramp anchored to the body size rather than to
-   `--fluid-lead`, which bottoms out under it on a phone. */
-
-.thesis-head h2 {
-  width: 100%;
-  max-width: 40ch;
-  margin: 0;
-  color: var(--text);
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-synthesis: none;
-  letter-spacing: -0.014em;
-  line-height: 1.1;
-  text-align: left;
-  text-wrap: balance;
-}
-
-.thesis-head h2 .accent-text {
-  color: var(--accent);
-  font-family: inherit;
-  font-weight: inherit;
-  text-align: inherit;
-}
+   It used to open the section - first as six-inch type, then as a dek laid
+   into the drawing's top-left corner - and either way the section explained
+   itself before it had shown anything. The figure is the argument now: the
+   eyebrow names it WORKFLOW at the brand names' own volume, the drawing runs,
+   and the one sentence the section keeps sits UNDER it, in the closer's seat,
+   where a conclusion belongs. Nothing shares the figure's cell any more; the
+   stage grid that held type over the drawing went with the dek. */
 
 /* The figure is not a card. It sits directly on the page field, the way the
    other two do, and it runs the full width of the column because a chain is a
@@ -1179,23 +1124,32 @@ h2 {
   margin-inline: clamp(-136px, calc((1480px - 100vw) / 2), 0px);
 }
 
-/* The answer, under the drawing that earns it. It used to sit directly beneath
-   the sentence, which made the section a claim answered by a slogan; below the
-   figure it is the last line of an argument instead. */
+/* THE CLOSER IS THE HEADLINE NOW, under the drawing that earns it. The slogan
+   that sat here answered a claim the reader had already been given twice; the
+   claim itself moved down instead, set in the display face on the deks' own
+   ramp, two statements breaking where the statement turns - the last line of
+   an argument rather than a caption for one. It is the section's one heading,
+   so it is an h2, and the accent stays on the first statement. */
 
 .thesis-closer {
-  max-width: 44ch;
+  width: 100%;
+  max-width: 40ch;
   margin: clamp(18px, 2.2vw, 32px) 0 0;
-  color: var(--accent);
-  font-size: clamp(1.04rem, 0.94rem + 0.44vw, 1.3rem);
+  color: var(--text);
+  font-family: var(--font-display);
   font-weight: 400;
-  letter-spacing: -0.012em;
-  line-height: 1.32;
+  font-synthesis: none;
+  letter-spacing: -0.014em;
+  line-height: 1.1;
   text-align: left;
+  text-wrap: balance;
 }
 
-.thesis-closer .brand-tm {
-  font-size: 0.42em;
+.thesis-closer .accent-text {
+  color: var(--accent);
+  font-family: inherit;
+  font-weight: inherit;
+  text-align: inherit;
 }
 
 
@@ -8993,19 +8947,19 @@ html.is-hidden .clinic-node i,
   font-family: var(--font-ui);
 }
 
-#root :is(.wordmark, .hero-heading, .hero-line, .about-hero-copy h1, .about-hero-copy h1 span, .founder-section blockquote, .founder-section blockquote span, .footer-mark > span, .final-cta h2, .thesis-head h2, .thesis-head h2 *, .section-heading h2, .section-heading h2 *, .control-copy h2, .control-copy h2 *, .why-now-title h2, .bento-copy h3, .bento-copy h3 *, .record-copy h3, .record-copy h3 *, .page-spine button > span, .why-now-lines .why-now-line > span, .outcome-panel > span, h1, h2) {
+#root :is(.wordmark, .hero-heading, .hero-line, .about-hero-copy h1, .about-hero-copy h1 span, .founder-section blockquote, .founder-section blockquote span, .footer-mark > span, .final-cta h2, .thesis-closer, .thesis-closer *, .section-heading h2, .section-heading h2 *, .control-copy h2, .control-copy h2 *, .why-now-title h2, .bento-copy h3, .bento-copy h3 *, .record-copy h3, .record-copy h3 *, .page-spine button > span, .why-now-lines .why-now-line > span, .outcome-panel > span, h1, h2) {
   font-family: 'Endless', sans-serif;
   font-weight: 400;
   font-synthesis: none;
 }
 
-#root :is(h1, h2, .hero-heading, .hero-line, .thesis-head h2, .section-heading h2) :is(*) {
+#root :is(h1, h2, .hero-heading, .hero-line, .thesis-closer, .section-heading h2) :is(*) {
   font-family: inherit;
   font-weight: inherit;
   font-synthesis: none;
 }
 
-#root :is(.hero-copy > p, .section-heading p, .control-copy > p, .trident-copy > p, .nectar-copy > p, .system-demo-heading p, .about-hero-copy > p, .thesis-head p, .capacity-section .section-heading p) {
+#root :is(.hero-copy > p, .section-heading p, .control-copy > p, .trident-copy > p, .nectar-copy > p, .system-demo-heading p, .about-hero-copy > p, .capacity-section .section-heading p) {
   font-family: var(--font-ui);
   font-weight: 400;
 }
@@ -12435,24 +12389,24 @@ html.is-hidden .clinic-node i,
   }
 }
 
-/* ONE SIZE FOR THE DEK, and it is the deks' own ramp.
+/* ONE SIZE FOR THE CLOSER, and it is the deks' own ramp.
 
    `.trident-copy .section-dek` and `.nectar-copy .section-dek` are the two
-   lines on this site that sit under a heading and say what the figure beside
-   them will not do. The thesis line does exactly that job for the figure below
-   it, so it runs on exactly that ramp - anchored to the body size rather than
-   to `--fluid-lead`, which bottoms out under it on a phone and would invert
-   the two. Set at `#root` because four grouped rules in this sheet used to
-   size this element as a page heading and one of them will try again. */
+   lines on this site that sit against a figure and say what it will not say
+   itself. The workflow sentence does that job from below the drawing now, so
+   it runs on exactly that ramp - anchored to the body size rather than to
+   `--fluid-lead`, which bottoms out under it on a phone and would invert the
+   two. Set at `#root` because four grouped rules in this sheet used to size
+   the thesis sentence as a page heading and one of them will try again. */
 
-#root .thesis-head h2 {
+#root .thesis-closer {
   font-size: clamp(1.34rem, 1.1rem + 1.02vw, 2.05rem);
 }
 
-/* The thesis is two statements, so it breaks where it turns rather than
+/* The sentence is two statements, so it breaks where it turns rather than
    wherever the column happens to run out. */
 
-#root .thesis-head h2 .thesis-line {
+#root .thesis-closer .thesis-line {
   display: block;
   text-wrap: balance;
 }
@@ -13371,13 +13325,20 @@ html.is-hidden .clinic-node i,
    clock is what gives it one. */
 .fl-carry { opacity: 0; }
 
+/* ONE CLOCK FOR THE WHOLE PLATE. The claw used to keep 7.4s while the
+   shipment kept Screening's 5.6s, which meant the cell the claw set down and
+   the cell that shipped could never be the same cell - the seat between them
+   was staffed by coincidence, and material APPEARED at the staging seat
+   instead of arriving there. The claw keeps the shipment's period now, so
+   one subject runs the plate end to end on one beat: picked on this cycle,
+   staged on the next, shipped on the one after. */
 .dgm-svg.is-live.is-fused .fl-claw,
 .dgm-svg.is-live.is-fused .fl-carry {
-  animation: fl-fetch 7.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: fl-fetch 5.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 .dgm-svg.is-live.is-fused .fl-carry {
-  animation: fl-fetch 7.4s cubic-bezier(0.4, 0, 0.2, 1) infinite, fl-borne 7.4s linear infinite;
+  animation: fl-fetch 5.6s cubic-bezier(0.4, 0, 0.2, 1) infinite, fl-borne 5.6s linear infinite;
 }
 
 /* THE TRAVERSE AND THE DROP ARE WRITTEN SEPARATELY. A translate along a plan
@@ -13387,38 +13348,50 @@ html.is-hidden .clinic-node i,
    go down. */
 @keyframes fl-fetch {
   0%, 6% { transform: translate(0px, 0px) translateY(0px); }
-  16%, 24% { transform: translate(0px, 0px) translateY(8px); }
-  32% { transform: translate(0px, 0px) translateY(0px); }
-  48%, 54% { transform: translate(48.5px, 19.04px) translateY(0px); }
-  64%, 70% { transform: translate(48.5px, 19.04px) translateY(14px); }
-  78% { transform: translate(48.5px, 19.04px) translateY(0px); }
-  94%, 100% { transform: translate(0px, 0px) translateY(0px); }
+  14%, 22% { transform: translate(0px, 0px) translateY(8px); }
+  30% { transform: translate(0px, 0px) translateY(0px); }
+  44%, 52% { transform: translate(48.5px, 19.04px) translateY(0px); }
+  62%, 68% { transform: translate(48.5px, 19.04px) translateY(14px); }
+  76% { transform: translate(48.5px, 19.04px) translateY(0px); }
+  92%, 100% { transform: translate(0px, 0px) translateY(0px); }
 }
 
+/* THE PICKUP IS REAL. The carried cell used to fade in at grip height while
+   the pile cell faded out on the floor - material teleporting fourteen
+   pixels straight up, which is not a pickup. Now the pile cell RISES with
+   the claw, on the claw's own easing and segment, and only once it is at
+   grip height inside the closed jaws does it hand off to the carried cell -
+   a crossfade between two coincident drawings, hidden where the jaws hold
+   it. A reader sees the claw close, lift, and come up holding. */
 @keyframes fl-borne {
-  0%, 18% { opacity: 0; }
-  24%, 66% { opacity: 1; }
-  72%, 100% { opacity: 0; }
+  0%, 30% { opacity: 0; }
+  34%, 64% { opacity: 1; }
+  68%, 100% { opacity: 0; }
 }
 
-/* The block the claw takes leaves the pile, and the slot it is set into fills.
-   Without both of those the claw is a thing waving over a heap: the whole
-   argument of the step is that the SAME material comes out in a better order,
-   so the reader has to see one leave and the other arrive. */
-.dgm-svg.is-live.is-fused .fl-pick { animation: fl-picked 7.4s linear infinite; }
+.dgm-svg.is-live.is-fused .fl-pick { animation: fl-picked 5.6s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
 
 @keyframes fl-picked {
-  0%, 18% { opacity: 1; }
-  24%, 88% { opacity: 0; }
-  96%, 100% { opacity: 1; }
+  0%, 22% { transform: translateY(0px); opacity: 1; }
+  30% { transform: translateY(-14px); opacity: 1; }
+  34%, 88% { transform: translateY(-14px); opacity: 0; }
+  90% { transform: translateY(0px); opacity: 0; }
+  96%, 100% { transform: translateY(0px); opacity: 1; }
 }
 
-.dgm-svg.is-live.is-fused .fl-lay { animation: fl-laid 7.4s cubic-bezier(0.3, 0, 0.2, 1) infinite; }
+/* THE PUTDOWN LANDS, THEN TRAVELS. The socket cell appears at floor level
+   exactly under the lowered jaws - no drop-in from four pixels up, the
+   crossfade IS the release - rests while the claw lifts away, then slides
+   the printed lane to the staging seat and fades exactly as the shipment
+   cell fades in on that seat: the "new" cell at staging is visibly the one
+   the claw just placed. */
+.dgm-svg.is-live.is-fused .fl-lay { animation: fl-laid 5.6s cubic-bezier(0.3, 0, 0.2, 1) infinite; }
 
 @keyframes fl-laid {
-  0%, 66% { opacity: 0; transform: translateY(-4px); }
-  76%, 92% { opacity: 1; transform: translateY(0px); }
-  100% { opacity: 0; transform: translateY(-4px); }
+  0%, 64% { transform: translate(0px, 0px); opacity: 0; }
+  70%, 84% { transform: translate(0px, 0px); opacity: 1; }
+  94% { transform: translate(13.86px, -5.44px); opacity: 1; }
+  98%, 100% { transform: translate(13.86px, -5.44px); opacity: 0; }
 }
 
 /* ── SCREENING IS THREE THROATS ──────────────────────────────────────────
@@ -13466,41 +13439,59 @@ html.is-hidden .clinic-node i,
   56% { transform: scale(1.42); }
 }
 
+/* THE BED FEEDS THE GREEN PORE AS A LINE. One 5.6s clock - the period the
+   shipment arrives on - moves one subject one seat per beat, and every
+   handover is a crossfade at rest between two coincident cells, so nothing
+   on this plate materialises in the air:
+
+     the cell on the pore's own column slides one pure -y step onto the
+     mouth and goes down (fl-drop, then fl-swallow inside the bore);
+     the cell at the entry seat shunts one column over to take its place
+     (fl-shunt); and the cell sliding in through the back gate takes the
+     entry seat (fl-join). The red pore stands open and ringed but is not
+     fed on a loop: one line into the green mouth is the story, and a
+     second faller was a second thing to watch on one plate. */
 .dgm-svg.is-live.is-fused .fl-faller {
   animation: fl-drop 5.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  animation-delay: calc(var(--turn, 0) * -1.87s);
 }
 
-/* THE APPROACH. A cell waits one step short of its pore, slides one
-   plan-axis step - toward the far edge, the same bearing every verdict on
-   this plate travels - and hands off at the rim: it fades exactly as the
-   stained cell inside the bore appears, so one subject arrives, is ruled,
-   and goes down. The descent itself belongs to `fl-swallow`, drawn inside
-   the opening. */
 @keyframes fl-drop {
-  0%, 10% { transform: translate(0px, 0px); opacity: 1; }
-  28%, 34% { transform: translate(12.12px, -4.76px); opacity: 1; }
-  40% { transform: translate(12.12px, -4.76px); opacity: 0; }
-  86% { transform: translate(0px, 0px); opacity: 0; }
-  94%, 100% { transform: translate(0px, 0px); opacity: 1; }
+  0%, 8% { transform: translate(0px, 0px); opacity: 1; }
+  30% { transform: translate(25.98px, -10.2px); opacity: 1; }
+  36% { transform: translate(25.98px, -10.2px); opacity: 0; }
+  86%, 88% { transform: translate(0px, 0px); opacity: 0; }
+  96%, 100% { transform: translate(0px, 0px); opacity: 1; }
+}
+
+/* The shunt rides the same clock: it waits out the feed's departure, slides
+   one column over, holds the seat it filled, and fades there exactly as the
+   feed cell reappears under it - while its own vacated seat is already
+   covered by the join cell that arrived at the cycle's end. */
+.dgm-svg.is-live.is-fused .fl-shunt {
+  animation: fl-shunt 5.6s cubic-bezier(0.45, 0, 0.25, 1) infinite;
+}
+
+@keyframes fl-shunt {
+  0%, 32% { transform: translate(0px, 0px); opacity: 1; }
+  46%, 86% { transform: translate(19.05px, 7.48px); opacity: 1; }
+  94%, 100% { transform: translate(19.05px, 7.48px); opacity: 0; }
 }
 
 /* THE SWALLOW. Absent at rest - an empty pore holds nothing - it appears
-   inside the mouth on the beat the approach cell fades at the rim, already
+   inside the mouth on the beat the feed cell fades at the rim, already
    stained by the pore that ruled it, and goes down the bore to nothing.
    Clipped to the opening, so only what is genuinely inside is drawn. */
 .fl-sunk { opacity: 0; }
 
 .dgm-svg.is-live.is-fused .fl-sunk {
   animation: fl-swallow 5.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  animation-delay: calc(var(--turn, 0) * -1.87s);
 }
 
 @keyframes fl-swallow {
-  0%, 34% { transform: translateY(0px); opacity: 0; }
-  40% { transform: translateY(1px); opacity: 1; }
-  56% { transform: translateY(8px); opacity: 1; }
-  64%, 70% { transform: translateY(13px); opacity: 0; }
+  0%, 30% { transform: translateY(0px); opacity: 0; }
+  36% { transform: translateY(1px); opacity: 1; }
+  52% { transform: translateY(8px); opacity: 1; }
+  60%, 66% { transform: translateY(13px); opacity: 0; }
   100% { transform: translateY(0px); opacity: 0; }
 }
 
@@ -13511,20 +13502,21 @@ html.is-hidden .clinic-node i,
 .fl-golgi .dgm-face-right { fill: color-mix(in srgb, var(--tone) 58%, var(--surface-solid)); }
 
 /* THE TRANSCRIPT, ON EVIDENCE'S OWN CLOCK. Protocol ships no material - it
-   ships the document: a faceted tablet in the protocol's own violet, the
-   same ink on both plates it touches, so the thing docking at the gantry is
-   visibly the thing the nucleus exported. Issue and dock run one 7.4s
-   period - the claw's own - the issue gone through the far gate at 72%, the
-   dock sliding in through Evidence's entry gate at 84%, resting on the
-   apron until the work absorbs it. */
-.fl-script .dgm-face-top {
-  fill: color-mix(in srgb, var(--governed) 26%, var(--surface-solid));
-  stroke: color-mix(in srgb, var(--line) 74%, transparent);
-}
-.fl-script .dgm-face-left { fill: color-mix(in srgb, var(--governed) 46%, var(--surface-solid)); }
-.fl-script .dgm-face-right { fill: color-mix(in srgb, var(--governed) 62%, var(--accent-strong)); }
+   ships the document - and the document crosses in the run's own vessel: a
+   round cell like everything else that travels, with the protocol's violet
+   as the ink that says this one is the document rather than a subject. The
+   same ink on both plates it touches, deepest at the core the way a verdict
+   stains, so the thing docking at the gantry is visibly the thing the
+   nucleus exported. Issue and dock run one 5.6s period - the claw's own -
+   the issue gone through the far gate at 72%, the dock sliding in through
+   Evidence's entry gate at 84%, resting on the apron until the work absorbs
+   it. */
+.fl-blk.is-script .dgm-face-top { fill: color-mix(in srgb, var(--governed) 36%, var(--surface-solid)); }
+.fl-blk.is-script .dgm-face-left { fill: color-mix(in srgb, var(--governed) 58%, var(--surface-solid)); }
+.fl-blk.is-script .dgm-face-right { fill: color-mix(in srgb, var(--governed) 64%, var(--accent-strong)); }
+.fl-blk.is-script .fl-core { fill: var(--governed); }
 
-.dgm-svg.is-live.is-fused .fl-issue { animation: fl-issue 7.4s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
+.dgm-svg.is-live.is-fused .fl-issue { animation: fl-issue 5.6s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
 
 @keyframes fl-issue {
   0%, 46% { transform: translate(0px, 0px); opacity: 1; }
@@ -13534,7 +13526,7 @@ html.is-hidden .clinic-node i,
   92%, 100% { transform: translate(0px, 0px); opacity: 1; }
 }
 
-.dgm-svg.is-live.is-fused .fl-dock { animation: fl-dock 7.4s cubic-bezier(0.3, 0, 0.3, 1) infinite; }
+.dgm-svg.is-live.is-fused .fl-dock { animation: fl-dock 5.6s cubic-bezier(0.3, 0, 0.3, 1) infinite; }
 
 @keyframes fl-dock {
   0%, 30% { transform: translate(0px, 0px); opacity: 1; }
@@ -13544,12 +13536,11 @@ html.is-hidden .clinic-node i,
 }
 
 /* THE SHIPMENT, ON SCREENING'S OWN CLOCK. Organised material leaves the bed
-   for the plate that will rule on it: one cell stages short of Evidence's
-   far wall, slides the -y plan axis through the gate - fading as it crosses
-   - and the wait cell nearest Screening's entry gate slides in through that
-   gate two beats later, on the same 5.6s period, rests with the bed, and is
-   absorbed into it as the bed feeds the pores. One subject, one period,
-   neither plate reaching across the seam. */
+   for the plate that will rule on it: the staging cell - which IS the cell
+   the claw just placed, handed up the lane by `fl-laid` - slides the -y
+   plan axis through the gate, fading as it crosses, and the cell entering
+   Screening's back gate two beats later is on the same 5.6s period. One
+   subject, one period, neither plate reaching across the seam. */
 .dgm-svg.is-live.is-fused .fl-ship { animation: fl-ship 5.6s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
 
 @keyframes fl-ship {
@@ -13560,11 +13551,14 @@ html.is-hidden .clinic-node i,
   92%, 100% { transform: translate(0px, 0px); opacity: 1; }
 }
 
+/* The join hands its seat to the shunt early: the shunt cell is drawn on the
+   same seat and rests there visibly from the cycle's start, so the join can
+   fade under it as soon as the new cycle opens and the seat never blinks. */
 .dgm-svg.is-live.is-fused .fl-join { animation: fl-join 5.6s cubic-bezier(0.3, 0, 0.3, 1) infinite; }
 
 @keyframes fl-join {
-  0%, 30% { transform: translate(0px, 0px); opacity: 1; }
-  40%, 82% { transform: translate(0px, 0px); opacity: 0; }
+  0%, 8% { transform: translate(0px, 0px); opacity: 1; }
+  16%, 82% { transform: translate(0px, 0px); opacity: 0; }
   84% { transform: translate(-20.78px, -8.16px); opacity: 0; }
   98%, 100% { transform: translate(0px, 0px); opacity: 1; }
 }
@@ -13572,8 +13566,12 @@ html.is-hidden .clinic-node i,
 /* THE HANDOFF, ON RESOLVE'S OWN CLOCK. The amber cell is the only thing
    that leaves this plate, and it is SENT: down the printed lane, through
    the amber-pyloned gate in the far wall, on the -y plan axis - the one
-   bearing that crosses the drawn slot and points at the next plate. It runs
-   at 4.8s, the period every clock on Resolve keeps, and fades out at 70%;
+   bearing that crosses the drawn slot and points at the next plate. ONE
+   transform segment carries the whole travel, bay to beyond the wall, so
+   the send is one motion - a waypoint keyframe at the gate line gave the
+   cell a visible hitch exactly where it should be moving with the most
+   conviction. The opacity-only frame mid-flight fades it without breaking
+   the segment. It runs at 4.8s, the period every clock on Resolve keeps;
    Resolve's `fl-arrive` slides its feed in through the entry gate at 84%.
    Two keyframe blocks, one period, no shared element - which is what lets a
    reader watch the same subject leave one plate and enter the next without
@@ -13582,8 +13580,8 @@ html.is-hidden .clinic-node i,
 
 @keyframes fl-handoff {
   0%, 38% { transform: translate(0px, 0px); opacity: 1; }
-  56% { transform: translate(24.25px, -9.52px); opacity: 1; }
-  70% { transform: translate(36.37px, -14.28px); opacity: 0; }
+  54% { opacity: 1; }
+  66% { transform: translate(36.37px, -14.28px); opacity: 0; }
   84% { transform: translate(0px, 0px); opacity: 0; }
   92%, 100% { transform: translate(0px, 0px); opacity: 1; }
 }
@@ -13872,6 +13870,7 @@ html.is-hidden .clinic-node i,
   .fl-lay,
   .fl-throat,
   .fl-faller,
+  .fl-shunt,
   .fl-sunk,
   .fl-ship,
   .fl-join,
