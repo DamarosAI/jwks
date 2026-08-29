@@ -2028,7 +2028,7 @@ describe('The floor schematic', () => {
     const own = {
       protocol: ['fl-board', 'fl-toggle', 'fl-seat', 'fl-issue'],
       evidence: ['fl-rig', 'fl-claw', 'fl-carry', 'fl-pick', 'fl-ship', 'fl-dock'],
-      screening: ['fl-hole', 'fl-throat', 'fl-faller', 'fl-shunt', 'fl-sunk', 'fl-join', 'fl-golgi', 'fl-bud', 'fl-handoff'],
+      screening: ['fl-hole', 'fl-throat', 'fl-faller', 'fl-shunt', 'fl-sunk', 'fl-join', 'fl-rer', 'fl-bud', 'fl-handoff'],
       resolve: ['fl-ram', 'fl-pivot', 'fl-lever', 'fl-index', 'fl-feed', 'fl-pushed'],
       replay: ['fl-tape', 'fl-reel', 'fl-head', 'fl-frame', 'fl-spin'],
     }
@@ -2141,24 +2141,24 @@ describe('The floor schematic', () => {
     // plate carries unruled material and keeps the station's ink.
     assert.match(css, /\.fl-step\.is-screening \.fl-pylon-wall\.is-far \{ fill: var\(--hold\); \}/)
     assert.doesNotMatch(css, /\.fl-step\.is-screening \.fl-pylon-wall \{/)
-    // THE BAY IS RESTOCKED BY THE ORGANELLE. The next amber cell BUDS off
-    // the cisternae rims on the lane's own plan x - the vesicle trail
+    // THE BAY IS RESTOCKED BY THE ORGANELLE. The next amber cell FORMS in
+    // the reticulum's pocket on the lane's own plan x - the vesicle trail
     // leaving the sacs already says this is how the organelle works - swells
     // to size, and slides down the printed lane to the bay: dispatch drawn
     // as secretion, the one arrival grammar that belongs to a sorting body,
     // instead of a cell fading up on an empty seat. It runs the handoff's
     // own period, and its slide is exactly flank-to-bay, re-derived here.
-    assert.match(floor, /cell\(40, 24, 'hold', 5\), cls: 'fl-blk is-hold fl-bud'/)
+    assert.match(floor, /cell\(40, 18, 'hold', 5\), cls: 'fl-blk is-hold fl-bud'/)
     assert.match(css, /\.fl-bud \{\s*\n\s*opacity: 0;/)
     assert.equal(css.match(/animation: fl-bud ([\d.]+)s/)[1], css.match(/animation: fl-handoff ([\d.]+)s/)[1],
       'the bud must run the period of the handoff it restocks')
     const budSeat = floor.match(/cell\((\d+), (\d+), 'hold', 5\), cls: 'fl-blk is-hold fl-bud'/).slice(1).map(Number)
     const baySeat = floor.match(/cell\((\d+), (-\d+), 'hold', 5\), cls: 'fl-blk is-hold fl-handoff'/).slice(1).map(Number)
-    assert.equal(budSeat[0], baySeat[0], 'the bud must grow on the amber lane it will travel')
+    assert.equal(budSeat[0], baySeat[0], 'the bud must form on the amber lane it will travel')
     const budRun = budSeat[1] - baySeat[1]
     const budTravel = css.match(/@keyframes fl-bud \{[\s\S]*?translate\(([\d.]+)px, (-[\d.]+)px\)/).slice(1).map(Number)
     assert.ok(Math.abs(budTravel[0] - budRun * 0.866) < 0.05 && Math.abs(budTravel[1] + budRun * 0.34) < 0.05,
-      'the bud must slide exactly from the Golgi flank to the bay')
+      'the bud must slide exactly from the pocket to the bay')
     // A SWAP NEVER CROSSES ITS FADES. Two coincident cells mid-fade sum
     // below one and the seat blinks - so at both covered swaps the incomer
     // reaches full opacity (invisible, over or under an identical opaque
@@ -2168,7 +2168,7 @@ describe('The floor schematic', () => {
     const fullBy = (name) => Number(css.match(new RegExp(`@keyframes ${name} \\{[\\s\\S]*?(\\d+)%, 100% \\{ transform: translate\\(0px, 0px\\)[^}]*opacity: 1`))[1])
     assert.ok(fullBy('fl-drop') <= Number(css.match(/@keyframes fl-shunt \{[\s\S]*?\d+%, (\d+)% \{ transform: translate\(19\.05px, 7\.48px\); opacity: 1/)[1]),
       'the feed must be fully back before the shunt fades under it')
-    assert.ok(fullBy('fl-handoff') <= Number(css.match(/@keyframes fl-bud \{[\s\S]*?\d+%, (\d+)% \{ transform: translate\(34\.64px, -13\.6px\) scale\(1\); opacity: 1/)[1]),
+    assert.ok(fullBy('fl-handoff') <= Number(css.match(/@keyframes fl-bud \{[\s\S]*?\d+%, (\d+)% \{ transform: translate\(29\.44px, -11\.56px\) scale\(1\); opacity: 1/)[1]),
       'the handoff must be fully back before the bud fades over it')
 
     // THE ROW IS PLUMBED BY GATES, one handoff per seam. Evidence ships its
@@ -2510,58 +2510,45 @@ describe('The floor schematic', () => {
     assert.match(floor, /\.\.\.stand\(0, 0, 44, 36, 3, 26\), cls: 'fl-board'/)
     assert.match(floor, /className="fl-thread"/)
     assert.match(floor, /className="fl-porering"/)
-    // THE GOLGI IS A U OF STACKED CISTERNAE, ITS MOUTH OPEN TOWARD THE
-    // GATE. Each layer is three capsule sacs - two arms running the full
-    // depth of the body and a spine tucked between them - and the walk
-    // below holds the construction to the three rules that keep its lines
-    // clean and its nesting honest: the three sacs of a layer share ONE
-    // front line (a seam that is a coordinate, not a wall); the spine's
-    // rounded caps sit strictly inside the arms' footprints (so cap walls
-    // land under arm walls in matching ink); and each column's depth grows
-    // with height (so sacs paint bottom-up). The bud is born IN the mouth:
-    // its seat sits between the arms on the lane's x, deeper than the
-    // spine, so the swelling cell stands in front of the far arm and
-    // behind the near sacs - cupped by the body that rules it.
-    const sacs = [...floor.matchAll(/stand\((-?[\d.]+), (-?[\d.]+), ([\d.]+), ([\d.]+), ([\d.]+), ([\d.]+)(?:, ([\d.]+))?\), cls: 'fl-golgi' \}/g)]
-      .map((m) => ({
-        px: Number(m[1]), py: Number(m[2]), hx: Number(m[3]), hy: Number(m[4]),
-        high: Number(m[5]), r: Number(m[6]), base: Number(m[7] || 0),
-      }))
-    const layers = [...new Set(sacs.map((s) => s.base))].sort((a, b) => a - b)
-      .map((base) => sacs.filter((s) => s.base === base).sort((a, b) => a.px - b.px))
-    assert.ok(layers.length >= 3, 'a Golgi is a stack of at least three cisternae')
+    // THE SORTING BODY IS DRAWN IN THE ROUGH ER'S LANGUAGE: at least three
+    // nested curved lamellae - thin arc-stroke sacs of one constant plan
+    // width, sharing one centre, wrapping the pocket the amber cell forms
+    // in, with daylight between them (the cisternal space) and the mouth
+    // open toward the gate. The nesting is depth-honest by construction:
+    // every band splits at one angle into a far arc painted behind the
+    // bud's seat and a near arc painted in front of it, so the forming
+    // cell sits inside every sac that wraps it. All derived from the data
+    // the body is built from.
+    const rer = floor.match(/const RER = \{ cx: ([\d.]+), cy: ([\d.]+), lift: ([\d.]+) \}/).slice(1).map(Number)
+    const bands = [...floor.match(/const lam = \[[\s\S]*?\n\s*\]/)[0].matchAll(/\[([\d.]+), ([\d.]+), (-?\d+), (-?\d+)\]/g)]
+      .map((m) => m.slice(1).map(Number)).sort((a, b) => a[0] - b[0])
+    assert.ok(bands.length >= 3, 'a reticulum is at least three nested lamellae')
     const bud = floor.match(/cell\((\d+), (\d+), 'hold', 5\), cls: 'fl-blk is-hold fl-bud'/).slice(1).map(Number)
-    for (const [arm1, spine, arm2] of layers) {
-      assert.ok(arm1.hy > arm1.hx && arm2.hy > arm2.hx && spine.hx > spine.hy,
-        'a layer is two arms running the depth of the body and a spine across it')
-      for (const sac of [arm1, spine, arm2]) {
-        assert.ok(sac.high <= 3, 'a cisterna is flattened, or it is a wall')
-        assert.equal(sac.r, Math.min(sac.hx, sac.hy), 'a sac ends in its own round rim, not a corner')
-      }
-      const front = spine.py + spine.hy
-      assert.ok(Math.abs(arm1.py + arm1.hy - front) < 0.01 && Math.abs(arm2.py + arm2.hy - front) < 0.01,
-        'the three sacs of a layer share one front line, or the joints grow walls')
-      assert.ok(spine.px - spine.hx >= arm1.px - arm1.hx && spine.px - spine.hx + spine.r <= arm1.px + arm1.hx,
-        'the spine\'s far cap must tuck inside the far arm')
-      assert.ok(spine.px + spine.hx <= arm2.px + arm2.hx && spine.px + spine.hx - spine.r >= arm2.px - arm2.hx,
-        'the spine\'s near cap must tuck inside the near arm')
-      // The mouth: the lane runs between the arms on every layer, and the
-      // layer the bud STANDS in clears the drawn cell - the upper lips may
-      // pinch a touch inward, which is the organic taper, not a collision.
-      const gap = [arm1.px + arm1.hx, arm2.px - arm2.hx]
-      if (arm1.base === layers[0][0].base) {
-        assert.ok(gap[1] - gap[0] >= 2 * 7 * Math.SQRT2 - 0.5, 'the mouth must clear the cell that swells in it')
-      }
-      assert.ok(bud[0] > gap[0] && bud[0] < gap[1], 'the bud must be born between the arms')
-      assert.ok(bud[1] < spine.py - spine.hy, 'the bud must sit clear of the spine it is cupped by')
-      assert.ok(bud[0] + bud[1] > arm1.px + arm1.py && bud[0] + bud[1] < spine.px + spine.py,
-        'the bud must nest between the far arm and the spine, or the cupping is painted, not real')
+    for (const [r, w, a0, a1] of bands) {
+      assert.ok(w <= r / 3, 'a lamella is a ribbon, not a disc')
+      assert.ok(a0 > -75 && a0 < 0 && a1 > 180 && a1 < 250,
+        'every sac wraps the pocket and leaves the mouth open toward the gate')
     }
-    for (const column of [0, 1, 2]) {
-      const depths = layers.map((layer) => layer[column].px + layer[column].py)
-      assert.deepEqual([...depths].sort((a, b) => a - b), depths,
-        'a column must gain depth with height, so sacs paint bottom-up')
+    for (let i = 1; i < bands.length; i += 1) {
+      assert.ok(bands[i][0] - bands[i][1] / 2 - (bands[i - 1][0] + bands[i - 1][1] / 2) >= 0.8,
+        'nested with daylight between - the cisternal space is part of the drawing')
     }
+    assert.ok(Math.hypot(bud[0] - rer[0], bud[1] - rer[1]) + 7 <= bands[0][0] - bands[0][1] / 2,
+      'the cell must form inside the innermost sac')
+    assert.match(floor, /\[\[a0, 120, RER\.cx \+ RER\.cy \+ r\], \[120, a1, RER\.cx \+ RER\.cy - r\]\]/)
+    assert.ok(bud[0] + bud[1] > rer[0] + rer[1] - bands[0][0] && bud[0] + bud[1] < rer[0] + rer[1] + bands[0][0],
+      'the bud must nest between every far arc and every near arc')
+    const dish2 = floor.match(/const DISH = \{ hx: [\d.]+, hy: ([\d.]+), r: \d+, t: (\d+)/).slice(1).map(Number)
+    assert.ok(rer[1] + bands[bands.length - 1][0] + bands[bands.length - 1][1] / 2 <= dish2[0] - dish2[1] - 2,
+      'the body keeps clear of the vessel wall, like the pores do')
+    // The pen must NOT be non-scaling: the plan matrix squashing the stroke
+    // is exactly what makes it the projected band of a flat curved sac.
+    assert.match(css, /\.fl-rer path \{[\s\S]*?vector-effect: none;/)
+    for (const piece of ['is-under', 'is-sac', 'is-grit']) {
+      assert.match(floor, new RegExp(`'fl-rer ${piece}'`), `the reticulum needs its ${piece}`)
+    }
+    assert.doesNotMatch(floor, /fl-golgi/)
+    assert.doesNotMatch(css, /fl-golgi/)
     assert.ok((floor.match(/className="fl-ruled" key="v\d"/g) || []).length >= 3,
       'the vesicle trail says the body dispatches')
     assert.match(floor, /\.\.\.drum\(28, -34, 7, 7\), cls: 'fl-ram is-body'/)

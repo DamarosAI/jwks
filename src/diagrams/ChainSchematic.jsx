@@ -732,57 +732,85 @@ function mechanism(key, t) {
       return [
         printed(-800, 'fl-print', [
           <rect key="bed" x="-70" y="-6" width="64" height="40" rx="14" />,
-          // THE VESICLE TRAIL. Three rings thinning from the cisternae rims
-          // toward the verdict line - sorted material leaving the organelle.
-          // Printed, not solid, by the sheet's own size law: a body under
-          // seventeen pixels is a mark, so traffic this small draws as
-          // print, the same ink every lane on the sheet is drawn in. The
-          // bud on the amber lane is the same story told at solid size.
-          <circle className="fl-ruled" key="v1" cx="14" cy="8" r="4" />,
-          <circle className="fl-ruled" key="v2" cx="5" cy="-2" r="3.2" />,
-          <circle className="fl-ruled" key="v3" cx="-4" cy="-12" r="2.4" />,
+          // THE VESICLE TRAIL. Three rings thinning from the reticulum's
+          // outer sac toward the verdict line - sorted material leaving the
+          // organelle. Printed, not solid, by the sheet's own size law: a
+          // body under seventeen pixels is a mark, so traffic this small
+          // draws as print, the same ink every lane on the sheet is drawn
+          // in. The bud on the amber lane is the same story at solid size.
+          <circle className="fl-ruled" key="v1" cx="8" cy="2" r="4" />,
+          <circle className="fl-ruled" key="v2" cx="-2" cy="-8" r="3.2" />,
+          <circle className="fl-ruled" key="v3" cx="-12" cy="-18" r="2.4" />,
           // THE FEED LANE. From the bed's pore column to the green mouth,
           // printed before anything travels it - the same convention as
           // every other travel on the sheet.
           <line className="fl-ruled" key="feed" x1="-40" y1="-2" x2="-40" y2="-12" />,
-          // THE AMBER LANE. Out of the mouth of the Golgi's U - where the
-          // hold cell swells - past the bay and straight through the gate in
-          // the far wall, printed before anything travels it.
+          // THE AMBER LANE. Out of the reticulum's pocket - where the hold
+          // cell forms - past the bay and straight through the gate in the
+          // far wall, printed before anything travels it.
           <rect key="bay" x="28" y="-46" width="24" height="38" rx="10" />,
-          <line className="fl-ruled" key="lane" x1="40" y1="20" x2="40" y2="-52" />,
+          <line className="fl-ruled" key="lane" x1="40" y1="18" x2="40" y2="-52" />,
         ]),
-        // THE GOLGI IS A U, AND THE BUD IS BORN IN ITS MOUTH. Three stacked
-        // cisternae, each drawn as three capsule sacs - two arms running the
-        // full depth of the body and a spine tucked between them - opening
-        // toward the gate, with the amber lane running out through the gap.
-        // The construction is what keeps the lines clean: within a layer the
-        // three sacs share ONE front line and the spine's rounded caps sit
-        // strictly inside the arms' footprints, so every joint lands on a
-        // shared coordinate under matching ink - a seam that is a
-        // coordinate, not a wall. And the depth order is the nesting: the
-        // bud's seat falls between the far arm and the spine, so the cell
-        // swelling in the mouth stands in front of the arm behind it and
-        // behind the sacs in front of it - genuinely cupped, not pasted on.
-        // Each layer leans a step further toward the reader, so the columns
-        // paint bottom-up and the stack reads as sacs resting on sacs.
-        { ...stand(25.5, 26.2, 4.5, 10.2, 2.6, 4.5), cls: 'fl-golgi' },
-        { ...stand(40, 31.4, 15.5, 5, 2.6, 5), cls: 'fl-golgi' },
-        { ...stand(54.5, 26.2, 4.5, 10.2, 2.6, 4.5), cls: 'fl-golgi' },
-        { ...stand(26, 27.4, 4.2, 10, 2.6, 4.2, 2.6), cls: 'fl-golgi' },
-        { ...stand(40, 32.65, 14.8, 4.75, 2.6, 4.75, 2.6), cls: 'fl-golgi' },
-        { ...stand(54, 27.4, 4.2, 10, 2.6, 4.2, 2.6), cls: 'fl-golgi' },
-        { ...stand(26.5, 28.9, 4.2, 9.5, 2.6, 4.2, 5.2), cls: 'fl-golgi' },
-        { ...stand(40, 33.9, 14, 4.5, 2.6, 4.5, 5.2), cls: 'fl-golgi' },
-        { ...stand(53.5, 28.9, 4.2, 9.5, 2.6, 4.2, 5.2), cls: 'fl-golgi' },
+        // THE SORTING BODY IS DRAWN IN THE ROUGH ER'S OWN LANGUAGE. Not a
+        // tiered cake, not three pills bolted into a U: nested curved
+        // LAMELLAE - thin sacs of one constant width, wrapping a pocket
+        // that opens toward the gate, studded with ribosome grit - the
+        // reference drawing every biology text gives the reticulum, bent to
+        // this plate's use: the pocket is where the amber cell forms, and
+        // the mouth is the way out to the wall.
+        //
+        // Each lamella is an ARC STROKE in plan space. The plan matrix
+        // squashes the pen anisotropically, so the stroke IS the projected
+        // band - a curved sac keeps one true plan width the whole way
+        // round, which no capsule composition could do. Two strokes make
+        // the solid: the under at ground, the sac lifted a storey; the
+        // sliver of under showing along the screen-low edge is the wall,
+        // and it falls on the viewer-facing flank of any curve by
+        // construction. And the nesting is depth-honest: every band splits
+        // at one angle into a far arc painted behind the bud's seat and a
+        // near arc painted in front of it - the shared round cap covers
+        // the seam - so the cell forming in the pocket sits inside every
+        // sac that wraps it.
+        ...(() => {
+          const RER = { cx: 38, cy: 15, lift: 4 }
+          const lam = [
+            [14.5, 3.8, -29, 216],
+            [20, 3.8, -36, 208],
+            [25.5, 3.8, -44, 196],
+          ]
+          const spot = (r, deg) => [
+            r1(RER.cx + r * Math.cos((deg * Math.PI) / 180)),
+            r1(RER.cy + r * Math.sin((deg * Math.PI) / 180)),
+          ]
+          const arc = (r, from, to) => {
+            const [x0, y0] = spot(r, from)
+            const [x1, y1] = spot(r, to)
+            return `M ${x0} ${y0} A ${r} ${r} 0 ${to - from > 180 ? 1 : 0} 1 ${x1} ${y1}`
+          }
+          const grit = (r, from, to, step) => {
+            const dots = []
+            for (let a = from + 14; a < to - 8; a += step) dots.push(spot(r + (dots.length % 2 ? 1.4 : -1.4), a))
+            return dots
+          }
+          return lam.flatMap(([r, w, a0, a1], i) => (
+            [[a0, 120, RER.cx + RER.cy + r], [120, a1, RER.cx + RER.cy - r]].flatMap(([from, to, depth]) => [
+              printed(depth, 'fl-rer is-under', <path key="u" d={arc(r, from, to)} strokeWidth={w} />),
+              printed(depth + 0.001, 'fl-rer is-sac', <path key="s" d={arc(r, from, to)} strokeWidth={w} />, RER.lift),
+              printed(depth + 0.002, 'fl-rer is-grit', grit(r, from, to, 24 + i * 5).map(([x, y], n) => (
+                <circle key={n} cx={x} cy={y} r="1.05" />
+              )), RER.lift),
+            ])
+          ))
+        })(),
         // THE BUD. The amber cell does not appear at the bay - it is
-        // DISPATCHED: it swells in the mouth of the U, cupped by the body
-        // that rules it, exactly the way the vesicle trail already leaving
-        // the sacs says this organelle works, then slides out through the
-        // gap and down the lane to the bay while the previous hold is
-        // mid-send. The one plate whose machine is a sorting organelle gets
+        // DISPATCHED: it forms in the reticulum's pocket, wrapped by every
+        // sac that nests around it, exactly the way the vesicle trail
+        // already leaving the body says this organelle works, then slides
+        // out through the mouth and down the lane to the bay while the
+        // previous hold is mid-send. The one plate whose machine is a sorting organelle gets
         // the one arrival drawn as secretion - no claw, no ram, its own
         // grammar. It buds already amber: dispatch IS the ruling.
-        { ...cell(40, 24, 'hold', 5), cls: 'fl-blk is-hold fl-bud' },
+        { ...cell(40, 18, 'hold', 5), cls: 'fl-blk is-hold fl-bud' },
         // THE BED FEEDS THE GREEN PORE AS A LINE, NOT AS AN APPARITION.
         // One 5.6s clock - the period the shipment arrives on - moves one
         // subject one seat per beat: the cell on the pore's own column
@@ -1073,7 +1101,7 @@ export default function ChainSchematic({ animate = true }) {
           className={`dgm-svg is-floor${animate ? ' is-live' : ''}`}
           viewBox={`0 0 ${W} ${H}`}
           role="img"
-          aria-label="Five plates in a row, seen in axonometric projection, their machines already running - each plate bounded by its own printed double-walled membrane, the way a section drawing bounds a cell. A survey line rules under the row and letters the five stations beneath it: Protocol, Evidence, Screening, Resolve, Replay. One cell - a round body with its nucleus drawn on top - runs the whole row. A grid of twelve switches on a breaker board is thrown one at a time, each settling green or red, and the compiled protocol ships out through a gate in the plate's wall as a violet-stained cell - the transcript in the run's own vessel. It docks beside the next plate's gantry, where a claw closes on one cell in a heap, lifts it, carries it across, and sets it down into an ordered bed of round sockets; the placed cell then slides up a printed lane to a staging seat, waits its beat, and continues straight out through that plate's far gate - one cell, one line, socket to seat to gate. Along the far long edge of the next plate, three verdict seats wait in a line - green, red, amber. The bed feeds the green pore as a moving line: one cell slides onto the mouth and is visibly swallowed down the bore while the seat behind it shuffles forward and the newly arrived cell takes the empty place; the red pore stands open and ringed; the amber seat is a gate cut through the plate's wall, its pylons stained amber, and the unsettled cell is sent through it in one motion - while the next amber cell swells in the open mouth of the plate's U-shaped Golgi stack and slides out down the lane to take the bay. On the plate beyond it enters a matching gate at the back of the lane, on the same clock it left on. There a hand throws a lever, a horizontal ram crosses the lane and pushes one cell clean off the edge through the one gap in the membrane, and the line indexes forward as the next arrives. On the last plate the run lies as frames on a tape between two reels, and a head reads its way along and then runs back. Pointing at a plate lifts it off the ground and darkens the ground beneath it."
+          aria-label="Five plates in a row, seen in axonometric projection, their machines already running - each plate bounded by its own printed double-walled membrane, the way a section drawing bounds a cell. A survey line rules under the row and letters the five stations beneath it: Protocol, Evidence, Screening, Resolve, Replay. One cell - a round body with its nucleus drawn on top - runs the whole row. A grid of twelve switches on a breaker board is thrown one at a time, each settling green or red, and the compiled protocol ships out through a gate in the plate's wall as a violet-stained cell - the transcript in the run's own vessel. It docks beside the next plate's gantry, where a claw closes on one cell in a heap, lifts it, carries it across, and sets it down into an ordered bed of round sockets; the placed cell then slides up a printed lane to a staging seat, waits its beat, and continues straight out through that plate's far gate - one cell, one line, socket to seat to gate. Along the far long edge of the next plate, three verdict seats wait in a line - green, red, amber. The bed feeds the green pore as a moving line: one cell slides onto the mouth and is visibly swallowed down the bore while the seat behind it shuffles forward and the newly arrived cell takes the empty place; the red pore stands open and ringed; the amber seat is a gate cut through the plate's wall, its pylons stained amber, and the unsettled cell is sent through it in one motion - while the next amber cell forms inside the plate's reticulum - nested curved sacs opening toward the gate - and slides out down the lane to take the bay. On the plate beyond it enters a matching gate at the back of the lane, on the same clock it left on. There a hand throws a lever, a horizontal ram crosses the lane and pushes one cell clean off the edge through the one gap in the membrane, and the line indexes forward as the next arrives. On the last plate the run lies as frames on a tape between two reels, and a head reads its way along and then runs back. Pointing at a plate lifts it off the ground and darkens the ground beneath it."
         >
           <defs>
             <pattern id="fl-grain" width="13" height="13" patternUnits="userSpaceOnUse">

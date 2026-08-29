@@ -13363,16 +13363,21 @@ html.is-hidden .clinic-node i,
   100% { transform: translateY(0px); opacity: 0; }
 }
 
-/* THE GOLGI IS A U OF STACKED CISTERNAE, its mouth open toward the gate,
-   the amber lane running out through the gap and the bud born inside it -
-   the body whose whole job is sorting and dispatch, drawn doing both, with
-   the printed vesicle trail thinning toward the verdict line. It is a
-   body, not a mechanism, so it sits a step quieter than the pores and the
-   arm; the sacs' three faces take the standard three values of the
-   station's ink. */
-.fl-golgi .dgm-face-top { fill: color-mix(in srgb, var(--tone) 30%, var(--surface-solid)); }
-.fl-golgi .dgm-face-left { fill: color-mix(in srgb, var(--tone) 44%, var(--surface-solid)); }
-.fl-golgi .dgm-face-right { fill: color-mix(in srgb, var(--tone) 58%, var(--surface-solid)); }
+/* THE SORTING BODY, IN THE ROUGH ER'S OWN LANGUAGE. Nested curved lamellae
+   wrapping the pocket the amber cell forms in, studded with ribosome grit,
+   the mouth open toward the gate. Each band is two plan-space arc strokes -
+   the under at ground, the sac lifted a storey - and the pen must NOT be
+   non-scaling: the plan matrix squashing the stroke is exactly what makes
+   it the projected band of a flat curved sac. It is a body, not a
+   mechanism, so it sits a step quieter than the pores and the arm, in the
+   same two values the solid organelles wear. */
+.fl-rer path {
+  vector-effect: none;
+  stroke-linecap: round;
+}
+.fl-rer.is-under path { stroke: color-mix(in srgb, var(--tone) 58%, var(--surface-solid)); }
+.fl-rer.is-sac path { stroke: color-mix(in srgb, var(--tone) 30%, var(--surface-solid)); }
+.fl-rer.is-grit circle { fill: color-mix(in srgb, var(--tone) 66%, var(--surface-solid)); stroke: none; }
 
 /* THE TRANSCRIPT, ON EVIDENCE'S OWN CLOCK. Protocol ships no material - it
    ships the document - and the document crosses in the run's own vessel: a
@@ -13461,8 +13466,8 @@ html.is-hidden .clinic-node i,
 }
 
 /* THE BAY IS RESTOCKED BY THE ORGANELLE, NOT BY A FADE. The next amber cell
-   BUDS off the cisternae rims - the vesicle trail already leaving the
-   sacs says this is how the organelle works - swells to size on the lane,
+   FORMS in the reticulum's pocket - the vesicle trail already leaving the
+   sacs says this is how the organelle works - swells to size cupped there,
    and slides forty plan units down to the bay while the previous hold is
    mid-send: dispatch drawn as secretion, the one arrival grammar that
    belongs to a sorting body. It runs the handoff's own 4.8s period, reaches
@@ -13481,8 +13486,8 @@ html.is-hidden .clinic-node i,
   0%, 44% { transform: translate(0px, 0px) scale(0.25); opacity: 0; }
   48% { transform: translate(0px, 0px) scale(0.25); opacity: 1; }
   58%, 64% { transform: translate(0px, 0px) scale(1); opacity: 1; }
-  86%, 94% { transform: translate(34.64px, -13.6px) scale(1); opacity: 1; }
-  100% { transform: translate(34.64px, -13.6px) scale(1); opacity: 0; }
+  86%, 94% { transform: translate(29.44px, -11.56px) scale(1); opacity: 1; }
+  100% { transform: translate(29.44px, -11.56px) scale(1); opacity: 0; }
 }
 
 /* ── RESOLVE IS A HORIZONTAL RAM ─────────────────────────────────────────
