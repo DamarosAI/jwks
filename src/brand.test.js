@@ -5,6 +5,7 @@ import { readSource } from './source-text.js'
 const app = await readSource(new URL('./App.jsx', import.meta.url))
 const css = await readSource(new URL('./styles.css', import.meta.url))
 const mobile = await readSource(new URL('./mobile.css', import.meta.url))
+const html = await readSource(new URL('../index.html', import.meta.url))
 
 describe('Damaros brand mark', () => {
   it('moves spine titles into home eyebrows and keeps the spine numeric', () => {
@@ -112,11 +113,18 @@ describe('Damaros brand mark', () => {
     assert.match(mobile, /#root \.thesis-section \.section-eyebrow,[\s\S]*?left:\s*var\(--gutter\);/)
   })
 
-  it('renders Damaros through BrandName with a contrast TM', () => {
-    assert.match(app, /function BrandName\(\) \{\s*return <>Damaros<sup className="brand-tm">TM<\/sup><\/>/)
-    assert.match(css, /\.brand-tm \{[\s\S]*?color:\s*var\(--accent\)/)
+  it('renders Damaros plain - incorporated names do not claim themselves', () => {
+    // The TM went with the pre-incorporation era: the mark now reads as the
+    // company, everywhere it appears, and the legal line carries the entity.
+    assert.match(app, /function BrandName\(\) \{[\s\S]*?return 'Damaros'\s*\n\}/)
+    assert.doesNotMatch(app, /brand-tm|™/)
+    assert.doesNotMatch(css, /brand-tm/)
     assert.match(app, /<NavLink className="wordmark"[\s\S]*?<BrandName \/>/)
-    assert.match(app, /2026 <BrandName \/>/)
+    assert.match(app, /2026 <BrandName \/> Inc/)
+    assert.doesNotMatch(app, /LLC/)
+    assert.match(html, /<title>Damaros<\/title>/)
+    assert.match(html, /"legalName":"Damaros Inc"/)
+    assert.doesNotMatch(html, /™/)
   })
 
   it('holds the drawn frame where there is room for it, and only there', () => {

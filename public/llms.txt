@@ -1,4 +1,4 @@
-# Damaros™
+# Damaros
 
 > Damaros is clinical research execution infrastructure.
 

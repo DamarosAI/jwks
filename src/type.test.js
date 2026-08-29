@@ -54,7 +54,7 @@ describe('site type', () => {
   })
 
   it('keeps rendered copy inside the supplied font character set', () => {
-    const renderedCopy = app.replace("document.title = 'Damaros™'", '')
+    const renderedCopy = app.replace("document.title = 'Damaros'", '')
     const unsupported = [...renderedCopy].filter((character) => character.codePointAt(0) > 127)
     assert.deepEqual(unsupported, [])
   })

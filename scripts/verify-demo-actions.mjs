@@ -167,8 +167,8 @@ if ((app.match(/Evidence stays/g) || []).length !== 1 || !app.includes('Local so
 if (!css.includes('.control-copy h2 span') || !css.includes('white-space: nowrap')) {
   throw new Error('Site headline lines must not wrap mid-phrase')
 }
-if (!html.includes('<title>Damaros™</title>') || !app.includes("document.title = 'Damaros™'") || !privacy.includes("document.title = 'Damaros™'")) {
-  throw new Error('Chrome tab title must be Damaros with a trademark mark')
+if (!html.includes('<title>Damaros</title>') || !app.includes("document.title = 'Damaros'") || !privacy.includes("document.title = 'Damaros'")) {
+  throw new Error('Chrome tab title must be the plain incorporated name')
 }
 if (!vercel.includes('"framework": "vite"') || !vercel.includes('"buildCommand": "npm run build"') || !vercel.includes('"outputDirectory": "dist"')) {
   throw new Error('Vercel must build the Vite app and serve dist, not raw JSX')
