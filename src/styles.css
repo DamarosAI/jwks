@@ -12596,13 +12596,16 @@ html.is-hidden .clinic-node i,
 .fl-vessel path,
 .fl-vessel ellipse { vector-effect: non-scaling-stroke; }
 
-.fl-vessel-band { fill: color-mix(in srgb, var(--tone) 24%, var(--surface-solid)); stroke: none; }
+/* A wall in front hides what is behind it, full stop: all three wall
+   surfaces carry a step more body than they used to, because a skirt
+   light enough to blend with the cells behind it reads as glass. */
+.fl-vessel-band { fill: color-mix(in srgb, var(--tone) 32%, var(--surface-solid)); stroke: none; }
 .fl-vessel-out {
-  fill: color-mix(in srgb, var(--tone) 38%, var(--surface-solid));
+  fill: color-mix(in srgb, var(--tone) 48%, var(--surface-solid));
   stroke: color-mix(in srgb, var(--line) 36%, transparent);
   stroke-width: 1;
 }
-.fl-vessel-in { fill: color-mix(in srgb, var(--tone) 48%, var(--surface-solid)); stroke: none; }
+.fl-vessel-in { fill: color-mix(in srgb, var(--tone) 56%, var(--surface-solid)); stroke: none; }
 .fl-vessel-edge {
   fill: none;
   stroke: color-mix(in srgb, var(--line) 52%, transparent);
@@ -13153,29 +13156,43 @@ html.is-hidden .clinic-node i,
    and the same carriage under a beam bolted to two posts is part of the
    machine. It is dressed a step back from the carriage, because structure is
    not the working end. */
-/* SOLID STEEL, NOT A WASH. The rig's faces sat at 24 and 58 percent of
-   their inks and the whole gantry read as translucent - a rail nobody
-   could tell was in front of the material it crossed. Structure carries
-   full-value faces now: tops in strong tone, every side in the deep, so
-   what is on what is settled by ink before the depth sort even matters. */
-.fl-rig .dgm-face-top { fill: color-mix(in srgb, var(--tone) 62%, var(--surface-solid)); }
+/* THE BRIDGE GANTRY'S INKS. The rails are the quietest members - ground
+   furniture the bed is framed by; the bridge (legs, cross-beam) carries
+   full structural ink; the carriage clamped to the beam is the working
+   end and takes the station's tone whole; the jaws hang one step back.
+   Every side face is the solid deep - nothing structural is a wash. */
+.fl-rig .dgm-face-top { fill: color-mix(in srgb, var(--tone) 45%, var(--surface-solid)); }
 .fl-rig .dgm-face-left,
 .fl-rig .dgm-face-right { fill: var(--deep); }
-/* The beam's roof sits a step LIGHTER than the carriage head riding it,
-   so the head reads as a separate solid hanging on the rail instead of
-   the rail thickening where the carriage happens to be. */
-.fl-rig.is-beam .dgm-face-top { fill: color-mix(in srgb, var(--tone) 52%, var(--surface-solid)); }
+
+.fl-gant .dgm-face-top { fill: color-mix(in srgb, var(--tone) 62%, var(--surface-solid)); }
+.fl-gant .dgm-face-left,
+.fl-gant .dgm-face-right { fill: var(--deep); }
+.fl-gant.is-beam .dgm-face-top { fill: color-mix(in srgb, var(--tone) 52%, var(--surface-solid)); }
+.fl-gant.is-head .dgm-face-top { fill: var(--tone); }
 
 .fl-claw .dgm-face-top { fill: color-mix(in srgb, var(--tone) 34%, var(--surface-solid)); }
 .fl-claw .dgm-face-left,
 .fl-claw .dgm-face-right { fill: var(--deep); }
-.fl-claw.is-head .dgm-face-top { fill: var(--tone); }
-/* The jaws stand one step back from the head - full deep sides, lighter
-   tops - so the carriage reads as three solid parts holding something,
-   never as one dark mass and never as a ghost. */
+/* The jaws stand one step back from the carriage - full deep sides,
+   lighter tops - so the working end reads as solid parts holding
+   something, never as one dark mass and never as a ghost. */
 .fl-claw.is-jaw .dgm-face-top { fill: color-mix(in srgb, var(--tone) 40%, var(--surface-solid)); }
 .fl-claw.is-jaw .dgm-face-left,
 .fl-claw.is-jaw .dgm-face-right { fill: var(--deep); }
+
+/* THE BRIDGE RIDES ITS OWN X-ONLY CLOCK - the same period, easing and
+   turning points as the jaws' fetch, minus the descents: a carriage
+   stays on its beam and a bridge stays on its rails while the jaws
+   telescope. Identical stops on identical curves is what keeps the two
+   halves of one machine glued. */
+.dgm-svg.is-live .fl-gant { animation: fl-span 5.6s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+
+@keyframes fl-span {
+  0%, 30% { transform: translate(0px, 0px); }
+  44%, 80% { transform: translate(48.5px, 19.04px); }
+  94%, 100% { transform: translate(0px, 0px); }
+}
 
 /* A claw holding nothing is holding nothing. The block it carries is absent
    until the jaws close on it, so its resting value is no opacity at all and the
@@ -14032,45 +14049,43 @@ html.is-hidden .clinic-node i,
   70.6%, 100% { opacity: 0; }
 }
 
-/* THE SPEED LINES. The cartoon word for motion: three short strokes that
-   light up behind the body only while it is actually flying a leg, and
-   behind the other shoulder for the ride home - where they run straight
-   through the victory spin, which is the joke landing. Opacity only;
-   position is inherited from the dip wrapper like everything else the
-   courier owns. */
-.fl-whoosh {
+/* THE LENS. Motion is marked the way mass marks a field: while the body
+   flies a leg, two faint concentric rings ride with it and a few of the
+   page's own matrix dots sit on them stretched along the tangent - the
+   Einstein-ring tell, at whisper strength. It replaces the cartoon
+   speed lines: this sheet's character bends the ground it flies over,
+   it does not leave exhaust. Opacity only; position inherited from the
+   dip wrapper, windows lit only mid-flight and on the ride home,
+   straight through the victory spin. */
+.fl-lens {
   opacity: 0;
   fill: none;
-  stroke: color-mix(in srgb, var(--accent) 78%, transparent);
-  stroke-linecap: round;
 }
 
-.fl-whoosh path { vector-effect: non-scaling-stroke; }
+.fl-lens ellipse {
+  stroke: color-mix(in srgb, var(--muted) 52%, transparent);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
 
-/* Three weights and three strengths, heaviest in the middle, so the
-   trail reads as one gust rather than three equal rules. */
-.fl-whoosh path:nth-child(1) { stroke-width: 1.5; opacity: 0.85; }
-.fl-whoosh path:nth-child(2) { stroke-width: 2.2; }
-.fl-whoosh path:nth-child(3) { stroke-width: 1.3; opacity: 0.7; }
+.fl-lens .fl-mote {
+  fill: color-mix(in srgb, var(--muted) 78%, transparent);
+  stroke: none;
+}
 
-.dgm-svg.is-live.is-floor .fl-whoosh.is-go { animation: fl-zoom 33.6s linear infinite; }
-.dgm-svg.is-live.is-floor .fl-whoosh.is-home { animation: fl-zoomhome 33.6s linear infinite; }
+.dgm-svg.is-live.is-floor .fl-lens { animation: fl-warp 33.6s linear infinite; }
 
-@keyframes fl-zoom {
+@keyframes fl-warp {
   0%, 8.4% { opacity: 0; }
-  9.6%, 12.4% { opacity: 0.85; }
+  9.6%, 12.4% { opacity: 0.55; }
   13.6%, 18.4% { opacity: 0; }
-  19.4%, 23.2% { opacity: 0.85; }
+  19.4%, 23.2% { opacity: 0.55; }
   24.4%, 43.2% { opacity: 0; }
-  44.2%, 47% { opacity: 0.85; }
+  44.2%, 47% { opacity: 0.55; }
   48%, 63.2% { opacity: 0; }
-  64%, 66.2% { opacity: 0.85; }
-  67.2%, 100% { opacity: 0; }
-}
-
-@keyframes fl-zoomhome {
-  0%, 79.6% { opacity: 0; }
-  80.8%, 90.6% { opacity: 0.85; }
+  64%, 66.2% { opacity: 0.55; }
+  67.2%, 79.6% { opacity: 0; }
+  80.8%, 90.6% { opacity: 0.55; }
   92%, 100% { opacity: 0; }
 }
 
@@ -14142,6 +14157,7 @@ html.is-hidden .clinic-node i,
   .fl-blk,
   .fl-toggle,
   .fl-claw,
+  .fl-gant,
   .fl-carry,
   .fl-pick,
   .fl-throat,

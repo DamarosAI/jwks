@@ -661,33 +661,24 @@ function mechanism(key, t) {
           // printed before anything travels it.
           <line className="fl-ruled" key="ship" x1="4" y1="-28" x2="4" y2="-52" />,
         ]),
-        // THE GANTRY THE CLAW RIDES, and it is the whole reason the claw is not
-        // a UFO. A carriage hanging in the air over a plate is a thing hovering
-        // over material; the same carriage under a beam bolted to two posts is
-        // part of the machine, and it can only go where the beam goes.
-        // THIRTY, NOT FORTY-TWO. A beam spanning the plate is carried at the
-        // height of its FAR end, where the plate surface is already forty
-        // pixels up the screen - so every pixel of gantry costs the row twice,
-        // and at forty-two this station stood thirty-six pixels taller than
-        // every other one. A bench of five reads as a bench.
+        // THE GANTRY IS A BRIDGE ON TWIN RAILS - the machine every reader
+        // who has watched a liquid handler work already knows. One beam on
+        // two mid-plate posts was a clothesline: nothing anchored it to the
+        // vessel, and the carriage seemed to hang from a wire. The real
+        // instrument runs two low rails along the bed's own edges, a bridge
+        // spanning them, and the carriage clamped to the bridge - so the
+        // whole bridge slides when the claw works (`fl-span`, the x-only
+        // twin of the claw's own clock), and only the jaws ever descend.
         //
-        // THE JOINERY IS THE PERSPECTIVE. The beam spans EXACTLY post centre
-        // to post centre (-58 to 64), so each rounded end lands on its own
-        // cap with no overshoot nub - and it paints after both posts, so it
-        // visibly RESTS on them. The right post stands out at 64, clear of
-        // the bed's last column, so no cell ever crowds its footing; its
-        // natural depth already follows everything behind it. The left post
-        // draws right after the deepest pile cells at -86.
-        { ...stand(-58, -20, 5, 5, 30, 4.5), cls: 'fl-rig is-post', depth: -85 },
-        { ...stand(64, -20, 5, 5, 30, 4.5), cls: 'fl-rig is-post' },
-        { ...stand(3, -20, 61, 3.5, 4, 3.5, 30), cls: 'fl-rig is-beam', depth: 45 },
-        // The beam is ruled along its own top the way a protofilament is
-        // drawn - segmented - so the track the carriage rides reads as grown
-        // structure rather than rolled steel. A raised print at the beam's own
-        // roof (base 30 + high 4), in the same plan units as the beam.
-        printed(45.5, 'fl-print', [-54, -42, -30, -18, -6, 6, 18, 30, 42, 54].map((x) => (
-          <line className="fl-ruled" key={x} x1={x} y1="-23" x2={x} y2="-17" />
-        )), 34),
+        // Depth is per member: the far rail and far leg go down before the
+        // pile they pass behind; the cross-beam and near leg ride over
+        // everything they cross, because a bridge is the tallest thing on
+        // its own bed and the near leg is nearer than any cell it passes.
+        { ...stand(0, -40, 58, 2, 3, 2), cls: 'fl-rig is-rail', depth: -140 },
+        { ...stand(0, 26, 58, 2, 3, 2), cls: 'fl-rig is-rail', depth: 60 },
+        { ...stand(-52, -40, 5, 5, 23, 2.5, 3), cls: 'fl-gant', depth: -95 },
+        { ...stand(-52, -7, 3, 35, 4, 2, 26), cls: 'fl-gant is-beam', depth: OVER - 6 },
+        { ...stand(-52, 26, 5, 5, 23, 2.5, 3), cls: 'fl-gant', depth: OVER - 5 },
         ...pile.map(([px, py, high, base], i) => cell(px, py, null, high, base, { turn: i })),
         // The one the claw takes. It is on top of the pile, because that is
         // where a claw can reach. The claw keeps its own 5.6s rhythm: the
@@ -721,13 +712,11 @@ function mechanism(key, t) {
         { ...cell(slot[0][0], slot[0][1], null, 5), cls: 'fl-blk fl-ship' },
         { ...stand(-52, -30, 3, 8, 10, 3, 14), cls: 'fl-claw is-jaw', depth: OVER },
         { ...stand(-52, -10, 3, 8, 10, 3, 14), cls: 'fl-claw is-jaw', depth: OVER + 2 },
-        // THE CARRIAGE IS A BLOCK CLAMPED AROUND THE RAIL. It was a drum
-        // for a pass and floated beside the beam like a saucer; a faceted
-        // block whose top two pixels ride over the beam's near face and
-        // whose foot overlaps the jaw hangers reads as one machine - rail,
-        // carriage, jaws - which is also the sheet's own law: the claw is
-        // structure, and structure is faceted.
-        { ...stand(-52, -20, 6.5, 6.5, 10, 2.5, 22), cls: 'fl-claw is-head', depth: OVER + 3 },
+        // THE CARRIAGE IS A BLOCK CLAMPED AROUND THE BRIDGE BEAM. It rides
+        // the bridge's own x-only clock - a carriage stays on its beam while
+        // the jaws telescope down - and its top edge laps the beam's near
+        // face so beam, carriage and jaws read as one machine.
+        { ...stand(-52, -20, 6.5, 6.5, 10, 2.5, 22), cls: 'fl-gant is-head', depth: OVER + 3 },
       ]
     },
     // SCREENING IS THREE THROATS, ON THE EDGE THE ROW RUNS ALONG.
@@ -1432,18 +1421,17 @@ export default function ChainSchematic({ animate = true }) {
                       rightward), the mirrored set trails right for the ride
                       home, and both ride inside the dip wrapper so they
                       follow every move the body makes. */}
-                  {/* Swept, not ruled: three arcs of three lengths and three
-                      weights, bowing gently with the flight line, longest in
-                      the middle - the manga whoosh, not a stack of hyphens. */}
-                  <g className="fl-whoosh is-go">
-                    <path d={`M ${CALLS[0] - 28} 73 Q ${CALLS[0] - 20} 75.5 ${CALLS[0] - 13.5} 74.8`} />
-                    <path d={`M ${CALLS[0] - 34} 79.5 Q ${CALLS[0] - 24} 82 ${CALLS[0] - 15.5} 81.4`} />
-                    <path d={`M ${CALLS[0] - 25} 86.5 Q ${CALLS[0] - 19} 88 ${CALLS[0] - 13.5} 87.4`} />
-                  </g>
-                  <g className="fl-whoosh is-home">
-                    <path d={`M ${CALLS[0] + 28} 73 Q ${CALLS[0] + 20} 75.5 ${CALLS[0] + 13.5} 74.8`} />
-                    <path d={`M ${CALLS[0] + 34} 79.5 Q ${CALLS[0] + 24} 82 ${CALLS[0] + 15.5} 81.4`} />
-                    <path d={`M ${CALLS[0] + 25} 86.5 Q ${CALLS[0] + 19} 88 ${CALLS[0] + 13.5} 87.4`} />
+                  {/* THE LENS. Two faint rings riding with the body and four
+                      of the page's matrix dots caught on them, stretched
+                      along the tangent - space bending subtly around the
+                      thing in flight, in place of cartoon exhaust. */}
+                  <g className="fl-lens">
+                    <ellipse cx={CALLS[0]} cy="81" rx="15" ry="10.5" />
+                    <ellipse cx={CALLS[0]} cy="81" rx="21.5" ry="15" />
+                    <ellipse className="fl-mote" cx={CALLS[0] - 15} cy="81" rx="0.9" ry="1.7" />
+                    <ellipse className="fl-mote" cx={CALLS[0] + 15} cy="81" rx="0.9" ry="1.7" />
+                    <ellipse className="fl-mote" cx={CALLS[0] - 14.2} cy="70.6" rx="1.7" ry="0.9" />
+                    <ellipse className="fl-mote" cx={CALLS[0] + 14.2} cy="91.4" rx="1.7" ry="0.9" />
                   </g>
                   {/* Each drum rides in a parcel wrapper: startled, the
                       courier drops what it carries - the wrapper fades

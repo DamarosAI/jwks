@@ -2029,7 +2029,7 @@ describe('The floor schematic', () => {
     // three throats, a ram across a lane, a tape transport.
     const own = {
       protocol: ['fl-board', 'fl-toggle', 'fl-seat', 'fl-issue'],
-      evidence: ['fl-rig', 'fl-claw', 'fl-carry', 'fl-pick', 'fl-ship', 'fl-dock'],
+      evidence: ['fl-rig', 'fl-gant', 'fl-claw', 'fl-carry', 'fl-pick', 'fl-ship', 'fl-dock'],
       screening: ['fl-hole', 'fl-throat', 'fl-faller', 'fl-shunt', 'fl-sunk', 'fl-join', 'fl-rer', 'fl-bud'],
       resolve: ['fl-ram', 'fl-pivot', 'fl-lever', 'fl-index', 'fl-feed', 'fl-pushed'],
       replay: ['fl-tape', 'fl-reel', 'fl-head', 'fl-frame', 'fl-spin'],
@@ -2784,7 +2784,7 @@ describe('The floor schematic', () => {
     // allowed to reach zero opacity are the blocks that are genuinely absent
     // for part of the cycle: one in flight from the catapult, and one being
     // pushed off the line. Everything standing on a plate stays standing.
-    const vanish = ['fl-swallow', 'fl-ship', 'fl-join', 'fl-issue', 'fl-dock', 'fl-shove', 'fl-drop', 'fl-shunt', 'fl-borne', 'fl-picked', 'fl-bud', 'fl-ground', 'fl-blink', 'fl-escort', 'fl-haul', 'fl-arrive', 'fl-zoom', 'fl-zoomhome']
+    const vanish = ['fl-swallow', 'fl-ship', 'fl-join', 'fl-issue', 'fl-dock', 'fl-shove', 'fl-drop', 'fl-shunt', 'fl-borne', 'fl-picked', 'fl-bud', 'fl-ground', 'fl-blink', 'fl-escort', 'fl-haul', 'fl-arrive', 'fl-warp']
     for (const [, name, body] of css.matchAll(/@keyframes (fl-[a-z]+) \{([\s\S]*?)\n\}/g)) {
       if (vanish.includes(name)) continue
       assert.doesNotMatch(body, /opacity: 0[;\s]/, `${name} blinks something out and back`)
@@ -2837,6 +2837,7 @@ describe('The floor schematic', () => {
     const rate = (clock) => css.match(new RegExp(`animation: ${clock} ([\\d.]+)s`))[1]
     assert.equal(rate('fl-fetch'), rate('fl-ship'), 'the claw must keep the shipment period')
     assert.equal(rate('fl-drop'), rate('fl-ship'), 'the green feed must keep the shipment period')
+    assert.equal(rate('fl-span'), rate('fl-fetch'), 'the bridge must keep the clock of the jaws it carries')
     assert.notEqual(rate('fl-flip'), rate('fl-fetch'), 'the board keeps a rate of its own')
     for (const owned of ['fl-claim', 'fl-stroke', 'fl-advance', 'fl-arrive', 'fl-run', 'fl-wind', 'fl-press', 'fl-issue', 'fl-dock', 'fl-bud', 'fl-escort', 'fl-haul']) {
       assert.equal(rate(owned), rate('fl-patrol'), `${owned} is courier-caused, so it must keep the round's own period`)
@@ -2968,12 +2969,15 @@ describe('The floor schematic', () => {
     // the cargo clocks say, anywhere on the round.
     assert.equal((floor.match(/className="fl-parcel"/g) || []).length, 2)
     assert.match(css, /\.fl-watch\.is-shy \.fl-parcel \{ opacity: 0; \}/)
-    // The speed lines: one trailing set per direction, opacity only, lit
-    // only while a leg is actually being flown.
-    assert.match(floor, /className="fl-whoosh is-go"/)
-    assert.match(floor, /className="fl-whoosh is-home"/)
-    assert.match(css, /\.fl-whoosh \{\s*\n\s*opacity: 0;/)
-    assert.doesNotMatch(css.match(/@keyframes fl-zoom \{([\s\S]*?)\n\}/)[1], /transform/, 'speed lines inherit their motion')
+    // The lens: motion marked as a field, not exhaust - two rings and
+    // four tangent-stretched matrix dots riding the dip wrapper, opacity
+    // only, lit only mid-flight and on the ride home.
+    assert.match(floor, /className="fl-lens"/)
+    assert.ok((floor.match(/className="fl-mote"/g) || []).length >= 4, 'the lens catches dots of the field')
+    assert.match(css, /\.fl-lens \{\s*\n\s*opacity: 0;/)
+    assert.doesNotMatch(css.match(/@keyframes fl-warp \{([\s\S]*?)\n\}/)[1], /transform/, 'the lens inherits its motion')
+    assert.doesNotMatch(floor, /fl-whoosh/)
+    assert.doesNotMatch(css, /fl-whoosh|fl-zoom/)
     // THE SHADOW SITS ON THE FLOOR IT SHADES: the groundwrap steps to each
     // stop's own ground line, derived from the same anchors as the stops
     // (ground = CY + (px+py)*ISO_Y, ellipse drawn at 170).
