@@ -58,11 +58,24 @@ describe('one responsive design', () => {
     assert.match(css, /@media \(max-width: 640px\) \{[\s\S]*?\.source-protocol-summary,\s*\n\.source-evidence-grid,\s*\n\.source-screen-grid,\s*\n\.source-replay-grid \{\s*grid-template-columns:\s*1fr;/)
   })
 
-  it('plays the workspace on a phone and marks the stage a phone can see', () => {
+  it('keeps the workspace off phones, and the pan free of chrome', () => {
+    // THE LIVE WORKSPACE IS A DESK INSTRUMENT. At product density it needs a
+    // desk's width; at 380 pixels it was the tallest, densest block on the
+    // page, a cramped model of an instrument playing to nobody. On a phone it
+    // does not render at all - the figures below carry the product - and the
+    // markup stays in place behind the one narrow gate, so nothing else about
+    // the hero changes. In a narrow desktop WINDOW it still renders and still
+    // reflows through its own container queries, which is why those rules
+    // survive it.
+    assert.match(app, /\{narrow \? null : <div className="hero-workspace-wrap"><MiniRun \/><\/div>\}/)
     assert.match(app, /const playing = shouldPlayAutoplay\(\{ reduced, held, inView, visible \}\)/)
-    assert.doesNotMatch(app, /!narrow && shouldPlayAutoplay/)
     assert.doesNotMatch(mobile, /animation:\s*none !important/)
     // Lying on its side the rail marker has to become an underline.
     assert.match(css, /@container product-window \(max-width: 900px\) \{[\s\S]*?#root \.hero-app-nav button\.active::before \{[\s\S]*?height:\s*3px;/)
+    // And the figures pan with NO VISIBLE CHROME: a figure cut at both edges
+    // says it continues, a finger says where, and a scrollbar drawn over the
+    // sheet is the one piece of browser furniture the drawing cannot absorb.
+    assert.match(mobile, /#root \.dgm-frame \{[\s\S]*?scrollbar-width: none;/)
+    assert.match(mobile, /#root \.dgm-frame::-webkit-scrollbar \{ display: none; \}/)
   })
 })

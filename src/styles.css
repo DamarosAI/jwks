@@ -12759,13 +12759,19 @@ html.is-hidden .clinic-node i,
 }
 .fl-vessel-cut { fill: color-mix(in srgb, var(--deep) 58%, var(--surface-solid)); stroke: none; }
 
-/* The pylons at Resolve's opening: the wall thickening at its own gate. */
+/* The pylons at a gate: the wall thickening at its own opening. Screening's
+   gate is THE AMBER STATION, so its pylons take the hold stain - the exit
+   reads as amber from across the room, which is the whole point of putting
+   the verdict on the wall. */
 .fl-pylon-wall { fill: var(--deep); stroke: none; }
 .fl-pylon-cap {
   fill: color-mix(in srgb, var(--deep) 52%, var(--surface-solid));
   stroke: color-mix(in srgb, var(--line) 60%, transparent);
   stroke-width: 1;
 }
+
+.fl-step.is-screening .fl-pylon-wall { fill: var(--hold); }
+.fl-step.is-screening .fl-pylon-cap { fill: color-mix(in srgb, var(--hold) 55%, var(--surface-solid)); }
 
 /* The near half arrives with the plate it stands on; the far half is inside
    the plate group and inherits its fade. */
@@ -13447,17 +13453,36 @@ html.is-hidden .clinic-node i,
   animation-delay: calc(var(--turn, 0) * -1.87s);
 }
 
-/* A cell APPROACHES its pore and sinks. It used to materialise in the air
-   over the mouth and drop, which is not material arriving anywhere - so it
-   now waits one step inboard, slides a plan-axis step to the mouth, and goes
-   down. The traverse and the descent are written separately, the same two
-   honest moves the claw makes. */
+/* THE APPROACH. A cell waits one step short of its pore, slides one
+   plan-axis step - toward the far edge, the same bearing every verdict on
+   this plate travels - and hands off at the rim: it fades exactly as the
+   stained cell inside the bore appears, so one subject arrives, is ruled,
+   and goes down. The descent itself belongs to `fl-swallow`, drawn inside
+   the opening. */
 @keyframes fl-drop {
-  0%, 10% { transform: translate(0px, 0px) translateY(0px); opacity: 1; }
-  28%, 36% { transform: translate(12.12px, 4.76px) translateY(0px); opacity: 1; }
-  54%, 60% { transform: translate(12.12px, 4.76px) translateY(13px); opacity: 0; }
-  84% { transform: translate(0px, 0px) translateY(0px); opacity: 0; }
-  94%, 100% { transform: translate(0px, 0px) translateY(0px); opacity: 1; }
+  0%, 10% { transform: translate(0px, 0px); opacity: 1; }
+  28%, 34% { transform: translate(12.12px, -4.76px); opacity: 1; }
+  40% { transform: translate(12.12px, -4.76px); opacity: 0; }
+  86% { transform: translate(0px, 0px); opacity: 0; }
+  94%, 100% { transform: translate(0px, 0px); opacity: 1; }
+}
+
+/* THE SWALLOW. Absent at rest - an empty pore holds nothing - it appears
+   inside the mouth on the beat the approach cell fades at the rim, already
+   stained by the pore that ruled it, and goes down the bore to nothing.
+   Clipped to the opening, so only what is genuinely inside is drawn. */
+.fl-sunk { opacity: 0; }
+
+.dgm-svg.is-live.is-fused .fl-sunk {
+  animation: fl-swallow 5.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation-delay: calc(var(--turn, 0) * -1.87s);
+}
+
+@keyframes fl-swallow {
+  0%, 34% { transform: translateY(0px); opacity: 0; }
+  40% { transform: translateY(1px); opacity: 1; }
+  58%, 64% { transform: translateY(9px); opacity: 0; }
+  100% { transform: translateY(0px); opacity: 0; }
 }
 
 /* THE GOLGI STACK. Three flattened discs, widest first - the organelle whose
@@ -13466,20 +13491,23 @@ html.is-hidden .clinic-node i,
 .fl-golgi .dgm-face-top { fill: color-mix(in srgb, var(--tone) 30%, var(--surface-solid)); }
 .fl-golgi .dgm-face-right { fill: color-mix(in srgb, var(--tone) 58%, var(--surface-solid)); }
 
-/* THE HANDOFF. The amber cell is the only thing that leaves this plate, and
-   it is not thrown any more - it is SENT: along the printed lane, through
-   the slot cut in the plate's own wall, toward the plate where the person
-   is. It slides on the +x plan axis - the one bearing that crosses the
-   drawn gate - fades as it clears the edge, and comes home invisible so the
-   cycle closes on the frame it opened with. */
-.dgm-svg.is-live.is-fused .fl-handoff { animation: fl-handoff 5.6s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
+/* THE HANDOFF, ON RESOLVE'S OWN CLOCK. The amber cell is the only thing
+   that leaves this plate, and it is SENT: down the printed lane, through
+   the amber-pyloned gate in the far wall, on the -y plan axis - the one
+   bearing that crosses the drawn slot and points at the next plate. It runs
+   at 4.8s, the period every clock on Resolve keeps, and fades out at 70%;
+   Resolve's `fl-arrive` slides its feed in through the entry gate at 84%.
+   Two keyframe blocks, one period, no shared element - which is what lets a
+   reader watch the same subject leave one plate and enter the next without
+   either plate reaching across the seam. */
+.dgm-svg.is-live.is-fused .fl-handoff { animation: fl-handoff 4.8s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
 
 @keyframes fl-handoff {
-  0%, 46% { transform: translate(0px, 0px); opacity: 1; }
-  58% { transform: translate(25.98px, 10.2px); opacity: 1; }
-  74% { transform: translate(45.03px, 17.68px); opacity: 0; }
-  88% { transform: translate(0px, 0px); opacity: 0; }
-  96%, 100% { transform: translate(0px, 0px); opacity: 1; }
+  0%, 38% { transform: translate(0px, 0px); opacity: 1; }
+  56% { transform: translate(24.25px, -9.52px); opacity: 1; }
+  70% { transform: translate(36.37px, -14.28px); opacity: 0; }
+  84% { transform: translate(0px, 0px); opacity: 0; }
+  92%, 100% { transform: translate(0px, 0px); opacity: 1; }
 }
 
 /* ── RESOLVE IS A HORIZONTAL RAM ─────────────────────────────────────────
@@ -13761,6 +13789,7 @@ html.is-hidden .clinic-node i,
   .fl-lay,
   .fl-throat,
   .fl-faller,
+  .fl-sunk,
   .fl-handoff,
   .fl-lever,
   .fl-ram,

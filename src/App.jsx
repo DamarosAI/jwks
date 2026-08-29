@@ -585,6 +585,11 @@ function MiniRun() {
 function LandingHero() {
   const root = useRef(null)
   const reduced = useReducedMotion()
+  // The live workspace stays off phones: at product density it needs a
+  // desk's width to be an instrument, and at 380px it is a cramped model of
+  // one. The figures below carry the product on a phone; the demo waits for
+  // the screen that can hold it.
+  const narrow = useMediaQuery(NARROW_VIEWPORT)
 
   useEnterMotion(root, reduced, () => {
     const timeline = gsap.timeline({ defaults: { ease: 'power2.out' } })
@@ -611,7 +616,7 @@ function LandingHero() {
           <a className="button button-secondary" href="#trident" onClick={(event) => smoothSection(event, '#trident')}>How it works <ArrowRight size={17} weight="bold" /></a>
         </div>
       </div>
-      <div className="hero-workspace-wrap"><MiniRun /></div>
+      {narrow ? null : <div className="hero-workspace-wrap"><MiniRun /></div>}
       <a className="hero-scroll-cue" href="#thesis" aria-label="Continue to the thesis" onClick={(event) => smoothSection(event, '#thesis')}>
         <CaretDown size={22} weight="bold" />
       </a>

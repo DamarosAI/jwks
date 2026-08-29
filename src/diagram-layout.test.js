@@ -2057,7 +2057,7 @@ describe('The floor schematic', () => {
     const own = {
       protocol: ['fl-board', 'fl-toggle', 'fl-seat'],
       evidence: ['fl-rig', 'fl-claw', 'fl-carry', 'fl-pick', 'fl-lay'],
-      screening: ['fl-hole', 'fl-throat', 'fl-faller', 'fl-golgi', 'fl-handoff'],
+      screening: ['fl-hole', 'fl-throat', 'fl-faller', 'fl-sunk', 'fl-golgi', 'fl-handoff'],
       resolve: ['fl-ram', 'fl-pivot', 'fl-lever', 'fl-index', 'fl-feed', 'fl-pushed'],
       replay: ['fl-tape', 'fl-reel', 'fl-head', 'fl-frame', 'fl-spin'],
     }
@@ -2099,28 +2099,46 @@ describe('The floor schematic', () => {
     assert.equal(verdicts.length, cols.length * rows.length, 'every switch on the board settles')
     assert.ok(verdicts.includes('pass') && verdicts.includes('fail'), 'a board where everything passes is not a screen')
 
-    // SCREENING'S THREE VERDICT SEATS SIT AT ONE PLAN X WITH THE PLAN Y
-    // STEPPING, parallel to the plate's own front-right edge. Green, red,
-    // amber, left to right - and the amber one nearest the corner that points
-    // at Resolve, because that is the one that goes there. The first two are
+    // SCREENING'S THREE VERDICT SEATS LINE THE FAR LONG EDGE: one plan y,
+    // stepping along the plan x that edge itself runs on. Green, red, amber,
+    // left to right - and the amber one nearest the corner that points at
+    // Resolve, because that is the one that goes there. The first two are
     // terminal pores; the third is not a pore at all, it is the GATE.
     const hole = [...floor.match(/^ +const hole = (\[.*\])$/m)[1].matchAll(/\[(-?\d+), (-?\d+), '(\w+)'\]/g)]
       .map((m) => [Number(m[1]), Number(m[2]), m[3]])
     assert.equal(hole.length, 3)
-    assert.equal(new Set(hole.map(([px]) => px)).size, 1, 'three verdicts off one plan axis is a bent plate')
+    assert.equal(new Set(hole.map(([, py]) => py)).size, 1, 'three verdicts off one plan axis is a bent plate')
     const across = hole.map(([px, py, v]) => [(px - py) * 0.866, v]).sort((a, b) => a[0] - b[0])
     assert.deepEqual(across.map(([, v]) => v), ['pass', 'fail', 'hold'])
-    assert.match(floor, /hole\.slice\(0, 2\)\.map\(\(\[px, py, v\]\) => \(\{ \.\.\.well\(px, py, 14, 8\)/)
+    assert.match(floor, /hole\.slice\(0, 2\)\.map\(\(\[px, py, v\], i\) => \(\{\s*\n\s*\.\.\.well\(px, py, 14, 8\)/)
     // A cell APPROACHES its pore - one plan-axis step in from the bed side -
     // and sinks. Material that materialises in the air over a mouth is not
     // material arriving anywhere.
     assert.match(floor, /cls: 'fl-blk fl-faller'/)
-    assert.match(css, /@keyframes fl-drop \{\s*\n\s*0%, 10% \{ transform: translate\(0px, 0px\) translateY\(0px\); opacity: 1; \}/)
-    // THE HANDOFF. The amber cell leaves through the slot in the wall, on the
-    // one plan axis that crosses the drawn gate, and Resolve's feed enters
-    // through the matching gate at the back of its own lane.
+    assert.match(css, /@keyframes fl-drop \{\s*\n\s*0%, 10% \{ transform: translate\(0px, 0px\); opacity: 1; \}/)
+    // THE SWALLOW IS DRAWN, NOT IMPLIED. Each terminal pore carries the cell
+    // it is swallowing: a stained cell standing inside the bore, clipped to
+    // the opening's own interior - the far-wall path - appearing on the beat
+    // the approach cell fades at the rim and descending to nothing. What the
+    // pore swallows, it has ruled: the sunk cell wears the pore's stain.
+    assert.match(floor, /swallow: cell\(px, py, null, 5, -6\)/)
+    assert.match(floor, /clipPath id=\{bore\}/)
+    assert.match(floor, /className=\{`fl-blk is-\$\{part\.stain\} fl-sunk`\}/)
+    assert.match(css, /@keyframes fl-swallow \{/)
+    assert.match(css, /\.fl-sunk \{ opacity: 0; \}/)
+    // THE HANDOFF RUNS ON RESOLVE'S CLOCK. The amber cell leaves through the
+    // slot in the far wall on the -y plan axis - the bearing that points at
+    // the next plate - at the 4.8s period every clock on Resolve keeps, and
+    // fades out before Resolve's feed slides in through the entry gate at
+    // 84%: one subject, two plates, one period, and neither plate reaches
+    // across the seam.
     assert.match(floor, /fl-blk is-hold fl-handoff/)
-    assert.match(css, /@keyframes fl-handoff \{/)
+    assert.match(css, /\.fl-handoff \{ animation: fl-handoff 4\.8s/)
+    const sent = css.match(/@keyframes fl-handoff \{([\s\S]*?)\n\}/)[1]
+    assert.ok(Number(sent.match(/(\d+)% \{ transform: translate\(36\.37px, -14\.28px\); opacity: 0/)[1]) <= 84,
+      'the handoff has to be gone before the feed arrives')
+    // And the gate itself is the amber station: its pylons take the stain.
+    assert.match(css, /\.fl-step\.is-screening \.fl-pylon-wall \{ fill: var\(--hold\); \}/)
     assert.match(css, /@keyframes fl-arrive \{\s*\n[\s\S]*?translate\(-22\.52px, -8\.84px\); opacity: 0/)
     // And Resolve is where one comes off the line, which IS the decision: it
     // arrives amber and a person takes it out of the run. THE PUSH IS
@@ -2291,18 +2309,21 @@ describe('The floor schematic', () => {
     assert.match(floor, /item\.key === 'resolve' \? \(/)
     assert.match(css, /\.fl-cut \{ fill: color-mix/)
     assert.equal((floor.match(/wallPath\(WALL_/g) || []).length, 2, 'two membrane lines part, and nothing else does')
-    const gates = floor.match(/const GATES = \{\s*\n\s*screening: \{ right: \[(-?\d+), (-?\d+)\] \},\s*\n\s*resolve: \{ back: \[(-?\d+), (-?\d+)\], front: \[(\d+), (\d+)\] \},/)
+    const gates = floor.match(/const GATES = \{\s*\n\s*screening: \{ far: \[(-?\d+), (-?\d+)\] \},\s*\n\s*resolve: \{ back: \[(-?\d+), (-?\d+)\], front: \[(\d+), (\d+)\] \},/)
       .slice(1).map(Number)
     const holdSeat = [...floor.match(/^ +const hole = (\[.*\])$/m)[1].matchAll(/\[(-?\d+), (-?\d+), '(\w+)'\]/g)]
       .map((m) => [Number(m[1]), Number(m[2]), m[3]]).find(([, , v]) => v === 'hold')
-    assert.ok(gates[0] <= holdSeat[1] - 7 && gates[1] >= holdSeat[1] + 7,
+    assert.ok(gates[0] <= holdSeat[0] - 7 && gates[1] >= holdSeat[0] + 7,
       'the slot has to clear the amber cell that leaves through it')
     const lane = Number(floor.match(/const lane = (\d+)/)[1])
     assert.ok(gates[2] <= lane - 7 && gates[3] >= lane + 7,
       'the entry gate has to clear the lane it feeds')
     assert.deepEqual([gates[4], gates[5]], gap, 'the exit wall gap brackets the membrane gap on the same lane')
     const dish = floor.match(/const DISH = \{ hx: ([\d.]+), hy: ([\d.]+), r: (\d+)/).slice(1).map(Number)
-    assert.ok(gates[0] >= -(dish[1] - dish[2]) && gates[3] <= dish[1] - dish[2], 'a gate must sit on the straight run of its edge')
+    assert.ok(gates[0] >= -(dish[0] - dish[2]) && gates[1] <= dish[0] - dish[2],
+      'the far gate must sit on the straight run of the long edge')
+    assert.ok(gates[2] >= -(dish[1] - dish[2]) && gates[3] <= dish[1] - dish[2],
+      'the entry gate must sit on the straight run of the back edge')
 
     // The membrane is context, not content: fainter than the plan the machine
     // stands in, and never animated - a wall does not run.
@@ -2532,7 +2553,7 @@ describe('The floor schematic', () => {
     // allowed to reach zero opacity are the blocks that are genuinely absent
     // for part of the cycle: one in flight from the catapult, and one being
     // pushed off the line. Everything standing on a plate stays standing.
-    const vanish = ['fl-handoff', 'fl-shove', 'fl-drop', 'fl-borne', 'fl-picked', 'fl-laid', 'fl-arrive']
+    const vanish = ['fl-handoff', 'fl-swallow', 'fl-shove', 'fl-drop', 'fl-borne', 'fl-picked', 'fl-laid', 'fl-arrive']
     for (const [, name, body] of css.matchAll(/@keyframes (fl-[a-z]+) \{([\s\S]*?)\n\}/g)) {
       if (vanish.includes(name)) continue
       assert.doesNotMatch(body, /opacity: 0[;\s]/, `${name} blinks something out and back`)
@@ -2560,9 +2581,9 @@ describe('The floor schematic', () => {
       // A claw crosses on a plan axis and drops on the screen's own y, and the
       // two are written separately because they are two different honest moves.
       'fl-fetch': /transform: translate\([\d.]+px, [\d.]+px\) translateY\(\d+px\)/,
-      // A cell approaches its pore on a plan axis, then goes straight down -
-      // two honest moves, written separately like the claw's.
-      'fl-drop': /transform: translate\([\d.]+px, [\d.]+px\) translateY\(13px\)/,
+      // A cell approaches its pore on a plan axis and hands off at the rim;
+      // the descent is fl-swallow's, straight down inside the bore.
+      'fl-drop': /transform: translate\(12\.12px, -4\.76px\)/,
       // A ram lies flat and travels across the lane, which is the one motion
       // here that goes to the LEFT along a plan axis.
       'fl-stroke': /transform: translate\(-[\d.]+px, [\d.]+px\)/,

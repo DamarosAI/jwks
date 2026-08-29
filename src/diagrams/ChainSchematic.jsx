@@ -186,18 +186,21 @@ const DISH = { hx: 76.5, hy: 50, r: 18, t: 5, h: 7 }
    cross-section face and wears a small pylon, the wall thickening at its own
    opening the way a boundary does at a regulated gate.
 
-   Screening's wall opens on its front-RIGHT edge, level with the amber lane:
-   the cell the machine cannot settle is not thrown any more, it is sent -
-   through a slot in the wall, toward the plate where the person is. Resolve
-   answers with two openings of its own: an entry gate at the BACK of its
-   lane, where the amber material arrives, and the exit over its near edge
-   where the signed decision pushes one cell out. Two plates, three gates,
-   one path a reader can follow across the bench.
+   Screening's wall opens on its FAR LONG edge, dead ahead of the amber
+   seat: the three verdicts line that edge, and where green and red are
+   pores, amber is a gate - the cell the machine cannot settle is not
+   thrown, it is SENT, straight through the wall toward the plate where the
+   person is, and the gate's own pylons take the amber stain so the exit
+   reads as the amber station from across the room. Resolve answers with two
+   openings of its own: an entry gate at the BACK of its lane, where the
+   amber material arrives on the same clock it left on, and the exit over
+   its near edge where the signed decision pushes one cell out. Two plates,
+   three gates, one path a reader can follow across the bench.
 
    Every gap is written in the wall's own plan units, on the straight run of
    its edge - the corner arcs are never cut. */
 const GATES = {
-  screening: { right: [-31, -13] },
+  screening: { far: [31, 49] },
   resolve: { back: [-7, 11], front: [14, 42] },
 }
 
@@ -220,8 +223,9 @@ const r1 = (v) => Math.round(v * 100) / 100
 
    Gates cut the straight runs: `right` is a span of plan y on the +x edge
    (front-right face), `front` a span of plan x on the +y edge (front-left
-   face), `back` a span of plan y on the -x edge (back-left face). The first
-   two belong to the near half, the last to the far half. */
+   face), `back` a span of plan y on the -x edge (back-left face), and `far`
+   a span of plan x on the -y edge (the far long face). The first two belong
+   to the near half, the last two to the far half. */
 const vessel = (seat, gates = null) => {
   const p = project(seat[0], seat[1])
   const { hx, hy, r, t, h } = DISH
@@ -243,6 +247,9 @@ const vessel = (seat, gates = null) => {
       }
       if (gates.back && pt[0] === -(hx - dx) && next[0] === -(hx - dx) && pt[1] > next[1]) {
         out.push([-(hx - dx), gates.back[1]], [-(hx - dx), gates.back[0]])
+      }
+      if (gates.far && pt[1] === -(hy - dy) && next[1] === -(hy - dy) && pt[0] < next[0]) {
+        out.push([gates.far[0], -(hy - dy)], [gates.far[1], -(hy - dy)])
       }
     })
     return out
@@ -315,6 +322,12 @@ const vessel = (seat, gates = null) => {
     backCuts.push(
       [[-hx, gates.back[1]], [-(hx - t), gates.back[1]]],
       [[-hx, gates.back[0]], [-(hx - t), gates.back[0]]],
+    )
+  }
+  if (gates?.far) {
+    backCuts.push(
+      [[gates.far[0], -hy], [gates.far[0], -(hy - t)]],
+      [[gates.far[1], -hy], [gates.far[1], -(hy - t)]],
     )
   }
 
@@ -661,47 +674,55 @@ function mechanism(key, t) {
     //
     // The cells arrive with NO stain. The pore is what gives them one.
     screening: () => {
-      // Three verdict seats at one plan x, parallel to the plate's own
-      // front-right edge: green, red, amber, left to right. The first two are
-      // terminal pores. The third is not a pore at all - it is the GATE.
-      const hole = [[50, 30, 'pass'], [50, 0, 'fail'], [50, -22, 'hold']]
-      const wait = [-30, -6].flatMap((py) => [-56, -34, -12].map((px) => [px, py]))
+      // THE THREE VERDICTS LINE THE FAR LONG EDGE, at one plan y, stepping
+      // along the plan x the edge itself runs on: green, red, amber, left to
+      // right, with the amber seat nearest the corner that points at Resolve.
+      // The first two are terminal pores. The third is not a pore at all -
+      // it is the GATE, cut through the wall dead ahead of it.
+      const hole = [[-40, -30, 'pass'], [0, -30, 'fail'], [40, -30, 'hold']]
+      const wait = [2, 24].flatMap((py) => [-58, -36, -14].map((px) => [px, py]))
       return [
         printed(-800, 'fl-print', [
-          <rect key="bed" x="-60" y="-38" width="56" height="42" rx="14" />,
-          // Two vesicles budding off the stack, printed - the sorted material
-          // leaving the organelle for the pores.
-          <circle className="fl-ruled" key="v1" cx="-10" cy="30" r="3.4" />,
-          <circle className="fl-ruled" key="v2" cx="0" cy="38" r="2.6" />,
-          // THE AMBER LANE. The cell the machine cannot settle is not thrown
-          // any more - it is SENT, along a printed lane, through a slot cut in
-          // the plate's own wall, toward the plate where the person is. The
-          // lane runs from the hold bay to the gate so the exit is drawn
-          // before anything travels it.
-          <rect key="bay" x="16" y="-32" width="36" height="20" rx="9" />,
-          <line className="fl-ruled" key="lane" x1="34" y1="-22" x2="74" y2="-22" />,
+          <rect key="bed" x="-66" y="-6" width="60" height="40" rx="14" />,
+          // Two vesicles budding off the stack toward the verdict line,
+          // printed - sorted material leaving the organelle.
+          <circle className="fl-ruled" key="v1" cx="6" cy="4" r="3.4" />,
+          <circle className="fl-ruled" key="v2" cx="16" cy="-4" r="2.6" />,
+          // THE AMBER LANE. From the hold bay straight through the gate in
+          // the far wall, printed before anything travels it.
+          <rect key="bay" x="28" y="-46" width="24" height="38" rx="10" />,
+          <line className="fl-ruled" key="lane" x1="40" y1="-10" x2="40" y2="-52" />,
         ]),
         // THE GOLGI STACK. The organelle whose whole job is sorting and
-        // dispatch stands on the plate that sorts and dispatches: three
-        // flattened discs, widest at the bottom, in the station's own ink.
-        // The machinery of the step stays the pores and the gate - the stack
-        // is the body those mechanisms belong to.
-        { ...drum(-34, 24, 16, 2.5), cls: 'fl-golgi' },
-        { ...drum(-34, 24, 12.5, 2.5, 2.5), cls: 'fl-golgi' },
-        { ...drum(-34, 24, 9, 2.5, 5), cls: 'fl-golgi' },
+        // dispatch stands between the bed and the verdict line, in the
+        // station's own ink. The machinery of the step stays the pores and
+        // the gate - the stack is the body those mechanisms belong to.
+        { ...drum(26, 24, 16, 2.5), cls: 'fl-golgi' },
+        { ...drum(26, 24, 12.5, 2.5, 2.5), cls: 'fl-golgi' },
+        { ...drum(26, 24, 9, 2.5, 5), cls: 'fl-golgi' },
         ...wait.map(([px, py], i) => cell(px, py, null, 5, 0, { turn: i })),
-        // The two terminal pores, fully inside the wall now - a pore is a
-        // hole in a boundary, and these sit against the membrane print, not
-        // through the vessel's own rim.
-        ...hole.slice(0, 2).map(([px, py, v]) => ({ ...well(px, py, 14, 8), cls: `fl-hole is-${v}` })),
-        // A cell APPROACHES its pore and sinks - one plan-axis step in from
-        // the bed side, then straight down. Material that materialises in the
-        // air above a hole is not material arriving; this is.
-        ...hole.slice(0, 2).map(([px, py], i) => cell(px - 14, py, null, 5, 0, { cls: 'fl-blk fl-faller', turn: i })),
-        // The amber cell, at the hold bay, already ruled: it slides the lane
-        // and leaves through the gate. Where it goes is drawn on the next
-        // plate - the entry gate at the back of Resolve's own lane.
-        { ...cell(30, -22, 'hold', 5), cls: 'fl-blk is-hold fl-handoff', depth: OVER + 4 },
+        // The two terminal pores. Each carries the cell it is swallowing:
+        // a stained cell standing INSIDE the bore, clipped to the opening
+        // the way Trident clips its shaft, so a reader watches the material
+        // go down the hole rather than vanish behind a painted disc. The
+        // stain is the pore's own - what the pore swallows, it has ruled.
+        ...hole.slice(0, 2).map(([px, py, v], i) => ({
+          ...well(px, py, 14, 8),
+          cls: `fl-hole is-${v}`,
+          stain: v,
+          turn: i,
+          swallow: cell(px, py, null, 5, -6),
+        })),
+        // A cell APPROACHES its pore - one plan-axis step toward the far
+        // edge, the same bearing every verdict travels - arrives at the rim,
+        // and hands off to the one sinking inside. Material that materialises
+        // in the air above a hole is not material arriving; this is.
+        ...hole.slice(0, 2).map(([px, py], i) => cell(px, py + 14, null, 5, 0, { cls: 'fl-blk fl-faller', turn: i })),
+        // The amber cell, at the hold bay, already ruled: it runs the lane on
+        // RESOLVE'S OWN CLOCK, through the gate, and the feed entering the
+        // back of Resolve's lane picks up the beat two frames later - one
+        // subject, two plates, one period.
+        { ...cell(40, -16, 'hold', 5), cls: 'fl-blk is-hold fl-handoff', depth: OVER + 4 },
       ]
     },
     // RESOLVE IS A HORIZONTAL RAM.
@@ -1033,7 +1054,7 @@ export default function ChainSchematic({ animate = true }) {
           className={`dgm-svg is-floor${animate ? ' is-live' : ''}${fused ? ' is-fused' : ''}`}
           viewBox={`0 0 ${W} ${H}`}
           role="img"
-          aria-label="Thirty surfaces scattered in the air, seen in axonometric projection. As the reader reaches the figure they draw together and set down flush, six at a time, into five plates in a row, and stay there - each plate bounded by its own printed double-walled membrane, the way a section drawing bounds a cell. A survey line rules under the row and letters the five stations beneath it: Protocol, Evidence, Screening, Resolve, Replay. One cell - a round body with its nucleus drawn on top - runs the whole row. A grid of twelve switches on a breaker board is thrown one at a time, each settling green or red. A claw on a gantry lifts a cell out of a heap and sets it into an ordered bed of round sockets. Three pores cut through the next plate along its front-right edge take cells that arrive unstained - green, red, and an amber one for what the machine cannot settle, which is catapulted to the plate beyond. There a hand throws a lever, a horizontal ram crosses the lane and pushes one cell clean off the edge through the one gap in the membrane, and the line indexes forward as another arrives. On the last plate the run lies as frames on a tape between two reels, and a head reads its way along and then runs back. Pointing at a plate lifts it off the ground and darkens the ground beneath it."
+          aria-label="Thirty surfaces scattered in the air, seen in axonometric projection. As the reader reaches the figure they draw together and set down flush, six at a time, into five plates in a row, and stay there - each plate bounded by its own printed double-walled membrane, the way a section drawing bounds a cell. A survey line rules under the row and letters the five stations beneath it: Protocol, Evidence, Screening, Resolve, Replay. One cell - a round body with its nucleus drawn on top - runs the whole row. A grid of twelve switches on a breaker board is thrown one at a time, each settling green or red. A claw on a gantry lifts a cell out of a heap and sets it into an ordered bed of round sockets. Along the far long edge of the next plate, three verdict seats wait in a line - green, red, amber. Cells arrive unstained, approach on one bearing, and the green and red pores visibly swallow theirs down their own bores; the amber seat is a gate cut through the plate's wall, its pylons stained amber, and the unsettled cell is sent through it. On the plate beyond it enters a matching gate at the back of the lane, on the same clock it left on. There a hand throws a lever, a horizontal ram crosses the lane and pushes one cell clean off the edge through the one gap in the membrane, and the line indexes forward as the next arrives. On the last plate the run lies as frames on a tape between two reels, and a head reads its way along and then runs back. Pointing at a plate lifts it off the ground and darkens the ground beneath it."
         >
           <defs>
             <pattern id="fl-grain" width="13" height="13" patternUnits="userSpaceOnUse">
@@ -1179,11 +1200,34 @@ export default function ChainSchematic({ animate = true }) {
                         something to go. */}
                     if (part.hole) {
                       const { cx, cy, rx, ry, deep, throat, wall } = part.hole
+                      const bore = `fl-bore-${item.key}-${n}`
                       return (
                         <g className={part.cls} key={`${item.key}-e${n}`}>
                           <path className="fl-wall" d={wall} />
                           <ellipse className="fl-floor" cx={cx} cy={cy + deep} rx={rx} ry={ry} />
                           <ellipse className="fl-throat" cx={cx} cy={cy + deep} rx={throat.rx} ry={throat.ry} />
+                          {/* THE SWALLOW. The cell going down is drawn INSIDE
+                              the bore - between the floor and the rim, clipped
+                              to the opening's own interior, which is exactly
+                              the far-wall path - so what a reader sees is the
+                              material descending through the mouth, stained by
+                              the pore that ruled it, not a disc painting over
+                              a puck. The approach cell outside fades at the
+                              rim on the same beat this one appears. */}
+                          {part.swallow ? (
+                            <>
+                              <clipPath id={bore}>
+                                <path d={wall} />
+                              </clipPath>
+                              <g
+                                className={`fl-blk is-${part.stain} fl-sunk`}
+                                clipPath={`url(#${bore})`}
+                                style={{ '--turn': part.turn ?? 0 }}
+                              >
+                                <Drum shape={part.swallow.shape} core={part.swallow.core} className="dgm-solid" />
+                              </g>
+                            </>
+                          ) : null}
                           <ellipse className="fl-rim" cx={cx} cy={cy} rx={rx} ry={ry} />
                         </g>
                       )

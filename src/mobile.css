@@ -299,7 +299,14 @@ body,
     overflow-x: auto;
     overflow-y: hidden;
     overscroll-behavior-x: contain;
+    /* The pan is the affordance-free kind: a figure cut at both edges says
+       it continues, a finger says where, and no scrollbar ever draws its
+       chrome over the sheet. */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
+
+  #root .dgm-frame::-webkit-scrollbar { display: none; }
 
   #root .dgm-svg { min-width: 500px; }
 
