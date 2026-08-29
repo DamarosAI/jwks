@@ -13505,6 +13505,39 @@ html.is-hidden .clinic-node i,
 .fl-golgi .dgm-face-top { fill: color-mix(in srgb, var(--tone) 30%, var(--surface-solid)); }
 .fl-golgi .dgm-face-right { fill: color-mix(in srgb, var(--tone) 58%, var(--surface-solid)); }
 
+/* THE TRANSCRIPT, ON EVIDENCE'S OWN CLOCK. Protocol ships no material - it
+   ships the document: a faceted tablet in the protocol's own violet, the
+   same ink on both plates it touches, so the thing docking at the gantry is
+   visibly the thing the nucleus exported. Issue and dock run one 7.4s
+   period - the claw's own - the issue gone through the far gate at 72%, the
+   dock sliding in through Evidence's entry gate at 84%, resting on the
+   apron until the work absorbs it. */
+.fl-script .dgm-face-top {
+  fill: color-mix(in srgb, var(--governed) 26%, var(--surface-solid));
+  stroke: color-mix(in srgb, var(--line) 74%, transparent);
+}
+.fl-script .dgm-face-left { fill: color-mix(in srgb, var(--governed) 46%, var(--surface-solid)); }
+.fl-script .dgm-face-right { fill: color-mix(in srgb, var(--governed) 62%, var(--accent-strong)); }
+
+.dgm-svg.is-live.is-fused .fl-issue { animation: fl-issue 7.4s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
+
+@keyframes fl-issue {
+  0%, 46% { transform: translate(0px, 0px); opacity: 1; }
+  60% { transform: translate(7.79px, -3.06px); opacity: 1; }
+  72% { transform: translate(22.52px, -8.84px); opacity: 0; }
+  84% { transform: translate(0px, 0px); opacity: 0; }
+  92%, 100% { transform: translate(0px, 0px); opacity: 1; }
+}
+
+.dgm-svg.is-live.is-fused .fl-dock { animation: fl-dock 7.4s cubic-bezier(0.3, 0, 0.3, 1) infinite; }
+
+@keyframes fl-dock {
+  0%, 30% { transform: translate(0px, 0px); opacity: 1; }
+  40%, 82% { transform: translate(0px, 0px); opacity: 0; }
+  84% { transform: translate(-19.05px, -7.48px); opacity: 0; }
+  98%, 100% { transform: translate(0px, 0px); opacity: 1; }
+}
+
 /* THE SHIPMENT, ON SCREENING'S OWN CLOCK. Organised material leaves the bed
    for the plate that will rule on it: one cell stages short of Evidence's
    far wall, slides the -y plan axis through the gate - fading as it crosses
@@ -13837,6 +13870,8 @@ html.is-hidden .clinic-node i,
   .fl-sunk,
   .fl-ship,
   .fl-join,
+  .fl-issue,
+  .fl-dock,
   .fl-handoff,
   .fl-lever,
   .fl-ram,

@@ -186,24 +186,29 @@ const DISH = { hx: 76.5, hy: 50, r: 18, t: 5, h: 7 }
    cross-section face and wears a small pylon, the wall thickening at its own
    opening the way a boundary does at a regulated gate.
 
-   The row is PLUMBED BY GATES now, one handoff per seam, all in one
-   grammar. Evidence ships its organised material out through a gate in its
-   own far wall; Screening receives it through an entry gate at the back of
-   its wait bed, runs its three verdicts along its own far edge - green and
-   red are pores, amber is a GATE, its pylons stained amber so the exit
-   reads as the amber station from across the room - and Resolve answers
-   with an entry gate at the back of its lane and the exit over its near
-   edge where the signed decision pushes one cell out. Each handoff pair
-   runs on the RECEIVING plate's clock, so a cell is seen leaving one plate
-   and entering the next on one period, with neither plate reaching across
-   the seam. Entry gates carry unruled material and keep the station's own
-   ink; only the amber gate wears a verdict, because only there has one
-   been given.
+   EVERY SEAM IS PLUMBED NOW, one handoff per gap, all in one grammar, and
+   what crosses each seam is what the story says crosses it. Protocol ships
+   no material - it has none; it ships THE TRANSCRIPT: a small faceted
+   tablet in the protocol's own violet, compiled by the switch bank,
+   staged beside the nucleus and sent through the far wall to dock at the
+   foot of Evidence's gantry - the machine that organises receives the
+   instructions it organises by, and a nucleus exporting a transcript
+   through its own envelope is what a nucleus is for. Evidence ships its
+   organised material on through its far gate; Screening receives it at the
+   back of its wait bed, runs its verdicts along its own far edge - green
+   and red are pores, amber is a GATE, its pylons stained amber - and
+   Resolve answers with an entry gate at the back of its lane and the exit
+   over its near edge where the signed decision pushes one cell out. Each
+   handoff pair runs on the RECEIVING plate's clock, so one subject is seen
+   leaving and arriving on one period, with neither plate reaching across
+   the seam. Entry gates keep the station's own ink; only the amber gate
+   wears a verdict, because only there has one been given.
 
    Every gap is written in the wall's own plan units, on the straight run of
    its edge - the corner arcs are never cut. */
 const GATES = {
-  evidence: { far: [19, 37] },
+  protocol: { far: [37, 55] },
+  evidence: { back: [9, 27], far: [19, 37] },
   screening: { back: [-7, 11], far: [31, 49] },
   resolve: { back: [-7, 11], front: [14, 42] },
 }
@@ -578,6 +583,9 @@ function mechanism(key, t) {
       return [
         printed(-800, 'fl-print', [
           <rect key="seat" x="-46" y="-38" width="92" height="76" rx="28" />,
+          // The export lane: from the nucleus's edge to the gate in the far
+          // wall, printed before anything travels it.
+          <line className="fl-ruled" key="issue" x1="46" y1="-34" x2="46" y2="-52" />,
         ]),
         // THE BANK IS DRAWN FIRST, AND NOT AT ITS OWN DEPTH. Sorted by its
         // centre, a plate-sized bank draws OVER every switch standing on its
@@ -601,6 +609,15 @@ function mechanism(key, t) {
           { ...stand(px, py, 5, 5, 5, 4.5, 3), cls: 'fl-seat' },
           arm(`fl-toggle is-${verdict[i]}`, px, py, 11, 11, 4, { knob: 3.2, turn: i }),
         ]),
+        // THE TRANSCRIPT. This plate holds no material - it holds the
+        // document, and the document is what it ships: a small faceted
+        // tablet, structure by the sheet's own law, in the protocol's own
+        // ink on every plate it touches. It stages in the clear ground
+        // between the nucleus and the far wall - off the bank's rounded
+        // corner - and ships through the gate on EVIDENCE'S clock, so the
+        // tablet seen leaving here is the tablet seen docking at the gantry
+        // next door two beats later.
+        { ...stand(46, -39, 5.5, 4.5, 4, 2), cls: 'fl-script fl-issue', depth: OVER + 4 },
       ]
     },
     // EVIDENCE IS A PICK AND PLACE.
@@ -666,6 +683,11 @@ function mechanism(key, t) {
         // them. All three ride one clock, so the cell travels because the claw
         // is carrying it rather than beside it.
         { ...cell(-52, -20, null, 5, 14), cls: 'fl-blk fl-carry', depth: OVER + 1 },
+        // THE DOCKED TRANSCRIPT. The instructions this machine organises by,
+        // arrived through the entry gate in the back wall on this plate's own
+        // clock, resting on the apron by the pile until the work consumes it
+        // and the next one arrives.
+        { ...stand(-65, 18, 5.5, 4.5, 4, 2), cls: 'fl-script fl-dock' },
         // THE SHIPMENT. Organised material does not pile up on the bed - it
         // goes on to be screened. One cell stages between the bed and the far
         // wall and ships through the gate, on SCREENING'S intake clock, so
@@ -1077,7 +1099,7 @@ export default function ChainSchematic({ animate = true }) {
           className={`dgm-svg is-floor${animate ? ' is-live' : ''}${fused ? ' is-fused' : ''}`}
           viewBox={`0 0 ${W} ${H}`}
           role="img"
-          aria-label="Thirty surfaces scattered in the air, seen in axonometric projection. As the reader reaches the figure they draw together and set down flush, six at a time, into five plates in a row, and stay there - each plate bounded by its own printed double-walled membrane, the way a section drawing bounds a cell. A survey line rules under the row and letters the five stations beneath it: Protocol, Evidence, Screening, Resolve, Replay. One cell - a round body with its nucleus drawn on top - runs the whole row. A grid of twelve switches on a breaker board is thrown one at a time, each settling green or red. A claw on a gantry lifts a cell out of a heap and sets it into an ordered bed of round sockets. Along the far long edge of the next plate, three verdict seats wait in a line - green, red, amber. Cells arrive unstained, approach on one bearing, and the green and red pores visibly swallow theirs down their own bores; the amber seat is a gate cut through the plate's wall, its pylons stained amber, and the unsettled cell is sent through it. On the plate beyond it enters a matching gate at the back of the lane, on the same clock it left on. There a hand throws a lever, a horizontal ram crosses the lane and pushes one cell clean off the edge through the one gap in the membrane, and the line indexes forward as the next arrives. On the last plate the run lies as frames on a tape between two reels, and a head reads its way along and then runs back. Pointing at a plate lifts it off the ground and darkens the ground beneath it."
+          aria-label="Thirty surfaces scattered in the air, seen in axonometric projection. As the reader reaches the figure they draw together and set down flush, six at a time, into five plates in a row, and stay there - each plate bounded by its own printed double-walled membrane, the way a section drawing bounds a cell. A survey line rules under the row and letters the five stations beneath it: Protocol, Evidence, Screening, Resolve, Replay. One cell - a round body with its nucleus drawn on top - runs the whole row. A grid of twelve switches on a breaker board is thrown one at a time, each settling green or red, and the compiled protocol ships out through a gate in the plate's wall as a small violet tablet. It docks beside the next plate's gantry, where a claw lifts a cell out of a heap and sets it into an ordered bed of round sockets, and the organised material ships onward through that plate's own far gate. Along the far long edge of the next plate, three verdict seats wait in a line - green, red, amber. Cells arrive unstained, approach on one bearing, and the green and red pores visibly swallow theirs down their own bores; the amber seat is a gate cut through the plate's wall, its pylons stained amber, and the unsettled cell is sent through it. On the plate beyond it enters a matching gate at the back of the lane, on the same clock it left on. There a hand throws a lever, a horizontal ram crosses the lane and pushes one cell clean off the edge through the one gap in the membrane, and the line indexes forward as the next arrives. On the last plate the run lies as frames on a tape between two reels, and a head reads its way along and then runs back. Pointing at a plate lifts it off the ground and darkens the ground beneath it."
         >
           <defs>
             <pattern id="fl-grain" width="13" height="13" patternUnits="userSpaceOnUse">

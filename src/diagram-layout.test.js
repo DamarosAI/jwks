@@ -2055,8 +2055,8 @@ describe('The floor schematic', () => {
     // thing it does to that material: a board of switches, a claw on a gantry,
     // three throats, a ram across a lane, a tape transport.
     const own = {
-      protocol: ['fl-board', 'fl-toggle', 'fl-seat'],
-      evidence: ['fl-rig', 'fl-claw', 'fl-carry', 'fl-pick', 'fl-lay', 'fl-ship'],
+      protocol: ['fl-board', 'fl-toggle', 'fl-seat', 'fl-issue'],
+      evidence: ['fl-rig', 'fl-claw', 'fl-carry', 'fl-pick', 'fl-lay', 'fl-ship', 'fl-dock'],
       screening: ['fl-hole', 'fl-throat', 'fl-faller', 'fl-sunk', 'fl-join', 'fl-golgi', 'fl-handoff'],
       resolve: ['fl-ram', 'fl-pivot', 'fl-lever', 'fl-index', 'fl-feed', 'fl-pushed'],
       replay: ['fl-tape', 'fl-reel', 'fl-head', 'fl-frame', 'fl-spin'],
@@ -2152,6 +2152,16 @@ describe('The floor schematic', () => {
     assert.match(floor, /cls: 'fl-blk fl-join'/)
     assert.match(css, /\.fl-ship \{ animation: fl-ship 5\.6s/)
     assert.match(css, /\.fl-join \{ animation: fl-join 5\.6s/)
+    // Protocol ships its transcript on EVIDENCE'S 7.4s clock - the claw's
+    // own - and the tablet wears the protocol's violet on both plates, so
+    // the thing docking at the gantry is visibly the thing the nucleus
+    // exported. Structure, not life: it is faceted and carries no nucleus.
+    assert.match(css, /\.fl-issue \{ animation: fl-issue 7\.4s/)
+    assert.match(css, /\.fl-dock \{ animation: fl-dock 7\.4s/)
+    assert.match(css, /\.fl-script \.dgm-face-top \{\s*\n\s*fill: color-mix\(in srgb, var\(--governed\)/)
+    const issued = css.match(/@keyframes fl-issue \{([\s\S]*?)\n\}/)[1]
+    assert.ok(Number(issued.match(/(\d+)% \{ transform: translate\(22\.52px, -8\.84px\); opacity: 0/)[1]) <= 84,
+      'the transcript has to be gone before it docks next door')
     const shipped = css.match(/@keyframes fl-ship \{([\s\S]*?)\n\}/)[1]
     assert.ok(Number(shipped.match(/(\d+)% \{ transform: translate\(24\.25px, -9\.52px\); opacity: 0/)[1]) <= 84,
       'the shipment has to be gone before the join arrives')
@@ -2331,33 +2341,39 @@ describe('The floor schematic', () => {
     assert.match(floor, /item\.key === 'resolve' \? \(/)
     assert.match(css, /\.fl-cut \{ fill: color-mix/)
     assert.equal((floor.match(/wallPath\(WALL_/g) || []).length, 2, 'two membrane lines part, and nothing else does')
-    const gates = floor.match(/const GATES = \{\s*\n\s*evidence: \{ far: \[(-?\d+), (-?\d+)\] \},\s*\n\s*screening: \{ back: \[(-?\d+), (-?\d+)\], far: \[(-?\d+), (-?\d+)\] \},\s*\n\s*resolve: \{ back: \[(-?\d+), (-?\d+)\], front: \[(\d+), (\d+)\] \},/)
+    const gates = floor.match(/const GATES = \{\s*\n\s*protocol: \{ far: \[(\d+), (\d+)\] \},\s*\n\s*evidence: \{ back: \[(\d+), (\d+)\], far: \[(-?\d+), (-?\d+)\] \},\s*\n\s*screening: \{ back: \[(-?\d+), (-?\d+)\], far: \[(-?\d+), (-?\d+)\] \},\s*\n\s*resolve: \{ back: \[(-?\d+), (-?\d+)\], front: \[(\d+), (\d+)\] \},/)
       .slice(1).map(Number)
-    // Evidence's far gate clears the shipping cell; Screening's entry gate
-    // clears the join cell's own bed row.
+    // Protocol's far gate clears the transcript it issues, and Evidence's
+    // entry gate clears where the transcript docks; Evidence's far gate
+    // clears the shipping cell, and Screening's entry gate clears the join
+    // cell's own bed row.
+    assert.match(floor, /stand\(46, -39, 5\.5, 4\.5, 4, 2\), cls: 'fl-script fl-issue'/)
+    assert.match(floor, /stand\(-65, 18, 5\.5, 4\.5, 4, 2\), cls: 'fl-script fl-dock'/)
+    assert.ok(gates[0] <= 46 - 7 && gates[1] >= 46 + 7, 'the export gate has to clear the transcript lane')
+    assert.ok(gates[2] <= 18 - 7 && gates[3] >= 18 + 7, 'the dock gate has to clear where the transcript rests')
     const shipSeat = floor.match(/cell\(28, -36, null, 5\), cls: 'fl-blk fl-ship'/)
     assert.ok(shipSeat, 'the shipment stages somewhere real')
-    assert.ok(gates[0] <= 28 - 7 && gates[1] >= 28 + 7, 'the far gate has to clear the shipment lane')
+    assert.ok(gates[4] <= 28 - 7 && gates[5] >= 28 + 7, 'the far gate has to clear the shipment lane')
     const joinRow = 2
-    assert.ok(gates[2] <= joinRow - 7 && gates[3] >= joinRow + 7, 'the entry gate has to clear the bed row it feeds')
+    assert.ok(gates[6] <= joinRow - 7 && gates[7] >= joinRow + 7, 'the entry gate has to clear the bed row it feeds')
     const holdSeat = [...floor.match(/^ +const hole = (\[.*\])$/m)[1].matchAll(/\[(-?\d+), (-?\d+), '(\w+)'\]/g)]
       .map((m) => [Number(m[1]), Number(m[2]), m[3]]).find(([, , v]) => v === 'hold')
-    assert.ok(gates[4] <= holdSeat[0] - 7 && gates[5] >= holdSeat[0] + 7,
+    assert.ok(gates[8] <= holdSeat[0] - 7 && gates[9] >= holdSeat[0] + 7,
       'the slot has to clear the amber cell that leaves through it')
     const lane = Number(floor.match(/const lane = (\d+)/)[1])
-    assert.ok(gates[6] <= lane - 7 && gates[7] >= lane + 7,
+    assert.ok(gates[10] <= lane - 7 && gates[11] >= lane + 7,
       'the entry gate has to clear the lane it feeds')
-    assert.deepEqual([gates[8], gates[9]], gap, 'the exit wall gap brackets the membrane gap on the same lane')
+    assert.deepEqual([gates[12], gates[13]], gap, 'the exit wall gap brackets the membrane gap on the same lane')
     // And every gap sits on the straight run of its own edge, where the
     // construction can cap it: |x| within hx - r on the long edges, |y|
     // within hy - r on the short ones.
     const dish = floor.match(/const DISH = \{ hx: ([\d.]+), hy: ([\d.]+), r: (\d+)/).slice(1).map(Number)
     const runX = dish[0] - dish[2]
     const runY = dish[1] - dish[2]
-    for (const [lo, hi] of [[gates[0], gates[1]], [gates[4], gates[5]], [gates[8], gates[9]]]) {
+    for (const [lo, hi] of [[gates[0], gates[1]], [gates[4], gates[5]], [gates[8], gates[9]], [gates[12], gates[13]]]) {
       assert.ok(lo >= -runX && hi <= runX, 'a long-edge gate must sit on the straight run')
     }
-    for (const [lo, hi] of [[gates[2], gates[3]], [gates[6], gates[7]]]) {
+    for (const [lo, hi] of [[gates[2], gates[3]], [gates[6], gates[7]], [gates[10], gates[11]]]) {
       assert.ok(lo >= -runY && hi <= runY, 'a short-edge gate must sit on the straight run')
     }
 
@@ -2589,7 +2605,7 @@ describe('The floor schematic', () => {
     // allowed to reach zero opacity are the blocks that are genuinely absent
     // for part of the cycle: one in flight from the catapult, and one being
     // pushed off the line. Everything standing on a plate stays standing.
-    const vanish = ['fl-handoff', 'fl-swallow', 'fl-ship', 'fl-join', 'fl-shove', 'fl-drop', 'fl-borne', 'fl-picked', 'fl-laid', 'fl-arrive']
+    const vanish = ['fl-handoff', 'fl-swallow', 'fl-ship', 'fl-join', 'fl-issue', 'fl-dock', 'fl-shove', 'fl-drop', 'fl-borne', 'fl-picked', 'fl-laid', 'fl-arrive']
     for (const [, name, body] of css.matchAll(/@keyframes (fl-[a-z]+) \{([\s\S]*?)\n\}/g)) {
       if (vanish.includes(name)) continue
       assert.doesNotMatch(body, /opacity: 0[;\s]/, `${name} blinks something out and back`)
