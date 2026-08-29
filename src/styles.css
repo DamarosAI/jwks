@@ -13792,3 +13792,837 @@ html.is-hidden .clinic-node i,
   .fl-faller,
   .fl-lay { opacity: 1; }
 }
+
+/* ────────────────────────────────────────────────────────────────────────────
+   THE PRODUCT WINDOW GROWS A FLOOR, AND THE RUN LEARNS TO SAY WHERE IT STANDS.
+
+   Five views shared one window and each left a different amount of it empty.
+   The window now closes with a run bar: the execution record surfaced as
+   chrome - snapshot, resource count, protocol hash on the left; the guided
+   tour's honest state and a five-segment stage meter on the right. The bar is
+   the same height in every view, so the void under a short view is gone and
+   the tall views give up nothing but the void.
+
+   Machine tokens - record ids, hashes, timestamps, tallies - move to the mono
+   stack the sheet always carried and never used. Data reads as data; prose
+   stays in the UI face. The display and body faces are untouched.
+
+   People stay round, structure stays faceted: avatars and live dots are the
+   only circles, every chip and segment sits on a 5px corner. */
+
+#root .hero-workspace {
+  display: flex;
+  flex-direction: column;
+}
+
+#root .hero-workspace > .mac-titlebar,
+#root .hero-workspace > .run-statusbar {
+  flex: 0 0 auto;
+}
+
+#root .hero-workspace > .hero-app-grid {
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 0;
+  max-height: none;
+}
+
+#root .hero-workspace .landing-source-view {
+  height: 100%;
+  min-height: 0;
+  max-height: none;
+}
+
+/* The mono voice. One rule owns the face; contexts set only size and color. */
+
+#root .hero-workspace code {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--text-soft);
+}
+
+/* ── The run bar ── */
+
+#root .run-statusbar {
+  display: flex;
+  min-height: 34px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 18px;
+  flex-wrap: wrap;
+  padding: 5px 14px;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--muted);
+}
+
+#root .run-statusbar-context {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+#root .run-statusbar-context > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  color: var(--faint);
+  white-space: nowrap;
+}
+
+#root .run-statusbar code {
+  font-size: 10.5px;
+  color: var(--text-soft);
+}
+
+#root .run-id {
+  padding-right: 16px;
+  border-right: 1px solid var(--border);
+}
+
+#root .run-id i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--success);
+  animation: live-pulse 1.8s ease-in-out infinite;
+}
+
+#root .run-id code {
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+#root .run-statusbar-mode {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 0 0 auto;
+}
+
+#root .hero-workspace .run-mode-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 24px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-solid);
+  color: var(--text-soft);
+  font-family: inherit;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: border-color var(--motion-snap), background-color var(--motion-snap), color var(--motion-snap);
+}
+
+#root .hero-workspace .run-mode-chip.is-static {
+  cursor: default;
+}
+
+#root .hero-workspace .run-mode-chip i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--faint);
+  transition: background-color var(--motion-snap);
+}
+
+#root .hero-workspace .run-mode-chip[aria-pressed='true'] i {
+  background: var(--success);
+  animation: live-pulse 1.8s ease-in-out infinite;
+}
+
+#root .run-stage-meter {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+#root .run-stage-meter i {
+  width: 10px;
+  height: 3px;
+  border-radius: 1.5px;
+  background: var(--border-strong);
+  transition: background-color var(--motion-snap), width 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#root .run-stage-meter i.is-done {
+  background: color-mix(in srgb, var(--accent) 46%, var(--border));
+}
+
+#root .run-stage-meter i.is-active {
+  width: 18px;
+  background: var(--accent);
+}
+
+#root .run-stage-count {
+  font-size: 10px;
+  color: var(--faint);
+}
+
+/* ── The rail: a sidebar that answers "how much is behind each door" ──
+   Wide-window geometry only: below 900px the container query further up owns
+   the rail's stacked layout, and a later flat rule here would out-cascade it. */
+
+@container product-window (min-width: 901px) {
+  #root .hero-app-grid {
+    grid-template-columns: 210px minmax(0, 1fr);
+  }
+
+  #root .hero-app-nav {
+    gap: 2px;
+    padding: 14px 10px 12px;
+  }
+
+  #root .hero-app-nav > strong {
+    margin: 2px 10px 10px;
+    text-transform: uppercase;
+  }
+
+  #root .hero-app-nav button {
+    min-height: 38px;
+    padding: 0 10px;
+    font-size: 0.75rem;
+  }
+}
+
+#root .hero-app-nav button .step-tally {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--faint);
+  transition: color var(--motion-snap);
+}
+
+#root .hero-app-nav button.visited .step-tally {
+  color: var(--muted);
+}
+
+#root .hero-app-nav button.active .step-tally {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+#root .hero-rail-foot {
+  display: grid;
+  gap: 9px;
+  margin-top: auto;
+  padding: 12px 10px 2px;
+  border-top: 1px solid var(--border);
+}
+
+#root .hero-rail-foot > div {
+  display: grid;
+  gap: 2px;
+}
+
+#root .hero-rail-foot span {
+  color: var(--faint);
+  font-size: 0.5625rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+#root .hero-rail-foot strong {
+  color: var(--text-soft);
+  font-size: 0.71rem;
+  font-weight: 550;
+}
+
+#root .hero-rail-foot code {
+  font-size: 10.5px;
+  color: var(--muted);
+}
+
+/* ── Protocol: the criteria read as one table, not five loose cards ── */
+
+#root .landing-source-demo .source-criteria-list {
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-solid);
+}
+
+#root .landing-source-demo .source-criteria-list > div {
+  min-height: 40px;
+  border: 0;
+  border-top: 1px solid var(--border);
+  border-radius: 0;
+}
+
+#root .landing-source-demo .source-criteria-list > div:first-child {
+  border-top: 0;
+}
+
+#root .landing-source-demo .source-criteria-list > div.is-live {
+  border-color: var(--border);
+  background: color-mix(in srgb, var(--accent-soft) 38%, white);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+#root .landing-source-demo .source-criteria-list > div > span,
+#root .landing-source-demo .obligation-list button b,
+#root .landing-source-demo .obligation-detail header > span,
+#root .landing-source-demo .source-patient-list button strong small,
+#root .landing-source-demo .source-patient-detail header h4 small,
+#root .landing-source-demo .resolve-subject-title h4 small,
+#root .landing-source-demo .replay-ledger time,
+#root .landing-source-demo .evidence-action-receipt > header strong,
+#root .landing-source-demo .source-arm > b {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* ── Evidence: the state of a row is printed on it, not hinted at ── */
+
+#root .obligation-list .evidence-status-dot {
+  display: none;
+}
+
+#root .obligation-list button > div {
+  grid-template-columns: 46px minmax(0, 1fr) auto;
+}
+
+#root .obligation-list > button {
+  padding: 10px 12px;
+}
+
+#root .landing-source-demo .obl-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 7px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+#root .landing-source-demo .obl-status::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+#root .obligation-list button.missing .obl-status { border-color: color-mix(in srgb, #bd6a22 32%, var(--border)); color: #bd6a22; }
+#root .obligation-list button.conflict .obl-status { border-color: color-mix(in srgb, #de3d5a 32%, var(--border)); color: #de3d5a; }
+#root .obligation-list button.stale .obl-status { border-color: color-mix(in srgb, var(--warning) 32%, var(--border)); color: var(--warning); }
+#root .obligation-list button.ambiguous .obl-status { border-color: color-mix(in srgb, #c8850f 32%, var(--border)); color: #c8850f; }
+#root .obligation-list button.confirm .obl-status { border-color: color-mix(in srgb, var(--success) 32%, var(--border)); color: var(--success); }
+#root .obligation-list button .obl-status.routed { border-color: color-mix(in srgb, var(--accent) 32%, var(--border)); color: var(--accent); }
+
+/* ── Screening: the result tiles are a scope bar the pointer can work ── */
+
+#root .landing-source-demo .screen-summary-strip {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+
+#root .landing-source-demo .screen-summary-strip > button {
+  display: grid;
+  min-height: 56px;
+  align-content: center;
+  gap: 3px;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-solid);
+  color: var(--text-soft);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--motion-snap), background-color var(--motion-snap), box-shadow var(--motion-snap);
+}
+
+#root .landing-source-demo .screen-summary-strip > button strong {
+  font-size: 1.375rem;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+#root .landing-source-demo .screen-summary-strip > button span {
+  color: var(--muted);
+  font-size: 0.6875rem;
+  font-weight: 550;
+}
+
+#root .landing-source-demo .screen-summary-strip > button.pass strong { color: var(--success); }
+#root .landing-source-demo .screen-summary-strip > button.review strong { color: var(--warning); }
+#root .landing-source-demo .screen-summary-strip > button.fail strong { color: #c23a52; }
+
+#root .landing-source-demo .screen-summary-strip > button:not(.is-on):hover {
+  border-color: color-mix(in srgb, var(--accent) 26%, var(--border));
+  background: color-mix(in srgb, var(--accent-soft) 12%, white);
+}
+
+#root .landing-source-demo .screen-summary-strip > button.is-on {
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--border));
+  background: color-mix(in srgb, var(--accent-soft) 26%, white);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+#root .landing-source-demo .screen-summary-strip > button.is-on span {
+  color: var(--text-soft);
+}
+
+/* ── Resolve: a choice discloses its end, and the signer stands by the pen ── */
+
+#root .source-decision-list button {
+  align-items: flex-start;
+  min-height: 54px;
+  padding: 10px 12px 10px 14px;
+}
+
+#root .source-decision-list button > i {
+  margin-top: 3px;
+}
+
+#root .source-decision-list .decision-body {
+  display: grid;
+  flex: 1 1 auto;
+  gap: 3px;
+  min-width: 0;
+}
+
+#root .source-decision-list .decision-body > strong {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+#root .source-decision-list .decision-body > span {
+  color: var(--muted);
+  font-size: 0.71rem;
+  font-weight: 400;
+  line-height: 1.42;
+}
+
+#root .source-decision-list .decision-outcome {
+  flex: 0 0 auto;
+  align-self: flex-start;
+  margin-top: 2px;
+  padding: 2px 7px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+}
+
+#root .source-decision-list .decision-outcome.to-pass {
+  border-color: color-mix(in srgb, var(--success) 32%, var(--border));
+  color: var(--success);
+}
+
+#root .source-decision-list .decision-outcome.to-review {
+  border-color: color-mix(in srgb, var(--warning) 32%, var(--border));
+  color: var(--warning);
+}
+
+#root .source-decision-list button:disabled:not(.selected) .decision-outcome {
+  border-color: var(--border);
+  color: var(--muted);
+}
+
+#root .resolve-signer {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+#root .resolve-signer > i {
+  display: grid;
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--muted);
+  font-size: 0.5625rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+#root .resolve-signer > span {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+#root .resolve-signer strong {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+#root .resolve-signer small {
+  overflow: hidden;
+  color: var(--muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#root .resolve-sign-row > small {
+  flex: 0 1 auto;
+  text-align: right;
+}
+
+#root .landing-source-demo .resolve-compare-bar code {
+  margin-top: 3px;
+  font-size: 10px;
+  color: var(--faint);
+}
+
+#root .landing-source-demo .resolve-signed-receipt code {
+  font-size: 10.5px;
+  color: color-mix(in srgb, var(--success) 72%, var(--text));
+}
+
+/* ── Replay: the ledger is a chain, drawn as one ── */
+
+#root .replay-ledger > header {
+  padding-left: 24px;
+}
+
+#root .replay-ledger > button {
+  position: relative;
+  padding-left: 24px;
+}
+
+#root .replay-ledger > button::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  left: 9px;
+  width: 1px;
+  background: var(--border-strong);
+}
+
+#root .replay-ledger > button:first-of-type::after {
+  top: 50%;
+}
+
+#root .replay-ledger > button:last-of-type::after {
+  bottom: 50%;
+}
+
+#root .replay-ledger > button::before {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  top: calc(50% - 3.5px);
+  left: 6px;
+  width: 5px;
+  height: 5px;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--border-strong));
+  border-radius: 50%;
+  background: var(--surface-solid);
+  transition: background-color var(--motion-snap), border-color var(--motion-snap);
+}
+
+#root .replay-ledger > button.active::before {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+#root .replay-ledger button strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+#root .landing-source-demo .ledger-flag {
+  padding: 1px 5px;
+  border: 1px solid color-mix(in srgb, var(--warning) 34%, var(--border));
+  border-radius: 4px;
+  color: var(--warning);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 650;
+  letter-spacing: 0.05em;
+}
+
+#root .replay-ledger button > b {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  justify-content: flex-end;
+}
+
+#root .replay-ledger button > b::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 1.5px;
+  background: var(--success);
+}
+
+#root .replay-chain-state {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 10px 12px;
+  border: 1px solid color-mix(in srgb, var(--success) 22%, var(--border));
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--success) 4%, white);
+}
+
+#root .replay-chain-state > i {
+  width: 7px;
+  height: 7px;
+  border: 1.5px solid var(--success);
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--success) 18%, white);
+}
+
+#root .replay-chain-state > span {
+  display: grid;
+  flex: 1 1 auto;
+  gap: 1px;
+  min-width: 0;
+}
+
+#root .replay-chain-state strong {
+  color: var(--success);
+  font-size: 0.71rem;
+  font-weight: 650;
+}
+
+#root .replay-chain-state small {
+  color: var(--muted);
+}
+
+#root .replay-chain-state > code {
+  color: color-mix(in srgb, var(--success) 72%, var(--text));
+}
+
+/* ── One press language: rows and chips sink a pixel, never scale ── */
+
+#root .hero-workspace :is(.hero-app-nav button, .obligation-list > button, .source-patient-list > button, .resolve-person-tabs button, .source-decision-list button, .replay-ledger > button, .screen-summary-strip > button, .run-mode-chip):active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #root .hero-workspace .run-mode-chip:not(.is-static):hover {
+    border-color: color-mix(in srgb, var(--accent) 42%, var(--border));
+    color: var(--text);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #root .hero-workspace :is(.hero-app-nav button, .obligation-list > button, .source-patient-list > button, .resolve-person-tabs button, .source-decision-list button, .replay-ledger > button, .screen-summary-strip > button, .run-mode-chip):active:not(:disabled) {
+    transform: none;
+  }
+
+  #root .run-id i,
+  #root .hero-workspace .run-mode-chip[aria-pressed='true'] i {
+    animation: none;
+  }
+
+  #root .run-stage-meter i {
+    transition: none;
+  }
+}
+
+/* ── The narrow window keeps the bar and sheds the ornaments ── */
+
+@container product-window (max-width: 900px) {
+  #root .hero-app-nav button .step-tally,
+  #root .hero-rail-foot {
+    display: none;
+  }
+
+  #root .run-statusbar {
+    row-gap: 6px;
+  }
+
+  #root .run-id {
+    padding-right: 12px;
+  }
+}
+
+@container product-window (max-width: 640px) {
+  #root .run-fact-wide {
+    display: none;
+  }
+
+  #root .run-statusbar-context {
+    gap: 10px;
+  }
+
+  #root .landing-source-demo .screen-summary-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #root .landing-source-demo .obl-status {
+    display: none;
+  }
+
+  #root .source-decision-list .decision-outcome {
+    display: none;
+  }
+
+  #root .resolve-sign-row > small {
+    display: none;
+  }
+
+  #root .replay-ledger > header,
+  #root .replay-ledger > button {
+    padding-left: 20px;
+  }
+}
+
+/* Pass 2: left-align the rail like a sidebar, and let every inspector pane
+   fill its column so the window never shows a void below a short view. The
+   primary action pins to the pane floor the way a macOS inspector closes. */
+
+@container product-window (min-width: 901px) {
+  #root .hero-app-nav button > span {
+    text-align: left;
+  }
+}
+
+#root .landing-source-demo .source-evidence-grid {
+  align-items: stretch;
+}
+
+#root .obligation-detail .pane-settle > .evidence-guidance {
+  margin-bottom: 12px;
+}
+
+#root .obligation-detail .pane-settle > .source-primary-action {
+  margin-top: auto;
+}
+
+#root .landing-source-demo .source-patient-detail {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+#root .landing-source-demo .source-patient-detail > .pane-settle {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+}
+
+#root .landing-source-demo .source-patient-detail .pane-settle > .recommended-action {
+  margin-bottom: 12px;
+}
+
+#root .landing-source-demo .source-patient-detail .pane-settle > .source-primary-action {
+  margin-top: auto;
+}
+
+#root .landing-source-demo .replay-event-detail > .pane-settle {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+}
+
+#root .landing-source-demo .replay-chain-state {
+  margin-top: auto;
+}
+
+#root .landing-source-demo .replay-event-detail > .pane-settle > footer {
+  margin-top: 14px;
+}
+
+/* Pass 3: Resolve's vertical budget. The options grew a consequence line each,
+   so everything above and below them gives a little back; the signed receipt
+   must sit fully inside the fixed window with three disclosed options above. */
+
+#root .landing-source-demo .resolve-person-tabs {
+  margin-top: 12px;
+}
+
+#root .landing-source-demo .resolve-subject-title {
+  margin-top: 14px;
+}
+
+#root .landing-source-demo .resolve-compare-bar {
+  margin-top: 12px;
+}
+
+#root .landing-source-demo .resolve-compare-bar > div {
+  min-height: 84px;
+  padding: 12px 16px;
+}
+
+#root .landing-source-demo .resolve-compare-bar strong {
+  font-size: 1.3rem;
+}
+
+#root .landing-source-demo .resolve-prompt {
+  margin-top: 10px;
+}
+
+#root .landing-source-demo .source-decision-list {
+  margin-top: 12px;
+  gap: 6px;
+}
+
+#root .source-decision-list button {
+  min-height: 50px;
+  padding: 8px 12px 8px 14px;
+}
+
+#root .source-decision-list .decision-body > span {
+  font-size: 0.7rem;
+  line-height: 1.38;
+}
+
+#root .landing-source-demo .resolve-signed-receipt {
+  margin-top: 10px;
+  padding: 12px 14px;
+  gap: 4px;
+}
+
+#root .landing-source-demo .resolve-sign-row {
+  min-height: 48px;
+  margin-top: 8px;
+}
+
+/* Pass 4: the routed-evidence receipt sits fully inside the pane. */
+
+#root .landing-source-demo .obligation-detail {
+  padding: 14px 16px;
+}
+
+#root .landing-source-demo .evidence-action-receipt {
+  padding: 10px 12px;
+}
+
+#root .landing-source-demo .evidence-action-receipt button {
+  min-height: 34px;
+  margin-top: 8px;
+}

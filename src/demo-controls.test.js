@@ -76,4 +76,51 @@ describe('demo controls', () => {
     assert.doesNotMatch(app, /<b> Verified<\/b>/)
     assert.doesNotMatch(app, /\? ' Replay ready'/)
   })
+
+  it('closes the window with a run bar that tells the truth about the tour', () => {
+    assert.match(app, /className="run-statusbar"/)
+    assert.match(app, /data-autoplay-toggle/)
+    assert.match(app, /aria-pressed=\{playing\}/)
+    assert.match(app, /\{playing \? 'Guided run' : 'Manual control'\}/)
+    // The run-bar pause is a park, not the click-hold's expiring timer.
+    assert.match(app, /setParked\(true\)/)
+    assert.match(css, /\.run-statusbar \{/)
+    assert.match(css, /\.run-stage-meter i\.is-active \{/)
+  })
+
+  it('counts each step on the rail and grounds it with the site card', () => {
+    assert.match(app, /STEP_TALLIES/)
+    assert.match(app, /className="hero-rail-foot"/)
+    assert.match(css, /\.step-tally \{/)
+    assert.match(css, /\.hero-rail-foot \{/)
+  })
+
+  it('keeps the wide rail geometry behind the wide container gate', () => {
+    // A flat late rule out-cascades the stacked phone layout, which is how the
+    // rail once ended up a 210px sliver on a 390px window.
+    const wide = css.match(/@container product-window \(min-width: 901px\) \{[\s\S]*?\n\}/g) || []
+    assert.ok(wide.some((block) => block.includes('grid-template-columns: 210px minmax(0, 1fr)')), 'rail width must sit inside the wide container gate')
+  })
+
+  it('scopes the screening queue from the result tiles', () => {
+    assert.match(app, /role="group" aria-label="Scope the queue by deterministic result"/)
+    assert.match(app, /aria-pressed=\{scope === 'review'\}/)
+    assert.match(app, /inScope\(patient\)/)
+    // The guided tour only walks the queue while the scope is open.
+    assert.match(app, /if \(scope !== 'all'\) return/)
+  })
+
+  it('prices every resolve option and names the signer before the pen moves', () => {
+    assert.match(app, /className="decision-body"/)
+    assert.match(app, /\{action\.impact\}/)
+    assert.match(app, /decision-outcome/)
+    assert.match(app, /className="resolve-signer"/)
+  })
+
+  it('draws the ledger as a chain and seals it in the detail pane', () => {
+    assert.match(app, /className="ledger-flag"/)
+    assert.match(app, /className="replay-chain-state"/)
+    assert.match(css, /\.replay-ledger > button::before \{/)
+    assert.match(css, /\.replay-ledger > button::after \{/)
+  })
 })

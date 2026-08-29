@@ -474,6 +474,11 @@ function Footer() {
   )
 }
 
+/* The rail tallies and the run bar quote the same synthetic run the five views
+   draw from: 36 criteria, 25 mapped, 8 subjects screened, 4 items awaiting
+   judgment, 9 sealed events. One system state, quoted in four places. */
+const STEP_TALLIES = { Protocol: '36', Evidence: '25/36', Screening: '8', Resolve: '4', Replay: '9' }
+
 function MiniRun() {
   const root = useRef(null)
   const reduced = useReducedMotion()
@@ -483,7 +488,11 @@ function MiniRun() {
   const [evidenceSelected, setEvidenceSelected] = useState(0)
   const [evidenceLocked, setEvidenceLocked] = useState(false)
   const [evidenceActed, setEvidenceActed] = useState({})
-  const { held, hold } = useAutoplayHold(reduced)
+  const { held: pointerHeld, hold, clearHold } = useAutoplayHold(reduced)
+  // A click inside the demo parks the tour for a while; the run-bar control
+  // parks it until the same control starts it again. Pause means pause.
+  const [parked, setParked] = useState(false)
+  const held = pointerHeld || parked
   const visible = useDocumentVisible()
   const { fading, swap } = useSoftSwap(reduced)
   const steps = ['Protocol', 'Evidence', 'Screening', 'Resolve', 'Replay']
@@ -519,12 +528,16 @@ function MiniRun() {
         </div>
         <div className="hero-app-grid">
         <aside className="hero-app-nav">
-          <strong>DMR-204</strong>
+          <strong>Workflow</strong>
           {steps.map((step, index) => (
             <button key={step} type="button" className={`${index === active ? 'active' : ''}${index < active ? ' visited' : ''}`} aria-current={index === active ? 'step' : undefined} onClick={() => selectStage(index)}>
-              <SpineGlyph kind={step} /><span>{step}</span>
+              <SpineGlyph kind={step} /><span>{step}</span><em className="step-tally" aria-hidden="true">{STEP_TALLIES[step]}</em>
             </button>
           ))}
+          <div className="hero-rail-foot" aria-hidden="true">
+            <div><span>SITE 018</span><strong>Damaros Health</strong></div>
+            <div><span>SNAPSHOT</span><code>pop-2026-06-22</code></div>
+          </div>
         </aside>
         <div className="hero-app-main">
           <div className={`hero-state-canvas landing-source-demo${fading ? ' is-fading' : ''}`}>
@@ -540,6 +553,31 @@ function MiniRun() {
           </div>
         </div>
       </div>
+      {/* The run bar is the execution record surfaced as window chrome: what
+         the run is standing on (snapshot, protocol, hash) and where the guided
+         tour stands. The one control on it is the explicit autoplay toggle the
+         click-capture above is built to leave alone. */}
+      <footer className="run-statusbar" aria-label="Execution run status">
+        <div className="run-statusbar-context">
+          <span className="run-id"><i aria-hidden="true" /><code>RUN 018-017</code></span>
+          <span className="run-fact">SNAPSHOT <code>pop-2026-06-22</code></span>
+          <span className="run-fact run-fact-wide"><code>1,284</code> RESOURCES</span>
+          <span className="run-fact">PROTOCOL <code>v2.1</code> <code>aead45cf</code></span>
+        </div>
+        <div className="run-statusbar-mode">
+          {reduced ? (
+            <span className="run-mode-chip is-static"><i aria-hidden="true" />Manual control</span>
+          ) : (
+            <button className="run-mode-chip" type="button" data-autoplay-toggle aria-pressed={playing} title={playing ? 'Pause the guided run' : 'Resume the guided run'} onClick={() => { if (playing) { setParked(true) } else { setParked(false); clearHold() } }}>
+              <i aria-hidden="true" />{playing ? 'Guided run' : 'Manual control'}
+            </button>
+          )}
+          <span className="run-stage-meter" aria-hidden="true">
+            {steps.map((step, index) => <i key={step} className={index === active ? 'is-active' : index < active ? 'is-done' : ''} />)}
+          </span>
+          <code className="run-stage-count" aria-hidden="true">{active + 1}/5</code>
+        </div>
+      </footer>
     </div>
   )
 }
@@ -860,7 +898,7 @@ function ProtocolView({ tick = 0, onAdvance }) {
   return (
     <div className="workspace-view source-protocol-view" key="protocol">
       <div className="protocol-source-head"><span>PROTOCOL</span><em><i /> INGESTED - LOCKED V2.1</em><small>Fetched NCT00000204 - parsed sponsor packet - 06-21 14:02Z</small></div>
-      <h4>DMR-204 - EGFR-mutant NSCLC</h4><p>NCT00000204 - Phase II - randomized 1:1 - hash aead45cf</p>
+      <h4>DMR-204 - EGFR-mutant NSCLC</h4><p>NCT00000204 - Phase II - randomized 1:1 - hash <code>aead45cf</code></p>
       <div className="source-amendment"><span>AMENDMENT CASCADE</span><strong>v2.0 - 04-12 <ArrowRight size={14} /> v2.1 - 06-21</strong><small>Narrowed prior-lines criterion - re-screen triggered</small></div>
       <div className="source-protocol-summary"><section><span>SPONSOR</span><h5>Meridian Oncology Therapeutics</h5><p>NCT00000204 - DMR-204 - v2.1 - Phase II</p><div><i>KS</i><span><strong>Dr. K. Sandoval</strong><small>Medical Monitor</small></span><i>LB</i><span><strong>L. Brenner</strong><small>Lead CRA</small></span></div></section><section><span>STUDY ARMS - LLM-PARSED FROM PACKET</span><div className="source-arm"><b>ARM A</b><span><strong>Velartinib - 80 mg PO daily</strong><small>Investigational - oral 3rd-gen EGFR-TKI</small></span></div><div className="source-arm"><b>ARM B</b><span><strong>Platinum doublet</strong><small>Comparator - standard of care</small></span></div><p>Randomized 1:1 - target n=140 - stratified by ECOG and prior lines</p></section></div>
       <div className="source-criteria-head"><span>ELIGIBILITY - 36 CRITERIA - 25 SOURCE-MAPPED</span><button type="button" onClick={onAdvance}>Open Evidence <ArrowRight size={14} weight="bold" /></button></div>
@@ -916,7 +954,7 @@ function EvidenceView({ refreshing, onAdvance, tick = 0, playing = false, select
           {obligations.map((item, index) => (
             <button type="button" className={`${selected === index ? 'active ' : ''}${item.status.toLowerCase()}`} aria-label={`${item.code}. ${item.fact}. ${acted[item.code] ? 'ROUTED' : item.status}`} aria-current={selected === index ? 'true' : undefined} onClick={() => pickObligation(index)} key={item.code}>
               <i className="evidence-status-dot" aria-hidden="true" />
-              <div><b>{item.code}</b><strong>{item.fact}</strong></div>
+              <div><b>{item.code}</b><strong>{item.fact}</strong><span className={`obl-status${acted[item.code] ? ' routed' : ''}`}>{acted[item.code] ? 'ROUTED' : item.status}</span></div>
               <footer><span>{item.cls}</span><small>{acted[item.code] ? 'Action recorded' : item.action} <ArrowRight size={12} weight="bold" /></small></footer>
             </button>
           ))}
@@ -961,10 +999,27 @@ function EvidenceView({ refreshing, onAdvance, tick = 0, playing = false, select
 function ScreeningView({ onAdvance, tick = 0 }) {
   const settle = usePaneSettle()
   const [selectedSubject, setSelectedSubject] = useState(2)
+  // The result tiles are a scope bar, not a caption: pressing one narrows the
+  // queue to that deterministic result. The guided tour only walks the queue
+  // while the scope is open, so a narrowed view stays where the user put it.
+  const [scope, setScope] = useState('all')
   useEffect(() => {
+    if (scope !== 'all') return
     setSelectedSubject(autoplayIndex(tick, PLATFORM_SCREENING_QUEUE.length))
-  }, [tick])
+  }, [tick, scope])
   const subject = PLATFORM_SCREENING_QUEUE[selectedSubject]
+  const tally = PLATFORM_SCREENING_QUEUE.reduce((counts, patient) => {
+    counts[patient.status.toLowerCase()] += 1
+    return counts
+  }, { pass: 0, review: 0, fail: 0 })
+  const inScope = (patient) => scope === 'all' || patient.status.toLowerCase() === scope
+  const pickScope = (next) => {
+    setScope(next)
+    if (next !== 'all' && subject.status.toLowerCase() !== next) {
+      const first = PLATFORM_SCREENING_QUEUE.findIndex((patient) => patient.status.toLowerCase() === next)
+      if (first >= 0) setSelectedSubject(first)
+    }
+  }
   const reviewTrigger = {
     'S-1066': 'Missing source', 'S-1051': 'Stale source', 'S-1047': 'Conflicting sources', 'S-1078': 'Ambiguous date',
   }[subject.id] || (subject.status === 'FAIL' ? 'Deterministic failure' : 'None')
@@ -976,10 +1031,15 @@ function ScreeningView({ onAdvance, tick = 0 }) {
   }[subject.id]
   return (
     <div className="workspace-view source-screening-view">
-      <div className="source-view-intro"><span>SCREENING</span><small>Protocol v2.1</small></div>
-      <div className="screen-summary-strip"><div className="pass"><strong>1</strong><span>Pass</span></div><div className="review"><strong>4</strong><span>Review</span></div><div className="fail"><strong>3</strong><span>Fail</span></div></div>
+      <div className="source-view-intro"><span>SCREENING</span><small>Protocol v2.1 - deterministic evaluator - no model in the loop</small></div>
+      <div className="screen-summary-strip" role="group" aria-label="Scope the queue by deterministic result">
+        <button type="button" className={`all${scope === 'all' ? ' is-on' : ''}`} aria-pressed={scope === 'all'} onClick={() => pickScope('all')}><strong>{PLATFORM_SCREENING_QUEUE.length}</strong><span>All subjects</span></button>
+        <button type="button" className={`pass${scope === 'pass' ? ' is-on' : ''}`} aria-pressed={scope === 'pass'} onClick={() => pickScope('pass')}><strong>{tally.pass}</strong><span>Pass</span></button>
+        <button type="button" className={`review${scope === 'review' ? ' is-on' : ''}`} aria-pressed={scope === 'review'} onClick={() => pickScope('review')}><strong>{tally.review}</strong><span>Review</span></button>
+        <button type="button" className={`fail${scope === 'fail' ? ' is-on' : ''}`} aria-pressed={scope === 'fail'} onClick={() => pickScope('fail')}><strong>{tally.fail}</strong><span>Fail</span></button>
+      </div>
       <div className="source-screen-grid">
-        <div className="source-patient-list"><span>PATIENT QUEUE - DECISIVE CRITERION</span>{PLATFORM_SCREENING_QUEUE.map((patient, index) => <button type="button" className={`${index === selectedSubject ? 'active ' : ''}${patient.status.toLowerCase()}`} aria-current={index === selectedSubject ? 'true' : undefined} onClick={() => setSelectedSubject(index)} key={patient.id}><i /><span><strong>{patient.name}<small>{patient.id}</small></strong><em>{patient.criterion}</em></span><b>{patient.status === 'PASS' ? 'CONFIRM' : patient.status}</b></button>)}</div>
+        <div className="source-patient-list"><span>PATIENT QUEUE - DECISIVE CRITERION</span>{PLATFORM_SCREENING_QUEUE.map((patient, index) => inScope(patient) ? <button type="button" className={`${index === selectedSubject ? 'active ' : ''}${patient.status.toLowerCase()}`} aria-current={index === selectedSubject ? 'true' : undefined} onClick={() => setSelectedSubject(index)} key={patient.id}><i /><span><strong>{patient.name}<small>{patient.id}</small></strong><em>{patient.criterion}</em></span><b>{patient.status === 'PASS' ? 'CONFIRM' : patient.status}</b></button> : null)}</div>
         <div className="source-patient-detail"><div className={settle}><header><h4>{subject.name}<small>{subject.id}</small></h4><em className={subject.status.toLowerCase()}>{subject.status === 'PASS' ? 'CONFIRM' : subject.status}</em></header><span>PRIMARY BLOCKER</span><h5>{subject.criterion.split(' - ')[0]} - {subject.blocker}</h5><span>NORMALIZED RULE</span><p>{subject.rule}</p><span>PATIENT FACTS USED</span><ul>{subject.facts.map((fact) => <li key={fact}>{fact}</li>)}</ul><span>EVIDENCE SOURCES</span><p className="source-records">{subject.sources.join(' - ')}</p><div className="screen-result-pair"><span><small>DETERMINISTIC RESULT</small><strong>{subject.status === 'REVIEW' ? 'REVIEW, not FAIL' : subject.status}</strong></span><span><small>REVIEW TRIGGER</small><strong>{reviewTrigger}</strong></span></div>{recommendation && <div className="recommended-action"><span>RECOMMENDED NEXT ACTION</span><strong>{recommendation}</strong></div>}{subject.status === 'REVIEW' && <button className="source-primary-action" type="button" onClick={onAdvance}>Open in Resolve <ArrowRight size={14} weight="bold" /></button>}</div></div>
       </div>
     </div>
@@ -1016,10 +1076,31 @@ function ResolveView({ tick = 0 }) {
       <div className="resolve-person-tabs">{RESOLVE_WORK_ITEMS.map((item, index) => <button type="button" className={`${work === index ? 'active ' : ''}${signedDecisions[item.key] ? 'committed' : ''}`} aria-current={work === index ? 'true' : undefined} onClick={() => selectWork(index)} key={item.key}><i>{item.patient.split(' ').map((part) => part[0]).join('')}</i>{item.patient}</button>)}</div>
       <div className={settle}>
       <div className="resolve-subject-title"><h4>{selectedWork.patient}<small>{selectedWork.subject}</small></h4><span>{selectedWork.criterion} - {selectedWork.rule}</span></div>
-      <div className="resolve-compare-bar"><div><span>{selectedWork.evidence[0].label}</span><strong>{selectedWork.evidence[0].value}</strong><small>{selectedWork.evidence[0].meta}</small></div><b>{selectedWork.symbol}</b><div><span>{selectedWork.evidence[1].label}</span><strong>{selectedWork.evidence[1].value}</strong><small>{selectedWork.evidence[1].meta}</small></div></div>
+      <div className="resolve-compare-bar"><div><span>{selectedWork.evidence[0].label}</span><strong>{selectedWork.evidence[0].value}</strong><small>{selectedWork.evidence[0].meta}</small><code>{selectedWork.evidence[0].ref}</code></div><b>{selectedWork.symbol}</b><div><span>{selectedWork.evidence[1].label}</span><strong>{selectedWork.evidence[1].value}</strong><small>{selectedWork.evidence[1].meta}</small><code>{selectedWork.evidence[1].ref}</code></div></div>
       <p className="resolve-prompt">{selectedWork.prompt}</p>
-      <div className="source-decision-list" role="group" aria-label="Decision to sign"><span>YOUR CALL</span>{selectedWork.actions.map((action) => <button className={decision === action.id ? 'selected' : ''} type="button" aria-pressed={decision === action.id} disabled={Boolean(signed)} onClick={() => setDecision(action.id)} key={action.id}><i />{action.label}</button>)}</div>
-      {signed ? <div className="resolve-signed-receipt"><span>DECISION SIGNED - BOUND TO REPLAY</span><strong>{selectedWork.actions.find((action) => action.id === signed)?.label}</strong><small>{selectedWork.signer} - {selectedWork.role} - {selectedWork.record}</small></div> : <div className="resolve-sign-row"><small>{decision ? `${selectedWork.role} signs - evidence preserved - PHI-free` : 'Select a decision to sign'}</small><button type="button" disabled={!decision} onClick={signDecision}>Sign decision</button></div>}
+      {/* Each option carries its own consequence: the deterministic result it
+         leads to, read straight off the impact copy. A signer compares ends,
+         not just labels. */}
+      <div className="source-decision-list" role="group" aria-label="Decision to sign"><span>YOUR CALL</span>{selectedWork.actions.map((action) => {
+        const toPass = action.impact.includes('PASS')
+        return (
+          <button className={decision === action.id ? 'selected' : ''} type="button" aria-pressed={decision === action.id} disabled={Boolean(signed)} onClick={() => setDecision(action.id)} key={action.id}>
+            <i />
+            <span className="decision-body"><strong>{action.label}</strong><span>{action.impact}</span></span>
+            <span className={`decision-outcome ${toPass ? 'to-pass' : 'to-review'}`}>{toPass ? 'PASS' : 'REVIEW'}</span>
+          </button>
+        )
+      })}</div>
+      {signed ? <div className="resolve-signed-receipt"><span>DECISION SIGNED - BOUND TO REPLAY</span><strong>{selectedWork.actions.find((action) => action.id === signed)?.label}</strong><small>{selectedWork.signer} - {selectedWork.role}</small><code>{selectedWork.record} - Ed25519 verified - replay-linked</code></div> : (
+        <div className="resolve-sign-row">
+          <div className="resolve-signer">
+            <i aria-hidden="true">{selectedWork.signer.replace(/^Dr\. /, '').replace(/, RN$/, '').split(' ').map((part) => part[0]).join('')}</i>
+            <span><strong>{selectedWork.signer}</strong><small>{selectedWork.role}</small></span>
+          </div>
+          <small>{decision ? 'Ed25519 - evidence preserved - PHI-free' : 'Select a decision to sign'}</small>
+          <button type="button" disabled={!decision} onClick={signDecision}>Sign decision</button>
+        </div>
+      )}
       </div>
       </div>
   )
@@ -1050,8 +1131,8 @@ function ReplayView({ tick = 0 }) {
 
   return (
     <div className="workspace-view source-replay-view" key="replay">
-      <div className="source-replay-head"><span><b>REPLAY</b><small>Subject S-1047 - DMR-204 - Site 018 - Protocol v2.1 - Run RPL-2026-0622-018-1047 - 06-22</small></span><button className={exportReady ? 'ready' : ''} type="button" onClick={() => { setExportOpen(true); if (exportReady) setExportReady(false) }}>{exportReady ? 'Replay ready' : 'Export Replay'}</button></div>
-      <div className="source-replay-grid"><div className="replay-ledger"><span>RECONSTRUCTION LEDGER</span><header><small>TIME</small><small>EVENT</small><small>ACTOR</small><small>INTEGRITY</small></header>{chain.map((item, index) => <button type="button" className={selected === index ? 'active' : ''} aria-current={selected === index ? 'true' : undefined} onClick={() => { setSelected(index); setExportOpen(false) }} key={item.id}><time>{item.time}</time><span><strong>{item.event}</strong><small>{item.detail}</small></span><em>{item.actor}</em><b>Verified</b></button>)}</div><div className="replay-event-detail"><div className={settle}>{exportOpen ? <InlineActionPanel open complete={exportReady} eyebrow="ACTION REQUIRED" title="Prepare sponsor-safe replay" description="Review chain integrity and data boundary before marking this replay ready. Raw PHI stays excluded." rows={[["Replay", "RPL-2026-0622-018-1047"], ["Events", "9 verified - chain intact"], ["Signature", "Ed25519 - verified"], ["Data boundary", "Sponsor-safe - raw PHI excluded"]]} confirmLabel="Prepare replay" successTitle="Replay ready" successDescription="Sponsor-safe replay is ready inside Damaros. Nothing downloaded to this device." onClose={() => setExportOpen(false)} onConfirm={() => setExportReady(true)} /> : <><span>SELECTED EVENT</span><header><h4>{selectedEvent.event}</h4>{selectedEvent.flag && <em>{selectedEvent.flag}</em>}<small>{selectedEvent.time} - {selectedEvent.id}</small></header><dl>{selectedEvent.rows.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl><footer><span>RELATED EVENTS</span><small>{selected > 0 ? chain[selected - 1].event : 'Protocol intake'} - {selected < chain.length - 1 ? chain[selected + 1].event : 'Export bundle'}</small></footer></>}</div></div></div>
+      <div className="source-replay-head"><span><b>REPLAY</b><small>Subject <code>S-1047</code> - DMR-204 - Site 018 - Protocol v2.1 - Run <code>RPL-2026-0622-018-1047</code> - 06-22</small></span><button className={exportReady ? 'ready' : ''} type="button" onClick={() => { setExportOpen(true); if (exportReady) setExportReady(false) }}>{exportReady ? 'Replay ready' : 'Export Replay'}</button></div>
+      <div className="source-replay-grid"><div className="replay-ledger"><span>RECONSTRUCTION LEDGER</span><header><small>TIME</small><small>EVENT</small><small>ACTOR</small><small>INTEGRITY</small></header>{chain.map((item, index) => <button type="button" className={selected === index ? 'active' : ''} aria-current={selected === index ? 'true' : undefined} onClick={() => { setSelected(index); setExportOpen(false) }} key={item.id}><time>{item.time}</time><span><strong>{item.event}{item.flag && <span className="ledger-flag">{item.flag}</span>}</strong><small>{item.detail}</small></span><em>{item.actor}</em><b>Verified</b></button>)}</div><div className="replay-event-detail"><div className={settle}>{exportOpen ? <InlineActionPanel open complete={exportReady} eyebrow="ACTION REQUIRED" title="Prepare sponsor-safe replay" description="Review chain integrity and data boundary before marking this replay ready. Raw PHI stays excluded." rows={[["Replay", "RPL-2026-0622-018-1047"], ["Events", "9 verified - chain intact"], ["Signature", "Ed25519 - verified"], ["Data boundary", "Sponsor-safe - raw PHI excluded"]]} confirmLabel="Prepare replay" successTitle="Replay ready" successDescription="Sponsor-safe replay is ready inside Damaros. Nothing downloaded to this device." onClose={() => setExportOpen(false)} onConfirm={() => setExportReady(true)} /> : <><span>SELECTED EVENT</span><header><h4>{selectedEvent.event}</h4>{selectedEvent.flag && <em>{selectedEvent.flag}</em>}<small><code>{selectedEvent.time}</code> - <code>{selectedEvent.id}</code></small></header><dl>{selectedEvent.rows.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl><div className="replay-chain-state"><i aria-hidden="true" /><span><strong>Chain intact</strong><small>9 of 9 events verified - Ed25519</small></span><code>RPL-1047</code></div><footer><span>RELATED EVENTS</span><small>{selected > 0 ? chain[selected - 1].event : 'Protocol intake'} - {selected < chain.length - 1 ? chain[selected + 1].event : 'Export bundle'}</small></footer></>}</div></div></div>
     </div>
   )
 }
