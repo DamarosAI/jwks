@@ -9332,7 +9332,12 @@ html.is-hidden .clinic-node i,
   display: flex;
   min-width: 0;
   flex-direction: column;
-  align-self: center;
+  /* Up with the name, not adrift beside the stack. Centred against a
+     700-unit figure, the copy floated a whole screen-band below the TRIDENT
+     eyebrow it belongs to; it starts at the top of the row now, a breath
+     under the name, and the figure keeps the vertical room to itself. */
+  align-self: start;
+  padding-top: clamp(8px, 1.6vw, 26px);
 }
 
 .trident-copy h2 {

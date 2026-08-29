@@ -2347,13 +2347,25 @@ describe('The floor schematic', () => {
     // entry gate clears where the transcript docks; Evidence's far gate
     // clears the shipping cell, and Screening's entry gate clears the join
     // cell's own bed row.
-    assert.match(floor, /stand\(46, -39, 5\.5, 4\.5, 4, 2\), cls: 'fl-script fl-issue'/)
+    // A gate also has to be SEEN: Evidence's used to sit exactly in the
+    // screen shadow of the right gantry post, and Protocol's crowded its own
+    // corner arc - both live in clear ground now, and both clear their cargo.
+    assert.match(floor, /stand\(42, -39, 5\.5, 4\.5, 4, 2\), cls: 'fl-script fl-issue'/)
     assert.match(floor, /stand\(-65, 18, 5\.5, 4\.5, 4, 2\), cls: 'fl-script fl-dock'/)
-    assert.ok(gates[0] <= 46 - 7 && gates[1] >= 46 + 7, 'the export gate has to clear the transcript lane')
+    assert.ok(gates[0] <= 42 - 7 && gates[1] >= 42 + 7, 'the export gate has to clear the transcript lane')
     assert.ok(gates[2] <= 18 - 7 && gates[3] >= 18 + 7, 'the dock gate has to clear where the transcript rests')
-    const shipSeat = floor.match(/cell\(28, -36, null, 5\), cls: 'fl-blk fl-ship'/)
+    const shipSeat = floor.match(/cell\(4, -36, null, 5\), cls: 'fl-blk fl-ship'/)
     assert.ok(shipSeat, 'the shipment stages somewhere real')
-    assert.ok(gates[4] <= 28 - 7 && gates[5] >= 28 + 7, 'the far gate has to clear the shipment lane')
+    assert.ok(gates[4] <= 4 - 7 && gates[5] >= 4 + 7, 'the far gate has to clear the shipment lane')
+    // AND ONLY THE VIEWER-FACING CUT IS DRAWN. A cut face's normal points
+    // into its gap; on every edge one flank faces the viewer and one faces
+    // away, and painting the away-facing one breaks the projection at the
+    // exact place a gate asks to be looked at. The pylon terminates the
+    // unlit flank instead.
+    assert.match(floor, /const mouth = \(oPt, nPt, edge, lit\) =>/)
+    assert.match(floor, /if \(lit\) \{\s*\n\s*parts\.push\(\{ d: `M \$\{at\(oPt, h\)\}/)
+    assert.equal((floor.match(/'far', true\]/g) || []).length, 1, 'a far gate lights its low-x flank')
+    assert.equal((floor.match(/'back', true\]/g) || []).length, 1, 'a back gate lights its low-y flank')
     const joinRow = 2
     assert.ok(gates[6] <= joinRow - 7 && gates[7] >= joinRow + 7, 'the entry gate has to clear the bed row it feeds')
     const holdSeat = [...floor.match(/^ +const hole = (\[.*\])$/m)[1].matchAll(/\[(-?\d+), (-?\d+), '(\w+)'\]/g)]

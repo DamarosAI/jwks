@@ -207,8 +207,8 @@ const DISH = { hx: 76.5, hy: 50, r: 18, t: 5, h: 7 }
    Every gap is written in the wall's own plan units, on the straight run of
    its edge - the corner arcs are never cut. */
 const GATES = {
-  protocol: { far: [37, 55] },
-  evidence: { back: [9, 27], far: [19, 37] },
+  protocol: { far: [33, 51] },
+  evidence: { back: [9, 27], far: [-5, 13] },
   screening: { back: [-7, 11], far: [31, 49] },
   resolve: { back: [-7, 11], front: [14, 42] },
 }
@@ -296,15 +296,20 @@ const vessel = (seat, gates = null) => {
     return out
   }
 
-  // A gate's furniture: the two cut faces and the pylon standing on each -
-  // wall features, built here rather than through `drum` and its size floor,
-  // because they are terminations of the wall and not parts on the plate.
-  // Each carries its edge's name, so the stylesheet can stain ONE gate's
-  // pylons - the amber exit - without dressing every opening on the plate.
-  const mouth = (oPt, nPt, edge) => {
-    const parts = [
-      { d: `M ${at(oPt, h)} L ${at(nPt, h)} L ${at(nPt, 0)} L ${at(oPt, 0)} Z`, cls: 'fl-vessel-cut' },
-    ]
+  // A gate's furniture: the pylon standing on each cut end, and - on ONE end
+  // only - the wall's cross-section face. A cut face is a plane in the wall's
+  // own thickness, and its outward normal points into the gap: on every edge,
+  // one flank's normal points toward the viewer and the other's points away.
+  // Drawing the away-facing one paints a face the viewer cannot physically
+  // see, which reads as the projection breaking at exactly the place a gate
+  // asks to be looked at. The pylon terminates the unlit flank instead.
+  // Each piece carries its edge's name, so the stylesheet can stain ONE
+  // gate's pylons - the amber exit - without dressing every opening.
+  const mouth = (oPt, nPt, edge, lit) => {
+    const parts = []
+    if (lit) {
+      parts.push({ d: `M ${at(oPt, h)} L ${at(nPt, h)} L ${at(nPt, 0)} L ${at(oPt, 0)} Z`, cls: 'fl-vessel-cut' })
+    }
     const [sx, sy] = p((oPt[0] + nPt[0]) / 2, (oPt[1] + nPt[1]) / 2)
     const post = roundedCylinder(sx, sy - 11, 3.4, 11 - h)
     parts.push({ d: post.wall, cls: `fl-pylon-wall is-${edge}` })
@@ -319,26 +324,26 @@ const vessel = (seat, gates = null) => {
   const backCuts = []
   if (gates?.right) {
     frontCuts.push(
-      [[hx, gates.right[0]], [hx - t, gates.right[0]], 'right'],
-      [[hx, gates.right[1]], [hx - t, gates.right[1]], 'right'],
+      [[hx, gates.right[0]], [hx - t, gates.right[0]], 'right', true],
+      [[hx, gates.right[1]], [hx - t, gates.right[1]], 'right', false],
     )
   }
   if (gates?.front) {
     frontCuts.push(
-      [[gates.front[1], hy], [gates.front[1], hy - t], 'front'],
-      [[gates.front[0], hy], [gates.front[0], hy - t], 'front'],
+      [[gates.front[1], hy], [gates.front[1], hy - t], 'front', false],
+      [[gates.front[0], hy], [gates.front[0], hy - t], 'front', true],
     )
   }
   if (gates?.back) {
     backCuts.push(
-      [[-hx, gates.back[1]], [-(hx - t), gates.back[1]], 'back'],
-      [[-hx, gates.back[0]], [-(hx - t), gates.back[0]], 'back'],
+      [[-hx, gates.back[1]], [-(hx - t), gates.back[1]], 'back', false],
+      [[-hx, gates.back[0]], [-(hx - t), gates.back[0]], 'back', true],
     )
   }
   if (gates?.far) {
     backCuts.push(
-      [[gates.far[0], -hy], [gates.far[0], -(hy - t)], 'far'],
-      [[gates.far[1], -hy], [gates.far[1], -(hy - t)], 'far'],
+      [[gates.far[0], -hy], [gates.far[0], -(hy - t)], 'far', true],
+      [[gates.far[1], -hy], [gates.far[1], -(hy - t)], 'far', false],
     )
   }
 
@@ -346,13 +351,13 @@ const vessel = (seat, gates = null) => {
   spans(o.left, o.right, n.left, n.right, backCuts).forEach(([oPts, nPts]) => {
     back.push(wall(nPts, 'fl-vessel-in'), band(oPts, nPts), edge(oPts), edge(nPts))
   })
-  backCuts.forEach(([oPt, nPt, edge]) => back.push(...mouth(oPt, nPt, edge)))
+  backCuts.forEach(([oPt, nPt, edge, lit]) => back.push(...mouth(oPt, nPt, edge, lit)))
 
   const front = []
   spans(o.right, o.left, n.right, n.left, frontCuts).forEach(([oPts, nPts]) => {
     front.push(wall(oPts, 'fl-vessel-out'), band(oPts, nPts), edge(oPts), edge(nPts))
   })
-  frontCuts.forEach(([oPt, nPt, edge]) => front.push(...mouth(oPt, nPt, edge)))
+  frontCuts.forEach(([oPt, nPt, edge, lit]) => front.push(...mouth(oPt, nPt, edge, lit)))
 
   return { back, front }
 }
@@ -448,13 +453,16 @@ function mechanism(key, t) {
     return { depth: px + py, round: true, shape: roundedCylinder(sx, sy - base - high, r, high) }
   }
 
-  /* A HOLE, DRAWN THE WAY TRIDENT DRAWS ITS INTAKE.
+  /* A HOLE, DRAWN THE WAY TRIDENT DRAWS ITS INTAKE - WHICH MEANS CLIPPED.
 
-     Looking into a bore from above and to the side you see the FAR inner wall,
-     the floor, and whatever stands on that floor. So that is what is drawn: the
-     band between the two rims on the far side, the floor under it, the throat
-     standing on the floor, and the rim itself as the one hard edge. Four
-     shapes, no filter, and it reads as depth at any size.
+     Everything a reader can see of a bore, they see THROUGH ITS MOUTH: the
+     far inner wall across the top, the floor a step down, the throat on the
+     floor, and whatever is being swallowed. So every interior surface is
+     clipped to the mouth ellipse, exactly as the intake clips its shaft. The
+     first cut of this drew the floor a full step BELOW the mouth, unclipped -
+     and a mouth ellipse with a band hanging under it is the silhouette of a
+     short drum standing ON the plate, which is precisely what a hole is not.
+     The rim is the one hard edge, and the collar rides outside it.
 
      The throat is what separates a hole from a dark disc. Without it the mouth
      is a filled ellipse with a ring round it - a symbol for taking something in
@@ -465,21 +473,9 @@ function mechanism(key, t) {
     const gape = planCircle(r * 0.42)
     const band = planCircle(r * 1.18)
     const cy = sy - base
-    const [left, right] = [Math.round((sx - rx) * 10) / 10, Math.round((sx + rx) * 10) / 10]
     return {
       depth: px + py,
-      hole: {
-        cx: sx,
-        cy,
-        rx,
-        ry,
-        deep,
-        throat: gape,
-        collar: band,
-        // Over the far rim, down the bore, and back along the near edge of the
-        // floor: the wall a reader can actually see into.
-        wall: `M ${left} ${cy} A ${rx} ${ry} 0 0 1 ${right} ${cy} L ${right} ${cy + deep} A ${rx} ${ry} 0 0 0 ${left} ${cy + deep} Z`,
-      },
+      hole: { cx: sx, cy, rx, ry, deep, throat: gape, collar: band },
     }
   }
 
@@ -585,7 +581,7 @@ function mechanism(key, t) {
           <rect key="seat" x="-46" y="-38" width="92" height="76" rx="28" />,
           // The export lane: from the nucleus's edge to the gate in the far
           // wall, printed before anything travels it.
-          <line className="fl-ruled" key="issue" x1="46" y1="-34" x2="46" y2="-52" />,
+          <line className="fl-ruled" key="issue" x1="42" y1="-34" x2="42" y2="-52" />,
         ]),
         // THE BANK IS DRAWN FIRST, AND NOT AT ITS OWN DEPTH. Sorted by its
         // centre, a plate-sized bank draws OVER every switch standing on its
@@ -617,7 +613,7 @@ function mechanism(key, t) {
         // corner - and ships through the gate on EVIDENCE'S clock, so the
         // tablet seen leaving here is the tablet seen docking at the gantry
         // next door two beats later.
-        { ...stand(46, -39, 5.5, 4.5, 4, 2), cls: 'fl-script fl-issue', depth: OVER + 4 },
+        { ...stand(42, -39, 5.5, 4.5, 4, 2), cls: 'fl-script fl-issue', depth: OVER + 4 },
       ]
     },
     // EVIDENCE IS A PICK AND PLACE.
@@ -650,7 +646,7 @@ function mechanism(key, t) {
           )),
           // The shipping lane: from the bed to the gate in the far wall,
           // printed before anything travels it.
-          <line className="fl-ruled" key="ship" x1="28" y1="-28" x2="28" y2="-52" />,
+          <line className="fl-ruled" key="ship" x1="4" y1="-28" x2="4" y2="-52" />,
         ]),
         // THE GANTRY THE CLAW RIDES, and it is the whole reason the claw is not
         // a UFO. A carriage hanging in the air over a plate is a thing hovering
@@ -694,7 +690,7 @@ function mechanism(key, t) {
         // the cell seen leaving here is the cell seen joining the wait bed
         // next door two beats later. Unstained, because nothing has ruled on
         // it yet - that is the next plate's whole job.
-        { ...cell(28, -36, null, 5), cls: 'fl-blk fl-ship', depth: OVER + 4 },
+        { ...cell(4, -36, null, 5), cls: 'fl-blk fl-ship', depth: OVER + 4 },
         { ...stand(-52, -30, 3, 8, 10, 3, 14), cls: 'fl-claw is-jaw', depth: OVER },
         { ...stand(-52, -10, 3, 8, 10, 3, 14), cls: 'fl-claw is-jaw', depth: OVER + 2 },
         // The motor's head is round - the one part of the carriage that is
@@ -1244,35 +1240,37 @@ export default function ChainSchematic({ animate = true }) {
                         symbol for taking something in rather than somewhere for
                         something to go. */}
                     if (part.hole) {
-                      const { cx, cy, rx, ry, deep, throat, collar, wall } = part.hole
+                      const { cx, cy, rx, ry, deep, throat, collar } = part.hole
                       const bore = `fl-bore-${item.key}-${n}`
                       return (
                         <g className={part.cls} key={`${item.key}-e${n}`}>
-                          <path className="fl-wall" d={wall} />
-                          <ellipse className="fl-floor" cx={cx} cy={cy + deep} rx={rx} ry={ry} />
-                          <ellipse className="fl-throat" cx={cx} cy={cy + deep} rx={throat.rx} ry={throat.ry} />
-                          {/* THE SWALLOW. The cell going down is drawn INSIDE
-                              the bore - between the floor and the rim, clipped
-                              to the opening's own interior, which is exactly
-                              the far-wall path - so what a reader sees is the
-                              material descending through the mouth, stained by
-                              the pore that ruled it, not a disc painting over
-                              a puck. The approach cell outside fades at the
-                              rim on the same beat this one appears. */}
-                          {part.swallow ? (
-                            <>
-                              <clipPath id={bore}>
-                                <path d={wall} />
-                              </clipPath>
+                          {/* The mouth is the only window into the bore, so it
+                              is the clip for everything inside: the far wall,
+                              the dropped floor, the throat, and the cell being
+                              swallowed. Nothing of the interior ever draws
+                              outside it, which is the whole difference between
+                              a hole cut INTO the plate and a drum standing on
+                              one. */}
+                          <clipPath id={bore}>
+                            <ellipse cx={cx} cy={cy} rx={rx} ry={ry} />
+                          </clipPath>
+                          <g clipPath={`url(#${bore})`}>
+                            <ellipse className="fl-wall" cx={cx} cy={cy} rx={rx} ry={ry} />
+                            <ellipse className="fl-floor" cx={cx} cy={cy + deep} rx={rx} ry={ry} />
+                            <ellipse className="fl-throat" cx={cx} cy={cy + deep} rx={throat.rx} ry={throat.ry} />
+                            {/* THE SWALLOW. The cell going down is drawn inside
+                                the same window, stained by the pore that ruled
+                                it; the approach cell outside fades at the rim
+                                on the beat this one appears. */}
+                            {part.swallow ? (
                               <g
                                 className={`fl-blk is-${part.stain} fl-sunk`}
-                                clipPath={`url(#${bore})`}
                                 style={{ '--turn': part.turn ?? 0 }}
                               >
                                 <Drum shape={part.swallow.shape} core={part.swallow.core} className="dgm-solid" />
                               </g>
-                            </>
-                          ) : null}
+                            ) : null}
+                          </g>
                           <ellipse className="fl-rim" cx={cx} cy={cy} rx={rx} ry={ry} />
                           {/* The collar, one ring out from the rim - the same
                               line Trident's intake wears - and it is where the
