@@ -516,13 +516,26 @@ const SITES = [
   // The corner radius is a fixed share of the plan size, so a small site and a
   // large one are visibly the same object at two scales rather than two shapes.
   const solid = roundedDeck(cx, cy, site.half, site.wall, Math.round(site.half * 0.34))
-  // Record bands under the lid that seals them, so the stack fills the site it
-  // is in rather than sitting in a box the site happens to contain.
+  // THE RECORDS ARE CELLS. They used to be bands - filing-cabinet furniture -
+  // and what a site actually holds is patients: the records under the sealed
+  // lid are the one population in either figure that is ALIVE, so they are
+  // drawn by the sheet's law - life is round, structure is faceted. Each row
+  // is a run of plan circles with a nucleus printed off-centre on each, and
+  // the local head still sweeps across them without any of them leaving.
+  // Everything else about the stack holds: the count of rows and the cells in
+  // each come from what the site holds, so the three sites still tell apart
+  // with every label removed.
   const lid = site.half - 7
   const rows = []
   for (let band = 0; band < site.bands; band += 1) {
     const y = Math.round((-lid * 0.58 + (band * lid * 1.16) / (site.bands - 1)) * 10) / 10
-    rows.push({ y, half: lid - 7 })
+    const half = lid - 7
+    const count = Math.max(2, Math.floor((half * 2) / 13))
+    const cells = []
+    for (let slot = 0; slot < count; slot += 1) {
+      cells.push(Math.round((-half + 6.5 + slot * 13) * 10) / 10)
+    }
+    rows.push({ y, half, cells })
   }
   // The site letters its own wall. The right-hand skirt is a flat plan side, so
   // the middle of it is plan (half, 0) carried through the projection, and the
@@ -803,7 +816,7 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
           ref={figure}
           viewBox="0 0 620 700"
           role="img"
-          aria-label="Three peer sites of three different sizes stand well apart on one ground, beneath shared execution intelligence drawn as a slab held above them with a mesh of criteria on it. Each site runs its task locally and beams the structure it used up a channel from a mast on its own roof - a criterion from one, a unit from another, a mapping from the third. A criterion the intelligence binds stands up off the slab, and any site can take a bound definition back down its channel and run it. Structure crosses in both directions and no record crosses in either: the records inside every site stay under a sealed lid, and the reach of each site grows until they overlap."
+          aria-label="Three peer sites of three different sizes stand well apart on one ground, beneath shared execution intelligence drawn as a slab held above them with a mesh of criteria on it. Each site runs its task locally and beams the structure it used up a channel from a mast on its own roof - a criterion from one, a unit from another, a mapping from the third. A criterion the intelligence binds stands up off the slab, and any site can take a bound definition back down its channel and run it. Structure crosses in both directions and no record crosses in either: the records inside every site - drawn as the cells they are, each with its nucleus - stay under a sealed lid, and the reach of each site grows until they overlap."
         >
           <defs>
             <pattern id="nc-grain" width="16" height="16" patternUnits="userSpaceOnUse">
@@ -1049,6 +1062,16 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
                       r={PORT_R}
                       vectorEffect="non-scaling-stroke"
                     />
+                    {/* The pore's collar, one ring out from the rim - the same
+                        line the membranes are drawn with, because a port is a
+                        hole IN the board's boundary layer. */}
+                    <circle
+                      className="dgm-membrane is-collar"
+                      cx={item.port.at[0]}
+                      cy={item.port.at[1]}
+                      r={PORT_R + 2.6}
+                      vectorEffect="non-scaling-stroke"
+                    />
                   </g>
                 ))}
                 {CHANNELS.map((item) => (
@@ -1167,7 +1190,14 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
                     <rect className="dgm-wall" x={-site.half + 5} y={-site.half + 5} width={(site.half - 5) * 2} height={(site.half - 5) * 2} rx={Math.round(site.half * 0.26)} vectorEffect="non-scaling-stroke" />
                     <rect className="dgm-wall is-inner" x={-site.half + 9} y={-site.half + 9} width={(site.half - 9) * 2} height={(site.half - 9) * 2} rx={Math.round(site.half * 0.2)} vectorEffect="non-scaling-stroke" />
                     {site.rows.map((row) => (
-                      <rect className="dgm-record" key={row.y} x={-row.half} y={row.y - 3.5} width={row.half * 2} height="7" rx="3" />
+                      <g className="dgm-record" key={row.y}>
+                        {row.cells.map((x) => (
+                          <g key={x}>
+                            <circle className="dgm-recordcell" cx={x} cy={row.y} r="4.2" />
+                            <circle className="dgm-recordcore" cx={x + 1.1} cy={row.y + 0.6} r="1.4" />
+                          </g>
+                        ))}
+                      </g>
                     ))}
                     <rect className="dgm-lid" x={-site.lid} y={-site.lid} width={site.lid * 2} height={site.lid * 2} rx={Math.round(site.lid * 0.28)} vectorEffect="non-scaling-stroke" />
                     <rect className="dgm-sweep" x={-site.lid + 7} y={-site.lid + 7} width="6" height={(site.lid - 7) * 2} rx="3" />

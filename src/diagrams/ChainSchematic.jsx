@@ -34,6 +34,21 @@ import { useCenterOnOverflow } from './useCenterOnOverflow'
  * lane with a ram rail across it, a tape path between two reels. The machine
  * stands in its own drawing.
  *
+ * THE SHEET'S LAW, THIS PASS: STRUCTURE IS FACETED, LIFE IS ROUND.
+ *
+ * This is clinical research, and the material the row handles is a patient's
+ * own biology - so the drawing says so. The unit that runs the five stations
+ * is a CELL: a plan circle carried through the projection, standing on its own
+ * wall, with its nucleus printed off-centre on top. A verdict reaches it the
+ * way a stain reaches a section - body first, nucleus deepest. Everything
+ * built ON the plates stays faceted, because the machines are the site's own
+ * structure; only the subject is alive. Every plate carries its own MEMBRANE,
+ * the double wall a section drawing gives a boundary, printed inside the
+ * plate's edge; where material crosses a surface it crosses through a pore -
+ * Screening's three throats were always drawn as bores - and the one place
+ * material leaves the run by a person's decision, Resolve's near edge, is the
+ * one place the wall is drawn PARTING.
+ *
  * Nothing is hoverable until the plates are down. A target on a tile still in
  * the air is a target on nothing.
  */
@@ -81,15 +96,61 @@ const HALF_Y = 50
    otherwise the handoff between them is a step change in an object that is
    supposed to be continuous. */
 const SHEET = 9
-/* Twelve, not ten. A softer corner is most of what separates a drawn panel from
-   a machined one, and the plate is the largest radius in the figure - every
-   other one is read against it. */
-const PLATE_R = 12
+/* Twenty, not twelve. A softer corner is most of what separates a grown
+   surface from a machined one, and the plate is the largest radius in the
+   figure - every other one is read against it. At twelve the plates were
+   panels; at twenty they are the plan of something that was cultured rather
+   than cut, without a single wobble of the outline, because an organic reading
+   does not need an irregular line - it needs a radius that is not apologising
+   for itself. */
+const PLATE_R = 20
 
 /* THE PITCH THE RESOLVE LINE INDEXES BY, and it is a constant because the whole
    seamlessness of that station is an arithmetic identity about it. See the
    note on the ram. */
 const PITCH = 24
+
+/* THE MEMBRANE EVERY PLATE CARRIES.
+
+   A surface that holds the material owns a boundary, and a boundary in a
+   section drawing is a DOUBLE line - the bilayer every textbook membrane is
+   drawn as. It is printed in plan inside the projection like every other mark
+   on a plate, inset from the edge so the plate's own corner survives it, and
+   it is drawn with the PLATE rather than with the machine, because the wall
+   belongs to the surface. Solids stand over it and occlude it, which is what
+   a printed line under a machine does.
+
+   Resolve's wall PARTS. The one place material leaves the run by a person's
+   decision is the one place the boundary is drawn open: both lines stop short
+   of the exit lane and end in terminal dots, so the gap reads as a drawn
+   opening rather than a missing stretch. The gap brackets plan x 28 - where
+   the ram carries the pushed cell over the edge - with a cell radius of
+   clearance each side, and the printed chevron already points through it. */
+const WALL_OUT = { hx: 69, hy: 44, r: 16 }
+const WALL_IN = { hx: 66.5, hy: 41.5, r: 14 }
+const WALL_GAP = [14, 42]
+
+/* A rounded plan rectangle as one open stroke: from one side of the gap in the
+   +y edge, the long way round, to the other. The corner arcs sweep 0 because
+   the path runs counterclockwise on screen. */
+const wallPath = ({ hx, hy, r }, [g0, g1]) => [
+  `M ${g1} ${hy}`,
+  `L ${hx - r} ${hy}`,
+  `A ${r} ${r} 0 0 0 ${hx} ${hy - r}`,
+  `L ${hx} ${r - hy}`,
+  `A ${r} ${r} 0 0 0 ${hx - r} ${-hy}`,
+  `L ${r - hx} ${-hy}`,
+  `A ${r} ${r} 0 0 0 ${-hx} ${r - hy}`,
+  `L ${-hx} ${hy - r}`,
+  `A ${r} ${r} 0 0 0 ${r - hx} ${hy}`,
+  `L ${g0} ${hy}`,
+].join(' ')
+
+const WALL_OPEN = {
+  outer: wallPath(WALL_OUT, WALL_GAP),
+  inner: wallPath(WALL_IN, WALL_GAP),
+  ends: WALL_GAP.flatMap((x) => [[x, WALL_OUT.hy], [x, WALL_IN.hy]]),
+}
 
 /* THE RUN, AS A LINE THE FIVE STATIONS ARE REGISTERED TO.
  *
@@ -119,12 +180,15 @@ const FACT_Y = DATUM + 29
    because a LEVER is a thing a person can picture their hand on, and what got
    generalised was the hinge rather than the hand.
 
-   What ties a run together is not the machines. It is the BLOCK passing through
-   them: it arrives in a pile, is put in order, drops down one of three holes,
-   runs a line where a person can push it off, and ends up on a tape that can be
-   wound back. The block carries its verdict from the hole that gave it one.
+   What ties a run together is not the machines. It is the CELL passing through
+   them: it arrives in a pile, is put in order, drops down one of three pores,
+   runs a lane where a person can push it off, and ends up recorded on a tape
+   that can be wound back. The cell carries its stain from the pore that gave
+   it one - and it is a cell, not a block, because what a run actually handles
+   is a patient's biology. The frames on the tape stay faceted: by Replay the
+   subject has become RECORD, and records are structure.
 
-   So each station is a different KIND of machine working on that block, and no
+   So each station is a different KIND of machine working on that cell, and no
    two of them share a kinematic:
 
    PROTOCOL IS A BREAKER BOARD. A grid of switches on a bank - the same relief
@@ -133,23 +197,25 @@ const FACT_Y = DATUM + 29
    once it stops being prose: a board of conditions that are met or not.
 
    EVIDENCE IS A PICK AND PLACE. A pile of material on one side, an ordered bed
-   of slots on the other, and a claw on a gantry that goes down into the pile,
-   comes up with a block, carries it across and sets it in a slot. Nothing is
-   created and nothing is taken away. The pile visibly loses the block and the
-   bed visibly gains it, which is the only way a reader can see that the machine
-   is ORGANISING rather than hovering.
+   of round sockets on the other, and a claw on a gantry that goes down into
+   the pile, comes up with a cell, carries it across and sets it in a socket.
+   Nothing is created and nothing is taken away. The pile visibly loses the
+   cell and the bed visibly gains it, which is the only way a reader can see
+   that the machine is ORGANISING rather than hovering.
 
-   SCREENING IS THREE THROATS, cut through the plate along its front-right edge
+   SCREENING IS THREE PORES, cut through the plate along its front-right edge
    and drawn the way Trident draws its intake: the far wall, the floor, and the
-   throat standing on it. Blocks arrive with no verdict at all - plain house
-   blue - and sink into one of the three. The hole is what gives them a colour.
-   The amber one is the machine admitting it cannot settle the question, so that
-   block does not stay: it is thrown to the next plate, where a person is.
+   throat standing on it. They sit against the plate's own membrane, because a
+   pore is a hole IN a boundary. Cells arrive unstained - plain house blue -
+   and sink into one of the three; the pore is what stains them. The amber one
+   is the machine admitting it cannot settle the question, so that cell does
+   not stay: it is thrown to the next plate, where a person is.
 
-   RESOLVE IS A HORIZONTAL RAM. Amber blocks run a lane, a hand throws the
-   lever, and a ram comes across the lane and pushes the block at the station
-   clean off the near edge of the plate, where it falls away. The line then
-   indexes one pitch and a new block arrives at the back. That is the honest
+   RESOLVE IS A HORIZONTAL RAM. Amber cells run a lane, a hand throws the
+   lever, and a ram comes across the lane and pushes the cell at the station
+   clean off the near edge of the plate - through the one gap in the membrane,
+   because leaving the boundary is the decision - where it falls away. The line
+   then indexes one pitch and a new cell arrives at the back. That is the honest
    picture of a judgement call: the rules have run out and somebody decides.
 
    REPLAY IS A TRANSPORT. Two reels, a tape path between them, the run's own
@@ -247,19 +313,36 @@ function mechanism(key, t) {
     ...extra,
   })
 
-  /* A BLOCK. THE MATERIAL THE WHOLE ROW IS MADE OF.
+  /* A CELL. THE MATERIAL THE WHOLE ROW IS MADE OF.
 
-     It arrives in a pile with NO verdict - plain house blue, because a block
-     nobody has ruled on is not a state, it is material - and it takes a colour
-     from the hole it falls down. Green for eligible, red for not, amber for the
-     ones a machine cannot settle, which is the only reason Resolve exists and
-     the reason a person is standing at it.
+     The run handles a patient's own biology, so the material is drawn ALIVE:
+     a plan circle carried through the projection, standing on its own wall,
+     with its nucleus printed off-centre on the top. Everything built on these
+     plates stays faceted - the machines are the site's structure - and only
+     the subject is round. One radius for every cell on the sheet, because the
+     subject does not change size between stations, and seven is the smallest
+     plan radius whose projected width (2r * ISO_X * sqrt2 = 17.2px) clears
+     the size at which a solid stops reading as a solid.
+
+     It arrives with NO verdict - plain house blue, because a cell nobody has
+     ruled on is not a state, it is material - and it takes its colour from
+     the hole it falls down, the way a section takes a stain: green for
+     eligible, red for not, amber for the ones a machine cannot settle, which
+     is the only reason Resolve exists and the reason a person is standing at
+     it. The stain reaches the nucleus deepest, because that is where a stain
+     goes.
 
      Two layers that do not fight: the station's ink dresses the plate and the
-     machine, and the block's colour is the state of one subject. The same green
-     on Screening is the same green on Replay because it is the same block. */
-  const block = (px, py, verdict, high = 6, base = 0, extra = {}) => ({
-    ...stand(px, py, 5, 5, high, 1.5, base),
+     machine, and the cell's stain is the state of one subject. The same green
+     on Screening is the same green on Replay because it is the same cell.
+
+     The nucleus is offset by plan (2.3, 0) carried through the projection -
+     the same offset on every cell, because a drafted sheet places a repeated
+     mark the same way every time. */
+  const CORE = { dx: 1.99, dy: 0.78, ...planCircle(2.4) }
+  const cell = (px, py, verdict, high = 5, base = 0, extra = {}) => ({
+    ...drum(px, py, 7, high, base),
+    core: CORE,
     cls: `fl-blk${verdict ? ` is-${verdict}` : ''}`,
     ...extra,
   })
@@ -280,7 +363,7 @@ function mechanism(key, t) {
       const bank = rows.flatMap((py, r) => cols.map((px, c) => [px, py, r * cols.length + c]))
       return [
         printed(-800, 'fl-print', [
-          <rect key="board" x="-54" y="-46" width="108" height="92" rx="6" />,
+          <rect key="board" x="-50" y="-40" width="100" height="80" rx="8" />,
         ]),
         // THE BANK IS DRAWN FIRST, AND NOT AT ITS OWN DEPTH. Everything else
         // here is sorted by the depth of the plan point it stands on, which is
@@ -308,22 +391,24 @@ function mechanism(key, t) {
     //
     // A machine that organises has to be seen taking one thing out of the mess
     // and putting it in the right place. So the claw goes DOWN into the pile,
-    // closes, comes up with a block, crosses to the bed and sets it in a slot.
-    // The pile loses that block and the bed gains it. Same material, better
+    // closes, comes up with a cell, crosses to the bed and sets it in a socket.
+    // The pile loses that cell and the bed gains it. Same material, better
     // order, which is the entire claim of the step.
     evidence: () => {
       // A PILE, NOT A SCATTER: some of these stand on the others, which is the
       // only difference between material heaped up and material laid out.
       const pile = [
-        [-62, -30, 9, 0], [-44, -34, 11, 0], [-64, -12, 7, 0], [-42, -10, 12, 0],
-        [-62, 6, 10, 0], [-46, 6, 8, 0], [-60, -32, 6, 8], [-58, 4, 5, 9],
+        [-62, -30, 5, 0], [-44, -34, 6, 0], [-64, -12, 4, 0], [-42, -10, 6, 0],
+        [-62, 6, 5, 0], [-46, 6, 4, 0], [-60, -32, 4, 5], [-58, 4, 4, 5],
       ]
       const slot = [-20, 8].flatMap((py) => [4, 28, 50].map((px) => [px, py]))
       return [
         printed(-800, 'fl-print', [
-          <rect key="pit" x="-70" y="-42" width="34" height="58" rx="5" />,
+          <rect key="pit" x="-63" y="-40" width="28" height="52" rx="10" />,
+          // ROUND SOCKETS FOR ROUND MATERIAL. A square slot under a cell says
+          // the bed was cut for some other cargo.
           ...slot.map(([px, py]) => (
-            <rect key={`${px}:${py}`} x={px - 8} y={py - 8} width="16" height="16" rx="2" />
+            <circle key={`${px}:${py}`} cx={px} cy={py} r="8.5" />
           )),
         ]),
         // THE GANTRY THE CLAW RIDES, and it is the whole reason the claw is not
@@ -338,18 +423,25 @@ function mechanism(key, t) {
         { ...stand(-68, -20, 5, 5, 30, 1.5), cls: 'fl-rig is-post' },
         { ...stand(62, -20, 5, 5, 30, 1.5), cls: 'fl-rig is-post' },
         { ...stand(-3, -20, 67, 3.5, 4, 2, 30), cls: 'fl-rig is-beam', depth: -600 },
-        ...pile.map(([px, py, high, base], i) => block(px, py, null, high, base, { turn: i })),
+        // The beam is ruled along its own top the way a protofilament is
+        // drawn - segmented - so the track the carriage rides reads as grown
+        // structure rather than rolled steel. A raised print at the beam's own
+        // roof (base 30 + high 4), in the same plan units as the beam.
+        printed(-599, 'fl-print', [-54, -42, -30, -18, -6, 6, 18, 30, 42, 54].map((x) => (
+          <line className="fl-ruled" key={x} x1={x} y1="-23" x2={x} y2="-17" />
+        )), 34),
+        ...pile.map(([px, py, high, base], i) => cell(px, py, null, high, base, { turn: i })),
         // The one the claw takes. It is on top of the pile, because that is
         // where a claw can reach.
-        { ...block(-52, -20, null, 6), cls: 'fl-blk fl-pick' },
-        ...slot.slice(1).map(([px, py], i) => block(px, py, null, 6, 0, { turn: i })),
+        { ...cell(-52, -20, null, 5), cls: 'fl-blk fl-pick' },
+        ...slot.slice(1).map(([px, py], i) => cell(px, py, null, 5, 0, { turn: i })),
         // The slot it fills. Empty until the claw lets go of what it is
-        // carrying, so the bed is one block fuller for having been worked on.
-        { ...block(slot[0][0], slot[0][1], null, 6), cls: 'fl-blk fl-lay' },
-        // THE CARRIAGE. Two jaws hanging off a head, and a block held between
-        // them. All three ride one clock, so the block travels because the claw
+        // carrying, so the bed is one cell fuller for having been worked on.
+        { ...cell(slot[0][0], slot[0][1], null, 5), cls: 'fl-blk fl-lay' },
+        // THE CARRIAGE. Two jaws hanging off a head, and a cell held between
+        // them. All three ride one clock, so the cell travels because the claw
         // is carrying it rather than beside it.
-        { ...block(-52, -20, null, 6, 14), cls: 'fl-blk fl-carry', depth: OVER + 1 },
+        { ...cell(-52, -20, null, 5, 14), cls: 'fl-blk fl-carry', depth: OVER + 1 },
         { ...stand(-52, -30, 3, 8, 10, 1, 14), cls: 'fl-claw is-jaw', depth: OVER },
         { ...stand(-52, -10, 3, 8, 10, 1, 14), cls: 'fl-claw is-jaw', depth: OVER + 2 },
         { ...stand(-52, -20, 8, 8, 6, 2, 24), cls: 'fl-claw is-head', depth: OVER + 3 },
@@ -365,22 +457,24 @@ function mechanism(key, t) {
     // left to right, with the amber one nearest the corner that points at
     // Resolve, because that is the one that goes there.
     //
-    // The blocks arrive with NO verdict. The hole is what gives them one.
+    // The cells arrive with NO stain. The pore is what gives them one.
     screening: () => {
       const hole = [[55, 32, 'pass'], [55, 0, 'fail'], [55, -32, 'hold']]
       const wait = [-30, -6].flatMap((py) => [-56, -34, -12].map((px) => [px, py]))
       return [
         printed(-800, 'fl-print', [
-          <rect key="bed" x="-64" y="-40" width="60" height="44" rx="4" />,
-          // ONE RING PER THROAT. Two turned three holes into nine concentric
-          // circles that all ran into each other, which is a target pattern and
-          // not a plan.
-          ...hole.map(([px, py]) => <circle className="fl-ruled" key={px + py} cx={px} cy={py} r="20" />),
+          // NO RINGS ROUND THE PORES ANY MORE. One printed ring per throat
+          // was already the survivor of a cull, and the membrane makes even
+          // that one redundant: the plate's own wall runs right past the three
+          // bores, so a pore is a hole IN the boundary - which is what a pore
+          // is - and a second ring around it was the target pattern trying to
+          // come back.
+          <rect key="bed" x="-64" y="-40" width="60" height="44" rx="12" />,
         ]),
-        ...wait.map(([px, py], i) => block(px, py, null, 6, 0, { turn: i })),
+        ...wait.map(([px, py], i) => cell(px, py, null, 5, 0, { turn: i })),
         ...hole.map(([px, py, v]) => ({ ...well(px, py, 14, 8), cls: `fl-hole is-${v}` })),
-        ...hole.map(([px, py], i) => block(px, py, null, 6, 0, { cls: 'fl-blk fl-faller', turn: i })),
-        // THE CATAPULT. The amber block is the only thing that leaves this
+        ...hole.map(([px, py], i) => cell(px, py, null, 5, 0, { cls: 'fl-blk fl-faller', turn: i })),
+        // THE CATAPULT. The amber cell is the only thing that leaves this
         // plate, and it leaves thrown - the one moment in the figure where a
         // machine hands a decision to a person because it has run out of rules.
         //
@@ -392,7 +486,7 @@ function mechanism(key, t) {
         // the same arm reaches over the throat and is plainly part of the plate.
         { ...drum(30, -38, 8, 10), cls: 'fl-pivot' },
         arm('fl-catapult', 30, -38, 10, 22, 4.6, { knob: 3.8 }),
-        { ...block(55, -32, 'hold', 6), cls: 'fl-blk is-hold fl-shot', depth: OVER + 4 },
+        { ...cell(55, -32, 'hold', 5), cls: 'fl-blk is-hold fl-shot', depth: OVER + 4 },
       ]
     },
     // RESOLVE IS A HORIZONTAL RAM.
@@ -400,13 +494,14 @@ function mechanism(key, t) {
     // The press used to come straight down onto an anvil, which is a stamp and
     // not a decision - and the anvil was a disc on a plate that nothing else in
     // the station referred to. A judgement is something coming OFF the line, so
-    // the ram lies flat, crosses the lane, and pushes the block at the station
-    // clean off the near edge, where it falls away.
+    // the ram lies flat, crosses the lane, and pushes the cell at the station
+    // clean off the near edge - through the gap the membrane leaves for it -
+    // where it falls away.
     //
     // THE LINE THEN INDEXES, AND THAT IS WHY IT LOOPS WITHOUT A SEAM. Three
-    // blocks each step forward exactly one PITCH while a fourth fades in at the
+    // cells each step forward exactly one PITCH while a fourth fades in at the
     // back, so the set of occupied slots at the end of a cycle is the set at the
-    // start shifted by one. When the clock turns over, every block lands on the
+    // start shifted by one. When the clock turns over, every cell lands on the
     // slot its neighbour just left and the picture is identical. Nothing has to
     // travel backwards to close the loop.
     resolve: () => {
@@ -415,29 +510,30 @@ function mechanism(key, t) {
       return [
         printed(-800, 'fl-print', [
           <line key="lane" x1="-60" y1={lane} x2="48" y2={lane} />,
-          // The rail the ram runs on, and the edge the block goes over. A plate
-          // has to say where something leaves it, or the block is just falling
-          // off a drawing.
-          <line className="fl-ruled" key="rail" x1="28" y1="-46" x2="28" y2="42" />,
+          // The rail the ram runs on, and the edge the cell goes over. A plate
+          // has to say where something leaves it, or the cell is just falling
+          // off a drawing - and here the membrane says it too: its gap
+          // brackets this lane, and the chevron points through it.
+          <line className="fl-ruled" key="rail" x1="28" y1="-40" x2="28" y2="42" />,
           <path className="fl-ruled" key="edge" d="M 18 32 L 28 42 L 38 32" />,
-          <rect key="gate" x="14" y="-18" width="28" height="40" rx="4" />,
+          <rect key="gate" x="14" y="-18" width="28" height="40" rx="8" />,
         ]),
-        ...[0, 1, 2].map((i) => ({ ...block(at(i), lane, 'hold'), cls: 'fl-blk is-hold fl-index' })),
+        ...[0, 1, 2].map((i) => ({ ...cell(at(i), lane, 'hold'), cls: 'fl-blk is-hold fl-index' })),
         // The one at the station, which is the one that gets pushed off.
-        { ...block(at(3), lane, 'hold'), cls: 'fl-blk is-hold fl-pushed', depth: OVER + 3 },
+        { ...cell(at(3), lane, 'hold'), cls: 'fl-blk is-hold fl-pushed', depth: OVER + 3 },
         // And the one that arrives to replace it, at the back of the lane.
-        { ...block(at(0), lane, 'hold'), cls: 'fl-blk is-hold fl-feed' },
+        { ...cell(at(0), lane, 'hold'), cls: 'fl-blk is-hold fl-feed' },
         // THE RAM, IN THREE STEPS. One slab crossing a lane is a slab. A body
         // at the back, a thin rod out of it, and a BLADE at the front that is
-        // wider across the lane than the block and stands twice its height:
+        // wider across the lane than the cell and stands twice its height:
         // the stepping is the only thing that says which end does the work, and
         // the blade is the only part a reader has to read.
         //
         // AND IT IS SORTED ABOVE THE LANE RATHER THAN AT ITS OWN PLAN POINT.
         // Every other solid here is sorted by where it stands, which is right
         // for something that stays there; the ram crosses the lane, so its
-        // depth relationship with the blocks on it genuinely REVERSES halfway
-        // through the stroke. Sorted at rest it was drawn behind the block it
+        // depth relationship with the cells on it genuinely REVERSES halfway
+        // through the stroke. Sorted at rest it was drawn behind the cell it
         // was pushing for the whole of the stroke.
         { ...stand(28, -38, 7, 9, 9, 3), cls: 'fl-ram is-body', depth: OVER - 3 },
         { ...stand(28, -22, 3, 9, 4, 1.5, 3), cls: 'fl-ram is-neck', depth: OVER - 2 },
@@ -505,7 +601,7 @@ function mechanism(key, t) {
         })),
         // THE HEAD. Two legs either side of the tape and a bar over the top, so
         // the tape passes UNDER it - which is the whole difference between a
-        // head reading a tape and a block sitting on one.
+        // head reading a tape and a solid sitting on one.
         { ...stand(-38, -9, 5, 5, 17, 1.5), cls: 'fl-head is-leg', depth: OVER },
         { ...stand(-38, 13, 5, 5, 17, 1.5), cls: 'fl-head is-leg', depth: OVER + 1 },
         { ...stand(-38, 2, 4, 15, 6, 2, 17), cls: 'fl-head is-bar', depth: OVER + 2 },
@@ -590,7 +686,7 @@ const STEPS = [
         // of them hand off to one plate without the outline moving. Scatter is
         // an offset from that, so the whole travel is a compositor transform
         // with nothing recomputed on any frame.
-        shape: roundedSlab(sx, sy, TILE, TILE, SHEET, 7),
+        shape: roundedSlab(sx, sy, TILE, TILE, SHEET, 9),
         // TWO SCATTER POSITIONS, NOT ONE. The mess has to be alive while it is
         // still a mess: tiles holding perfectly still read as a paused video.
         driftX: Math.round(clamp(KEEP.left + 76 + spot * (KEEP.right - KEEP.left - 152) + (jitter(seed, 37) - 0.5) * 58, KEEP.left, KEEP.right, slack) - sx),
@@ -633,11 +729,17 @@ const STEPS = [
  * axis-aligned ellipse in this projection, so the top is an ordinary <ellipse>
  * and only the wall has to be solved.
  */
-function Drum({ shape, className }) {
+function Drum({ shape, core, className }) {
   return (
     <g className={className}>
       <path className="dgm-face-right" d={shape.wall} />
       <ellipse className="dgm-face-top" cx={shape.cx} cy={shape.cy} rx={shape.rx} ry={shape.ry} />
+      {/* The nucleus, on the cells only. A plan circle like the body it sits
+          on, offset the same way on every cell, and drawn after the top so it
+          reads as printed ON the material rather than showing through it. */}
+      {core ? (
+        <ellipse className="fl-core" cx={shape.cx + core.dx} cy={shape.cy + core.dy} rx={core.rx} ry={core.ry} />
+      ) : null}
     </g>
   )
 }
@@ -693,7 +795,7 @@ export default function ChainSchematic({ animate = true }) {
           className={`dgm-svg is-floor${animate ? ' is-live' : ''}${fused ? ' is-fused' : ''}`}
           viewBox={`0 0 ${W} ${H}`}
           role="img"
-          aria-label="Thirty surfaces scattered in the air, seen in axonometric projection. As the reader reaches the figure they draw together and set down flush, six at a time, into five plates in a row, and stay there. A survey line rules under the row and letters the five stations beneath it: Protocol, Evidence, Screening, Resolve, Replay. One block runs the whole row. A grid of twelve switches on a breaker board is thrown one at a time, each settling green or red. A claw on a gantry lifts a block out of a heap and sets it into an ordered bed of slots. Three throats cut through the next plate along its front-right edge take blocks that arrive with no verdict - green, red, and an amber one for what the machine cannot settle, which is catapulted to the plate beyond. There a hand throws a lever, a horizontal ram crosses the lane and pushes one block clean off the edge, and the line indexes forward as another arrives. On the last plate the run lies on a tape between two reels, and a head reads its way along and then runs back. Pointing at a plate lifts it off the ground and darkens the ground beneath it."
+          aria-label="Thirty surfaces scattered in the air, seen in axonometric projection. As the reader reaches the figure they draw together and set down flush, six at a time, into five plates in a row, and stay there - each plate bounded by its own printed double-walled membrane, the way a section drawing bounds a cell. A survey line rules under the row and letters the five stations beneath it: Protocol, Evidence, Screening, Resolve, Replay. One cell - a round body with its nucleus drawn on top - runs the whole row. A grid of twelve switches on a breaker board is thrown one at a time, each settling green or red. A claw on a gantry lifts a cell out of a heap and sets it into an ordered bed of round sockets. Three pores cut through the next plate along its front-right edge take cells that arrive unstained - green, red, and an amber one for what the machine cannot settle, which is catapulted to the plate beyond. There a hand throws a lever, a horizontal ram crosses the lane and pushes one cell clean off the edge through the one gap in the membrane, and the line indexes forward as another arrives. On the last plate the run lies as frames on a tape between two reels, and a head reads its way along and then runs back. Pointing at a plate lifts it off the ground and darkens the ground beneath it."
         >
           <defs>
             <pattern id="fl-grain" width="13" height="13" patternUnits="userSpaceOnUse">
@@ -777,6 +879,28 @@ export default function ChainSchematic({ animate = true }) {
                 <g className="fl-plate">
                   <Faces shape={item.plate} className="dgm-solid" />
                   <polygon className="fl-grain" points={item.plate.top} fill="url(#fl-grain)" />
+                  {/* THE MEMBRANE. The plate's own boundary, printed as the
+                      double wall a section drawing gives one, in the same plan
+                      space as everything standing on the surface - so the wall
+                      and the machine inside it are solved from the same two
+                      numbers. On Resolve it PARTS at the exit lane and its cut
+                      ends thicken into terminal dots; see `wallPath`. */}
+                  <g className="fl-membrane" transform={planSpace(item.seat[0], item.seat[1])}>
+                    {item.key === 'resolve' ? (
+                      <>
+                        <path className="fl-bilayer" d={WALL_OPEN.outer} />
+                        <path className="fl-bilayer is-inner" d={WALL_OPEN.inner} />
+                        {WALL_OPEN.ends.map(([x, y]) => (
+                          <circle className="fl-cut" key={`${x}:${y}`} cx={x} cy={y} r="1.7" />
+                        ))}
+                      </>
+                    ) : (
+                      <>
+                        <rect className="fl-bilayer" x={-WALL_OUT.hx} y={-WALL_OUT.hy} width={WALL_OUT.hx * 2} height={WALL_OUT.hy * 2} rx={WALL_OUT.r} />
+                        <rect className="fl-bilayer is-inner" x={-WALL_IN.hx} y={-WALL_IN.hy} width={WALL_IN.hx * 2} height={WALL_IN.hy * 2} rx={WALL_IN.r} />
+                      </>
+                    )}
+                  </g>
                 </g>
 
                 {/* THE PLAN OF THE WORK, AND THE WORK STANDING IN IT. Printed
@@ -855,11 +979,11 @@ export default function ChainSchematic({ animate = true }) {
                         style={{ '--turn': part.turn ?? 0, '--idle': part.idle ? 1 : 0, '--life': part.life }}
                       >
                         {/* The settle sits INSIDE whatever the part is already
-                            doing, so a block can be riding a claw across the
+                            doing, so a cell can be riding a claw across the
                             plate and breathing at the same time. */}
                         <g className="fl-settle">
                           {part.round ? (
-                            <Drum shape={part.shape} className="dgm-solid" />
+                            <Drum shape={part.shape} core={part.core} className="dgm-solid" />
                           ) : (
                             <Faces shape={part.shape} className="dgm-solid" />
                           )}

@@ -132,10 +132,13 @@ describe('Trident and Nectar schematics', () => {
     assert.match(nectar, /records: '890', half: 44, wall: 18, bands: 4, grew: 0\.96/)
     assert.match(nectar, /records: '614', half: 40, wall: 15, bands: 3, grew: 0\.92/)
     assert.match(nectar, /records: '1,204', half: 55, wall: 22, bands: 5, grew: 1\.04/)
-    // The bands sit under the lid that seals them, so a stack fills the site it
-    // is in and no band is drawn outside the thing holding it shut.
+    // The rows sit under the lid that seals them, so a stack fills the site it
+    // is in and no record is drawn outside the thing holding it shut - and a
+    // record is a CELL now, a run of them per row, each with its nucleus,
+    // because what a site holds is patients.
     assert.match(nectar, /const lid = site\.half - 7/)
-    assert.match(nectar, /rows\.push\(\{ y, half: lid - 7 \}\)/)
+    assert.match(nectar, /rows\.push\(\{ y, half, cells \}\)/)
+    assert.match(nectar, /Math\.max\(2, Math\.floor\(\(half \* 2\) \/ 13\)\)/)
     // The badge that sat on the roof of every site - a circle with a little
     // glyph inside it - is gone from the figure and from the sheet. (`dgm-port`
     // used to be banned here as a prefix, which stopped meaning the badge the
@@ -1897,10 +1900,11 @@ describe('Trident and Nectar schematics', () => {
 describe('The floor schematic', () => {
   it('is drawn in the same hand as the other two figures', () => {
     assert.match(floor, /from '\.\/iso'/)
-    assert.match(floor, /roundedSlab\(sx, sy, TILE, TILE, SHEET, 7\)/)
+    assert.match(floor, /roundedSlab\(sx, sy, TILE, TILE, SHEET, 9\)/)
     assert.doesNotMatch(floor, /<text\b[^>]*>\{(?!item\.label)/)
-    // AND NOT TRIDENT OR NECTAR. Those are stacked round decks and districts of
-    // scattered blocks. Nothing here is a deck and nothing is a drum.
+    // AND NOT TRIDENT OR NECTAR. Those figures' own helpers stay theirs: the
+    // floor builds every round thing it has - the cells, the reels, the
+    // pivots - out of its own `drum`, on `roundedCylinder`.
     assert.doesNotMatch(floor, /roundedDeck|planCyl|planPrism|planDrop/)
   })
 
@@ -2004,7 +2008,7 @@ describe('The floor schematic', () => {
     // PASSING THROUGH them: a block arrives in a heap, is ordered into rows,
     // falls down one of three holes, and ends up shelved where it can be pulled
     // back out.
-    assert.match(floor, /const block = \(px, py, verdict, high = 6, base = 0, extra = \{\}\) =>/)
+    assert.match(floor, /const cell = \(px, py, verdict, high = 5, base = 0, extra = \{\}\) =>/)
     assert.match(floor, /cls: `fl-blk\$\{verdict \? ` is-\$\{verdict\}` : ''\}`/)
     for (const key of ['protocol', 'evidence', 'screening', 'resolve', 'replay']) {
       assert.match(floor, new RegExp(`^    ${key}: \\(\\) =>`, 'm'))
@@ -2114,7 +2118,7 @@ describe('The floor schematic', () => {
     // NOTHING STANDS OFF ITS OWN PLATE. The plate is a plan rectangle with
     // ROUNDED corners, so a part can be inside the plan bounds and still leave
     // the surface once its own height lifts it.
-    const [HX, HY, R] = [75, 50, 12]
+    const [HX, HY, R] = [75, 50, 20]
     const inPlan = (x, y) => {
       const [ax, ay] = [Math.abs(x), Math.abs(y)]
       if (ax > HX || ay > HY) return false
@@ -2149,17 +2153,18 @@ describe('The floor schematic', () => {
         }
       }
     }
-    // A PILE IS BLOCKS STANDING ON OTHER BLOCKS. A flat scatter of eight is a
+    // A PILE IS CELLS STANDING ON OTHER CELLS. A flat scatter of eight is a
     // scatter; what makes a heap read as a heap is that some of it is on top of
-    // the rest, which is the whole reason `block` took a base.
+    // the rest, which is the whole reason `cell` took a base.
     const pile = [...floor.match(/const pile = \[[\s\S]*?\n {6}\]/)[0]
       .matchAll(/\[(-?[\d.]+), (-?[\d.]+), (\d+), (\d+)\]/g)]
       .map((m) => m.slice(1).map(Number))
-    assert.ok(pile.length >= 7, 'a pile of six blocks is a row with gaps')
+    assert.ok(pile.length >= 7, 'a pile of six cells is a row with gaps')
     assert.ok(pile.some(([, , , base]) => base > 0), 'nothing standing on anything else is a scatter, not a pile')
     for (const [px, py] of pile) {
-      for (const [sx, sy] of corners) {
-        if (!inPlan(px + sx * 5, py + sy * 5)) off.push(`pile block at ${px},${py}`)
+      for (let a = 0; a < 24; a += 1) {
+        const t = (a / 24) * Math.PI * 2
+        if (!inPlan(px + Math.cos(t) * 7, py + Math.sin(t) * 7)) off.push(`pile cell at ${px},${py}`)
       }
     }
     for (const [px, py] of hole) {
@@ -2179,10 +2184,11 @@ describe('The floor schematic', () => {
     const round = [...floor.matchAll(/(?<![A-Za-z])(?:drum|well)\([^,]+, [^,]+, ([\d.]+), /g)]
       .map((m) => 2 * Number(m[1]) * X * Math.SQRT2)
     assert.ok(sized.length >= 5 && round.length >= 4, 'the stations are solved, not drawn by hand')
-    // And the block itself, which most of the row is made of, is solved once in
-    // its own helper rather than at every call site.
-    const blk = floor.match(/\.\.\.stand\(px, py, ([\d.]+), ([\d.]+), high/)
-    assert.ok(2 * (Number(blk[1]) + Number(blk[2])) * X >= 17, 'a block under seventeen pixels is a mark')
+    // And the cell itself, which most of the row is made of, is solved once in
+    // its own helper rather than at every call site - a round body now, so its
+    // projected width is 2r * ISO_X * sqrt2.
+    const blk = floor.match(/\.\.\.drum\(px, py, ([\d.]+), high/)
+    assert.ok(2 * Number(blk[1]) * X * Math.SQRT2 >= 17, 'a cell under seventeen pixels is a mark')
     assert.ok(Math.min(...sized, ...round) >= 17, `a ${Math.round(Math.min(...sized, ...round))}px part is a mark, not a thing`)
 
     // A HOLE ONLY READS AS ONE WHILE ITS FLOOR STILL SITS INSIDE ITS RIM.
@@ -2203,6 +2209,73 @@ describe('The floor schematic', () => {
     // Back to front, or a station is a pile rather than an object.
     assert.match(floor, /\.sort\(\(a, b\) => a\.depth - b\.depth\)/)
     assert.match(floor, /const OVER = 999/)
+  })
+
+  it('draws the material alive, inside a membrane', () => {
+    // THE SHEET'S LAW, THIS PASS: STRUCTURE IS FACETED, LIFE IS ROUND.
+    //
+    // This is clinical research. The thing moving through the run is a
+    // patient's own biology, so the unit of material is a CELL - a plan circle
+    // carried through the projection, standing on its own wall, with a nucleus
+    // printed off-centre on its top - and a verdict reaches it the way a stain
+    // reaches a section: body first, nucleus deepest. The machines stay
+    // faceted, because they are the site's structure. Only the subject is
+    // round.
+    assert.match(floor, /const cell = \(px, py, verdict, high = 5, base = 0, extra = \{\}\) =>/)
+    assert.match(floor, /\.\.\.drum\(px, py, 7, high, base\)/)
+    assert.match(floor, /const CORE = \{ dx: [\d.]+, dy: [\d.]+, \.\.\.planCircle\(2\.4\) \}/)
+    assert.match(floor, /core: CORE/)
+    assert.match(floor, /core=\{part\.core\}/)
+    assert.match(css, /\.fl-core \{[\s\S]*?fill: color-mix\(in srgb, var\(--accent-strong\)/)
+    for (const verdict of ['pass', 'hold', 'fail']) {
+      assert.match(css, new RegExp(`\\.fl-blk\\.is-${verdict} \\.fl-core \\{ fill: var\\(--${verdict}\\); \\}`))
+    }
+    // The nucleus is an offset in PLAN carried through the projection, not a
+    // nudge made by eye: plan (2.3, 0) lands at (2.3 * ISO_X, 2.3 * ISO_Y).
+    const core = floor.match(/const CORE = \{ dx: ([\d.]+), dy: ([\d.]+)/)
+    assert.ok(Math.abs(Number(core[1]) - 2.3 * ISO.ISO_X) < 0.01, 'the nucleus offset is not a plan offset')
+    assert.ok(Math.abs(Number(core[2]) - 2.3 * ISO.ISO_Y) < 0.01, 'the nucleus offset is not a plan offset')
+
+    // EVERY SURFACE THAT HOLDS THE MATERIAL CARRIES A MEMBRANE - the double
+    // wall a section drawing gives a boundary, printed inside its edge. The
+    // five plates each wear one. Trident's stack stands on a ground that wears
+    // the site's own, with its proposal surfaces riding outside it, and its
+    // intake pore wears the same line as a collar. Nectar's sites always had
+    // their double wall; their ports carry the collar, and the records under
+    // every sealed lid are drawn as what they are - cells, each with a
+    // nucleus, the one population in either figure that is alive.
+    assert.match(floor, /className="fl-membrane" transform=\{planSpace\(item\.seat\[0\], item\.seat\[1\]\)\}/)
+    assert.match(css, /\.fl-bilayer \{[\s\S]*?stroke: color-mix\(in srgb, var\(--line\)/)
+    assert.match(trident, /className="dgm-membrane"/)
+    assert.match(trident, /className="dgm-membrane is-collar"/)
+    assert.match(nectar, /className="dgm-membrane is-collar"/)
+    assert.match(nectar, /className="dgm-recordcell"/)
+    assert.match(nectar, /className="dgm-recordcore"/)
+    assert.match(DGM_BLOCK, /\.dgm-membrane \{[\s\S]*?stroke: color-mix\(in srgb, var\(--accent\)/)
+    assert.match(DGM_BLOCK, /\.dgm-recordcell \{ fill: color-mix/)
+
+    // AND THE WALL PARTS EXACTLY ONCE. Resolve is the one place material
+    // leaves the run by a person's decision, so it is the one place a boundary
+    // is drawn open: the gap brackets the lane the ram pushes down, with a
+    // cell radius of clearance either side, and the cut ends thicken into the
+    // terminal dots a sectioned membrane gets. The other four walls are closed
+    // rects; only Resolve draws the open path.
+    assert.match(floor, /const WALL_GAP = \[14, 42\]/)
+    const gap = floor.match(/const WALL_GAP = \[(\d+), (\d+)\]/).slice(1).map(Number)
+    const pitch = Number(floor.match(/const PITCH = (\d+)/)[1])
+    const station = -44 + 3 * pitch // at(3), where fl-shove carries the cell over the edge
+    assert.ok(gap[0] <= station - 7 && gap[1] >= station + 7,
+      `an opening of ${gap} does not clear the cell that leaves through it at ${station}`)
+    assert.match(floor, /item\.key === 'resolve' \? \(/)
+    assert.match(css, /\.fl-cut \{ fill: color-mix/)
+    assert.equal((floor.match(/wallPath\(WALL_/g) || []).length, 2, 'two walls part, and nothing else does')
+
+    // The membrane is context, not content: fainter than the plan the machine
+    // stands in, and never animated - a wall does not run.
+    const wallInk = Number(css.match(/\.fl-bilayer \{[\s\S]*?stroke: color-mix\(in srgb, var\(--line\) (\d+)%/)[1])
+    const planInk = Number(css.match(/\.fl-plan \{[\s\S]*?stroke: color-mix\(in srgb, var\(--line\) (\d+)%/)[1])
+    assert.ok(wallInk <= planInk, `a wall at ${wallInk}% over a plan at ${planInk}% is a wall shouting`)
+    assert.doesNotMatch(css, /fl-bilayer[\s\S]{0,200}?animation:/)
   })
 
   it('gives each station its own ink, and couples the row into one run', () => {
@@ -2565,7 +2638,7 @@ describe('The floor schematic', () => {
     // seven samples the plate's radius came out as a visible run of chords.
     assert.match(iso, /const plan = roundedBox\(halfX, halfY, radius, 11\)/)
     assert.match(iso, /export function roundedBox\(halfX, halfY, radius, steps = 5\)/)
-    assert.match(floor, /const PLATE_R = 12/)
+    assert.match(floor, /const PLATE_R = 20/)
 
     // And the halo is not a blur. A Gaussian on five polygons is five
     // full-frame filter passes every frame for a thing invisible on four of

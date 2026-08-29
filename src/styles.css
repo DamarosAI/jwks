@@ -9410,14 +9410,33 @@ html.is-hidden .clinic-node i,
      written on the section root and inherit down; with no pointer they are
      zero and the wash sits dead centre, which is where it would have been if
      nobody had thought to move it. That is the whole fallback. */
+  /* AND THE GROUND IS CYTOPLASM NOW. Under the dots, two washes the size of
+     the viewport; floating in them, two sparse layers of open rings - the
+     vesicles of the sheet, one ring per couple of hundred pixels, tiled at two
+     sizes that share no factor so no grid ever forms. The rings ride the same
+     scroll term as the dots, so the whole ground moves as one medium. Every
+     layer is a tint of the one accent: the field is somewhere the figures are
+     suspended, not a texture behind them. */
   background-image:
     radial-gradient(circle 26vmax at calc(50% + var(--px, 0) * 40%) calc(50% + var(--py, 0) * 44%), color-mix(in srgb, var(--accent) 10%, transparent), transparent 64%),
+    radial-gradient(ellipse 58vmax 42vmax at 16% 22%, color-mix(in srgb, var(--accent) 6%, transparent), transparent 70%),
+    radial-gradient(ellipse 52vmax 44vmax at 86% 74%, color-mix(in srgb, var(--accent) 5%, transparent), transparent 72%),
+    radial-gradient(circle at center, transparent 5.2px, color-mix(in srgb, var(--accent) 15%, transparent) 5.9px, transparent 7px),
+    radial-gradient(circle at center, transparent 3.4px, color-mix(in srgb, var(--accent) 12%, transparent) 4px, transparent 5px),
     radial-gradient(circle at center, color-mix(in srgb, var(--accent) 38%, transparent) 1.1px, transparent 1.4px);
   background-position:
     center,
+    center,
+    center,
+    calc(50% + 47px) calc(var(--spread, 1) * -34px + 31px),
+    calc(50% - 60px) calc(var(--spread, 1) * -34px - 22px),
     center calc(var(--spread, 1) * -34px);
   background-size:
     100% 100%,
+    100% 100%,
+    100% 100%,
+    233px 209px,
+    181px 163px,
     26px 26px;
   opacity: calc(0.34 + 0.66 * var(--spread, 1));
   pointer-events: none;
@@ -9597,6 +9616,21 @@ html.is-hidden .clinic-node i,
   stroke: color-mix(in srgb, var(--accent) 22%, transparent);
   stroke-width: 1;
 }
+
+/* THE MEMBRANE. Every surface in these figures that holds patient material
+   carries its own boundary, printed as the double line a section drawing gives
+   a membrane: Trident's ground wears the site's, Nectar's sites always wore
+   theirs, and a pore - the intake, a board port - wears it as a collar. Two
+   hairlines a step apart, in the house ink, quieter than any working line:
+   a wall is not a machine. */
+.dgm-membrane {
+  fill: none;
+  stroke: color-mix(in srgb, var(--accent) 30%, transparent);
+  stroke-width: 1.05;
+}
+
+.dgm-membrane.is-inner { stroke: color-mix(in srgb, var(--accent) 21%, transparent); stroke-width: 0.9; }
+.dgm-membrane.is-collar { stroke: color-mix(in srgb, var(--accent) 36%, transparent); }
 
 .dgm-rule { stroke: var(--border); stroke-width: 1; }
 .dgm-mark { opacity: 0.92; }
@@ -11741,7 +11775,13 @@ html.is-hidden .clinic-node i,
 
 .dgm-wall.is-inner { stroke: color-mix(in srgb, var(--text) 22%, transparent); stroke-width: 1; }
 
-.dgm-record { fill: color-mix(in srgb, var(--text) 30%, var(--surface-solid)); }
+/* The records are cells - the one population in either figure that is alive,
+   drawn by the sheet's law: life is round, structure is faceted. A plan circle
+   inside `planSpace` is an honest ellipse, and the nucleus is a smaller one
+   printed off-centre, deeper than its body the way a stained section carries
+   its nuclei. */
+.dgm-recordcell { fill: color-mix(in srgb, var(--text) 26%, var(--surface-solid)); }
+.dgm-recordcore { fill: color-mix(in srgb, var(--text) 55%, var(--surface-solid)); }
 
 .dgm-lid {
   fill: color-mix(in srgb, var(--surface-strong) 60%, transparent);
@@ -12626,6 +12666,32 @@ html.is-hidden .clinic-node i,
    meant to count. */
 .fl-grain { opacity: 0.5; }
 
+/* ── The membrane ────────────────────────────────────────────────────────────────────
+
+   Every plate carries its own boundary, printed as the double line a section
+   drawing gives a membrane. It is drawn with the plate rather than with the
+   machine - the wall belongs to the surface - and it is the quietest geometry
+   on it: fainter than the plan, because a boundary is context and the machine
+   is content. A held plate's wall comes up a step with the rest of its plan.
+
+   Where the wall PARTS - Resolve's exit - the cut ends thicken into the
+   terminal dots a sectioned membrane gets, so the gap reads as a drawn
+   opening rather than a stretch someone forgot. */
+.fl-membrane * { vector-effect: non-scaling-stroke; }
+
+.fl-bilayer {
+  fill: none;
+  stroke: color-mix(in srgb, var(--line) 30%, transparent);
+  stroke-width: 1.05;
+  transition: stroke 300ms ease;
+}
+
+.fl-bilayer.is-inner { stroke: color-mix(in srgb, var(--line) 21%, transparent); stroke-width: 0.9; }
+
+.fl-cut { fill: color-mix(in srgb, var(--line) 52%, transparent); stroke: none; }
+
+.is-fused .fl-step.is-hot .fl-bilayer { stroke: color-mix(in srgb, var(--line) 50%, transparent); }
+
 
 /* ── Pointing at one lifts it ────────────────────────────────────────────
 
@@ -13047,6 +13113,22 @@ html.is-hidden .clinic-node i,
 .fl-blk.is-fail .dgm-face-top { fill: color-mix(in srgb, var(--fail) 44%, var(--surface-solid)); }
 .fl-blk.is-fail .dgm-face-left { fill: color-mix(in srgb, var(--fail) 72%, var(--surface-solid)); }
 .fl-blk.is-fail .dgm-face-right { fill: var(--fail); }
+
+/* THE NUCLEUS, AND THE STAIN THAT FINDS IT. A cell is the one round thing on
+   the sheet, and the nucleus is the one mark that says it is alive rather
+   than turned on a lathe. Unstained, it holds the house ink a step deeper
+   than its body; stained, it takes the verdict at full strength, because a
+   stain reaches the nucleus deepest - which is also what keeps a cell legible
+   at seventeen pixels: the reader is given a dark centre to find. */
+.fl-core {
+  fill: color-mix(in srgb, var(--accent-strong) 62%, var(--surface-solid));
+  stroke: none;
+  transition: fill 300ms ease;
+}
+
+.fl-blk.is-pass .fl-core { fill: var(--pass); }
+.fl-blk.is-hold .fl-core { fill: var(--hold); }
+.fl-blk.is-fail .fl-core { fill: var(--fail); }
 
 /* ── PROTOCOL IS A BREAKER BOARD, LAID OUT AS A GRID ─────────────────────
 

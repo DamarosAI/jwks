@@ -73,6 +73,17 @@ import { useScrollRun } from './useScrollPhase'
  * Nothing here names a vendor. The three sources are kinds of proposer, not
  * products, because the claim is about authority and not about whose model it
  * is: any of them can propose, none of them can decide.
+ *
+ * AND THE WHOLE STACK STANDS INSIDE THE SITE'S OWN MEMBRANE. The ground the
+ * run is measured against carries a printed double wall - the bilayer every
+ * section drawing gives a boundary - because the site is where the patient's
+ * data lives, and the one thing this figure claims is that everything above
+ * happens inside that boundary. The three proposal surfaces ride OUTSIDE it,
+ * up in the air, which is the drawing's way of saying they are not the site's:
+ * what they emit enters through the intake's pore, and a pore is a hole in a
+ * membrane. The decks themselves stay faceted. They are the machine; nothing
+ * alive is up on the stack, and the sheet's law - structure is faceted, life
+ * is round - is why the drawing can stay this dry.
  */
 
 const CX = 258
@@ -82,7 +93,11 @@ const HALF = 76
 // four outlines printed on one sheet. The extra four pixels are what let the
 // body colours separate and the tier read as an object with a thickness.
 const THICK = 15
-const RAD = 16
+// Twenty-two, not sixteen. The stack sits over a membraned ground now, and at
+// sixteen the four tiers read a register more machined than the boundary they
+// stand inside. A softer plan radius is the one organic reading a deck can
+// take without giving up a single straight edge.
+const RAD = 22
 const SEP = 104
 const TOP = 196
 const MIDDLE = TOP + SEP * 1.5
@@ -634,7 +649,7 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
           ref={figure}
           viewBox="0 0 620 700"
           role="img"
-          aria-label="Three kinds of proposal source - a model, an agent loop and a scheduled job - sit above one site, drawn identically because any of them can be swapped for another. A proposal lands on an intake deck, drops to a schema contract deck of nineteen named fields, and drops again to an approval deck whose gate stays closed until a named person at the site signs. Only then does it reach the receipt ledger, where every row is chained to the row above it by its hash."
+          aria-label="Three kinds of proposal source - a model, an agent loop and a scheduled job - sit above one site, drawn identically because any of them can be swapped for another. The whole stack stands over a ground that carries the site's own membrane, printed as a double wall, and the proposal surfaces ride outside it. A proposal lands on an intake deck through a collared pore, drops to a schema contract deck of nineteen named fields, and drops again to an approval deck whose gate stays closed until a named person at the site signs. Only then does it reach the receipt ledger, where every row is chained to the row above it by its hash."
         >
           <defs>
             <pattern id="tr-grain" width="16" height="16" patternUnits="userSpaceOnUse">
@@ -675,6 +690,13 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
             <g transform={planSpace(CX, GROUND)}>
               <rect className="dgm-plane" x={-HALF} y={-HALF} width={HALF * 2} height={HALF * 2} rx={RAD} vectorEffect="non-scaling-stroke" />
               <rect className="dgm-planefill" x={-HALF} y={-HALF} width={HALF * 2} height={HALF * 2} rx={RAD} fill="url(#tr-grain)" />
+              {/* THE SITE'S MEMBRANE. A double wall printed inside the ground's
+                  own edge - the boundary the whole stack stands within. The
+                  patient's data lives inside this line, the proposal surfaces
+                  ride outside it, and the only ways through anything here are
+                  drawn as pores. */}
+              <rect className="dgm-membrane" x={-HALF + 7} y={-HALF + 7} width={(HALF - 7) * 2} height={(HALF - 7) * 2} rx={RAD - 6} vectorEffect="non-scaling-stroke" />
+              <rect className="dgm-membrane is-inner" x={-HALF + 10.5} y={-HALF + 10.5} width={(HALF - 10.5) * 2} height={(HALF - 10.5) * 2} rx={RAD - 8} vectorEffect="non-scaling-stroke" />
             </g>
           </g>
 
@@ -1022,6 +1044,10 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
                   </g>
                 </g>
                 <circle className="dgm-port is-hub" cx="0" cy="0" r="14" vectorEffect="non-scaling-stroke" />
+                {/* The pore's collar: the same double-line language the
+                    membranes use, one ring out from the rim, because a hole
+                    that things pass through is a hole IN a boundary. */}
+                <circle className="dgm-membrane is-collar" cx="0" cy="0" r="18" vectorEffect="non-scaling-stroke" />
               </g>
             </g>
 
