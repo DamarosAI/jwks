@@ -11841,10 +11841,6 @@ html.is-hidden .clinic-node i,
 /* The second head, parked until a reader leans on the site. It is the same run
    at the same rate, half a period behind - which is what makes the wrapper's
    opacity the only thing that changes when the cursor arrives. */
-.dgm-second { opacity: 0; transition: opacity 240ms ease; }
-.dgm-site.is-hot .dgm-second,
-.dgm-site.is-running .dgm-second { opacity: 1; }
-
 /* The site's number, lettered along its own wall. Set in the machine face at
    wall scale and tracked open, so it reads as stencilled on the object rather
    than typeset beside it. It never carries a status colour: a name is not a
@@ -11870,23 +11866,24 @@ html.is-hidden .clinic-node i,
 
 .dgm-svg.is-live .dgm-sweep {
   animation: dgm-sweep calc(3s + var(--life, 0) * 2.4s) ease-in-out infinite;
-  animation-delay: calc(var(--stagger, 0) * -6s);
+  animation-delay: calc(var(--life, 0) * -8.7s);
 }
 
-/* Half a period behind the first, on the same clock. */
-.dgm-svg.is-live .dgm-sweep.is-again {
-  animation-delay: calc(var(--stagger, 0) * -6s - 1.5s - var(--life, 0) * 1.2s);
-}
+/* ONE HEAD PER SITE, NEVER IN STEP. The second head that used to answer a
+   hover doubled the local run into two bars crossing at once, and the three
+   sites' heads - delayed off `--stagger`, three values inside half a period -
+   read as one synchronised scanner sweeping the federation. Each site runs
+   ONE head now, delayed off its own `--life`, on a period its own `--life`
+   already sets, so the three drift and never agree.
 
-/* Point at a site and it shows you what it does rather than telling you: the
-   local run crosses its own records, inside its own wall, and still nothing
-   leaves. Leaning on it puts a second head across them and deepens the ink -
-   it does not wind the first head on. Re-timing a running clock teleports
-   whatever it was carrying to wherever the new phase happens to land, which is
-   precisely the jolt a reader feels the moment their cursor arrives, and it was
-   in this figure three times over. */
+   Point at a site and it shows you what it does rather than telling you: the
+   head deepens into the accent while the run keeps its own clock. A site
+   running a definition it took down shows the same deepening, because both
+   are the same statement - more work crossing these records. Re-timing the
+   clock would teleport the head, which is the jolt this figure refuses. */
 
-.dgm-svg.is-live .dgm-site.is-hot .dgm-sweep {
+.dgm-svg.is-live .dgm-site.is-hot .dgm-sweep,
+.dgm-svg.is-live .dgm-site.is-running .dgm-sweep {
   fill: color-mix(in srgb, var(--accent) 62%, transparent);
 }
 
@@ -12000,7 +11997,7 @@ html.is-hidden .clinic-node i,
 @media (prefers-reduced-motion: reduce) {
   .dgm-svg { transition: none; }
 
-  .dgm-svg :is(.dgm-droppath, .dgm-dropflow, .dgm-dropnode, .dgm-spark, .dgm-fieldtile, .dgm-queue, .dgm-face-top, .dgm-holerim, .dgm-blade, .dgm-bladeface, .dgm-bladeedge, .dgm-bank, .dgm-loopflow, .dgm-side, .dgm-sidefact, .dgm-read, .dgm-tagbody, .dgm-node, .dgm-link, .dgm-district, .dgm-tracepath, .dgm-tracerun, .dgm-via, .dgm-junction, .dgm-portal, .dgm-portrim, .dgm-reachfill, .dgm-reachrim, .dgm-sweep, .dgm-wallmark, .dgm-status, .dgm-statustext, .dgm-deck, .dgm-plate, .dgm-site, .dgm-catch, .dgm-throat, .dgm-ledgerchain, .dgm-ledgerbar, .dgm-ledgerhash, .dgm-slide, .dgm-housing, .dgm-pad, .dgm-intakepath, .dgm-intake, .dgm-ledgerflow, .dgm-ledgerseal, .dgm-intel, .dgm-seat, .dgm-riser, .dgm-tine, .dgm-orbit, .dgm-reach, .dgm-crit, .dgm-stand, .dgm-field, .dgm-face-left, .dgm-face-right, .dgm-mast, .dgm-masthead, .dgm-channel, .dgm-trace, .dgm-lift, .dgm-rise, .dgm-fall, .dgm-second, .dgm-steady, .dgm-draw, .dgm-hand, .dgm-ledgeraudit) {
+  .dgm-svg :is(.dgm-droppath, .dgm-dropflow, .dgm-dropnode, .dgm-spark, .dgm-fieldtile, .dgm-queue, .dgm-face-top, .dgm-holerim, .dgm-blade, .dgm-bladeface, .dgm-bladeedge, .dgm-bank, .dgm-loopflow, .dgm-side, .dgm-sidefact, .dgm-read, .dgm-tagbody, .dgm-node, .dgm-link, .dgm-district, .dgm-tracepath, .dgm-tracerun, .dgm-via, .dgm-junction, .dgm-portal, .dgm-portrim, .dgm-reachfill, .dgm-reachrim, .dgm-sweep, .dgm-wallmark, .dgm-status, .dgm-statustext, .dgm-deck, .dgm-plate, .dgm-site, .dgm-catch, .dgm-throat, .dgm-ledgerchain, .dgm-ledgerbar, .dgm-ledgerhash, .dgm-slide, .dgm-housing, .dgm-pad, .dgm-intakepath, .dgm-intake, .dgm-ledgerflow, .dgm-ledgerseal, .dgm-intel, .dgm-seat, .dgm-riser, .dgm-tine, .dgm-orbit, .dgm-reach, .dgm-crit, .dgm-stand, .dgm-field, .dgm-face-left, .dgm-face-right, .dgm-mast, .dgm-masthead, .dgm-channel, .dgm-trace, .dgm-lift, .dgm-rise, .dgm-fall, .dgm-steady, .dgm-draw, .dgm-hand, .dgm-ledgeraudit) {
     transition: none;
     animation: none;
   }
@@ -13446,15 +13443,21 @@ html.is-hidden .clinic-node i,
 }
 
 .dgm-svg.is-live.is-fused .fl-faller {
-  animation: fl-drop 5.6s cubic-bezier(0.4, 0, 0.85, 1) infinite;
+  animation: fl-drop 5.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   animation-delay: calc(var(--turn, 0) * -1.87s);
 }
 
+/* A cell APPROACHES its pore and sinks. It used to materialise in the air
+   over the mouth and drop, which is not material arriving anywhere - so it
+   now waits one step inboard, slides a plan-axis step to the mouth, and goes
+   down. The traverse and the descent are written separately, the same two
+   honest moves the claw makes. */
 @keyframes fl-drop {
-  0%, 6% { transform: translateY(-32px); opacity: 0; }
-  14%, 68% { transform: translateY(-17px); opacity: 1; }
-  84%, 96% { transform: translateY(13px); opacity: 0; }
-  100% { transform: translateY(-32px); opacity: 0; }
+  0%, 10% { transform: translate(0px, 0px) translateY(0px); opacity: 1; }
+  28%, 36% { transform: translate(12.12px, 4.76px) translateY(0px); opacity: 1; }
+  54%, 60% { transform: translate(12.12px, 4.76px) translateY(13px); opacity: 0; }
+  84% { transform: translate(0px, 0px) translateY(0px); opacity: 0; }
+  94%, 100% { transform: translate(0px, 0px) translateY(0px); opacity: 1; }
 }
 
 /* THE GOLGI STACK. Three flattened discs, widest first - the organelle whose
@@ -13463,31 +13466,20 @@ html.is-hidden .clinic-node i,
 .fl-golgi .dgm-face-top { fill: color-mix(in srgb, var(--tone) 30%, var(--surface-solid)); }
 .fl-golgi .dgm-face-right { fill: color-mix(in srgb, var(--tone) 58%, var(--surface-solid)); }
 
-/* THE CATAPULT. The amber block is the only thing that leaves this plate, and
-   it leaves thrown - the one moment in the figure where a machine hands a
-   decision to a person because it has run out of rules. It goes UP and to the
-   right, along the plan axis that points at the next plate, because that is
-   where the person is standing. */
-.fl-catapult { transform-box: view-box; transform: rotate(-8deg); }
-.fl-catapult .fl-limb { fill: var(--deep); }
-.fl-catapult .fl-grip { fill: var(--hold); }
+/* THE HANDOFF. The amber cell is the only thing that leaves this plate, and
+   it is not thrown any more - it is SENT: along the printed lane, through
+   the slot cut in the plate's own wall, toward the plate where the person
+   is. It slides on the +x plan axis - the one bearing that crosses the
+   drawn gate - fades as it clears the edge, and comes home invisible so the
+   cycle closes on the frame it opened with. */
+.dgm-svg.is-live.is-fused .fl-handoff { animation: fl-handoff 5.6s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
 
-.dgm-svg.is-live.is-fused .fl-catapult { animation: fl-fling 5.6s cubic-bezier(0.7, 0, 0.4, 1.6) infinite; }
-
-@keyframes fl-fling {
-  0%, 52% { transform: rotate(-8deg); }
-  62%, 74% { transform: rotate(-64deg); }
-  90%, 100% { transform: rotate(-8deg); }
-}
-
-.dgm-svg.is-live.is-fused .fl-shot { animation: fl-throwline 5.6s cubic-bezier(0.3, 0, 0.7, 1) infinite; }
-
-@keyframes fl-throwline {
-  0%, 58% { transform: translate(0px, 0px); opacity: 0; }
-  64% { transform: translate(0px, 0px); opacity: 1; }
-  86% { transform: translate(77.9px, -30.6px); opacity: 1; }
-  94% { transform: translate(77.9px, -30.6px); opacity: 0; }
-  100% { transform: translate(0px, 0px); opacity: 0; }
+@keyframes fl-handoff {
+  0%, 46% { transform: translate(0px, 0px); opacity: 1; }
+  58% { transform: translate(25.98px, 10.2px); opacity: 1; }
+  74% { transform: translate(45.03px, 17.68px); opacity: 0; }
+  88% { transform: translate(0px, 0px); opacity: 0; }
+  96%, 100% { transform: translate(0px, 0px); opacity: 1; }
 }
 
 /* ── RESOLVE IS A HORIZONTAL RAM ─────────────────────────────────────────
@@ -13545,18 +13537,20 @@ html.is-hidden .clinic-node i,
   84%, 100% { transform: translate(0px, 0px); }
 }
 
-/* The block that comes off the line, which IS the decision. It goes with the
-   ram to the edge, tips, falls, and while it is out of sight it comes back to
-   the station - so the cycle closes on the picture it opened with rather than
-   on a block reappearing out of nothing. */
+/* The cell that comes off the line, which IS the decision. THE PUSH IS
+   CONTACT-LOCKED: the blade rests with its leading edge on the cell's back
+   tangent, and cell and blade share one travel, one easing and one start
+   frame - so there is no frame anywhere in the stroke where the blade is
+   inside the thing it is pushing. The cell goes with the blade to the edge,
+   tips, falls, and comes back to the station while out of sight, so the
+   cycle closes on the picture it opened with. */
 .dgm-svg.is-live.is-fused .fl-pushed { animation: fl-shove 4.8s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
 
 @keyframes fl-shove {
-  0% { transform: translate(0px, 0px) translateY(0px); opacity: 1; }
-  36% { transform: translate(0px, 0px) translateY(0px); opacity: 1; }
-  58% { transform: translate(-43.3px, 17px) translateY(0px); opacity: 1; }
-  64% { transform: translate(-43.3px, 17px) translateY(8px); opacity: 1; }
-  78%, 84% { transform: translate(-43.3px, 17px) translateY(24px); opacity: 0; }
+  0%, 30% { transform: translate(0px, 0px) translateY(0px); opacity: 1; }
+  58% { transform: translate(-45.46px, 17.85px) translateY(0px); opacity: 1; }
+  64% { transform: translate(-45.46px, 17.85px) translateY(8px); opacity: 1; }
+  78%, 84% { transform: translate(-45.46px, 17.85px) translateY(24px); opacity: 0; }
   90% { transform: translate(0px, 0px) translateY(0px); opacity: 0; }
   100% { transform: translate(0px, 0px) translateY(0px); opacity: 1; }
 }
@@ -13574,9 +13568,12 @@ html.is-hidden .clinic-node i,
 
 .dgm-svg.is-live.is-fused .fl-feed { animation: fl-arrive 4.8s ease-out infinite; }
 
+/* In through the entry gate at the back of the lane - a plan-axis slide from
+   just inside the wall's throat - so the material that left Screening
+   through its slot is seen entering here through this one. */
 @keyframes fl-arrive {
-  0%, 84% { opacity: 0; }
-  98%, 100% { opacity: 1; }
+  0%, 84% { transform: translate(-22.52px, -8.84px); opacity: 0; }
+  98%, 100% { transform: translate(0px, 0px); opacity: 1; }
 }
 
 /* ── REPLAY IS A TRANSPORT ───────────────────────────────────────────────
@@ -13764,8 +13761,7 @@ html.is-hidden .clinic-node i,
   .fl-lay,
   .fl-throat,
   .fl-faller,
-  .fl-catapult,
-  .fl-shot,
+  .fl-handoff,
   .fl-lever,
   .fl-ram,
   .fl-index,
@@ -13782,15 +13778,14 @@ html.is-hidden .clinic-node i,
   .fl-station,
   .fl-readpill { animation: none; transition: none; }
 
-  /* The parts whose resting value is nothing are the ones a still frame has to
-     be given by hand: the shot has been thrown, the decision has been made, the
-     line has indexed, and the claw has set its block down. What the claw is
-     carrying stays absent, because a still claw is a claw holding nothing. */
-  .fl-shot,
+  /* The parts whose resting value is nothing are the ones a still frame has
+     to be given by hand: the decision has been made, the line has indexed,
+     and the claw has set its cell down. The faller and the handoff rest
+     visible on their own, and what the claw is carrying stays absent,
+     because a still claw is a claw holding nothing. */
   .fl-pushed,
   .fl-feed,
-  .fl-faller,
-  .fl-lay { opacity: 1; }
+  .fl-lay { opacity: 1; transform: none; }
 }
 
 /* ────────────────────────────────────────────────────────────────────────────

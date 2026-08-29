@@ -1711,16 +1711,18 @@ describe('Trident and Nectar schematics', () => {
       const escaped = rule.replace(/[.()*:]/g, (c) => `\\${c}`)
       assert.match(DGM_BLOCK, new RegExp(`${escaped} \\{[^}]*stroke-dasharray:`))
     }
-    // A site's local run cannot be dash-doubled - it is a bar, not a dash - so it
-    // gets a second head instead, on the same clock, half a period behind, and
-    // the only thing hover touches is the wrapper's opacity.
-    assert.match(nectar, /<g className="dgm-second">/)
-    assert.match(DGM_BLOCK, /\.dgm-site\.is-hot \.dgm-second,\s*\n\s*\.dgm-site\.is-running \.dgm-second \{ opacity: 1; \}/)
-    // The same head is what a definition coming back down lands in. Otherwise it
-    // arrives at a mast and stops, which is the thing the figure was already
-    // criticised for doing in the other direction.
+    // ONE HEAD PER SITE, AND NEVER IN STEP. The second head that used to
+    // answer a hover doubled the local run into two bars crossing at once,
+    // and three heads delayed off `--stagger` - three values inside half a
+    // period - read as one synchronised scanner sweeping the federation. A
+    // site runs one head, delayed and rated off its own `--life`, so the
+    // three drift and never agree; hover and a running download both deepen
+    // the head's ink on the same clock, touching no timing at all.
+    assert.doesNotMatch(nectar, /dgm-second|is-again/)
+    assert.doesNotMatch(css, /dgm-second|is-again/)
+    assert.match(DGM_BLOCK, /\.dgm-svg\.is-live \.dgm-sweep \{\s*\n\s*animation: dgm-sweep calc\(3s \+ var\(--life, 0\) \* 2\.4s\)[^}]*animation-delay: calc\(var\(--life, 0\) \* -8\.7s\);/)
     assert.match(nectar, /className=\{`dgm-site\$\{state\.down\.includes\(site\.id\) \? ' is-running' : ''\}/)
-    assert.match(DGM_BLOCK, /\.dgm-svg\.is-live \.dgm-sweep\.is-again \{\s*\n\s*animation-delay: calc\(var\(--stagger, 0\) \* -6s - 1\.5s - var\(--life, 0\) \* 1\.2s\);/)
+    assert.match(DGM_BLOCK, /\.dgm-svg\.is-live \.dgm-site\.is-hot \.dgm-sweep,\s*\n\.dgm-svg\.is-live \.dgm-site\.is-running \.dgm-sweep \{\s*\n\s*fill: color-mix/)
     // Anything a hover repaints has to be able to get there: a property that
     // steps under the cursor is the same jolt as a clock that steps.
     for (const rule of ['.dgm-channel', '.dgm-reachrim', '.dgm-sweep', '.dgm-queue']) {
@@ -2055,7 +2057,7 @@ describe('The floor schematic', () => {
     const own = {
       protocol: ['fl-board', 'fl-toggle', 'fl-seat'],
       evidence: ['fl-rig', 'fl-claw', 'fl-carry', 'fl-pick', 'fl-lay'],
-      screening: ['fl-hole', 'fl-throat', 'fl-faller', 'fl-pivot', 'fl-catapult', 'fl-shot'],
+      screening: ['fl-hole', 'fl-throat', 'fl-faller', 'fl-golgi', 'fl-handoff'],
       resolve: ['fl-ram', 'fl-pivot', 'fl-lever', 'fl-index', 'fl-feed', 'fl-pushed'],
       replay: ['fl-tape', 'fl-reel', 'fl-head', 'fl-frame', 'fl-spin'],
     }
@@ -2068,7 +2070,11 @@ describe('The floor schematic', () => {
     // And nothing an abandoned pass left behind is still in the sheet: a disc
     // hovering over material it never touched, a plunger on an anvil nothing
     // else referred to, a shelf of files.
-    for (const gone of ['fl-shaper', 'fl-plunge', 'fl-anvil', 'fl-stamp', 'fl-pull', 'fl-post']) {
+    // The catapult went with the gate that replaced it: a machine that has
+    // run out of rules does not throw the subject at the person, it SENDS it
+    // - through a slot cut in its own wall, into a matching gate at the back
+    // of the plate where the person is.
+    for (const gone of ['fl-shaper', 'fl-plunge', 'fl-anvil', 'fl-stamp', 'fl-pull', 'fl-post', 'fl-catapult', 'fl-shot', 'fl-fling', 'fl-throwline']) {
       assert.doesNotMatch(floor, new RegExp(gone), `${gone} belongs to a pass that was thrown out`)
       assert.doesNotMatch(css, new RegExp(gone), `${gone} belongs to a pass that was thrown out`)
     }
@@ -2093,32 +2099,47 @@ describe('The floor schematic', () => {
     assert.equal(verdicts.length, cols.length * rows.length, 'every switch on the board settles')
     assert.ok(verdicts.includes('pass') && verdicts.includes('fail'), 'a board where everything passes is not a screen')
 
-    // SCREENING'S THREE THROATS SIT AT ONE PLAN X WITH THE PLAN Y STEPPING, so
-    // the three of them lie exactly parallel to the plate's own front-right
-    // edge. Stepped on any other bearing they land on a screen line of the
-    // wrong slope and the plate reads as bent underneath them, which is
-    // precisely what the pass before this did.
+    // SCREENING'S THREE VERDICT SEATS SIT AT ONE PLAN X WITH THE PLAN Y
+    // STEPPING, parallel to the plate's own front-right edge. Green, red,
+    // amber, left to right - and the amber one nearest the corner that points
+    // at Resolve, because that is the one that goes there. The first two are
+    // terminal pores; the third is not a pore at all, it is the GATE.
     const hole = [...floor.match(/^ +const hole = (\[.*\])$/m)[1].matchAll(/\[(-?\d+), (-?\d+), '(\w+)'\]/g)]
       .map((m) => [Number(m[1]), Number(m[2]), m[3]])
     assert.equal(hole.length, 3)
-    assert.equal(new Set(hole.map(([px]) => px)).size, 1, 'three throats off one plan axis is a bent plate')
-    // Green, red, amber, left to right - and the amber one nearest the corner
-    // that points at Resolve, because that is the one that goes there.
+    assert.equal(new Set(hole.map(([px]) => px)).size, 1, 'three verdicts off one plan axis is a bent plate')
     const across = hole.map(([px, py, v]) => [(px - py) * 0.866, v]).sort((a, b) => a[0] - b[0])
     assert.deepEqual(across.map(([, v]) => v), ['pass', 'fail', 'hold'])
-    // The blocks arrive with NO verdict. The hole is what gives them one.
+    assert.match(floor, /hole\.slice\(0, 2\)\.map\(\(\[px, py, v\]\) => \(\{ \.\.\.well\(px, py, 14, 8\)/)
+    // A cell APPROACHES its pore - one plan-axis step in from the bed side -
+    // and sinks. Material that materialises in the air over a mouth is not
+    // material arriving anywhere.
     assert.match(floor, /cls: 'fl-blk fl-faller'/)
-    assert.match(floor, /fl-blk is-hold fl-shot/)
-    assert.match(css, /@keyframes fl-fling \{/)
+    assert.match(css, /@keyframes fl-drop \{\s*\n\s*0%, 10% \{ transform: translate\(0px, 0px\) translateY\(0px\); opacity: 1; \}/)
+    // THE HANDOFF. The amber cell leaves through the slot in the wall, on the
+    // one plan axis that crosses the drawn gate, and Resolve's feed enters
+    // through the matching gate at the back of its own lane.
+    assert.match(floor, /fl-blk is-hold fl-handoff/)
+    assert.match(css, /@keyframes fl-handoff \{/)
+    assert.match(css, /@keyframes fl-arrive \{\s*\n[\s\S]*?translate\(-22\.52px, -8\.84px\); opacity: 0/)
     // And Resolve is where one comes off the line, which IS the decision: it
-    // arrives amber and a person takes it out of the run.
+    // arrives amber and a person takes it out of the run. THE PUSH IS
+    // CONTACT-LOCKED: blade and cell share one travel, one easing and one
+    // start frame, so no frame of the stroke has the blade inside the cell.
     assert.match(floor, /fl-blk is-hold fl-pushed/)
     assert.match(css, /@keyframes fl-shove \{/)
+    const stroke = css.match(/@keyframes fl-stroke \{([\s\S]*?)\n\}/)[1]
+    const shove = css.match(/@keyframes fl-shove \{([\s\S]*?)\n\}/)[1]
+    const strokeOut = stroke.match(/(\d+)%[^{]*\{ transform: translate\((-[\d.]+)px, ([\d.]+)px\)/)
+    const shoveOut = shove.match(/(\d+)% \{ transform: translate\((-[\d.]+)px, ([\d.]+)px\) translateY\(0px\)/)
+    assert.equal(strokeOut[2], shoveOut[2], 'the cell and the blade travel as one or the blade phases through')
+    assert.match(stroke, /0%, 30%/)
+    assert.match(shove, /0%, 30%/)
 
     // NOTHING STANDS OFF ITS OWN PLATE. The plate is a plan rectangle with
     // ROUNDED corners, so a part can be inside the plan bounds and still leave
     // the surface once its own height lifts it.
-    const [HX, HY, R] = [75, 50, 20]
+    const [HX, HY, R] = [79.5, 53, 20]
     const inPlan = (x, y) => {
       const [ax, ay] = [Math.abs(x), Math.abs(y)]
       if (ax > HX || ay > HY) return false
@@ -2254,12 +2275,13 @@ describe('The floor schematic', () => {
     assert.match(DGM_BLOCK, /\.dgm-membrane \{[\s\S]*?stroke: color-mix\(in srgb, var\(--accent\)/)
     assert.match(DGM_BLOCK, /\.dgm-recordcell \{ fill: color-mix/)
 
-    // AND THE WALL PARTS EXACTLY ONCE. Resolve is the one place material
-    // leaves the run by a person's decision, so it is the one place a boundary
-    // is drawn open: the gap brackets the lane the ram pushes down, with a
-    // cell radius of clearance either side, and the cut ends thicken into the
-    // terminal dots a sectioned membrane gets. The other four walls are closed
-    // rects; only Resolve draws the open path.
+    // AND EVERY OPENING IS A DRAWN GATE. The membrane parts once, at
+    // Resolve's exit, with terminal dots; the vessel walls part three times -
+    // Screening's slot toward Resolve, Resolve's entry at the back of its
+    // lane, Resolve's exit over its near edge - and each cut end is capped
+    // and wears its pylon. Every gap clears the cell that crosses it by a
+    // cell radius, and every gap sits on the straight run of its edge, where
+    // the construction can cap it.
     assert.match(floor, /const WALL_GAP = \[14, 42\]/)
     const gap = floor.match(/const WALL_GAP = \[(\d+), (\d+)\]/).slice(1).map(Number)
     const pitch = Number(floor.match(/const PITCH = (\d+)/)[1])
@@ -2268,7 +2290,19 @@ describe('The floor schematic', () => {
       `an opening of ${gap} does not clear the cell that leaves through it at ${station}`)
     assert.match(floor, /item\.key === 'resolve' \? \(/)
     assert.match(css, /\.fl-cut \{ fill: color-mix/)
-    assert.equal((floor.match(/wallPath\(WALL_/g) || []).length, 2, 'two walls part, and nothing else does')
+    assert.equal((floor.match(/wallPath\(WALL_/g) || []).length, 2, 'two membrane lines part, and nothing else does')
+    const gates = floor.match(/const GATES = \{\s*\n\s*screening: \{ right: \[(-?\d+), (-?\d+)\] \},\s*\n\s*resolve: \{ back: \[(-?\d+), (-?\d+)\], front: \[(\d+), (\d+)\] \},/)
+      .slice(1).map(Number)
+    const holdSeat = [...floor.match(/^ +const hole = (\[.*\])$/m)[1].matchAll(/\[(-?\d+), (-?\d+), '(\w+)'\]/g)]
+      .map((m) => [Number(m[1]), Number(m[2]), m[3]]).find(([, , v]) => v === 'hold')
+    assert.ok(gates[0] <= holdSeat[1] - 7 && gates[1] >= holdSeat[1] + 7,
+      'the slot has to clear the amber cell that leaves through it')
+    const lane = Number(floor.match(/const lane = (\d+)/)[1])
+    assert.ok(gates[2] <= lane - 7 && gates[3] >= lane + 7,
+      'the entry gate has to clear the lane it feeds')
+    assert.deepEqual([gates[4], gates[5]], gap, 'the exit wall gap brackets the membrane gap on the same lane')
+    const dish = floor.match(/const DISH = \{ hx: ([\d.]+), hy: ([\d.]+), r: (\d+)/).slice(1).map(Number)
+    assert.ok(gates[0] >= -(dish[1] - dish[2]) && gates[3] <= dish[1] - dish[2], 'a gate must sit on the straight run of its edge')
 
     // The membrane is context, not content: fainter than the plan the machine
     // stands in, and never animated - a wall does not run.
@@ -2284,8 +2318,8 @@ describe('The floor schematic', () => {
     // near skirt and near rim band). The split points are shared coordinates,
     // so the seam is not a mark. Resolve's wall opens over the same lane its
     // membrane does, and each cut end is capped and wears its pylon.
-    assert.match(floor, /const DISH = \{ hx: \d+, hy: \d+, r: \d+, t: \d+, h: \d+ \}/)
-    assert.match(floor, /dish: vessel\(seat, step\.key === 'resolve' \? DISH_GAP : null\)/)
+    assert.match(floor, /const DISH = \{ hx: [\d.]+, hy: [\d.]+, r: \d+, t: \d+, h: \d+ \}/)
+    assert.match(floor, /dish: vessel\(seat, GATES\[step\.key\] \?\? null\)/)
     assert.match(floor, /<g className="fl-vessel is-back">/)
     assert.match(floor, /<g className="fl-vessel is-front">/)
     for (const part of ['fl-vessel-band', 'fl-vessel-in', 'fl-vessel-out', 'fl-vessel-edge', 'fl-vessel-cut', 'fl-pylon-wall', 'fl-pylon-cap']) {
@@ -2295,10 +2329,6 @@ describe('The floor schematic', () => {
     // The near half arrives with the plate: same fade, or the wall pops in
     // over a surface that is still closing.
     assert.match(css, /\.fl-vessel\.is-front \{ opacity: clamp\(0, calc\(\(var\(--fuse\) - 0\.62\) \/ 0\.16\), 1\); \}/)
-    // The dish gap brackets the membrane gap, so the two openings are one
-    // opening: wall outside, membrane inside, both parted at the same lane.
-    const dish = floor.match(/const DISH_GAP = \[(\d+), (\d+)\]/).slice(1).map(Number)
-    assert.ok(dish[0] <= gap[0] && dish[1] >= gap[1], `a wall gap of ${dish} does not clear the membrane gap ${gap}`)
 
     // THE ORGANELLES ARE THE BODIES OF THE MACHINES NOW. The switch bank is
     // the nucleus - an oval platform wearing its printed double envelope,
@@ -2502,7 +2532,7 @@ describe('The floor schematic', () => {
     // allowed to reach zero opacity are the blocks that are genuinely absent
     // for part of the cycle: one in flight from the catapult, and one being
     // pushed off the line. Everything standing on a plate stays standing.
-    const vanish = ['fl-throwline', 'fl-shove', 'fl-drop', 'fl-borne', 'fl-picked', 'fl-laid', 'fl-arrive']
+    const vanish = ['fl-handoff', 'fl-shove', 'fl-drop', 'fl-borne', 'fl-picked', 'fl-laid', 'fl-arrive']
     for (const [, name, body] of css.matchAll(/@keyframes (fl-[a-z]+) \{([\s\S]*?)\n\}/g)) {
       if (vanish.includes(name)) continue
       assert.doesNotMatch(body, /opacity: 0[;\s]/, `${name} blinks something out and back`)
@@ -2530,8 +2560,9 @@ describe('The floor schematic', () => {
       // A claw crosses on a plan axis and drops on the screen's own y, and the
       // two are written separately because they are two different honest moves.
       'fl-fetch': /transform: translate\([\d.]+px, [\d.]+px\) translateY\(\d+px\)/,
-      // A throat takes things straight down.
-      'fl-drop': /transform: translateY\(-?\d+px\)/,
+      // A cell approaches its pore on a plan axis, then goes straight down -
+      // two honest moves, written separately like the claw's.
+      'fl-drop': /transform: translate\([\d.]+px, [\d.]+px\) translateY\(13px\)/,
       // A ram lies flat and travels across the lane, which is the one motion
       // here that goes to the LEFT along a plan axis.
       'fl-stroke': /transform: translate\(-[\d.]+px, [\d.]+px\)/,
@@ -2579,7 +2610,7 @@ describe('The floor schematic', () => {
     const datum = Number(floor.match(/const DATUM = (\d+)/)[1])
     const nameY = Number(floor.match(/const NAME_Y = DATUM \+ (\d+)/)[1]) + datum
     const factY = Number(floor.match(/const FACT_Y = DATUM \+ (\d+)/)[1]) + datum
-    const foot = Number(floor.match(/const CY = (\d+)/)[1]) + (75 + 50) * 0.34 + 9
+    const foot = Number(floor.match(/const CY = (\d+)/)[1]) + (79.5 + 53) * 0.34 + 9
     assert.ok(datum > foot, `a datum at ${datum} runs through a row whose foot is at ${Math.round(foot)}`)
     assert.ok(nameY > datum && factY > nameY, 'the name hangs under the rule and the value under the name')
     assert.ok(factY + 12 <= Number(floor.match(/const H = (\d+)/)[1]), 'and the value line stays inside the frame')

@@ -83,14 +83,14 @@ const clamp = (value, low, high, slack) => Math.max(low + slack, Math.min(high -
 /* THE PACKING IS SOLVED, NOT EYEBALLED. A plan rectangle of half-extents
    (hx, hy) projects to a top face 2(hx + hy) * ISO_X wide, and a row stepped by
    (+t, -t) advances 2t * ISO_X. So planes collide unless t exceeds hx + hy. */
-const CELL = 50
-const TILE = 24
+const CELL = 53
+const TILE = 25.5
 const COLS = 3
 const ROWS = 2
 const STEP = 136
 const PLAN = project(CX, CY)
-const HALF_X = 75
-const HALF_Y = 50
+const HALF_X = 79.5
+const HALF_Y = 53
 /* One thickness for every surface in the drawing. A plate and the six tiles it
    is made of are the same sheet, so they are the same nine pixels of body -
    otherwise the handoff between them is a step change in an object that is
@@ -126,8 +126,8 @@ const PITCH = 24
    opening rather than a missing stretch. The gap brackets plan x 28 - where
    the ram carries the pushed cell over the edge - with a cell radius of
    clearance each side, and the printed chevron already points through it. */
-const WALL_OUT = { hx: 62, hy: 37, r: 14 }
-const WALL_IN = { hx: 59.5, hy: 34.5, r: 12 }
+const WALL_OUT = { hx: 66, hy: 40.5, r: 15 }
+const WALL_IN = { hx: 63.5, hy: 38, r: 13 }
 const WALL_GAP = [14, 42]
 
 /* A rounded plan rectangle as one open stroke: from one side of the gap in the
@@ -179,81 +179,157 @@ const WALL_OPEN = {
    of the exit lane, each cut end is capped with its own cross-section face,
    and a small pylon stands on each cap - the wall thickening at its own
    opening, which is what a boundary does at a regulated gate. */
-const DISH = { hx: 72, hy: 47, r: 17, t: 5, h: 7 }
-const DISH_GAP = [12, 44]
+const DISH = { hx: 76.5, hy: 50, r: 18, t: 5, h: 7 }
+
+/* THE GATES. Where material crosses a wall, the wall opens - and the opening
+   is architecture, not absence: each cut end is capped with its own
+   cross-section face and wears a small pylon, the wall thickening at its own
+   opening the way a boundary does at a regulated gate.
+
+   Screening's wall opens on its front-RIGHT edge, level with the amber lane:
+   the cell the machine cannot settle is not thrown any more, it is sent -
+   through a slot in the wall, toward the plate where the person is. Resolve
+   answers with two openings of its own: an entry gate at the BACK of its
+   lane, where the amber material arrives, and the exit over its near edge
+   where the signed decision pushes one cell out. Two plates, three gates,
+   one path a reader can follow across the bench.
+
+   Every gap is written in the wall's own plan units, on the straight run of
+   its edge - the corner arcs are never cut. */
+const GATES = {
+  screening: { right: [-31, -13] },
+  resolve: { back: [-7, 11], front: [14, 42] },
+}
 
 const r1 = (v) => Math.round(v * 100) / 100
 
-const vessel = (seat, gap = null) => {
+/* THE VESSEL. EVERY PLATE IS A WALLED DISH, NOT A SHEET WITH A LINE ON IT.
+
+   The reference is the plant cell: a thick WALL with the thin membrane just
+   inside it. A rounded plan rectangle, sampled by `roundedBox`, carried
+   through the projection and extruded straight up the screen. Four visible
+   surfaces, split into two draw groups by an honest painter's argument:
+
+     BACK  - the inner far wall and the far half of the top band; everything
+             standing on the plate is nearer, so these go down first.
+     FRONT - the outer near skirt and the near half of the top band; nearer
+             than anything on the plate, so they go down after it.
+
+   The split lands on the left and right screen corners, where the two halves
+   share their cut coordinates - a seam that is a coordinate, not a mark.
+
+   Gates cut the straight runs: `right` is a span of plan y on the +x edge
+   (front-right face), `front` a span of plan x on the +y edge (front-left
+   face), `back` a span of plan y on the -x edge (back-left face). The first
+   two belong to the near half, the last to the far half. */
+const vessel = (seat, gates = null) => {
   const p = project(seat[0], seat[1])
   const { hx, hy, r, t, h } = DISH
-  const splice = (ring, edgeY, cuts) => {
-    if (!cuts) return ring
-    // The gap lies on the straight +y run, between the front corner arc and
-    // the left corner arc. Ring order there runs +x toward -x, so the higher
-    // cut goes in first.
+
+  // Cut points spliced into a ring's straight runs, in the ring's own
+  // sampling order: +x edge ascending y, +y edge descending x, -x edge
+  // descending y.
+  const splice = (ring, dx, dy) => {
+    if (!gates) return ring
     const out = []
     ring.forEach((pt, i) => {
       out.push(pt)
       const next = ring[(i + 1) % ring.length]
-      if (pt[1] === edgeY && next[1] === edgeY && pt[0] > next[0] && pt[0] >= cuts[1] && next[0] <= cuts[0]) {
-        out.push([cuts[1], edgeY], [cuts[0], edgeY])
+      if (gates.right && pt[0] === hx - dx && next[0] === hx - dx && pt[1] < next[1]) {
+        out.push([hx - dx, gates.right[0]], [hx - dx, gates.right[1]])
+      }
+      if (gates.front && pt[1] === hy - dy && next[1] === hy - dy && pt[0] > next[0]) {
+        out.push([gates.front[1], hy - dy], [gates.front[0], hy - dy])
+      }
+      if (gates.back && pt[0] === -(hx - dx) && next[0] === -(hx - dx) && pt[1] > next[1]) {
+        out.push([-(hx - dx), gates.back[1]], [-(hx - dx), gates.back[0]])
       }
     })
     return out
   }
-  const outer = splice(roundedBox(hx, hy, r, 11), hy, gap)
-  const inner = splice(roundedBox(hx - t, hy - t, r - t, 11), hy - t, gap)
+
+  const outer = splice(roundedBox(hx, hy, r, 11), 0, 0)
+  const inner = splice(roundedBox(hx - t, hy - t, r - t, 11), t, t)
   const pick = (ring, score) => ring.reduce((b, pt, i) => (score(pt) > score(ring[b]) ? i : b), 0)
+  const find = (ring, x, y) => ring.findIndex((pt) => pt[0] === x && pt[1] === y)
   const at = (pt, up) => {
     const [x, y] = p(pt[0], pt[1])
     return `${x} ${r1(y - up)}`
   }
   const seg = (ring, from, to) => (from <= to ? ring.slice(from, to + 1) : [...ring.slice(from), ...ring.slice(0, to + 1)])
   const run = (pts, up) => pts.map((pt) => at(pt, up)).join(' L ')
-  const wall = (pts) => `M ${run(pts, h)} L ${run([...pts].reverse(), 0)} Z`
-  const band = (out, back) => `M ${run(out, h)} L ${run([...back].reverse(), h)} Z`
-  const edge = (pts) => `M ${run(pts, h)}`
-  const find = (ring, x, y) => ring.findIndex((pt) => pt[0] === x && pt[1] === y)
+  const wall = (pts, cls) => ({ d: `M ${run(pts, h)} L ${run([...pts].reverse(), 0)} Z`, cls })
+  const band = (out, back) => ({ d: `M ${run(out, h)} L ${run([...back].reverse(), h)} Z`, cls: 'fl-vessel-band' })
+  const edge = (pts) => ({ d: `M ${run(pts, h)}`, cls: 'fl-vessel-edge' })
 
-  const o = { right: pick(outer, ([x, y]) => x - y), front: pick(outer, ([x, y]) => x + y), left: pick(outer, ([x, y]) => y - x) }
+  // A half runs corner to corner, broken wherever a gate cuts it. The cuts
+  // arrive as [begin, resume] pairs in path order, on both rings at once.
+  const spans = (oFrom, oTo, nFrom, nTo, cuts) => {
+    const oStops = [oFrom]
+    const nStops = [nFrom]
+    cuts.forEach(([oPt, nPt]) => {
+      oStops.push(find(outer, oPt[0], oPt[1]))
+      nStops.push(find(inner, nPt[0], nPt[1]))
+    })
+    oStops.push(oTo)
+    nStops.push(nTo)
+    const out = []
+    for (let i = 0; i < oStops.length; i += 2) {
+      out.push([seg(outer, oStops[i], oStops[i + 1]), seg(inner, nStops[i], nStops[i + 1])])
+    }
+    return out
+  }
+
+  // A gate's furniture: the two cut faces and the pylon standing on each -
+  // wall features, built here rather than through `drum` and its size floor,
+  // because they are terminations of the wall and not parts on the plate.
+  const mouth = (oPt, nPt) => {
+    const parts = [
+      { d: `M ${at(oPt, h)} L ${at(nPt, h)} L ${at(nPt, 0)} L ${at(oPt, 0)} Z`, cls: 'fl-vessel-cut' },
+    ]
+    const [sx, sy] = p((oPt[0] + nPt[0]) / 2, (oPt[1] + nPt[1]) / 2)
+    const post = roundedCylinder(sx, sy - 11, 3.4, 11 - h)
+    parts.push({ d: post.wall, cls: 'fl-pylon-wall' })
+    parts.push({ ellipse: { cx: post.cx, cy: post.cy, rx: post.rx, ry: post.ry }, cls: 'fl-pylon-cap' })
+    return parts
+  }
+
+  const o = { right: pick(outer, ([x, y]) => x - y), left: pick(outer, ([x, y]) => y - x) }
   const n = { right: pick(inner, ([x, y]) => x - y), left: pick(inner, ([x, y]) => y - x) }
 
-  const back = [
-    { d: wall(seg(inner, n.left, n.right)), cls: 'fl-vessel-in' },
-    { d: band(seg(outer, o.left, o.right), seg(inner, n.left, n.right)), cls: 'fl-vessel-band' },
-    { d: edge(seg(outer, o.left, o.right)), cls: 'fl-vessel-edge' },
-    { d: edge(seg(inner, n.left, n.right)), cls: 'fl-vessel-edge' },
-  ]
+  const frontCuts = []
+  const backCuts = []
+  if (gates?.right) {
+    frontCuts.push(
+      [[hx, gates.right[0]], [hx - t, gates.right[0]]],
+      [[hx, gates.right[1]], [hx - t, gates.right[1]]],
+    )
+  }
+  if (gates?.front) {
+    frontCuts.push(
+      [[gates.front[1], hy], [gates.front[1], hy - t]],
+      [[gates.front[0], hy], [gates.front[0], hy - t]],
+    )
+  }
+  if (gates?.back) {
+    backCuts.push(
+      [[-hx, gates.back[1]], [-(hx - t), gates.back[1]]],
+      [[-hx, gates.back[0]], [-(hx - t), gates.back[0]]],
+    )
+  }
+
+  const back = []
+  spans(o.left, o.right, n.left, n.right, backCuts).forEach(([oPts, nPts]) => {
+    back.push(wall(nPts, 'fl-vessel-in'), band(oPts, nPts), edge(oPts), edge(nPts))
+  })
+  backCuts.forEach(([oPt, nPt]) => back.push(...mouth(oPt, nPt)))
 
   const front = []
-  const spans = gap
-    ? [
-        [o.right, find(outer, gap[1], hy), n.right, find(inner, gap[1], hy - t)],
-        [find(outer, gap[0], hy), o.left, find(inner, gap[0], hy - t), n.left],
-      ]
-    : [[o.right, o.left, n.right, n.left]]
-  spans.forEach(([a, b, c, d]) => {
-    front.push(
-      { d: wall(seg(outer, a, b)), cls: 'fl-vessel-out' },
-      { d: band(seg(outer, a, b), seg(inner, c, d)), cls: 'fl-vessel-band' },
-      { d: edge(seg(outer, a, b)), cls: 'fl-vessel-edge' },
-      { d: edge(seg(inner, c, d)), cls: 'fl-vessel-edge' },
-    )
+  spans(o.right, o.left, n.right, n.left, frontCuts).forEach(([oPts, nPts]) => {
+    front.push(wall(oPts, 'fl-vessel-out'), band(oPts, nPts), edge(oPts), edge(nPts))
   })
-  if (gap) {
-    // The two cut faces, then the pylon standing on each: the wall thickening
-    // at its own opening. Small on purpose - these are features OF the wall,
-    // not parts standing on the plate, which is why they are built here
-    // rather than through `drum` and its size floor.
-    gap.forEach((x) => {
-      front.push({ d: `M ${at([x, hy], h)} L ${at([x, hy - t], h)} L ${at([x, hy - t], 0)} L ${at([x, hy], 0)} Z`, cls: 'fl-vessel-cut' })
-      const [sx, sy] = p(x, hy - t / 2)
-      const post = roundedCylinder(sx, sy - 11, 3.4, 11 - h)
-      front.push({ d: post.wall, cls: 'fl-pylon-wall' })
-      front.push({ ellipse: { cx: post.cx, cy: post.cy, rx: post.rx, ry: post.ry }, cls: 'fl-pylon-cap' })
-    })
-  }
+  frontCuts.forEach(([oPt, nPt]) => front.push(...mouth(oPt, nPt)))
+
   return { back, front }
 }
 
@@ -585,46 +661,47 @@ function mechanism(key, t) {
     //
     // The cells arrive with NO stain. The pore is what gives them one.
     screening: () => {
-      const hole = [[50, 32, 'pass'], [50, 0, 'fail'], [50, -32, 'hold']]
+      // Three verdict seats at one plan x, parallel to the plate's own
+      // front-right edge: green, red, amber, left to right. The first two are
+      // terminal pores. The third is not a pore at all - it is the GATE.
+      const hole = [[50, 30, 'pass'], [50, 0, 'fail'], [50, -22, 'hold']]
       const wait = [-30, -6].flatMap((py) => [-56, -34, -12].map((px) => [px, py]))
       return [
         printed(-800, 'fl-print', [
-          // NO RINGS ROUND THE PORES ANY MORE. One printed ring per throat
-          // was already the survivor of a cull, and the membrane makes even
-          // that one redundant: the plate's own wall runs right past the three
-          // bores, so a pore is a hole IN the boundary - which is what a pore
-          // is - and a second ring around it was the target pattern trying to
-          // come back.
           <rect key="bed" x="-60" y="-38" width="56" height="42" rx="14" />,
           // Two vesicles budding off the stack, printed - the sorted material
           // leaving the organelle for the pores.
-          <circle className="fl-ruled" key="v1" cx="-8" cy="26" r="3.4" />,
-          <circle className="fl-ruled" key="v2" cx="2" cy="34" r="2.6" />,
+          <circle className="fl-ruled" key="v1" cx="-10" cy="30" r="3.4" />,
+          <circle className="fl-ruled" key="v2" cx="0" cy="38" r="2.6" />,
+          // THE AMBER LANE. The cell the machine cannot settle is not thrown
+          // any more - it is SENT, along a printed lane, through a slot cut in
+          // the plate's own wall, toward the plate where the person is. The
+          // lane runs from the hold bay to the gate so the exit is drawn
+          // before anything travels it.
+          <rect key="bay" x="16" y="-32" width="36" height="20" rx="9" />,
+          <line className="fl-ruled" key="lane" x1="34" y1="-22" x2="74" y2="-22" />,
         ]),
         // THE GOLGI STACK. The organelle whose whole job is sorting and
         // dispatch stands on the plate that sorts and dispatches: three
         // flattened discs, widest at the bottom, in the station's own ink.
-        // The machinery of the step stays the three pores and the catapult -
-        // the stack is the body those mechanisms belong to.
-        { ...drum(-34, 22, 16, 2.5), cls: 'fl-golgi' },
-        { ...drum(-34, 22, 12.5, 2.5, 2.5), cls: 'fl-golgi' },
-        { ...drum(-34, 22, 9, 2.5, 5), cls: 'fl-golgi' },
+        // The machinery of the step stays the pores and the gate - the stack
+        // is the body those mechanisms belong to.
+        { ...drum(-34, 24, 16, 2.5), cls: 'fl-golgi' },
+        { ...drum(-34, 24, 12.5, 2.5, 2.5), cls: 'fl-golgi' },
+        { ...drum(-34, 24, 9, 2.5, 5), cls: 'fl-golgi' },
         ...wait.map(([px, py], i) => cell(px, py, null, 5, 0, { turn: i })),
-        ...hole.map(([px, py, v]) => ({ ...well(px, py, 14, 8), cls: `fl-hole is-${v}` })),
-        ...hole.map(([px, py], i) => cell(px, py, null, 5, 0, { cls: 'fl-blk fl-faller', turn: i })),
-        // THE CATAPULT. The amber cell is the only thing that leaves this
-        // plate, and it leaves thrown - the one moment in the figure where a
-        // machine hands a decision to a person because it has run out of rules.
-        //
-        // IT STANDS ON A PIVOT, INBOARD OF THE HOLE IT SERVES. Hinged straight
-        // over the amber throat it sat on the plate's own back-right corner
-        // with nothing underneath it, and at that corner every pixel of height
-        // carries an object above the plate's outline - so it read as a lollipop
-        // stuck to the edge of the drawing. Bolted to a boss a little inboard,
-        // the same arm reaches over the throat and is plainly part of the plate.
-        { ...drum(30, -38, 8, 10), cls: 'fl-pivot' },
-        arm('fl-catapult', 30, -38, 10, 22, 4.6, { knob: 3.8 }),
-        { ...cell(50, -32, 'hold', 5), cls: 'fl-blk is-hold fl-shot', depth: OVER + 4 },
+        // The two terminal pores, fully inside the wall now - a pore is a
+        // hole in a boundary, and these sit against the membrane print, not
+        // through the vessel's own rim.
+        ...hole.slice(0, 2).map(([px, py, v]) => ({ ...well(px, py, 14, 8), cls: `fl-hole is-${v}` })),
+        // A cell APPROACHES its pore and sinks - one plan-axis step in from
+        // the bed side, then straight down. Material that materialises in the
+        // air above a hole is not material arriving; this is.
+        ...hole.slice(0, 2).map(([px, py], i) => cell(px - 14, py, null, 5, 0, { cls: 'fl-blk fl-faller', turn: i })),
+        // The amber cell, at the hold bay, already ruled: it slides the lane
+        // and leaves through the gate. Where it goes is drawn on the next
+        // plate - the entry gate at the back of Resolve's own lane.
+        { ...cell(30, -22, 'hold', 5), cls: 'fl-blk is-hold fl-handoff', depth: OVER + 4 },
       ]
     },
     // RESOLVE IS A HORIZONTAL RAM.
@@ -680,7 +757,11 @@ function mechanism(key, t) {
         // person's decision drives them.
         { ...drum(28, -34, 7, 7), cls: 'fl-ram is-body', depth: OVER - 3 },
         { ...stand(28, -20, 3, 7, 4, 3, 3), cls: 'fl-ram is-neck', depth: OVER - 2 },
-        { ...stand(28, -8.5, 9, 2.5, 11, 2.5), cls: 'fl-ram is-face', depth: OVER - 1 },
+        // The blade RESTS IN CONTACT: its leading edge sits exactly on the
+        // waiting cell's back tangent, and the two share one travel and one
+        // easing from the first frame of the stroke - so the push is a push,
+        // never a blade phasing through the thing it is pushing.
+        { ...stand(28, -7.5, 9, 2.5, 11, 2.5), cls: 'fl-ram is-face', depth: OVER - 1 },
         // The lever a person throws, and it is still the only hinge on this
         // plate. Nothing about a lever is ambient. It used to stand twenty-six
         // pixels tall in the station's own crimson, which made the one human
@@ -746,8 +827,14 @@ function mechanism(key, t) {
         // THE HEAD. Two legs either side of the tape and a bar over the top, so
         // the tape passes UNDER it - which is the whole difference between a
         // head reading a tape and a solid sitting on one.
-        { ...stand(-34, -9, 5, 5, 17, 4.5), cls: 'fl-head is-leg', depth: OVER },
-        { ...stand(-34, 13, 5, 5, 17, 4.5), cls: 'fl-head is-leg', depth: OVER + 1 },
+        // The far leg is SORTED BEHIND THE FRAMES, not at OVER: its plan y
+        // puts it behind every frame it will ever pass, always, so its depth
+        // says so - a head crossing a tape must never paint over the record
+        // it is reading. Both legs also stand clear of the frames' own band,
+        // because a gate that grazes what passes through it is a collision,
+        // not a reader.
+        { ...stand(-34, -11, 5, 5, 17, 4.5), cls: 'fl-head is-leg', depth: -500 },
+        { ...stand(-34, 15, 5, 5, 17, 4.5), cls: 'fl-head is-leg', depth: OVER + 1 },
         { ...stand(-34, 2, 4, 15, 6, 4, 17), cls: 'fl-head is-bar', depth: OVER + 2 },
       ]
     },
@@ -864,8 +951,9 @@ const STEPS = [
     // what the object IS without changing where its edge falls.
     plate: roundedSlab(seat[0], seat[1], HALF_X, HALF_Y, SHEET, PLATE_R),
     // The wall standing on it, split into the half that goes down before the
-    // machine and the half that goes down after it. Resolve's opens.
-    dish: vessel(seat, step.key === 'resolve' ? DISH_GAP : null),
+    // machine and the half that goes down after it. Screening's opens toward
+    // Resolve; Resolve's opens where the material arrives and where it leaves.
+    dish: vessel(seat, GATES[step.key] ?? null),
   }
 })
 

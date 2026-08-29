@@ -1245,22 +1245,6 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
                     ))}
                     <rect className="dgm-lid" x={-site.lid} y={-site.lid} width={site.lid * 2} height={site.lid * 2} rx={Math.round(site.lid * 0.28)} vectorEffect="non-scaling-stroke" />
                     <rect className="dgm-sweep" x={-site.lid + 7} y={-site.lid + 7} width="6" height={(site.lid - 7) * 2} rx="3" />
-                    {/* The second head. It runs when this site has taken a
-                        definition down and is running it, and it runs while a
-                        reader is leaning on the site - because both are the same
-                        statement, that there is more work crossing these records
-                        than there was. Without it a definition arriving down a
-                        channel lands on a mast and stops, which is the same
-                        thing the figure was already criticised for doing in the
-                        other direction.
-
-                        A second head, never a faster one. Re-timing a running
-                        clock teleports whatever it was carrying, which is the
-                        jolt a reader feels the moment their cursor arrives - so
-                        the run keeps its rate and simply carries more. */}
-                    <g className="dgm-second">
-                      <rect className="dgm-sweep is-again" x={-site.lid + 7} y={-site.lid + 7} width="6" height={(site.lid - 7) * 2} rx="3" />
-                    </g>
                   </g>
                   {/* The mast, and the head the channel leaves from. */}
                   <line className="dgm-mast" x1={chan.foot[0]} y1={chan.foot[1]} x2={chan.head[0]} y2={chan.head[1]} />
