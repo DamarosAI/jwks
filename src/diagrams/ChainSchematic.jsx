@@ -61,9 +61,6 @@ const CX = 600
 // is set into the top of this same cell.
 const CY = 178
 
-/* The sheet's own margins: where the run's datum starts and stops. */
-const KEEP = { left: 62, right: 1138 }
-
 /* THE PACKING IS SOLVED, NOT EYEBALLED. A plan rectangle of half-extents
    (hx, hy) projects to a top face 2(hx + hy) * ISO_X wide, and a row stepped by
    (+t, -t) advances 2t * ISO_X. So planes collide unless t exceeds hx + hy. */
@@ -360,22 +357,14 @@ const vessel = (seat, gates = null) => {
   return { back, front }
 }
 
-/* THE RUN, AS A LINE THE FIVE STATIONS ARE REGISTERED TO.
- *
- * The names used to sit ABOVE the plates in fourteen-pixel blue caps, which put
- * the loudest type in the figure in the middle of it - over the scatter's own
- * airspace, competing with the machines for the reader's first look, and
- * lettered in the one colour the drawing was already using for everything else.
- *
- * A survey does not letter a station over the top of it. It runs a datum under
- * the whole line, ticks each station on it, and hangs the name beneath in the
- * quietest ink on the sheet. So does this: one rule under the row, five leaders
- * down onto it, and five names in near-black at ten pixels. The type is the
- * last thing you read rather than the first, which is what it is for. */
-const FOOT = Math.round(CY + (HALF_X + HALF_Y) * ISO_Y) + SHEET + 4
-const DATUM = 244
-const NAME_Y = DATUM + 16
-const FACT_Y = DATUM + 29
+/* THE LETTERING STANDS ALONE. The names ran on a survey datum once - one
+ * rule under the row, leaders down onto it, ticks at every station - and the
+ * apparatus outweighed the words: a line whose whole job was to hold five
+ * labels that already sat in a row. The rule went. Each station's name hangs
+ * under its plate in full ink, the value in the machine face under that, and
+ * the row itself is the only line the reader needs. */
+const NAME_Y = 260
+const FACT_Y = 273
 
 /* -- WHAT RUNS ON EACH PLATE --------------------------------------------
 
@@ -1092,6 +1081,9 @@ function Drum({ shape, core, className }) {
 export default function ChainSchematic({ animate = true }) {
   const frame = useCenterOnOverflow()
   const [hot, setHot] = useState(null)
+  // The monitor's one nerve: clicked, it bolts; the flee animation ending
+  // brings it back on its own, so there is no timer to leak.
+  const [shy, setShy] = useState(false)
   const step = STEPS.find((item) => item.key === hot) ?? null
 
   return (
@@ -1101,7 +1093,7 @@ export default function ChainSchematic({ animate = true }) {
           className={`dgm-svg is-floor${animate ? ' is-live' : ''}`}
           viewBox={`0 0 ${W} ${H}`}
           role="img"
-          aria-label="Five plates in a row, seen in axonometric projection, their machines already running - each plate bounded by its own printed double-walled membrane, the way a section drawing bounds a cell. A survey line rules under the row and letters the five stations beneath it: Protocol, Evidence, Screening, Resolve, Replay. One cell - a round body with its nucleus drawn on top - runs the whole row. A grid of twelve switches on a breaker board is thrown one at a time, each settling green or red, and the compiled protocol ships out through a gate in the plate's wall as a violet-stained cell - the transcript in the run's own vessel. It docks beside the next plate's gantry, where a claw closes on one cell in a heap, lifts it, carries it across, and sets it down into an ordered bed of round sockets; the placed cell then slides up a printed lane to a staging seat, waits its beat, and continues straight out through that plate's far gate - one cell, one line, socket to seat to gate. Along the far long edge of the next plate, three verdict seats wait in a line - green, red, amber. The bed feeds the green pore as a moving line: one cell slides onto the mouth and is visibly swallowed down the bore while the seat behind it shuffles forward and the newly arrived cell takes the empty place; the red pore stands open and ringed; the amber seat is a gate cut through the plate's wall, its pylons stained amber, and the unsettled cell is sent through it in one motion - while the next amber cell forms inside the plate's reticulum - nested curved sacs opening toward the gate - and slides out down the lane to take the bay. On the plate beyond it enters a matching gate at the back of the lane, on the same clock it left on. There a hand throws a lever, a horizontal ram crosses the lane and pushes one cell clean off the edge through the one gap in the membrane, and the line indexes forward as the next arrives. On the last plate the run lies as frames on a tape between two reels, and a head reads its way along and then runs back. Pointing at a plate lifts it off the ground and darkens the ground beneath it."
+          aria-label="Five plates in a row, seen in axonometric projection, their machines already running - each plate bounded by its own printed double-walled membrane, the way a section drawing bounds a cell. The five stations are lettered in ink beneath their plates: Protocol, Evidence, Screening, Resolve, Replay. A small hovering monitor wearing the Damaros mark patrols the air above the row, pausing to look down at each plate in turn; clicked, it darts off the sheet and drifts back. One cell - a round body with its nucleus drawn on top - runs the whole row. A grid of twelve switches on a breaker board is thrown one at a time, each settling green or red, and the compiled protocol ships out through a gate in the plate's wall as a violet-stained cell - the transcript in the run's own vessel. It docks beside the next plate's gantry, where a claw closes on one cell in a heap, lifts it, carries it across, and sets it down into an ordered bed of round sockets; the placed cell then slides up a printed lane to a staging seat, waits its beat, and continues straight out through that plate's far gate - one cell, one line, socket to seat to gate. Along the far long edge of the next plate, three verdict seats wait in a line - green, red, amber. The bed feeds the green pore as a moving line: one cell slides onto the mouth and is visibly swallowed down the bore while the seat behind it shuffles forward and the newly arrived cell takes the empty place; the red pore stands open and ringed; the amber seat is a gate cut through the plate's wall, its pylons stained amber, and the unsettled cell is sent through it in one motion - while the next amber cell forms inside the plate's reticulum - nested curved sacs opening toward the gate - and slides out down the lane to take the bay. On the plate beyond it enters a matching gate at the back of the lane, on the same clock it left on. There a hand throws a lever, a horizontal ram crosses the lane and pushes one cell clean off the edge through the one gap in the membrane, and the line indexes forward as the next arrives. On the last plate the run lies as frames on a tape between two reels, and a head reads its way along and then runs back. Pointing at a plate lifts it off the ground and darkens the ground beneath it."
         >
           <defs>
             <pattern id="fl-grain" width="13" height="13" patternUnits="userSpaceOnUse">
@@ -1114,15 +1106,6 @@ export default function ChainSchematic({ animate = true }) {
               <circle className="dgm-grain is-fine" cx="4.5" cy="3.5" r="0.55" />
             </pattern>
           </defs>
-
-          <line
-            className="fl-datum"
-            x1={KEEP.left}
-            y1={DATUM}
-            x2={KEEP.right}
-            y2={DATUM}
-            aria-hidden="true"
-          />
 
           {STEPS.map((item) => (
             <g
@@ -1335,13 +1318,10 @@ export default function ChainSchematic({ animate = true }) {
                 </g>
               </g>
 
-              {/* THE STATION, AND ITS NAME UNDER IT. Below the plate, on the
-                  datum, in the quietest ink on the sheet - a leader down onto
-                  the rule, a tick where this step sits on the run, and the name
-                  hanging beneath. The type does not travel with the plate: the
-                  solids float and the lettering stays nailed to the ground. */}
-              <line className="fl-leader" x1={item.seat[0]} y1={FOOT} x2={item.seat[0]} y2={DATUM} />
-              <circle className="fl-station" cx={item.seat[0]} cy={DATUM} r="2.4" />
+              {/* THE STATION, AND ITS NAME UNDER IT. Below the plate, bare
+                  and in full ink - no rule, no leader, no tick: the label
+                  alone. The type does not travel with the plate: the solids
+                  float and the lettering stays nailed to the ground. */}
               <text className="fl-name" x={item.seat[0]} y={NAME_Y} textAnchor="middle">
                 {item.label}
               </text>
@@ -1364,6 +1344,57 @@ export default function ChainSchematic({ animate = true }) {
               />
             </g>
           ))}
+
+          {/* THE MONITOR. Clinical research has one figure who hovers over
+              every site in turn and looks at the work without touching it,
+              and this sheet finally drew them: a small drone wearing the
+              Damaros mark as its face, patrolling the empty air band above
+              the row on a slow loop of its own - dwell over a plate, dip
+              for a look (the beam blinks, the shadow keeps its ground),
+              hop one row pitch to the next, and after the fifth station
+              climb and glide the whole row home. It flies the one plan
+              axis that projects flat - the row's own - and the dips ride
+              the height axis, so nothing about it ever crosses the
+              projection; it lives above every solid's airspace and its
+              only ground contact is a shadow. Click it and it bolts
+              straight up off the sheet, then drifts back down to wherever
+              the patrol has got to - the flee composes on its own wrapper,
+              so the loop underneath never stutters. */}
+          {(() => {
+            const scout = roundedCylinder(STEPS[0].seat[0], 76, 7.5, 6)
+            const mark = 0.0155
+            return (
+              <g className={`fl-watch${shy ? ' is-shy' : ''}`} aria-hidden="true">
+                <g className="fl-patrolled">
+                  <g className="fl-groundwrap">
+                    <ellipse className="fl-monitorshade" cx={STEPS[0].seat[0]} cy="170" rx="14" ry="4.6" />
+                  </g>
+                  <g
+                    className="fl-dart"
+                    onAnimationEnd={(event) => { if (event.animationName === 'fl-flee') setShy(false) }}
+                  >
+                    <g className="fl-duck">
+                      <g className="fl-hover">
+                        <line className="fl-beam" x1={scout.cx} y1={scout.cy + 11} x2={scout.cx} y2={scout.cy + 25} />
+                        <g className="fl-monitor" onClick={() => setShy(true)}>
+                          <path className="dgm-face-right" d={scout.wall} />
+                          <ellipse className="dgm-face-top" cx={scout.cx} cy={scout.cy} rx={scout.rx} ry={scout.ry} />
+                          {/* The face is the company's own mark, straight off
+                              the favicon - white on the dark body, the way the
+                              mark already lives on black. A mascot is a solid
+                              that kept the brand's geometry. */}
+                          <g className="fl-face" transform={`translate(${r1(scout.cx - 235.5 * mark)}, ${r1(scout.cy + 3.6 - 260 * mark)}) scale(${mark})`}>
+                            <path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z" />
+                            <path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z" />
+                          </g>
+                        </g>
+                      </g>
+                    </g>
+                  </g>
+                </g>
+              </g>
+            )
+          })()}
         </svg>
       </div>
 

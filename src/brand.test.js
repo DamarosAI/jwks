@@ -152,7 +152,7 @@ describe('Damaros brand mark', () => {
     // that earns it, still breaking where the statement turns and keeping
     // the accent on the first statement. It is the section's one heading,
     // so it is an h2.
-    assert.match(app, /<h2 className="thesis-closer"><span className="thesis-line accent-text">The next generation of medicine<\/span><span className="thesis-line">cannot run on yesterday's research infrastructure\.<\/span><\/h2>/)
+    assert.match(app, /<h2 className="thesis-closer"><span className="thesis-line accent-text">The next generation of medicine<\/span><span className="thesis-line">deserves tomorrow's research infrastructure\.<\/span><\/h2>/)
     assert.doesNotMatch(app, /is building what comes next/)
     assert.match(css, /#root \.thesis-closer \.thesis-line \{[^}]*display:\s*block;/)
     // The sentence runs on the same body-anchored ramp the two product deks

@@ -152,7 +152,7 @@ if (!app.includes('about-scroll-cue') || !app.includes('hero-scroll-cue') || !ap
 if (!css.includes('.thesis-section.section-space') || !css.includes('22vh')) {
   throw new Error('Home hero and thesis must share a scroll stop')
 }
-if (!app.includes('The next generation of medicine') || !app.includes("yesterday's research infrastructure") || app.includes('Most clinics cannot budget') || app.includes('whether a site runs one trial or a hundred') || app.includes('is building what comes next') || !app.includes('<h2 className="thesis-closer">')) {
+if (!app.includes('The next generation of medicine') || !app.includes("tomorrow's research infrastructure") || app.includes('Most clinics cannot budget') || app.includes('whether a site runs one trial or a hundred') || app.includes('is building what comes next') || !app.includes('<h2 className="thesis-closer">')) {
   throw new Error('Thesis must close with its one sentence under the figure, and nothing else')
 }
 if (app.includes('—') || css.includes('—')) {

@@ -12515,9 +12515,6 @@ html.is-hidden .clinic-node i,
 .fl-plate,
 .fl-emblem,
 .fl-cast,
-.fl-datum,
-.fl-leader,
-.fl-station,
 .fl-name,
 .fl-fact { pointer-events: none; }
 .fl-hit {
@@ -12764,37 +12761,14 @@ html.is-hidden .clinic-node i,
    second. It was also the fourth different job the accent was doing on a sheet
    that has one colour.
 
-   A survey does not letter a station over the top of it. It runs a datum under
-   the whole line, ticks each station on it, and hangs the name beneath in the
-   quietest ink on the sheet. Ten pixels, six hundred, near-black, under the
-   rule, with the value in the machine face below that. Pointing at one takes it
-   to full black rather than to a colour: the accent is spent on the solids. */
-
-.fl-datum {
-  fill: none;
-  stroke: color-mix(in srgb, var(--text) 24%, transparent);
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
-}
-
-/* The leader is what ties a name to the plate it names, and it is the faintest
-   drawn line in the figure on purpose: a reader should register it, not follow
-   it. */
-.fl-leader {
-  fill: none;
-  stroke: color-mix(in srgb, var(--text) 18%, transparent);
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
-  transition: stroke 260ms ease;
-}
-
-.fl-station {
-  fill: color-mix(in srgb, var(--text) 40%, transparent);
-  transition: fill 260ms ease;
-}
+   The names stand alone now - the survey datum, its leaders and its ticks
+   went: a line whose whole job was to hold five labels that already sat in
+   a row was apparatus, not information. Each name hangs under its plate in
+   FULL ink, the value in the machine face under it, and the row itself is
+   the only line the reader needs. */
 
 .fl-name {
-  fill: var(--text-soft);
+  fill: var(--text);
   font-family: var(--font-ui);
   /* Eleven, not ten. The sheet is a 1200-unit viewBox that renders at about
      1100 on a wide desktop, so type inside it lands a tenth SMALLER than the
@@ -12825,10 +12799,7 @@ html.is-hidden .clinic-node i,
   transition: fill 260ms ease;
 }
 
-.fl-step.is-hot .fl-name { fill: var(--text); }
 .fl-step.is-hot .fl-fact { fill: var(--ink-deep); }
-.fl-step.is-hot .fl-leader { stroke: color-mix(in srgb, var(--text) 50%, transparent); }
-.fl-step.is-hot .fl-station { fill: var(--text); }
 
 /* -- THE FIVE MECHANISMS ------------------------------------------------
 
@@ -13758,6 +13729,129 @@ html.is-hidden .clinic-node i,
 
 .fl-readghost { visibility: hidden; }
 
+/* ── The monitor ─────────────────────────────────────────────────────────
+
+   Clinical research has one figure who hovers over every site in turn and
+   looks at the work without touching it. This sheet draws them: a small
+   drone wearing the Damaros mark as its face, patrolling the empty air
+   band above the row - dwell, dip for a look, hop one row pitch, and after
+   the fifth station climb and ride the whole row home. The hops run the
+   one plan axis that projects FLAT (the row's own, +x -y), the dips run
+   the height axis, and it flies above every solid's airspace, so nothing
+   about it can cross the projection; its one ground contact is a shadow.
+
+   It has exactly one nerve: clicked, it bolts straight up off the sheet
+   and drifts back down with a little bounce - and the flee rides its own
+   wrapper, composing over the patrol, so the loop underneath never
+   stutters and the drone comes back to wherever the round has got to. */
+
+.fl-watch {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.dgm-svg.is-live .fl-watch { opacity: 1; }
+.dgm-svg.is-live .fl-monitor { pointer-events: all; cursor: pointer; }
+
+.fl-monitor .dgm-face-top {
+  fill: color-mix(in srgb, var(--accent) 26%, var(--surface-solid));
+  stroke: color-mix(in srgb, var(--line) 60%, transparent);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+/* The body is the mark's own ground: near-black, so the white mark reads
+   the way it already reads on the favicon. */
+.fl-monitor .dgm-face-right { fill: var(--ink-deep); }
+.fl-face path { fill: var(--surface-solid); }
+
+.fl-beam {
+  stroke: color-mix(in srgb, var(--accent-strong) 55%, transparent);
+  stroke-width: 1.2;
+  stroke-dasharray: 2 3;
+  vector-effect: non-scaling-stroke;
+  opacity: 0;
+}
+
+.fl-monitorshade { fill: color-mix(in srgb, var(--ink-deep) 76%, transparent); }
+
+.dgm-svg.is-live .fl-patrolled { animation: fl-patrol 36s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
+.dgm-svg.is-live .fl-duck { animation: fl-duck 36s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
+.dgm-svg.is-live .fl-hover { animation: fl-hovering 3.4s ease-in-out infinite alternate; }
+.dgm-svg.is-live .fl-monitorshade { animation: fl-ground 36s linear infinite; }
+.dgm-svg.is-live .fl-beam { animation: fl-blink 36s linear infinite; }
+
+/* Five stops on the row pitch - one per plate - and the long ride home. */
+@keyframes fl-patrol {
+  0%, 9% { transform: translate(0px, 0px); }
+  16%, 25% { transform: translate(235.55px, 0px); }
+  32%, 41% { transform: translate(471.1px, 0px); }
+  48%, 57% { transform: translate(706.66px, 0px); }
+  64%, 76% { transform: translate(942.21px, 0px); }
+  94%, 100% { transform: translate(0px, 0px); }
+}
+
+/* The look: a dip inside each dwell, and altitude for the trip back. */
+@keyframes fl-duck {
+  0%, 1.5% { transform: translateY(0px); }
+  4.5% { transform: translateY(9px); }
+  7.5%, 17.5% { transform: translateY(0px); }
+  20.5% { transform: translateY(9px); }
+  23.5%, 33.5% { transform: translateY(0px); }
+  36.5% { transform: translateY(9px); }
+  39.5%, 49.5% { transform: translateY(0px); }
+  52.5% { transform: translateY(9px); }
+  55.5%, 65.5% { transform: translateY(0px); }
+  68.5% { transform: translateY(9px); }
+  71.5% { transform: translateY(0px); }
+  78%, 91% { transform: translateY(-14px); }
+  97%, 100% { transform: translateY(0px); }
+}
+
+@keyframes fl-hovering {
+  to { transform: translateY(-1.8px); }
+}
+
+/* The shadow keeps the ground the drone left, and goes with it when the
+   drone climbs out of working height for the ride home. */
+@keyframes fl-ground {
+  0%, 72% { opacity: 0.26; }
+  78%, 92% { opacity: 0; }
+  98%, 100% { opacity: 0.26; }
+}
+
+/* The beam blinks only while it is actually looking. */
+@keyframes fl-blink {
+  0%, 2.5% { opacity: 0; }
+  4.5% { opacity: 0.6; }
+  7%, 18.5% { opacity: 0; }
+  20.5% { opacity: 0.6; }
+  23%, 34.5% { opacity: 0; }
+  36.5% { opacity: 0.6; }
+  39%, 50.5% { opacity: 0; }
+  52.5% { opacity: 0.6; }
+  55%, 66.5% { opacity: 0; }
+  68.5% { opacity: 0.6; }
+  71%, 100% { opacity: 0; }
+}
+
+/* The flee: straight up, off the sheet, a beat of nerve, and back down
+   with one small bounce. Height axis only - the one axis that cannot lie -
+   and on its own wrapper so the patrol underneath never stutters. */
+.dgm-svg.is-live .fl-watch.is-shy .fl-dart { animation: fl-flee 3.2s cubic-bezier(0.5, 0, 0.25, 1) 1; }
+
+.fl-watch.is-shy .fl-groundwrap { opacity: 0; }
+
+.fl-groundwrap { transition: opacity 220ms ease; }
+
+@keyframes fl-flee {
+  0% { transform: translateY(0px); }
+  12% { transform: translateY(-170px); }
+  58% { transform: translateY(-170px); }
+  86% { transform: translateY(6px); }
+  100% { transform: translateY(0px); }
+}
+
 /* ── Still, and still true ───────────────────────────────────────────────
 
    With reduced motion the figure rests as the five plates, assembled and
@@ -13796,8 +13890,12 @@ html.is-hidden .clinic-node i,
   .fl-step,
   .fl-name,
   .fl-fact,
-  .fl-leader,
-  .fl-station,
+  .fl-patrolled,
+  .fl-duck,
+  .fl-hover,
+  .fl-dart,
+  .fl-beam,
+  .fl-monitorshade,
   .fl-readpill { animation: none; transition: none; }
 
   /* The parts whose resting value is nothing are the ones a still frame has
@@ -13808,6 +13906,10 @@ html.is-hidden .clinic-node i,
      has not been ruled is not on the sheet. */
   .fl-pushed,
   .fl-feed { opacity: 1; transform: none; }
+
+  /* A parked drone hanging in the air is a thing to look at, not a thing
+     at work - the monitor only exists in motion. */
+  .fl-watch { opacity: 0; }
 }
 
 /* ────────────────────────────────────────────────────────────────────────────

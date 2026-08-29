@@ -699,7 +699,7 @@ function ThesisSection() {
         <div className="thesis-chain">
           <ChainSchematic animate={animate} />
         </div>
-        <h2 className="thesis-closer"><span className="thesis-line accent-text">The next generation of medicine</span><span className="thesis-line">cannot run on yesterday's research infrastructure.</span></h2>
+        <h2 className="thesis-closer"><span className="thesis-line accent-text">The next generation of medicine</span><span className="thesis-line">deserves tomorrow's research infrastructure.</span></h2>
       </div>
     </section>
   )

@@ -2671,22 +2671,20 @@ describe('The floor schematic', () => {
     assert.doesNotMatch(floor, /const glide|glide\(/)
     assert.doesNotMatch(floor, /'--span'|span:/)
     assert.doesNotMatch(css, /var\(--span\)/)
-    // The one sideways move left is the WANDER in the mess, and it is allowed:
-    // a tile before the fuse is in the air with no plate under it and nothing
-    // to be sorted against, so there is no depth relationship for it to break.
-    // Everything from the moment a plate exists moves on screen y alone.
     const moves = [...css.matchAll(/@keyframes (fl-[a-z]+) \{([\s\S]*?)\n\}/g)]
-      .filter(([, name]) => name !== 'fl-adrift')
     for (const [, name, frames] of moves) {
       for (const move of frames.match(/translate\((-?[\d.]+)px, (-?[\d.]+)px\)/g) || []) {
         const [, dx, dy] = move.match(/translate\((-?[\d.]+)px, (-?[\d.]+)px\)/).map(Number)
         if (dx === 0 && dy === 0) continue
         // TRAVEL ALONG A PLAN AXIS IS TRAVEL INSIDE THE DRAWING. A solid moving
         // on any other bearing is sliding over the top of the projection, which
-        // is what broke the perspective when three of them did it. The ratio is
-        // ISO_Y over ISO_X and nothing else will do.
+        // is what broke the perspective when three of them did it. TWO bearings
+        // qualify: the ratio ISO_Y over ISO_X (the +x and +y axes), and dy of
+        // exactly zero - the row's own +x -y diagonal, which is the one plan
+        // axis that projects FLAT, and the reason the row is legible at all.
+        // The monitor patrols it; nothing else needs it.
         assert.ok(
-          Math.abs(Math.abs(dy / dx) - 0.34 / 0.866) < 0.01,
+          dy === 0 || Math.abs(Math.abs(dy / dx) - 0.34 / 0.866) < 0.01,
           `${name} moves ${dx},${dy} - not along a plan axis, so it slides over the projection`,
         )
       }
@@ -2760,7 +2758,7 @@ describe('The floor schematic', () => {
     // allowed to reach zero opacity are the blocks that are genuinely absent
     // for part of the cycle: one in flight from the catapult, and one being
     // pushed off the line. Everything standing on a plate stays standing.
-    const vanish = ['fl-handoff', 'fl-swallow', 'fl-ship', 'fl-join', 'fl-issue', 'fl-dock', 'fl-shove', 'fl-drop', 'fl-shunt', 'fl-borne', 'fl-picked', 'fl-bud', 'fl-arrive']
+    const vanish = ['fl-handoff', 'fl-swallow', 'fl-ship', 'fl-join', 'fl-issue', 'fl-dock', 'fl-shove', 'fl-drop', 'fl-shunt', 'fl-borne', 'fl-picked', 'fl-bud', 'fl-ground', 'fl-blink', 'fl-arrive']
     for (const [, name, body] of css.matchAll(/@keyframes (fl-[a-z]+) \{([\s\S]*?)\n\}/g)) {
       if (vanish.includes(name)) continue
       assert.doesNotMatch(body, /opacity: 0[;\s]/, `${name} blinks something out and back`)
@@ -2814,15 +2812,45 @@ describe('The floor schematic', () => {
     const rates = ['fl-flip', 'fl-fetch', 'fl-claim', 'fl-run'].map(rate)
     assert.equal(new Set(rates).size, 4, 'the board, the material line, the ram and the transport keep four distinct rates')
 
-    // AND NOTHING HANGS OVER THE ROW. Two passes put things in the band above
-    // the plates - five identical carriers ferrying across, then one hanging
-    // object per station - and both were decoration with a rationale attached.
-    // The carriers said only that something was moving, which the couplings say
-    // better; the hanging objects were static shapes in the quietest part of
-    // the sheet, and a thing that hangs in the air without doing anything is
-    // there to be looked at rather than read.
+    // AND NOTHING HANGS OVER THE ROW WITHOUT A JOB. Two passes put decoration
+    // in the band above the plates - five identical carriers, then one
+    // hanging object per station - and both died for the same reason: a
+    // thing that hangs in the air without doing anything is there to be
+    // looked at rather than read. The names stay banned.
     assert.doesNotMatch(floor, /const SKY|const AIR|fl-bot|fl-ferry|function overhead|fl-air/)
     assert.doesNotMatch(css, /\.fl-sky|\.fl-bot|fl-ferry|\.fl-air|fl-hang/)
+    // THE ONE THING THAT FLIES, FLIES BECAUSE IT WORKS: the monitor - the
+    // figure clinical research already has for hovering over every site and
+    // looking without touching. It patrols the empty air band on the row's
+    // own flat-projecting axis, stopping once per plate ON THE ROW PITCH,
+    // dips on the height axis, keeps a shadow for ground contact, wears the
+    // company's own mark as its face - the geometry straight off the
+    // favicon - and has exactly one nerve: clicked, it bolts straight up
+    // off the sheet and comes back on the flee's own wrapper, so the patrol
+    // underneath never stutters and there is no timer to leak.
+    assert.match(floor, /className=\{`fl-watch\$\{shy \? ' is-shy' : ''\}`\} aria-hidden="true"/)
+    assert.match(floor, /className="fl-monitor" onClick=\{\(\) => setShy\(true\)\}/)
+    assert.match(floor, /if \(event\.animationName === 'fl-flee'\) setShy\(false\)/)
+    assert.match(floor, /className="fl-face"[\s\S]{0,700}M 104\.82 74\.50[\s\S]*?M 158\.62 284\.50/)
+    const patrol = css.match(/@keyframes fl-patrol \{([\s\S]*?)\n\}/)[1]
+    const stops = [...new Set([...patrol.matchAll(/translate\((-?[\d.]+)px, 0px\)/g)].map((m) => Number(m[1])))]
+      .sort((a, b) => a - b)
+    const pitch = 2 * Number(floor.match(/const STEP = (\d+)/)[1]) * 0.866
+    assert.equal(stops.length, 5, 'the monitor calls at all five stations')
+    stops.forEach((x, k) => {
+      assert.ok(Math.abs(x - k * pitch) < 0.05, `a stop at ${x} is off the row pitch of ${pitch}`)
+    })
+    assert.match(css, /\.dgm-svg\.is-live \.fl-watch \{ opacity: 1; \}/)
+    assert.match(css, /\.fl-watch \{\s*\n\s*opacity: 0;\s*\n\s*pointer-events: none;/)
+    assert.match(css, /\.dgm-svg\.is-live \.fl-monitor \{ pointer-events: all; cursor: pointer; \}/)
+    assert.match(css, /\.dgm-svg\.is-live \.fl-watch\.is-shy \.fl-dart \{ animation: fl-flee/)
+    // The flee is height-axis only - the one axis that cannot lie - and its
+    // seam closes: it ends exactly where it began.
+    const flee = css.match(/@keyframes fl-flee \{([\s\S]*?)\n\}/)[1]
+    assert.doesNotMatch(flee, /translate\(/, 'the flee rides the height axis alone')
+    // With reduced motion the monitor does not exist: a parked drone hanging
+    // in the air is exactly the decoration this law exists to kill.
+    assert.match(css, /reduced-motion[\s\S]*?\.fl-watch \{ opacity: 0; \}/)
 
     // POINTING AT A STATION FINISHES IT. A hover used to re-weight the drawing
     // and nothing more, which is presentation: it says "this one" and says
@@ -2833,48 +2861,37 @@ describe('The floor schematic', () => {
     assert.match(css, /\.fl-step\.is-hot \.fl-blk\.is-fail \.dgm-face-top \{ fill: color-mix/)
   })
 
-  it('letters the run underneath it, in ink, off one datum', () => {
-    // THE LETTERING WAS THE LOUDEST THING IN THE FIGURE. Fourteen pixels, seven
-    // hundred weight, tracked out a sixth of an em, set in the ACCENT, and hung
-    // above every plate - so the first thing a reader met was five blue words
-    // floating in the scatter's own airspace, and the machines they named came
-    // second. It was also the fourth different job the accent was doing on a
-    // sheet that has one colour.
-    //
-    // A survey does not letter a station over the top of it. It runs a datum
-    // under the whole line, ticks each station on it, and hangs the name
-    // beneath in the quietest ink on the sheet.
-    const datum = Number(floor.match(/const DATUM = (\d+)/)[1])
-    const nameY = Number(floor.match(/const NAME_Y = DATUM \+ (\d+)/)[1]) + datum
-    const factY = Number(floor.match(/const FACT_Y = DATUM \+ (\d+)/)[1]) + datum
+  it('letters the stations beneath their plates, bare and in ink', () => {
+    // THE LETTERING WAS THE LOUDEST THING IN THE FIGURE ONCE - fourteen-pixel
+    // accent caps hung above every plate - and then it was a survey: a datum
+    // ruled under the row, leaders down onto it, a tick per station, the
+    // names in soft ink beneath. The survey went too. A line whose whole job
+    // was to hold five labels that already sat in a row was apparatus, not
+    // information: the names hang bare under their plates now, in FULL ink,
+    // with the value in the machine face beneath - and the row itself is the
+    // only line the reader needs.
+    const nameY = Number(floor.match(/const NAME_Y = (\d+)/)[1])
+    const factY = Number(floor.match(/const FACT_Y = (\d+)/)[1])
     const foot = Number(floor.match(/const CY = (\d+)/)[1]) + (79.5 + 53) * 0.34 + 9
-    assert.ok(datum > foot, `a datum at ${datum} runs through a row whose foot is at ${Math.round(foot)}`)
-    assert.ok(nameY > datum && factY > nameY, 'the name hangs under the rule and the value under the name')
+    assert.ok(nameY > foot, `a name line at ${nameY} runs through a row whose foot is at ${Math.round(foot)}`)
+    assert.ok(factY > nameY, 'the value hangs under the name')
     assert.ok(factY + 12 <= Number(floor.match(/const H = (\d+)/)[1]), 'and the value line stays inside the frame')
     assert.match(floor, /className="fl-name" x=\{item\.seat\[0\]\} y=\{NAME_Y\}/)
-    assert.match(floor, /className="fl-leader" x1=\{item\.seat\[0\]\} y1=\{FOOT\} x2=\{item\.seat\[0\]\} y2=\{DATUM\}/)
-    assert.match(floor, /className="fl-station" cx=\{item\.seat\[0\]\} cy=\{DATUM\}/)
-    // IN INK, AND QUIETLY. Ten pixels against the fourteen it was, and no rule
-    // in the lettering may reach for the accent - hover takes it to full black
-    // instead, because this sheet spends its one colour on the solids.
+    assert.doesNotMatch(floor, /fl-datum|fl-leader|fl-station|const DATUM|const KEEP|const FOOT/)
+    assert.doesNotMatch(css, /fl-datum|fl-leader|fl-station/)
+    // IN INK - full ink now, since the label is all there is - and small:
+    // no rule in the lettering may reach for the accent, because this sheet
+    // spends its one colour on the solids.
     const size = Number(css.match(/\.fl-name \{[\s\S]*?font-size: ([\d.]+)px/)[1])
     assert.ok(size <= 11, `${size}px caps over a 216px plate is a headline, not a label`)
-    assert.match(css, /\.fl-name \{[\s\S]*?fill: var\(--text-soft\);/)
+    assert.match(css, /\.fl-name \{[\s\S]*?fill: var\(--text\);/)
     assert.match(css, /\.fl-fact \{[\s\S]*?fill: var\(--faint\);/)
-    assert.match(css, /\.fl-step\.is-hot \.fl-name \{ fill: var\(--text\); \}/)
+    assert.match(css, /\.fl-step\.is-hot \.fl-fact \{ fill: var\(--ink-deep\); \}/)
     const letters = css
       .slice(css.indexOf('The run, and the names that hang off it'), css.indexOf('-- THE FIVE MECHANISMS'))
       .replace(/^[\s\S]*?\*\//, '')
       .replace(/\/\*[\s\S]*?\*\//g, '')
     assert.doesNotMatch(letters, /accent/, 'the lettering does not spend the sheet\'s one colour')
-    // THE RULE IS SIMPLY DRAWN. It used to write itself in on the entrance's
-    // one-shot timeline; with the entrance gone it is a line on the sheet,
-    // there from the first frame like the plates it underlines.
-    assert.doesNotMatch(
-      css.slice(css.indexOf('The run, and the names that hang off it'), css.indexOf('-- THE FIVE MECHANISMS')),
-      /stroke-dashoffset|var\(--in\)|scaleX/,
-    )
-    assert.doesNotMatch(floor.match(/className="fl-datum"[\s\S]*?\/>/)[0], /pathLength|--from/)
     assert.doesNotMatch(css, /@keyframes fl-label/)
 
     // THE CAPTION HOLDS ITS GROUND. Every read the pill can show is drawn
@@ -2925,15 +2942,15 @@ describe('The floor schematic', () => {
     assert.match(css, /\.fl-caststep \{[\s\S]*?opacity: var\(--a\);/)
     assert.match(css, /\.fl-caststep \{[\s\S]*?fill: color-mix\(in srgb, var\(--text\)/)
     // And the lettering does NOT go up with it. The solids float and the type
-    // is nailed to the ground, which is what keeps the leader on the datum.
-    assert.match(floor, /<\/g>\s*\n\s*\{\/\* THE STATION[\s\S]*?<line className="fl-leader"/)
+    // is nailed to the ground.
+    assert.match(floor, /<\/g>\s*\n\s*\{\/\* THE STATION[\s\S]*?<text className="fl-name"/)
     // A HELD PLATE KEEPS RUNNING. Pointing at one used to freeze it, on the
     // theory that a reader who has stopped wants a drawing that has stopped.
     // They have just chosen which machine to watch, and the one thing a machine
     // should not do when somebody leans in is stop being a machine. What a
     // hover buys is contrast: a halo behind it, a step of ink on every solid,
     // and the plate's own printed plan coming up with them.
-    assert.doesNotMatch(css.slice(css.indexOf('THIRTY FRAGMENTS BECOME FIVE SURFACES')), /animation-play-state/)
+    assert.doesNotMatch(css.slice(css.indexOf('FIVE SURFACES, ALREADY DOWN')), /animation-play-state/)
     assert.match(css, /\.fl-step\.is-hot \.fl-emblem \.dgm-face-top \{/)
     assert.match(css, /\.fl-step\.is-hot \.fl-plan \{/)
     // A SPRING, NOT A ONE-WAY EASE. Everything decelerated into place on a
