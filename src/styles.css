@@ -12770,8 +12770,8 @@ html.is-hidden .clinic-node i,
   stroke-width: 1;
 }
 
-.fl-step.is-screening .fl-pylon-wall { fill: var(--hold); }
-.fl-step.is-screening .fl-pylon-cap { fill: color-mix(in srgb, var(--hold) 55%, var(--surface-solid)); }
+.fl-step.is-screening .fl-pylon-wall.is-far { fill: var(--hold); }
+.fl-step.is-screening .fl-pylon-cap.is-far { fill: color-mix(in srgb, var(--hold) 55%, var(--surface-solid)); }
 
 /* The near half arrives with the plate it stands on; the far half is inside
    the plate group and inherits its fade. */
@@ -13434,11 +13434,24 @@ html.is-hidden .clinic-node i,
    is a filled ellipse with a ring round it, which is a symbol for taking
    something in rather than somewhere for something to go. */
 
-.fl-hole .fl-wall { fill: color-mix(in srgb, var(--ink-deep) 44%, var(--surface-solid)); }
-.fl-hole .fl-floor { fill: color-mix(in srgb, var(--deep) 16%, var(--surface-solid)); }
-.fl-hole.is-pass .fl-floor { fill: color-mix(in srgb, var(--pass) 60%, var(--surface-solid)); }
-.fl-hole.is-hold .fl-floor { fill: color-mix(in srgb, var(--hold) 58%, var(--surface-solid)); }
-.fl-hole.is-fail .fl-floor { fill: color-mix(in srgb, var(--fail) 58%, var(--surface-solid)); }
+.fl-hole .fl-wall { fill: color-mix(in srgb, var(--ink-deep) 28%, var(--surface-solid)); }
+.fl-hole .fl-floor { fill: color-mix(in srgb, var(--deep) 14%, var(--surface-solid)); }
+.fl-hole.is-pass .fl-floor { fill: color-mix(in srgb, var(--pass) 30%, var(--surface-solid)); }
+.fl-hole.is-hold .fl-floor { fill: color-mix(in srgb, var(--hold) 30%, var(--surface-solid)); }
+.fl-hole.is-fail .fl-floor { fill: color-mix(in srgb, var(--fail) 30%, var(--surface-solid)); }
+
+/* The collar is where the verdict lives now - a machined ring around a quiet
+   bore, the way Trident's intake wears its own, rather than a bowl of paint.
+   A reader finds the green and the red by their rings and the dark throat
+   says where things go. */
+.fl-collar {
+  fill: none;
+  stroke-width: 1.6;
+  vector-effect: non-scaling-stroke;
+}
+.fl-hole.is-pass .fl-collar { stroke: var(--pass); }
+.fl-hole.is-hold .fl-collar { stroke: var(--hold); }
+.fl-hole.is-fail .fl-collar { stroke: var(--fail); }
 
 /* It swallows. A throat that holds still is a dot printed on a floor. */
 .dgm-svg.is-live.is-fused .fl-throat { animation: fl-gulp 5.6s ease-in-out infinite; }
@@ -13481,7 +13494,8 @@ html.is-hidden .clinic-node i,
 @keyframes fl-swallow {
   0%, 34% { transform: translateY(0px); opacity: 0; }
   40% { transform: translateY(1px); opacity: 1; }
-  58%, 64% { transform: translateY(9px); opacity: 0; }
+  56% { transform: translateY(8px); opacity: 1; }
+  64%, 70% { transform: translateY(13px); opacity: 0; }
   100% { transform: translateY(0px); opacity: 0; }
 }
 
@@ -13490,6 +13504,32 @@ html.is-hidden .clinic-node i,
    mechanism, so it sits a step quieter than the pores and the arm. */
 .fl-golgi .dgm-face-top { fill: color-mix(in srgb, var(--tone) 30%, var(--surface-solid)); }
 .fl-golgi .dgm-face-right { fill: color-mix(in srgb, var(--tone) 58%, var(--surface-solid)); }
+
+/* THE SHIPMENT, ON SCREENING'S OWN CLOCK. Organised material leaves the bed
+   for the plate that will rule on it: one cell stages short of Evidence's
+   far wall, slides the -y plan axis through the gate - fading as it crosses
+   - and the wait cell nearest Screening's entry gate slides in through that
+   gate two beats later, on the same 5.6s period, rests with the bed, and is
+   absorbed into it as the bed feeds the pores. One subject, one period,
+   neither plate reaching across the seam. */
+.dgm-svg.is-live.is-fused .fl-ship { animation: fl-ship 5.6s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
+
+@keyframes fl-ship {
+  0%, 46% { transform: translate(0px, 0px); opacity: 1; }
+  60% { transform: translate(8.66px, -3.4px); opacity: 1; }
+  72% { transform: translate(24.25px, -9.52px); opacity: 0; }
+  84% { transform: translate(0px, 0px); opacity: 0; }
+  92%, 100% { transform: translate(0px, 0px); opacity: 1; }
+}
+
+.dgm-svg.is-live.is-fused .fl-join { animation: fl-join 5.6s cubic-bezier(0.3, 0, 0.3, 1) infinite; }
+
+@keyframes fl-join {
+  0%, 30% { transform: translate(0px, 0px); opacity: 1; }
+  40%, 82% { transform: translate(0px, 0px); opacity: 0; }
+  84% { transform: translate(-20.78px, -8.16px); opacity: 0; }
+  98%, 100% { transform: translate(0px, 0px); opacity: 1; }
+}
 
 /* THE HANDOFF, ON RESOLVE'S OWN CLOCK. The amber cell is the only thing
    that leaves this plate, and it is SENT: down the printed lane, through
@@ -13722,9 +13762,14 @@ html.is-hidden .clinic-node i,
 
 .fl-readout {
   display: flex;
-  width: 100%;
   align-items: baseline;
   gap: clamp(12px, 1.6vw, 22px);
+  /* The caption stands back in the COLUMN. The figure breaks out of the
+     reading measure because a run wants the width of the screen; its caption
+     is prose, and prose lines up with the closer under it - so the readout
+     cancels the chain's own bleed, margin for margin, and the pill starts
+     exactly where "Damaros is building what comes next" starts. */
+  margin-inline: clamp(0px, calc((100vw - 1480px) / 2), 136px);
   margin-top: clamp(10px, 1.6vh, 20px);
   padding-top: clamp(10px, 1.4vh, 16px);
   border-top: 1px solid var(--border);
@@ -13790,6 +13835,8 @@ html.is-hidden .clinic-node i,
   .fl-throat,
   .fl-faller,
   .fl-sunk,
+  .fl-ship,
+  .fl-join,
   .fl-handoff,
   .fl-lever,
   .fl-ram,

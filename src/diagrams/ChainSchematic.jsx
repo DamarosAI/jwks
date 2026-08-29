@@ -186,21 +186,25 @@ const DISH = { hx: 76.5, hy: 50, r: 18, t: 5, h: 7 }
    cross-section face and wears a small pylon, the wall thickening at its own
    opening the way a boundary does at a regulated gate.
 
-   Screening's wall opens on its FAR LONG edge, dead ahead of the amber
-   seat: the three verdicts line that edge, and where green and red are
-   pores, amber is a gate - the cell the machine cannot settle is not
-   thrown, it is SENT, straight through the wall toward the plate where the
-   person is, and the gate's own pylons take the amber stain so the exit
-   reads as the amber station from across the room. Resolve answers with two
-   openings of its own: an entry gate at the BACK of its lane, where the
-   amber material arrives on the same clock it left on, and the exit over
-   its near edge where the signed decision pushes one cell out. Two plates,
-   three gates, one path a reader can follow across the bench.
+   The row is PLUMBED BY GATES now, one handoff per seam, all in one
+   grammar. Evidence ships its organised material out through a gate in its
+   own far wall; Screening receives it through an entry gate at the back of
+   its wait bed, runs its three verdicts along its own far edge - green and
+   red are pores, amber is a GATE, its pylons stained amber so the exit
+   reads as the amber station from across the room - and Resolve answers
+   with an entry gate at the back of its lane and the exit over its near
+   edge where the signed decision pushes one cell out. Each handoff pair
+   runs on the RECEIVING plate's clock, so a cell is seen leaving one plate
+   and entering the next on one period, with neither plate reaching across
+   the seam. Entry gates carry unruled material and keep the station's own
+   ink; only the amber gate wears a verdict, because only there has one
+   been given.
 
    Every gap is written in the wall's own plan units, on the straight run of
    its edge - the corner arcs are never cut. */
 const GATES = {
-  screening: { far: [31, 49] },
+  evidence: { far: [19, 37] },
+  screening: { back: [-7, 11], far: [31, 49] },
   resolve: { back: [-7, 11], front: [14, 42] },
 }
 
@@ -290,14 +294,16 @@ const vessel = (seat, gates = null) => {
   // A gate's furniture: the two cut faces and the pylon standing on each -
   // wall features, built here rather than through `drum` and its size floor,
   // because they are terminations of the wall and not parts on the plate.
-  const mouth = (oPt, nPt) => {
+  // Each carries its edge's name, so the stylesheet can stain ONE gate's
+  // pylons - the amber exit - without dressing every opening on the plate.
+  const mouth = (oPt, nPt, edge) => {
     const parts = [
       { d: `M ${at(oPt, h)} L ${at(nPt, h)} L ${at(nPt, 0)} L ${at(oPt, 0)} Z`, cls: 'fl-vessel-cut' },
     ]
     const [sx, sy] = p((oPt[0] + nPt[0]) / 2, (oPt[1] + nPt[1]) / 2)
     const post = roundedCylinder(sx, sy - 11, 3.4, 11 - h)
-    parts.push({ d: post.wall, cls: 'fl-pylon-wall' })
-    parts.push({ ellipse: { cx: post.cx, cy: post.cy, rx: post.rx, ry: post.ry }, cls: 'fl-pylon-cap' })
+    parts.push({ d: post.wall, cls: `fl-pylon-wall is-${edge}` })
+    parts.push({ ellipse: { cx: post.cx, cy: post.cy, rx: post.rx, ry: post.ry }, cls: `fl-pylon-cap is-${edge}` })
     return parts
   }
 
@@ -308,26 +314,26 @@ const vessel = (seat, gates = null) => {
   const backCuts = []
   if (gates?.right) {
     frontCuts.push(
-      [[hx, gates.right[0]], [hx - t, gates.right[0]]],
-      [[hx, gates.right[1]], [hx - t, gates.right[1]]],
+      [[hx, gates.right[0]], [hx - t, gates.right[0]], 'right'],
+      [[hx, gates.right[1]], [hx - t, gates.right[1]], 'right'],
     )
   }
   if (gates?.front) {
     frontCuts.push(
-      [[gates.front[1], hy], [gates.front[1], hy - t]],
-      [[gates.front[0], hy], [gates.front[0], hy - t]],
+      [[gates.front[1], hy], [gates.front[1], hy - t], 'front'],
+      [[gates.front[0], hy], [gates.front[0], hy - t], 'front'],
     )
   }
   if (gates?.back) {
     backCuts.push(
-      [[-hx, gates.back[1]], [-(hx - t), gates.back[1]]],
-      [[-hx, gates.back[0]], [-(hx - t), gates.back[0]]],
+      [[-hx, gates.back[1]], [-(hx - t), gates.back[1]], 'back'],
+      [[-hx, gates.back[0]], [-(hx - t), gates.back[0]], 'back'],
     )
   }
   if (gates?.far) {
     backCuts.push(
-      [[gates.far[0], -hy], [gates.far[0], -(hy - t)]],
-      [[gates.far[1], -hy], [gates.far[1], -(hy - t)]],
+      [[gates.far[0], -hy], [gates.far[0], -(hy - t)], 'far'],
+      [[gates.far[1], -hy], [gates.far[1], -(hy - t)], 'far'],
     )
   }
 
@@ -335,13 +341,13 @@ const vessel = (seat, gates = null) => {
   spans(o.left, o.right, n.left, n.right, backCuts).forEach(([oPts, nPts]) => {
     back.push(wall(nPts, 'fl-vessel-in'), band(oPts, nPts), edge(oPts), edge(nPts))
   })
-  backCuts.forEach(([oPt, nPt]) => back.push(...mouth(oPt, nPt)))
+  backCuts.forEach(([oPt, nPt, edge]) => back.push(...mouth(oPt, nPt, edge)))
 
   const front = []
   spans(o.right, o.left, n.right, n.left, frontCuts).forEach(([oPts, nPts]) => {
     front.push(wall(oPts, 'fl-vessel-out'), band(oPts, nPts), edge(oPts), edge(nPts))
   })
-  frontCuts.forEach(([oPt, nPt]) => front.push(...mouth(oPt, nPt)))
+  frontCuts.forEach(([oPt, nPt, edge]) => front.push(...mouth(oPt, nPt, edge)))
 
   return { back, front }
 }
@@ -451,7 +457,8 @@ function mechanism(key, t) {
   const well = (px, py, r, deep, base = 0) => {
     const [sx, sy] = PLAN(t + px, -t + py)
     const { rx, ry } = planCircle(r)
-    const gape = planCircle(r * 0.36)
+    const gape = planCircle(r * 0.42)
+    const band = planCircle(r * 1.18)
     const cy = sy - base
     const [left, right] = [Math.round((sx - rx) * 10) / 10, Math.round((sx + rx) * 10) / 10]
     return {
@@ -463,6 +470,7 @@ function mechanism(key, t) {
         ry,
         deep,
         throat: gape,
+        collar: band,
         // Over the far rim, down the bore, and back along the near edge of the
         // floor: the wall a reader can actually see into.
         wall: `M ${left} ${cy} A ${rx} ${ry} 0 0 1 ${right} ${cy} L ${right} ${cy + deep} A ${rx} ${ry} 0 0 0 ${left} ${cy + deep} Z`,
@@ -623,6 +631,9 @@ function mechanism(key, t) {
           ...slot.map(([px, py]) => (
             <circle key={`${px}:${py}`} cx={px} cy={py} r="8.5" />
           )),
+          // The shipping lane: from the bed to the gate in the far wall,
+          // printed before anything travels it.
+          <line className="fl-ruled" key="ship" x1="28" y1="-28" x2="28" y2="-52" />,
         ]),
         // THE GANTRY THE CLAW RIDES, and it is the whole reason the claw is not
         // a UFO. A carriage hanging in the air over a plate is a thing hovering
@@ -655,6 +666,13 @@ function mechanism(key, t) {
         // them. All three ride one clock, so the cell travels because the claw
         // is carrying it rather than beside it.
         { ...cell(-52, -20, null, 5, 14), cls: 'fl-blk fl-carry', depth: OVER + 1 },
+        // THE SHIPMENT. Organised material does not pile up on the bed - it
+        // goes on to be screened. One cell stages between the bed and the far
+        // wall and ships through the gate, on SCREENING'S intake clock, so
+        // the cell seen leaving here is the cell seen joining the wait bed
+        // next door two beats later. Unstained, because nothing has ruled on
+        // it yet - that is the next plate's whole job.
+        { ...cell(28, -36, null, 5), cls: 'fl-blk fl-ship', depth: OVER + 4 },
         { ...stand(-52, -30, 3, 8, 10, 3, 14), cls: 'fl-claw is-jaw', depth: OVER },
         { ...stand(-52, -10, 3, 8, 10, 3, 14), cls: 'fl-claw is-jaw', depth: OVER + 2 },
         // The motor's head is round - the one part of the carriage that is
@@ -679,7 +697,7 @@ function mechanism(key, t) {
       // right, with the amber seat nearest the corner that points at Resolve.
       // The first two are terminal pores. The third is not a pore at all -
       // it is the GATE, cut through the wall dead ahead of it.
-      const hole = [[-40, -30, 'pass'], [0, -30, 'fail'], [40, -30, 'hold']]
+      const hole = [[-40, -28, 'pass'], [0, -28, 'fail'], [40, -28, 'hold']]
       const wait = [2, 24].flatMap((py) => [-58, -36, -14].map((px) => [px, py]))
       return [
         printed(-800, 'fl-print', [
@@ -700,7 +718,12 @@ function mechanism(key, t) {
         { ...drum(26, 24, 16, 2.5), cls: 'fl-golgi' },
         { ...drum(26, 24, 12.5, 2.5, 2.5), cls: 'fl-golgi' },
         { ...drum(26, 24, 9, 2.5, 5), cls: 'fl-golgi' },
-        ...wait.map(([px, py], i) => cell(px, py, null, 5, 0, { turn: i })),
+        // The wait cell nearest the entry gate is the one that ARRIVES: it
+        // slides in through the back wall on the same clock the shipment
+        // leaves Evidence on, rests with the bed, and is absorbed into it as
+        // the bed feeds the pores - so the population closes without a blink.
+        { ...cell(wait[0][0], wait[0][1], null, 5), cls: 'fl-blk fl-join' },
+        ...wait.slice(1).map(([px, py], i) => cell(px, py, null, 5, 0, { turn: i })),
         // The two terminal pores. Each carries the cell it is swallowing:
         // a stained cell standing INSIDE the bore, clipped to the opening
         // the way Trident clips its shaft, so a reader watches the material
@@ -1199,7 +1222,7 @@ export default function ChainSchematic({ animate = true }) {
                         symbol for taking something in rather than somewhere for
                         something to go. */}
                     if (part.hole) {
-                      const { cx, cy, rx, ry, deep, throat, wall } = part.hole
+                      const { cx, cy, rx, ry, deep, throat, collar, wall } = part.hole
                       const bore = `fl-bore-${item.key}-${n}`
                       return (
                         <g className={part.cls} key={`${item.key}-e${n}`}>
@@ -1229,6 +1252,11 @@ export default function ChainSchematic({ animate = true }) {
                             </>
                           ) : null}
                           <ellipse className="fl-rim" cx={cx} cy={cy} rx={rx} ry={ry} />
+                          {/* The collar, one ring out from the rim - the same
+                              line Trident's intake wears - and it is where the
+                              verdict lives: a green or red RING around a quiet
+                              machined bore, not a bowl of paint. */}
+                          <ellipse className="fl-collar" cx={cx} cy={cy} rx={collar.rx} ry={collar.ry} />
                         </g>
                       )
                     }
