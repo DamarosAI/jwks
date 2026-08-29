@@ -12493,20 +12493,16 @@ html.is-hidden .clinic-node i,
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   THIRTY FRAGMENTS BECOME FIVE SURFACES, ONCE
+   FIVE SURFACES, ALREADY DOWN, ALREADY WORKING
 
-   The figure opens as a mess, the reader arrives, and the mess resolves into
-   five plates in a row. THAT IS THE END OF IT. It ran on a fourteen-second
-   loop and the loop was the mistake: a claim you can watch come undone every
-   fourteen seconds is not a claim, it is a screensaver, and a reader who looks
-   away for ten seconds comes back to the argument in pieces again.
-
-   So one registered number runs the whole entrance. `--fuse` goes 0 to 1
-   exactly once, latched by the reader reaching the figure, and every calc()
-   downstream eases on that single timeline: the tiles travel to their seats,
-   the six seams in each group close into one plate, the name rises under it,
-   and the mechanism on top comes on last. Nothing can scrub it and nothing
-   puts it back.
+   The figure used to open as a mess of thirty tiles that drew together into
+   the five plates as the reader arrived. The entrance was a claim about
+   consolidation, but it spent the row's first seconds on furniture assembling
+   itself - and the machinery is the argument. So the plates are simply there,
+   the way a survey sheet is simply drawn, and the only choreography a reader
+   ever watches is the material moving through the run. The clocks still gate
+   on `is-live`, and they all start from that one class flip, which is what
+   keeps the five plates' handoffs phase-locked.
 
    THE PLATE IS PAPER AND WHAT STANDS ON IT IS INK. The previous pass drew the
    surface in blue and the machine on it in blue an eighth of a step apart, and
@@ -12514,15 +12510,6 @@ html.is-hidden .clinic-node i,
    not have that problem because a deck there is nearly white with a hard edge.
    Same rule here.
    ═══════════════════════════════════════════════════════════════════════ */
-
-/* The one number. Registered, so a single class flip transitions every
-   expression reading it - the same device the Trident boot runs on, and the
-   reason none of this needs a frame loop or a re-render. */
-@property --fuse {
-  syntax: '<number>';
-  inherits: true;
-  initial-value: 0;
-}
 
 .dgm-svg.is-floor {
   --ink: var(--accent);
@@ -12537,21 +12524,11 @@ html.is-hidden .clinic-node i,
      every edge that defines one is drawn in near-black. */
   --ink-deep: color-mix(in srgb, var(--accent-strong) 34%, var(--text));
   --line: color-mix(in srgb, var(--text) 72%, var(--accent-strong));
-  --fuse: 0;
-  transition: --fuse 2200ms cubic-bezier(0.42, 0.02, 0.08, 1);
 }
 
-.dgm-svg.is-floor.is-fused { --fuse: 1; }
-
-/* NOTHING IS A TARGET UNTIL THE PLATES ARE DOWN. A hover on a tile still in
-   the air is a hover on nothing: it would name a step that does not exist yet,
-   dim four others that are still assembling, and hold a readout open over a
-   scatter. The hit rect is the only pointer surface in the figure and it is
-   inert until the fuse has run. */
+/* The hit rect is the only pointer surface in the figure. */
 .fl-step { transition: opacity 260ms ease; }
 .fl-step:focus { outline: none; }
-.fl-hit,
-.fl-tiles,
 .fl-plate,
 .fl-emblem,
 .fl-cast,
@@ -12560,8 +12537,11 @@ html.is-hidden .clinic-node i,
 .fl-station,
 .fl-name,
 .fl-fact { pointer-events: none; }
-.fl-hit { fill: none; }
-.is-fused .fl-hit { pointer-events: all; cursor: pointer; }
+.fl-hit {
+  fill: none;
+  pointer-events: all;
+  cursor: pointer;
+}
 
 /* ONE SOURCE OF TRUTH FOR WHICH STEP IS BEING READ.
    The drawing used to style off `:hover` while the readout underneath rendered
@@ -12572,76 +12552,12 @@ html.is-hidden .clinic-node i,
    comes along for the ring, because that is a rendering of the focus ring and
    not of the reading. */
 
-/* ── The fragments ───────────────────────────────────────────────────────
-
-   Built at their seats, so the assembled group is a true plan grid with every
-   seam landing on every other seam - which is what lets six tiles hand off to
-   one plate without the outline moving. Scatter is an offset from that: the
-   same object in two places rather than two pretending to be one, so the whole
-   travel is a compositor transform with nothing recomputed on any frame.
-
-   `--own` is this tile's slice of the fuse. One number staggered per tile is
-   what makes thirty objects arrive as a flock rather than as a block, and it
-   costs one clamp rather than thirty animations. Every tile is seated by 0.72,
-   which is well before the seams start closing at 0.86 - nothing may still be
-   travelling when the surface it belongs to arrives. */
-
-.fl-tile {
-  --own: clamp(0, calc((var(--fuse) - var(--lag, 0) * 0.26) / 0.46), 1);
-  --away: calc(1 - var(--own));
-  transform-box: fill-box;
-  transform-origin: center;
-  transform:
-    translate(calc(var(--drift-x, 0px) * var(--away)), calc(var(--drift-y, 0px) * var(--away)))
-    scale(calc(1 - 0.32 * var(--away)));
-}
-
-.fl-tiles { opacity: clamp(0, calc((0.86 - var(--fuse)) / 0.14), 1); }
-
-.fl-tile .dgm-face-top {
-  fill: color-mix(in srgb, var(--accent) 11%, var(--surface-solid));
-  stroke: color-mix(in srgb, var(--line) 34%, transparent);
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
-}
-
-.fl-tile .dgm-face-left { fill: color-mix(in srgb, var(--accent) 26%, var(--surface-solid)); stroke: none; }
-.fl-tile .dgm-face-right { fill: color-mix(in srgb, var(--accent-strong) 30%, var(--accent)); stroke: none; }
-
-/* THE MESS IS NOT A PAUSE. Tiles holding perfectly still before the fuse read
-   as a video that has not started, so each one wanders a few pixels off its
-   drift on its own long clock. It stops the instant the fuse is latched: the
-   tile is travelling several hundred pixels at that moment, so a wander of
-   thirty ending is not something anybody sees, and a surface that is still
-   breathing after it has landed is not a base you can build on. */
-
-.fl-drift {
-  transform-box: fill-box;
-  transform-origin: center;
-}
-
-.dgm-svg.is-live .fl-drift {
-  animation: fl-adrift calc(6.5s + var(--life, 0) * 5s) ease-in-out infinite alternate;
-  animation-delay: calc(var(--life, 0) * -7s);
-}
-
-@keyframes fl-adrift {
-  to { transform: translate(var(--sway-x, 0px), var(--sway-y, 0px)); }
-}
-
-.dgm-svg.is-fused .fl-drift { animation: none; }
-
-/* ── The surface they become ─────────────────────────────────────────────
+/* ── The surface ─────────────────────────────────────────────────────────
 
    One sheet of the page's own paper with a single drawn edge. It is the widest
    thing in its own band and the palest, so everything standing on it is the
    only dark object there - which is the entire separation between the base and
-   the machine, and it is done with value rather than with outlines.
-
-   Six per cent, not the thirty-eight the tiles used to carry. A base that is
-   coloured competes with what it is a base for. */
-
-.fl-plate { opacity: clamp(0, calc((var(--fuse) - 0.62) / 0.16), 1); }
+   the machine, and it is done with value rather than with outlines. */
 
 .fl-plate .dgm-face-top {
   fill: color-mix(in srgb, var(--tone) 6%, var(--surface-solid));
@@ -12690,7 +12606,7 @@ html.is-hidden .clinic-node i,
 
 .fl-cut { fill: color-mix(in srgb, var(--line) 52%, transparent); stroke: none; }
 
-.is-fused .fl-step.is-hot .fl-bilayer { stroke: color-mix(in srgb, var(--line) 50%, transparent); }
+.fl-step.is-hot .fl-bilayer { stroke: color-mix(in srgb, var(--line) 50%, transparent); }
 
 /* ── The vessel wall ─────────────────────────────────────────────────────
 
@@ -12732,11 +12648,7 @@ html.is-hidden .clinic-node i,
 .fl-step.is-screening .fl-pylon-wall.is-far { fill: var(--hold); }
 .fl-step.is-screening .fl-pylon-cap.is-far { fill: color-mix(in srgb, var(--hold) 55%, var(--surface-solid)); }
 
-/* The near half arrives with the plate it stands on; the far half is inside
-   the plate group and inherits its fade. */
-.fl-vessel.is-front { opacity: clamp(0, calc((var(--fuse) - 0.62) / 0.16), 1); }
-
-.is-fused .fl-step.is-hot .fl-vessel-edge { stroke: color-mix(in srgb, var(--line) 74%, transparent); }
+.fl-step.is-hot .fl-vessel-edge { stroke: color-mix(in srgb, var(--line) 74%, transparent); }
 
 
 /* ── Pointing at one lifts it ────────────────────────────────────────────
@@ -12781,11 +12693,11 @@ html.is-hidden .clinic-node i,
 }
 
 @media (any-hover: hover) and (pointer: fine) {
-  .thesis-section:hover .dgm-svg.is-fused .fl-step:not(.is-hot) .fl-body {
+  .thesis-section:hover .dgm-svg .fl-step:not(.is-hot) .fl-body {
     transform: translateY(calc(var(--near, 0) * -4.5px));
   }
 
-  .thesis-section:hover .dgm-svg.is-fused .fl-step:not(.is-hot) .fl-bilayer {
+  .thesis-section:hover .dgm-svg .fl-step:not(.is-hot) .fl-bilayer {
     stroke: color-mix(in srgb, var(--line) calc((30 + var(--near, 0) * 24) * 1%), transparent);
   }
 }
@@ -12838,9 +12750,9 @@ html.is-hidden .clinic-node i,
    down onto the datum last pass, which means the lift no longer has any type to
    clear - so a held plate can travel far enough for the rise to be the thing a
    reader notices rather than something they have to be told about. */
-.is-fused .fl-step.is-hot .fl-body { transform: translateY(-22px); }
+.fl-step.is-hot .fl-body { transform: translateY(-22px); }
 
-.is-fused .fl-step.is-hot .fl-cast { opacity: 1; }
+.fl-step.is-hot .fl-cast { opacity: 1; }
 
 /* The falloff is QUADRATIC, which is what makes five steps read as one shadow
    rather than as five. The first two sit almost on the plate's own footprint at
@@ -12848,17 +12760,17 @@ html.is-hidden .clinic-node i,
    at a fifteenth, which is the ambient. Linear steps can only ever draw the
    first of those, so the old shadow was a hard little smudge with nothing
    around it. */
-.is-fused .fl-step.is-hot .fl-caststep {
+.fl-step.is-hot .fl-caststep {
   transform: translateY(calc(var(--n) * var(--n) * 0.62px)) scale(calc(0.978 + var(--n) * 0.013));
 }
 
-.is-fused .fl-step.is-hot .fl-plate .dgm-face-top { stroke: var(--line); }
+.fl-step.is-hot .fl-plate .dgm-face-top { stroke: var(--line); }
 
 .fl-step:focus-visible .fl-plate .dgm-face-top { stroke-width: 2; }
 
 /* The four you are not on stand down, so the one being read is the one in
    focus. */
-.dgm-svg.is-floor.is-fused:has(.fl-step.is-hot) .fl-step:not(.is-hot) { opacity: 0.36; }
+.dgm-svg.is-floor:has(.fl-step.is-hot) .fl-step:not(.is-hot) { opacity: 0.36; }
 
 /* ── The run, and the names that hang off it ─────────────────────────
 
@@ -12873,26 +12785,13 @@ html.is-hidden .clinic-node i,
    the whole line, ticks each station on it, and hangs the name beneath in the
    quietest ink on the sheet. Ten pixels, six hundred, near-black, under the
    rule, with the value in the machine face below that. Pointing at one takes it
-   to full black rather than to a colour: the accent is spent on the solids.
+   to full black rather than to a colour: the accent is spent on the solids. */
 
-   And the rule DRAWS ITSELF on the same one-shot timeline as everything else,
-   so the run arrives with the row rather than waiting under an empty stage. */
-
-.dgm-svg.is-floor { --in: clamp(0, calc((var(--fuse) - 0.86) / 0.14), 1); }
-
-/* IT DRAWS WITH A TRANSFORM, NOT WITH A DASH. A normalised pathLength under a
-   non-scaling stroke came out three quarters of the way along and stopped -
-   the rule ended between Resolve and Replay, which on a line whose whole job is
-   to say these five are one run is the worst single mark in the figure. A
-   scaleX off the same one number cannot be got wrong, and it composites. */
 .fl-datum {
   fill: none;
   stroke: color-mix(in srgb, var(--text) 24%, transparent);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
-  transform-box: view-box;
-  transform-origin: var(--from) var(--at);
-  transform: scaleX(var(--in));
 }
 
 /* The leader is what ties a name to the plate it names, and it is the faintest
@@ -12903,13 +12802,11 @@ html.is-hidden .clinic-node i,
   stroke: color-mix(in srgb, var(--text) 18%, transparent);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
-  opacity: var(--in);
   transition: stroke 260ms ease;
 }
 
 .fl-station {
   fill: color-mix(in srgb, var(--text) 40%, transparent);
-  opacity: var(--in);
   transition: fill 260ms ease;
 }
 
@@ -12924,10 +12821,6 @@ html.is-hidden .clinic-node i,
   font-weight: 600;
   font-synthesis: none;
   letter-spacing: 0.12em;
-  transform-box: fill-box;
-  transform-origin: center;
-  opacity: var(--in);
-  transform: translateY(calc((1 - var(--in)) * 8px));
   transition: fill 260ms ease;
 }
 
@@ -12946,17 +12839,13 @@ html.is-hidden .clinic-node i,
   font-family: var(--font-mono);
   font-size: 9px;
   letter-spacing: 0.02em;
-  transform-box: fill-box;
-  transform-origin: center;
-  opacity: var(--in);
-  transform: translateY(calc((1 - var(--in)) * 8px));
   transition: fill 260ms ease;
 }
 
-.is-fused .fl-step.is-hot .fl-name { fill: var(--text); }
-.is-fused .fl-step.is-hot .fl-fact { fill: var(--ink-deep); }
-.is-fused .fl-step.is-hot .fl-leader { stroke: color-mix(in srgb, var(--text) 50%, transparent); }
-.is-fused .fl-step.is-hot .fl-station { fill: var(--text); }
+.fl-step.is-hot .fl-name { fill: var(--text); }
+.fl-step.is-hot .fl-fact { fill: var(--ink-deep); }
+.fl-step.is-hot .fl-leader { stroke: color-mix(in srgb, var(--text) 50%, transparent); }
+.fl-step.is-hot .fl-station { fill: var(--text); }
 
 /* -- THE FIVE MECHANISMS ------------------------------------------------
 
@@ -12980,9 +12869,7 @@ html.is-hidden .clinic-node i,
    three throats cut through the plate along its own front-right edge. Resolve
    is a horizontal ram that pushes a block clean off the line, thrown by a hand
    on a lever. Replay is a tape transport that reads its way along the run and
-   then RUNS BACK. Nothing runs until the plate is under it. */
-
-.fl-emblem { opacity: var(--in); }
+   then RUNS BACK. */
 
 .fl-emblem .dgm-face-top {
   fill: color-mix(in srgb, var(--tone) 58%, var(--surface-solid));
@@ -13022,8 +12909,8 @@ html.is-hidden .clinic-node i,
 
 /* A held plate's plan comes up with it, or the machine gains contrast and the
    bed it stands in stays where it was. */
-.is-fused .fl-step.is-hot .fl-plan { stroke: color-mix(in srgb, var(--line) 54%, transparent); }
-.is-fused .fl-step.is-hot .fl-ruled { stroke: color-mix(in srgb, var(--line) 34%, transparent); }
+.fl-step.is-hot .fl-plan { stroke: color-mix(in srgb, var(--line) 54%, transparent); }
+.fl-step.is-hot .fl-ruled { stroke: color-mix(in srgb, var(--line) 34%, transparent); }
 
 /* ── A hole ──────────────────────────────────────────────────────────────
 
@@ -13134,7 +13021,7 @@ html.is-hidden .clinic-node i,
   transform-origin: center;
 }
 
-.dgm-svg.is-live.is-fused .fl-settle {
+.dgm-svg.is-live .fl-settle {
   animation: fl-breathe calc(11s + var(--life, 0) * 7s) ease-in-out infinite alternate;
   animation-delay: calc(var(--life, 0) * -9s);
 }
@@ -13264,7 +13151,7 @@ html.is-hidden .clinic-node i,
    has settled. The stagger walks the grid the way the contract deck walks its
    fields, rather than blinking twelve switches independently, which is a
    decoration and not a pass. */
-.dgm-svg.is-live.is-fused .fl-toggle {
+.dgm-svg.is-live .fl-toggle {
   animation: fl-flip 6.2s cubic-bezier(0.6, 0, 0.3, 1.5) infinite;
   animation-delay: calc(var(--turn, 0) * 0.19s);
 }
@@ -13275,7 +13162,7 @@ html.is-hidden .clinic-node i,
   96%, 100% { transform: rotate(-118deg); }
 }
 
-.dgm-svg.is-live.is-fused .fl-toggle.is-fail { animation-name: fl-flipoff; }
+.dgm-svg.is-live .fl-toggle.is-fail { animation-name: fl-flipoff; }
 
 @keyframes fl-flipoff {
   0%, 8% { transform: rotate(-62deg); }
@@ -13332,12 +13219,12 @@ html.is-hidden .clinic-node i,
    instead of arriving there. The claw keeps the shipment's period now, so
    one subject runs the plate end to end on one beat: picked on this cycle,
    staged on the next, shipped on the one after. */
-.dgm-svg.is-live.is-fused .fl-claw,
-.dgm-svg.is-live.is-fused .fl-carry {
+.dgm-svg.is-live .fl-claw,
+.dgm-svg.is-live .fl-carry {
   animation: fl-fetch 5.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
-.dgm-svg.is-live.is-fused .fl-carry {
+.dgm-svg.is-live .fl-carry {
   animation: fl-fetch 5.6s cubic-bezier(0.4, 0, 0.2, 1) infinite, fl-borne 5.6s linear infinite;
 }
 
@@ -13369,7 +13256,7 @@ html.is-hidden .clinic-node i,
   70%, 100% { opacity: 0; }
 }
 
-.dgm-svg.is-live.is-fused .fl-pick { animation: fl-picked 5.6s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+.dgm-svg.is-live .fl-pick { animation: fl-picked 5.6s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
 
 @keyframes fl-picked {
   0%, 22% { transform: translateY(0px); opacity: 1; }
@@ -13428,7 +13315,7 @@ html.is-hidden .clinic-node i,
 .fl-hole.is-fail .fl-collar { stroke: var(--fail); }
 
 /* It swallows. A throat that holds still is a dot printed on a floor. */
-.dgm-svg.is-live.is-fused .fl-throat { animation: fl-gulp 5.6s ease-in-out infinite; }
+.dgm-svg.is-live .fl-throat { animation: fl-gulp 5.6s ease-in-out infinite; }
 
 @keyframes fl-gulp {
   0%, 100% { transform: scale(1); }
@@ -13447,7 +13334,7 @@ html.is-hidden .clinic-node i,
      entry seat (fl-join). The red pore stands open and ringed but is not
      fed on a loop: one line into the green mouth is the story, and a
      second faller was a second thing to watch on one plate. */
-.dgm-svg.is-live.is-fused .fl-faller {
+.dgm-svg.is-live .fl-faller {
   animation: fl-drop 5.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
@@ -13465,7 +13352,7 @@ html.is-hidden .clinic-node i,
    coincident cells mid-fade sum below one and the seat blinks - so the
    incomer always reaches full opacity first (invisible, over an identical
    opaque twin) and only then does the sitter fade out beneath it. */
-.dgm-svg.is-live.is-fused .fl-shunt {
+.dgm-svg.is-live .fl-shunt {
   animation: fl-shunt 5.6s cubic-bezier(0.45, 0, 0.25, 1) infinite;
 }
 
@@ -13481,7 +13368,7 @@ html.is-hidden .clinic-node i,
    Clipped to the opening, so only what is genuinely inside is drawn. */
 .fl-sunk { opacity: 0; }
 
-.dgm-svg.is-live.is-fused .fl-sunk {
+.dgm-svg.is-live .fl-sunk {
   animation: fl-swallow 5.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
@@ -13493,13 +13380,13 @@ html.is-hidden .clinic-node i,
   100% { transform: translateY(0px); opacity: 0; }
 }
 
-/* THE GOLGI IS A STACK OF CISTERNAE. Four flattened sacs with round rims,
-   staggered the way the organelle actually stacks, and a thinning trail of
-   vesicle bodies leaving for the verdict line - the body whose whole job
-   is sorting and dispatch, drawn doing both. Concentric discs read as a
-   podium. It is a body, not a mechanism, so it sits a step quieter than
-   the pores and the arm; the sacs' three faces take the standard three
-   values of the station's ink. */
+/* THE GOLGI IS A U OF STACKED CISTERNAE, its mouth open toward the gate,
+   the amber lane running out through the gap and the bud born inside it -
+   the body whose whole job is sorting and dispatch, drawn doing both, with
+   the printed vesicle trail thinning toward the verdict line. It is a
+   body, not a mechanism, so it sits a step quieter than the pores and the
+   arm; the sacs' three faces take the standard three values of the
+   station's ink. */
 .fl-golgi .dgm-face-top { fill: color-mix(in srgb, var(--tone) 30%, var(--surface-solid)); }
 .fl-golgi .dgm-face-left { fill: color-mix(in srgb, var(--tone) 44%, var(--surface-solid)); }
 .fl-golgi .dgm-face-right { fill: color-mix(in srgb, var(--tone) 58%, var(--surface-solid)); }
@@ -13519,7 +13406,7 @@ html.is-hidden .clinic-node i,
 .fl-blk.is-script .dgm-face-right { fill: color-mix(in srgb, var(--governed) 64%, var(--accent-strong)); }
 .fl-blk.is-script .fl-core { fill: var(--governed); }
 
-.dgm-svg.is-live.is-fused .fl-issue { animation: fl-issue 5.6s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
+.dgm-svg.is-live .fl-issue { animation: fl-issue 5.6s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
 
 @keyframes fl-issue {
   0%, 46% { transform: translate(0px, 0px); opacity: 1; }
@@ -13529,7 +13416,7 @@ html.is-hidden .clinic-node i,
   92%, 100% { transform: translate(0px, 0px); opacity: 1; }
 }
 
-.dgm-svg.is-live.is-fused .fl-dock { animation: fl-dock 5.6s cubic-bezier(0.3, 0, 0.3, 1) infinite; }
+.dgm-svg.is-live .fl-dock { animation: fl-dock 5.6s cubic-bezier(0.3, 0, 0.3, 1) infinite; }
 
 @keyframes fl-dock {
   0%, 30% { transform: translate(0px, 0px); opacity: 1; }
@@ -13544,7 +13431,7 @@ html.is-hidden .clinic-node i,
    gone through the gate by 62, well before Screening's join arrives at 84
    on the same 5.6s period - one subject, one period, neither plate reaching
    across the seam. */
-.dgm-svg.is-live.is-fused .fl-ship { animation: fl-ship 5.6s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
+.dgm-svg.is-live .fl-ship { animation: fl-ship 5.6s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
 
 @keyframes fl-ship {
   0%, 40% { transform: translate(13.86px, -5.44px); opacity: 1; }
@@ -13558,7 +13445,7 @@ html.is-hidden .clinic-node i,
 /* The join hands its seat to the shunt early: the shunt cell is drawn on the
    same seat and rests there visibly from the cycle's start, so the join can
    fade under it as soon as the new cycle opens and the seat never blinks. */
-.dgm-svg.is-live.is-fused .fl-join { animation: fl-join 5.6s cubic-bezier(0.3, 0, 0.3, 1) infinite; }
+.dgm-svg.is-live .fl-join { animation: fl-join 5.6s cubic-bezier(0.3, 0, 0.3, 1) infinite; }
 
 @keyframes fl-join {
   0%, 8% { transform: translate(0px, 0px); opacity: 1; }
@@ -13580,7 +13467,7 @@ html.is-hidden .clinic-node i,
    Two keyframe blocks, one period, no shared element - which is what lets a
    reader watch the same subject leave one plate and enter the next without
    either plate reaching across the seam. */
-.dgm-svg.is-live.is-fused .fl-handoff { animation: fl-handoff 4.8s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
+.dgm-svg.is-live .fl-handoff { animation: fl-handoff 4.8s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
 
 @keyframes fl-handoff {
   0%, 38% { transform: translate(0px, 0px); opacity: 1; }
@@ -13605,7 +13492,7 @@ html.is-hidden .clinic-node i,
   transform-origin: 50% 72%;
 }
 
-.dgm-svg.is-live.is-fused .fl-bud { animation: fl-bud 4.8s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
+.dgm-svg.is-live .fl-bud { animation: fl-bud 4.8s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
 
 @keyframes fl-bud {
   0%, 44% { transform: translate(0px, 0px) scale(0.25); opacity: 0; }
@@ -13646,7 +13533,7 @@ html.is-hidden .clinic-node i,
 .fl-grip { fill: var(--tone); stroke: none; }
 .fl-lever { transform-box: view-box; transform: rotate(-116deg); }
 
-.dgm-svg.is-live.is-fused .fl-lever { animation: fl-claim 4.8s cubic-bezier(0.6, 0, 0.3, 1.4) infinite; }
+.dgm-svg.is-live .fl-lever { animation: fl-claim 4.8s cubic-bezier(0.6, 0, 0.3, 1.4) infinite; }
 
 @keyframes fl-claim {
   0%, 14% { transform: rotate(-116deg); }
@@ -13662,7 +13549,7 @@ html.is-hidden .clinic-node i,
 .fl-ram.is-neck .dgm-face-top { fill: color-mix(in srgb, var(--deep) 82%, var(--surface-solid)); }
 .fl-ram.is-face .dgm-face-top { fill: var(--tone); }
 
-.dgm-svg.is-live.is-fused .fl-ram { animation: fl-stroke 4.8s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
+.dgm-svg.is-live .fl-ram { animation: fl-stroke 4.8s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
 
 @keyframes fl-stroke {
   0%, 30% { transform: translate(0px, 0px); }
@@ -13677,7 +13564,7 @@ html.is-hidden .clinic-node i,
    inside the thing it is pushing. The cell goes with the blade to the edge,
    tips, falls, and comes back to the station while out of sight, so the
    cycle closes on the picture it opened with. */
-.dgm-svg.is-live.is-fused .fl-pushed { animation: fl-shove 4.8s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
+.dgm-svg.is-live .fl-pushed { animation: fl-shove 4.8s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
 
 @keyframes fl-shove {
   0%, 30% { transform: translate(0px, 0px) translateY(0px); opacity: 1; }
@@ -13688,7 +13575,7 @@ html.is-hidden .clinic-node i,
   100% { transform: translate(0px, 0px) translateY(0px); opacity: 1; }
 }
 
-.dgm-svg.is-live.is-fused .fl-index { animation: fl-advance 4.8s cubic-bezier(0.5, 0, 0.2, 1) infinite; }
+.dgm-svg.is-live .fl-index { animation: fl-advance 4.8s cubic-bezier(0.5, 0, 0.2, 1) infinite; }
 
 /* The line waits for the ram to be home before it indexes. Overlapped, the
    block arriving at the station and the blade leaving it cross - and a blade
@@ -13699,7 +13586,7 @@ html.is-hidden .clinic-node i,
   98%, 100% { transform: translate(20.78px, 8.16px); }
 }
 
-.dgm-svg.is-live.is-fused .fl-feed { animation: fl-arrive 4.8s ease-out infinite; }
+.dgm-svg.is-live .fl-feed { animation: fl-arrive 4.8s ease-out infinite; }
 
 /* In through the entry gate at the back of the lane - a plan-axis slide from
    just inside the wall's throat - so the material that left Screening
@@ -13736,7 +13623,7 @@ html.is-hidden .clinic-node i,
 
 /* Forward at a constant rate, because a transport does not accelerate through a
    record, and back on a curve, because a rewind does. */
-.dgm-svg.is-live.is-fused .fl-head { animation: fl-run 9.4s linear infinite; }
+.dgm-svg.is-live .fl-head { animation: fl-run 9.4s linear infinite; }
 
 @keyframes fl-run {
   0%, 4% { transform: translate(0px, 0px); }
@@ -13765,7 +13652,7 @@ html.is-hidden .clinic-node i,
 
 .fl-coil { fill: none; stroke-width: 1.2; }
 
-.dgm-svg.is-live.is-fused .fl-spin { animation: fl-wind 9.4s linear infinite; }
+.dgm-svg.is-live .fl-spin { animation: fl-wind 9.4s linear infinite; }
 
 @keyframes fl-wind {
   0%, 4% { transform: rotate(0deg); }
@@ -13776,7 +13663,7 @@ html.is-hidden .clinic-node i,
 /* A frame lifts a hair as the head crosses it and settles behind it. That is a
    record being read rather than seven blocks blinking: the delay walks the tape
    at exactly the rate the head walks it. */
-.dgm-svg.is-live.is-fused .fl-frame {
+.dgm-svg.is-live .fl-frame {
   animation: fl-read 9.4s ease-in-out infinite;
   animation-delay: calc(var(--turn, 0) * 0.9s);
 }
@@ -13803,20 +13690,20 @@ html.is-hidden .clinic-node i,
    instrument works faster, which is the station being operated rather than
    highlighted. */
 
-.is-fused .fl-step.is-hot .fl-blk.is-pass .dgm-face-top { fill: color-mix(in srgb, var(--pass) 72%, var(--surface-solid)); }
-.is-fused .fl-step.is-hot .fl-blk.is-hold .dgm-face-top { fill: color-mix(in srgb, var(--hold) 70%, var(--surface-solid)); }
-.is-fused .fl-step.is-hot .fl-blk.is-fail .dgm-face-top { fill: color-mix(in srgb, var(--fail) 70%, var(--surface-solid)); }
+.fl-step.is-hot .fl-blk.is-pass .dgm-face-top { fill: color-mix(in srgb, var(--pass) 72%, var(--surface-solid)); }
+.fl-step.is-hot .fl-blk.is-hold .dgm-face-top { fill: color-mix(in srgb, var(--hold) 70%, var(--surface-solid)); }
+.fl-step.is-hot .fl-blk.is-fail .dgm-face-top { fill: color-mix(in srgb, var(--fail) 70%, var(--surface-solid)); }
 .fl-blk .dgm-face-top { transition: fill 300ms ease; }
 
 /* The machine gains a step of ink as it rises, so the plate a reader is on is
    the darkest thing on the sheet as well as the highest. */
-.is-fused .fl-step.is-hot .fl-emblem .dgm-face-top {
+.fl-step.is-hot .fl-emblem .dgm-face-top {
   fill: color-mix(in srgb, var(--tone) 68%, var(--surface-solid));
   stroke: var(--line);
 }
 
 
-.is-fused .fl-step.is-hot .fl-plate .dgm-face-top { stroke-width: 1.4; }
+.fl-step.is-hot .fl-plate .dgm-face-top { stroke-width: 1.4; }
 
 .fl-emblem .dgm-face-top { transition: fill 300ms ease, stroke 300ms ease; }
 
@@ -13885,20 +13772,14 @@ html.is-hidden .clinic-node i,
 
 /* ── Still, and still true ───────────────────────────────────────────────
 
-   With reduced motion the fuse does not run - it is already finished. The
-   figure rests as the five plates, assembled and lettered, with their
-   mechanisms on them, which is the frame that states the claim. The pointer
-   still lifts one, because a hover is a thing a reader asked for rather than a
-   thing moving at them. */
+   With reduced motion the figure rests as the five plates, assembled and
+   lettered, with their mechanisms on them, which is the frame that states
+   the claim. The pointer still lifts one, because a hover is a thing a
+   reader asked for rather than a thing moving at them. */
 
 @media (prefers-reduced-motion: reduce) {
-  .dgm-svg.is-floor {
-    --fuse: 1;
-    transition: none;
-  }
+  .dgm-svg.is-floor { transition: none; }
 
-  .fl-tile,
-  .fl-drift,
   .fl-emblem > g,
   .fl-blk,
   .fl-toggle,

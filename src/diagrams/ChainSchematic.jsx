@@ -1,23 +1,22 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 
 import { ISO_Y, jitter, planCircle, planSpace, project, roundedBox, roundedCylinder, roundedSlab } from './iso'
 import { Faces } from './Solid'
 import { useCenterOnOverflow } from './useCenterOnOverflow'
 
 /**
- * THIRTY FRAGMENTS BECOME FIVE SURFACES, ONCE.
+ * FIVE SURFACES, ALREADY DOWN, ALREADY WORKING.
  *
- * The figure opens as a mess: thirty tiles off every axis, wandering, belonging
- * to nothing. When the reader reaches it they draw together and set down flush
- * into five plates in a row - Protocol, Evidence, Screening, Resolve, Replay -
- * and THEY STAY THERE. That is the whole argument of the section, and an
- * argument you can watch come undone every fourteen seconds is not an argument.
- *
- * So this does not loop. `--fuse` is a registered custom property that runs
- * 0 to 1 exactly once, latched by the reader arriving, and every calc()
- * downstream of it eases on that one timeline: the tiles travel, the six seams
- * in each group close into a single plate, the run's datum draws itself under
- * the row, and the machine on each plate comes on last.
+ * The figure used to open as a mess - thirty tiles wandering, drawing together
+ * into the five plates as the reader arrived. The entrance was a claim about
+ * consolidation, but it spent the row's first seconds on furniture assembling
+ * itself, and the machinery is the argument: Protocol, Evidence, Screening,
+ * Resolve, Replay, seated in a row and RUNNING. So the plates are simply
+ * there, the way a survey sheet is simply drawn, and the only choreography a
+ * reader ever watches is the material moving through the run. The machines
+ * still gate on `is-live` - clocks run when the figure is on screen, and every
+ * seam handoff starts from one shared class flip, which is what keeps the five
+ * plates phase-locked.
  *
  * THE PLATE IS PAPER. WHAT STANDS ON IT IS INK. A surface drawn in blue under
  * objects drawn in blue an eighth of a step apart is a haze, and no reader can
@@ -49,8 +48,6 @@ import { useCenterOnOverflow } from './useCenterOnOverflow'
  * material leaves the run by a person's decision, Resolve's near edge, is the
  * one place the wall is drawn PARTING.
  *
- * Nothing is hoverable until the plates are down. A target on a tile still in
- * the air is a target on nothing.
  */
 
 const W = 1200
@@ -60,41 +57,22 @@ const W = 1200
    frame is cut to what the figure, the run's datum and the sentence occupy. */
 const H = 286
 const CX = 600
-// The row sits low, because everything above it belongs to two other things:
-// the sentence, which is set into the top of this same cell, and the scatter,
-// which needs somewhere to be that is not on top of the sentence.
+// The row sits low, because the band above it belongs to the sentence, which
+// is set into the top of this same cell.
 const CY = 178
 
-/* WHERE THE MESS IS ALLOWED TO BE.
- *
- * The scatter used to be a reach and an angle with nothing bounding it, so
- * tiles ran two hundred and seventy units above their seat - off the top of the
- * viewBox entirely, and straight through the headline that is set into the top
- * of this cell. A drawing that collides with its own sentence is a drawing
- * that has stopped being read. The floor of the box is the plate row's own
- * foot, because the band under that belongs to the lettering now. */
-const KEEP = { top: 96, bottom: 224, left: 62, right: 1138 }
-
-/* The clamp needs a PER-TILE inset, or every tile whose reach overshoots lands
-   on the identical boundary pixel and the edges of the scatter grow clumps -
-   which is the one thing a scatter is not allowed to have. */
-const clamp = (value, low, high, slack) => Math.max(low + slack, Math.min(high - slack, value))
+/* The sheet's own margins: where the run's datum starts and stops. */
+const KEEP = { left: 62, right: 1138 }
 
 /* THE PACKING IS SOLVED, NOT EYEBALLED. A plan rectangle of half-extents
    (hx, hy) projects to a top face 2(hx + hy) * ISO_X wide, and a row stepped by
    (+t, -t) advances 2t * ISO_X. So planes collide unless t exceeds hx + hy. */
-const CELL = 53
-const TILE = 25.5
-const COLS = 3
-const ROWS = 2
 const STEP = 136
 const PLAN = project(CX, CY)
 const HALF_X = 79.5
 const HALF_Y = 53
-/* One thickness for every surface in the drawing. A plate and the six tiles it
-   is made of are the same sheet, so they are the same nine pixels of body -
-   otherwise the handoff between them is a step change in an object that is
-   supposed to be continuous. */
+/* One thickness for every surface in the drawing: a plate is nine pixels of
+   body, and everything cut from the same sheet keeps the same nine. */
 const SHEET = 9
 /* Twenty, not twelve. A softer corner is most of what separates a grown
    surface from a machined one, and the plate is the largest radius in the
@@ -767,29 +745,40 @@ function mechanism(key, t) {
           // printed before anything travels it - the same convention as
           // every other travel on the sheet.
           <line className="fl-ruled" key="feed" x1="-40" y1="-2" x2="-40" y2="-12" />,
-          // THE AMBER LANE. From the Golgi's own flank - where the hold cell
-          // buds off - past the bay and straight through the gate in the far
-          // wall, printed before anything travels it.
+          // THE AMBER LANE. Out of the mouth of the Golgi's U - where the
+          // hold cell swells - past the bay and straight through the gate in
+          // the far wall, printed before anything travels it.
           <rect key="bay" x="28" y="-46" width="24" height="38" rx="10" />,
           <line className="fl-ruled" key="lane" x1="40" y1="20" x2="40" y2="-52" />,
         ]),
-        // THE GOLGI IS A STACK OF CISTERNAE, NOT A TIERED CAKE. Three
-        // concentric discs read as a podium, and a podium is furniture. The
-        // organelle whose whole job is sorting and dispatch is four
-        // flattened sacs - capsule plans, long axis parallel to the verdict
-        // line they feed - staggered the way the organelle actually stacks,
-        // their round rims reaching the amber lane so the bud visibly
-        // pinches off the body. Depth grows with height, so each sac paints
-        // over the one it rests on.
-        { ...stand(25, 22.5, 15.5, 5.5, 2.4, 5.5), cls: 'fl-golgi' },
-        { ...stand(26.5, 24, 17.5, 5.5, 2.4, 5.5, 2.4), cls: 'fl-golgi' },
-        { ...stand(25.5, 25.5, 16, 5.5, 2.4, 5.5, 4.8), cls: 'fl-golgi' },
-        { ...stand(27, 27, 12.5, 5.5, 2.4, 5.5, 7.2), cls: 'fl-golgi' },
+        // THE GOLGI IS A U, AND THE BUD IS BORN IN ITS MOUTH. Three stacked
+        // cisternae, each drawn as three capsule sacs - two arms running the
+        // full depth of the body and a spine tucked between them - opening
+        // toward the gate, with the amber lane running out through the gap.
+        // The construction is what keeps the lines clean: within a layer the
+        // three sacs share ONE front line and the spine's rounded caps sit
+        // strictly inside the arms' footprints, so every joint lands on a
+        // shared coordinate under matching ink - a seam that is a
+        // coordinate, not a wall. And the depth order is the nesting: the
+        // bud's seat falls between the far arm and the spine, so the cell
+        // swelling in the mouth stands in front of the arm behind it and
+        // behind the sacs in front of it - genuinely cupped, not pasted on.
+        // Each layer leans a step further toward the reader, so the columns
+        // paint bottom-up and the stack reads as sacs resting on sacs.
+        { ...stand(25.5, 26.2, 4.5, 10.2, 2.6, 4.5), cls: 'fl-golgi' },
+        { ...stand(40, 31.4, 15.5, 5, 2.6, 5), cls: 'fl-golgi' },
+        { ...stand(54.5, 26.2, 4.5, 10.2, 2.6, 4.5), cls: 'fl-golgi' },
+        { ...stand(26, 27.4, 4.2, 10, 2.6, 4.2, 2.6), cls: 'fl-golgi' },
+        { ...stand(40, 32.65, 14.8, 4.75, 2.6, 4.75, 2.6), cls: 'fl-golgi' },
+        { ...stand(54, 27.4, 4.2, 10, 2.6, 4.2, 2.6), cls: 'fl-golgi' },
+        { ...stand(26.5, 28.9, 4.2, 9.5, 2.6, 4.2, 5.2), cls: 'fl-golgi' },
+        { ...stand(40, 33.9, 14, 4.5, 2.6, 4.5, 5.2), cls: 'fl-golgi' },
+        { ...stand(53.5, 28.9, 4.2, 9.5, 2.6, 4.2, 5.2), cls: 'fl-golgi' },
         // THE BUD. The amber cell does not appear at the bay - it is
-        // DISPATCHED: it buds off the cisternae rims, exactly the way the
-        // vesicle trail already leaving the sacs says this organelle
-        // works, swells to size on the lane the print runs from the stack to
-        // the gate, and slides down to the bay while the previous hold is
+        // DISPATCHED: it swells in the mouth of the U, cupped by the body
+        // that rules it, exactly the way the vesicle trail already leaving
+        // the sacs says this organelle works, then slides out through the
+        // gap and down the lane to the bay while the previous hold is
         // mid-send. The one plate whose machine is a sorting organelle gets
         // the one arrival drawn as secretion - no claw, no ram, its own
         // grammar. It buds already amber: dispatch IS the ruling.
@@ -1029,62 +1018,16 @@ const STEPS = [
 ].map((step, index) => {
   const t = (index - 2) * STEP
 
-  const tiles = []
-  for (let row = 0; row < ROWS; row += 1) {
-    for (let col = 0; col < COLS; col += 1) {
-      const px = t + (col - (COLS - 1) / 2) * CELL
-      const py = -t + (row - (ROWS - 1) / 2) * CELL
-      const [sx, sy] = PLAN(px, py)
-      const seed = index * 11 + row * COLS + col
-      /* A LOW-DISCREPANCY SCATTER, NOT THIRTY RANDOM DRAWS.
-         Thirty independent reaches clump: three or four tiles land on the same
-         spot and leave a hole beside it, and a clump in a mess reads as a
-         mistake rather than as disorder. Two irrational strides walk the frame
-         instead. Every tile lands somewhere different, the coverage is even at
-         any count, and nothing is on a grid - which is the whole difference
-         between disorder and a pattern. */
-      const spot = (seed * 0.6180339887) % 1
-      const band = (seed * 0.7548776662) % 1
-      const slack = Math.round(jitter(seed, 79) * 44)
-      tiles.push({
-        key: `${step.key}-${row}-${col}`,
-        // BUILT AT ITS SEAT, so the assembled group is a true plan grid with
-        // every seam landing on every other seam - which is what lets the six
-        // of them hand off to one plate without the outline moving. Scatter is
-        // an offset from that, so the whole travel is a compositor transform
-        // with nothing recomputed on any frame.
-        shape: roundedSlab(sx, sy, TILE, TILE, SHEET, 9),
-        // TWO SCATTER POSITIONS, NOT ONE. The mess has to be alive while it is
-        // still a mess: tiles holding perfectly still read as a paused video.
-        driftX: Math.round(clamp(KEEP.left + 76 + spot * (KEEP.right - KEEP.left - 152) + (jitter(seed, 37) - 0.5) * 58, KEEP.left, KEEP.right, slack) - sx),
-        driftY: Math.round(clamp(KEEP.top + 12 + band * 128 + (jitter(seed, 53) - 0.5) * 28, KEEP.top, KEEP.bottom, slack * 0.5) - sy),
-        // The wander is a DELTA off the drift, not a second absolute position.
-        // Written absolutely it is a several-hundred-pixel offset, and an
-        // ambient loop between two points that far apart is not a tile
-        // floating, it is a tile being thrown across the frame.
-        wanderX: Math.round((jitter(seed, 97) - 0.5) * 30),
-        wanderY: Math.round((jitter(seed, 103) - 0.5) * 22),
-        // Where it falls in the fuse. Every tile is seated well before the
-        // seams close, so nothing is still travelling when the plate arrives.
-        lag: Math.round(jitter(seed, 89) * 100) / 100,
-        life: Math.round(jitter(seed, 61) * 100) / 100,
-      })
-    }
-  }
-
   const seat = PLAN(t, -t)
   return {
     ...step,
     index,
-    tiles,
     seat,
     // Where this station sits across the sheet, in the pointer field's own
     // units, so the stylesheet can read nearness without measuring anything.
     sx: Math.round(((seat[0] / W) - 0.5) * 2 * 1000) / 1000,
     emblem: mechanism(step.key, t),
-    // The one surface the six tiles become, cut from the same geometry at the
-    // same thickness. Its corner is the group's corner, so the handoff changes
-    // what the object IS without changing where its edge falls.
+    // The plate: one sheet of the page's own paper with one drawn edge.
     plate: roundedSlab(seat[0], seat[1], HALF_X, HALF_Y, SHEET, PLATE_R),
     // The wall standing on it, split into the half that goes down before the
     // machine and the half that goes down after it. Screening's opens toward
@@ -1120,56 +1063,17 @@ function Drum({ shape, core, className }) {
 
 export default function ChainSchematic({ animate = true }) {
   const frame = useCenterOnOverflow()
-  const root = useRef(null)
-  // Latched as the initial value where there is no observer to latch it - a
-  // renderer without one is not a reader arriving, it is a snapshot, and a
-  // snapshot of the scatter states nothing.
-  const [fused, setFused] = useState(() => typeof IntersectionObserver !== 'function')
   const [hot, setHot] = useState(null)
   const step = STEPS.find((item) => item.key === hot) ?? null
 
-  /* THE LATCH.
-   *
-   * One observer, one direction, no teardown of state. `animate` cannot do this
-   * job: it is the site's ambient power gate and it goes off every time the
-   * section leaves the viewport, so a figure driven by it would fall back to a
-   * scatter the moment a reader scrolled past and reassemble behind their back.
-   * What the reader has already watched happen has happened.
-   *
-   * AND IT FIRES LATE ON PURPOSE. The mess is the opening, and a latch that
-   * trips on the first pixel of the figure spends it off screen. Well into
-   * view, then. Two ways in, because either one alone has a viewport that
-   * defeats it - a ratio never reaches four tenths if the figure is taller than
-   * the window, and a top line never crosses if the figure is short enough to
-   * enter from the bottom already whole. */
-  useEffect(() => {
-    const node = root.current
-    if (!node || typeof IntersectionObserver !== 'function') return undefined
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const arrived = entries.some(
-          (entry) =>
-            entry.isIntersecting &&
-            (entry.intersectionRatio >= 0.4 || entry.boundingClientRect.top <= window.innerHeight * 0.45),
-        )
-        if (!arrived) return
-        setFused(true)
-        observer.disconnect()
-      },
-      { threshold: [0, 0.15, 0.4, 0.7] },
-    )
-    observer.observe(node)
-    return () => observer.disconnect()
-  }, [])
-
   return (
-    <figure className="dgm" ref={root}>
+    <figure className="dgm">
       <div className="dgm-frame" ref={frame}>
         <svg
-          className={`dgm-svg is-floor${animate ? ' is-live' : ''}${fused ? ' is-fused' : ''}`}
+          className={`dgm-svg is-floor${animate ? ' is-live' : ''}`}
           viewBox={`0 0 ${W} ${H}`}
           role="img"
-          aria-label="Thirty surfaces scattered in the air, seen in axonometric projection. As the reader reaches the figure they draw together and set down flush, six at a time, into five plates in a row, and stay there - each plate bounded by its own printed double-walled membrane, the way a section drawing bounds a cell. A survey line rules under the row and letters the five stations beneath it: Protocol, Evidence, Screening, Resolve, Replay. One cell - a round body with its nucleus drawn on top - runs the whole row. A grid of twelve switches on a breaker board is thrown one at a time, each settling green or red, and the compiled protocol ships out through a gate in the plate's wall as a violet-stained cell - the transcript in the run's own vessel. It docks beside the next plate's gantry, where a claw closes on one cell in a heap, lifts it, carries it across, and sets it down into an ordered bed of round sockets; the placed cell then slides up a printed lane to a staging seat, waits its beat, and continues straight out through that plate's far gate - one cell, one line, socket to seat to gate. Along the far long edge of the next plate, three verdict seats wait in a line - green, red, amber. The bed feeds the green pore as a moving line: one cell slides onto the mouth and is visibly swallowed down the bore while the seat behind it shuffles forward and the newly arrived cell takes the empty place; the red pore stands open and ringed; the amber seat is a gate cut through the plate's wall, its pylons stained amber, and the unsettled cell is sent through it in one motion - while the next amber cell buds off the plate's Golgi stack, swells on the printed lane, and slides down to take the bay. On the plate beyond it enters a matching gate at the back of the lane, on the same clock it left on. There a hand throws a lever, a horizontal ram crosses the lane and pushes one cell clean off the edge through the one gap in the membrane, and the line indexes forward as the next arrives. On the last plate the run lies as frames on a tape between two reels, and a head reads its way along and then runs back. Pointing at a plate lifts it off the ground and darkens the ground beneath it."
+          aria-label="Five plates in a row, seen in axonometric projection, their machines already running - each plate bounded by its own printed double-walled membrane, the way a section drawing bounds a cell. A survey line rules under the row and letters the five stations beneath it: Protocol, Evidence, Screening, Resolve, Replay. One cell - a round body with its nucleus drawn on top - runs the whole row. A grid of twelve switches on a breaker board is thrown one at a time, each settling green or red, and the compiled protocol ships out through a gate in the plate's wall as a violet-stained cell - the transcript in the run's own vessel. It docks beside the next plate's gantry, where a claw closes on one cell in a heap, lifts it, carries it across, and sets it down into an ordered bed of round sockets; the placed cell then slides up a printed lane to a staging seat, waits its beat, and continues straight out through that plate's far gate - one cell, one line, socket to seat to gate. Along the far long edge of the next plate, three verdict seats wait in a line - green, red, amber. The bed feeds the green pore as a moving line: one cell slides onto the mouth and is visibly swallowed down the bore while the seat behind it shuffles forward and the newly arrived cell takes the empty place; the red pore stands open and ringed; the amber seat is a gate cut through the plate's wall, its pylons stained amber, and the unsettled cell is sent through it in one motion - while the next amber cell swells in the open mouth of the plate's U-shaped Golgi stack and slides out down the lane to take the bay. On the plate beyond it enters a matching gate at the back of the lane, on the same clock it left on. There a hand throws a lever, a horizontal ram crosses the lane and pushes one cell clean off the edge through the one gap in the membrane, and the line indexes forward as the next arrives. On the last plate the run lies as frames on a tape between two reels, and a head reads its way along and then runs back. Pointing at a plate lifts it off the ground and darkens the ground beneath it."
         >
           <defs>
             <pattern id="fl-grain" width="13" height="13" patternUnits="userSpaceOnUse">
@@ -1189,7 +1093,6 @@ export default function ChainSchematic({ animate = true }) {
             y1={DATUM}
             x2={KEEP.right}
             y2={DATUM}
-            style={{ '--from': `${KEEP.left}px`, '--at': `${DATUM}px` }}
             aria-hidden="true"
           />
 
@@ -1202,7 +1105,7 @@ export default function ChainSchematic({ animate = true }) {
               onMouseLeave={() => setHot((current) => (current === item.key ? null : current))}
               onFocus={() => setHot(item.key)}
               onBlur={() => setHot(null)}
-              tabIndex={fused ? 0 : -1}
+              tabIndex={0}
               role="button"
               aria-label={`${item.label}, ${item.fact} - ${item.read}`}
             >
@@ -1230,31 +1133,7 @@ export default function ChainSchematic({ animate = true }) {
               </g>
 
               <g className="fl-body">
-                {/* THE FRAGMENTS. They travel, they seat, and then they are
-                    gone: six seams under a machine is six things competing
-                    with the thing worth reading. */}
-                <g className="fl-tiles">
-                  {item.tiles.map((tile) => (
-                    <g
-                      className="fl-tile"
-                      key={tile.key}
-                      style={{
-                        '--drift-x': `${tile.driftX}px`,
-                        '--drift-y': `${tile.driftY}px`,
-                        '--sway-x': `${tile.wanderX}px`,
-                        '--sway-y': `${tile.wanderY}px`,
-                        '--lag': tile.lag,
-                        '--life': tile.life,
-                      }}
-                    >
-                      <g className="fl-drift">
-                        <Faces shape={tile.shape} className="dgm-solid" />
-                      </g>
-                    </g>
-                  ))}
-                </g>
-
-                {/* THE SURFACE THEY BECOME. One sheet of the page's own paper
+                {/* THE SURFACE. One sheet of the page's own paper
                     with one drawn edge, so everything standing on it is the
                     only dark thing in its own band. */}
                 <g className="fl-plate">

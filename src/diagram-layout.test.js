@@ -1902,7 +1902,7 @@ describe('Trident and Nectar schematics', () => {
 describe('The floor schematic', () => {
   it('is drawn in the same hand as the other two figures', () => {
     assert.match(floor, /from '\.\/iso'/)
-    assert.match(floor, /roundedSlab\(sx, sy, TILE, TILE, SHEET, 9\)/)
+    assert.match(floor, /roundedSlab\(seat\[0\], seat\[1\], HALF_X, HALF_Y, SHEET, PLATE_R\)/)
     assert.doesNotMatch(floor, /<text\b[^>]*>\{(?!item\.label)/)
     // AND NOT TRIDENT OR NECTAR. Those figures' own helpers stay theirs: the
     // floor builds every round thing it has - the cells, the reels, the
@@ -1910,19 +1910,13 @@ describe('The floor schematic', () => {
     assert.doesNotMatch(floor, /roundedDeck|planCyl|planPrism|planDrop/)
   })
 
-  it('fuses thirty tiles into five plates, not one', () => {
+  it('seats five plates in a row, already down', () => {
     // One plane was an abstraction: a rectangle is not a shape this business
     // makes, and a plate with nothing on it is a plate nobody has a reason to
-    // look at. The scatter resolves into FIVE, and the five are the product.
-    //
-    // They do not converge on a point either. Every tile has a seat in a
-    // particular group, and a group is only a plate once all six are in it.
+    // look at. Five plates, and the five are the product.
     const steps = floor.match(/const STEPS = \[[\s\S]*?\n\]\.map/)[0]
     assert.deepEqual([...steps.matchAll(/label: '([A-Z]+)'/g)].map((m) => m[1]),
       ['PROTOCOL', 'EVIDENCE', 'SCREENING', 'RESOLVE', 'REPLAY'])
-    assert.match(floor, /const COLS = 3/)
-    assert.match(floor, /const ROWS = 2/)
-    assert.match(floor, /const \[sx, sy\] = PLAN\(px, py\)/)
   })
 
   it('packs the row so no plate ever lands on its neighbour', () => {
@@ -1931,59 +1925,36 @@ describe('The floor schematic', () => {
     // collide unless t exceeds hx + hy. The row also runs along the axis that
     // projects FLAT, because stepping plan x alone sends it down and to the
     // right and puts every label exactly where the next plate is.
-    const cell = Number(floor.match(/const CELL = (\d+)/)[1])
+    const halfX = Number(floor.match(/const HALF_X = ([\d.]+)/)[1])
+    const halfY = Number(floor.match(/const HALF_Y = ([\d.]+)/)[1])
     const step = Number(floor.match(/const STEP = (\d+)/)[1])
-    const half = (3 * cell) / 2 + (2 * cell) / 2
-    assert.ok(step > half, `a step of ${step} against a half-extent of ${half} overlaps`)
+    assert.ok(step > halfX + halfY, `a step of ${step} against a half-extent of ${halfX + halfY} overlaps`)
     assert.match(floor, /const seat = PLAN\(t, -t\)/)
   })
 
-  it('runs the entrance exactly once, and never puts it back', () => {
-    // THE LOOP WAS THE MISTAKE. A claim a reader can watch come undone every
-    // fourteen seconds is not a claim, and somebody who looks away for ten
-    // seconds came back to the argument in pieces. One registered number runs
-    // the whole entrance instead: `--fuse` goes 0 to 1 once, latched by the
-    // reader arriving, and every expression downstream eases on that one
-    // timeline - which is the same device the Trident boot already uses.
-    assert.match(css, /@property --fuse \{[\s\S]*?syntax: '<number>';/)
-    assert.match(css, /\.dgm-svg\.is-floor \{[\s\S]*?transition: --fuse 2200ms/)
-    assert.match(css, /\.dgm-svg\.is-floor\.is-fused \{ --fuse: 1; \}/)
-    assert.doesNotMatch(css.slice(css.indexOf('THIRTY FRAGMENTS BECOME FIVE SURFACES')), /fl-gather|infinite;[\s\S]{0,40}fl-tile/)
-    // The latch is the figure's own, and it is one-directional. `animate` is
-    // the site's ambient power gate and it drops every time the section leaves
-    // the viewport - a figure driven by it would fall back to a scatter the
-    // moment a reader scrolled past and reassemble behind their back.
-    assert.match(floor, /const \[fused, setFused\] = useState\(\(\) => typeof IntersectionObserver !== 'function'\)/)
-    assert.match(floor, /new IntersectionObserver\(/)
-    // AND IT FIRES LATE. A latch that trips on the first pixel of the figure
-    // spends the opening off screen: the tiles assemble below the fold and the
-    // reader arrives at a drawing that has already finished. Two ways in,
-    // because either alone has a viewport that defeats it - a ratio never
-    // reaches four tenths if the figure is taller than the window, and a top
-    // line never crosses if the figure enters from the bottom already whole.
-    assert.match(floor, /entry\.intersectionRatio >= 0\.4 \|\| entry\.boundingClientRect\.top <= window\.innerHeight \* 0\.45/)
-    assert.match(floor, /setFused\(true\)\n\s+observer\.disconnect\(\)/)
-    assert.doesNotMatch(floor, /setFused\(false\)/)
-    assert.match(floor, /\$\{fused \? ' is-fused' : ''\}/)
-    // The mess is still a mess while it is one: each tile wanders a few pixels
-    // off its drift, and stops the instant the fuse is latched, because a
-    // surface that is still breathing after it lands is not a base.
-    assert.match(css, /\.dgm-svg\.is-live \.fl-drift \{[\s\S]*?animation: fl-adrift/)
-    assert.match(css, /\.dgm-svg\.is-fused \.fl-drift \{ animation: none; \}/)
-    // Staggered off the one number rather than off thirty animations, and
-    // every tile seated well before the seams start closing.
-    assert.match(css, /--own: clamp\(0, calc\(\(var\(--fuse\) - var\(--lag, 0\) \* 0\.26\) \/ 0\.46\), 1\)/)
+  it('has no entrance to run - the plates are there, and the machinery is the show', () => {
+    // The figure used to open as thirty scattered tiles drawing together into
+    // the five plates as the reader arrived. The entrance was a claim about
+    // consolidation, but it spent the row's first seconds on furniture
+    // assembling itself, and the machinery is the argument - so the scatter,
+    // the fuse timeline it eased on, and the latch that armed it are all
+    // gone. The plates are simply drawn, the way a survey sheet is simply
+    // drawn, and the only choreography a reader ever watches is material
+    // moving through the run.
+    assert.doesNotMatch(floor, /fl-tile|driftX|wanderX|setFused|IntersectionObserver|is-fused/)
+    assert.doesNotMatch(css, /--fuse|fl-tile|fl-adrift|fl-drift|is-fused/)
+    // The machines still gate on the section's power: clocks run while the
+    // figure is on screen, and every seam handoff starts from that one class
+    // flip - which is what keeps the five plates phase-locked.
+    assert.match(floor, /className=\{`dgm-svg is-floor\$\{animate \? ' is-live' : ''\}`\}/)
+    // And with no scatter to wait out, every station is a target from the
+    // first frame.
+    assert.match(floor, /tabIndex=\{0\}/)
+    assert.match(css, /\.fl-hit \{\s*\n\s*fill: none;\s*\n\s*pointer-events: all;\s*\n\s*cursor: pointer;\s*\n\}/)
   })
 
-  it('closes the seams, so what arrives in pieces leaves as one surface', () => {
-    // Six tiles arrive and one plate remains. The fragments are the point of
-    // the opening and would be noise afterwards - six outlines under a
-    // mechanism is six things competing with the thing worth reading - so the
-    // tiles hand off to a single slab cut from the same geometry at the same
-    // thickness. That handoff is the thesis.
+  it('stands the machines on paper, in ink', () => {
     assert.match(floor, /plate: roundedSlab\(seat\[0\], seat\[1\], HALF_X, HALF_Y, SHEET, PLATE_R\)/)
-    assert.match(css, /\.fl-plate \{ opacity: clamp\(0, calc\(\(var\(--fuse\) - 0\.62\) \/ 0\.16\), 1\); \}/)
-    assert.match(css, /\.fl-tiles \{ opacity: clamp\(0, calc\(\(0\.86 - var\(--fuse\)\) \/ 0\.14\), 1\); \}/)
     // THE PLATE IS PAPER AND WHAT STANDS ON IT IS INK. The pass before this
     // drew the surface in blue and the machine on it in blue an eighth of a
     // step apart, and no reader could tell where one stopped and the other
@@ -2220,7 +2191,7 @@ describe('The floor schematic', () => {
     // while the laid cell was still sliding in - the subject seen twice.
     // Both legs are re-derived from the seats' own numbers: sixteen units
     // socket-to-seat, forty-four socket-to-gone.
-    assert.match(css, /\.fl-claw,\s*\n\.dgm-svg\.is-live\.is-fused \.fl-carry \{\s*\n\s*animation: fl-fetch 5\.6s/)
+    assert.match(css, /\.fl-claw,\s*\n\.dgm-svg\.is-live \.fl-carry \{\s*\n\s*animation: fl-fetch 5\.6s/)
     assert.match(css, /@keyframes fl-picked \{\s*\n\s*0%, 22% \{ transform: translateY\(0px\); opacity: 1; \}\s*\n\s*30% \{ transform: translateY\(-14px\); opacity: 1; \}/)
     assert.doesNotMatch(floor, /fl-lay[' ]/, 'the laid cell merged into the shipment')
     assert.doesNotMatch(css, /fl-laid|\.fl-lay[ ,{:]/, 'the laid cell merged into the shipment')
@@ -2525,9 +2496,9 @@ describe('The floor schematic', () => {
       assert.match(floor, new RegExp(part), `the vessel needs its ${part}`)
       assert.match(css, new RegExp(`\\.${part}[ ,.{:]`), `${part} has to be dressed`)
     }
-    // The near half arrives with the plate: same fade, or the wall pops in
-    // over a surface that is still closing.
-    assert.match(css, /\.fl-vessel\.is-front \{ opacity: clamp\(0, calc\(\(var\(--fuse\) - 0\.62\) \/ 0\.16\), 1\); \}/)
+    // The wall arrives whole with the plate it stands on - there is no
+    // entrance left for it to fade in through.
+    assert.doesNotMatch(css, /\.fl-vessel\.is-front \{ opacity/)
 
     // THE ORGANELLES ARE THE BODIES OF THE MACHINES NOW. The switch bank is
     // the nucleus - an oval platform wearing its printed double envelope,
@@ -2539,29 +2510,60 @@ describe('The floor schematic', () => {
     assert.match(floor, /\.\.\.stand\(0, 0, 44, 36, 3, 26\), cls: 'fl-board'/)
     assert.match(floor, /className="fl-thread"/)
     assert.match(floor, /className="fl-porering"/)
-    // THE GOLGI IS A STACK OF CISTERNAE, NOT A TIERED CAKE. Concentric
-    // discs read as a podium, and a podium is furniture. The sorter's body
-    // is at least four flattened sacs - capsule plans, long in one axis,
-    // rims fully round - staggered off one plumb line, with a printed
-    // trail of vesicles thinning toward the verdict line (printed by the
-    // sheet's own size law: a solid under seventeen pixels is a mark), and
-    // a rim reaching the lane the amber bud grows on, so the bud pinches
-    // off the body rather than hovering beside it. All derived from the
-    // calls the parts are built with.
-    const cisternae = [...floor.matchAll(/stand\((-?[\d.]+), (-?[\d.]+), ([\d.]+), ([\d.]+), [\d.]+, ([\d.]+)(?:, [\d.]+)?\), cls: 'fl-golgi' \}/g)]
-      .map((m) => m.slice(1).map(Number))
-    assert.ok(cisternae.length >= 4, 'a Golgi is a stack of at least four cisternae')
-    for (const [, , chx, chy, cr] of cisternae) {
-      assert.ok(chx >= 2 * chy, 'a cisterna is a flattened sac, long in one plan axis')
-      assert.equal(cr, chy, 'a cisterna ends in its own round rim, not a corner')
+    // THE GOLGI IS A U OF STACKED CISTERNAE, ITS MOUTH OPEN TOWARD THE
+    // GATE. Each layer is three capsule sacs - two arms running the full
+    // depth of the body and a spine tucked between them - and the walk
+    // below holds the construction to the three rules that keep its lines
+    // clean and its nesting honest: the three sacs of a layer share ONE
+    // front line (a seam that is a coordinate, not a wall); the spine's
+    // rounded caps sit strictly inside the arms' footprints (so cap walls
+    // land under arm walls in matching ink); and each column's depth grows
+    // with height (so sacs paint bottom-up). The bud is born IN the mouth:
+    // its seat sits between the arms on the lane's x, deeper than the
+    // spine, so the swelling cell stands in front of the far arm and
+    // behind the near sacs - cupped by the body that rules it.
+    const sacs = [...floor.matchAll(/stand\((-?[\d.]+), (-?[\d.]+), ([\d.]+), ([\d.]+), ([\d.]+), ([\d.]+)(?:, ([\d.]+))?\), cls: 'fl-golgi' \}/g)]
+      .map((m) => ({
+        px: Number(m[1]), py: Number(m[2]), hx: Number(m[3]), hy: Number(m[4]),
+        high: Number(m[5]), r: Number(m[6]), base: Number(m[7] || 0),
+      }))
+    const layers = [...new Set(sacs.map((s) => s.base))].sort((a, b) => a - b)
+      .map((base) => sacs.filter((s) => s.base === base).sort((a, b) => a.px - b.px))
+    assert.ok(layers.length >= 3, 'a Golgi is a stack of at least three cisternae')
+    const bud = floor.match(/cell\((\d+), (\d+), 'hold', 5\), cls: 'fl-blk is-hold fl-bud'/).slice(1).map(Number)
+    for (const [arm1, spine, arm2] of layers) {
+      assert.ok(arm1.hy > arm1.hx && arm2.hy > arm2.hx && spine.hx > spine.hy,
+        'a layer is two arms running the depth of the body and a spine across it')
+      for (const sac of [arm1, spine, arm2]) {
+        assert.ok(sac.high <= 3, 'a cisterna is flattened, or it is a wall')
+        assert.equal(sac.r, Math.min(sac.hx, sac.hy), 'a sac ends in its own round rim, not a corner')
+      }
+      const front = spine.py + spine.hy
+      assert.ok(Math.abs(arm1.py + arm1.hy - front) < 0.01 && Math.abs(arm2.py + arm2.hy - front) < 0.01,
+        'the three sacs of a layer share one front line, or the joints grow walls')
+      assert.ok(spine.px - spine.hx >= arm1.px - arm1.hx && spine.px - spine.hx + spine.r <= arm1.px + arm1.hx,
+        'the spine\'s far cap must tuck inside the far arm')
+      assert.ok(spine.px + spine.hx <= arm2.px + arm2.hx && spine.px + spine.hx - spine.r >= arm2.px - arm2.hx,
+        'the spine\'s near cap must tuck inside the near arm')
+      // The mouth: the lane runs between the arms on every layer, and the
+      // layer the bud STANDS in clears the drawn cell - the upper lips may
+      // pinch a touch inward, which is the organic taper, not a collision.
+      const gap = [arm1.px + arm1.hx, arm2.px - arm2.hx]
+      if (arm1.base === layers[0][0].base) {
+        assert.ok(gap[1] - gap[0] >= 2 * 7 * Math.SQRT2 - 0.5, 'the mouth must clear the cell that swells in it')
+      }
+      assert.ok(bud[0] > gap[0] && bud[0] < gap[1], 'the bud must be born between the arms')
+      assert.ok(bud[1] < spine.py - spine.hy, 'the bud must sit clear of the spine it is cupped by')
+      assert.ok(bud[0] + bud[1] > arm1.px + arm1.py && bud[0] + bud[1] < spine.px + spine.py,
+        'the bud must nest between the far arm and the spine, or the cupping is painted, not real')
     }
-    assert.ok(new Set(cisternae.map(([px, py]) => `${px},${py}`)).size >= 3,
-      'the stack staggers - a plumb pile is a podium')
+    for (const column of [0, 1, 2]) {
+      const depths = layers.map((layer) => layer[column].px + layer[column].py)
+      assert.deepEqual([...depths].sort((a, b) => a - b), depths,
+        'a column must gain depth with height, so sacs paint bottom-up')
+    }
     assert.ok((floor.match(/className="fl-ruled" key="v\d"/g) || []).length >= 3,
       'the vesicle trail says the body dispatches')
-    const budLaneX = Number(floor.match(/cell\((\d+), \d+, 'hold', 5\), cls: 'fl-blk is-hold fl-bud'/)[1])
-    assert.ok(Math.max(...cisternae.map(([px, , chx]) => px + chx)) >= budLaneX,
-      'a cisterna rim must reach the lane the bud grows on')
     assert.match(floor, /\.\.\.drum\(28, -34, 7, 7\), cls: 'fl-ram is-body'/)
     assert.match(floor, /className="fl-coil"/)
     assert.doesNotMatch(floor, /const spoke = /)
@@ -2619,7 +2621,6 @@ describe('The floor schematic', () => {
     assert.doesNotMatch(tokens, /var\(--tone\)|var\(--deep\)/)
     assert.match(css, /--line: color-mix\(in srgb, var\(--text\) 72%, var\(--accent-strong\)\)/)
     assert.match(css, /\.fl-plate \.dgm-face-left \{ fill: color-mix\(in srgb, var\(--accent\)/)
-    assert.match(css, /\.fl-tile \.dgm-face-top \{[\s\S]*?var\(--accent\)/)
     // And a lit cap has to beat its own body. At full tone against a body drawn
     // at more than half the same tone the two sat a step apart, which is enough
     // for a cool hue and not for a warm one.
@@ -2645,7 +2646,7 @@ describe('The floor schematic', () => {
     // it is most of why that figure reads as a system that happens to be drawn
     // rather than as a drawing that happens to loop. This one had nothing like
     // it: every solid was either working or perfectly still.
-    assert.match(css, /\.dgm-svg\.is-live\.is-fused \.fl-settle \{[\s\S]*?animation: fl-breathe calc\(11s/)
+    assert.match(css, /\.dgm-svg\.is-live \.fl-settle \{[\s\S]*?animation: fl-breathe calc\(11s/)
     assert.match(css, /@keyframes fl-breathe \{\s*to \{ transform: translateY\(-0\.7px\); \}/)
     // It sits on an INNER group, so it composes with whatever the part is
     // already doing: a die can be falling and settling at once.
@@ -2653,8 +2654,16 @@ describe('The floor schematic', () => {
     // went with the plate that had one.
     assert.match(floor, /<g className="fl-settle">\s*\{part\.round \?/)
     assert.match(floor, /\.map\(\(part, index\) => \(\{ \.\.\.part, life: jitter\(index, 23\) \}\)\)/)
-    // And it is one of the clocks that only runs once the plate is under it.
-    assert.deepEqual([...css.matchAll(/\.dgm-svg\.is-live (\.fl-[a-z]+)/g)].map((m) => m[1]), ['.fl-drift'])
+    // And EVERY clock in the figure waits on the section's power: with the
+    // entrance gone, `is-live` is the one gate left, and nothing on the
+    // sheet may run without it - a machine animating off screen is heat, and
+    // a clock that starts before the shared class flip breaks the seam
+    // phase-lock the handoffs depend on.
+    for (const [, selector, body] of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+      if (!/animation: fl-/.test(body)) continue
+      assert.match(selector.trim(), /\.dgm-svg\.is-live /,
+        `"${selector.trim().slice(0, 60)}" runs a floor clock without the is-live gate`)
+    }
   })
 
   it('moves nothing sideways, and floats nothing over the row', () => {
@@ -2833,8 +2842,8 @@ describe('The floor schematic', () => {
     // nothing about the step. Every lamp on the held plate comes up and STAYS
     // up, out of the cycle it was taking its turn in - four criteria compiled,
     // every record bound, every bin counted, nine bands of nine recovered.
-    assert.match(css, /\.is-fused \.fl-step\.is-hot \.fl-blk\.is-pass \.dgm-face-top \{ fill: color-mix/)
-    assert.match(css, /\.is-fused \.fl-step\.is-hot \.fl-blk\.is-fail \.dgm-face-top \{ fill: color-mix/)
+    assert.match(css, /\.fl-step\.is-hot \.fl-blk\.is-pass \.dgm-face-top \{ fill: color-mix/)
+    assert.match(css, /\.fl-step\.is-hot \.fl-blk\.is-fail \.dgm-face-top \{ fill: color-mix/)
   })
 
   it('letters the run underneath it, in ink, off one datum', () => {
@@ -2865,29 +2874,20 @@ describe('The floor schematic', () => {
     assert.ok(size <= 11, `${size}px caps over a 216px plate is a headline, not a label`)
     assert.match(css, /\.fl-name \{[\s\S]*?fill: var\(--text-soft\);/)
     assert.match(css, /\.fl-fact \{[\s\S]*?fill: var\(--faint\);/)
-    assert.match(css, /\.is-fused \.fl-step\.is-hot \.fl-name \{ fill: var\(--text\); \}/)
+    assert.match(css, /\.fl-step\.is-hot \.fl-name \{ fill: var\(--text\); \}/)
     const letters = css
       .slice(css.indexOf('The run, and the names that hang off it'), css.indexOf('-- THE FIVE MECHANISMS'))
       .replace(/^[\s\S]*?\*\//, '')
       .replace(/\/\*[\s\S]*?\*\//g, '')
     assert.doesNotMatch(letters, /accent/, 'the lettering does not spend the sheet\'s one colour')
-    // THE RULE DRAWS WITH A TRANSFORM, NOT WITH A DASH. A normalised pathLength
-    // under a non-scaling stroke came out three quarters of the way along and
-    // stopped - the rule ended between Resolve and Replay, which on a line
-    // whose whole job is to say these five are one run is the worst single mark
-    // in the figure.
-    assert.match(css, /\.fl-datum \{[\s\S]*?transform: scaleX\(var\(--in\)\);/)
+    // THE RULE IS SIMPLY DRAWN. It used to write itself in on the entrance's
+    // one-shot timeline; with the entrance gone it is a line on the sheet,
+    // there from the first frame like the plates it underlines.
     assert.doesNotMatch(
       css.slice(css.indexOf('The run, and the names that hang off it'), css.indexOf('-- THE FIVE MECHANISMS')),
-      /stroke-dashoffset/,
+      /stroke-dashoffset|var\(--in\)|scaleX/,
     )
-    // The rule draws with a transform. Evidence's flow is a dash by design, so
-    // this is about the datum rather than about the sheet.
-    assert.doesNotMatch(floor.match(/className="fl-datum"[\s\S]*?\/>/)[0], /pathLength/)
-    // It arrives on the same one-shot timeline as everything else, so the run
-    // shows up WITH the row rather than waiting under an empty stage.
-    assert.match(css, /\.dgm-svg\.is-floor \{ --in: clamp\(0, calc\(\(var\(--fuse\) - 0\.86\) \/ 0\.14\), 1\); \}/)
-    assert.match(css, /\.fl-name \{[\s\S]*?opacity: var\(--in\);/)
+    assert.doesNotMatch(floor.match(/className="fl-datum"[\s\S]*?\/>/)[0], /pathLength|--from/)
     assert.doesNotMatch(css, /@keyframes fl-label/)
 
     // THE CAPTION HOLDS ITS GROUND. Every read the pill can show is drawn
@@ -2924,9 +2924,9 @@ describe('The floor schematic', () => {
     // moving up while its contact with the ground stays down and softens.
     assert.doesNotMatch(css, /fl-aura|fl-shade/)
     assert.doesNotMatch(floor, /fl-aura|fl-shade/)
-    const lift = Number(css.match(/\.is-fused \.fl-step\.is-hot \.fl-body \{ transform: translateY\(-(\d+)px\); \}/)[1])
+    const lift = Number(css.match(/\.fl-step\.is-hot \.fl-body \{ transform: translateY\(-(\d+)px\); \}/)[1])
     assert.ok(lift >= 20, `a ${lift}px lift is a nudge, and the lettering left the plates so it can afford more`)
-    assert.match(css, /\.is-fused \.fl-step\.is-hot \.fl-cast \{ opacity: 1; \}/)
+    assert.match(css, /\.fl-step\.is-hot \.fl-cast \{ opacity: 1; \}/)
     // The steps NEST rather than march: at five, ten and fifteen pixels apart
     // they came out as three ghost plates trailing under the real one, and three
     // drawn edges is not a soft shadow, it is a stutter.
@@ -2947,8 +2947,8 @@ describe('The floor schematic', () => {
     // hover buys is contrast: a halo behind it, a step of ink on every solid,
     // and the plate's own printed plan coming up with them.
     assert.doesNotMatch(css.slice(css.indexOf('THIRTY FRAGMENTS BECOME FIVE SURFACES')), /animation-play-state/)
-    assert.match(css, /\.is-fused \.fl-step\.is-hot \.fl-emblem \.dgm-face-top \{/)
-    assert.match(css, /\.is-fused \.fl-step\.is-hot \.fl-plan \{/)
+    assert.match(css, /\.fl-step\.is-hot \.fl-emblem \.dgm-face-top \{/)
+    assert.match(css, /\.fl-step\.is-hot \.fl-plan \{/)
     // A SPRING, NOT A ONE-WAY EASE. Everything decelerated into place on a
     // curve that never passes its target, which is the motion of a thing being
     // positioned rather than of a thing being let go. A plate that rises,
@@ -2984,17 +2984,16 @@ describe('The floor schematic', () => {
     // The cast stays on the ground while the plate goes up, so it has to sit
     // outside the group that lifts.
     assert.match(floor, /<g className="fl-cast">[\s\S]{0,900}<g className="fl-body">/)
-    // NOTHING IS A TARGET UNTIL THE PLATES ARE DOWN. A hover on a tile still in
-    // the air would name a step that does not exist yet, dim four others that
-    // are still assembling, and hold a readout open over a scatter.
-    assert.match(css, /\.is-fused \.fl-hit \{ pointer-events: all; cursor: pointer; \}/)
-    assert.match(floor, /tabIndex=\{fused \? 0 : -1\}/)
-    assert.match(css, /\.dgm-svg\.is-floor\.is-fused:has\(\.fl-step\.is-hot\) \.fl-step:not\(\.is-hot\) \{ opacity: 0\.36; \}/)
+    // The hit rect is the figure's one pointer surface, live from the first
+    // frame - there is no scatter left to wait out.
+    assert.match(css, /\.fl-hit \{\s*\n\s*fill: none;\s*\n\s*pointer-events: all;\s*\n\s*cursor: pointer;\s*\n\}/)
+    assert.match(floor, /tabIndex=\{0\}/)
+    assert.match(css, /\.dgm-svg\.is-floor:has\(\.fl-step\.is-hot\) \.fl-step:not\(\.is-hot\) \{ opacity: 0\.36; \}/)
     // ONE SOURCE OF TRUTH. The drawing used to style off `:hover` while the
     // readout under it rendered off React state - two answers to one question,
     // and on a touch screen `:hover` sticks after the finger has gone, so the
     // plate stayed lifted under a caption that had moved on.
-    assert.doesNotMatch(css.slice(css.indexOf('THIRTY FRAGMENTS BECOME FIVE SURFACES')), /\.fl-step:hover/)
+    assert.doesNotMatch(css.slice(css.indexOf('FIVE SURFACES, ALREADY DOWN')), /\.fl-step:hover/)
     assert.match(floor, /onMouseEnter=\{\(\) => setHot\(item\.key\)\}/)
   })
 
@@ -3051,11 +3050,10 @@ describe('The floor schematic', () => {
     assert.match(app, /<div className="section-field" ref=\{field\} aria-hidden="true" \/>/)
     assert.match(app, /const animate = shouldRunAmbient\(\{ reduced, inView, narrow \}\)/)
     assert.doesNotMatch(app, /usePinnedRun|thesis-pin/)
-    // Nothing runs when the reader has asked for less motion, and the fuse does
-    // not run either - it is already finished, so the figure rests as the five
-    // plates, lettered, with their mechanisms on them. The pointer still lifts
-    // one, because a hover is a thing a reader asked for.
-    assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{\s+\.dgm-svg\.is-floor \{\s+--fuse: 1;\s+transition: none;/)
+    // Nothing runs when the reader has asked for less motion: the figure
+    // rests as the five plates, lettered, with their mechanisms on them. The
+    // pointer still lifts one, because a hover is a thing a reader asked for.
+    assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{\s+\.dgm-svg\.is-floor \{ transition: none; \}/)
   })
 })
 
@@ -3084,7 +3082,7 @@ describe('The pointer field', () => {
     // Spent only while the pointer is actually over the section - the field's
     // resting zeroes would otherwise leave the centre vessel swollen - and
     // only on a pointer that can hover, and never over the held plate.
-    assert.match(css, /\.thesis-section:hover \.dgm-svg\.is-fused \.fl-step:not\(\.is-hot\) \.fl-body/)
+    assert.match(css, /\.thesis-section:hover \.dgm-svg \.fl-step:not\(\.is-hot\) \.fl-body/)
     assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{\s*\n\s*\.thesis-section:hover \.dgm-svg\.is-floor \.fl-body \{ transform: none; \}/)
     // `--sway` means something else on this sheet now - it is where a scattered
     // tile wanders to while it is still a mess - so the check is for the
