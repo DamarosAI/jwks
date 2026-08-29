@@ -2679,6 +2679,179 @@ describe('The floor schematic', () => {
     }
   })
 
+  it('paints every screen overlap in true depth order, permanently', () => {
+    // THE PERSPECTIVE LAW. Hand-set depths kept springing leaks: every
+    // pass that moved a post or added a rail found a new pair of solids
+    // overlapping on screen in the wrong order. So the suite now rebuilds
+    // every station's solids from the source - the literal stand/drum/cell
+    // calls and the mapped grids - projects each one to its screen box,
+    // and requires that every pair which overlaps on screen is either
+    // painted back-to-front by the plan's own diagonal (judged over the
+    // overlap window, so a long rail is measured where it actually meets
+    // the other part) or belongs to one rigid assembly whose joinery is
+    // deliberate. A future part that would read wrong fails here before
+    // anyone sees it.
+    const IX = 0.866
+    const IY = 0.34
+    const grab = (name, next) => {
+      const a = floor.indexOf(`${name}: () => {`)
+      const b = next ? floor.indexOf(`${next}: () => {`) : floor.indexOf('// Back to front, or a mechanism')
+      assert.ok(a > -1 && b > a, `cannot find the ${name} builder`)
+      return floor.slice(a, b)
+    }
+    const blocks = {
+      protocol: grab('protocol', 'evidence'),
+      evidence: grab('evidence', 'screening'),
+      screening: grab('screening', 'resolve'),
+      resolve: grab('resolve', 'replay'),
+      replay: grab('replay', null),
+    }
+    const depthVal = (txt) => {
+      if (!txt) return null
+      const over = txt.match(/OVER\s*([-+])\s*(\d+)/)
+      if (over) return 999 + (over[1] === '-' ? -1 : 1) * Number(over[2])
+      if (/^OVER$/.test(txt.trim())) return 999
+      const n = Number(txt.trim())
+      return Number.isFinite(n) ? n : null
+    }
+    const solid = (order, kind, px, py, hx, hy, high, base, cls, depth, r = 0) => ({
+      order, kind, px, py, cls,
+      x0: px - hx, x1: px + hx, y0: py - hy, y1: py + hy,
+      base, high, r: Math.min(r, hx, hy),
+      depth: depth ?? px + py,
+    })
+    const parseStation = (name) => {
+      const src = blocks[name]
+      const parts = []
+      // Every literal one-liner solid, with its cls and any depth override.
+      for (const m of src.matchAll(/\{ \.\.\.(stand|drum|cell)\(([^)]*)\), cls: '([^']*)'(?:, depth: ([^,}]+?))? \}/g)) {
+        const args = m[2].split(',').map((s) => Number(s.trim()))
+        const [a, b, c, d, e, f, g] = args
+        if (!Number.isFinite(a) || !Number.isFinite(b)) continue
+        if (m[1] === 'stand') {
+          parts.push(solid(m.index, 'stand', a, b, c, d, e, Number.isFinite(g) ? g : 0, m[3], depthVal(m[4]), Number.isFinite(f) ? f : 0))
+        } else if (m[1] === 'drum') {
+          parts.push(solid(m.index, 'drum', a, b, c, c, d, Number.isFinite(e) ? e : 0, m[3], depthVal(m[4]), c))
+        } else {
+          const high = Number.isFinite(d) ? d : 5
+          parts.push(solid(m.index, 'cell', a, b, 7, 7, high, Number.isFinite(e) ? e : 0, m[3], depthVal(m[4]), 7))
+        }
+      }
+      // The mapped grids, expanded from their own literal arrays.
+      if (name === 'protocol') {
+        const cols = floor.match(/const cols = \[(-?\d+), (-?\d+), (-?\d+), (-?\d+)\]/).slice(1, 5).map(Number)
+        const rows = floor.match(/const rows = \[(-?\d+), (-?\d+), (-?\d+)\]/).slice(1, 4).map(Number)
+        const at = src.indexOf('...bank.flatMap')
+        rows.forEach((py) => cols.forEach((px) => parts.push(solid(at, 'stand', px, py, 5, 5, 5, 3, 'fl-seat', null, 4.5))))
+      }
+      if (name === 'evidence') {
+        const pileTxt = src.match(/const pile = (\[[\s\S]*?\])\n/)[1]
+        const pile = new Function(`return ${pileTxt}`)()
+        const at = src.indexOf('const pile')
+        pile.forEach(([px, py, high, base]) => parts.push(solid(at, 'cell', px, py, 7, 7, high, base, 'fl-blk', null, 7)))
+        const slotM = src.match(/const slot = \[(-?\d+), (-?\d+)\]\.flatMap\(\(py\) => \[(-?\d+), (-?\d+), (-?\d+)\]/)
+        const pys = [Number(slotM[1]), Number(slotM[2])]
+        const pxs = [Number(slotM[3]), Number(slotM[4]), Number(slotM[5])]
+        const slots = pys.flatMap((py) => pxs.map((px) => [px, py])).slice(1)
+        const sAt = src.indexOf('...slot.slice(1)')
+        slots.forEach(([px, py]) => parts.push(solid(sAt, 'cell', px, py, 7, 7, 5, 0, 'fl-blk', null, 7)))
+      }
+      if (name === 'screening') {
+        const waitM = src.match(/const wait = \[(-?\d+), (-?\d+)\]\.flatMap\(\(py\) => \[(-?\d+), (-?\d+), (-?\d+)\]/)
+        const pys = [Number(waitM[1]), Number(waitM[2])]
+        const pxs = [Number(waitM[3]), Number(waitM[4]), Number(waitM[5])]
+        const seats = pys.flatMap((py) => pxs.map((px) => [px, py])).slice(2)
+        const at = src.indexOf('...wait.slice(2)')
+        seats.forEach(([px, py]) => parts.push(solid(at, 'cell', px, py, 7, 7, 5, 0, 'fl-blk', null, 7)))
+      }
+      if (name === 'resolve') {
+        const pitch = Number(floor.match(/const PITCH = (\d+)/)[1])
+        const lane = Number(src.match(/const lane = (-?\d+)/)[1])
+        const at = src.indexOf('...[0, 1, 2].map')
+        ;[0, 1, 2].forEach((i) => parts.push(solid(at, 'cell', -44 + i * pitch, lane, 7, 7, 5, 0, 'fl-blk is-hold fl-index', null, 7)))
+        const fAt = src.indexOf('cell(at(0) - PITCH')
+        if (fAt > -1) parts.push(solid(fAt, 'cell', -44 - pitch, lane, 7, 7, 5, 0, 'fl-blk is-hold fl-feed', null, 7))
+      }
+      if (name === 'replay') {
+        const at = floor.match(/const at = \[(-?\d+), (-?\d+), (-?\d+), (-?\d+), (-?\d+), (-?\d+), (-?\d+)\]/).slice(1, 8).map(Number)
+        const fAt = src.indexOf('...at.map((px, i)')
+        at.forEach((px) => parts.push(solid(fAt, 'stand', px, 2, 4, 7, 5, 2, 'fl-blk fl-frame', null, 3.5)))
+      }
+      return parts
+    }
+    const minimum = { protocol: 13, evidence: 18, screening: 5, resolve: 8, replay: 10 }
+    const family = (cls) => {
+      if (/fl-rig|fl-gant|fl-claw|fl-carry/.test(cls)) return 'gantry'
+      if (/fl-ram|fl-pivot/.test(cls)) return 'ram'
+      if (/fl-tape|fl-reel|fl-head/.test(cls)) return 'transport'
+      if (/fl-board|fl-seat/.test(cls)) return 'board'
+      if (/fl-blk/.test(cls)) return 'cell'
+      return cls
+    }
+    const box = (p) => ({
+      sx0: (p.x0 - p.y1) * IX,
+      sx1: (p.x1 - p.y0) * IX,
+      sy0: 178 + (p.x0 + p.y0) * IY - p.base - p.high - 3,
+      sy1: 178 + (p.x1 + p.y1) * IY + 3,
+    })
+    const offenders = []
+    for (const name of Object.keys(blocks)) {
+      const parts = parseStation(name)
+      assert.ok(parts.length >= minimum[name], `${name} parsed only ${parts.length} solids - the perspective law lost sight of the plate`)
+      const painted = parts.map((p, i) => ({ ...p, tie: i })).sort((a, b) => (a.depth - b.depth) || (a.tie - b.tie))
+      for (let i = 0; i < painted.length; i += 1) {
+        for (let j = i + 1; j < painted.length; j += 1) {
+          const A = painted[i]
+          const B = painted[j]
+          if (A.depth >= 900 || B.depth >= 900) continue
+          if (family(A.cls) === family(B.cls)) continue
+          const a = box(A)
+          const b = box(B)
+          const ox0 = Math.max(a.sx0, b.sx0)
+          const ox1 = Math.min(a.sx1, b.sx1)
+          const oy = Math.min(a.sy1, b.sy1) - Math.max(a.sy0, b.sy0)
+          if (ox1 - ox0 < 1.5 || oy < 1.5) continue
+          // A is painted first. Judge the pair by PLAN geometry:
+          const px0 = Math.max(A.x0, B.x0)
+          const px1 = Math.min(A.x1, B.x1)
+          const py0 = Math.max(A.y0, B.y0)
+          const py1 = Math.min(A.y1, B.y1)
+          const planApart = px1 - px0 <= 0.6 || py1 - py0 <= 0.6
+          // A footprint pocket that only exists inside someone's rounded
+          // corner is empty ground: the rects meet where the part is not.
+          const cornerVoid = [A, B].some((P) => P.r > 1 && [
+            [P.x1 - P.r, P.y1 - P.r, 1, 1], [P.x0 + P.r, P.y1 - P.r, -1, 1],
+            [P.x1 - P.r, P.y0 + P.r, 1, -1], [P.x0 + P.r, P.y0 + P.r, -1, -1],
+          ].some(([cx, cy, sx, sy]) => {
+            const inQx = sx > 0 ? px0 >= cx - 0.01 : px1 <= cx + 0.01
+            const inQy = sy > 0 ? py0 >= cy - 0.01 : py1 <= cy + 0.01
+            if (!inQx || !inQy) return false
+            const nx = Math.min(Math.abs(px0 - cx), Math.abs(px1 - cx))
+            const ny = Math.min(Math.abs(py0 - cy), Math.abs(py1 - cy))
+            return Math.hypot(nx, ny) >= P.r - 0.5
+          }))
+          if (planApart || cornerVoid) {
+            // Disjoint footprints: the farther one must have gone down
+            // first. Farther is smaller y or smaller x - both push a part
+            // up-screen and behind in this projection.
+            if (A.y1 <= B.y0 + 0.6 || A.x1 <= B.x0 + 0.6) continue
+            if (B.y1 <= A.y0 + 0.6 || B.x1 <= A.x0 + 0.6) {
+              offenders.push(`${name}: '${A.cls}' (${A.px},${A.py}) paints under '${B.cls}' (${B.px},${B.py}) yet stands nearer than it`)
+            }
+            continue
+          }
+          // Footprints genuinely share ground: only a rider standing ON
+          // its support may do that, and the support must go down first.
+          const rides = B.base >= A.base + A.high - 0.6
+            && B.x0 >= A.x0 - 1 && B.x1 <= A.x1 + 1 && B.y0 >= A.y0 - 1 && B.y1 <= A.y1 + 1
+          if (rides) continue
+          offenders.push(`${name}: '${A.cls}' (${A.px},${A.py}) and '${B.cls}' (${B.px},${B.py}) share ground without one standing on the other`)
+        }
+      }
+    }
+    assert.deepEqual(offenders, [], `perspective violations:\n${offenders.join('\n')}`)
+  })
+
   it('moves nothing sideways, and floats nothing over the row', () => {
     // HEIGHT IS THE ONE AXIS IN AN AXONOMETRIC THAT CANNOT LIE.
     //
@@ -2969,15 +3142,24 @@ describe('The floor schematic', () => {
     // the cargo clocks say, anywhere on the round.
     assert.equal((floor.match(/className="fl-parcel"/g) || []).length, 2)
     assert.match(css, /\.fl-watch\.is-shy \.fl-parcel \{ opacity: 0; \}/)
-    // The lens: motion marked as a field, not exhaust - two rings and
-    // four tangent-stretched matrix dots riding the dip wrapper, opacity
-    // only, lit only mid-flight and on the ride home.
-    assert.match(floor, /className="fl-lens"/)
-    assert.ok((floor.match(/className="fl-mote"/g) || []).length >= 4, 'the lens catches dots of the field')
-    assert.match(css, /\.fl-lens \{\s*\n\s*opacity: 0;/)
-    assert.doesNotMatch(css.match(/@keyframes fl-warp \{([\s\S]*?)\n\}/)[1], /transform/, 'the lens inherits its motion')
-    assert.doesNotMatch(floor, /fl-whoosh/)
-    assert.doesNotMatch(css, /fl-whoosh|fl-zoom/)
+    // THE WARP genuinely distorts the field: an HTML lens rides BEHIND
+    // the sheet (the svg stacks over it, so it shows only through the
+    // transparent air band and can never cover a solid), carrying the
+    // field's own dot gradient magnified over a patch of page ground.
+    // Its stops are the patrol's anchors divided onto the frame width,
+    // derived here to the same hundredth.
+    assert.match(floor, /<div className="fl-warplens" aria-hidden="true" \/>/)
+    assert.match(css, /\.dgm-svg\.is-live\.is-floor \+ \.fl-warplens \{ animation: fl-warp 33\.6s/)
+    assert.match(css, /\.dgm-frame > \.dgm-svg \{ position: relative; z-index: 1; \}/)
+    assert.match(css, /\.fl-warplens \{[\s\S]*?radial-gradient\(circle at center, color-mix\(in srgb, var\(--accent\) 40%/)
+    const warp = css.match(/@keyframes fl-warp \{([\s\S]*?)\n\}/)[1]
+    assert.doesNotMatch(warp, /transform/, 'the lens travels by left and top, never a transform the axis walk would misread')
+    for (const k of [0, 2, 4]) {
+      const pct = Math.round((anchor(k) / 12) * 100) / 100
+      assert.match(warp, new RegExp(`left: ${String(pct).replace('.', '\\.')}%`), `the warp misses stop ${k}'s anchor`)
+    }
+    assert.doesNotMatch(floor, /fl-whoosh|fl-lens|fl-mote/)
+    assert.doesNotMatch(css, /fl-whoosh|fl-zoom|fl-lens|fl-mote/)
     // THE SHADOW SITS ON THE FLOOR IT SHADES: the groundwrap steps to each
     // stop's own ground line, derived from the same anchors as the stops
     // (ground = CY + (px+py)*ISO_Y, ellipse drawn at 170).

@@ -644,9 +644,12 @@ function mechanism(key, t) {
     evidence: () => {
       // A PILE, NOT A SCATTER: some of these stand on the others, which is the
       // only difference between material heaped up and material laid out.
+      // The pile keeps clear of the far rail's line: its deepest cells sit
+      // at plan y -27, so nothing material ever shares ground with the
+      // gantry's running gear - the perspective law holds the gap.
       const pile = [
-        [-56, -30, 5, 0], [-38, -34, 6, 0], [-58, -12, 4, 0], [-36, -10, 6, 0],
-        [-56, 6, 5, 0], [-40, 6, 4, 0], [-54, -32, 4, 5], [-52, 4, 4, 5],
+        [-56, -27, 5, 0], [-38, -27, 6, 0], [-58, -12, 4, 0], [-36, -10, 6, 0],
+        [-56, 6, 5, 0], [-40, 6, 4, 0], [-54, -28, 4, 5], [-52, 4, 4, 5],
       ]
       const slot = [-20, 8].flatMap((py) => [4, 28, 50].map((px) => [px, py]))
       return [
@@ -1421,18 +1424,6 @@ export default function ChainSchematic({ animate = true }) {
                       rightward), the mirrored set trails right for the ride
                       home, and both ride inside the dip wrapper so they
                       follow every move the body makes. */}
-                  {/* THE LENS. Two faint rings riding with the body and four
-                      of the page's matrix dots caught on them, stretched
-                      along the tangent - space bending subtly around the
-                      thing in flight, in place of cartoon exhaust. */}
-                  <g className="fl-lens">
-                    <ellipse cx={CALLS[0]} cy="81" rx="15" ry="10.5" />
-                    <ellipse cx={CALLS[0]} cy="81" rx="21.5" ry="15" />
-                    <ellipse className="fl-mote" cx={CALLS[0] - 15} cy="81" rx="0.9" ry="1.7" />
-                    <ellipse className="fl-mote" cx={CALLS[0] + 15} cy="81" rx="0.9" ry="1.7" />
-                    <ellipse className="fl-mote" cx={CALLS[0] - 14.2} cy="70.6" rx="1.7" ry="0.9" />
-                    <ellipse className="fl-mote" cx={CALLS[0] + 14.2} cy="91.4" rx="1.7" ry="0.9" />
-                  </g>
                   {/* Each drum rides in a parcel wrapper: startled, the
                       courier drops what it carries - the wrapper fades
                       whatever the cargo clock says. */}
@@ -1457,6 +1448,16 @@ export default function ChainSchematic({ animate = true }) {
             </g>
           </g>
         </svg>
+        {/* THE WARP. The courier genuinely distorts the page's dot matrix
+            as it flies: this div rides the flight line BEHIND the sheet
+            (the svg's air band is transparent, so it shows through there
+            and can never cover a plate or the body), carrying the field's
+            own dot gradient magnified over a patch of page ground, edge
+            feathered - so inside the circle the real lattice reads bent
+            and swollen, and the boundary shear moves with the flight.
+            Its stops are the patrol's own anchors, derived to the same
+            hundredth, and it lights only mid-leg and on the ride home. */}
+        <div className="fl-warplens" aria-hidden="true" />
       </div>
 
       {/* Prose in the document rather than type inside the drawing: it holds
