@@ -13024,8 +13024,11 @@ html.is-hidden .clinic-node i,
    if it takes the ink of whichever plate it happens to be standing on. The
    station colours the plate and the machine; a verdict, and only a verdict,
    colours the block. */
-.fl-blk .dgm-face-top { fill: color-mix(in srgb, var(--accent) 32%, var(--surface-solid)); }
-.fl-blk .dgm-face-left { fill: color-mix(in srgb, var(--accent) 60%, var(--surface-solid)); }
+/* Three decisive values per puck - light top, mid flank, deep wall - so a
+   cell reads as a solid at a glance and the eye settles what is on what
+   without hunting. Nothing on a puck is ever translucent. */
+.fl-blk .dgm-face-top { fill: color-mix(in srgb, var(--accent) 42%, var(--surface-solid)); }
+.fl-blk .dgm-face-left { fill: color-mix(in srgb, var(--accent) 68%, var(--surface-solid)); }
 .fl-blk .dgm-face-right { fill: color-mix(in srgb, var(--accent-strong) 74%, var(--accent)); }
 
 .fl-blk.is-pass .dgm-face-top { fill: color-mix(in srgb, var(--pass) 46%, var(--surface-solid)); }
@@ -13150,21 +13153,26 @@ html.is-hidden .clinic-node i,
    and the same carriage under a beam bolted to two posts is part of the
    machine. It is dressed a step back from the carriage, because structure is
    not the working end. */
-.fl-rig .dgm-face-top { fill: color-mix(in srgb, var(--tone) 24%, var(--surface-solid)); }
+/* SOLID STEEL, NOT A WASH. The rig's faces sat at 24 and 58 percent of
+   their inks and the whole gantry read as translucent - a rail nobody
+   could tell was in front of the material it crossed. Structure carries
+   full-value faces now: tops in strong tone, every side in the deep, so
+   what is on what is settled by ink before the depth sort even matters. */
+.fl-rig .dgm-face-top { fill: color-mix(in srgb, var(--tone) 62%, var(--surface-solid)); }
 .fl-rig .dgm-face-left,
-.fl-rig .dgm-face-right { fill: color-mix(in srgb, var(--deep) 58%, var(--surface-solid)); }
-.fl-rig.is-beam .dgm-face-top { fill: color-mix(in srgb, var(--tone) 40%, var(--surface-solid)); }
+.fl-rig .dgm-face-right { fill: var(--deep); }
+.fl-rig.is-beam .dgm-face-top { fill: color-mix(in srgb, var(--tone) 78%, var(--surface-solid)); }
 
 .fl-claw .dgm-face-top { fill: color-mix(in srgb, var(--tone) 34%, var(--surface-solid)); }
 .fl-claw .dgm-face-left,
 .fl-claw .dgm-face-right { fill: var(--deep); }
 .fl-claw.is-head .dgm-face-top { fill: var(--tone); }
-/* The jaws stand back from the head. At full depth all three parts and the
-   block between them came out as one dark mass, and the whole point of the
-   carriage is that a reader can see it holding something. */
-.fl-claw.is-jaw .dgm-face-top { fill: color-mix(in srgb, var(--tone) 24%, var(--surface-solid)); }
+/* The jaws stand one step back from the head - full deep sides, lighter
+   tops - so the carriage reads as three solid parts holding something,
+   never as one dark mass and never as a ghost. */
+.fl-claw.is-jaw .dgm-face-top { fill: color-mix(in srgb, var(--tone) 40%, var(--surface-solid)); }
 .fl-claw.is-jaw .dgm-face-left,
-.fl-claw.is-jaw .dgm-face-right { fill: color-mix(in srgb, var(--deep) 66%, var(--surface-solid)); }
+.fl-claw.is-jaw .dgm-face-right { fill: var(--deep); }
 
 /* A claw holding nothing is holding nothing. The block it carries is absent
    until the jaws close on it, so its resting value is no opacity at all and the
@@ -13632,7 +13640,7 @@ html.is-hidden .clinic-node i,
    and it is drawn a good deal harder than the rest of the plan work, because
    it is the only thing on the reel that shows it turning. */
 .fl-spin {
-  stroke: color-mix(in srgb, var(--deep) 56%, transparent);
+  stroke: color-mix(in srgb, var(--deep) 72%, var(--surface-solid));
   transform-box: fill-box;
   transform-origin: center;
 }

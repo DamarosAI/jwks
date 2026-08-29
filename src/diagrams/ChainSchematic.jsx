@@ -670,14 +670,22 @@ function mechanism(key, t) {
         // pixels up the screen - so every pixel of gantry costs the row twice,
         // and at forty-two this station stood thirty-six pixels taller than
         // every other one. A bench of five reads as a bench.
-        { ...stand(-58, -20, 5, 5, 30, 4.5), cls: 'fl-rig is-post' },
-        { ...stand(56, -20, 5, 5, 30, 4.5), cls: 'fl-rig is-post' },
-        { ...stand(-1, -20, 60, 3.5, 4, 3.5, 30), cls: 'fl-rig is-beam', depth: -600 },
+        //
+        // THE JOINERY ORDER IS THE PERSPECTIVE. The beam RESTS ON the posts,
+        // so it must paint over both post caps - each post right after the
+        // last thing that genuinely stands behind it (the deepest pile cell
+        // at -86 for the left, the bed cell at 30 for the right), and the
+        // beam immediately after the nearer post. Drawn at -600 the beam
+        // went down first and both posts painted over its ends, which read
+        // as a rail threaded THROUGH its own supports.
+        { ...stand(-58, -20, 5, 5, 30, 4.5), cls: 'fl-rig is-post', depth: -85 },
+        { ...stand(56, -20, 5, 5, 30, 4.5), cls: 'fl-rig is-post', depth: 32 },
+        { ...stand(-1, -20, 60, 3.5, 4, 3.5, 30), cls: 'fl-rig is-beam', depth: 33 },
         // The beam is ruled along its own top the way a protofilament is
         // drawn - segmented - so the track the carriage rides reads as grown
         // structure rather than rolled steel. A raised print at the beam's own
         // roof (base 30 + high 4), in the same plan units as the beam.
-        printed(-599, 'fl-print', [-54, -42, -30, -18, -6, 6, 18, 30, 42, 54].map((x) => (
+        printed(33.5, 'fl-print', [-54, -42, -30, -18, -6, 6, 18, 30, 42, 54].map((x) => (
           <line className="fl-ruled" key={x} x1={x} y1="-23" x2={x} y2="-17" />
         )), 34),
         ...pile.map(([px, py, high, base], i) => cell(px, py, null, high, base, { turn: i })),
