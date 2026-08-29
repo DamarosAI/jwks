@@ -649,7 +649,7 @@ function mechanism(key, t) {
       // gantry's running gear - the perspective law holds the gap.
       const pile = [
         [-56, -27, 5, 0], [-38, -27, 6, 0], [-58, -12, 4, 0], [-36, -10, 6, 0],
-        [-56, 6, 5, 0], [-40, 6, 4, 0], [-54, -28, 4, 5], [-52, 4, 4, 5],
+        [-56, 6, 5, 0], [-40, 6, 4, 0], [-46, -28, 4, 5], [-52, 4, 4, 5],
       ]
       const slot = [-20, 8].flatMap((py) => [4, 28, 50].map((px) => [px, py]))
       return [
@@ -664,24 +664,23 @@ function mechanism(key, t) {
           // printed before anything travels it.
           <line className="fl-ruled" key="ship" x1="4" y1="-28" x2="4" y2="-52" />,
         ]),
-        // THE GANTRY IS A BRIDGE ON TWIN RAILS - the machine every reader
-        // who has watched a liquid handler work already knows. One beam on
-        // two mid-plate posts was a clothesline: nothing anchored it to the
-        // vessel, and the carriage seemed to hang from a wire. The real
-        // instrument runs two low rails along the bed's own edges, a bridge
-        // spanning them, and the carriage clamped to the bridge - so the
-        // whole bridge slides when the claw works (`fl-span`, the x-only
-        // twin of the claw's own clock), and only the jaws ever descend.
-        //
-        // Depth is per member: the far rail and far leg go down before the
-        // pile they pass behind; the cross-beam and near leg ride over
-        // everything they cross, because a bridge is the tallest thing on
-        // its own bed and the near leg is nearer than any cell it passes.
-        { ...stand(0, -40, 58, 2, 3, 2), cls: 'fl-rig is-rail', depth: -140 },
-        { ...stand(0, 26, 58, 2, 3, 2), cls: 'fl-rig is-rail', depth: 60 },
-        { ...stand(-52, -40, 5, 5, 23, 2.5, 3), cls: 'fl-gant', depth: -95 },
-        { ...stand(-52, -7, 3, 35, 4, 2, 26), cls: 'fl-gant is-beam', depth: OVER - 6 },
-        { ...stand(-52, 26, 5, 5, 23, 2.5, 3), cls: 'fl-gant', depth: OVER - 5 },
+        // THE GANTRY IS A BACK RUNWAY WITH A CANTILEVER ARM - the way a
+        // bench liquid handler actually stands: an elevated runway along
+        // the deck's far edge on two end towers, a carriage riding it, and
+        // a thin arm reaching forward at height with the head hung off its
+        // tip. Two earlier constructions failed on this projection: a beam
+        // on mid-plate posts read as a clothesline, and a front-to-back
+        // bridge projected end-on into a clump that sat over the entry
+        // gate, and its towers crowded the shipping lane. A runway along x
+        // projects LONG AND FLAT - the one clean reading this projection
+        // gives a rail - and at plan y -38 with its right tower at 24, past
+        // the far gate's lane, every foot of it stays clear of the gate,
+        // the seat, the apron and the pile; the elevated span crosses the lane twenty-six units up, where the screen never even overlaps. Towers first, runway over their caps, sliders in the OVER band.
+        { ...stand(-58, -38, 5.5, 4.5, 26, 2.5), cls: 'fl-rig is-tower', depth: -102 },
+        { ...stand(24, -38, 5.5, 4.5, 26, 2.5), cls: 'fl-rig is-tower', depth: -101 },
+        { ...stand(-17, -38, 41, 3, 4, 2, 26), cls: 'fl-rig is-rail', depth: -100 },
+        { ...stand(-52, -38, 6, 4, 8, 2.5, 24), cls: 'fl-gant', depth: OVER - 6 },
+        { ...stand(-52, -27, 2.5, 11, 3, 1.5, 27), cls: 'fl-gant is-beam', depth: OVER - 5 },
         ...pile.map(([px, py, high, base], i) => cell(px, py, null, high, base, { turn: i })),
         // The one the claw takes. It is on top of the pile, because that is
         // where a claw can reach. The claw keeps its own 5.6s rhythm: the
@@ -715,11 +714,11 @@ function mechanism(key, t) {
         { ...cell(slot[0][0], slot[0][1], null, 5), cls: 'fl-blk fl-ship' },
         { ...stand(-52, -30, 3, 8, 10, 3, 14), cls: 'fl-claw is-jaw', depth: OVER },
         { ...stand(-52, -10, 3, 8, 10, 3, 14), cls: 'fl-claw is-jaw', depth: OVER + 2 },
-        // THE CARRIAGE IS A BLOCK CLAMPED AROUND THE BRIDGE BEAM. It rides
-        // the bridge's own x-only clock - a carriage stays on its beam while
-        // the jaws telescope down - and its top edge laps the beam's near
-        // face so beam, carriage and jaws read as one machine.
-        { ...stand(-52, -20, 6.5, 6.5, 10, 2.5, 22), cls: 'fl-gant is-head', depth: OVER + 3 },
+        // THE HEAD HOUSING hangs off the cantilever's tip, over the work
+        // line - its roof laps the arm's underside, the jaws hang from its
+        // foot, and the whole sliding set (carriage, arm, housing) rides
+        // the runway's x-only clock while only the jaws descend.
+        { ...stand(-52, -20, 5.5, 5.5, 8, 2.5, 21), cls: 'fl-gant is-head', depth: OVER + 3 },
       ]
     },
     // SCREENING IS THREE THROATS, ON THE EDGE THE ROW RUNS ALONG.
@@ -1132,12 +1131,11 @@ export default function ChainSchematic({ animate = true }) {
           aria-label="Five plates in a row, seen in axonometric projection, their machines already running - each plate bounded by its own printed double-walled membrane, the way a section drawing bounds a cell. The five stations are lettered in ink beneath their plates: Protocol, Evidence, Screening, Resolve, Replay. A small hovering courier shaped as the flat blue Damaros mark - a plump two-part silhouette that bobs with a soft jelly squash, its floor shadow beneath it - works the air above the row on one slow round, and the seams of the run move only under it. One cell - a round body with its nucleus drawn on top - runs the whole row. A grid of twelve switches on a breaker board is thrown one at a time, each settling green or red, and once per round the courier drops to the export gate: the compiled violet transcript slides to the mouth under its beam and crosses the seam riding just below the courier's body, led to the next plate and set in through the entry gate, where it docks beside the gantry. There a claw closes on one cell in a heap, lifts it, carries it across, and sets it down into an ordered bed of round sockets; the placed cell then slides up a printed lane to a staging seat, waits its beat, and continues straight out through that plate's far gate - one cell, one line, socket to seat to gate. Along the far long edge of the next plate, three verdict seats wait in a line - green, red, amber. The bed feeds the green pore as a moving line: one cell slides onto the mouth and is visibly swallowed down the bore while the seat behind it shuffles forward and the newly arrived cell takes the empty place; the red pore stands open and ringed; the amber seat is a gate cut through the plate's wall, its pylons stained amber. The unsettled amber cell forms inside the plate's reticulum - nested curved sacs opening toward the gate - slides down the lane to the bay while the courier waits overhead, and leaves only in the courier's hold: carried through the air and set down at the resolve lane's entry gate, one seat behind the line, so it never lands where a cell already stands. The courier then steps sideways onto the lever and throws it - nothing else ever moves that lever - so the horizontal ram crosses the lane, pushes one cell clean off the edge through the one gap in the membrane, and the line indexes forward. On the last plate the run lies as frames on a tape between two reels, and a head reads its way out along the tape; the courier lands on the take-up reel's raised hub - the transport's one button - the hub gives under the press, and only then does the head turn and rewind, the courier stepping backwards alongside it before allowing itself one full spin on the climb home. Clicked anywhere on its round, the courier drops whatever it is carrying and darts off the sheet, drifting back on its own. Pointing at a plate darkens the ground beneath it and brings its verdicts forward."
         >
           <defs>
-            <pattern id="fl-grain" width="13" height="13" patternUnits="userSpaceOnUse">
-              <circle className="dgm-grain" cx="1" cy="1" r="0.9" />
-            </pattern>
-            {/* The cytoplasm's finer grain: a second dot scale, offset off the
-                first, so the floor of every vessel carries the ribosome
-                stipple a section drawing gives living ground. */}
+            {/* One stipple only. The plate used to carry a second, coarser
+                dot grid as well, and at 13px pitch it read as the page's own
+                matrix showing THROUGH the plate - a solid surface looking
+                see-through. The fine ribosome stipple below is clearly
+                texture; the lookalike grid is gone. */}
             <pattern id="fl-plasm" width="7" height="7" patternUnits="userSpaceOnUse">
               <circle className="dgm-grain is-fine" cx="4.5" cy="3.5" r="0.55" />
             </pattern>
@@ -1185,7 +1183,6 @@ export default function ChainSchematic({ animate = true }) {
                     only dark thing in its own band. */}
                 <g className="fl-plate">
                   <Faces shape={item.plate} className="dgm-solid" />
-                  <polygon className="fl-grain" points={item.plate.top} fill="url(#fl-grain)" />
                   <polygon className="fl-plasm" points={item.plate.top} fill="url(#fl-plasm)" />
                   {/* The far half of the wall: the inside surface a reader
                       sees down onto, and the far rim band. Everything on the
@@ -1385,7 +1382,7 @@ export default function ChainSchematic({ animate = true }) {
               already has for visiting every site and moving the paperwork
               along, drawn as a small character built from the company mark
               (unnamed on the sheet - the christening is the company's) and
-              working the air band above the row on a 33.6-second round.
+              working the air band above the row on a 16.8-second round.
               THE ROUND IS THE LINE'S CLOCK: the seams the courier owns
               move only under it. At Protocol it drops to the export mouth
               and the staged transcript slides under its beam; the crossing

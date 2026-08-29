@@ -12555,7 +12555,6 @@ html.is-hidden .clinic-node i,
 /* The plan ruling that says this is a measured surface rather than a coloured
    shape. Faint, because it is the paper's texture and not a grid anybody is
    meant to count. */
-.fl-grain { opacity: 0.5; }
 .fl-plasm { opacity: 0.4; }
 
 /* ── The membrane ────────────────────────────────────────────────────────────────────
@@ -13238,19 +13237,19 @@ html.is-hidden .clinic-node i,
    a crossfade between two coincident drawings, hidden where the jaws hold
    it. A reader sees the claw close, lift, and come up holding. */
 @keyframes fl-borne {
-  0%, 30% { opacity: 0; }
-  34%, 66% { opacity: 1; }
-  70%, 100% { opacity: 0; }
+  0%, 28% { opacity: 0; }
+  33%, 66% { opacity: 1; }
+  72%, 100% { opacity: 0; }
 }
 
 .dgm-svg.is-live .fl-pick { animation: fl-picked 5.6s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
 
 @keyframes fl-picked {
   0%, 22% { transform: translateY(0px); opacity: 1; }
-  30% { transform: translateY(-14px); opacity: 1; }
-  34%, 88% { transform: translateY(-14px); opacity: 0; }
+  30%, 33.5% { transform: translateY(-14px); opacity: 1; }
+  38%, 88% { transform: translateY(-14px); opacity: 0; }
   90% { transform: translateY(0px); opacity: 0; }
-  96%, 100% { transform: translateY(0px); opacity: 1; }
+  97%, 100% { transform: translateY(0px); opacity: 1; }
 }
 
 /* THE PUTDOWN LANDS, TRAVELS, AND LEAVES - ONE ELEMENT. The cell appears at
@@ -13391,7 +13390,7 @@ html.is-hidden .clinic-node i,
    courier's own cargo drum (`fl-escort`, below with the rounds), led
    through the air over the seam. When the courier is elsewhere, nothing
    crosses - which is the whole point: the seam animation IS the visit.
-   Issue and dock keep only their in-plate legs, on the patrol's 33.6s
+   Issue and dock keep only their in-plate legs, on the patrol's 16.8s
    period, phased to the courier's stops: the issue at the mouth by 6.2 and
    faded under the hovering escort, the dock fading up beneath that same
    escort at the far end and sliding mouth-to-apron at 16.8, where it rests
@@ -13416,17 +13415,17 @@ html.is-hidden .clinic-node i,
 .fl-blk.is-script .dgm-face-right { fill: color-mix(in srgb, var(--governed) 64%, var(--accent-strong)); }
 .fl-blk.is-script .fl-core { fill: var(--governed); }
 
-.dgm-svg.is-live .fl-issue { animation: fl-issue 33.6s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
+.dgm-svg.is-live .fl-issue { animation: fl-issue 16.8s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
 
 @keyframes fl-issue {
   0%, 2% { transform: translate(0px, 0px); opacity: 1; }
   4.2%, 6.2% { transform: translate(6.06px, -2.38px); opacity: 1; }
-  7% { transform: translate(6.06px, -2.38px); opacity: 0; }
+  8% { transform: translate(6.06px, -2.38px); opacity: 0; }
   86% { transform: translate(0px, 0px); opacity: 0; }
   92%, 100% { transform: translate(0px, 0px); opacity: 1; }
 }
 
-.dgm-svg.is-live .fl-dock { animation: fl-dock 33.6s cubic-bezier(0.3, 0, 0.3, 1) infinite; }
+.dgm-svg.is-live .fl-dock { animation: fl-dock 16.8s cubic-bezier(0.3, 0, 0.3, 1) infinite; }
 
 @keyframes fl-dock {
   0% { transform: translate(0px, 0px); opacity: 0; }
@@ -13453,8 +13452,8 @@ html.is-hidden .clinic-node i,
   0%, 40% { transform: translate(13.86px, -5.44px); opacity: 1; }
   54% { transform: translate(20.78px, -8.16px); opacity: 1; }
   60% { transform: translate(24.25px, -9.52px); opacity: 0; }
-  62%, 68% { transform: translate(0px, 0px); opacity: 0; }
-  72%, 84% { transform: translate(0px, 0px); opacity: 1; }
+  62%, 66% { transform: translate(0px, 0px); opacity: 0; }
+  73%, 84% { transform: translate(0px, 0px); opacity: 1; }
   94%, 100% { transform: translate(13.86px, -5.44px); opacity: 1; }
 }
 
@@ -13489,7 +13488,7 @@ html.is-hidden .clinic-node i,
    reticulum's pocket - the vesicle trail already leaving the sacs says
    this is how the organelle works - swells to size cupped there while the
    courier waits overhead, and slides down the printed lane to the bay in
-   time for the pickup: one bud per round, on the patrol's own 33.6s
+   time for the pickup: one bud per round, on the patrol's own 16.8s
    period, gone under the opaque haul before it fades. Absent at rest: a
    bud that has not been ruled yet is not on the sheet. */
 .fl-bud {
@@ -13498,14 +13497,14 @@ html.is-hidden .clinic-node i,
   transform-origin: 50% 72%;
 }
 
-.dgm-svg.is-live .fl-bud { animation: fl-bud 33.6s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
+.dgm-svg.is-live .fl-bud { animation: fl-bud 16.8s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
 
 @keyframes fl-bud {
   0%, 24% { transform: translate(0px, 0px) scale(0.25); opacity: 0; }
   27% { transform: translate(0px, 0px) scale(0.25); opacity: 1; }
   31%, 33% { transform: translate(0px, 0px) scale(1); opacity: 1; }
   36%, 39.2% { transform: translate(29.44px, -11.56px) scale(1); opacity: 1; }
-  40.4%, 100% { transform: translate(29.44px, -11.56px) scale(1); opacity: 0; }
+  41.2%, 100% { transform: translate(29.44px, -11.56px) scale(1); opacity: 0; }
 }
 
 /* ── RESOLVE IS A HORIZONTAL RAM ─────────────────────────────────────────
@@ -13542,11 +13541,11 @@ html.is-hidden .clinic-node i,
 /* THE LEVER ONLY MOVES UNDER A HAND. It kept a 4.8s loop of its own for
    four passes, and a lever throwing itself is the one lie this station
    could tell - the whole claim of Resolve is that a PERSON decides. So the
-   lever now runs the courier's 33.6s round and nothing else: the courier
+   lever now runs the courier's 16.8s round and nothing else: the courier
    delivers the amber cell, slides over the boss, dips onto the knob at
    53.6, and the throw begins at 54 - contact first, motion on the next
    beat. One throw per round, and it is always the visitor's. */
-.dgm-svg.is-live .fl-lever { animation: fl-claim 33.6s cubic-bezier(0.6, 0, 0.3, 1.4) infinite; }
+.dgm-svg.is-live .fl-lever { animation: fl-claim 16.8s cubic-bezier(0.6, 0, 0.3, 1.4) infinite; }
 
 @keyframes fl-claim {
   0%, 53.8% { transform: rotate(-116deg); }
@@ -13565,7 +13564,7 @@ html.is-hidden .clinic-node i,
 /* The ram answers the lever, so it keeps the lever's clock - the round's.
    Throw at 54, stroke at 55, and the blade is home before the line
    indexes. */
-.dgm-svg.is-live .fl-ram { animation: fl-stroke 33.6s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
+.dgm-svg.is-live .fl-ram { animation: fl-stroke 16.8s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
 
 @keyframes fl-stroke {
   0%, 54.8% { transform: translate(0px, 0px); }
@@ -13580,7 +13579,7 @@ html.is-hidden .clinic-node i,
    inside the thing it is pushing. The cell goes with the blade to the edge,
    tips, falls, and comes back to the station while out of sight, so the
    cycle closes on the picture it opened with. */
-.dgm-svg.is-live .fl-pushed { animation: fl-shove 33.6s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
+.dgm-svg.is-live .fl-pushed { animation: fl-shove 16.8s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
 
 /* The decision falls, but it is GONE before it falls past the skirt: a
    cell fading over the page's dot field is a see-through puck, so the
@@ -13594,7 +13593,7 @@ html.is-hidden .clinic-node i,
   99%, 100% { transform: translate(0px, 0px) translateY(0px); opacity: 1; }
 }
 
-.dgm-svg.is-live .fl-index { animation: fl-advance 33.6s cubic-bezier(0.5, 0, 0.2, 1) infinite; }
+.dgm-svg.is-live .fl-index { animation: fl-advance 16.8s cubic-bezier(0.5, 0, 0.2, 1) infinite; }
 
 /* The line waits for the ram to be home before it indexes. Overlapped, the
    block arriving at the station and the blade leaving it cross - and a blade
@@ -13605,7 +13604,7 @@ html.is-hidden .clinic-node i,
   63.8%, 100% { transform: translate(20.78px, 8.16px); }
 }
 
-.dgm-svg.is-live .fl-feed { animation: fl-arrive 33.6s ease-out infinite; }
+.dgm-svg.is-live .fl-feed { animation: fl-arrive 16.8s ease-out infinite; }
 
 /* The back of the lane is fed by the courier now: the amber cell descends
    with the visitor's own dip and this one fades up beneath the opaque haul
@@ -13645,12 +13644,12 @@ html.is-hidden .clinic-node i,
 
 /* Forward at a constant rate, because a transport does not accelerate
    through a record, and back on a curve, because a rewind does. ONE scan
-   per round now, on the courier's own 33.6s clock: the head reads its way
+   per round now, on the courier's own 16.8s clock: the head reads its way
    out while the courier finishes at Resolve, dwells at the far end - and
    turns for home at 68.4, two tenths of a second after the courier's body
    lands on the take-up reel at 68. The reversal is the press. When the
    visitor is not on the sheet, the tape never runs back. */
-.dgm-svg.is-live .fl-head { animation: fl-run 33.6s linear infinite; }
+.dgm-svg.is-live .fl-head { animation: fl-run 16.8s linear infinite; }
 
 @keyframes fl-run {
   0%, 45% { transform: translate(0px, 0px); }
@@ -13679,7 +13678,7 @@ html.is-hidden .clinic-node i,
 
 .fl-coil { fill: none; stroke-width: 1.2; }
 
-.dgm-svg.is-live .fl-spin { animation: fl-wind 33.6s linear infinite; }
+.dgm-svg.is-live .fl-spin { animation: fl-wind 16.8s linear infinite; }
 
 @keyframes fl-wind {
   0%, 45% { transform: rotate(0deg); }
@@ -13691,8 +13690,8 @@ html.is-hidden .clinic-node i,
    record being read rather than seven blocks blinking: the delay walks the tape
    at exactly the rate the head walks it. */
 .dgm-svg.is-live .fl-frame {
-  animation: fl-read 33.6s ease-in-out infinite;
-  animation-delay: calc(var(--turn, 0) * 1s);
+  animation: fl-read 16.8s ease-in-out infinite;
+  animation-delay: calc(var(--turn, 0) * 0.5s);
 }
 
 @keyframes fl-read {
@@ -13710,7 +13709,7 @@ html.is-hidden .clinic-node i,
 .fl-reel.is-hub.is-pressed .dgm-face-top { fill: var(--tone); }
 .fl-reel.is-hub.is-pressed .dgm-face-right { fill: var(--deep); }
 
-.dgm-svg.is-live .fl-reel.is-pressed { animation: fl-press 33.6s cubic-bezier(0.5, 0, 0.3, 1) infinite; }
+.dgm-svg.is-live .fl-reel.is-pressed { animation: fl-press 16.8s cubic-bezier(0.5, 0, 0.3, 1) infinite; }
 
 @keyframes fl-press {
   0%, 68.1% { transform: translateY(0px); }
@@ -13820,13 +13819,13 @@ html.is-hidden .clinic-node i,
    the paperwork along. This sheet draws them: a small character built out
    of the company mark (deliberately unnamed - the christening is the
    company's to do), working the empty air band above the row on a
-   33.6-second round. THE ROUND IS THE LINE'S CLOCK: 33.6 is six material
+   16.8-second round. THE ROUND IS THE LINE'S CLOCK: 16.8 is three material
    beats (5.6s), so the ambient claw and bed keep their own rhythm under
    it - but every seam the courier owns moves ONLY when the courier works
    it. It leads the transcript across the first seam, hauls the amber cell
    across the third, throws the one lever, presses the one reel; the lever,
    the ram, the line index and the transport's rewind all run the round's
-   own 33.6s period, so cause and answer can never drift apart. Hops run
+   own 16.8s period, so cause and answer can never drift apart. Hops run
    the one plan axis that projects FLAT (the row's own), dips ride the
    height axis - all the way down to contact, because a cause a reader
    cannot see touching is not a cause - and its one ground contact is a
@@ -13862,17 +13861,8 @@ html.is-hidden .clinic-node i,
   vector-effect: none;
 }
 
-/* The keyline: the same two paths drawn under the blue at a fatter
-   stroke, so the silhouette keeps a subtle dark rim - about two thirds
-   of a pixel on screen - the way a printed sticker holds its edge. */
-.courier-line {
-  fill: color-mix(in srgb, var(--text) 88%, var(--accent-strong));
-  stroke: color-mix(in srgb, var(--text) 88%, var(--accent-strong));
-  stroke-width: 61;
-  stroke-linejoin: round;
-  stroke-linecap: round;
-  vector-effect: none;
-}
+/* No keyline: it was tried and it dirtied the silhouette. The mark is
+   the mark - two blue shapes and nothing drawn around them. */
 
 .courier-trunk {
   transform-box: fill-box;
@@ -13896,7 +13886,7 @@ html.is-hidden .clinic-node i,
   transform-origin: center;
 }
 
-.dgm-svg.is-live.is-floor .courier-whirl { animation: courier-whirl 33.6s cubic-bezier(0.55, 0, 0.35, 1) infinite; }
+.dgm-svg.is-live.is-floor .courier-whirl { animation: courier-whirl 16.8s cubic-bezier(0.55, 0, 0.35, 1) infinite; }
 
 @keyframes courier-whirl {
   0%, 80.5% { transform: rotate(0deg); }
@@ -13928,11 +13918,11 @@ html.is-hidden .clinic-node i,
    lane, throws the lever - the only thing that ever throws it - and
    presses the replay reel that turns the scanner for home. The `is-floor`
    scope is the sheet the round belongs to. */
-.dgm-svg.is-live.is-floor .fl-patrolled { animation: fl-patrol 33.6s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
-.dgm-svg.is-live.is-floor .fl-duck { animation: fl-duck 33.6s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
+.dgm-svg.is-live.is-floor .fl-patrolled { animation: fl-patrol 16.8s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
+.dgm-svg.is-live.is-floor .fl-duck { animation: fl-duck 16.8s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
 .dgm-svg.is-live .fl-hover { animation: fl-hovering 3.4s ease-in-out infinite alternate; }
-.dgm-svg.is-live.is-floor .fl-monitorshade { animation: fl-ground 33.6s linear infinite; }
-.dgm-svg.is-live.is-floor .fl-beam { animation: fl-blink 33.6s linear infinite; }
+.dgm-svg.is-live.is-floor .fl-monitorshade { animation: fl-ground 16.8s linear infinite; }
+.dgm-svg.is-live.is-floor .fl-beam { animation: fl-blink 16.8s linear infinite; }
 
 /* Five stops, each directly over the thing the courier works: Protocol's
    export gate, Evidence's entry gate, Screening's hold bay, the back of
@@ -13997,7 +13987,7 @@ html.is-hidden .clinic-node i,
    the difference), slides with the lever step and the backward step the
    way the body does, and the ellipse's own clock deepens it at every
    contact and lifts it for the ride home. */
-.dgm-svg.is-live.is-floor .fl-groundwrap { animation: fl-footing 33.6s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
+.dgm-svg.is-live.is-floor .fl-groundwrap { animation: fl-footing 16.8s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
 
 @keyframes fl-footing {
   0%, 8% { transform: translate(0px, 0px) translateY(6.64px); }
@@ -14063,6 +14053,12 @@ html.is-hidden .clinic-node i,
 
 .dgm-frame > .dgm-svg { position: relative; z-index: 1; }
 
+/* NOTHING IS PAINTED - the lens carries no pigment at all. It is a pure
+   backdrop filter: the REAL dots of the field, behind the sheet, smear
+   and swell inside the travelling circle and snap back as it passes,
+   which is displacement of the actual matrix rather than a printed
+   bubble over it. The mask feathers the boundary so there is no rim,
+   no disc, no halo - just ground that misbehaves under the flight. */
 .fl-warplens {
   position: absolute;
   z-index: 0;
@@ -14072,15 +14068,13 @@ html.is-hidden .clinic-node i,
   transform: translate(-50%, -50%);
   opacity: 0;
   pointer-events: none;
-  background-image:
-    radial-gradient(circle at center, color-mix(in srgb, var(--accent) 40%, transparent) 1.3px, transparent 1.7px),
-    linear-gradient(var(--bg), var(--bg));
-  background-size: 30.7px 30.7px, 100% 100%;
-  -webkit-mask-image: radial-gradient(circle, var(--text) 52%, transparent 76%);
-  mask-image: radial-gradient(circle, var(--text) 52%, transparent 76%);
+  -webkit-backdrop-filter: blur(1.3px) saturate(1.3) contrast(1.06);
+  backdrop-filter: blur(1.3px) saturate(1.3) contrast(1.06);
+  -webkit-mask-image: radial-gradient(circle, var(--text) 42%, transparent 72%);
+  mask-image: radial-gradient(circle, var(--text) 42%, transparent 72%);
 }
 
-.dgm-svg.is-live.is-floor + .fl-warplens { animation: fl-warp 33.6s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
+.dgm-svg.is-live.is-floor + .fl-warplens { animation: fl-warp 16.8s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
 
 @keyframes fl-warp {
   0%, 8% { left: 17.09%; top: 28.32%; opacity: 0; }
@@ -14113,19 +14107,19 @@ html.is-hidden .clinic-node i,
 .fl-escort,
 .fl-haul { opacity: 0; }
 
-.dgm-svg.is-live.is-floor .fl-escort { animation: fl-escort 33.6s linear infinite; }
-.dgm-svg.is-live.is-floor .fl-haul { animation: fl-haul 33.6s linear infinite; }
+.dgm-svg.is-live.is-floor .fl-escort { animation: fl-escort 16.8s linear infinite; }
+.dgm-svg.is-live.is-floor .fl-haul { animation: fl-haul 16.8s linear infinite; }
 
 @keyframes fl-escort {
-  0%, 4.6% { opacity: 0; }
+  0%, 4.2% { opacity: 0; }
   5.8%, 15.8% { opacity: 1; }
-  16.6%, 100% { opacity: 0; }
+  17.4%, 100% { opacity: 0; }
 }
 
 @keyframes fl-haul {
-  0%, 37.6% { opacity: 0; }
+  0%, 37.2% { opacity: 0; }
   38.8%, 49.8% { opacity: 1; }
-  50.8%, 100% { opacity: 0; }
+  51.4%, 100% { opacity: 0; }
 }
 
 /* The flee: straight up, off the sheet, a beat of nerve, and back down

@@ -2198,7 +2198,7 @@ describe('The floor schematic', () => {
     // INSIDE THE WALL, because a half-transparent puck over the page's
     // dot field is the one see-through this sheet forbids.
     assert.match(css, /\.fl-claw,\s*\n\.dgm-svg\.is-live \.fl-carry \{\s*\n\s*animation: fl-fetch 5\.6s/)
-    assert.match(css, /@keyframes fl-picked \{\s*\n\s*0%, 22% \{ transform: translateY\(0px\); opacity: 1; \}\s*\n\s*30% \{ transform: translateY\(-14px\); opacity: 1; \}/)
+    assert.match(css, /@keyframes fl-picked \{\s*\n\s*0%, 22% \{ transform: translateY\(0px\); opacity: 1; \}\s*\n\s*30%, 33\.5% \{ transform: translateY\(-14px\); opacity: 1; \}/)
     assert.doesNotMatch(floor, /fl-lay[' ]/, 'the laid cell merged into the shipment')
     assert.doesNotMatch(css, /fl-laid|\.fl-lay[ ,{:]/, 'the laid cell merged into the shipment')
     const shipLegs = [...css.match(/@keyframes fl-ship \{([\s\S]*?)\n\}/)[1]
@@ -2216,8 +2216,8 @@ describe('The floor schematic', () => {
     // courier's escort drum and happens exactly once per round. The
     // document still travels in the run's own vessel: a round cell wearing
     // the protocol's violet on both plates.
-    assert.match(css, /\.fl-issue \{ animation: fl-issue 33\.6s/)
-    assert.match(css, /\.fl-dock \{ animation: fl-dock 33\.6s/)
+    assert.match(css, /\.fl-issue \{ animation: fl-issue 16.8s/)
+    assert.match(css, /\.fl-dock \{ animation: fl-dock 16.8s/)
     assert.match(css, /\.fl-blk\.is-script \.dgm-face-top \{ fill: color-mix\(in srgb, var\(--governed\)/)
     assert.match(css, /\.fl-blk\.is-script \.fl-core \{ fill: var\(--governed\); \}/)
     assert.doesNotMatch(floor, /fl-script/)
@@ -3042,14 +3042,11 @@ describe('The floor schematic', () => {
     assert.doesNotMatch(courier, /[Ss]cout/)
     assert.match(courier, /M 104\.82 74\.50[\s\S]*?M 158\.62 284\.50/)
     assert.equal((courier.match(/className="courier-shape"/g) || []).length, 2, 'the body is the two mark shapes')
-    // Plus the keyline: the SAME two paths once more, drawn under the blue
-    // at a fatter stroke, so the silhouette keeps a subtle dark rim.
-    assert.equal((courier.match(/className="courier-line"/g) || []).length, 2, 'the keyline is the same two paths under the body')
-    assert.equal((courier.match(/<path/g) || []).length, 4, 'the body is the mark - two ink paths, two blue paths, nothing else')
-    const keyline = Number(css.match(/\.courier-line \{[\s\S]*?stroke-width: (\d+);/)[1])
-    const body = Number(css.match(/\.courier-shape \{[\s\S]*?stroke-width: (\d+);/)[1])
-    assert.ok(keyline > body && keyline - body < 40, 'the keyline is a rim, not a border')
+    assert.equal((courier.match(/<path/g) || []).length, 2, 'the body is the mark - two blue paths and nothing else')
     assert.doesNotMatch(courier, /<circle|<line|<rect/, 'no face, no antenna, no dressing - the silhouette is the costume')
+    // The keyline came off too: the logo did not survive an outline.
+    assert.doesNotMatch(courier, /courier-line/)
+    assert.doesNotMatch(css, /courier-line/)
     for (const retired of ['courier-eye', 'courier-pupil', 'courier-glint', 'courier-flank', 'courier-blink', 'courier-antenna', 'courier-tip', 'courier-wink', 'courier-sway']) {
       assert.doesNotMatch(courier, new RegExp(retired), `${retired} came off the character`)
       assert.doesNotMatch(css, new RegExp(retired), `${retired} came off the character`)
@@ -3127,7 +3124,7 @@ describe('The floor schematic', () => {
     // and gives under the press; the reel base stays planted on the plate.
     assert.match(floor, /cls: 'fl-reel is-hub is-pressed'/)
     assert.doesNotMatch(floor, /cls: 'fl-reel is-pressed'/)
-    assert.match(css, /\.fl-reel\.is-pressed \{ animation: fl-press 33\.6s/)
+    assert.match(css, /\.fl-reel\.is-pressed \{ animation: fl-press 16.8s/)
     assert.match(css, /\.fl-reel\.is-hub\.is-pressed \.dgm-face-top \{ fill: var\(--tone\); \}/)
     // The set-down seat is the resolve lane's entry gate, one pitch behind
     // the first occupied seat - never on top of a standing cell - and the
@@ -3136,7 +3133,7 @@ describe('The floor schematic', () => {
     // The victory lap: one full spin on the climb home, a whole turn so
     // the seam is invisible, on its own wrapper so the jelly survives it.
     assert.match(courier, /className="courier-whirl"/)
-    assert.match(css, /\.dgm-svg\.is-live\.is-floor \.courier-whirl \{ animation: courier-whirl 33\.6s/)
+    assert.match(css, /\.dgm-svg\.is-live\.is-floor \.courier-whirl \{ animation: courier-whirl 16.8s/)
     assert.match(css, /@keyframes courier-whirl \{\s*\n\s*0%, [\d.]+% \{ transform: rotate\(0deg\); \}\s*\n\s*[\d.]+%, 100% \{ transform: rotate\(360deg\); \}/)
     // Startled, the courier drops the parcel: the wrappers fade whatever
     // the cargo clocks say, anywhere on the round.
@@ -3149,9 +3146,13 @@ describe('The floor schematic', () => {
     // Its stops are the patrol's anchors divided onto the frame width,
     // derived here to the same hundredth.
     assert.match(floor, /<div className="fl-warplens" aria-hidden="true" \/>/)
-    assert.match(css, /\.dgm-svg\.is-live\.is-floor \+ \.fl-warplens \{ animation: fl-warp 33\.6s/)
+    assert.match(css, /\.dgm-svg\.is-live\.is-floor \+ \.fl-warplens \{ animation: fl-warp 16.8s/)
     assert.match(css, /\.dgm-frame > \.dgm-svg \{ position: relative; z-index: 1; \}/)
-    assert.match(css, /\.fl-warplens \{[\s\S]*?radial-gradient\(circle at center, color-mix\(in srgb, var\(--accent\) 40%/)
+    // The lens paints NOTHING: it is a pure backdrop filter over the real
+    // field, so the actual dots smear and swell under the flight and no
+    // printed disc or halo ever appears.
+    assert.match(css, /\.fl-warplens \{[\s\S]*?backdrop-filter: blur\(/)
+    assert.doesNotMatch(css.match(/\.fl-warplens \{[\s\S]*?\n\}/)[0], /background-image/)
     const warp = css.match(/@keyframes fl-warp \{([\s\S]*?)\n\}/)[1]
     assert.doesNotMatch(warp, /transform/, 'the lens travels by left and top, never a transform the axis walk would misread')
     for (const k of [0, 2, 4]) {
@@ -3163,7 +3164,7 @@ describe('The floor schematic', () => {
     // THE SHADOW SITS ON THE FLOOR IT SHADES: the groundwrap steps to each
     // stop's own ground line, derived from the same anchors as the stops
     // (ground = CY + (px+py)*ISO_Y, ellipse drawn at 170).
-    assert.match(css, /\.dgm-svg\.is-live\.is-floor \.fl-groundwrap \{ animation: fl-footing 33\.6s cubic-bezier\(0\.45, 0, 0\.25, 1\) infinite; \}/)
+    assert.match(css, /\.dgm-svg\.is-live\.is-floor \.fl-groundwrap \{ animation: fl-footing 16.8s cubic-bezier\(0\.45, 0, 0\.25, 1\) infinite; \}/)
     const footing = css.match(/@keyframes fl-footing \{([\s\S]*?)\n\}/)[1]
     for (let k = 0; k < 5; k += 1) {
       const seat = Math.round(((calls[k * 2] + calls[k * 2 + 1]) * 0.34 + 8) * 100) / 100
