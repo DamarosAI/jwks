@@ -13351,9 +13351,9 @@ html.is-hidden .clinic-node i,
   14%, 22% { transform: translate(0px, 0px) translateY(8px); }
   30% { transform: translate(0px, 0px) translateY(0px); }
   44%, 52% { transform: translate(48.5px, 19.04px) translateY(0px); }
-  62%, 68% { transform: translate(48.5px, 19.04px) translateY(14px); }
-  76% { transform: translate(48.5px, 19.04px) translateY(0px); }
-  92%, 100% { transform: translate(0px, 0px) translateY(0px); }
+  66%, 72% { transform: translate(48.5px, 19.04px) translateY(14px); }
+  80% { transform: translate(48.5px, 19.04px) translateY(0px); }
+  94%, 100% { transform: translate(0px, 0px) translateY(0px); }
 }
 
 /* THE PICKUP IS REAL. The carried cell used to fade in at grip height while
@@ -13365,8 +13365,8 @@ html.is-hidden .clinic-node i,
    it. A reader sees the claw close, lift, and come up holding. */
 @keyframes fl-borne {
   0%, 30% { opacity: 0; }
-  34%, 64% { opacity: 1; }
-  68%, 100% { opacity: 0; }
+  34%, 66% { opacity: 1; }
+  70%, 100% { opacity: 0; }
 }
 
 .dgm-svg.is-live.is-fused .fl-pick { animation: fl-picked 5.6s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
@@ -13379,20 +13379,16 @@ html.is-hidden .clinic-node i,
   96%, 100% { transform: translateY(0px); opacity: 1; }
 }
 
-/* THE PUTDOWN LANDS, THEN TRAVELS. The socket cell appears at floor level
-   exactly under the lowered jaws - no drop-in from four pixels up, the
-   crossfade IS the release - rests while the claw lifts away, then slides
-   the printed lane to the staging seat and fades exactly as the shipment
-   cell fades in on that seat: the "new" cell at staging is visibly the one
-   the claw just placed. */
-.dgm-svg.is-live.is-fused .fl-lay { animation: fl-laid 5.6s cubic-bezier(0.3, 0, 0.2, 1) infinite; }
-
-@keyframes fl-laid {
-  0%, 64% { transform: translate(0px, 0px); opacity: 0; }
-  70%, 84% { transform: translate(0px, 0px); opacity: 1; }
-  94% { transform: translate(13.86px, -5.44px); opacity: 1; }
-  98%, 100% { transform: translate(13.86px, -5.44px); opacity: 0; }
-}
+/* THE PUTDOWN LANDS, TRAVELS, AND LEAVES - ONE ELEMENT. The cell appears at
+   floor level in the first socket exactly under the lowered jaws (no drop-in
+   from four pixels up: the crossfade IS the release), rests while the claw
+   lifts away, slides the printed lane to the staging seat, dwells there over
+   the cycle seam, and continues straight out through the far gate. It used
+   to be two elements handing over at the seat, and the relay showed: the
+   shipment faded up while the laid cell was still sliding in, so a reader
+   saw the subject twice on one seat. Socket, seat and gate share one plan
+   line, so the whole journey is one bearing - the jump home happens at zero
+   opacity, between the exit and the next release. */
 
 /* ── SCREENING IS THREE THROATS ──────────────────────────────────────────
 
@@ -13459,22 +13455,24 @@ html.is-hidden .clinic-node i,
   0%, 8% { transform: translate(0px, 0px); opacity: 1; }
   30% { transform: translate(25.98px, -10.2px); opacity: 1; }
   36% { transform: translate(25.98px, -10.2px); opacity: 0; }
-  86%, 88% { transform: translate(0px, 0px); opacity: 0; }
-  96%, 100% { transform: translate(0px, 0px); opacity: 1; }
+  84%, 86% { transform: translate(0px, 0px); opacity: 0; }
+  92%, 100% { transform: translate(0px, 0px); opacity: 1; }
 }
 
 /* The shunt rides the same clock: it waits out the feed's departure, slides
-   one column over, holds the seat it filled, and fades there exactly as the
-   feed cell reappears under it - while its own vacated seat is already
-   covered by the join cell that arrived at the cycle's end. */
+   one column over, and holds the seat it filled until the feed cell is
+   FULLY back over it before it fades. A SWAP NEVER CROSSES ITS FADES: two
+   coincident cells mid-fade sum below one and the seat blinks - so the
+   incomer always reaches full opacity first (invisible, over an identical
+   opaque twin) and only then does the sitter fade out beneath it. */
 .dgm-svg.is-live.is-fused .fl-shunt {
   animation: fl-shunt 5.6s cubic-bezier(0.45, 0, 0.25, 1) infinite;
 }
 
 @keyframes fl-shunt {
   0%, 32% { transform: translate(0px, 0px); opacity: 1; }
-  46%, 86% { transform: translate(19.05px, 7.48px); opacity: 1; }
-  94%, 100% { transform: translate(19.05px, 7.48px); opacity: 0; }
+  46%, 92% { transform: translate(19.05px, 7.48px); opacity: 1; }
+  98%, 100% { transform: translate(19.05px, 7.48px); opacity: 0; }
 }
 
 /* THE SWALLOW. Absent at rest - an empty pore holds nothing - it appears
@@ -13535,20 +13533,21 @@ html.is-hidden .clinic-node i,
   98%, 100% { transform: translate(0px, 0px); opacity: 1; }
 }
 
-/* THE SHIPMENT, ON SCREENING'S OWN CLOCK. Organised material leaves the bed
-   for the plate that will rule on it: the staging cell - which IS the cell
-   the claw just placed, handed up the lane by `fl-laid` - slides the -y
-   plan axis through the gate, fading as it crosses, and the cell entering
-   Screening's back gate two beats later is on the same 5.6s period. One
-   subject, one period, neither plate reaching across the seam. */
+/* THE SHIPMENT, SOCKET TO SEAT TO GATE. The element is drawn at the first
+   socket; the seat leg is sixteen plan units of -y (13.86, -5.44) and the
+   exit runs on to forty-four (38.1, -14.96), all one straight lane. It is
+   gone through the gate by 62, well before Screening's join arrives at 84
+   on the same 5.6s period - one subject, one period, neither plate reaching
+   across the seam. */
 .dgm-svg.is-live.is-fused .fl-ship { animation: fl-ship 5.6s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
 
 @keyframes fl-ship {
-  0%, 46% { transform: translate(0px, 0px); opacity: 1; }
-  60% { transform: translate(8.66px, -3.4px); opacity: 1; }
-  72% { transform: translate(24.25px, -9.52px); opacity: 0; }
-  84% { transform: translate(0px, 0px); opacity: 0; }
-  92%, 100% { transform: translate(0px, 0px); opacity: 1; }
+  0%, 40% { transform: translate(13.86px, -5.44px); opacity: 1; }
+  52% { transform: translate(22.52px, -8.84px); opacity: 1; }
+  62% { transform: translate(38.1px, -14.96px); opacity: 0; }
+  64%, 68% { transform: translate(0px, 0px); opacity: 0; }
+  72%, 84% { transform: translate(0px, 0px); opacity: 1; }
+  94%, 100% { transform: translate(13.86px, -5.44px); opacity: 1; }
 }
 
 /* The join hands its seat to the shunt early: the shunt cell is drawn on the
@@ -13582,8 +13581,33 @@ html.is-hidden .clinic-node i,
   0%, 38% { transform: translate(0px, 0px); opacity: 1; }
   54% { opacity: 1; }
   66% { transform: translate(36.37px, -14.28px); opacity: 0; }
-  84% { transform: translate(0px, 0px); opacity: 0; }
+  84%, 86% { transform: translate(0px, 0px); opacity: 0; }
   92%, 100% { transform: translate(0px, 0px); opacity: 1; }
+}
+
+/* THE BAY IS RESTOCKED BY THE ORGANELLE, NOT BY A FADE. The next amber cell
+   BUDS off the Golgi's flank - the printed vesicles already leaving the
+   stack say this is how the organelle works - swells to size on the lane,
+   and slides forty plan units down to the bay while the previous hold is
+   mid-send: dispatch drawn as secretion, the one arrival grammar that
+   belongs to a sorting body. It runs the handoff's own 4.8s period, reaches
+   the bay while the seat cell is still absent, holds opaque over the seat
+   cell's return, and fades above it - the same covered swap as the bed's.
+   Absent at rest: a bud that has not been ruled yet is not on the sheet. */
+.fl-bud {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: 50% 72%;
+}
+
+.dgm-svg.is-live.is-fused .fl-bud { animation: fl-bud 4.8s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
+
+@keyframes fl-bud {
+  0%, 44% { transform: translate(0px, 0px) scale(0.25); opacity: 0; }
+  48% { transform: translate(0px, 0px) scale(0.25); opacity: 1; }
+  58%, 64% { transform: translate(0px, 0px) scale(1); opacity: 1; }
+  86%, 94% { transform: translate(34.64px, -13.6px) scale(1); opacity: 1; }
+  100% { transform: translate(34.64px, -13.6px) scale(1); opacity: 0; }
 }
 
 /* ── RESOLVE IS A HORIZONTAL RAM ─────────────────────────────────────────
@@ -13867,10 +13891,10 @@ html.is-hidden .clinic-node i,
   .fl-claw,
   .fl-carry,
   .fl-pick,
-  .fl-lay,
   .fl-throat,
   .fl-faller,
   .fl-shunt,
+  .fl-bud,
   .fl-sunk,
   .fl-ship,
   .fl-join,
@@ -13894,13 +13918,13 @@ html.is-hidden .clinic-node i,
   .fl-readpill { animation: none; transition: none; }
 
   /* The parts whose resting value is nothing are the ones a still frame has
-     to be given by hand: the decision has been made, the line has indexed,
-     and the claw has set its cell down. The faller and the handoff rest
-     visible on their own, and what the claw is carrying stays absent,
-     because a still claw is a claw holding nothing. */
+     to be given by hand: the decision has been made and the line has
+     indexed. The shipment, the faller and the handoff rest visible on their
+     own seats; what the claw is carrying stays absent, because a still claw
+     is a claw holding nothing - and so does the bud, because a hold that
+     has not been ruled is not on the sheet. */
   .fl-pushed,
-  .fl-feed,
-  .fl-lay { opacity: 1; transform: none; }
+  .fl-feed { opacity: 1; transform: none; }
 }
 
 /* ────────────────────────────────────────────────────────────────────────────

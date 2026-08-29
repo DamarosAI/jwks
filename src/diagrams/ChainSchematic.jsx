@@ -205,12 +205,20 @@ const DISH = { hx: 76.5, hy: 50, r: 18, t: 5, h: 7 }
    wears a verdict, because only there has one been given.
 
    Every gap is written in the wall's own plan units, on the straight run of
-   its edge - the corner arcs are never cut. */
+   its edge - the corner arcs are never cut.
+
+   A GATE CLEARS ITS CARGO'S DRAWN SILHOUETTE, NOT ITS PLAN RADIUS. A plan
+   circle of radius r projects to an ellipse rx = r * sqrt(2) * ISO_X - a
+   seven-unit cell is seventeen pixels wide on screen - while a gap of span s
+   opens s * ISO_X pixels. Eighteen units of gap is fifteen and a half pixels
+   of opening: slivers of every crossing cell painted over both jambs for the
+   whole crossing, which reads as the cargo showing THROUGH the wall. Every
+   cargo gate runs twenty-four units now, centred on its lane. */
 const GATES = {
-  protocol: { far: [33, 51] },
-  evidence: { back: [9, 27], far: [-5, 13] },
-  screening: { back: [-7, 11], far: [31, 49] },
-  resolve: { back: [-7, 11], front: [14, 42] },
+  protocol: { far: [30, 54] },
+  evidence: { back: [6, 30], far: [-8, 16] },
+  screening: { back: [-10, 14], far: [28, 52] },
+  resolve: { back: [-10, 14], front: [14, 42] },
 }
 
 const r1 = (v) => Math.round(v * 100) / 100
@@ -688,13 +696,11 @@ function mechanism(key, t) {
         // where a claw can reach.
         { ...cell(-52, -20, null, 5), cls: 'fl-blk fl-pick' },
         ...slot.slice(1).map(([px, py], i) => cell(px, py, null, 5, 0, { turn: i })),
-        // The slot it fills - and the slot is a WAYPOINT, not a terminus.
-        // Empty until the claw sets the carried cell down INTO it (the
-        // crossfade happens at floor level, under the open jaws), it holds
-        // the cell for a beat and then sends it up the printed lane to the
-        // staging seat, where the shipment cycle takes over. One subject:
-        // picked, placed, staged, shipped.
-        { ...cell(slot[0][0], slot[0][1], null, 5), cls: 'fl-blk fl-lay' },
+        // The first socket is a WAYPOINT, not a terminus - and the cell that
+        // lands in it is the fl-ship element below, one drawing for the whole
+        // journey. Two elements used to split it at the staging seat, and the
+        // relay showed: the shipment faded up on the seat while the laid cell
+        // was still sliding toward it, so a reader saw the subject twice.
         // THE CARRIAGE. Two jaws hanging off a head, and a cell held between
         // them. All three ride one clock, so the cell travels because the claw
         // is carrying it rather than beside it.
@@ -705,16 +711,16 @@ function mechanism(key, t) {
         // the apron by the pile until the work consumes it and the next one
         // arrives.
         { ...cell(-65, 18, null, 5), cls: 'fl-blk is-script fl-dock' },
-        // THE SHIPMENT. Organised material does not pile up on the bed - it
-        // goes on to be screened. The staging seat sits between the bed and
-        // the far wall on the same printed lane the first socket feeds: the
-        // laid cell slides up to it late in the cycle, and this is the cell
-        // that ships through the gate on the next beat - so departure is the
-        // continuation of the putdown, not an apparition at the wall. At its
-        // own honest depth: the staging seat is FARTHER than the bed's first
-        // socket, and a cell drawn at OVER painted over the nearer socket's
-        // cell - and over the near gate pylon it should pass behind.
-        { ...cell(4, -36, null, 5), cls: 'fl-blk fl-ship' },
+        // THE SHIPMENT, END TO END IN ONE ELEMENT. Organised material does
+        // not pile up on the bed - it goes on to be screened - and the whole
+        // leg is one cell now: it appears in the first socket at floor level
+        // under the lowered jaws (the crossfade IS the release), slides the
+        // printed lane to the staging seat, dwells there through the cycle
+        // seam, and continues straight out through the gate - socket, seat
+        // and gate all on one plan line, one bearing, one drawing. Splitting
+        // it into a laid cell and a shipping cell put two pucks on the seat
+        // at once. Drawn at the socket, its own honest depth.
+        { ...cell(slot[0][0], slot[0][1], null, 5), cls: 'fl-blk fl-ship' },
         { ...stand(-52, -30, 3, 8, 10, 3, 14), cls: 'fl-claw is-jaw', depth: OVER },
         { ...stand(-52, -10, 3, 8, 10, 3, 14), cls: 'fl-claw is-jaw', depth: OVER + 2 },
         // The motor's head is round - the one part of the carriage that is
@@ -756,10 +762,11 @@ function mechanism(key, t) {
           // printed before anything travels it - the same convention as
           // every other travel on the sheet.
           <line className="fl-ruled" key="feed" x1="-40" y1="-2" x2="-40" y2="-12" />,
-          // THE AMBER LANE. From the hold bay straight through the gate in
-          // the far wall, printed before anything travels it.
+          // THE AMBER LANE. From the Golgi's own flank - where the hold cell
+          // buds off - past the bay and straight through the gate in the far
+          // wall, printed before anything travels it.
           <rect key="bay" x="28" y="-46" width="24" height="38" rx="10" />,
-          <line className="fl-ruled" key="lane" x1="40" y1="-10" x2="40" y2="-52" />,
+          <line className="fl-ruled" key="lane" x1="40" y1="20" x2="40" y2="-52" />,
         ]),
         // THE GOLGI STACK. The organelle whose whole job is sorting and
         // dispatch stands between the bed and the verdict line, in the
@@ -768,6 +775,15 @@ function mechanism(key, t) {
         { ...drum(26, 24, 16, 2.5), cls: 'fl-golgi' },
         { ...drum(26, 24, 12.5, 2.5, 2.5), cls: 'fl-golgi' },
         { ...drum(26, 24, 9, 2.5, 5), cls: 'fl-golgi' },
+        // THE BUD. The amber cell does not appear at the bay - it is
+        // DISPATCHED: it buds off the Golgi's flank, exactly the way the
+        // printed vesicles already leaving the stack say this organelle
+        // works, swells to size on the lane the print runs from the stack to
+        // the gate, and slides down to the bay while the previous hold is
+        // mid-send. The one plate whose machine is a sorting organelle gets
+        // the one arrival drawn as secretion - no claw, no ram, its own
+        // grammar. It buds already amber: dispatch IS the ruling.
+        { ...cell(40, 24, 'hold', 5), cls: 'fl-blk is-hold fl-bud' },
         // THE BED FEEDS THE GREEN PORE AS A LINE, NOT AS AN APPARITION.
         // One 5.6s clock - the period the shipment arrives on - moves one
         // subject one seat per beat: the cell on the pore's own column
@@ -1139,7 +1155,7 @@ export default function ChainSchematic({ animate = true }) {
           className={`dgm-svg is-floor${animate ? ' is-live' : ''}${fused ? ' is-fused' : ''}`}
           viewBox={`0 0 ${W} ${H}`}
           role="img"
-          aria-label="Thirty surfaces scattered in the air, seen in axonometric projection. As the reader reaches the figure they draw together and set down flush, six at a time, into five plates in a row, and stay there - each plate bounded by its own printed double-walled membrane, the way a section drawing bounds a cell. A survey line rules under the row and letters the five stations beneath it: Protocol, Evidence, Screening, Resolve, Replay. One cell - a round body with its nucleus drawn on top - runs the whole row. A grid of twelve switches on a breaker board is thrown one at a time, each settling green or red, and the compiled protocol ships out through a gate in the plate's wall as a violet-stained cell - the transcript in the run's own vessel. It docks beside the next plate's gantry, where a claw closes on one cell in a heap, lifts it, carries it across, and sets it down into an ordered bed of round sockets; the placed cell then slides up a printed lane to a staging seat and ships onward through that plate's far gate. Along the far long edge of the next plate, three verdict seats wait in a line - green, red, amber. The bed feeds the green pore as a moving line: one cell slides onto the mouth and is visibly swallowed down the bore while the seat behind it shuffles forward and the newly arrived cell takes the empty place; the red pore stands open and ringed; the amber seat is a gate cut through the plate's wall, its pylons stained amber, and the unsettled cell is sent through it in one motion. On the plate beyond it enters a matching gate at the back of the lane, on the same clock it left on. There a hand throws a lever, a horizontal ram crosses the lane and pushes one cell clean off the edge through the one gap in the membrane, and the line indexes forward as the next arrives. On the last plate the run lies as frames on a tape between two reels, and a head reads its way along and then runs back. Pointing at a plate lifts it off the ground and darkens the ground beneath it."
+          aria-label="Thirty surfaces scattered in the air, seen in axonometric projection. As the reader reaches the figure they draw together and set down flush, six at a time, into five plates in a row, and stay there - each plate bounded by its own printed double-walled membrane, the way a section drawing bounds a cell. A survey line rules under the row and letters the five stations beneath it: Protocol, Evidence, Screening, Resolve, Replay. One cell - a round body with its nucleus drawn on top - runs the whole row. A grid of twelve switches on a breaker board is thrown one at a time, each settling green or red, and the compiled protocol ships out through a gate in the plate's wall as a violet-stained cell - the transcript in the run's own vessel. It docks beside the next plate's gantry, where a claw closes on one cell in a heap, lifts it, carries it across, and sets it down into an ordered bed of round sockets; the placed cell then slides up a printed lane to a staging seat, waits its beat, and continues straight out through that plate's far gate - one cell, one line, socket to seat to gate. Along the far long edge of the next plate, three verdict seats wait in a line - green, red, amber. The bed feeds the green pore as a moving line: one cell slides onto the mouth and is visibly swallowed down the bore while the seat behind it shuffles forward and the newly arrived cell takes the empty place; the red pore stands open and ringed; the amber seat is a gate cut through the plate's wall, its pylons stained amber, and the unsettled cell is sent through it in one motion - while the next amber cell buds off the plate's Golgi stack, swells on the printed lane, and slides down to take the bay. On the plate beyond it enters a matching gate at the back of the lane, on the same clock it left on. There a hand throws a lever, a horizontal ram crosses the lane and pushes one cell clean off the edge through the one gap in the membrane, and the line indexes forward as the next arrives. On the last plate the run lies as frames on a tape between two reels, and a head reads its way along and then runs back. Pointing at a plate lifts it off the ground and darkens the ground beneath it."
         >
           <defs>
             <pattern id="fl-grain" width="13" height="13" patternUnits="userSpaceOnUse">

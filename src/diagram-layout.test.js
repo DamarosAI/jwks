@@ -2056,8 +2056,8 @@ describe('The floor schematic', () => {
     // three throats, a ram across a lane, a tape transport.
     const own = {
       protocol: ['fl-board', 'fl-toggle', 'fl-seat', 'fl-issue'],
-      evidence: ['fl-rig', 'fl-claw', 'fl-carry', 'fl-pick', 'fl-lay', 'fl-ship', 'fl-dock'],
-      screening: ['fl-hole', 'fl-throat', 'fl-faller', 'fl-shunt', 'fl-sunk', 'fl-join', 'fl-golgi', 'fl-handoff'],
+      evidence: ['fl-rig', 'fl-claw', 'fl-carry', 'fl-pick', 'fl-ship', 'fl-dock'],
+      screening: ['fl-hole', 'fl-throat', 'fl-faller', 'fl-shunt', 'fl-sunk', 'fl-join', 'fl-golgi', 'fl-bud', 'fl-handoff'],
       resolve: ['fl-ram', 'fl-pivot', 'fl-lever', 'fl-index', 'fl-feed', 'fl-pushed'],
       replay: ['fl-tape', 'fl-reel', 'fl-head', 'fl-frame', 'fl-spin'],
     }
@@ -2170,28 +2170,68 @@ describe('The floor schematic', () => {
     // plate carries unruled material and keeps the station's ink.
     assert.match(css, /\.fl-step\.is-screening \.fl-pylon-wall\.is-far \{ fill: var\(--hold\); \}/)
     assert.doesNotMatch(css, /\.fl-step\.is-screening \.fl-pylon-wall \{/)
+    // THE BAY IS RESTOCKED BY THE ORGANELLE. The next amber cell BUDS off
+    // the Golgi's flank on the lane's own plan x - the printed vesicles
+    // leaving the stack already say this is how the organelle works - swells
+    // to size, and slides down the printed lane to the bay: dispatch drawn
+    // as secretion, the one arrival grammar that belongs to a sorting body,
+    // instead of a cell fading up on an empty seat. It runs the handoff's
+    // own period, and its slide is exactly flank-to-bay, re-derived here.
+    assert.match(floor, /cell\(40, 24, 'hold', 5\), cls: 'fl-blk is-hold fl-bud'/)
+    assert.match(css, /\.fl-bud \{\s*\n\s*opacity: 0;/)
+    assert.equal(css.match(/animation: fl-bud ([\d.]+)s/)[1], css.match(/animation: fl-handoff ([\d.]+)s/)[1],
+      'the bud must run the period of the handoff it restocks')
+    const budSeat = floor.match(/cell\((\d+), (\d+), 'hold', 5\), cls: 'fl-blk is-hold fl-bud'/).slice(1).map(Number)
+    const baySeat = floor.match(/cell\((\d+), (-\d+), 'hold', 5\), cls: 'fl-blk is-hold fl-handoff'/).slice(1).map(Number)
+    assert.equal(budSeat[0], baySeat[0], 'the bud must grow on the amber lane it will travel')
+    const budRun = budSeat[1] - baySeat[1]
+    const budTravel = css.match(/@keyframes fl-bud \{[\s\S]*?translate\(([\d.]+)px, (-[\d.]+)px\)/).slice(1).map(Number)
+    assert.ok(Math.abs(budTravel[0] - budRun * 0.866) < 0.05 && Math.abs(budTravel[1] + budRun * 0.34) < 0.05,
+      'the bud must slide exactly from the Golgi flank to the bay')
+    // A SWAP NEVER CROSSES ITS FADES. Two coincident cells mid-fade sum
+    // below one and the seat blinks - so at both covered swaps the incomer
+    // reaches full opacity (invisible, over or under an identical opaque
+    // twin) BEFORE the sitter starts to fade. Held to the keyframes' own
+    // numbers: the feed is back before the shunt fades, the handoff is back
+    // before the bud fades.
+    const fullBy = (name) => Number(css.match(new RegExp(`@keyframes ${name} \\{[\\s\\S]*?(\\d+)%, 100% \\{ transform: translate\\(0px, 0px\\)[^}]*opacity: 1`))[1])
+    assert.ok(fullBy('fl-drop') <= Number(css.match(/@keyframes fl-shunt \{[\s\S]*?\d+%, (\d+)% \{ transform: translate\(19\.05px, 7\.48px\); opacity: 1/)[1]),
+      'the feed must be fully back before the shunt fades under it')
+    assert.ok(fullBy('fl-handoff') <= Number(css.match(/@keyframes fl-bud \{[\s\S]*?\d+%, (\d+)% \{ transform: translate\(34\.64px, -13\.6px\) scale\(1\); opacity: 1/)[1]),
+      'the handoff must be fully back before the bud fades over it')
 
     // THE ROW IS PLUMBED BY GATES, one handoff per seam. Evidence ships its
     // organised material out through its far gate and Screening's join cell
-    // slides in through the entry gate on the same 5.6s period, gone at 72
+    // slides in through the entry gate on the same 5.6s period, gone at 62
     // before the join arrives at 84 - the same one-subject chain the amber
     // handoff runs into Resolve at 4.8s.
     assert.match(floor, /cls: 'fl-blk fl-ship'/)
     assert.match(floor, /cls: 'fl-blk fl-join'/)
     assert.match(css, /\.fl-ship \{ animation: fl-ship 5\.6s/)
     assert.match(css, /\.fl-join \{ animation: fl-join 5\.6s/)
-    // EVIDENCE RUNS END TO END ON ONE CLOCK NOW. The claw keeps the
-    // shipment's 5.6s period, so the subject is one cell across the whole
-    // plate: the pile cell RISES with the claw before the carried cell takes
-    // over (a crossfade at grip height inside the closed jaws, not a
-    // teleport), is set down INTO the first socket at floor level, slides up
-    // the printed lane to the staging seat, and ships on the next beat. The
-    // laid cell's travel is exactly socket-to-seat, re-derived here.
+    // EVIDENCE RUNS END TO END ON ONE CLOCK, AND THE OUTBOUND LEG IS ONE
+    // ELEMENT. The claw keeps the shipment's 5.6s period, the pile cell
+    // RISES with the claw before the carried cell takes over (a crossfade at
+    // grip height inside the closed jaws, not a teleport) - and from the
+    // release down, the subject is a single drawing: it appears in the first
+    // socket at floor level, slides the printed lane to the staging seat,
+    // dwells over the cycle seam, and continues straight out the gate. Two
+    // elements used to hand over at the seat, and the shipment faded up
+    // while the laid cell was still sliding in - the subject seen twice.
+    // Both legs are re-derived from the seats' own numbers: sixteen units
+    // socket-to-seat, forty-four socket-to-gone.
     assert.match(css, /\.fl-claw,\s*\n\.dgm-svg\.is-live\.is-fused \.fl-carry \{\s*\n\s*animation: fl-fetch 5\.6s/)
     assert.match(css, /@keyframes fl-picked \{\s*\n\s*0%, 22% \{ transform: translateY\(0px\); opacity: 1; \}\s*\n\s*30% \{ transform: translateY\(-14px\); opacity: 1; \}/)
-    const laidTravel = css.match(/@keyframes fl-laid \{[\s\S]*?translate\(([\d.]+)px, (-[\d.]+)px\)/).slice(1).map(Number)
-    assert.ok(Math.abs(laidTravel[0] - 16 * 0.866) < 0.05 && Math.abs(laidTravel[1] + 16 * 0.34) < 0.05,
-      'the laid cell must slide exactly from its socket at (4,-20) to the staging seat at (4,-36)')
+    assert.doesNotMatch(floor, /fl-lay[' ]/, 'the laid cell merged into the shipment')
+    assert.doesNotMatch(css, /fl-laid|\.fl-lay[ ,{:]/, 'the laid cell merged into the shipment')
+    const shipLegs = [...css.match(/@keyframes fl-ship \{([\s\S]*?)\n\}/)[1]
+      .matchAll(/translate\(([\d.]+)px, (-[\d.]+)px\)/g)].map((m) => [Number(m[1]), Number(m[2])])
+    const seatLeg = shipLegs[0]
+    const goneLeg = shipLegs.reduce((a, b) => (b[0] > a[0] ? b : a))
+    assert.ok(Math.abs(seatLeg[0] - 16 * 0.866) < 0.05 && Math.abs(seatLeg[1] + 16 * 0.34) < 0.05,
+      'the shipment must open at the staging seat, sixteen units up the lane from its socket')
+    assert.ok(Math.abs(goneLeg[0] - 44 * 0.866) < 0.05 && Math.abs(goneLeg[1] + 44 * 0.34) < 0.05,
+      'the shipment must leave to forty-four units, through the gate and off the sheet')
     // Protocol ships its transcript on EVIDENCE'S clock - the claw's own,
     // which is now the shipment's too - and the document crosses in the
     // run's own vessel: a round cell wearing the protocol's violet on both
@@ -2207,7 +2247,7 @@ describe('The floor schematic', () => {
     assert.ok(Number(issued.match(/(\d+)% \{ transform: translate\(22\.52px, -8\.84px\); opacity: 0/)[1]) <= 84,
       'the transcript has to be gone before it docks next door')
     const shipped = css.match(/@keyframes fl-ship \{([\s\S]*?)\n\}/)[1]
-    assert.ok(Number(shipped.match(/(\d+)% \{ transform: translate\(24\.25px, -9\.52px\); opacity: 0/)[1]) <= 84,
+    assert.ok(Number(shipped.match(/(\d+)% \{ transform: translate\(38\.1px, -14\.96px\); opacity: 0/)[1]) <= 84,
       'the shipment has to be gone before the join arrives')
     // The verdict lives on the collar now - a machined ring around a quiet
     // bore, the way Trident's intake wears its own - not a bowl of paint.
@@ -2400,9 +2440,22 @@ describe('The floor schematic', () => {
     assert.match(floor, /cell\(-65, 18, null, 5\), cls: 'fl-blk is-script fl-dock'/)
     assert.ok(gates[0] <= 42 - 7 && gates[1] >= 42 + 7, 'the export gate has to clear the transcript lane')
     assert.ok(gates[2] <= 18 - 7 && gates[3] >= 18 + 7, 'the dock gate has to clear where the transcript rests')
-    const shipSeat = floor.match(/cell\(4, -36, null, 5\), cls: 'fl-blk fl-ship'/)
-    assert.ok(shipSeat, 'the shipment stages somewhere real')
+    const shipSeat = floor.match(/cell\(slot\[0\]\[0\], slot\[0\]\[1\], null, 5\), cls: 'fl-blk fl-ship'/)
+    assert.ok(shipSeat, 'the shipment starts in a real socket')
     assert.ok(gates[4] <= 4 - 7 && gates[5] >= 4 + 7, 'the far gate has to clear the shipment lane')
+    // AND A GATE CLEARS ITS CARGO'S DRAWN SILHOUETTE, NOT ITS PLAN RADIUS.
+    // A plan circle of radius r projects to an ellipse rx = r * sqrt(2) *
+    // ISO_X, while a gap of span s opens s * ISO_X of screen: an
+    // eighteen-unit gap is narrower than the seventeen-pixel cell crossing
+    // it, and the overhang painted slivers of every traveller over both
+    // jambs - cargo showing THROUGH the wall. Derived from the same radius
+    // the cells are built with, plus a pixel of daylight a side.
+    const cellFace = 7 * Math.SQRT2 * 0.866
+    for (const [lo, hi] of [[gates[0], gates[1]], [gates[2], gates[3]], [gates[4], gates[5]],
+      [gates[6], gates[7]], [gates[8], gates[9]], [gates[10], gates[11]]]) {
+      assert.ok(((hi - lo) / 2) * 0.866 >= cellFace + 1,
+        `a ${hi - lo}-unit gate is narrower than the cell that crosses it`)
+    }
     // AND ONLY THE VIEWER-FACING CUT IS DRAWN. A cut face's normal points
     // into its gap; on every edge one flank faces the viewer and one faces
     // away, and painting the away-facing one breaks the projection at the
@@ -2669,14 +2722,14 @@ describe('The floor schematic', () => {
         assert.match(frames['100%'], /opacity: 1/, 'the block replacing the one pushed off has to be there by the seam')
         continue
       }
-      // A RELAY LEG ENDS WHERE THE NEXT LEG BEGINS. The laid cell and the
-      // bed shunt finish their cycles AWAY from home - at the seat the next
+      // A RELAY LEG ENDS WHERE THE NEXT LEG BEGINS. The bed shunt and the
+      // Golgi bud finish their cycles AWAY from home - at the seat the next
       // clock takes over from - and both seats are covered at the seam by
-      // the cells drawn there (the shipment reappearing at staging, the join
-      // resting on the entry seat), so the loop's jump happens between
+      // the cells drawn there (the faller back on the feed seat, the
+      // handoff back at the bay), so the loop's jump happens between
       // frames in which the traveller cannot be seen. The walk holds them to
       // exactly that: invisible at the seam, or they restart in plain sight.
-      if (name === 'fl-laid' || name === 'fl-shunt') {
+      if (name === 'fl-shunt' || name === 'fl-bud') {
         assert.match(frames['100%'], /opacity: 0/, `${name} must be gone at the seam it hands over on`)
         continue
       }
@@ -2689,7 +2742,7 @@ describe('The floor schematic', () => {
     // allowed to reach zero opacity are the blocks that are genuinely absent
     // for part of the cycle: one in flight from the catapult, and one being
     // pushed off the line. Everything standing on a plate stays standing.
-    const vanish = ['fl-handoff', 'fl-swallow', 'fl-ship', 'fl-join', 'fl-issue', 'fl-dock', 'fl-shove', 'fl-drop', 'fl-shunt', 'fl-borne', 'fl-picked', 'fl-laid', 'fl-arrive']
+    const vanish = ['fl-handoff', 'fl-swallow', 'fl-ship', 'fl-join', 'fl-issue', 'fl-dock', 'fl-shove', 'fl-drop', 'fl-shunt', 'fl-borne', 'fl-picked', 'fl-bud', 'fl-arrive']
     for (const [, name, body] of css.matchAll(/@keyframes (fl-[a-z]+) \{([\s\S]*?)\n\}/g)) {
       if (vanish.includes(name)) continue
       assert.doesNotMatch(body, /opacity: 0[;\s]/, `${name} blinks something out and back`)
