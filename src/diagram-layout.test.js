@@ -2171,8 +2171,8 @@ describe('The floor schematic', () => {
     assert.match(css, /\.fl-step\.is-screening \.fl-pylon-wall\.is-far \{ fill: var\(--hold\); \}/)
     assert.doesNotMatch(css, /\.fl-step\.is-screening \.fl-pylon-wall \{/)
     // THE BAY IS RESTOCKED BY THE ORGANELLE. The next amber cell BUDS off
-    // the Golgi's flank on the lane's own plan x - the printed vesicles
-    // leaving the stack already say this is how the organelle works - swells
+    // the cisternae rims on the lane's own plan x - the vesicle trail
+    // leaving the sacs already says this is how the organelle works - swells
     // to size, and slides down the printed lane to the bay: dispatch drawn
     // as secretion, the one arrival grammar that belongs to a sorting body,
     // instead of a cell fading up on an empty seat. It runs the handoff's
@@ -2539,7 +2539,29 @@ describe('The floor schematic', () => {
     assert.match(floor, /\.\.\.stand\(0, 0, 44, 36, 3, 26\), cls: 'fl-board'/)
     assert.match(floor, /className="fl-thread"/)
     assert.match(floor, /className="fl-porering"/)
-    assert.equal((floor.match(/fl-golgi/g) || []).length, 3, 'a Golgi stack is three discs')
+    // THE GOLGI IS A STACK OF CISTERNAE, NOT A TIERED CAKE. Concentric
+    // discs read as a podium, and a podium is furniture. The sorter's body
+    // is at least four flattened sacs - capsule plans, long in one axis,
+    // rims fully round - staggered off one plumb line, with a printed
+    // trail of vesicles thinning toward the verdict line (printed by the
+    // sheet's own size law: a solid under seventeen pixels is a mark), and
+    // a rim reaching the lane the amber bud grows on, so the bud pinches
+    // off the body rather than hovering beside it. All derived from the
+    // calls the parts are built with.
+    const cisternae = [...floor.matchAll(/stand\((-?[\d.]+), (-?[\d.]+), ([\d.]+), ([\d.]+), [\d.]+, ([\d.]+)(?:, [\d.]+)?\), cls: 'fl-golgi' \}/g)]
+      .map((m) => m.slice(1).map(Number))
+    assert.ok(cisternae.length >= 4, 'a Golgi is a stack of at least four cisternae')
+    for (const [, , chx, chy, cr] of cisternae) {
+      assert.ok(chx >= 2 * chy, 'a cisterna is a flattened sac, long in one plan axis')
+      assert.equal(cr, chy, 'a cisterna ends in its own round rim, not a corner')
+    }
+    assert.ok(new Set(cisternae.map(([px, py]) => `${px},${py}`)).size >= 3,
+      'the stack staggers - a plumb pile is a podium')
+    assert.ok((floor.match(/className="fl-ruled" key="v\d"/g) || []).length >= 3,
+      'the vesicle trail says the body dispatches')
+    const budLaneX = Number(floor.match(/cell\((\d+), \d+, 'hold', 5\), cls: 'fl-blk is-hold fl-bud'/)[1])
+    assert.ok(Math.max(...cisternae.map(([px, , chx]) => px + chx)) >= budLaneX,
+      'a cisterna rim must reach the lane the bud grows on')
     assert.match(floor, /\.\.\.drum\(28, -34, 7, 7\), cls: 'fl-ram is-body'/)
     assert.match(floor, /className="fl-coil"/)
     assert.doesNotMatch(floor, /const spoke = /)
@@ -2867,6 +2889,22 @@ describe('The floor schematic', () => {
     assert.match(css, /\.dgm-svg\.is-floor \{ --in: clamp\(0, calc\(\(var\(--fuse\) - 0\.86\) \/ 0\.14\), 1\); \}/)
     assert.match(css, /\.fl-name \{[\s\S]*?opacity: var\(--in\);/)
     assert.doesNotMatch(css, /@keyframes fl-label/)
+
+    // THE CAPTION HOLDS ITS GROUND. Every read the pill can show is drawn
+    // hidden in the readline's one grid cell, so the line box stands as
+    // tall as the tallest caption at ANY width and the closer under the
+    // figure never moves when the narration changes. A guessed min-height
+    // breaks at exactly the widths a guess breaks at; the reserve here is
+    // the captions themselves. On a phone the readout stacks - the pill
+    // above the prose - so the read gets the full measure, and the rule is
+    // addressed to the class the figure actually renders.
+    assert.match(floor, /\[\.\.\.STEPS\.map\(\(s\) => s\.read\), READ_REST\]\.map\(\(text\) => \(\s*\n\s*<span className="fl-readghost" aria-hidden="true" key=\{text\}>\{text\}<\/span>/)
+    assert.match(floor, /<span className="fl-readtext">\{step \? step\.read : READ_REST\}<\/span>/)
+    assert.match(css, /\.fl-readline \{[\s\S]*?display: grid;/)
+    assert.match(css, /\.fl-readline > span \{ grid-area: 1 \/ 1; \}/)
+    assert.match(css, /\.fl-readghost \{ visibility: hidden; \}/)
+    assert.match(mobile, /#root \.fl-readout \{\s*\n\s*flex-direction: column;/)
+    assert.doesNotMatch(mobile, /dgm-readout/, 'the phone rule must address the class the figure renders')
   })
 
   it('lifts a plate off the ground rather than thickening it', () => {

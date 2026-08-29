@@ -13493,10 +13493,15 @@ html.is-hidden .clinic-node i,
   100% { transform: translateY(0px); opacity: 0; }
 }
 
-/* THE GOLGI STACK. Three flattened discs, widest first - the organelle whose
-   job is sorting standing on the plate that sorts. It is a body, not a
-   mechanism, so it sits a step quieter than the pores and the arm. */
+/* THE GOLGI IS A STACK OF CISTERNAE. Four flattened sacs with round rims,
+   staggered the way the organelle actually stacks, and a thinning trail of
+   vesicle bodies leaving for the verdict line - the body whose whole job
+   is sorting and dispatch, drawn doing both. Concentric discs read as a
+   podium. It is a body, not a mechanism, so it sits a step quieter than
+   the pores and the arm; the sacs' three faces take the standard three
+   values of the station's ink. */
 .fl-golgi .dgm-face-top { fill: color-mix(in srgb, var(--tone) 30%, var(--surface-solid)); }
+.fl-golgi .dgm-face-left { fill: color-mix(in srgb, var(--tone) 44%, var(--surface-solid)); }
 .fl-golgi .dgm-face-right { fill: color-mix(in srgb, var(--tone) 58%, var(--surface-solid)); }
 
 /* THE TRANSCRIPT, ON EVIDENCE'S OWN CLOCK. Protocol ships no material - it
@@ -13586,8 +13591,8 @@ html.is-hidden .clinic-node i,
 }
 
 /* THE BAY IS RESTOCKED BY THE ORGANELLE, NOT BY A FADE. The next amber cell
-   BUDS off the Golgi's flank - the printed vesicles already leaving the
-   stack say this is how the organelle works - swells to size on the lane,
+   BUDS off the cisternae rims - the vesicle trail already leaving the
+   sacs says this is how the organelle works - swells to size on the lane,
    and slides forty plan units down to the bay while the previous hold is
    mid-send: dispatch drawn as secretion, the one arrival grammar that
    belongs to a sorting body. It runs the handoff's own 4.8s period, reaches
@@ -13859,6 +13864,11 @@ html.is-hidden .clinic-node i,
 }
 
 .fl-readline {
+  /* THE CAPTION HOLDS ITS GROUND. Every read the pill can show is stacked
+     hidden in this one grid cell, so the line box is as tall as the
+     tallest caption at whatever width the reader holds - and the closer
+     under the figure never shifts when the narration changes. */
+  display: grid;
   width: 100%;
   min-width: 0;
   color: var(--text);
@@ -13868,6 +13878,10 @@ html.is-hidden .clinic-node i,
   line-height: 1.4;
   text-wrap: pretty;
 }
+
+.fl-readline > span { grid-area: 1 / 1; }
+
+.fl-readghost { visibility: hidden; }
 
 /* ── Still, and still true ───────────────────────────────────────────────
 

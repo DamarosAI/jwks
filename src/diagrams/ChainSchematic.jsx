@@ -754,10 +754,15 @@ function mechanism(key, t) {
       return [
         printed(-800, 'fl-print', [
           <rect key="bed" x="-70" y="-6" width="64" height="40" rx="14" />,
-          // Two vesicles budding off the stack toward the verdict line,
-          // printed - sorted material leaving the organelle.
-          <circle className="fl-ruled" key="v1" cx="6" cy="4" r="3.4" />,
-          <circle className="fl-ruled" key="v2" cx="16" cy="-4" r="2.6" />,
+          // THE VESICLE TRAIL. Three rings thinning from the cisternae rims
+          // toward the verdict line - sorted material leaving the organelle.
+          // Printed, not solid, by the sheet's own size law: a body under
+          // seventeen pixels is a mark, so traffic this small draws as
+          // print, the same ink every lane on the sheet is drawn in. The
+          // bud on the amber lane is the same story told at solid size.
+          <circle className="fl-ruled" key="v1" cx="14" cy="8" r="4" />,
+          <circle className="fl-ruled" key="v2" cx="5" cy="-2" r="3.2" />,
+          <circle className="fl-ruled" key="v3" cx="-4" cy="-12" r="2.4" />,
           // THE FEED LANE. From the bed's pore column to the green mouth,
           // printed before anything travels it - the same convention as
           // every other travel on the sheet.
@@ -768,16 +773,21 @@ function mechanism(key, t) {
           <rect key="bay" x="28" y="-46" width="24" height="38" rx="10" />,
           <line className="fl-ruled" key="lane" x1="40" y1="20" x2="40" y2="-52" />,
         ]),
-        // THE GOLGI STACK. The organelle whose whole job is sorting and
-        // dispatch stands between the bed and the verdict line, in the
-        // station's own ink. The machinery of the step stays the pores and
-        // the gate - the stack is the body those mechanisms belong to.
-        { ...drum(26, 24, 16, 2.5), cls: 'fl-golgi' },
-        { ...drum(26, 24, 12.5, 2.5, 2.5), cls: 'fl-golgi' },
-        { ...drum(26, 24, 9, 2.5, 5), cls: 'fl-golgi' },
+        // THE GOLGI IS A STACK OF CISTERNAE, NOT A TIERED CAKE. Three
+        // concentric discs read as a podium, and a podium is furniture. The
+        // organelle whose whole job is sorting and dispatch is four
+        // flattened sacs - capsule plans, long axis parallel to the verdict
+        // line they feed - staggered the way the organelle actually stacks,
+        // their round rims reaching the amber lane so the bud visibly
+        // pinches off the body. Depth grows with height, so each sac paints
+        // over the one it rests on.
+        { ...stand(25, 22.5, 15.5, 5.5, 2.4, 5.5), cls: 'fl-golgi' },
+        { ...stand(26.5, 24, 17.5, 5.5, 2.4, 5.5, 2.4), cls: 'fl-golgi' },
+        { ...stand(25.5, 25.5, 16, 5.5, 2.4, 5.5, 4.8), cls: 'fl-golgi' },
+        { ...stand(27, 27, 12.5, 5.5, 2.4, 5.5, 7.2), cls: 'fl-golgi' },
         // THE BUD. The amber cell does not appear at the bay - it is
-        // DISPATCHED: it buds off the Golgi's flank, exactly the way the
-        // printed vesicles already leaving the stack say this organelle
+        // DISPATCHED: it buds off the cisternae rims, exactly the way the
+        // vesicle trail already leaving the sacs says this organelle
         // works, swells to size on the lane the print runs from the stack to
         // the gate, and slides down to the bay while the previous hold is
         // mid-send. The one plate whose machine is a sorting organelle gets
@@ -980,6 +990,10 @@ function mechanism(key, t) {
    which is a diagram of a connection rather than a connection. The datum under
    the row already says these five are one run, and it says it with one line
    instead of fourteen marks. */
+
+/* What the caption says when no station is hot - and one of the lines the
+   readout reserves room for, so it is a name, not an inline string. */
+const READ_REST = 'One protocol, executed the same way at every site, and reconstructable end to end.'
 
 const STEPS = [
   {
@@ -1451,8 +1465,17 @@ export default function ChainSchematic({ animate = true }) {
           it is where the curiosity a hover creates has somewhere to go. */}
       <figcaption className={`fl-readout${step ? ' is-hot' : ''}`} aria-live="polite">
         <span className="fl-readpill">{step ? step.label : 'FIVE STEPS'}</span>
+        {/* THE CAPTION HOLDS ITS GROUND. Every read the pill can show is
+            drawn in the same grid cell, hidden - so the line box stands as
+            tall as the tallest caption at ANY width, and the closer under
+            the figure never moves when the narration changes. Reserving a
+            guessed number of lines broke at exactly the widths a guess
+            breaks at. */}
         <span className="fl-readline">
-          {step ? step.read : 'One protocol, executed the same way at every site, and reconstructable end to end.'}
+          {[...STEPS.map((s) => s.read), READ_REST].map((text) => (
+            <span className="fl-readghost" aria-hidden="true" key={text}>{text}</span>
+          ))}
+          <span className="fl-readtext">{step ? step.read : READ_REST}</span>
         </span>
       </figcaption>
     </figure>

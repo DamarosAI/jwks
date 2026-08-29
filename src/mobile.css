@@ -329,7 +329,13 @@ body,
 
   #root .dgm-svg.is-floor { min-width: 820px; }
 
-  #root .dgm-readout {
+  /* The caption stacks on a phone - the pill above the prose, so the read
+     gets the full measure instead of the sliver beside the pill. (This rule
+     spent a while addressed to a readout class nothing renders, so phones
+     kept the desktop row and every caption wrapped differently beside the
+     pill.) The reserve that keeps the closer from shifting is structural -
+     the readline's hidden ghost stack - not a guessed min-height here. */
+  #root .fl-readout {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
