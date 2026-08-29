@@ -1,7 +1,6 @@
 import { useState } from 'react'
 
 import { EDGE_ANGLE, ISO_X, ISO_Y, jitter, planCyl, planPrism, planSpace, project, roundedDeck } from './iso'
-import { Scout } from './Scout'
 import { Faces } from './Solid'
 import { useCenterOnOverflow } from './useCenterOnOverflow'
 import { useScrollRun } from './useScrollPhase'
@@ -801,9 +800,6 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
   const frame = useCenterOnOverflow()
   const [figure, phase, booted] = useScrollRun(PHASES, { reduced })
   const [hot, setHot] = useState(null)
-  // The visiting scout's one nerve: clicked, it bolts; the flee animation
-  // ending brings it back on its own.
-  const [shy, setShy] = useState(false)
   const state = PHASES[phase] ?? PHASES[PHASES.length - 1]
 
   // Pointing at a site lifts it and lights the structure it has published.
@@ -827,7 +823,7 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
           ref={figure}
           viewBox="0 0 620 700"
           role="img"
-          aria-label="Three peer sites of three different sizes stand well apart on one ground, beneath shared execution intelligence drawn as a slab held above them with a mesh of criteria on it. Each site runs its task locally and beams the structure it used up a channel from a mast on its own roof - a criterion from one, a unit from another, a mapping from the third. A criterion the intelligence binds stands up off the slab, and any site can take a bound definition back down its channel and run it. Structure crosses in both directions and no record crosses in either: the records inside every site - drawn as the cells they are, each with its nucleus - stay under a sealed lid, and the reach of each site grows until they overlap. The small hovering monitor that patrols the workflow figure visits here too, drifting down the sheet's edge and borrowing one site's masthead for a second before putting it back; clicked, it darts off the sheet and drifts back."
+          aria-label="Three peer sites of three different sizes stand well apart on one ground, beneath shared execution intelligence drawn as a slab held above them with a mesh of criteria on it. Each site runs its task locally and beams the structure it used up a channel from a mast on its own roof - a criterion from one, a unit from another, a mapping from the third. A criterion the intelligence binds stands up off the slab, and any site can take a bound definition back down its channel and run it. Structure crosses in both directions and no record crosses in either: the records inside every site - drawn as the cells they are, each with its nucleus - stay under a sealed lid, and the reach of each site grows until they overlap."
         >
           <defs>
             <pattern id="nc-grain" width="16" height="16" patternUnits="userSpaceOnUse">
@@ -1250,14 +1246,9 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
                     <rect className="dgm-lid" x={-site.lid} y={-site.lid} width={site.lid * 2} height={site.lid * 2} rx={Math.round(site.lid * 0.28)} vectorEffect="non-scaling-stroke" />
                     <rect className="dgm-sweep" x={-site.lid + 7} y={-site.lid + 7} width="6" height={(site.lid - 7) * 2} rx="3" />
                   </g>
-                  {/* The mast, and the head the channel leaves from. Site
-                      103's is the one the visiting scout borrows for a
-                      second on its rounds - lifted off the roof, blinked
-                      out, and put back exactly where it was. */}
-                  <g className={`dgm-mastarm${site.id === 'SITE 103' ? ' is-borrowed' : ''}`}>
-                    <line className="dgm-mast" x1={chan.foot[0]} y1={chan.foot[1]} x2={chan.head[0]} y2={chan.head[1]} />
-                    <circle className="dgm-masthead" cx={chan.head[0]} cy={chan.head[1]} r={MAST_HEAD} />
-                  </g>
+                  {/* The mast, and the head the channel leaves from. */}
+                  <line className="dgm-mast" x1={chan.foot[0]} y1={chan.foot[1]} x2={chan.head[0]} y2={chan.head[1]} />
+                  <circle className="dgm-masthead" cx={chan.head[0]} cy={chan.head[1]} r={MAST_HEAD} />
                 </g>
               </g>
             )
@@ -1294,27 +1285,6 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
           <rect className="dgm-status" x="20" y="660" width="130" height="26" rx="13" />
           <text className="dgm-statustext" x="85" y="677" textAnchor="middle">{pill}</text>
           <text className="dgm-read" x="164" y="677">{read}</text>
-          {/* THE VISITOR. The workflow figure's scout, off duty: it drifts
-              down the free air at the sheet's left edge, and once per round
-              borrows Site 103's masthead for a second - beam on, mast
-              blinked off the roof, put back exactly where it was. Same
-              body, same mark for a face, same one nerve: clicked, it bolts
-              off the sheet and drifts back. */}
-          <g className={`fl-watch${shy ? ' is-shy' : ''}`} aria-hidden="true">
-            <g className="dgm-scoutround is-nectar">
-              <g
-                className="fl-dart"
-                onAnimationEnd={(event) => { if (event.animationName === 'fl-flee') setShy(false) }}
-              >
-                <g className="fl-hover">
-                  <line className="fl-beam" x1="67" y1="136" x2="84" y2="136" />
-                  <g className="fl-monitor" onClick={() => setShy(true)}>
-                    <Scout x={48} y={124} />
-                  </g>
-                </g>
-              </g>
-            </g>
-          </g>
         </svg>
       </div>
     </figure>

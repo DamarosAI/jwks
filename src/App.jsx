@@ -1150,7 +1150,6 @@ function TridentSection() {
   const inView = useInView(root)
   const animate = shouldRunAmbient({ reduced, inView, narrow })
   const field = useScrollSpread({ reduced, start: 'top bottom', end: 'top 40%' })
-  usePointerField(root, { reduced })
   useEnterMotion(root, reduced, () => [
     gsap.from('.trident-copy > *', {
       opacity: 0, duration: 0.8, stagger: 0.12, clearProps: 'transform',

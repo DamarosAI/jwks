@@ -358,15 +358,26 @@ const vessel = (seat, gates = null) => {
   return { back, front }
 }
 
-/* WHERE THE MONITOR'S ROUNDS CALL. One anchor per station, each directly
- * over the thing the scout works there: the switch it pokes on Protocol's
- * board, Evidence's entry gate where it collects the transcript, the centre
- * of Screening's verdict line for the sweep, Resolve's lever, and the middle
- * of Replay's transport for the little step backward. Solved from the same
- * projection the plates are placed with, so a station can move and the
- * rounds follow. */
+/* WHERE THE COURIER'S ROUNDS CALL. One anchor per station, each directly
+ * over the thing the courier works there: Protocol's export mouth where the
+ * transcript stages, Evidence's entry gate where the led cell docks,
+ * Screening's hold bay where the amber bud waits, the back of Resolve's
+ * lane where the haul is set down (the lever is a sideways step from
+ * there), and Replay's take-up reel. Solved from the same projection the
+ * plates are placed with, so a station can move and the rounds follow -
+ * and the two cargo drums are drawn at the home anchor, because anything
+ * riding inside the courier's own wrappers inherits every leg from there. */
 const call = (station, px, py) => r1(CX + ((station - 2) * STEP * 2 + px - py) * ISO_X)
-const CALLS = [call(0, 30, -22), call(1, -74, 18), call(2, 0, -28), call(3, -54, -28), call(4, -52, 2)]
+const CALLS = [call(0, 42, -46), call(1, -74, 18), call(2, 40, -16), call(3, -44, 2), call(4, -52, 2)]
+
+/* THE CARGO DRUM. What the courier moves is the run's own cell, drawn at
+ * the courier's home anchor just under its body, in the beam - the same
+ * seven-unit plan circle every cell on the sheet is - and duplicated once:
+ * a violet escort for the transcript leg, an amber haul for the unsettled
+ * cell. Both ride inside the courier's dip wrapper, so every leg is
+ * inherited rather than mirrored, and their keyframes are pure opacity. */
+const CARGO = roundedCylinder(CALLS[0], 99, 7, 5)
+const CARGO_CORE = { dx: 1.99, dy: 0.78, ...planCircle(2.4) }
 
 /* THE LETTERING STANDS ALONE. The names ran on a survey datum once - one
  * rule under the row, leaders down onto it, ticks at every station - and the
@@ -601,24 +612,20 @@ function mechanism(key, t) {
         ], 3),
         ...bank.flatMap(([px, py, i]) => [
           { ...stand(px, py, 5, 5, 5, 4.5, 3), cls: 'fl-seat' },
-          // Switch three is the one the monitor pokes on its rounds: it
-          // trades the board's staggered clock for the patrol's own, sits
-          // settled all loop, and waggles once as the scout's beam touches
-          // it - flipped by the visitor, not by the run.
-          arm(`fl-toggle is-${verdict[i]}${i === 3 ? ' is-poked' : ''}`, px, py, 11, 11, 4, { knob: 3.2, turn: i }),
+          arm(`fl-toggle is-${verdict[i]}`, px, py, 11, 11, 4, { knob: 3.2, turn: i }),
         ]),
         // THE TRANSCRIPT. This plate holds no material - it holds the
         // document, and the document is what it ships. It crossed as a
         // faceted tablet once, and a lone cube commuting between plates of
         // round material read as a second animation grammar at the first
         // seam a reader meets - so the transcript rides in the run's own
-        // vessel now: a cell in the protocol's violet, the ink and not the
+        // vessel: a cell in the protocol's violet, the ink and not the
         // silhouette saying this one is the document. It stages off the
-        // bank's rounded corner and ships through the gate on EVIDENCE'S
-        // clock, so the violet cell seen leaving here is the violet cell
-        // seen docking at the gantry next door two beats later. Natural
-        // depth: nothing stands on its lane, and a cell riding OVER the
-        // whole plate paints over the near gate pylon it should pass behind.
+        // bank's rounded corner - and it only ever reaches the mouth under
+        // the courier's beam, once per round, where the crossing becomes
+        // the courier's own escort drum. Natural depth: nothing stands on
+        // its lane, and a cell riding OVER the whole plate paints over the
+        // near gate pylon it should pass behind.
         { ...cell(42, -39, null, 5), cls: 'fl-blk is-script fl-issue' },
       ]
     },
@@ -675,7 +682,8 @@ function mechanism(key, t) {
         )), 34),
         ...pile.map(([px, py, high, base], i) => cell(px, py, null, high, base, { turn: i })),
         // The one the claw takes. It is on top of the pile, because that is
-        // where a claw can reach.
+        // where a claw can reach. The claw keeps its own 5.6s rhythm: the
+        // courier runs the seams, not the housework.
         { ...cell(-52, -20, null, 5), cls: 'fl-blk fl-pick' },
         ...slot.slice(1).map(([px, py], i) => cell(px, py, null, 5, 0, { turn: i })),
         // The first socket is a WAYPOINT, not a terminus - and the cell that
@@ -687,19 +695,11 @@ function mechanism(key, t) {
         // them. All three ride one clock, so the cell travels because the claw
         // is carrying it rather than beside it.
         { ...cell(-52, -20, null, 5, 14), cls: 'fl-blk fl-carry', depth: OVER + 1 },
-        // THE MONITOR'S COLLECTION. Once per patrol, while the scout hangs
-        // over the entry gate, a violet transcript comes in through it and
-        // never reaches the apron: the beam takes it, it rises off the
-        // lane and is absorbed into the visitor - a monitor collecting the
-        // site's paperwork, which is what monitors do. It runs on the
-        // patrol's own 33.6s clock, timed between the regular dock's
-        // arrivals so the gate never carries two cells at once.
-        { ...cell(-74, 18, null, 5), cls: 'fl-blk is-script fl-treat' },
-        // THE DOCKED TRANSCRIPT. The instructions this machine organises by,
-        // arrived through the entry gate in the back wall on this plate's own
-        // clock - the same violet cell that left the nucleus - resting on
-        // the apron by the pile until the work consumes it and the next one
-        // arrives.
+        // THE DOCKED TRANSCRIPT. The instructions this machine organises
+        // by - the same violet cell that left the nucleus, delivered once
+        // per round by the courier and set in through this gate. It fades
+        // up at the mouth beneath the hovering escort, slides to the apron,
+        // and rests there until the work absorbs it.
         { ...cell(-65, 18, null, 5), cls: 'fl-blk is-script fl-dock' },
         // THE SHIPMENT, END TO END IN ONE ELEMENT. Organised material does
         // not pile up on the bed - it goes on to be screened - and the whole
@@ -818,10 +818,12 @@ function mechanism(key, t) {
         // DISPATCHED: it forms in the reticulum's pocket, wrapped by every
         // sac that nests around it, exactly the way the vesicle trail
         // already leaving the body says this organelle works, then slides
-        // out through the mouth and down the lane to the bay while the
-        // previous hold is mid-send. The one plate whose machine is a sorting organelle gets
-        // the one arrival drawn as secretion - no claw, no ram, its own
-        // grammar. It buds already amber: dispatch IS the ruling.
+        // out through the mouth and down the lane to the bay - once per
+        // round, timed so the courier hanging overhead watches it form and
+        // takes it the moment it lands. The one plate whose machine is a
+        // sorting organelle gets the one arrival drawn as secretion - no
+        // claw, no ram, its own grammar. It buds already amber: dispatch
+        // IS the ruling.
         { ...cell(40, 18, 'hold', 5), cls: 'fl-blk is-hold fl-bud' },
         // THE BED FEEDS THE GREEN PORE AS A LINE, NOT AS AN APPARITION.
         // One 5.6s clock - the period the shipment arrives on - moves one
@@ -856,13 +858,10 @@ function mechanism(key, t) {
           turn: i,
           ...(v === 'pass' ? { swallow: cell(px, py, null, 5, -6) } : {}),
         })),
-        // The amber cell, at the hold bay, already ruled: it runs the lane on
-        // RESOLVE'S OWN CLOCK, through the gate in ONE unbroken motion, and
-        // the feed entering the back of Resolve's lane picks up the beat two
-        // frames later - one subject, two plates, one period. Honest depth:
-        // nothing stands on the amber lane, and a cell drawn OVER the plate
-        // paints over the near gate pylon it should pass behind.
-        { ...cell(40, -16, 'hold', 5), cls: 'fl-blk is-hold fl-handoff' },
+        // The amber gate stays cut and stained - the wall saying where this
+        // cargo is allowed out - but nothing runs its lane on a loop any
+        // more: the unsettled cell leaves this plate only in the courier's
+        // haul, once per round, from the bay the bud slides into.
       ]
     },
     // RESOLVE IS A HORIZONTAL RAM.
@@ -968,9 +967,13 @@ function mechanism(key, t) {
         // of hairlines are seven coloured cubes in a row; frames standing on a
         // strip that runs onto both reels are a record on a tape.
         { ...stand(0, 2, 54, 8, 2, 4), cls: 'fl-tape', depth: -600 },
-        { ...drum(-52, 2, 13, 7), cls: 'fl-reel' },
+        // The take-up reel is the transport's one button: the courier lands
+        // on it once per round and it visibly gives under the press - which
+        // is the frame before the head turns for home. Reel and hub carry
+        // the class together so the whole drum dips as one part.
+        { ...drum(-52, 2, 13, 7), cls: 'fl-reel is-pressed' },
         { ...drum(52, 2, 13, 7), cls: 'fl-reel' },
-        { ...drum(-52, 2, 8, 3, 7), cls: 'fl-reel is-hub' },
+        { ...drum(-52, 2, 8, 3, 7), cls: 'fl-reel is-hub is-pressed' },
         { ...drum(52, 2, 8, 3, 7), cls: 'fl-reel is-hub' },
         // The reels wind as the head runs and unwind as it goes back, which is
         // what makes two cylinders a transport rather than two cylinders.
@@ -1116,7 +1119,7 @@ export default function ChainSchematic({ animate = true }) {
           className={`dgm-svg is-floor${animate ? ' is-live' : ''}`}
           viewBox={`0 0 ${W} ${H}`}
           role="img"
-          aria-label="Five plates in a row, seen in axonometric projection, their machines already running - each plate bounded by its own printed double-walled membrane, the way a section drawing bounds a cell. The five stations are lettered in ink beneath their plates: Protocol, Evidence, Screening, Resolve, Replay. A small hovering monitor wearing the Damaros mark patrols the air above the row on its own slow loop: it pokes a switch on the protocol board, draws the incoming violet transcript up its beam at the evidence gate, sweeps the verdict line, drops onto the resolve lever a beat before the throw, presses the replay transport's take-up reel just as the scanner turns for home and steps backwards alongside the rewind, then rides the row home; clicked, it darts off the sheet and drifts back. One cell - a round body with its nucleus drawn on top - runs the whole row. A grid of twelve switches on a breaker board is thrown one at a time, each settling green or red, and the compiled protocol ships out through a gate in the plate's wall as a violet-stained cell - the transcript in the run's own vessel. It docks beside the next plate's gantry, where a claw closes on one cell in a heap, lifts it, carries it across, and sets it down into an ordered bed of round sockets; the placed cell then slides up a printed lane to a staging seat, waits its beat, and continues straight out through that plate's far gate - one cell, one line, socket to seat to gate. Along the far long edge of the next plate, three verdict seats wait in a line - green, red, amber. The bed feeds the green pore as a moving line: one cell slides onto the mouth and is visibly swallowed down the bore while the seat behind it shuffles forward and the newly arrived cell takes the empty place; the red pore stands open and ringed; the amber seat is a gate cut through the plate's wall, its pylons stained amber, and the unsettled cell is sent through it in one motion - while the next amber cell forms inside the plate's reticulum - nested curved sacs opening toward the gate - and slides out down the lane to take the bay. On the plate beyond it enters a matching gate at the back of the lane, on the same clock it left on. There a hand throws a lever, a horizontal ram crosses the lane and pushes one cell clean off the edge through the one gap in the membrane, and the line indexes forward as the next arrives. On the last plate the run lies as frames on a tape between two reels, and a head reads its way along and then runs back. Pointing at a plate lifts it off the ground and darkens the ground beneath it."
+          aria-label="Five plates in a row, seen in axonometric projection, their machines already running - each plate bounded by its own printed double-walled membrane, the way a section drawing bounds a cell. The five stations are lettered in ink beneath their plates: Protocol, Evidence, Screening, Resolve, Replay. A small hovering courier built from the Damaros mark - a blue two-part body with white eyes and a blinking antenna light - works the air above the row on one slow round, and the seams of the run move only under it. One cell - a round body with its nucleus drawn on top - runs the whole row. A grid of twelve switches on a breaker board is thrown one at a time, each settling green or red, and once per round the courier drops to the export gate: the compiled violet transcript slides to the mouth under its beam and crosses the seam riding just below the courier's body, led to the next plate and set in through the entry gate, where it docks beside the gantry. There a claw closes on one cell in a heap, lifts it, carries it across, and sets it down into an ordered bed of round sockets; the placed cell then slides up a printed lane to a staging seat, waits its beat, and continues straight out through that plate's far gate - one cell, one line, socket to seat to gate. Along the far long edge of the next plate, three verdict seats wait in a line - green, red, amber. The bed feeds the green pore as a moving line: one cell slides onto the mouth and is visibly swallowed down the bore while the seat behind it shuffles forward and the newly arrived cell takes the empty place; the red pore stands open and ringed; the amber seat is a gate cut through the plate's wall, its pylons stained amber. The unsettled amber cell forms inside the plate's reticulum - nested curved sacs opening toward the gate - slides down the lane to the bay while the courier waits overhead, and leaves only in the courier's hold: carried through the air to the back of the resolve lane and set down as the line's next cell. The courier then steps sideways onto the lever and throws it - nothing else ever moves that lever - so the horizontal ram crosses the lane, pushes one cell clean off the edge through the one gap in the membrane, and the line indexes forward. On the last plate the run lies as frames on a tape between two reels, and a head reads its way out along the tape; the courier lands on the take-up reel, the reel gives under the press, and only then does the head turn and rewind, the courier stepping backwards alongside it. Clicked, the courier darts off the sheet and drifts back. Pointing at a plate lifts it off the ground and darkens the ground beneath it."
         >
           <defs>
             <pattern id="fl-grain" width="13" height="13" patternUnits="userSpaceOnUse">
@@ -1368,25 +1371,32 @@ export default function ChainSchematic({ animate = true }) {
             </g>
           ))}
 
-          {/* THE MONITOR ON ITS ROUNDS. The one figure clinical research
-              already has for hovering over every site and looking without
-              touching, drawn as the site's small visitor - the Scout, the
-              company's mark for a face - patrolling the air band above the
-              row on a 33.6-second loop. THE PERIOD IS THE SYNC: 33.6 is six
-              material beats (5.6s) and seven of Resolve's (4.8s), so the
-              rounds phase-lock to both clocks and every act lands on cue.
-              At Protocol it dips and pokes a switch, which waggles; at
-              Evidence it hangs over the entry gate and draws the incoming
-              transcript up its beam; at Screening it sweeps the verdict
-              line end to end; at Resolve it drops onto the lever exactly
-              one beat before the throw; at Replay it plays one step of
-              itself backwards, which on this sheet only Replay may do.
-              Then it climbs and rides the whole row home. Hops run the one
-              plan axis that projects flat, dips ride the height axis, and
-              it flies above every solid's airspace with a shadow for
-              ground contact. Clicked, it bolts straight off the sheet and
-              drifts back - the flee composes on its own wrapper, so the
-              patrol underneath never stutters. */}
+          {/* THE COURIER ON ITS ROUNDS. The one figure clinical research
+              already has for visiting every site and moving the paperwork
+              along, drawn as a small character built from the company mark
+              (unnamed on the sheet - the christening is the company's) and
+              working the air band above the row on a 33.6-second round.
+              THE ROUND IS THE LINE'S CLOCK: the seams the courier owns
+              move only under it. At Protocol it drops to the export mouth
+              and the staged transcript slides under its beam; the crossing
+              to Evidence is its own violet escort drum, riding in the dip
+              wrapper below; at Evidence it sets the cell in through the
+              entry gate. At Screening it waits out the reticulum forming
+              the one amber bud, drops onto the bay and takes it; the haul
+              rides the same way to the back of Resolve's lane, where it is
+              set down as the line's new feed - then the sideways step onto
+              the lever, the dip that lands on the knob, and the throw that
+              follows two tenths of a second later, driving the ram, the
+              push and the index. At Replay it lands on the take-up reel,
+              the reel gives, and the head turns for home - then the one
+              backward step alongside the rewind, which on this sheet only
+              Replay may do. Then altitude, and the ride home. Hops run the
+              one plan axis that projects flat, dips ride the height axis
+              all the way to contact, and the one ground contact is a
+              shadow. Clicked, it bolts straight off the sheet and drifts
+              back - the flee composes on its own wrapper, so the round
+              underneath never stutters, and any cargo mid-leg bolts with
+              the body the way a startled courier keeps hold of the parcel. */}
           <g className={`fl-watch${shy ? ' is-shy' : ''}`} aria-hidden="true">
             <g className="fl-patrolled">
               <g className="fl-groundwrap">
@@ -1397,6 +1407,12 @@ export default function ChainSchematic({ animate = true }) {
                 onAnimationEnd={(event) => { if (event.animationName === 'fl-flee') setShy(false) }}
               >
                 <g className="fl-duck">
+                  <g className="fl-blk is-script fl-escort">
+                    <Drum shape={CARGO} core={CARGO_CORE} className="dgm-solid" />
+                  </g>
+                  <g className="fl-blk is-hold fl-haul">
+                    <Drum shape={CARGO} core={CARGO_CORE} className="dgm-solid" />
+                  </g>
                   <g className="fl-hover">
                     <line className="fl-beam" x1={CALLS[0]} y1="86" x2={CALLS[0]} y2="102" />
                     <g className="fl-monitor" onClick={() => setShy(true)}>
