@@ -12954,33 +12954,6 @@ html.is-hidden .clinic-node i,
 .fl-step.is-resolve { --tone: color-mix(in srgb, var(--danger) 76%, var(--accent-strong)); }
 .fl-step.is-replay { --tone: color-mix(in srgb, var(--success) 86%, var(--accent-strong)); }
 
-/* ── The couplings, and the run between them ─────────────────────────────
-
-   FIVE PLATES IN A ROW ARE NOT A RUN, THEY ARE FIVE ISLANDS.
-
-   Nothing in the drawing said the output of one station was the input of the
-   next - the datum lettered them as a sequence and the figure above it showed
-   five unconnected machines. So each plate carries a coupling at the two plan
-   corners where it comes nearest its neighbours, and a hairline run passes
-   between them. The row is a machine now rather than five machines standing
-   near each other, and the couplings are the only part every plate has in
-   common, which is what makes them read as the interface rather than as
-   another mechanism. */
-
-.fl-couple .dgm-face-top { fill: color-mix(in srgb, var(--deep) 62%, var(--surface-solid)); }
-.fl-couple .dgm-face-left,
-.fl-couple .dgm-face-right { fill: var(--deep); }
-
-.fl-links {
-  fill: none;
-  stroke: color-mix(in srgb, var(--text) 26%, transparent);
-  stroke-width: 1.4;
-  vector-effect: non-scaling-stroke;
-  opacity: var(--in);
-}
-
-.fl-links line { vector-effect: non-scaling-stroke; }
-
 /* ── The half-pixel every solid moves ────────────────────────────────────
 
    Trident runs a second, quieter layer under everything else: nineteen contract
@@ -13072,25 +13045,44 @@ html.is-hidden .clinic-node i,
    and swings back, a die presses and lifts. The endpoints match on all of them
    and the spec walks every keyframe in the sheet to be sure. */
 
-.dgm-svg.is-live.is-fused .fl-die { animation: fl-punch 6.2s cubic-bezier(0.5, 0, 0.2, 1) infinite; }
+/* FIVE PLATES, FIVE KINDS OF MOTION - AND THIS IS WHERE THAT WENT WRONG.
 
-/* One stroke, held, and back. A press is a thing that happens at a moment,
-   which is the whole reason it replaced a head strolling along a rail. */
-@keyframes fl-punch {
-  0%, 38% { transform: translateY(0); }
-  50%, 60% { transform: translateY(22px); }
-  74%, 100% { transform: translateY(0); }
+   Banning sideways travel left exactly one axis, and I put everything on it:
+   Protocol pressed a die down and up, Screening dropped a subject down, Resolve
+   pressed a die down and up, and the other two barely moved at all. Three
+   plates doing the same thing is the redundancy this whole redesign existed to
+   remove, arrived at from the other direction.
+
+   Vertical translation is not the only motion an axonometric can take honestly.
+   It is the only one I reached for. So each plate takes a different KIND now:
+   Protocol CUTS in sequence, Evidence FLOWS along a line, Screening FALLS,
+   Resolve TURNS and drives a press, Replay FANS APART. Scale, flow, fall,
+   rotation, expansion - and the press that made two of the duplicates is gone
+   from this plate, because the sheet's four bites are the thing worth watching
+   on it anyway.
+
+   A wave of division travelling the document, left to right, one bite at a
+   time. Nothing else in the figure scales, and nothing else runs a sequence
+   along a row of objects. */
+
+.fl-bite {
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
-/* The bites are there before the die falls, because the RESTING frame of this
-   figure is the finished one - a protocol that has been compiled. The stroke
-   only takes them back to a trace for the moment before it lands again. */
-.dgm-svg.is-live.is-fused .fl-bite { animation: fl-bitten 6.2s ease-out infinite; }
+.dgm-svg.is-live.is-fused .fl-bite {
+  animation: fl-cut 6.2s ease-in-out infinite;
+  animation-delay: calc(var(--turn, 0) * 0.3s);
+}
 
-@keyframes fl-bitten {
-  0%, 44% { opacity: 1; }
-  52%, 58% { opacity: 0.3; }
-  68%, 100% { opacity: 1; }
+/* Open at rest, because the resting frame of this figure is the finished one:
+   a protocol that has been compiled. The cycle takes one bite back to nothing
+   and reopens it, and the stagger is what makes four of those read as a cut
+   travelling rather than as four things blinking. */
+@keyframes fl-cut {
+  0%, 30% { transform: scale(1); }
+  44% { transform: scale(0.15); }
+  62%, 100% { transform: scale(1); }
 }
 
 .dgm-svg.is-live.is-fused .fl-lamp.is-crit .dgm-face-top {
@@ -13148,17 +13140,32 @@ html.is-hidden .clinic-node i,
   opacity: 1;
 }
 
-.dgm-svg.is-live.is-fused .fl-route:not(.is-open) {
-  animation: fl-reach 7.4s ease-out infinite;
-  animation-delay: calc(var(--turn, 0) * 0.5s);
+/* A REFERENCE BEING FOLLOWED. The binding is permanent - it has been made and
+   it stays made - so the thing that moves cannot be the route itself. It is a
+   short bright segment running the route from the spine down to the socket,
+   and it is the only motion in the figure that travels along a drawn line.
+
+   The dash pattern is exactly one period long, so an offset of a hundred and an
+   offset of nought are the same picture: this cycle is seamless by construction
+   rather than by matching two frames, which is why it is the one clock exempt
+   from the endpoint rule the others are held to. */
+.fl-flow {
+  fill: none;
+  stroke: var(--tone);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-dasharray: 13 87;
+  vector-effect: non-scaling-stroke;
 }
 
-/* A route that has been made stays made until the snapshot closes, which is
-   what the whole step is claiming about a binding. */
-@keyframes fl-reach {
-  0%, 14% { stroke-width: 1.3; }
-  28%, 44% { stroke-width: 2.6; }
-  64%, 100% { stroke-width: 1.3; }
+.dgm-svg.is-live.is-fused .fl-flow {
+  animation: fl-flow 7.4s linear infinite;
+  animation-delay: calc(var(--turn, 0) * -1.85s);
+}
+
+@keyframes fl-flow {
+  0% { stroke-dashoffset: 100; }
+  100% { stroke-dashoffset: 0; }
 }
 
 .dgm-svg.is-live.is-fused .fl-lamp.is-res .dgm-face-top {
@@ -13345,10 +13352,17 @@ html.is-hidden .clinic-node i,
    9 / 9 was a core with nothing in it. They stand permanently and the recovery
    is a RIPPLE running up them - staggered per band, which is a chain checked
    link by link rather than a stack rebuilt every eight seconds. */
+/* AND THE RECOVERY IS THE CORE COMING APART. A three-pixel ripple was not
+   motion, it was a rounding error. What a reconstruction looks like is a
+   section taken apart to be read and put back: each band lifts clear of the one
+   below it BY ITS OWN DEPTH in the stack, so the core fans open like a drawn
+   exploded view and closes again. The ninth band travels twenty-four pixels and
+   the first travels none, which is why this reads as a stack expanding rather
+   than as an object moving - the one motion here that is differential. */
 @keyframes fl-lift {
-  0%, 10% { transform: translateY(0); }
-  26%, 40% { transform: translateY(-3px); }
-  64%, 100% { transform: translateY(0); }
+  0%, 12% { transform: translateY(0); }
+  38%, 56% { transform: translateY(calc(var(--turn, 0) * -3px)); }
+  84%, 100% { transform: translateY(0); }
 }
 
 /* POINTING AT A STATION FINISHES IT.
@@ -13364,23 +13378,11 @@ html.is-hidden .clinic-node i,
    every bin counted, the call made, nine bands of nine recovered. The ambient
    machine keeps running underneath - a machine that stops when somebody leans
    in is not a machine - but what a reader is shown is the step having got
-   there rather than the step going round.
-
-   And the RUN lights through it. The two links either side of the held station
-   carry, so the answer to "what does this step do" includes where it sits: five
-   plates near each other become a run with a reader's finger somewhere in it.
-   That is the one thing the datum underneath could never say on its own. */
+   there rather than the step going round. */
 
 .dgm-svg.is-floor.is-fused .fl-step.is-hot .fl-lamp .dgm-face-top {
   animation: none;
   fill: var(--deep);
-}
-
-.fl-link { transition: stroke 320ms ease, stroke-width 320ms ease; }
-
-.is-fused .fl-link.is-live {
-  stroke: color-mix(in srgb, var(--accent-strong) 78%, var(--text));
-  stroke-width: 2;
 }
 
 /* The machine gains a step of ink as it rises, so the plate a reader is on is

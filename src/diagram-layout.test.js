@@ -2012,7 +2012,7 @@ describe('The floor schematic', () => {
     }
     // Five verbs, and each plate names the parts only it has.
     const own = {
-      protocol: ['fl-sheet', 'fl-bite', 'fl-die'],
+      protocol: ['fl-sheet', 'fl-bite', 'fl-ruled'],
       evidence: ['fl-socket', 'fl-record', 'fl-route'],
       screening: ['fl-throat', 'fl-unit', 'fl-faller'],
       resolve: ['fl-post', 'fl-throw', 'fl-stamp'],
@@ -2102,7 +2102,7 @@ describe('The floor schematic', () => {
       const dy = ((bite[i][0] + bite[i][1]) - (bite[i - 1][0] + bite[i - 1][1])) * 0.34
       assert.ok(Math.abs(dx) >= 17 && Math.abs(dy) < 0.01, `bites ${dx.toFixed(0)}px apart and ${dy.toFixed(0)} down`)
     }
-    assert.match(css, /@keyframes fl-punch \{/)
+    assert.match(css, /@keyframes fl-cut \{/)
 
     // EVIDENCE SINKS. The record is at the bottom of the socket and NOWHERE
     // ELSE - the step's claim made as geometry rather than as a caption. The
@@ -2149,7 +2149,7 @@ describe('The floor schematic', () => {
 
     // Five clocks, because the thing each step does is different and a figure
     // running one loop five times says they are the same step five times.
-    const clocks = [...css.matchAll(/animation: fl-(?:punch|reach|drop|claim|lift) ([\d.]+)s/g)].map((m) => m[1])
+    const clocks = [...css.matchAll(/animation: fl-(?:cut|flow|drop|claim|lift) ([\d.]+)s/g)].map((m) => m[1])
     assert.equal(new Set(clocks).size, 5, 'five instruments, five rates')
     // None runs until the plate is under it. The one clock allowed before the
     // fuse is the wander in the mess, which has to be alive while it is a mess.
@@ -2226,15 +2226,16 @@ describe('The floor schematic', () => {
     // FIVE PLATES IN A ROW ARE NOT A RUN, THEY ARE FIVE ISLANDS. Nothing said
     // the output of one station was the input of the next; the datum underneath
     // was doing all the work of saying so on its own.
-    assert.match(floor, /cls: 'fl-couple'/)
-    assert.match(floor, /const LINK_X = Math\.round\(\(66 \+ 41\) \* 0\.866 \* 10\) \/ 10/)
-    assert.match(floor, /<g className="fl-links"/)
-    assert.match(css, /\.fl-links \{[\s\S]*?opacity: var\(--in\);/)
-    // Four links for five plates, and each one is solved from the coupling's own
-    // plan position rather than measured off a screenshot.
-    assert.match(floor, /STEPS\.slice\(1\)\.map\(\(item, i\) => \(/)
-    assert.match(floor, /x1=\{STEPS\[i\]\.seat\[0\] \+ LINK_X\}/)
-    assert.match(floor, /x2=\{item\.seat\[0\] - LINK_X\}/)
+    // AND THE PLATES ARE NOT WIRED TOGETHER. A coupling stood in each of the
+    // two plan corners where a plate came nearest its neighbours, with a
+    // hairline run passing between them, on the argument that five plates in a
+    // row are five islands. The argument was right and the answer was wrong:
+    // four thin lines crossing the empty gaps and ten small blocks doing
+    // nothing on ten corners is a diagram of a connection rather than a
+    // connection. The datum already says these five are one run, with one line
+    // instead of fourteen marks.
+    assert.doesNotMatch(floor, /fl-couple|fl-link|LINK_X/)
+    assert.doesNotMatch(css, /fl-couple|fl-link/)
 
     // THE HALF-PIXEL EVERY SOLID MOVES. Trident runs a second, quieter layer
     // under everything else - nineteen contract fields and four waiting
@@ -2296,6 +2297,13 @@ describe('The floor schematic', () => {
       }
       // `alternate` clocks declare only `to`, and run back down by definition.
       if (frames['0%'] === undefined) continue
+      // A dash cycle over exactly one period is seamless by construction: an
+      // offset of a hundred against a 13/87 pattern on a pathLength of a
+      // hundred is the same picture as an offset of nought.
+      if (/stroke-dashoffset/.test(frames['0%'])) {
+        assert.match(css, new RegExp(`\\.${name.replace('fl-', 'fl-')} \\{[\\s\\S]*?stroke-dasharray: 13 87;`))
+        continue
+      }
       assert.equal(frames['100%'], frames['0%'], `${name} ends somewhere it does not start, so it restarts`)
     }
 
@@ -2312,8 +2320,32 @@ describe('The floor schematic', () => {
     // A binding that has been made stays made, and nine of nine stay standing.
     assert.match(css, /\.fl-route \{[\s\S]*?opacity: 1;/)
     assert.doesNotMatch(css.match(/@keyframes fl-lift \{([\s\S]*?)\n\}/)[1], /opacity/)
-    assert.match(css, /@keyframes fl-punch \{/)
+    assert.match(css, /@keyframes fl-cut \{/)
     assert.match(css, /@keyframes fl-lift \{/)
+
+    // FIVE PLATES, FIVE KINDS OF MOTION. Banning sideways travel left exactly
+    // one axis and I put everything on it: Protocol pressed a die down and up,
+    // Screening dropped a subject down, Resolve pressed a die down and up, and
+    // the other two barely moved. Three plates doing the same thing is the
+    // redundancy this redesign existed to remove, arrived at from the other
+    // direction. Each plate takes a different KIND now, and this checks the
+    // kinds rather than counting rates: a scale, a flow along a line, a fall,
+    // a rotation, and a differential expansion.
+    const kind = {
+      'fl-cut': /transform: scale\(/,
+      'fl-flow': /stroke-dashoffset:/,
+      'fl-drop': /transform: translateY\(-?\d+px\)/,
+      'fl-claim': /transform: rotate\(/,
+      'fl-lift': /transform: translateY\(calc\(var\(--turn/,
+    }
+    for (const [clock, shape] of Object.entries(kind)) {
+      const body = css.match(new RegExp(`@keyframes ${clock} \\{([\\s\\S]*?)\\n\\}`))[1]
+      assert.match(body, shape, `${clock} is not the kind of motion its plate was given`)
+    }
+    // And no two plates share one. `fl-press` is the linkage the lever drives,
+    // so Resolve is the only plate with a block that travels in y at all.
+    const verticals = Object.keys(kind).filter((c) => /translateY/.test(css.match(new RegExp(`@keyframes ${c} \\{([\\s\\S]*?)\\n\\}`))[1]))
+    assert.deepEqual(verticals, ['fl-drop', 'fl-lift'], 'more than one plate moves a block up and down')
 
     // AND NOTHING HANGS OVER THE ROW. Two passes put things in the band above
     // the plates - five identical carriers ferrying across, then one hanging
@@ -2331,11 +2363,7 @@ describe('The floor schematic', () => {
     // up, out of the cycle it was taking its turn in - four criteria compiled,
     // every record bound, every bin counted, nine bands of nine recovered.
     assert.match(css, /\.dgm-svg\.is-floor\.is-fused \.fl-step\.is-hot \.fl-lamp \.dgm-face-top \{\s*animation: none;\s*fill: var\(--deep\);/)
-    // And the RUN lights through it, so the answer to what a step does includes
-    // where it sits. Five plates near each other become a run with a reader's
-    // finger somewhere in it, which the datum alone could never say.
-    assert.match(floor, /className=\{`fl-link\$\{hot === item\.key \|\| hot === STEPS\[i\]\.key \? ' is-live' : ''\}`\}/)
-    assert.match(css, /\.is-fused \.fl-link\.is-live \{[\s\S]*?stroke-width: 2;/)
+    assert.match(css, /\.dgm-svg\.is-floor\.is-fused \.fl-step\.is-hot \.fl-lamp \.dgm-face-top \{\s*animation: none;/)
   })
 
   it('letters the run underneath it, in ink, off one datum', () => {
@@ -2378,8 +2406,13 @@ describe('The floor schematic', () => {
     // whose whole job is to say these five are one run is the worst single mark
     // in the figure.
     assert.match(css, /\.fl-datum \{[\s\S]*?transform: scaleX\(var\(--in\)\);/)
-    assert.doesNotMatch(css.slice(css.indexOf('THIRTY FRAGMENTS BECOME FIVE SURFACES')), /stroke-dashoffset/)
-    assert.doesNotMatch(floor, /pathLength/)
+    assert.doesNotMatch(
+      css.slice(css.indexOf('The run, and the names that hang off it'), css.indexOf('-- THE FIVE MECHANISMS')),
+      /stroke-dashoffset/,
+    )
+    // The rule draws with a transform. Evidence's flow is a dash by design, so
+    // this is about the datum rather than about the sheet.
+    assert.doesNotMatch(floor.match(/className="fl-datum"[\s\S]*?\/>/)[0], /pathLength/)
     // It arrives on the same one-shot timeline as everything else, so the run
     // shows up WITH the row rather than waiting under an empty stage.
     assert.match(css, /\.dgm-svg\.is-floor \{ --in: clamp\(0, calc\(\(var\(--fuse\) - 0\.86\) \/ 0\.14\), 1\); \}/)

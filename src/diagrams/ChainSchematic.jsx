@@ -262,10 +262,9 @@ function mechanism(key, t) {
           )),
         ]),
         // Four bites punched clean through it. This is the step, drawn once.
-        ...bite.map(([px, py]) => ({ ...well(px, py, 7, 4, 4), cls: 'fl-bite' })),
+        ...bite.map(([px, py], i) => ({ ...well(px, py, 7, 4, 4), cls: 'fl-bite', turn: i })),
         // The die. One decisive stroke rather than a head strolling along a
         // rail: a press is a thing that happens at a moment.
-        { ...stand(-46, 10, 16, 16, 6, 3, 26), cls: 'fl-die', depth: OVER },
         // And what came out of the bites, standing separately.
         ...at.flatMap((px, i) => lit('crit', px, 10, 5, 5, rise[i], 1.5, i)),
       ]
@@ -287,13 +286,23 @@ function mechanism(key, t) {
           <line key="spine" x1="-52" y1="-40" x2="52" y2="-40" />,
           ...from.map((x, i) => {
             const [px, py] = socket[wire[i]]
+            const path = `${x},-40 ${x},${bend[i]} ${px - 16},${bend[i]} ${px - 16},${py - 16}`
+            // TWO PASSES OVER ONE ROUTE. The binding itself is permanent - it
+            // has been made and it stays made - so the thing that moves cannot
+            // be the route. It is a short bright segment running the route from
+            // the spine to the socket, which is a reference being FOLLOWED
+            // rather than a reference being created, and it is the only motion
+            // in the figure that travels along a drawn line.
             return (
-              <polyline
-                className={`fl-route${wire[i] === 3 ? ' is-open' : ''}`}
-                key={x}
-                points={`${x},-40 ${x},${bend[i]} ${px - 16},${bend[i]} ${px - 16},${py - 16}`}
-                style={{ '--turn': i }}
-              />
+              <g key={x}>
+                <polyline
+                  className={`fl-route${wire[i] === 3 ? ' is-open' : ''}`}
+                  points={path}
+                />
+                {wire[i] !== 3 && (
+                  <polyline className="fl-flow" points={path} pathLength="100" style={{ '--turn': i }} />
+                )}
+              </g>
             )
           }),
         ]),
@@ -432,42 +441,24 @@ function mechanism(key, t) {
     },
   }
 
-  /* THE COUPLING. Five plates in a row are not a run, they are five islands -
-     nothing in the drawing said the output of one station was the input of the
-     next, and the datum underneath was doing all the work of saying so on its
-     own. Every plate carries one at each of the two plan corners where it comes
-     nearest its neighbours, and a hairline run passes between them outside. It
-     is the only part every plate has in common, which is what lets it read as
-     the interface rather than as a sixth mechanism. */
-  const couple = [
-    { ...stand(-66, 41, 5, 5, 4, 1.5), cls: 'fl-couple', depth: -1200 },
-    { ...stand(66, -41, 5, 5, 4, 1.5), cls: 'fl-couple', depth: -1200 },
-  ]
-
   // Back to front, or a mechanism is a pile rather than an object - and every
   // solid gets its own phase in the settle, so a plate breathes as a population
   // of separate things rather than as one object going up and down.
-  return [...couple, ...build[key]()]
+  return build[key]()
     .sort((a, b) => a.depth - b.depth)
     .map((part, index) => ({ ...part, life: jitter(index, 23) }))
 }
 
-/* WHERE THE RUN CROSSES BETWEEN PLATES. The coupling sits at plan (66, -41),
-   which the projection puts 92.7 to the right of its seat and 8.5 down; its
-   mirror is the same distance the other way. Solved rather than measured, so
-   the run still lands on both couplings if the plate ever changes size. */
-const LINK_X = Math.round((66 + 41) * 0.866 * 10) / 10
-const LINK_Y = Math.round((66 - 41) * 0.34 * 10) / 10
+/* THE PLATES ARE NOT WIRED TOGETHER ANY MORE.
 
-/* NOTHING FLIES OVER THE ROW ANY MORE.
-
-   Two passes put things in the band above the plates: five identical carriers
-   ferrying across, then one hanging object per station. Both were decoration
-   with a rationale attached. The carriers said only that something was moving,
-   which the couplings say better; the hanging objects were static shapes in the
-   quietest part of the sheet, and a thing that hangs in the air without doing
-   anything is a thing that is there to be looked at rather than read. The band
-   is gone with them, and the figure is the closer for it. */
+   A coupling stood in each of the two plan corners where a plate came nearest
+   its neighbours, with a hairline run passing between them, on the argument
+   that five plates in a row are five islands. The argument was right and the
+   answer was wrong: what it produced was four thin lines crossing the empty
+   gaps between the plates and ten small blocks doing nothing on ten corners,
+   which is a diagram of a connection rather than a connection. The datum under
+   the row already says these five are one run, and it says it with one line
+   instead of fourteen marks. */
 
 const STEPS = [
   {
@@ -637,29 +628,6 @@ export default function ChainSchematic({ animate = true }) {
               <circle className="dgm-grain" cx="1" cy="1" r="0.9" />
             </pattern>
           </defs>
-
-          {/* THE RUN BETWEEN THE STATIONS. Four hairlines, each from one
-              plate's downstream coupling to the next plate's upstream one, so
-              what the row is doing carries across the gaps instead of stopping
-              at every plate edge. */}
-          <g className="fl-links" aria-hidden="true">
-            {STEPS.slice(1).map((item, i) => (
-              <line
-                /* THE RUN LIGHTS THROUGH THE STATION A READER IS ON. Pointing
-                   at a step used to change only that step, which made five
-                   plates that happen to be near each other rather than a run
-                   with a reader's finger somewhere in it. The two links either
-                   side of the held station carry now, so the answer to "what
-                   does this step do" includes where it sits. */
-                className={`fl-link${hot === item.key || hot === STEPS[i].key ? ' is-live' : ''}`}
-                key={item.key}
-                x1={STEPS[i].seat[0] + LINK_X}
-                y1={STEPS[i].seat[1] + LINK_Y}
-                x2={item.seat[0] - LINK_X}
-                y2={item.seat[1] - LINK_Y}
-              />
-            ))}
-          </g>
 
           <line
             className="fl-datum"
