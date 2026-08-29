@@ -10,8 +10,9 @@
  * floor shadow doing the grounding (the shadow lives with the round, in the
  * figure's own markup, because it belongs to the floor and not the body).
  *
- * The character is deliberately not named anywhere a reader can see. The
- * component name is a placeholder until the company christens it.
+ * It has no name, and it is not getting one: it is the Damaros drum logo
+ * personified a bit, and "courier" is its job on this sheet, not a
+ * christening.
  *
  * The body is only the drawing. Where it flies and what it moves belong to
  * the figure that hosts it.
@@ -27,20 +28,20 @@ const S = 0.048
 const CX = 235.5
 const TOP = 74
 
-export function Scout({ x, y }) {
+export function Courier({ x, y }) {
   return (
-    <g className="scout">
-      <g className="scout-body" transform={`translate(${Math.round((x - CX * S) * 100) / 100}, ${Math.round((y - TOP * S) * 100) / 100}) scale(${S})`}>
+    <g className="courier">
+      <g className="courier-body" transform={`translate(${Math.round((x - CX * S) * 100) / 100}, ${Math.round((y - TOP * S) * 100) / 100}) scale(${S})`}>
         {/* The whirl (one full victory spin at the end of a round) and the
             jelly each live on their own wrapper inside the placing
             transform, because a CSS animation on the placed group would
             replace the translate and scale that stand the character on
             its point - and on one shared wrapper the spin would replace
             the wobble. */}
-        <g className="scout-whirl">
-          <g className="scout-trunk">
-            <path className="scout-shape" d={MARK[0]} />
-            <path className="scout-shape" d={MARK[1]} />
+        <g className="courier-whirl">
+          <g className="courier-trunk">
+            <path className="courier-shape" d={MARK[0]} />
+            <path className="courier-shape" d={MARK[1]} />
           </g>
         </g>
       </g>

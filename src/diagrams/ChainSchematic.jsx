@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import { ISO_X, ISO_Y, jitter, planCircle, planSpace, project, roundedBox, roundedCylinder, roundedSlab } from './iso'
 import { Faces } from './Solid'
-import { Scout } from './Scout'
+import { Courier } from './Courier'
 import { useCenterOnOverflow } from './useCenterOnOverflow'
 
 /**
@@ -1429,7 +1429,7 @@ export default function ChainSchematic({ animate = true }) {
                   <g className="fl-hover">
                     <line className="fl-beam" x1={CALLS[0]} y1="86" x2={CALLS[0]} y2="102" />
                     <g className="fl-monitor" onClick={() => setShy(true)}>
-                      <Scout x={CALLS[0]} y={72} />
+                      <Courier x={CALLS[0]} y={72} />
                     </g>
                   </g>
                 </g>

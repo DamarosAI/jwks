@@ -16,7 +16,7 @@ const iso = await readSource(new URL('./diagrams/iso.js', import.meta.url))
 const solid = await readSource(new URL('./diagrams/Solid.jsx', import.meta.url))
 const trident = await readSource(new URL('./diagrams/TridentSchematic.jsx', import.meta.url))
 const nectar = await readSource(new URL('./diagrams/NectarSchematic.jsx', import.meta.url))
-const scout = await readSource(new URL('./diagrams/Scout.jsx', import.meta.url))
+const courier = await readSource(new URL('./diagrams/Courier.jsx', import.meta.url))
 const floor = await readSource(new URL('./diagrams/ChainSchematic.jsx', import.meta.url))
 const field = await readSource(new URL('./diagrams/usePointerField.js', import.meta.url))
 
@@ -2225,9 +2225,17 @@ describe('The floor schematic', () => {
     const escortUp = Number(css.match(/@keyframes fl-escort \{[\s\S]*?(\d+(?:\.\d+)?)%, [\d.]+% \{ opacity: 1/)[1])
     const issueGone = Number(css.match(/@keyframes fl-issue \{[\s\S]*?(\d+(?:\.\d+)?)% \{ transform: translate\(6\.06px, -2\.38px\); opacity: 0/)[1])
     assert.ok(escortUp <= issueGone, 'the escort must be opaque over the issue before the issue fades')
-    const dockUp = Number(css.match(/@keyframes fl-dock \{[\s\S]*?(\d+(?:\.\d+)?)%, [\d.]+% \{ transform: translate\(-9\.96px, -3\.91px\); opacity: 1/)[1])
+    const dockUp = Number(css.match(/@keyframes fl-dock \{[\s\S]*?(\d+(?:\.\d+)?)%, [\d.]+% \{ transform: translate\(-7\.79px, -3\.06px\); opacity: 1/)[1])
     const escortGone = Number(css.match(/@keyframes fl-escort \{[\s\S]*?(\d+(?:\.\d+)?)%, 100% \{ opacity: 0/)[1])
     assert.ok(dockUp <= escortGone, 'the dock must be up at the mouth before the escort fades over it')
+    // HANDLED CARGO DOES NOT BREATHE. A covered swap is only invisible if
+    // the twins are pixel-coincident, and the settle's idle drift split
+    // them by a hair at every handoff - so every cell that takes part in
+    // one sits dead still.
+    for (const held of ['fl-issue', 'fl-dock', 'fl-bud', 'fl-feed', 'fl-index', 'fl-pushed']) {
+      assert.match(css, new RegExp(`\\.dgm-svg\\.is-live \\.${held} \\.fl-settle`), `${held} must not breathe under a swap`)
+    }
+    assert.match(css, /\.fl-pushed \.fl-settle \{ animation: none; \}/)
     const shipped = css.match(/@keyframes fl-ship \{([\s\S]*?)\n\}/)[1]
     assert.ok(Number(shipped.match(/(\d+)% \{ transform: translate\(38\.1px, -14\.96px\); opacity: 0/)[1]) <= 84,
       'the shipment has to be gone before the join arrives')
@@ -2850,23 +2858,28 @@ describe('The floor schematic', () => {
     // phase-locked to the hover bob. A face, a fake extrusion and an
     // antenna were all tried and all came off, so they are BANNED, not
     // just absent.
-    assert.match(floor, /import \{ Scout \} from '\.\/Scout'/)
-    assert.match(scout, /M 104\.82 74\.50[\s\S]*?M 158\.62 284\.50/)
-    assert.equal((scout.match(/className="scout-shape"/g) || []).length, 2, 'the body is the two mark shapes')
-    assert.equal((scout.match(/<path/g) || []).length, 2, 'the body is the mark - two paths and nothing else')
-    assert.doesNotMatch(scout, /<circle|<line|<rect/, 'no face, no antenna, no dressing - the silhouette is the costume')
-    for (const retired of ['scout-eye', 'scout-pupil', 'scout-glint', 'scout-flank', 'scout-blink', 'scout-antenna', 'scout-tip', 'scout-wink', 'scout-sway']) {
-      assert.doesNotMatch(scout, new RegExp(retired), `${retired} came off the character`)
+    assert.match(floor, /import \{ Courier \} from '\.\/Courier'/)
+    // The name went with the dressings: it is the drum logo personified a
+    // bit, and "courier" is a job, not a christening.
+    assert.doesNotMatch(floor, /[Ss]cout/)
+    assert.doesNotMatch(css, /[Ss]cout/)
+    assert.doesNotMatch(courier, /[Ss]cout/)
+    assert.match(courier, /M 104\.82 74\.50[\s\S]*?M 158\.62 284\.50/)
+    assert.equal((courier.match(/className="courier-shape"/g) || []).length, 2, 'the body is the two mark shapes')
+    assert.equal((courier.match(/<path/g) || []).length, 2, 'the body is the mark - two paths and nothing else')
+    assert.doesNotMatch(courier, /<circle|<line|<rect/, 'no face, no antenna, no dressing - the silhouette is the costume')
+    for (const retired of ['courier-eye', 'courier-pupil', 'courier-glint', 'courier-flank', 'courier-blink', 'courier-antenna', 'courier-tip', 'courier-wink', 'courier-sway']) {
+      assert.doesNotMatch(courier, new RegExp(retired), `${retired} came off the character`)
       assert.doesNotMatch(css, new RegExp(retired), `${retired} came off the character`)
     }
     assert.match(floor, /className="fl-monitorshade"/)
-    assert.match(css, /\.scout-shape \{\s*\n\s*fill: var\(--accent\);/)
-    assert.match(css, /\.scout-shape \{[\s\S]*?stroke-width: 33;/)
+    assert.match(css, /\.courier-shape \{\s*\n\s*fill: var\(--accent\);/)
+    assert.match(css, /\.courier-shape \{[\s\S]*?stroke-width: 33;/)
     // The jelly and the bob must share one clock and one alternate ease,
     // or the squash lands off the bounce it belongs to.
-    assert.match(css, /\.dgm-svg\.is-live \.scout-trunk \{ animation: scout-jelly 3\.4s ease-in-out infinite alternate; \}/)
+    assert.match(css, /\.dgm-svg\.is-live \.courier-trunk \{ animation: courier-jelly 3\.4s ease-in-out infinite alternate; \}/)
     assert.match(css, /\.dgm-svg\.is-live \.fl-hover \{ animation: fl-hovering 3\.4s ease-in-out infinite alternate; \}/)
-    assert.match(css, /@keyframes scout-jelly \{\s*\n\s*from \{ transform: rotate\(-?[\d.]+deg\) scale\([\d.]+, [\d.]+\); \}/)
+    assert.match(css, /@keyframes courier-jelly \{\s*\n\s*from \{ transform: rotate\(-?[\d.]+deg\) scale\([\d.]+, [\d.]+\); \}/)
     assert.match(floor, /className=\{`fl-watch\$\{shy \? ' is-shy' : ''\}`\} aria-hidden="true"/)
     assert.match(floor, /className="fl-monitor" onClick=\{\(\) => setShy\(true\)\}/)
     assert.match(floor, /if \(event\.animationName === 'fl-flee'\) setShy\(false\)/)
@@ -2940,9 +2953,9 @@ describe('The floor schematic', () => {
     assert.match(floor, /cell\(at\(0\) - PITCH, lane, 'hold'\), cls: 'fl-blk is-hold fl-feed'/)
     // The victory lap: one full spin on the climb home, a whole turn so
     // the seam is invisible, on its own wrapper so the jelly survives it.
-    assert.match(scout, /className="scout-whirl"/)
-    assert.match(css, /\.dgm-svg\.is-live\.is-floor \.scout-whirl \{ animation: scout-whirl 33\.6s/)
-    assert.match(css, /@keyframes scout-whirl \{\s*\n\s*0%, [\d.]+% \{ transform: rotate\(0deg\); \}\s*\n\s*[\d.]+%, 100% \{ transform: rotate\(360deg\); \}/)
+    assert.match(courier, /className="courier-whirl"/)
+    assert.match(css, /\.dgm-svg\.is-live\.is-floor \.courier-whirl \{ animation: courier-whirl 33\.6s/)
+    assert.match(css, /@keyframes courier-whirl \{\s*\n\s*0%, [\d.]+% \{ transform: rotate\(0deg\); \}\s*\n\s*[\d.]+%, 100% \{ transform: rotate\(360deg\); \}/)
     // Startled, the courier drops the parcel: the wrappers fade whatever
     // the cargo clocks say, anywhere on the round.
     assert.equal((floor.match(/className="fl-parcel"/g) || []).length, 2)
@@ -2974,7 +2987,7 @@ describe('The floor schematic', () => {
     // no borrowed mast - and the retired act names stay banned so no pass
     // quietly brings the pet back.
     for (const clean of [trident, nectar]) {
-      assert.doesNotMatch(clean, /Scout|fl-watch|dgm-scoutround|setShy/)
+      assert.doesNotMatch(clean, /Scout|Courier|fl-watch|dgm-scoutround|setShy/)
     }
     assert.doesNotMatch(css, /dgm-scoutround|dgm-press|dgm-yoink|dgm-mastarm|dgm-lookt|dgm-lookn/)
     for (const retired of ['fl-treat', 'fl-jolt', 'is-poked']) {

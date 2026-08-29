@@ -13368,6 +13368,21 @@ html.is-hidden .clinic-node i,
    faded under the hovering escort, the dock fading up beneath that same
    escort at the far end and sliding mouth-to-apron at 16.8, where it rests
    until the work absorbs it mid-round. */
+/* HANDLED CARGO DOES NOT BREATHE. Every solid on a plate idles on its own
+   settle clock - and at every covered swap that pixel of idle drift is
+   exactly what betrayed the twin: the courier's drum holds still while
+   the seat cell under it breathed, and the pair split by a hair for a
+   frame. So the cells that take part in a handoff - the staged issue, the
+   docked transcript, the bud, the lane feed, the indexed line and the
+   pushed cell - sit dead still, which is also the honest reading:
+   material in a machine's grip is held, not idling. */
+.dgm-svg.is-live .fl-issue .fl-settle,
+.dgm-svg.is-live .fl-dock .fl-settle,
+.dgm-svg.is-live .fl-bud .fl-settle,
+.dgm-svg.is-live .fl-feed .fl-settle,
+.dgm-svg.is-live .fl-index .fl-settle,
+.dgm-svg.is-live .fl-pushed .fl-settle { animation: none; }
+
 .fl-blk.is-script .dgm-face-top { fill: color-mix(in srgb, var(--governed) 36%, var(--surface-solid)); }
 .fl-blk.is-script .dgm-face-left { fill: color-mix(in srgb, var(--governed) 58%, var(--surface-solid)); }
 .fl-blk.is-script .dgm-face-right { fill: color-mix(in srgb, var(--governed) 64%, var(--accent-strong)); }
@@ -13387,8 +13402,8 @@ html.is-hidden .clinic-node i,
 
 @keyframes fl-dock {
   0% { transform: translate(0px, 0px); opacity: 0; }
-  13% { transform: translate(-9.96px, -3.91px); opacity: 0; }
-  14.4%, 16.8% { transform: translate(-9.96px, -3.91px); opacity: 1; }
+  13% { transform: translate(-7.79px, -3.06px); opacity: 0; }
+  14.4%, 16.8% { transform: translate(-7.79px, -3.06px); opacity: 1; }
   18.8%, 44% { transform: translate(0px, 0px); opacity: 1; }
   48%, 100% { transform: translate(0px, 0px); opacity: 0; }
 }
@@ -13798,7 +13813,7 @@ html.is-hidden .clinic-node i,
    3.4s, same alternate ease), so the body squashes wide at the bottom of
    every bob and stretches tall at the top the way anything soft and
    floaty does. The floor shadow riding the round does the grounding. */
-.scout-shape {
+.courier-shape {
   fill: var(--accent);
   stroke: var(--accent);
   stroke-width: 33;
@@ -13807,14 +13822,14 @@ html.is-hidden .clinic-node i,
   vector-effect: none;
 }
 
-.scout-trunk {
+.courier-trunk {
   transform-box: fill-box;
   transform-origin: 50% 88%;
 }
 
-.dgm-svg.is-live .scout-trunk { animation: scout-jelly 3.4s ease-in-out infinite alternate; }
+.dgm-svg.is-live .courier-trunk { animation: courier-jelly 3.4s ease-in-out infinite alternate; }
 
-@keyframes scout-jelly {
+@keyframes courier-jelly {
   from { transform: rotate(-2deg) scale(1.06, 0.93); }
   to { transform: rotate(2deg) scale(0.96, 1.05); }
 }
@@ -13824,14 +13839,14 @@ html.is-hidden .clinic-node i,
    Protocol - a whole turn in just over a second, on its own wrapper so
    the jelly keeps wobbling straight through it. A full turn ends where
    it starts, so the seam is invisible. */
-.scout-whirl {
+.courier-whirl {
   transform-box: fill-box;
   transform-origin: center;
 }
 
-.dgm-svg.is-live.is-floor .scout-whirl { animation: scout-whirl 33.6s cubic-bezier(0.55, 0, 0.35, 1) infinite; }
+.dgm-svg.is-live.is-floor .courier-whirl { animation: courier-whirl 33.6s cubic-bezier(0.55, 0, 0.35, 1) infinite; }
 
-@keyframes scout-whirl {
+@keyframes courier-whirl {
   0%, 80.5% { transform: rotate(0deg); }
   84.5%, 100% { transform: rotate(360deg); }
 }
