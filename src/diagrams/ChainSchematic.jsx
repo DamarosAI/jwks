@@ -1,7 +1,8 @@
 import { useState } from 'react'
 
-import { ISO_Y, jitter, planCircle, planSpace, project, roundedBox, roundedCylinder, roundedSlab } from './iso'
+import { ISO_X, ISO_Y, jitter, planCircle, planSpace, project, roundedBox, roundedCylinder, roundedSlab } from './iso'
 import { Faces } from './Solid'
+import { Scout } from './Scout'
 import { useCenterOnOverflow } from './useCenterOnOverflow'
 
 /**
@@ -357,6 +358,16 @@ const vessel = (seat, gates = null) => {
   return { back, front }
 }
 
+/* WHERE THE MONITOR'S ROUNDS CALL. One anchor per station, each directly
+ * over the thing the scout works there: the switch it pokes on Protocol's
+ * board, Evidence's entry gate where it collects the transcript, the centre
+ * of Screening's verdict line for the sweep, Resolve's lever, and the middle
+ * of Replay's transport for the little step backward. Solved from the same
+ * projection the plates are placed with, so a station can move and the
+ * rounds follow. */
+const call = (station, px, py) => r1(CX + ((station - 2) * STEP * 2 + px - py) * ISO_X)
+const CALLS = [call(0, 30, -22), call(1, -74, 18), call(2, 0, -28), call(3, -54, -28), call(4, -52, 2)]
+
 /* THE LETTERING STANDS ALONE. The names ran on a survey datum once - one
  * rule under the row, leaders down onto it, ticks at every station - and the
  * apparatus outweighed the words: a line whose whole job was to hold five
@@ -590,7 +601,11 @@ function mechanism(key, t) {
         ], 3),
         ...bank.flatMap(([px, py, i]) => [
           { ...stand(px, py, 5, 5, 5, 4.5, 3), cls: 'fl-seat' },
-          arm(`fl-toggle is-${verdict[i]}`, px, py, 11, 11, 4, { knob: 3.2, turn: i }),
+          // Switch three is the one the monitor pokes on its rounds: it
+          // trades the board's staggered clock for the patrol's own, sits
+          // settled all loop, and waggles once as the scout's beam touches
+          // it - flipped by the visitor, not by the run.
+          arm(`fl-toggle is-${verdict[i]}${i === 3 ? ' is-poked' : ''}`, px, py, 11, 11, 4, { knob: 3.2, turn: i }),
         ]),
         // THE TRANSCRIPT. This plate holds no material - it holds the
         // document, and the document is what it ships. It crossed as a
@@ -672,6 +687,14 @@ function mechanism(key, t) {
         // them. All three ride one clock, so the cell travels because the claw
         // is carrying it rather than beside it.
         { ...cell(-52, -20, null, 5, 14), cls: 'fl-blk fl-carry', depth: OVER + 1 },
+        // THE MONITOR'S COLLECTION. Once per patrol, while the scout hangs
+        // over the entry gate, a violet transcript comes in through it and
+        // never reaches the apron: the beam takes it, it rises off the
+        // lane and is absorbed into the visitor - a monitor collecting the
+        // site's paperwork, which is what monitors do. It runs on the
+        // patrol's own 33.6s clock, timed between the regular dock's
+        // arrivals so the gate never carries two cells at once.
+        { ...cell(-74, 18, null, 5), cls: 'fl-blk is-script fl-treat' },
         // THE DOCKED TRANSCRIPT. The instructions this machine organises by,
         // arrived through the entry gate in the back wall on this plate's own
         // clock - the same violet cell that left the nucleus - resting on
@@ -1093,7 +1116,7 @@ export default function ChainSchematic({ animate = true }) {
           className={`dgm-svg is-floor${animate ? ' is-live' : ''}`}
           viewBox={`0 0 ${W} ${H}`}
           role="img"
-          aria-label="Five plates in a row, seen in axonometric projection, their machines already running - each plate bounded by its own printed double-walled membrane, the way a section drawing bounds a cell. The five stations are lettered in ink beneath their plates: Protocol, Evidence, Screening, Resolve, Replay. A small hovering monitor wearing the Damaros mark patrols the air above the row, pausing to look down at each plate in turn; clicked, it darts off the sheet and drifts back. One cell - a round body with its nucleus drawn on top - runs the whole row. A grid of twelve switches on a breaker board is thrown one at a time, each settling green or red, and the compiled protocol ships out through a gate in the plate's wall as a violet-stained cell - the transcript in the run's own vessel. It docks beside the next plate's gantry, where a claw closes on one cell in a heap, lifts it, carries it across, and sets it down into an ordered bed of round sockets; the placed cell then slides up a printed lane to a staging seat, waits its beat, and continues straight out through that plate's far gate - one cell, one line, socket to seat to gate. Along the far long edge of the next plate, three verdict seats wait in a line - green, red, amber. The bed feeds the green pore as a moving line: one cell slides onto the mouth and is visibly swallowed down the bore while the seat behind it shuffles forward and the newly arrived cell takes the empty place; the red pore stands open and ringed; the amber seat is a gate cut through the plate's wall, its pylons stained amber, and the unsettled cell is sent through it in one motion - while the next amber cell forms inside the plate's reticulum - nested curved sacs opening toward the gate - and slides out down the lane to take the bay. On the plate beyond it enters a matching gate at the back of the lane, on the same clock it left on. There a hand throws a lever, a horizontal ram crosses the lane and pushes one cell clean off the edge through the one gap in the membrane, and the line indexes forward as the next arrives. On the last plate the run lies as frames on a tape between two reels, and a head reads its way along and then runs back. Pointing at a plate lifts it off the ground and darkens the ground beneath it."
+          aria-label="Five plates in a row, seen in axonometric projection, their machines already running - each plate bounded by its own printed double-walled membrane, the way a section drawing bounds a cell. The five stations are lettered in ink beneath their plates: Protocol, Evidence, Screening, Resolve, Replay. A small hovering monitor wearing the Damaros mark patrols the air above the row on its own slow loop: it pokes a switch on the protocol board, draws the incoming violet transcript up its beam at the evidence gate, sweeps the verdict line, drops onto the resolve lever a beat before the throw, presses the replay transport's take-up reel just as the scanner turns for home and steps backwards alongside the rewind, then rides the row home; clicked, it darts off the sheet and drifts back. One cell - a round body with its nucleus drawn on top - runs the whole row. A grid of twelve switches on a breaker board is thrown one at a time, each settling green or red, and the compiled protocol ships out through a gate in the plate's wall as a violet-stained cell - the transcript in the run's own vessel. It docks beside the next plate's gantry, where a claw closes on one cell in a heap, lifts it, carries it across, and sets it down into an ordered bed of round sockets; the placed cell then slides up a printed lane to a staging seat, waits its beat, and continues straight out through that plate's far gate - one cell, one line, socket to seat to gate. Along the far long edge of the next plate, three verdict seats wait in a line - green, red, amber. The bed feeds the green pore as a moving line: one cell slides onto the mouth and is visibly swallowed down the bore while the seat behind it shuffles forward and the newly arrived cell takes the empty place; the red pore stands open and ringed; the amber seat is a gate cut through the plate's wall, its pylons stained amber, and the unsettled cell is sent through it in one motion - while the next amber cell forms inside the plate's reticulum - nested curved sacs opening toward the gate - and slides out down the lane to take the bay. On the plate beyond it enters a matching gate at the back of the lane, on the same clock it left on. There a hand throws a lever, a horizontal ram crosses the lane and pushes one cell clean off the edge through the one gap in the membrane, and the line indexes forward as the next arrives. On the last plate the run lies as frames on a tape between two reels, and a head reads its way along and then runs back. Pointing at a plate lifts it off the ground and darkens the ground beneath it."
         >
           <defs>
             <pattern id="fl-grain" width="13" height="13" patternUnits="userSpaceOnUse">
@@ -1345,56 +1368,45 @@ export default function ChainSchematic({ animate = true }) {
             </g>
           ))}
 
-          {/* THE MONITOR. Clinical research has one figure who hovers over
-              every site in turn and looks at the work without touching it,
-              and this sheet finally drew them: a small drone wearing the
-              Damaros mark as its face, patrolling the empty air band above
-              the row on a slow loop of its own - dwell over a plate, dip
-              for a look (the beam blinks, the shadow keeps its ground),
-              hop one row pitch to the next, and after the fifth station
-              climb and glide the whole row home. It flies the one plan
-              axis that projects flat - the row's own - and the dips ride
-              the height axis, so nothing about it ever crosses the
-              projection; it lives above every solid's airspace and its
-              only ground contact is a shadow. Click it and it bolts
-              straight up off the sheet, then drifts back down to wherever
-              the patrol has got to - the flee composes on its own wrapper,
-              so the loop underneath never stutters. */}
-          {(() => {
-            const scout = roundedCylinder(STEPS[0].seat[0], 76, 7.5, 6)
-            const mark = 0.0155
-            return (
-              <g className={`fl-watch${shy ? ' is-shy' : ''}`} aria-hidden="true">
-                <g className="fl-patrolled">
-                  <g className="fl-groundwrap">
-                    <ellipse className="fl-monitorshade" cx={STEPS[0].seat[0]} cy="170" rx="14" ry="4.6" />
-                  </g>
-                  <g
-                    className="fl-dart"
-                    onAnimationEnd={(event) => { if (event.animationName === 'fl-flee') setShy(false) }}
-                  >
-                    <g className="fl-duck">
-                      <g className="fl-hover">
-                        <line className="fl-beam" x1={scout.cx} y1={scout.cy + 11} x2={scout.cx} y2={scout.cy + 25} />
-                        <g className="fl-monitor" onClick={() => setShy(true)}>
-                          <path className="dgm-face-right" d={scout.wall} />
-                          <ellipse className="dgm-face-top" cx={scout.cx} cy={scout.cy} rx={scout.rx} ry={scout.ry} />
-                          {/* The face is the company's own mark, straight off
-                              the favicon - white on the dark body, the way the
-                              mark already lives on black. A mascot is a solid
-                              that kept the brand's geometry. */}
-                          <g className="fl-face" transform={`translate(${r1(scout.cx - 235.5 * mark)}, ${r1(scout.cy + 3.6 - 260 * mark)}) scale(${mark})`}>
-                            <path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z" />
-                            <path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z" />
-                          </g>
-                        </g>
-                      </g>
+          {/* THE MONITOR ON ITS ROUNDS. The one figure clinical research
+              already has for hovering over every site and looking without
+              touching, drawn as the site's small visitor - the Scout, the
+              company's mark for a face - patrolling the air band above the
+              row on a 33.6-second loop. THE PERIOD IS THE SYNC: 33.6 is six
+              material beats (5.6s) and seven of Resolve's (4.8s), so the
+              rounds phase-lock to both clocks and every act lands on cue.
+              At Protocol it dips and pokes a switch, which waggles; at
+              Evidence it hangs over the entry gate and draws the incoming
+              transcript up its beam; at Screening it sweeps the verdict
+              line end to end; at Resolve it drops onto the lever exactly
+              one beat before the throw; at Replay it plays one step of
+              itself backwards, which on this sheet only Replay may do.
+              Then it climbs and rides the whole row home. Hops run the one
+              plan axis that projects flat, dips ride the height axis, and
+              it flies above every solid's airspace with a shadow for
+              ground contact. Clicked, it bolts straight off the sheet and
+              drifts back - the flee composes on its own wrapper, so the
+              patrol underneath never stutters. */}
+          <g className={`fl-watch${shy ? ' is-shy' : ''}`} aria-hidden="true">
+            <g className="fl-patrolled">
+              <g className="fl-groundwrap">
+                <ellipse className="fl-monitorshade" cx={CALLS[0]} cy="170" rx="14" ry="4.6" />
+              </g>
+              <g
+                className="fl-dart"
+                onAnimationEnd={(event) => { if (event.animationName === 'fl-flee') setShy(false) }}
+              >
+                <g className="fl-duck">
+                  <g className="fl-hover">
+                    <line className="fl-beam" x1={CALLS[0]} y1="86" x2={CALLS[0]} y2="102" />
+                    <g className="fl-monitor" onClick={() => setShy(true)}>
+                      <Scout x={CALLS[0]} y={72} />
                     </g>
                   </g>
                 </g>
               </g>
-            )
-          })()}
+            </g>
+          </g>
         </svg>
       </div>
 

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import { ISO_Y, jitter, planCyl, planDrop, planPrism, planSpace, roundedBox, roundedDeck } from './iso'
+import { Scout } from './Scout'
 import { Faces } from './Solid'
 import { useCenterOnOverflow } from './useCenterOnOverflow'
 import { useScrollRun } from './useScrollPhase'
@@ -608,6 +609,9 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
   const frame = useCenterOnOverflow()
   const [figure, phase, booted] = useScrollRun(PHASES, { reduced })
   const [hot, setHot] = useState(null)
+  // The visiting scout's one nerve: clicked, it bolts; the flee animation
+  // ending brings it back on its own.
+  const [shy, setShy] = useState(false)
   const [source, setSource] = useState(null)
   const [field, setField] = useState(null)
   const state = PHASES[phase] ?? PHASES[PHASES.length - 1]
@@ -686,7 +690,7 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
           ref={figure}
           viewBox="0 0 620 700"
           role="img"
-          aria-label="Three kinds of proposal source - a model, an agent loop and a scheduled job - sit above one site, drawn identically because any of them can be swapped for another. The whole stack stands over a ground that carries the site's own membrane, printed as a double wall, and the proposal surfaces ride outside it. A proposal lands on an intake deck through a collared pore, drops to a schema contract deck of nineteen named fields, and drops again to an approval deck whose gate stays closed until a named person at the site signs. Only then does it reach the receipt ledger, where every row is chained to the row above it by its hash."
+          aria-label="Three kinds of proposal source - a model, an agent loop and a scheduled job - sit above one site, drawn identically because any of them can be swapped for another. The whole stack stands over a ground that carries the site's own membrane, printed as a double wall, and the proposal surfaces ride outside it. A proposal lands on an intake deck through a collared pore, drops to a schema contract deck of nineteen named fields, and drops again to an approval deck whose gate stays closed until a named person at the site signs. Only then does it reach the receipt ledger, where every row is chained to the row above it by its hash. The small hovering monitor that patrols the workflow figure visits here too, riding the free air at the sheet's edge and pressing one of the contract's field tiles in passing; clicked, it darts off the sheet and drifts back."
         >
           <defs>
             <pattern id="tr-grain" width="16" height="16" patternUnits="userSpaceOnUse">
@@ -943,9 +947,13 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
                 {FIELDS.map((cell, index) => {
                   const bound = index < state.bound
                   return (
+                    // Field seven rides an extra wrapper: the visiting scout
+                    // presses it once per round, and the press lives on the
+                    // wrapper because the field and its tile already keep
+                    // clocks of their own.
+                    <g className={index === 7 ? 'dgm-presswrap' : undefined} key={cell.name}>
                     <g
                       className={`dgm-field${bound ? ' is-bound' : ''}`}
-                      key={cell.name}
                       style={{ '--seq': cell.seq, '--life': cell.life, '--lift': `${cell.block.step}px` }}
                     >
                       <path className="dgm-face-left" d={cell.block.faceLeft} />
@@ -956,6 +964,7 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
                         style={{ '--life': cell.life }}
                         {...touch(index)}
                       />
+                    </g>
                     </g>
                   )
                 })}
@@ -1141,6 +1150,27 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
           <rect className="dgm-status" x="20" y="660" width="122" height="26" rx="13" />
           <text className="dgm-statustext" x="81" y="677" textAnchor="middle">{pill}</text>
           <text className="dgm-read" x="156" y="677">{read}</text>
+          {/* THE VISITOR. The workflow figure's scout, off duty: it rides
+              the free air channel at the sheet's right edge, peeks at the
+              sources, drops to the schema contract's height and presses one
+              field tile in passing - the same body, the same mark for a
+              face, and the same one nerve everywhere: clicked, it bolts off
+              the sheet and drifts back. */}
+          <g className={`fl-watch${shy ? ' is-shy' : ''}`} aria-hidden="true">
+            <g className="dgm-scoutround is-trident">
+              <g
+                className="fl-dart"
+                onAnimationEnd={(event) => { if (event.animationName === 'fl-flee') setShy(false) }}
+              >
+                <g className="fl-hover">
+                  <line className="fl-beam" x1="536" y1="136" x2="553" y2="136" />
+                  <g className="fl-monitor" onClick={() => setShy(true)}>
+                    <Scout x={572} y={124} />
+                  </g>
+                </g>
+              </g>
+            </g>
+          </g>
         </svg>
       </div>
     </figure>

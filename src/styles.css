@@ -13582,7 +13582,7 @@ html.is-hidden .clinic-node i,
 
 /* Forward at a constant rate, because a transport does not accelerate through a
    record, and back on a curve, because a rewind does. */
-.dgm-svg.is-live .fl-head { animation: fl-run 9.4s linear infinite; }
+.dgm-svg.is-live .fl-head { animation: fl-run 8.4s linear infinite; }
 
 @keyframes fl-run {
   0%, 4% { transform: translate(0px, 0px); }
@@ -13611,7 +13611,7 @@ html.is-hidden .clinic-node i,
 
 .fl-coil { fill: none; stroke-width: 1.2; }
 
-.dgm-svg.is-live .fl-spin { animation: fl-wind 9.4s linear infinite; }
+.dgm-svg.is-live .fl-spin { animation: fl-wind 8.4s linear infinite; }
 
 @keyframes fl-wind {
   0%, 4% { transform: rotate(0deg); }
@@ -13623,7 +13623,7 @@ html.is-hidden .clinic-node i,
    record being read rather than seven blocks blinking: the delay walks the tape
    at exactly the rate the head walks it. */
 .dgm-svg.is-live .fl-frame {
-  animation: fl-read 9.4s ease-in-out infinite;
+  animation: fl-read 8.4s ease-in-out infinite;
   animation-delay: calc(var(--turn, 0) * 0.9s);
 }
 
@@ -13732,18 +13732,20 @@ html.is-hidden .clinic-node i,
 /* ── The monitor ─────────────────────────────────────────────────────────
 
    Clinical research has one figure who hovers over every site in turn and
-   looks at the work without touching it. This sheet draws them: a small
-   drone wearing the Damaros mark as its face, patrolling the empty air
-   band above the row - dwell, dip for a look, hop one row pitch, and after
-   the fifth station climb and ride the whole row home. The hops run the
-   one plan axis that projects FLAT (the row's own, +x -y), the dips run
-   the height axis, and it flies above every solid's airspace, so nothing
-   about it can cross the projection; its one ground contact is a shadow.
+   looks at the work without touching it. This sheet draws them: the Scout,
+   a small drone wearing the Damaros mark as its face, patrolling the empty
+   air band above the row on a 33.6-second round. THE PERIOD IS THE SYNC:
+   33.6 is six material beats (5.6s) and seven of Resolve's (4.8s), so the
+   rounds phase-lock to both clocks and every act lands on cue - the poke
+   meets the switch, the beam meets the transcript, the drop onto the lever
+   lands one beat before the throw. Hops run the one plan axis that
+   projects FLAT (the row's own), dips ride the height axis, and it flies
+   above every solid's airspace; its one ground contact is a shadow.
 
-   It has exactly one nerve: clicked, it bolts straight up off the sheet
-   and drifts back down with a little bounce - and the flee rides its own
-   wrapper, composing over the patrol, so the loop underneath never
-   stutters and the drone comes back to wherever the round has got to. */
+   It has exactly one nerve, in every figure it visits: clicked, it bolts
+   straight up off the sheet and drifts back down with a small bounce - on
+   its own wrapper, composing over whatever round it was flying, so the
+   loop underneath never stutters. */
 
 .fl-watch {
   opacity: 0;
@@ -13753,17 +13755,36 @@ html.is-hidden .clinic-node i,
 .dgm-svg.is-live .fl-watch { opacity: 1; }
 .dgm-svg.is-live .fl-monitor { pointer-events: all; cursor: pointer; }
 
-.fl-monitor .dgm-face-top {
-  fill: color-mix(in srgb, var(--accent) 26%, var(--surface-solid));
-  stroke: color-mix(in srgb, var(--line) 60%, transparent);
+/* The character itself - one dress for all three figures. THE BODY IS THE
+   MARK: both trapezoids filled and fat-stroked in one deep ink, exactly
+   the favicon's construction, so the plump silhouette is the stroke and
+   the character is the logo. The eyes are the surface's own white, like
+   the mark on black. */
+.scout-shape {
+  fill: color-mix(in srgb, var(--accent-strong) 58%, var(--text));
+  stroke: color-mix(in srgb, var(--accent-strong) 58%, var(--text));
+  stroke-width: 33;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: none;
+}
+
+.scout-eye { fill: var(--surface-solid); }
+
+.scout-antenna {
+  stroke: color-mix(in srgb, var(--text) 55%, transparent);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
 
-/* The body is the mark's own ground: near-black, so the white mark reads
-   the way it already reads on the favicon. */
-.fl-monitor .dgm-face-right { fill: var(--ink-deep); }
-.fl-face path { fill: var(--surface-solid); }
+.scout-tip { fill: var(--accent-strong); }
+
+.dgm-svg.is-live .scout-tip { animation: scout-wink 2.6s ease-in-out infinite alternate; }
+
+@keyframes scout-wink {
+  from { opacity: 0.35; }
+  to { opacity: 1; }
+}
 
 .fl-beam {
   stroke: color-mix(in srgb, var(--accent-strong) 55%, transparent);
@@ -13773,71 +13794,124 @@ html.is-hidden .clinic-node i,
   opacity: 0;
 }
 
-.fl-monitorshade { fill: color-mix(in srgb, var(--ink-deep) 76%, transparent); }
+.fl-monitorshade { fill: color-mix(in srgb, var(--accent-strong) 62%, transparent); }
 
-.dgm-svg.is-live .fl-patrolled { animation: fl-patrol 36s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
-.dgm-svg.is-live .fl-duck { animation: fl-duck 36s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
+/* THE CHAIN'S ROUND - scoped to the floor sheet, because the cameo rounds
+   in Trident and Nectar fly their own. */
+.dgm-svg.is-live.is-floor .fl-patrolled { animation: fl-patrol 33.6s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
+.dgm-svg.is-live.is-floor .fl-duck { animation: fl-duck 33.6s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
 .dgm-svg.is-live .fl-hover { animation: fl-hovering 3.4s ease-in-out infinite alternate; }
-.dgm-svg.is-live .fl-monitorshade { animation: fl-ground 36s linear infinite; }
-.dgm-svg.is-live .fl-beam { animation: fl-blink 36s linear infinite; }
+.dgm-svg.is-live.is-floor .fl-monitorshade { animation: fl-ground 33.6s linear infinite; }
+.dgm-svg.is-live.is-floor .fl-beam { animation: fl-blink 33.6s linear infinite; }
 
-/* Five stops on the row pitch - one per plate - and the long ride home. */
+/* Five stops, each over the thing the scout works there, and the long ride
+   home. The X values are the CALLS anchors' own spacing. */
 @keyframes fl-patrol {
-  0%, 9% { transform: translate(0px, 0px); }
-  16%, 25% { transform: translate(235.55px, 0px); }
-  32%, 41% { transform: translate(471.1px, 0px); }
-  48%, 57% { transform: translate(706.66px, 0px); }
-  64%, 76% { transform: translate(942.21px, 0px); }
-  94%, 100% { transform: translate(0px, 0px); }
+  0%, 8% { transform: translate(0px, 0px); }
+  13%, 27% { transform: translate(110.85px, 0px); }
+  31.5%, 43% { transform: translate(450.32px, 0px); }
+  48%, 62% { transform: translate(639.11px, 0px); }
+  66%, 78% { transform: translate(850.41px, 0px); }
+  92%, 100% { transform: translate(0px, 0px); }
 }
 
-/* The look: a dip inside each dwell, and altitude for the trip back. */
+/* The acts. Protocol: the poke. Evidence: the low hang while the beam
+   draws the transcript up, and a happy double-bob once it lands. Screening:
+   the level sweep along the verdict line. Resolve: the drop onto the lever
+   at 58.2% - cycle four of the 4.8s clock starts at 57.14%, the throw runs
+   its 14-28% window at 59.1-61.1%, so the scout lands a beat before the
+   lever goes. Replay: the poke onto the take-up reel at 65.8% - the
+   transport runs 8.4s, a quarter of the patrol, and its head turns for
+   home at 66.5% - so the scout presses the circle and the scanner
+   reverses, and the scout steps backwards alongside the rewind, which
+   only Replay may do. Then altitude for the ride home. */
 @keyframes fl-duck {
-  0%, 1.5% { transform: translateY(0px); }
-  4.5% { transform: translateY(9px); }
-  7.5%, 17.5% { transform: translateY(0px); }
-  20.5% { transform: translateY(9px); }
-  23.5%, 33.5% { transform: translateY(0px); }
-  36.5% { transform: translateY(9px); }
-  39.5%, 49.5% { transform: translateY(0px); }
-  52.5% { transform: translateY(9px); }
-  55.5%, 65.5% { transform: translateY(0px); }
-  68.5% { transform: translateY(9px); }
-  71.5% { transform: translateY(0px); }
-  78%, 91% { transform: translateY(-14px); }
-  97%, 100% { transform: translateY(0px); }
+  0%, 1.5% { transform: translate(0px, 0px) translateY(0px); }
+  3% { transform: translate(0px, 0px) translateY(26px); }
+  4.5% { transform: translate(0px, 0px) translateY(8px); }
+  6%, 16% { transform: translate(0px, 0px) translateY(0px); }
+  18%, 24.4% { transform: translate(0px, 0px) translateY(18px); }
+  25.2% { transform: translate(0px, 0px) translateY(10px); }
+  25.9% { transform: translate(0px, 0px) translateY(18px); }
+  26.8%, 32% { transform: translate(0px, 0px) translateY(0px); }
+  33.5% { transform: translate(-35px, 0px) translateY(10px); }
+  40% { transform: translate(35px, 0px) translateY(10px); }
+  42.5%, 56.5% { transform: translate(0px, 0px) translateY(0px); }
+  58.2% { transform: translate(0px, 0px) translateY(30px); }
+  59.5% { transform: translate(0px, 0px) translateY(12px); }
+  61%, 64.6% { transform: translate(0px, 0px) translateY(0px); }
+  65.8% { transform: translate(0px, 0px) translateY(26px); }
+  67% { transform: translate(0px, 0px) translateY(6px); }
+  68.5% { transform: translate(0px, 0px) translateY(0px); }
+  69.8%, 72.5% { transform: translate(-16px, 0px) translateY(0px); }
+  75%, 79% { transform: translate(0px, 0px) translateY(0px); }
+  82%, 90% { transform: translate(0px, 0px) translateY(-14px); }
+  94%, 100% { transform: translate(0px, 0px) translateY(0px); }
 }
 
 @keyframes fl-hovering {
   to { transform: translateY(-1.8px); }
 }
 
-/* The shadow keeps the ground the drone left, and goes with it when the
-   drone climbs out of working height for the ride home. */
+/* The shadow keeps the ground the scout left, and goes with it when the
+   scout climbs out of working height for the ride home. */
 @keyframes fl-ground {
-  0%, 72% { opacity: 0.26; }
-  78%, 92% { opacity: 0; }
-  98%, 100% { opacity: 0.26; }
+  0%, 77% { opacity: 0.26; }
+  83%, 90% { opacity: 0; }
+  94%, 100% { opacity: 0.26; }
 }
 
-/* The beam blinks only while it is actually looking. */
+/* The beam lights only while the scout is actually working something: the
+   switch, the transcript, the verdict sweep, the lever. */
 @keyframes fl-blink {
-  0%, 2.5% { opacity: 0; }
-  4.5% { opacity: 0.6; }
-  7%, 18.5% { opacity: 0; }
-  20.5% { opacity: 0.6; }
-  23%, 34.5% { opacity: 0; }
-  36.5% { opacity: 0.6; }
-  39%, 50.5% { opacity: 0; }
-  52.5% { opacity: 0.6; }
-  55%, 66.5% { opacity: 0; }
-  68.5% { opacity: 0.6; }
-  71%, 100% { opacity: 0; }
+  0%, 1.8% { opacity: 0; }
+  3% { opacity: 0.6; }
+  4.8%, 20% { opacity: 0; }
+  21% { opacity: 0.6; }
+  24.6% { opacity: 0.6; }
+  25.4%, 32.5% { opacity: 0; }
+  33.5% { opacity: 0.55; }
+  40% { opacity: 0.55; }
+  41%, 57% { opacity: 0; }
+  58% { opacity: 0.6; }
+  59.8%, 64.8% { opacity: 0; }
+  65.8% { opacity: 0.6; }
+  67%, 100% { opacity: 0; }
+}
+
+/* THE COLLECTION. Once per round a violet transcript comes in through
+   Evidence's entry gate and never reaches the apron: the beam takes it. It
+   rides the patrol's own period, timed between the regular dock's
+   arrivals so the gate never carries two cells at once. */
+.fl-treat { opacity: 0; }
+
+.dgm-svg.is-live.is-floor .fl-treat { animation: fl-treat 33.6s cubic-bezier(0.3, 0, 0.3, 1) infinite; }
+
+@keyframes fl-treat {
+  0%, 17.2% { transform: translate(-8.66px, -3.4px) translateY(0px); opacity: 0; }
+  18.2% { transform: translate(-8.66px, -3.4px) translateY(0px); opacity: 1; }
+  20.2%, 21.4% { transform: translate(0px, 0px) translateY(0px); opacity: 1; }
+  24% { transform: translate(0px, 0px) translateY(-45px); opacity: 1; }
+  24.8% { transform: translate(0px, 0px) translateY(-45px); opacity: 0; }
+  100% { transform: translate(-8.66px, -3.4px) translateY(0px); opacity: 0; }
+}
+
+/* THE POKED SWITCH. Switch three trades the board's staggered clock for
+   the patrol's own: settled all round, one waggle as the beam touches it -
+   flipped by the visitor, not by the run. */
+.dgm-svg.is-live .fl-toggle.is-poked { animation: fl-jolt 33.6s cubic-bezier(0.6, 0, 0.3, 1.2) infinite; }
+
+@keyframes fl-jolt {
+  0%, 2.6% { transform: rotate(-62deg); }
+  3.6% { transform: rotate(-118deg); }
+  5.4% { transform: rotate(-118deg); }
+  7%, 100% { transform: rotate(-62deg); }
 }
 
 /* The flee: straight up, off the sheet, a beat of nerve, and back down
    with one small bounce. Height axis only - the one axis that cannot lie -
-   and on its own wrapper so the patrol underneath never stutters. */
+   and on its own wrapper so the round underneath never stutters. Shared by
+   every figure the scout visits. */
 .dgm-svg.is-live .fl-watch.is-shy .fl-dart { animation: fl-flee 3.2s cubic-bezier(0.5, 0, 0.25, 1) 1; }
 
 .fl-watch.is-shy .fl-groundwrap { opacity: 0; }
@@ -13850,6 +13924,63 @@ html.is-hidden .clinic-node i,
   58% { transform: translateY(-170px); }
   86% { transform: translateY(6px); }
   100% { transform: translateY(0px); }
+}
+
+/* THE CAMEOS. In Trident and Nectar the scout is off duty - it rides the
+   free air channel at the sheet's edge, peeks, and messes about: it
+   presses one of the schema contract's field tiles, and it borrows a
+   site's masthead for a second and puts it back. Same body, same nerve. */
+.dgm-svg.is-live .dgm-scoutround.is-trident { animation: dgm-roundt 26s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
+.dgm-svg.is-live .dgm-scoutround.is-nectar { animation: dgm-roundn 28s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
+.dgm-svg.is-live .dgm-scoutround.is-trident .fl-beam { animation: dgm-lookt 26s linear infinite; }
+.dgm-svg.is-live .dgm-scoutround.is-nectar .fl-beam { animation: dgm-lookn 28s linear infinite; }
+
+@keyframes dgm-roundt {
+  0%, 16% { transform: translate(0px, 0px) translateY(0px); }
+  20% { transform: translate(0px, 0px) translateY(8px); }
+  23%, 34% { transform: translate(0px, 0px) translateY(0px); }
+  42%, 60% { transform: translate(-104px, 0px) translateY(215px); }
+  68%, 100% { transform: translate(0px, 0px) translateY(0px); }
+}
+
+@keyframes dgm-roundn {
+  0%, 14% { transform: translate(0px, 0px) translateY(0px); }
+  18% { transform: translate(0px, 0px) translateY(8px); }
+  21%, 36% { transform: translate(0px, 0px) translateY(0px); }
+  44%, 64% { transform: translate(60px, 0px) translateY(265px); }
+  72%, 100% { transform: translate(0px, 0px) translateY(0px); }
+}
+
+@keyframes dgm-lookt {
+  0%, 44% { opacity: 0; }
+  46% { opacity: 0.55; }
+  53% { opacity: 0.55; }
+  55%, 100% { opacity: 0; }
+}
+
+@keyframes dgm-lookn {
+  0%, 46% { opacity: 0; }
+  48% { opacity: 0.55; }
+  56% { opacity: 0.55; }
+  58%, 100% { opacity: 0; }
+}
+
+/* What the messing-about touches. The pressed field tile goes down and
+   comes back; the borrowed masthead vanishes upward for a second and is
+   put back where it was. */
+.dgm-svg.is-live .dgm-presswrap { animation: dgm-press 26s linear infinite; }
+.dgm-svg.is-live .dgm-mastarm.is-borrowed { animation: dgm-yoink 28s cubic-bezier(0.6, 0, 0.3, 1.3) infinite; }
+
+@keyframes dgm-press {
+  0%, 45.5% { transform: translateY(0px); }
+  47.5%, 51% { transform: translateY(2.5px); }
+  53%, 100% { transform: translateY(0px); }
+}
+
+@keyframes dgm-yoink {
+  0%, 48% { transform: translateY(0px); opacity: 1; }
+  49.5%, 54.5% { transform: translateY(-8px); opacity: 0; }
+  56%, 100% { transform: translateY(0px); opacity: 1; }
 }
 
 /* ── Still, and still true ───────────────────────────────────────────────
@@ -13908,8 +14039,16 @@ html.is-hidden .clinic-node i,
   .fl-feed { opacity: 1; transform: none; }
 
   /* A parked drone hanging in the air is a thing to look at, not a thing
-     at work - the monitor only exists in motion. */
+     at work - the monitor only exists in motion. And with it go the things
+     it touches: the poked switch, the collected transcript, the pressed
+     field, the borrowed mast all rest where the run leaves them. */
   .fl-watch { opacity: 0; }
+
+  .dgm-presswrap,
+  .dgm-mastarm,
+  .dgm-scoutround,
+  .fl-treat,
+  .fl-toggle.is-poked { animation: none; }
 }
 
 /* ────────────────────────────────────────────────────────────────────────────

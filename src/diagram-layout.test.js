@@ -16,6 +16,7 @@ const iso = await readSource(new URL('./diagrams/iso.js', import.meta.url))
 const solid = await readSource(new URL('./diagrams/Solid.jsx', import.meta.url))
 const trident = await readSource(new URL('./diagrams/TridentSchematic.jsx', import.meta.url))
 const nectar = await readSource(new URL('./diagrams/NectarSchematic.jsx', import.meta.url))
+const scout = await readSource(new URL('./diagrams/Scout.jsx', import.meta.url))
 const floor = await readSource(new URL('./diagrams/ChainSchematic.jsx', import.meta.url))
 const field = await readSource(new URL('./diagrams/usePointerField.js', import.meta.url))
 
@@ -2646,9 +2647,9 @@ describe('The floor schematic', () => {
     // sheet may run without it - a machine animating off screen is heat, and
     // a clock that starts before the shared class flip breaks the seam
     // phase-lock the handoffs depend on.
-    for (const [, selector, body] of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+    for (const [, selector, body] of css.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
       if (!/animation: fl-/.test(body)) continue
-      assert.match(selector.trim(), /\.dgm-svg\.is-live /,
+      assert.match(selector.trim(), /\.dgm-svg\.is-live[ .]/,
         `"${selector.trim().slice(0, 60)}" runs a floor clock without the is-live gate`)
     }
   })
@@ -2758,7 +2759,7 @@ describe('The floor schematic', () => {
     // allowed to reach zero opacity are the blocks that are genuinely absent
     // for part of the cycle: one in flight from the catapult, and one being
     // pushed off the line. Everything standing on a plate stays standing.
-    const vanish = ['fl-handoff', 'fl-swallow', 'fl-ship', 'fl-join', 'fl-issue', 'fl-dock', 'fl-shove', 'fl-drop', 'fl-shunt', 'fl-borne', 'fl-picked', 'fl-bud', 'fl-ground', 'fl-blink', 'fl-arrive']
+    const vanish = ['fl-handoff', 'fl-swallow', 'fl-ship', 'fl-join', 'fl-issue', 'fl-dock', 'fl-shove', 'fl-drop', 'fl-shunt', 'fl-borne', 'fl-picked', 'fl-bud', 'fl-ground', 'fl-blink', 'fl-treat', 'fl-arrive']
     for (const [, name, body] of css.matchAll(/@keyframes (fl-[a-z]+) \{([\s\S]*?)\n\}/g)) {
       if (vanish.includes(name)) continue
       assert.doesNotMatch(body, /opacity: 0[;\s]/, `${name} blinks something out and back`)
@@ -2819,27 +2820,59 @@ describe('The floor schematic', () => {
     // looked at rather than read. The names stay banned.
     assert.doesNotMatch(floor, /const SKY|const AIR|fl-bot|fl-ferry|function overhead|fl-air/)
     assert.doesNotMatch(css, /\.fl-sky|\.fl-bot|fl-ferry|\.fl-air|fl-hang/)
-    // THE ONE THING THAT FLIES, FLIES BECAUSE IT WORKS: the monitor - the
-    // figure clinical research already has for hovering over every site and
-    // looking without touching. It patrols the empty air band on the row's
-    // own flat-projecting axis, stopping once per plate ON THE ROW PITCH,
-    // dips on the height axis, keeps a shadow for ground contact, wears the
-    // company's own mark as its face - the geometry straight off the
-    // favicon - and has exactly one nerve: clicked, it bolts straight up
-    // off the sheet and comes back on the flee's own wrapper, so the patrol
-    // underneath never stutters and there is no timer to leak.
+    // THE ONE THING THAT FLIES, FLIES BECAUSE IT WORKS: the Scout - the
+    // monitor clinical research already has for hovering over every site
+    // and looking without touching, drawn once and visiting all three
+    // figures. On this sheet it patrols the air band on the row's own
+    // flat-projecting axis, and it does not just look: every station gets
+    // its act. THE PERIOD IS THE SYNC LAW - the patrol must divide evenly
+    // by the material beat AND by Resolve's, or the acts drift off cue.
+    assert.match(floor, /import \{ Scout \} from '\.\/Scout'/)
+    assert.match(scout, /M 104\.82 74\.50[\s\S]*?M 158\.62 284\.50/)
+    assert.match(scout, /className="scout-shape"/)
+    assert.ok((scout.match(/className="scout-eye"/g) || []).length >= 2, 'a character has eyes')
+    assert.match(css, /\.scout-shape \{[\s\S]*?stroke-width: 33;/)
     assert.match(floor, /className=\{`fl-watch\$\{shy \? ' is-shy' : ''\}`\} aria-hidden="true"/)
     assert.match(floor, /className="fl-monitor" onClick=\{\(\) => setShy\(true\)\}/)
     assert.match(floor, /if \(event\.animationName === 'fl-flee'\) setShy\(false\)/)
-    assert.match(floor, /className="fl-face"[\s\S]{0,700}M 104\.82 74\.50[\s\S]*?M 158\.62 284\.50/)
+    const span = Number(css.match(/animation: fl-patrol ([\d.]+)s/)[1])
+    const beat = Number(css.match(/animation: fl-ship ([\d.]+)s/)[1])
+    const ruling = Number(css.match(/animation: fl-handoff ([\d.]+)s/)[1])
+    assert.ok(Math.abs(span / beat - Math.round(span / beat)) < 1e-9,
+      `a ${span}s patrol drifts against the ${beat}s material beat`)
+    assert.ok(Math.abs(span / ruling - Math.round(span / ruling)) < 1e-9,
+      `a ${span}s patrol drifts against Resolve's ${ruling}s beat`)
+    const transport = Number(css.match(/animation: fl-run ([\d.]+)s/)[1])
+    assert.ok(Math.abs(span / transport - Math.round(span / transport)) < 1e-9,
+      `a ${span}s patrol drifts against the ${transport}s transport - the reel press must always answer`)
+    // THE ROUNDS CALL WHERE THE WORK IS. Five anchors, derived in the
+    // source from the same projection the plates are placed with - the
+    // poked switch, the entry gate, the verdict line, the lever, the
+    // transport - and the patrol's X stops are exactly their spacing.
+    assert.match(floor, /const call = \(station, px, py\) => r1\(CX \+ \(\(station - 2\) \* STEP \* 2 \+ px - py\) \* ISO_X\)/)
+    const calls = floor.match(/const CALLS = \[call\(0, (-?[\d.]+), (-?[\d.]+)\), call\(1, (-?[\d.]+), (-?[\d.]+)\), call\(2, (-?[\d.]+), (-?[\d.]+)\), call\(3, (-?[\d.]+), (-?[\d.]+)\), call\(4, (-?[\d.]+), (-?[\d.]+)\)\]/)
+      .slice(1).map(Number)
+    const step = Number(floor.match(/const STEP = (\d+)/)[1])
+    const anchor = (i) => 600 + ((i - 2) * step * 2 + calls[i * 2] - calls[i * 2 + 1]) * 0.866
     const patrol = css.match(/@keyframes fl-patrol \{([\s\S]*?)\n\}/)[1]
     const stops = [...new Set([...patrol.matchAll(/translate\((-?[\d.]+)px, 0px\)/g)].map((m) => Number(m[1])))]
       .sort((a, b) => a - b)
-    const pitch = 2 * Number(floor.match(/const STEP = (\d+)/)[1]) * 0.866
-    assert.equal(stops.length, 5, 'the monitor calls at all five stations')
+    assert.equal(stops.length, 5, 'the rounds call at all five stations')
     stops.forEach((x, k) => {
-      assert.ok(Math.abs(x - k * pitch) < 0.05, `a stop at ${x} is off the row pitch of ${pitch}`)
+      assert.ok(Math.abs(x - (anchor(k) - anchor(0))) < 0.05, `stop ${k} at ${x} is off its own anchor`)
+      assert.ok(Math.abs(anchor(k) - (129 + k * 235.55)) <= 116, `anchor ${k} leaves its own plate`)
     })
+    // The acts have their spec: the poked switch waggles on the patrol's
+    // clock, not the board's; the collected transcript enters the gate on
+    // the dock's own bearing and rises the height axis into the beam.
+    assert.match(floor, /i === 3 \? ' is-poked' : ''/)
+    assert.match(css, /\.dgm-svg\.is-live \.fl-toggle\.is-poked \{ animation: fl-jolt 33\.6s/)
+    assert.doesNotMatch(css.match(/@keyframes fl-jolt \{([\s\S]*?)\n\}/)[1], /translate/, 'a switch turns in place')
+    assert.match(floor, /cls: 'fl-blk is-script fl-treat'/)
+    const treat = css.match(/@keyframes fl-treat \{([\s\S]*?)\n\}/)[1]
+    const entry = treat.match(/translate\((-?[\d.]+)px, (-?[\d.]+)px\)/).slice(1).map(Number)
+    assert.ok(Math.abs(Math.abs(entry[1] / entry[0]) - 0.34 / 0.866) < 0.01, 'the collection enters on a plan axis')
+    assert.match(treat, /translateY\(-45px\)/)
     assert.match(css, /\.dgm-svg\.is-live \.fl-watch \{ opacity: 1; \}/)
     assert.match(css, /\.fl-watch \{\s*\n\s*opacity: 0;\s*\n\s*pointer-events: none;/)
     assert.match(css, /\.dgm-svg\.is-live \.fl-monitor \{ pointer-events: all; cursor: pointer; \}/)
@@ -2848,8 +2881,23 @@ describe('The floor schematic', () => {
     // seam closes: it ends exactly where it began.
     const flee = css.match(/@keyframes fl-flee \{([\s\S]*?)\n\}/)[1]
     assert.doesNotMatch(flee, /translate\(/, 'the flee rides the height axis alone')
-    // With reduced motion the monitor does not exist: a parked drone hanging
-    // in the air is exactly the decoration this law exists to kill.
+    // AND THE SCOUT MAKES CAMEOS. In Trident it rides the sheet's edge and
+    // presses one schema field tile; in Nectar it borrows Site 103's
+    // masthead for a second and puts it back. Same body, same nerve -
+    // the shy wiring and the flee are the same classes everywhere.
+    for (const cameo of [trident, nectar]) {
+      assert.match(cameo, /import \{ Scout \} from '\.\/Scout'/)
+      assert.match(cameo, /className=\{`fl-watch\$\{shy \? ' is-shy' : ''\}`\} aria-hidden="true"/)
+      assert.match(cameo, /if \(event\.animationName === 'fl-flee'\) setShy\(false\)/)
+    }
+    assert.match(trident, /className="dgm-scoutround is-trident"/)
+    assert.match(nectar, /className="dgm-scoutround is-nectar"/)
+    assert.match(trident, /className=\{index === 7 \? 'dgm-presswrap' : undefined\}/)
+    assert.match(nectar, /className=\{`dgm-mastarm\$\{site\.id === 'SITE 103' \? ' is-borrowed' : ''\}`\}/)
+    assert.match(css, /\.dgm-svg\.is-live \.dgm-presswrap \{ animation: dgm-press/)
+    assert.match(css, /\.dgm-svg\.is-live \.dgm-mastarm\.is-borrowed \{ animation: dgm-yoink/)
+    // With reduced motion the scout does not exist, anywhere: a parked
+    // drone hanging in the air is exactly the decoration this law kills.
     assert.match(css, /reduced-motion[\s\S]*?\.fl-watch \{ opacity: 0; \}/)
 
     // POINTING AT A STATION FINISHES IT. A hover used to re-weight the drawing
