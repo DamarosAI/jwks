@@ -40,6 +40,11 @@ export function Courier({ x, y }) {
             the wobble. */}
         <g className="courier-whirl">
           <g className="courier-trunk">
+            {/* The outline is the same two paths once more, one stroke
+                width fatter in the ink, drawn under the blue - a subtle
+                dark rim the way a printed sticker keeps its keyline. */}
+            <path className="courier-line" d={MARK[0]} />
+            <path className="courier-line" d={MARK[1]} />
             <path className="courier-shape" d={MARK[0]} />
             <path className="courier-shape" d={MARK[1]} />
           </g>

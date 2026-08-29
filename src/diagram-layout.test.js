@@ -2194,7 +2194,9 @@ describe('The floor schematic', () => {
     // elements used to hand over at the seat, and the shipment faded up
     // while the laid cell was still sliding in - the subject seen twice.
     // Both legs are re-derived from the seats' own numbers: sixteen units
-    // socket-to-seat, forty-four socket-to-gone.
+    // socket-to-seat, twenty-eight socket-to-gone - the fade COMPLETES
+    // INSIDE THE WALL, because a half-transparent puck over the page's
+    // dot field is the one see-through this sheet forbids.
     assert.match(css, /\.fl-claw,\s*\n\.dgm-svg\.is-live \.fl-carry \{\s*\n\s*animation: fl-fetch 5\.6s/)
     assert.match(css, /@keyframes fl-picked \{\s*\n\s*0%, 22% \{ transform: translateY\(0px\); opacity: 1; \}\s*\n\s*30% \{ transform: translateY\(-14px\); opacity: 1; \}/)
     assert.doesNotMatch(floor, /fl-lay[' ]/, 'the laid cell merged into the shipment')
@@ -2205,8 +2207,8 @@ describe('The floor schematic', () => {
     const goneLeg = shipLegs.reduce((a, b) => (b[0] > a[0] ? b : a))
     assert.ok(Math.abs(seatLeg[0] - 16 * 0.866) < 0.05 && Math.abs(seatLeg[1] + 16 * 0.34) < 0.05,
       'the shipment must open at the staging seat, sixteen units up the lane from its socket')
-    assert.ok(Math.abs(goneLeg[0] - 44 * 0.866) < 0.05 && Math.abs(goneLeg[1] + 44 * 0.34) < 0.05,
-      'the shipment must leave to forty-four units, through the gate and off the sheet')
+    assert.ok(Math.abs(goneLeg[0] - 28 * 0.866) < 0.05 && Math.abs(goneLeg[1] + 28 * 0.34) < 0.05,
+      'the shipment must be gone by twenty-eight units, while the wall still backs the fade')
     // Protocol's transcript crosses BY COURIER. Issue and dock keep only
     // their in-plate legs - the slide to the export mouth, the fade-up at
     // the entry mouth and the slide to the apron - and both run the
@@ -2237,7 +2239,7 @@ describe('The floor schematic', () => {
     }
     assert.match(css, /\.fl-pushed \.fl-settle \{ animation: none; \}/)
     const shipped = css.match(/@keyframes fl-ship \{([\s\S]*?)\n\}/)[1]
-    assert.ok(Number(shipped.match(/(\d+)% \{ transform: translate\(38\.1px, -14\.96px\); opacity: 0/)[1]) <= 84,
+    assert.ok(Number(shipped.match(/(\d+)% \{ transform: translate\(24\.25px, -9\.52px\); opacity: 0/)[1]) <= 84,
       'the shipment has to be gone before the join arrives')
     // The verdict lives on the collar now - a machined ring around a quiet
     // bore, the way Trident's intake wears its own - not a bowl of paint.
@@ -2866,7 +2868,13 @@ describe('The floor schematic', () => {
     assert.doesNotMatch(courier, /[Ss]cout/)
     assert.match(courier, /M 104\.82 74\.50[\s\S]*?M 158\.62 284\.50/)
     assert.equal((courier.match(/className="courier-shape"/g) || []).length, 2, 'the body is the two mark shapes')
-    assert.equal((courier.match(/<path/g) || []).length, 2, 'the body is the mark - two paths and nothing else')
+    // Plus the keyline: the SAME two paths once more, drawn under the blue
+    // at a fatter stroke, so the silhouette keeps a subtle dark rim.
+    assert.equal((courier.match(/className="courier-line"/g) || []).length, 2, 'the keyline is the same two paths under the body')
+    assert.equal((courier.match(/<path/g) || []).length, 4, 'the body is the mark - two ink paths, two blue paths, nothing else')
+    const keyline = Number(css.match(/\.courier-line \{[\s\S]*?stroke-width: (\d+);/)[1])
+    const body = Number(css.match(/\.courier-shape \{[\s\S]*?stroke-width: (\d+);/)[1])
+    assert.ok(keyline > body && keyline - body < 40, 'the keyline is a rim, not a border')
     assert.doesNotMatch(courier, /<circle|<line|<rect/, 'no face, no antenna, no dressing - the silhouette is the costume')
     for (const retired of ['courier-eye', 'courier-pupil', 'courier-glint', 'courier-flank', 'courier-blink', 'courier-antenna', 'courier-tip', 'courier-wink', 'courier-sway']) {
       assert.doesNotMatch(courier, new RegExp(retired), `${retired} came off the character`)

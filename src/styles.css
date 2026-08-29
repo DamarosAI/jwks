@@ -13427,11 +13427,16 @@ html.is-hidden .clinic-node i,
    across the seam. */
 .dgm-svg.is-live .fl-ship { animation: fl-ship 5.6s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
 
+/* The fade COMPLETES INSIDE THE WALL. The exit used to keep fading to
+   forty-four units, well past the vessel - a half-transparent subject
+   over the page's dot field, which is the one place a puck may never be
+   see-through. It is gone by twenty-eight units now, still backed by the
+   gate's own masonry, and travels home at zero. */
 @keyframes fl-ship {
   0%, 40% { transform: translate(13.86px, -5.44px); opacity: 1; }
-  52% { transform: translate(22.52px, -8.84px); opacity: 1; }
-  62% { transform: translate(38.1px, -14.96px); opacity: 0; }
-  64%, 68% { transform: translate(0px, 0px); opacity: 0; }
+  54% { transform: translate(20.78px, -8.16px); opacity: 1; }
+  60% { transform: translate(24.25px, -9.52px); opacity: 0; }
+  62%, 68% { transform: translate(0px, 0px); opacity: 0; }
   72%, 84% { transform: translate(0px, 0px); opacity: 1; }
   94%, 100% { transform: translate(13.86px, -5.44px); opacity: 1; }
 }
@@ -13441,10 +13446,14 @@ html.is-hidden .clinic-node i,
    fade under it as soon as the new cycle opens and the seat never blinks. */
 .dgm-svg.is-live .fl-join { animation: fl-join 5.6s cubic-bezier(0.3, 0, 0.3, 1) infinite; }
 
+/* The fade-in happens AT the wall, not out on the page: the join used to
+   materialise twenty-four units out and slide in half-made over the dot
+   field. It is invisible until the wall band is behind it now. */
 @keyframes fl-join {
   0%, 8% { transform: translate(0px, 0px); opacity: 1; }
   16%, 82% { transform: translate(0px, 0px); opacity: 0; }
-  84% { transform: translate(-20.78px, -8.16px); opacity: 0; }
+  84% { transform: translate(-12.99px, -5.1px); opacity: 0; }
+  90% { transform: translate(-8.66px, -3.4px); opacity: 1; }
   98%, 100% { transform: translate(0px, 0px); opacity: 1; }
 }
 
@@ -13556,12 +13565,15 @@ html.is-hidden .clinic-node i,
    cycle closes on the picture it opened with. */
 .dgm-svg.is-live .fl-pushed { animation: fl-shove 33.6s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
 
+/* The decision falls, but it is GONE before it falls past the skirt: a
+   cell fading over the page's dot field is a see-through puck, so the
+   fade completes while the plate's own wall still backs it. */
 @keyframes fl-shove {
   0%, 54.8% { transform: translate(0px, 0px) translateY(0px); opacity: 1; }
   57.4% { transform: translate(-45.46px, 17.85px) translateY(0px); opacity: 1; }
   58.8% { transform: translate(-45.46px, 17.85px) translateY(8px); opacity: 1; }
-  61%, 62.5% { transform: translate(-45.46px, 17.85px) translateY(24px); opacity: 0; }
-  64% { transform: translate(0px, 0px) translateY(0px); opacity: 0; }
+  60.6%, 61.4% { transform: translate(-45.46px, 17.85px) translateY(14px); opacity: 0; }
+  63% { transform: translate(0px, 0px) translateY(0px); opacity: 0; }
   99%, 100% { transform: translate(0px, 0px) translateY(0px); opacity: 1; }
 }
 
@@ -13833,6 +13845,18 @@ html.is-hidden .clinic-node i,
   vector-effect: none;
 }
 
+/* The keyline: the same two paths drawn under the blue at a fatter
+   stroke, so the silhouette keeps a subtle dark rim - about two thirds
+   of a pixel on screen - the way a printed sticker holds its edge. */
+.courier-line {
+  fill: color-mix(in srgb, var(--text) 88%, var(--accent-strong));
+  stroke: color-mix(in srgb, var(--text) 88%, var(--accent-strong));
+  stroke-width: 61;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: none;
+}
+
 .courier-trunk {
   transform-box: fill-box;
   transform-origin: 50% 88%;
@@ -14016,12 +14040,18 @@ html.is-hidden .clinic-node i,
    courier owns. */
 .fl-whoosh {
   opacity: 0;
-  stroke: color-mix(in srgb, var(--accent) 72%, transparent);
-  stroke-width: 1.6;
+  fill: none;
+  stroke: color-mix(in srgb, var(--accent) 78%, transparent);
   stroke-linecap: round;
 }
 
-.fl-whoosh line { vector-effect: non-scaling-stroke; }
+.fl-whoosh path { vector-effect: non-scaling-stroke; }
+
+/* Three weights and three strengths, heaviest in the middle, so the
+   trail reads as one gust rather than three equal rules. */
+.fl-whoosh path:nth-child(1) { stroke-width: 1.5; opacity: 0.85; }
+.fl-whoosh path:nth-child(2) { stroke-width: 2.2; }
+.fl-whoosh path:nth-child(3) { stroke-width: 1.3; opacity: 0.7; }
 
 .dgm-svg.is-live.is-floor .fl-whoosh.is-go { animation: fl-zoom 33.6s linear infinite; }
 .dgm-svg.is-live.is-floor .fl-whoosh.is-home { animation: fl-zoomhome 33.6s linear infinite; }

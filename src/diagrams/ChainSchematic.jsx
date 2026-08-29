@@ -721,9 +721,13 @@ function mechanism(key, t) {
         { ...cell(slot[0][0], slot[0][1], null, 5), cls: 'fl-blk fl-ship' },
         { ...stand(-52, -30, 3, 8, 10, 3, 14), cls: 'fl-claw is-jaw', depth: OVER },
         { ...stand(-52, -10, 3, 8, 10, 3, 14), cls: 'fl-claw is-jaw', depth: OVER + 2 },
-        // The motor's head is round - the one part of the carriage that is
-        // the organelle rather than the frame it hangs from.
-        { ...drum(-52, -20, 8, 6, 24), cls: 'fl-claw is-head', depth: OVER + 3 },
+        // THE CARRIAGE IS A BLOCK CLAMPED AROUND THE RAIL. It was a drum
+        // for a pass and floated beside the beam like a saucer; a faceted
+        // block whose top two pixels ride over the beam's near face and
+        // whose foot overlaps the jaw hangers reads as one machine - rail,
+        // carriage, jaws - which is also the sheet's own law: the claw is
+        // structure, and structure is faceted.
+        { ...stand(-52, -20, 6.5, 6.5, 10, 2.5, 22), cls: 'fl-claw is-head', depth: OVER + 3 },
       ]
     },
     // SCREENING IS THREE THROATS, ON THE EDGE THE ROW RUNS ALONG.
@@ -1428,15 +1432,18 @@ export default function ChainSchematic({ animate = true }) {
                       rightward), the mirrored set trails right for the ride
                       home, and both ride inside the dip wrapper so they
                       follow every move the body makes. */}
+                  {/* Swept, not ruled: three arcs of three lengths and three
+                      weights, bowing gently with the flight line, longest in
+                      the middle - the manga whoosh, not a stack of hyphens. */}
                   <g className="fl-whoosh is-go">
-                    <line x1={CALLS[0] - 25} y1="75" x2={CALLS[0] - 16} y2="75" />
-                    <line x1={CALLS[0] - 29} y1="80.5" x2={CALLS[0] - 17} y2="80.5" />
-                    <line x1={CALLS[0] - 24} y1="86" x2={CALLS[0] - 16} y2="86" />
+                    <path d={`M ${CALLS[0] - 28} 73 Q ${CALLS[0] - 20} 75.5 ${CALLS[0] - 13.5} 74.8`} />
+                    <path d={`M ${CALLS[0] - 34} 79.5 Q ${CALLS[0] - 24} 82 ${CALLS[0] - 15.5} 81.4`} />
+                    <path d={`M ${CALLS[0] - 25} 86.5 Q ${CALLS[0] - 19} 88 ${CALLS[0] - 13.5} 87.4`} />
                   </g>
                   <g className="fl-whoosh is-home">
-                    <line x1={CALLS[0] + 16} y1="75" x2={CALLS[0] + 25} y2="75" />
-                    <line x1={CALLS[0] + 17} y1="80.5" x2={CALLS[0] + 29} y2="80.5" />
-                    <line x1={CALLS[0] + 16} y1="86" x2={CALLS[0] + 24} y2="86" />
+                    <path d={`M ${CALLS[0] + 28} 73 Q ${CALLS[0] + 20} 75.5 ${CALLS[0] + 13.5} 74.8`} />
+                    <path d={`M ${CALLS[0] + 34} 79.5 Q ${CALLS[0] + 24} 82 ${CALLS[0] + 15.5} 81.4`} />
+                    <path d={`M ${CALLS[0] + 25} 86.5 Q ${CALLS[0] + 19} 88 ${CALLS[0] + 13.5} 87.4`} />
                   </g>
                   {/* Each drum rides in a parcel wrapper: startled, the
                       courier drops what it carries - the wrapper fades
