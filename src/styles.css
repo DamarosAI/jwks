@@ -9607,7 +9607,6 @@ html.is-hidden .clinic-node i,
 .dgm-districtfill { opacity: 0.3; pointer-events: none; }
 
 .dgm-rule { stroke: var(--border); stroke-width: 1; }
-.dgm-mark { opacity: 0.92; }
 
 /* Solids. A rounded plan square and two skirt faces, three weights of one ink.
    The radius is a plan radius carried through the projection, so a Damaros
@@ -12727,7 +12726,13 @@ html.is-hidden .clinic-node i,
    down onto the datum last pass, which means the lift no longer has any type to
    clear - so a held plate can travel far enough for the rise to be the thing a
    reader notices rather than something they have to be told about. */
-.fl-step.is-hot .fl-body { transform: translateY(-22px); }
+/* THE HELD PLATE NO LONGER RISES. A twenty-two pixel lift under a courier
+   whose anchors, dips and cargo swaps are all solved against the resting
+   geometry tore every one of them loose the moment a pointer arrived -
+   the drum hovered beside a raised gate, the swap split by the lift. The
+   hold is stated by ink and ground instead: the cast spreads beneath the
+   plate and the verdicts come forward, and nothing the courier is
+   working ever moves out from under it. */
 
 .fl-step.is-hot .fl-cast { opacity: 1; }
 
@@ -13641,10 +13646,15 @@ html.is-hidden .clinic-node i,
   49%, 100% { transform: translateY(0px); }
 }
 
-/* THE BUTTON IS REAL. The take-up reel the courier presses gives under the
-   press - two and a half pixels down while the visitor's body is on it,
-   back up as it leaves - so the reversal that follows has a visible cause
-   with a visible mechanism. Same round, same clock. */
+/* THE BUTTON IS REAL, AND IT IS ONLY THE TOP CIRCLE. The take-up reel's
+   raised hub is the button: it alone gives under the press - two and a
+   half pixels down while the courier's body is on it, back up as it
+   leaves - while the reel base below stays planted, solid and joined to
+   the plate the way a housing is. The hub wears the station's full tone
+   so it reads as the one pressable part. Same round, same clock. */
+.fl-reel.is-hub.is-pressed .dgm-face-top { fill: var(--tone); }
+.fl-reel.is-hub.is-pressed .dgm-face-right { fill: var(--deep); }
+
 .dgm-svg.is-live .fl-reel.is-pressed { animation: fl-press 33.6s cubic-bezier(0.5, 0, 0.3, 1) infinite; }
 
 @keyframes fl-press {
@@ -13809,6 +13819,31 @@ html.is-hidden .clinic-node i,
   to { transform: rotate(2deg) scale(0.96, 1.05); }
 }
 
+/* THE VICTORY LAP. Replay done, round complete, and the little drum
+   allows itself one full spin on the climb out before starting again at
+   Protocol - a whole turn in just over a second, on its own wrapper so
+   the jelly keeps wobbling straight through it. A full turn ends where
+   it starts, so the seam is invisible. */
+.scout-whirl {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.dgm-svg.is-live.is-floor .scout-whirl { animation: scout-whirl 33.6s cubic-bezier(0.55, 0, 0.35, 1) infinite; }
+
+@keyframes scout-whirl {
+  0%, 80.5% { transform: rotate(0deg); }
+  84.5%, 100% { transform: rotate(360deg); }
+}
+
+/* Startled mid-errand, the courier drops what it was carrying: the
+   parcel wrappers fade their drums out whatever the cargo clocks say,
+   because the wrapper's opacity multiplies the animation's - and the
+   ground swap the flight interrupted resumes on the next round. */
+.fl-parcel { transition: opacity 220ms ease; }
+
+.fl-watch.is-shy .fl-parcel { opacity: 0; }
+
 .fl-beam {
   stroke: color-mix(in srgb, var(--accent-strong) 55%, transparent);
   stroke-width: 1.2;
@@ -13841,7 +13876,7 @@ html.is-hidden .clinic-node i,
   0%, 8% { transform: translate(0px, 0px); }
   13%, 18% { transform: translate(79.68px, 0px); }
   24%, 43% { transform: translate(443.4px, 0px); }
-  47.5%, 63% { transform: translate(590.62px, 0px); }
+  47.5%, 63% { transform: translate(569.83px, 0px); }
   66.5%, 79% { transform: translate(819.24px, 0px); }
   92%, 100% { transform: translate(0px, 0px); }
 }
@@ -13867,11 +13902,11 @@ html.is-hidden .clinic-node i,
   17.2%, 36% { transform: translate(0px, 0px) translateY(0px); }
   37.2%, 40.4% { transform: translate(0px, 0px) translateY(82px); }
   42%, 47.5% { transform: translate(0px, 0px) translateY(0px); }
-  48.6%, 50.4% { transform: translate(0px, 0px) translateY(60px); }
+  48.6%, 50.4% { transform: translate(0px, 0px) translateY(51.6px); }
   51.6% { transform: translate(0px, 0px) translateY(0px); }
-  52.8% { transform: translate(9.8px, 0px) translateY(0px); }
-  53.6%, 55.4% { transform: translate(9.8px, 0px) translateY(27px); }
-  57% { transform: translate(9.8px, 0px) translateY(0px); }
+  52.8% { transform: translate(30.6px, 0px) translateY(0px); }
+  53.6%, 55.4% { transform: translate(30.6px, 0px) translateY(27px); }
+  57% { transform: translate(30.6px, 0px) translateY(0px); }
   58.4%, 67.2% { transform: translate(0px, 0px) translateY(0px); }
   68.2%, 69.4% { transform: translate(0px, 0px) translateY(62px); }
   70.6% { transform: translate(0px, 0px) translateY(0px); }
@@ -13885,12 +13920,47 @@ html.is-hidden .clinic-node i,
   to { transform: translateY(-1.8px); }
 }
 
-/* The shadow keeps the ground the courier left, and goes with it when the
-   body climbs out of working height for the ride home. */
+/* THE SHADOW SITS ON THE FLOOR IT SHADES. The courier works five
+   different grounds - the export mouth, the entry gate, the bay, the
+   lane seat, the reel - and a contact shadow parked at one screen y
+   floats off four of them, which is exactly the kind of perspective
+   dirt the rest of the sheet forbids. So the wrap steps to each stop's
+   own ground line (ground = CY + (px+py)*ISO_Y off the same anchors the
+   stops are solved from; the ellipse is drawn at 170, so each step is
+   the difference), slides with the lever step and the backward step the
+   way the body does, and the ellipse's own clock deepens it at every
+   contact and lifts it for the ride home. */
+.dgm-svg.is-live.is-floor .fl-groundwrap { animation: fl-footing 33.6s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
+
+@keyframes fl-footing {
+  0%, 8% { transform: translate(0px, 0px) translateY(6.64px); }
+  13%, 18% { transform: translate(0px, 0px) translateY(-11.04px); }
+  24%, 43% { transform: translate(0px, 0px) translateY(16.16px); }
+  47.5%, 51.6% { transform: translate(0px, 0px) translateY(-14.44px); }
+  52.8%, 57% { transform: translate(30.6px, 0px) translateY(-19.88px); }
+  58.4%, 63% { transform: translate(0px, 0px) translateY(-14.44px); }
+  66.5%, 71% { transform: translate(0px, 0px) translateY(-9px); }
+  71.8%, 74.8% { transform: translate(-16px, 0px) translateY(-9px); }
+  76.6%, 79% { transform: translate(0px, 0px) translateY(-9px); }
+  92%, 100% { transform: translate(0px, 0px) translateY(6.64px); }
+}
+
 @keyframes fl-ground {
-  0%, 77% { opacity: 0.26; }
+  0%, 1.8% { opacity: 0.22; }
+  2.8%, 6.2% { opacity: 0.36; }
+  7.6%, 13.4% { opacity: 0.22; }
+  14.4%, 15.6% { opacity: 0.36; }
+  17%, 36.6% { opacity: 0.22; }
+  37.4%, 40.2% { opacity: 0.36; }
+  41.6%, 48% { opacity: 0.22; }
+  48.8%, 50.2% { opacity: 0.36; }
+  51.6%, 53% { opacity: 0.22; }
+  53.8%, 55.2% { opacity: 0.36; }
+  56.4%, 67.4% { opacity: 0.22; }
+  68.4%, 69.2% { opacity: 0.36; }
+  70.6%, 77% { opacity: 0.22; }
   83%, 90% { opacity: 0; }
-  94%, 100% { opacity: 0.26; }
+  94%, 100% { opacity: 0.22; }
 }
 
 /* The beam lights only while the courier is actually working something:

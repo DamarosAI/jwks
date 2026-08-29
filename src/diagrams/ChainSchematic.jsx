@@ -368,7 +368,7 @@ const vessel = (seat, gates = null) => {
  * and the two cargo drums are drawn at the home anchor, because anything
  * riding inside the courier's own wrappers inherits every leg from there. */
 const call = (station, px, py) => r1(CX + ((station - 2) * STEP * 2 + px - py) * ISO_X)
-const CALLS = [call(0, 42, -46), call(1, -74, 18), call(2, 40, -16), call(3, -44, 2), call(4, -52, 2)]
+const CALLS = [call(0, 42, -46), call(1, -74, 18), call(2, 40, -16), call(3, -68, 2), call(4, -52, 2)]
 
 /* THE CARGO DRUM. What the courier moves is the run's own cell, drawn at
  * the courier's home anchor just under its body, in the beam - the same
@@ -884,7 +884,11 @@ function mechanism(key, t) {
       const at = (i) => -44 + i * PITCH
       return [
         printed(-800, 'fl-print', [
-          <line key="lane" x1="-60" y1={lane} x2="48" y2={lane} />,
+          // The lane runs from the entry gate to the exit rail, because
+          // the courier sets the new cell down AT the gate - one pitch
+          // behind the line, on a seat nothing occupies - and the index
+          // carries it forward onto the lane proper.
+          <line key="lane" x1="-72" y1={lane} x2="48" y2={lane} />,
           // The rail the ram runs on, and the edge the cell goes over. A plate
           // has to say where something leaves it, or the cell is just falling
           // off a drawing - and here the membrane says it too: its gap
@@ -898,8 +902,10 @@ function mechanism(key, t) {
         ...[0, 1, 2].map((i) => ({ ...cell(at(i), lane, 'hold'), cls: 'fl-blk is-hold fl-index' })),
         // The one at the station, which is the one that gets pushed off.
         { ...cell(at(3), lane, 'hold'), cls: 'fl-blk is-hold fl-pushed', depth: OVER + 3 },
-        // And the one that arrives to replace it, at the back of the lane.
-        { ...cell(at(0), lane, 'hold'), cls: 'fl-blk is-hold fl-feed' },
+        // And the one the courier sets down: AT the entry gate, one full
+        // pitch behind the first occupied seat - never on top of a cell
+        // already standing - and the next index carries it onto at(0).
+        { ...cell(at(0) - PITCH, lane, 'hold'), cls: 'fl-blk is-hold fl-feed' },
         // THE RAM, IN THREE STEPS. One slab crossing a lane is a slab. A body
         // at the back, a thin rod out of it, and a BLADE at the front that is
         // wider across the lane than the cell and stands twice its height:
@@ -967,11 +973,11 @@ function mechanism(key, t) {
         // of hairlines are seven coloured cubes in a row; frames standing on a
         // strip that runs onto both reels are a record on a tape.
         { ...stand(0, 2, 54, 8, 2, 4), cls: 'fl-tape', depth: -600 },
-        // The take-up reel is the transport's one button: the courier lands
-        // on it once per round and it visibly gives under the press - which
-        // is the frame before the head turns for home. Reel and hub carry
-        // the class together so the whole drum dips as one part.
-        { ...drum(-52, 2, 13, 7), cls: 'fl-reel is-pressed' },
+        // The take-up reel's raised hub is the transport's one button: the
+        // courier lands on it once per round and the hub alone visibly
+        // gives - the frame before the head turns for home - while the
+        // reel base stays planted, solid on the plate like a housing.
+        { ...drum(-52, 2, 13, 7), cls: 'fl-reel' },
         { ...drum(52, 2, 13, 7), cls: 'fl-reel' },
         { ...drum(-52, 2, 8, 3, 7), cls: 'fl-reel is-hub is-pressed' },
         { ...drum(52, 2, 8, 3, 7), cls: 'fl-reel is-hub' },
@@ -1119,7 +1125,7 @@ export default function ChainSchematic({ animate = true }) {
           className={`dgm-svg is-floor${animate ? ' is-live' : ''}`}
           viewBox={`0 0 ${W} ${H}`}
           role="img"
-          aria-label="Five plates in a row, seen in axonometric projection, their machines already running - each plate bounded by its own printed double-walled membrane, the way a section drawing bounds a cell. The five stations are lettered in ink beneath their plates: Protocol, Evidence, Screening, Resolve, Replay. A small hovering courier shaped as the flat blue Damaros mark - a plump two-part silhouette that bobs with a soft jelly squash, its floor shadow beneath it - works the air above the row on one slow round, and the seams of the run move only under it. One cell - a round body with its nucleus drawn on top - runs the whole row. A grid of twelve switches on a breaker board is thrown one at a time, each settling green or red, and once per round the courier drops to the export gate: the compiled violet transcript slides to the mouth under its beam and crosses the seam riding just below the courier's body, led to the next plate and set in through the entry gate, where it docks beside the gantry. There a claw closes on one cell in a heap, lifts it, carries it across, and sets it down into an ordered bed of round sockets; the placed cell then slides up a printed lane to a staging seat, waits its beat, and continues straight out through that plate's far gate - one cell, one line, socket to seat to gate. Along the far long edge of the next plate, three verdict seats wait in a line - green, red, amber. The bed feeds the green pore as a moving line: one cell slides onto the mouth and is visibly swallowed down the bore while the seat behind it shuffles forward and the newly arrived cell takes the empty place; the red pore stands open and ringed; the amber seat is a gate cut through the plate's wall, its pylons stained amber. The unsettled amber cell forms inside the plate's reticulum - nested curved sacs opening toward the gate - slides down the lane to the bay while the courier waits overhead, and leaves only in the courier's hold: carried through the air to the back of the resolve lane and set down as the line's next cell. The courier then steps sideways onto the lever and throws it - nothing else ever moves that lever - so the horizontal ram crosses the lane, pushes one cell clean off the edge through the one gap in the membrane, and the line indexes forward. On the last plate the run lies as frames on a tape between two reels, and a head reads its way out along the tape; the courier lands on the take-up reel, the reel gives under the press, and only then does the head turn and rewind, the courier stepping backwards alongside it. Clicked, the courier darts off the sheet and drifts back. Pointing at a plate lifts it off the ground and darkens the ground beneath it."
+          aria-label="Five plates in a row, seen in axonometric projection, their machines already running - each plate bounded by its own printed double-walled membrane, the way a section drawing bounds a cell. The five stations are lettered in ink beneath their plates: Protocol, Evidence, Screening, Resolve, Replay. A small hovering courier shaped as the flat blue Damaros mark - a plump two-part silhouette that bobs with a soft jelly squash, its floor shadow beneath it - works the air above the row on one slow round, and the seams of the run move only under it. One cell - a round body with its nucleus drawn on top - runs the whole row. A grid of twelve switches on a breaker board is thrown one at a time, each settling green or red, and once per round the courier drops to the export gate: the compiled violet transcript slides to the mouth under its beam and crosses the seam riding just below the courier's body, led to the next plate and set in through the entry gate, where it docks beside the gantry. There a claw closes on one cell in a heap, lifts it, carries it across, and sets it down into an ordered bed of round sockets; the placed cell then slides up a printed lane to a staging seat, waits its beat, and continues straight out through that plate's far gate - one cell, one line, socket to seat to gate. Along the far long edge of the next plate, three verdict seats wait in a line - green, red, amber. The bed feeds the green pore as a moving line: one cell slides onto the mouth and is visibly swallowed down the bore while the seat behind it shuffles forward and the newly arrived cell takes the empty place; the red pore stands open and ringed; the amber seat is a gate cut through the plate's wall, its pylons stained amber. The unsettled amber cell forms inside the plate's reticulum - nested curved sacs opening toward the gate - slides down the lane to the bay while the courier waits overhead, and leaves only in the courier's hold: carried through the air and set down at the resolve lane's entry gate, one seat behind the line, so it never lands where a cell already stands. The courier then steps sideways onto the lever and throws it - nothing else ever moves that lever - so the horizontal ram crosses the lane, pushes one cell clean off the edge through the one gap in the membrane, and the line indexes forward. On the last plate the run lies as frames on a tape between two reels, and a head reads its way out along the tape; the courier lands on the take-up reel's raised hub - the transport's one button - the hub gives under the press, and only then does the head turn and rewind, the courier stepping backwards alongside it before allowing itself one full spin on the climb home. Clicked anywhere on its round, the courier drops whatever it is carrying and darts off the sheet, drifting back on its own. Pointing at a plate darkens the ground beneath it and brings its verdicts forward."
         >
           <defs>
             <pattern id="fl-grain" width="13" height="13" patternUnits="userSpaceOnUse">
@@ -1407,11 +1413,18 @@ export default function ChainSchematic({ animate = true }) {
                 onAnimationEnd={(event) => { if (event.animationName === 'fl-flee') setShy(false) }}
               >
                 <g className="fl-duck">
-                  <g className="fl-blk is-script fl-escort">
-                    <Drum shape={CARGO} core={CARGO_CORE} className="dgm-solid" />
+                  {/* Each drum rides in a parcel wrapper: startled, the
+                      courier drops what it carries - the wrapper fades
+                      whatever the cargo clock says. */}
+                  <g className="fl-parcel">
+                    <g className="fl-blk is-script fl-escort">
+                      <Drum shape={CARGO} core={CARGO_CORE} className="dgm-solid" />
+                    </g>
                   </g>
-                  <g className="fl-blk is-hold fl-haul">
-                    <Drum shape={CARGO} core={CARGO_CORE} className="dgm-solid" />
+                  <g className="fl-parcel">
+                    <g className="fl-blk is-hold fl-haul">
+                      <Drum shape={CARGO} core={CARGO_CORE} className="dgm-solid" />
+                    </g>
                   </g>
                   <g className="fl-hover">
                     <line className="fl-beam" x1={CALLS[0]} y1="86" x2={CALLS[0]} y2="102" />

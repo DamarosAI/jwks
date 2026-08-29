@@ -31,12 +31,17 @@ export function Scout({ x, y }) {
   return (
     <g className="scout">
       <g className="scout-body" transform={`translate(${Math.round((x - CX * S) * 100) / 100}, ${Math.round((y - TOP * S) * 100) / 100}) scale(${S})`}>
-        {/* The jelly lives on its own wrapper inside the placing transform,
-            because a CSS animation on the placed group would replace the
-            translate and scale that stand the character on its point. */}
-        <g className="scout-trunk">
-          <path className="scout-shape" d={MARK[0]} />
-          <path className="scout-shape" d={MARK[1]} />
+        {/* The whirl (one full victory spin at the end of a round) and the
+            jelly each live on their own wrapper inside the placing
+            transform, because a CSS animation on the placed group would
+            replace the translate and scale that stand the character on
+            its point - and on one shared wrapper the spin would replace
+            the wobble. */}
+        <g className="scout-whirl">
+          <g className="scout-trunk">
+            <path className="scout-shape" d={MARK[0]} />
+            <path className="scout-shape" d={MARK[1]} />
+          </g>
         </g>
       </g>
     </g>

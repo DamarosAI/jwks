@@ -1393,12 +1393,13 @@ describe('Trident and Nectar schematics', () => {
     assert.match(DGM_BLOCK, /@keyframes dgm-sweep/)
   })
 
-  it('gives the mark room and a reason in both figures', () => {
-    // One mark per drawing, large, in the top-left corner, clear of everything
-    // - not a favicon set beside a caption.
+  it('carries no corner mark in either figure', () => {
+    // The monogram sat in the top-left corner for a pass and came off: the
+    // brand's presence on the product sheets is the courier on the workflow
+    // figure, and a logo stamped on a technical drawing beside it read as a
+    // watermark, not a signature.
     for (const source of figures) {
-      assert.match(source, /<image className="dgm-mark" href="\/assets\/damaros-monogram-blue\.svg" x="22" y="16" width="34" height="40" \/>/)
-      assert.equal((source.match(/dgm-mark/g) || []).length, 1)
+      assert.doesNotMatch(source, /dgm-mark|damaros-monogram/)
     }
     // The receipt says it is written by being written - the front row fills and
     // its seal turns - rather than by a pill parked beside the deck announcing
@@ -2927,8 +2928,38 @@ describe('The floor schematic', () => {
     }
     assert.match(floor, /className="fl-blk is-script fl-escort"/)
     assert.match(floor, /className="fl-blk is-hold fl-haul"/)
-    assert.match(floor, /cls: 'fl-reel is-pressed'/)
+    // The button is only the top circle: the hub alone carries is-pressed
+    // and gives under the press; the reel base stays planted on the plate.
+    assert.match(floor, /cls: 'fl-reel is-hub is-pressed'/)
+    assert.doesNotMatch(floor, /cls: 'fl-reel is-pressed'/)
     assert.match(css, /\.fl-reel\.is-pressed \{ animation: fl-press 33\.6s/)
+    assert.match(css, /\.fl-reel\.is-hub\.is-pressed \.dgm-face-top \{ fill: var\(--tone\); \}/)
+    // The set-down seat is the resolve lane's entry gate, one pitch behind
+    // the first occupied seat - never on top of a standing cell - and the
+    // index carries it onto the lane.
+    assert.match(floor, /cell\(at\(0\) - PITCH, lane, 'hold'\), cls: 'fl-blk is-hold fl-feed'/)
+    // The victory lap: one full spin on the climb home, a whole turn so
+    // the seam is invisible, on its own wrapper so the jelly survives it.
+    assert.match(scout, /className="scout-whirl"/)
+    assert.match(css, /\.dgm-svg\.is-live\.is-floor \.scout-whirl \{ animation: scout-whirl 33\.6s/)
+    assert.match(css, /@keyframes scout-whirl \{\s*\n\s*0%, [\d.]+% \{ transform: rotate\(0deg\); \}\s*\n\s*[\d.]+%, 100% \{ transform: rotate\(360deg\); \}/)
+    // Startled, the courier drops the parcel: the wrappers fade whatever
+    // the cargo clocks say, anywhere on the round.
+    assert.equal((floor.match(/className="fl-parcel"/g) || []).length, 2)
+    assert.match(css, /\.fl-watch\.is-shy \.fl-parcel \{ opacity: 0; \}/)
+    // THE SHADOW SITS ON THE FLOOR IT SHADES: the groundwrap steps to each
+    // stop's own ground line, derived from the same anchors as the stops
+    // (ground = CY + (px+py)*ISO_Y, ellipse drawn at 170).
+    assert.match(css, /\.dgm-svg\.is-live\.is-floor \.fl-groundwrap \{ animation: fl-footing 33\.6s cubic-bezier\(0\.45, 0, 0\.25, 1\) infinite; \}/)
+    const footing = css.match(/@keyframes fl-footing \{([\s\S]*?)\n\}/)[1]
+    for (let k = 0; k < 5; k += 1) {
+      const seat = Math.round(((calls[k * 2] + calls[k * 2 + 1]) * 0.34 + 8) * 100) / 100
+      assert.match(footing, new RegExp(`translateY\\(${seat}px\\)`.replace('.', '\\.')),
+        `the shadow never seats on stop ${k}'s own ground (${seat})`)
+    }
+    // And no plate moves under the courier any more: the held plate states
+    // its hold in ink and cast, never by rising out from under the round.
+    assert.doesNotMatch(css, /\.fl-step\.is-hot \.fl-body \{ transform/)
     assert.match(css, /\.dgm-svg\.is-live \.fl-watch \{ opacity: 1; \}/)
     assert.match(css, /\.fl-watch \{\s*\n\s*opacity: 0;\s*\n\s*pointer-events: none;/)
     assert.match(css, /\.dgm-svg\.is-live \.fl-monitor \{ pointer-events: all; cursor: pointer; \}/)
@@ -2944,7 +2975,6 @@ describe('The floor schematic', () => {
     // quietly brings the pet back.
     for (const clean of [trident, nectar]) {
       assert.doesNotMatch(clean, /Scout|fl-watch|dgm-scoutround|setShy/)
-      assert.match(clean, /className="dgm-mark"/)
     }
     assert.doesNotMatch(css, /dgm-scoutround|dgm-press|dgm-yoink|dgm-mastarm|dgm-lookt|dgm-lookn/)
     for (const retired of ['fl-treat', 'fl-jolt', 'is-poked']) {
@@ -3014,25 +3044,19 @@ describe('The floor schematic', () => {
     assert.doesNotMatch(mobile, /dgm-readout/, 'the phone rule must address the class the figure renders')
   })
 
-  it('lifts a plate off the ground rather than thickening it', () => {
-    // It used to EXTRUDE: the body grew downwards and the plate got thicker,
-    // which reads as a slab swelling rather than as a slab being picked up, and
-    // it put thirty pixels of dark side under a mechanism that was already
-    // fighting the surface for contrast.
-    //
-    // A held plate rises as ONE object - plate, machine and all, because they
-    // are one thing - and darkens the ground under it. That is the only cue an
-    // axonometric has for height and it is what both other figures use.
+  it('holds a plate with ink and ground, never by moving it', () => {
+    // The hold has been three wrong things: an EXTRUSION (the plate got
+    // thicker, which reads as swelling), a HALO (an inset cue that pushed
+    // the plate into the page), and finally a 22px LIFT - which was right
+    // until the courier arrived. A rise under a round whose anchors, dips
+    // and cargo swaps are solved against resting geometry tears every one
+    // of them loose the moment a pointer lands. So the held plate stays
+    // put: the cast spreads beneath it and the verdicts come forward, and
+    // nothing the courier is working ever moves out from under it.
     assert.doesNotMatch(floor, /tall: roundedSlab|fl-deep|fl-shallow/)
-    // IT WAS READING AS RECESSED, AND THE HALO WAS WHY. A held plate used to
-    // grow a ring of pale accent all the way round it, which is an INSET cue -
-    // it is what every sunken panel on the web is drawn with - so leaning on a
-    // step pushed it INTO the page. Elevation is not a glow: it is an object
-    // moving up while its contact with the ground stays down and softens.
     assert.doesNotMatch(css, /fl-aura|fl-shade/)
     assert.doesNotMatch(floor, /fl-aura|fl-shade/)
-    const lift = Number(css.match(/\.fl-step\.is-hot \.fl-body \{ transform: translateY\(-(\d+)px\); \}/)[1])
-    assert.ok(lift >= 20, `a ${lift}px lift is a nudge, and the lettering left the plates so it can afford more`)
+    assert.doesNotMatch(css, /\.fl-step\.is-hot \.fl-body \{ transform/)
     assert.match(css, /\.fl-step\.is-hot \.fl-cast \{ opacity: 1; \}/)
     // The steps NEST rather than march: at five, ten and fifteen pixels apart
     // they came out as three ghost plates trailing under the real one, and three

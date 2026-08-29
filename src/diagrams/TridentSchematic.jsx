@@ -705,8 +705,6 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
             </clipPath>
           </defs>
 
-          <image className="dgm-mark" href="/assets/damaros-monogram-blue.svg" x="22" y="16" width="34" height="40" />
-
           <g className="dgm-count">
             <rect className="dgm-countbody" x="446" y="22" width="154" height="30" rx="15" />
             <text className="dgm-countval" x="462" y="41">{state.bound}/19</text>
