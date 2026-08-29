@@ -227,10 +227,10 @@ const DISTRICTS = [
 // still its own degree in the district's index, so the tall ones are the hubs;
 // the kind sets the footprint and the floor of that range.
 const KINDS = {
-  block: { halfX: 8, halfY: 8, radius: 3, low: 5, span: 9 },
+  block: { halfX: 8, halfY: 8, radius: 5, low: 5, span: 9 },
   drum: { halfX: 7, halfY: 7, radius: 7, low: 5, span: 9 },
-  bar: { halfX: 11, halfY: 4.5, radius: 2, low: 4, span: 7 },
-  post: { halfX: 5, halfY: 5, radius: 1.6, low: 8, span: 12 },
+  bar: { halfX: 11, halfY: 4.5, radius: 3.5, low: 4, span: 7 },
+  post: { halfX: 5, halfY: 5, radius: 3, low: 8, span: 12 },
 }
 
 // Where the members of a district stand. A phyllotactic disc - the arrangement a
@@ -779,11 +779,18 @@ const SEAT_STEPS = [0.1, 0.26, 0.42]
 function Seat({ half, radius, cy, kind }) {
   return (
     <g className={`dgm-seat is-${kind}`}>
-      <g transform={planSpace(310, cy)}>
-        {SEAT_STEPS.map((fraction) => {
-          const inset = Math.round(half * fraction)
-          return <rect className="dgm-seatstep" key={fraction} x={-half + inset} y={-half + inset} width={(half - inset) * 2} height={(half - inset) * 2} rx={radius} />
-        })}
+      {/* The shift rides between the seat's own clock and its geometry: the
+          shadow slides against the pointer, so the slab reads as suspended
+          without the slab - whose ports three channels arrive through -
+          moving a single unit. Occlusion is the one part of this figure that
+          is not plumbed to anything. */}
+      <g className="dgm-seatshift">
+        <g transform={planSpace(310, cy)}>
+          {SEAT_STEPS.map((fraction) => {
+            const inset = Math.round(half * fraction)
+            return <rect className="dgm-seatstep" key={fraction} x={-half + inset} y={-half + inset} width={(half - inset) * 2} height={(half - inset) * 2} rx={radius} />
+          })}
+        </g>
       </g>
     </g>
   )
@@ -887,6 +894,10 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
                   <g className={`dgm-reach${lit(site.id)}`} key={site.id} style={{ '--stagger': site.stagger, '--life': site.life }}>
                     <circle className="dgm-reachfill" cx={site.plan[0]} cy={site.plan[1]} r={span} fill="url(#nc-reach)" />
                     <circle className="dgm-reachrim" cx={site.plan[0]} cy={site.plan[1]} r={span} vectorEffect="non-scaling-stroke" />
+                    {/* The growth ring: the reach a phase ago, still visible
+                        inside the rim, so coverage reads as grown rather than
+                        stamped. It rides the same transition the rim does. */}
+                    <circle className="dgm-reachrim is-ring" cx={site.plan[0]} cy={site.plan[1]} r={Math.max(span - 9, 4)} vectorEffect="non-scaling-stroke" />
                   </g>
                 )
               })}
@@ -986,13 +997,24 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
                     reader needs in order to see four kinds rather than
                     forty-two things. */}
                 {BY_BAND.map((district) => (
-                  <circle
-                    className={`dgm-district ${district.tone}`}
-                    key={district.key}
-                    cx={district.at[0]}
-                    cy={district.at[1]}
-                    r={district.spread + GROUND_OUT}
-                  />
+                  <g key={district.key}>
+                    <circle
+                      className={`dgm-district ${district.tone}`}
+                      cx={district.at[0]}
+                      cy={district.at[1]}
+                      r={district.spread + GROUND_OUT}
+                    />
+                    {/* The district's own cytoplasm: the fine stipple, inside
+                        its ground, so a quarter given to one kind of thing
+                        reads as grown ground rather than blank disc. */}
+                    <circle
+                      className="dgm-districtfill"
+                      cx={district.at[0]}
+                      cy={district.at[1]}
+                      r={district.spread + GROUND_OUT - 3}
+                      fill="url(#nc-reach)"
+                    />
+                  </g>
                 ))}
 
                 {/* The junction the four taps meet at. It is a footprint, not a
@@ -1000,15 +1022,37 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
                     districts moved out to the corners, and an empty middle is
                     what made the first districted floor read as four separate
                     diagrams instead of one board. */}
-                <rect
+                {/* THE CENTROSOME. The junction the four taps meet is the
+                    board's organising centre, so it is drawn as the cell's
+                    own: a round hub with an aster of short spokes inside it.
+                    The geometry is unchanged - a circle of JUNCTION_HALF
+                    passes exactly through the four points the taps already
+                    stop on - so every run still arrives where it always did. */}
+                <circle
                   className="dgm-junction"
-                  x={-JUNCTION_HALF}
-                  y={-JUNCTION_HALF}
-                  width={JUNCTION_HALF * 2}
-                  height={JUNCTION_HALF * 2}
-                  rx="5"
+                  cx="0"
+                  cy="0"
+                  r={JUNCTION_HALF}
                   vectorEffect="non-scaling-stroke"
                 />
+                <g className="dgm-aster">
+                  {[0, 45, 90, 135, 180, 225, 270, 315].map((deg) => {
+                    const a = (deg * Math.PI) / 180
+                    const r0 = 5
+                    const r2 = 11.5
+                    return (
+                      <line
+                        key={deg}
+                        x1={Math.round(Math.cos(a) * r0 * 10) / 10}
+                        y1={Math.round(Math.sin(a) * r0 * 10) / 10}
+                        x2={Math.round(Math.cos(a) * r2 * 10) / 10}
+                        y2={Math.round(Math.sin(a) * r2 * 10) / 10}
+                        vectorEffect="non-scaling-stroke"
+                      />
+                    )
+                  })}
+                  <circle className="dgm-asterhub" cx="0" cy="0" r="2.6" />
+                </g>
 
                 {/* The bus round the four districts, its four taps into the
                     junction, and a pad wherever a run starts, turns or ends.

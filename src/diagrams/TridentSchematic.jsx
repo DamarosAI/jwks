@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { jitter, planCyl, planDrop, planPrism, planSpace, roundedDeck } from './iso'
+import { ISO_Y, jitter, planCyl, planDrop, planPrism, planSpace, roundedBox, roundedDeck } from './iso'
 import { Faces } from './Solid'
 import { useCenterOnOverflow } from './useCenterOnOverflow'
 import { useScrollRun } from './useScrollPhase'
@@ -170,11 +170,48 @@ const SOURCES = [
 
 const HUB = SURFACE.p(0, 0)
 
+/* THE CATCHMENT HAS A WALL NOW. The intake used to say "everything in here
+   goes to the throat" with a printed rounded rect; a catchment is a basin,
+   and a basin has a rim you can see the body of. Built in the deck's own
+   plan space: a rounded plan square, offset up the screen by the extrusion
+   step (equal negative steps on both plan axes cancel in x and rise in y),
+   with the far inner face drawn before everything the basin holds and the
+   near outer face after it. The printed catch line stays, just inside the
+   wall, because the wall bounds and the line still marks. */
+const BASIN = (() => {
+  const h = 5
+  const step = Math.round((h / (2 * ISO_Y)) * 100) / 100
+  const outer = roundedBox(60, 60, 22, 7)
+  const inner = roundedBox(54.5, 54.5, 17, 7)
+  const pick = (ring, score) => ring.reduce((b, pt, i) => (score(pt) > score(ring[b]) ? i : b), 0)
+  const seg = (ring, from, to) => (from <= to ? ring.slice(from, to + 1) : [...ring.slice(from), ...ring.slice(0, to + 1)])
+  const run = (pts, up) => pts.map(([x, y]) => `${Math.round((x - (up ? step : 0)) * 100) / 100} ${Math.round((y - (up ? step : 0)) * 100) / 100}`).join(' L ')
+  const wall = (pts) => `M ${run(pts, true)} L ${run([...pts].reverse(), false)} Z`
+  const band = (out, back) => `M ${run(out, true)} L ${run([...back].reverse(), true)} Z`
+  const edge = (pts) => `M ${run(pts, true)}`
+  const o = { right: pick(outer, ([x, y]) => x - y), left: pick(outer, ([x, y]) => y - x) }
+  const n = { right: pick(inner, ([x, y]) => x - y), left: pick(inner, ([x, y]) => y - x) }
+  return {
+    back: [
+      { d: wall(seg(inner, n.left, n.right)), cls: 'dgm-basin-in' },
+      { d: band(seg(outer, o.left, o.right), seg(inner, n.left, n.right)), cls: 'dgm-basin-band' },
+      { d: edge(seg(outer, o.left, o.right)), cls: 'dgm-basin-edge' },
+      { d: edge(seg(inner, n.left, n.right)), cls: 'dgm-basin-edge' },
+    ],
+    front: [
+      { d: wall(seg(outer, o.right, o.left)), cls: 'dgm-basin-out' },
+      { d: band(seg(outer, o.right, o.left), seg(inner, n.right, n.left)), cls: 'dgm-basin-band' },
+      { d: edge(seg(outer, o.right, o.left)), cls: 'dgm-basin-edge' },
+      { d: edge(seg(inner, n.right, n.left)), cls: 'dgm-basin-edge' },
+    ],
+  }
+})()
+
 // Proposals waiting their turn, in the one quadrant of the intake deck that no
 // source lands in. A queue is what an intake looks like when it is working.
 const QUEUE = [0, 1, 2, 3].map((step) => {
-  const x = 14 + step * 13
-  return { step, x, y: 52, life: jitter(step, 21), block: planPrism(x, 52, 5, 5, 5, 3) }
+  const x = 12 + step * 12
+  return { step, x, y: 47, life: jitter(step, 21), block: planPrism(x, 47, 5, 5, 5, 5) }
 })
 
 // 19 contract fields as a plan grid, laid out 5-5-5-4 with the short row
@@ -252,7 +289,7 @@ let cursor = 0
       y,
       at: CONTRACT.p(x, y),
       seq: Math.round((cursor / 19) * 100) / 100,
-      block: planPrism(x, y, FIELD_HALF, FIELD_HALF, FIELD_RISE, 5),
+      block: planPrism(x, y, FIELD_HALF, FIELD_HALF, FIELD_RISE, 7),
       // `seq` is the order the contract checks in, which is what the pass runs
       // on. Settling is not a run, so it gets a scattered clock instead - a
       // grid of nineteen breathing in reading order is a wave, not a relief.
@@ -348,7 +385,7 @@ const LEDGER = [-39, -13, 13, 39].map((y, index, all) => ({
   // construction as a field tile at another ratio, because a record and a
   // checked field are the same kind of thing to this drawing: something the
   // system now holds, and holds up.
-  bar: planPrism(4, y, 48, 5.5, 5, 3),
+  bar: planPrism(4, y, 48, 5.5, 5, 5),
 }))
 
 // The descent. One short drop per deck, and it belongs to the deck it lands on
@@ -814,6 +851,18 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
                       establishing that this deck has a hole in it at all. */}
                   <path className="dgm-face-right" d={BARREL.wall} />
                   <circle className="dgm-housing" cx={BARREL.top.cx} cy={BARREL.top.cy} r={SHUT_FRAME} />
+                  {/* The pore complex's collar, one ring out from the barrel:
+                      the same line every membrane crossing wears. */}
+                  <circle className="dgm-membrane is-collar" cx={BARREL.top.cx} cy={BARREL.top.cy} r={SHUT_FRAME + 4} vectorEffect="non-scaling-stroke" />
+                  {/* THE IRIS. Three fine ridges on the housing annulus, between
+                      the bore and the rim - because this gate opens on a named
+                      person's signature, and a gate that reads a person is
+                      drawn as the instrument that does: an iris. The one
+                      biometric mark on the stack, on the one deck that needs
+                      one. */}
+                  {[33.5, 38.5, 43.5].map((ring) => (
+                    <circle className="dgm-scanring" key={ring} cx={BARREL.top.cx} cy={BARREL.top.cy} r={ring} vectorEffect="non-scaling-stroke" />
+                  ))}
                   {/* Everything the frame carries sits on the frame, one storey
                       up, so the opening is cut through a block rather than
                       printed beside one. The clip travels with the group, so the
@@ -958,10 +1007,17 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
               <Faces shape={SURFACE} className="dgm-solid" />
               <g transform={planSpace(CX, SURFACE.cy)}>
                 <rect className="dgm-planefill" x={-HALF + 10} y={-HALF + 10} width={HALF * 2 - 20} height={HALF * 2 - 20} rx="14" fill="url(#tr-grain)" />
+                {/* The basin's far half: the inside face a reader sees down
+                    onto, before anything the basin holds. */}
+                <g className="dgm-basin">
+                  {BASIN.back.map((piece, n) => (
+                    <path key={n} className={piece.cls} d={piece.d} vectorEffect="non-scaling-stroke" />
+                  ))}
+                </g>
                 {/* Everything that lands on this deck lands inside one
                     catchment, and everything in the catchment goes to one
                     throat. */}
-                <rect className="dgm-catch" x="-56" y="-56" width="112" height="112" rx="20" vectorEffect="non-scaling-stroke" />
+                <rect className="dgm-catch" x="-50" y="-50" width="100" height="100" rx="17" vectorEffect="non-scaling-stroke" />
                 {/* The intake never stops pulling. Each waiting proposal has a
                     run to the throat, and a mark keeps travelling it - so the
                     deck is seen doing the one thing it is for, whether or not
@@ -1048,6 +1104,14 @@ export default function TridentSchematic({ animate = true, reduced = false }) {
                     membranes use, one ring out from the rim, because a hole
                     that things pass through is a hole IN a boundary. */}
                 <circle className="dgm-membrane is-collar" cx="0" cy="0" r="18" vectorEffect="non-scaling-stroke" />
+              </g>
+              {/* The basin's near half, over everything it holds. */}
+              <g transform={planSpace(CX, SURFACE.cy)}>
+                <g className="dgm-basin">
+                  {BASIN.front.map((piece, n) => (
+                    <path key={n} className={piece.cls} d={piece.d} vectorEffect="non-scaling-stroke" />
+                  ))}
+                </g>
               </g>
             </g>
 

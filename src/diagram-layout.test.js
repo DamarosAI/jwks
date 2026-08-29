@@ -1580,9 +1580,9 @@ describe('Trident and Nectar schematics', () => {
     assert.match(iso, /const step = round\(depth \/ \(2 \* ISO_Y\)\)/)
     assert.match(iso, /export function planPrism\(cx, cy, halfX, halfY, depth, radius\) \{/)
     for (const call of [
-      /block: planPrism\(x, y, FIELD_HALF, FIELD_HALF, FIELD_RISE, 5\)/,
-      /bar: planPrism\(4, y, 48, 5\.5, 5, 3\)/,
-      /block: planPrism\(x, 52, 5, 5, 5, 3\)/,
+      /block: planPrism\(x, y, FIELD_HALF, FIELD_HALF, FIELD_RISE, 7\)/,
+      /bar: planPrism\(4, y, 48, 5\.5, 5, 5\)/,
+      /block: planPrism\(x, 47, 5, 5, 5, 5\)/,
       /puck: planPrism\(source\.land\[0\], source\.land\[1\], 12, 12, 4, 12\)/,
     ]) assert.match(trident, call)
     // The approval deck's barrel is the one solid in either figure built on a
@@ -2276,6 +2276,54 @@ describe('The floor schematic', () => {
     const planInk = Number(css.match(/\.fl-plan \{[\s\S]*?stroke: color-mix\(in srgb, var\(--line\) (\d+)%/)[1])
     assert.ok(wallInk <= planInk, `a wall at ${wallInk}% over a plan at ${planInk}% is a wall shouting`)
     assert.doesNotMatch(css, /fl-bilayer[\s\S]{0,200}?animation:/)
+
+    // AND THE WALL IS A BODY, NOT A LINE. Every plate is a walled vessel: a
+    // rounded plan rectangle extruded up the screen, split at its own side
+    // corners into the half that goes down before the machine (the inner far
+    // face and far rim band) and the half that goes down after it (the outer
+    // near skirt and near rim band). The split points are shared coordinates,
+    // so the seam is not a mark. Resolve's wall opens over the same lane its
+    // membrane does, and each cut end is capped and wears its pylon.
+    assert.match(floor, /const DISH = \{ hx: \d+, hy: \d+, r: \d+, t: \d+, h: \d+ \}/)
+    assert.match(floor, /dish: vessel\(seat, step\.key === 'resolve' \? DISH_GAP : null\)/)
+    assert.match(floor, /<g className="fl-vessel is-back">/)
+    assert.match(floor, /<g className="fl-vessel is-front">/)
+    for (const part of ['fl-vessel-band', 'fl-vessel-in', 'fl-vessel-out', 'fl-vessel-edge', 'fl-vessel-cut', 'fl-pylon-wall', 'fl-pylon-cap']) {
+      assert.match(floor, new RegExp(part), `the vessel needs its ${part}`)
+      assert.match(css, new RegExp(`\\.${part}[ ,.{:]`), `${part} has to be dressed`)
+    }
+    // The near half arrives with the plate: same fade, or the wall pops in
+    // over a surface that is still closing.
+    assert.match(css, /\.fl-vessel\.is-front \{ opacity: clamp\(0, calc\(\(var\(--fuse\) - 0\.62\) \/ 0\.16\), 1\); \}/)
+    // The dish gap brackets the membrane gap, so the two openings are one
+    // opening: wall outside, membrane inside, both parted at the same lane.
+    const dish = floor.match(/const DISH_GAP = \[(\d+), (\d+)\]/).slice(1).map(Number)
+    assert.ok(dish[0] <= gap[0] && dish[1] >= gap[1], `a wall gap of ${dish} does not clear the membrane gap ${gap}`)
+
+    // THE ORGANELLES ARE THE BODIES OF THE MACHINES NOW. The switch bank is
+    // the nucleus - an oval platform wearing its printed double envelope,
+    // four pores on the rim, and one chromatin thread strung through all
+    // twelve criteria in reading order, because a protocol is one document.
+    // The sorter grows its Golgi stack; the ram's body is a drum; the reels
+    // print coils, not spokes, because what winds onto a reel of biology is
+    // a strand.
+    assert.match(floor, /\.\.\.stand\(0, 0, 44, 36, 3, 26\), cls: 'fl-board'/)
+    assert.match(floor, /className="fl-thread"/)
+    assert.match(floor, /className="fl-porering"/)
+    assert.equal((floor.match(/fl-golgi/g) || []).length, 3, 'a Golgi stack is three discs')
+    assert.match(floor, /\.\.\.drum\(28, -34, 7, 7\), cls: 'fl-ram is-body'/)
+    assert.match(floor, /className="fl-coil"/)
+    assert.doesNotMatch(floor, /const spoke = /)
+    // Trident's catchment is a walled basin and Nectar's junction is the
+    // centrosome - same organising move on both boards, geometry unchanged:
+    // the taps stop on the same four points a circle of JUNCTION_HALF passes
+    // through.
+    assert.match(trident, /const BASIN = /)
+    assert.match(trident, /className="dgm-basin"/)
+    assert.match(DGM_BLOCK, /\.dgm-basin-band \{/)
+    assert.match(nectar, /className="dgm-junction"\s*\n\s*cx="0"/)
+    assert.match(nectar, /className="dgm-aster"/)
+    assert.match(nectar, /className="dgm-districtfill"/)
   })
 
   it('gives each station its own ink, and couples the row into one run', () => {
@@ -2730,12 +2778,20 @@ describe('The pointer field', () => {
     // Attached to the ref each section already keeps for GSAP, so there is no
     // second ref and nothing to merge - a callback ref writing `root.current`
     // is both harder to read and something the hooks lint is right to refuse.
-    // TWO, NOT THREE. The thesis had a cloud of nine plates at nine heights for
-    // the pointer to shear against; it has one deck now, and a parallax on a
-    // single flat object is not depth, it is a wobble. The figure also runs a
-    // continuous loop of its own, so a second motion answering the cursor would
-    // be two clocks on one drawing.
-    assert.equal((app.match(/usePointerField\(root, \{ reduced \}\)/g) || []).length, 2)
+    // THREE NOW, AND EACH SECTION SPENDS IT DIFFERENTLY. The refusal that
+    // held the thesis out - a parallax on one flat deck is a wobble - still
+    // stands: what the thesis runs is not a parallax. Each vessel reads its
+    // NEARNESS to the cursor and swells toward it, which is a response, not a
+    // view shear, and it costs no second clock because it is driven entirely
+    // by where the pointer is. Trident spends the field on its un-plumbed
+    // proposer plates; Nectar spends it on the slab's own shadow.
+    assert.equal((app.match(/usePointerField\(root, \{ reduced \}\)/g) || []).length, 3)
+    assert.match(css, /--near: max\(0, 1 - max\(var\(--dx\), -1 \* var\(--dx\)\) \* 2\.4\)/)
+    // Spent only while the pointer is actually over the section - the field's
+    // resting zeroes would otherwise leave the centre vessel swollen - and
+    // only on a pointer that can hover, and never over the held plate.
+    assert.match(css, /\.thesis-section:hover \.dgm-svg\.is-fused \.fl-step:not\(\.is-hot\) \.fl-body/)
+    assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{\s*\n\s*\.thesis-section:hover \.dgm-svg\.is-floor \.fl-body \{ transform: none; \}/)
     // `--sway` means something else on this sheet now - it is where a scattered
     // tile wanders to while it is still a mess - so the check is for the
     // pointer-field variables themselves rather than a name that got reused.
@@ -2755,11 +2811,11 @@ describe('The pointer field', () => {
   })
 
   it('spends it hardest on the figure that is a place', () => {
-    // Four pixels on a Trident plate, which is furniture on an instrument, and
-    // that is now the hardest this device is spent anywhere. It used to run
-    // hardest on the thesis cloud - nine plates at nine rates, shearing rather
-    // than sliding - and that cloud is gone with the landscape it hung over.
-    assert.match(css, /\.dgm-plate \{\s*\n\s*transform:\s*\n\s*translate\(calc\(var\(--px, 0\) \* 4px\), calc\(var\(--py, 0\) \* 2\.5px\)\)/)
+    // Six pixels on a Trident plate. The plates are the one layer in that
+    // figure attached to nothing, and them riding the view while the governed
+    // stack refuses to move a unit IS the section's claim, made by the
+    // pointer instead of the caption.
+    assert.match(css, /\.dgm-plate \{\s*\n\s*transform:\s*\n\s*translate\(calc\(var\(--px, 0\) \* 6px\), calc\(var\(--py, 0\) \* 3\.5px\)\)/)
     // Trident's plates are the one layer in that figure attached to nothing.
     // Nothing plumbed moves: a deck is joined to the deck below it by a drop
     // drawn inside both, and a parallax on a plumbed thing is a drawing that
@@ -2768,13 +2824,17 @@ describe('The pointer field', () => {
     assert.doesNotMatch(css, /\.dgm-drop[a-z]* \{[^}]*var\(--px/)
   })
 
-  it('leaves Nectar out on purpose, and says why in the sheet', () => {
-    // The obvious counterpart is the intelligence slab, and it cannot move:
-    // three channels pass under its near skirt and come up through ports cut in
-    // its plan, so drifting it by two pixels slides every port off the route
-    // arriving at it. If someone ever adds it, this fails and the reason gets
-    // read again rather than rediscovered.
+  it('moves the slab\'s shadow and never the slab', () => {
+    // The slab cannot move: three channels pass under its near skirt and come
+    // up through ports cut in its plan, so drifting it by two pixels slides
+    // every port off the route arriving at it. Its SHADOW is the one part of
+    // the figure plumbed to nothing, so that is what answers the pointer -
+    // sliding against it, which reads as the slab hanging in air the reader
+    // is moving through. If someone ever puts the field on the slab itself,
+    // this fails and the reason gets read again rather than rediscovered.
     assert.doesNotMatch(css, /\.dgm-intel[^{]*\{[^}]*var\(--px/)
-    assert.match(css, /NECTAR IS DELIBERATELY NOT IN THIS PASS/)
+    assert.match(css, /NECTAR'S SLAB IS DELIBERATELY NOT IN THIS PASS/)
+    assert.match(nectar, /className="dgm-seatshift"/)
+    assert.match(css, /\.dgm-seatshift \{\s*\n\s*transform: translate\(calc\(var\(--px, 0\) \* -10px\), calc\(var\(--py, 0\) \* -6px\)\);/)
   })
 })

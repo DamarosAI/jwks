@@ -617,6 +617,11 @@ function ThesisSection() {
   const inView = useInView(root)
   const animate = shouldRunAmbient({ reduced, inView, narrow })
   const field = useScrollSpread({ reduced, start: 'top bottom', end: 'top 40%' })
+  // The bench feels the pointer coming: each vessel reads its distance from
+  // the cursor off the same two numbers the other sections already write, and
+  // swells toward it before any hover commits. Nearness, not parallax - the
+  // response of something alive rather than a camera move.
+  usePointerField(root, { reduced })
 
   useEnterMotion(root, reduced, () => [
     gsap.from('.thesis-head > *', {

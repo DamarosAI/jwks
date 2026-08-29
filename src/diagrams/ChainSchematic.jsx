@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 
-import { ISO_Y, jitter, planCircle, planSpace, project, roundedCylinder, roundedSlab } from './iso'
+import { ISO_Y, jitter, planCircle, planSpace, project, roundedBox, roundedCylinder, roundedSlab } from './iso'
 import { Faces } from './Solid'
 import { useCenterOnOverflow } from './useCenterOnOverflow'
 
@@ -126,8 +126,8 @@ const PITCH = 24
    opening rather than a missing stretch. The gap brackets plan x 28 - where
    the ram carries the pushed cell over the edge - with a cell radius of
    clearance each side, and the printed chevron already points through it. */
-const WALL_OUT = { hx: 69, hy: 44, r: 16 }
-const WALL_IN = { hx: 66.5, hy: 41.5, r: 14 }
+const WALL_OUT = { hx: 62, hy: 37, r: 14 }
+const WALL_IN = { hx: 59.5, hy: 34.5, r: 12 }
 const WALL_GAP = [14, 42]
 
 /* A rounded plan rectangle as one open stroke: from one side of the gap in the
@@ -150,6 +150,111 @@ const WALL_OPEN = {
   outer: wallPath(WALL_OUT, WALL_GAP),
   inner: wallPath(WALL_IN, WALL_GAP),
   ends: WALL_GAP.flatMap((x) => [[x, WALL_OUT.hy], [x, WALL_IN.hy]]),
+}
+
+/* THE VESSEL. EVERY PLATE IS A WALLED DISH NOW, NOT A SHEET WITH A LINE ON IT.
+
+   The reference for this whole pass is the plant cell: a thick WALL you can
+   see the body of, with the thin membrane just inside it. A printed bilayer
+   alone reads as ruling; a wall with a top band, an outer skirt and an inner
+   face you can see down into reads as a vessel - and five walled vessels in a
+   row read as a culture bench, which is what a run over living material is.
+
+   It is built the way everything here is built: a rounded plan rectangle,
+   sampled by `roundedBox` and carried through the projection, extruded
+   straight up the screen. Four visible parts, split into two draw groups by
+   an honest painter's argument:
+
+     BACK  - the inner far wall (the inside surface a reader sees down onto)
+             and the far half of the top band. Everything standing on the
+             plate is nearer than these, so they go down before the machine.
+     FRONT - the outer near skirt and the near half of the top band. These
+             are nearer than anything on the plate, so they go down after it.
+
+   The split lands exactly on the left and right screen corners, where the
+   band's two halves share their cut points - so the seam is two identical
+   coordinates, not a drawn line.
+
+   Resolve's wall OPENS, like its membrane: the front pieces stop either side
+   of the exit lane, each cut end is capped with its own cross-section face,
+   and a small pylon stands on each cap - the wall thickening at its own
+   opening, which is what a boundary does at a regulated gate. */
+const DISH = { hx: 72, hy: 47, r: 17, t: 5, h: 7 }
+const DISH_GAP = [12, 44]
+
+const r1 = (v) => Math.round(v * 100) / 100
+
+const vessel = (seat, gap = null) => {
+  const p = project(seat[0], seat[1])
+  const { hx, hy, r, t, h } = DISH
+  const splice = (ring, edgeY, cuts) => {
+    if (!cuts) return ring
+    // The gap lies on the straight +y run, between the front corner arc and
+    // the left corner arc. Ring order there runs +x toward -x, so the higher
+    // cut goes in first.
+    const out = []
+    ring.forEach((pt, i) => {
+      out.push(pt)
+      const next = ring[(i + 1) % ring.length]
+      if (pt[1] === edgeY && next[1] === edgeY && pt[0] > next[0] && pt[0] >= cuts[1] && next[0] <= cuts[0]) {
+        out.push([cuts[1], edgeY], [cuts[0], edgeY])
+      }
+    })
+    return out
+  }
+  const outer = splice(roundedBox(hx, hy, r, 11), hy, gap)
+  const inner = splice(roundedBox(hx - t, hy - t, r - t, 11), hy - t, gap)
+  const pick = (ring, score) => ring.reduce((b, pt, i) => (score(pt) > score(ring[b]) ? i : b), 0)
+  const at = (pt, up) => {
+    const [x, y] = p(pt[0], pt[1])
+    return `${x} ${r1(y - up)}`
+  }
+  const seg = (ring, from, to) => (from <= to ? ring.slice(from, to + 1) : [...ring.slice(from), ...ring.slice(0, to + 1)])
+  const run = (pts, up) => pts.map((pt) => at(pt, up)).join(' L ')
+  const wall = (pts) => `M ${run(pts, h)} L ${run([...pts].reverse(), 0)} Z`
+  const band = (out, back) => `M ${run(out, h)} L ${run([...back].reverse(), h)} Z`
+  const edge = (pts) => `M ${run(pts, h)}`
+  const find = (ring, x, y) => ring.findIndex((pt) => pt[0] === x && pt[1] === y)
+
+  const o = { right: pick(outer, ([x, y]) => x - y), front: pick(outer, ([x, y]) => x + y), left: pick(outer, ([x, y]) => y - x) }
+  const n = { right: pick(inner, ([x, y]) => x - y), left: pick(inner, ([x, y]) => y - x) }
+
+  const back = [
+    { d: wall(seg(inner, n.left, n.right)), cls: 'fl-vessel-in' },
+    { d: band(seg(outer, o.left, o.right), seg(inner, n.left, n.right)), cls: 'fl-vessel-band' },
+    { d: edge(seg(outer, o.left, o.right)), cls: 'fl-vessel-edge' },
+    { d: edge(seg(inner, n.left, n.right)), cls: 'fl-vessel-edge' },
+  ]
+
+  const front = []
+  const spans = gap
+    ? [
+        [o.right, find(outer, gap[1], hy), n.right, find(inner, gap[1], hy - t)],
+        [find(outer, gap[0], hy), o.left, find(inner, gap[0], hy - t), n.left],
+      ]
+    : [[o.right, o.left, n.right, n.left]]
+  spans.forEach(([a, b, c, d]) => {
+    front.push(
+      { d: wall(seg(outer, a, b)), cls: 'fl-vessel-out' },
+      { d: band(seg(outer, a, b), seg(inner, c, d)), cls: 'fl-vessel-band' },
+      { d: edge(seg(outer, a, b)), cls: 'fl-vessel-edge' },
+      { d: edge(seg(inner, c, d)), cls: 'fl-vessel-edge' },
+    )
+  })
+  if (gap) {
+    // The two cut faces, then the pylon standing on each: the wall thickening
+    // at its own opening. Small on purpose - these are features OF the wall,
+    // not parts standing on the plate, which is why they are built here
+    // rather than through `drum` and its size floor.
+    gap.forEach((x) => {
+      front.push({ d: `M ${at([x, hy], h)} L ${at([x, hy - t], h)} L ${at([x, hy - t], 0)} L ${at([x, hy], 0)} Z`, cls: 'fl-vessel-cut' })
+      const [sx, sy] = p(x, hy - t / 2)
+      const post = roundedCylinder(sx, sy - 11, 3.4, 11 - h)
+      front.push({ d: post.wall, cls: 'fl-pylon-wall' })
+      front.push({ ellipse: { cx: post.cx, cy: post.cy, rx: post.rx, ry: post.ry }, cls: 'fl-pylon-cap' })
+    })
+  }
+  return { back, front }
 }
 
 /* THE RUN, AS A LINE THE FIVE STATIONS ARE REGISTERED TO.
@@ -357,27 +462,46 @@ function mechanism(key, t) {
     // have to follow. So: twelve switches, four across and three back, standing
     // on a bank with the bus rails printed under them.
     protocol: () => {
-      const cols = [-34, -11, 12, 35]
-      const rows = [-26, 0, 26]
+      const cols = [-30, -10, 10, 30]
+      const rows = [-22, 0, 22]
       const verdict = ['pass', 'pass', 'fail', 'pass', 'pass', 'pass', 'fail', 'pass', 'pass', 'fail', 'pass', 'pass']
       const bank = rows.flatMap((py, r) => cols.map((px, c) => [px, py, r * cols.length + c]))
+      // THE BOARD IS THE NUCLEUS NOW. The protocol is the run's genome - the
+      // one document everything downstream executes - so the bank it is
+      // thrown on is drawn as the organelle that holds a genome: an oval
+      // platform (the same rounded slab at a radius that turns it into a
+      // stadium), wearing its double envelope printed on its own face, with
+      // four pores on the envelope's rim and one chromatin thread snaking
+      // through all twelve criteria in reading order. The switches stay a
+      // grid, because a grid is what a reader can total - the nucleus is the
+      // body, not the layout.
+      const thread = rows
+        .flatMap((py, r) => (r % 2 ? [...cols].reverse() : cols).map((px) => `${px} ${py}`))
+        .join(' L ')
       return [
         printed(-800, 'fl-print', [
-          <rect key="board" x="-50" y="-40" width="100" height="80" rx="8" />,
+          <rect key="seat" x="-46" y="-38" width="92" height="76" rx="28" />,
         ]),
-        // THE BANK IS DRAWN FIRST, AND NOT AT ITS OWN DEPTH. Everything else
-        // here is sorted by the depth of the plan point it stands on, which is
-        // right for a small solid and wrong for a large one: sorted by its
+        // THE BANK IS DRAWN FIRST, AND NOT AT ITS OWN DEPTH. Sorted by its
         // centre, a plate-sized bank draws OVER every switch standing on its
         // far half, and six of the twelve went missing.
-        { ...stand(0, 0, 46, 38, 3, 4), cls: 'fl-board', depth: -700 },
-        // The bus rails go on the bank's own top face, not on the plate
-        // underneath it, where the bank would cover them.
-        printed(-699, 'fl-print', rows.map((py) => (
-          <line className="fl-ruled" key={py} x1="-40" y1={py} x2="40" y2={py} />
-        )), 3),
+        { ...stand(0, 0, 44, 36, 3, 26), cls: 'fl-board', depth: -700 },
+        // Everything the nucleus wears goes on its own top face: the double
+        // envelope, its four pores, and the thread. On the plate underneath,
+        // the bank would cover all of it.
+        printed(-699, 'fl-print', [
+          <rect className="fl-ruled" key="env" x="-40" y="-32" width="80" height="64" rx="24" />,
+          <rect className="fl-ruled" key="env2" x="-36" y="-28" width="72" height="56" rx="21" />,
+          ...[[0, -32], [40, 0], [0, 32], [-40, 0]].map(([px, py]) => (
+            <g key={`${px}:${py}`}>
+              <circle className="fl-porering" cx={px} cy={py} r="3" />
+              <circle className="fl-poredot" cx={px} cy={py} r="1.1" />
+            </g>
+          )),
+          <path className="fl-thread" key="thread" d={`M ${thread}`} />,
+        ], 3),
         ...bank.flatMap(([px, py, i]) => [
-          { ...stand(px, py, 5, 5, 5, 1.5, 3), cls: 'fl-seat' },
+          { ...stand(px, py, 5, 5, 5, 4.5, 3), cls: 'fl-seat' },
           arm(`fl-toggle is-${verdict[i]}`, px, py, 11, 11, 4, { knob: 3.2, turn: i }),
         ]),
       ]
@@ -398,13 +522,13 @@ function mechanism(key, t) {
       // A PILE, NOT A SCATTER: some of these stand on the others, which is the
       // only difference between material heaped up and material laid out.
       const pile = [
-        [-62, -30, 5, 0], [-44, -34, 6, 0], [-64, -12, 4, 0], [-42, -10, 6, 0],
-        [-62, 6, 5, 0], [-46, 6, 4, 0], [-60, -32, 4, 5], [-58, 4, 4, 5],
+        [-56, -30, 5, 0], [-38, -34, 6, 0], [-58, -12, 4, 0], [-36, -10, 6, 0],
+        [-56, 6, 5, 0], [-40, 6, 4, 0], [-54, -32, 4, 5], [-52, 4, 4, 5],
       ]
       const slot = [-20, 8].flatMap((py) => [4, 28, 50].map((px) => [px, py]))
       return [
         printed(-800, 'fl-print', [
-          <rect key="pit" x="-63" y="-40" width="28" height="52" rx="10" />,
+          <rect key="pit" x="-60" y="-40" width="30" height="52" rx="12" />,
           // ROUND SOCKETS FOR ROUND MATERIAL. A square slot under a cell says
           // the bed was cut for some other cargo.
           ...slot.map(([px, py]) => (
@@ -420,9 +544,9 @@ function mechanism(key, t) {
         // pixels up the screen - so every pixel of gantry costs the row twice,
         // and at forty-two this station stood thirty-six pixels taller than
         // every other one. A bench of five reads as a bench.
-        { ...stand(-68, -20, 5, 5, 30, 1.5), cls: 'fl-rig is-post' },
-        { ...stand(62, -20, 5, 5, 30, 1.5), cls: 'fl-rig is-post' },
-        { ...stand(-3, -20, 67, 3.5, 4, 2, 30), cls: 'fl-rig is-beam', depth: -600 },
+        { ...stand(-58, -20, 5, 5, 30, 4.5), cls: 'fl-rig is-post' },
+        { ...stand(56, -20, 5, 5, 30, 4.5), cls: 'fl-rig is-post' },
+        { ...stand(-1, -20, 60, 3.5, 4, 3.5, 30), cls: 'fl-rig is-beam', depth: -600 },
         // The beam is ruled along its own top the way a protofilament is
         // drawn - segmented - so the track the carriage rides reads as grown
         // structure rather than rolled steel. A raised print at the beam's own
@@ -442,9 +566,11 @@ function mechanism(key, t) {
         // them. All three ride one clock, so the cell travels because the claw
         // is carrying it rather than beside it.
         { ...cell(-52, -20, null, 5, 14), cls: 'fl-blk fl-carry', depth: OVER + 1 },
-        { ...stand(-52, -30, 3, 8, 10, 1, 14), cls: 'fl-claw is-jaw', depth: OVER },
-        { ...stand(-52, -10, 3, 8, 10, 1, 14), cls: 'fl-claw is-jaw', depth: OVER + 2 },
-        { ...stand(-52, -20, 8, 8, 6, 2, 24), cls: 'fl-claw is-head', depth: OVER + 3 },
+        { ...stand(-52, -30, 3, 8, 10, 3, 14), cls: 'fl-claw is-jaw', depth: OVER },
+        { ...stand(-52, -10, 3, 8, 10, 3, 14), cls: 'fl-claw is-jaw', depth: OVER + 2 },
+        // The motor's head is round - the one part of the carriage that is
+        // the organelle rather than the frame it hangs from.
+        { ...drum(-52, -20, 8, 6, 24), cls: 'fl-claw is-head', depth: OVER + 3 },
       ]
     },
     // SCREENING IS THREE THROATS, ON THE EDGE THE ROW RUNS ALONG.
@@ -459,7 +585,7 @@ function mechanism(key, t) {
     //
     // The cells arrive with NO stain. The pore is what gives them one.
     screening: () => {
-      const hole = [[55, 32, 'pass'], [55, 0, 'fail'], [55, -32, 'hold']]
+      const hole = [[50, 32, 'pass'], [50, 0, 'fail'], [50, -32, 'hold']]
       const wait = [-30, -6].flatMap((py) => [-56, -34, -12].map((px) => [px, py]))
       return [
         printed(-800, 'fl-print', [
@@ -469,8 +595,20 @@ function mechanism(key, t) {
           // bores, so a pore is a hole IN the boundary - which is what a pore
           // is - and a second ring around it was the target pattern trying to
           // come back.
-          <rect key="bed" x="-64" y="-40" width="60" height="44" rx="12" />,
+          <rect key="bed" x="-60" y="-38" width="56" height="42" rx="14" />,
+          // Two vesicles budding off the stack, printed - the sorted material
+          // leaving the organelle for the pores.
+          <circle className="fl-ruled" key="v1" cx="-8" cy="26" r="3.4" />,
+          <circle className="fl-ruled" key="v2" cx="2" cy="34" r="2.6" />,
         ]),
+        // THE GOLGI STACK. The organelle whose whole job is sorting and
+        // dispatch stands on the plate that sorts and dispatches: three
+        // flattened discs, widest at the bottom, in the station's own ink.
+        // The machinery of the step stays the three pores and the catapult -
+        // the stack is the body those mechanisms belong to.
+        { ...drum(-34, 22, 16, 2.5), cls: 'fl-golgi' },
+        { ...drum(-34, 22, 12.5, 2.5, 2.5), cls: 'fl-golgi' },
+        { ...drum(-34, 22, 9, 2.5, 5), cls: 'fl-golgi' },
         ...wait.map(([px, py], i) => cell(px, py, null, 5, 0, { turn: i })),
         ...hole.map(([px, py, v]) => ({ ...well(px, py, 14, 8), cls: `fl-hole is-${v}` })),
         ...hole.map(([px, py], i) => cell(px, py, null, 5, 0, { cls: 'fl-blk fl-faller', turn: i })),
@@ -486,7 +624,7 @@ function mechanism(key, t) {
         // the same arm reaches over the throat and is plainly part of the plate.
         { ...drum(30, -38, 8, 10), cls: 'fl-pivot' },
         arm('fl-catapult', 30, -38, 10, 22, 4.6, { knob: 3.8 }),
-        { ...cell(55, -32, 'hold', 5), cls: 'fl-blk is-hold fl-shot', depth: OVER + 4 },
+        { ...cell(50, -32, 'hold', 5), cls: 'fl-blk is-hold fl-shot', depth: OVER + 4 },
       ]
     },
     // RESOLVE IS A HORIZONTAL RAM.
@@ -516,7 +654,9 @@ function mechanism(key, t) {
           // brackets this lane, and the chevron points through it.
           <line className="fl-ruled" key="rail" x1="28" y1="-40" x2="28" y2="42" />,
           <path className="fl-ruled" key="edge" d="M 18 32 L 28 42 L 38 32" />,
-          <rect key="gate" x="14" y="-18" width="28" height="40" rx="8" />,
+          // The sensor pad before the opening: the iris language at bench
+          // scale, printed where the signed decision lets a cell out.
+          ...[5, 9, 13].map((ring) => <circle className="fl-ruled" key={ring} cx="28" cy="22" r={ring} />),
         ]),
         ...[0, 1, 2].map((i) => ({ ...cell(at(i), lane, 'hold'), cls: 'fl-blk is-hold fl-index' })),
         // The one at the station, which is the one that gets pushed off.
@@ -535,9 +675,12 @@ function mechanism(key, t) {
         // depth relationship with the cells on it genuinely REVERSES halfway
         // through the stroke. Sorted at rest it was drawn behind the cell it
         // was pushing for the whole of the stroke.
-        { ...stand(28, -38, 7, 9, 9, 3), cls: 'fl-ram is-body', depth: OVER - 3 },
-        { ...stand(28, -22, 3, 9, 4, 1.5, 3), cls: 'fl-ram is-neck', depth: OVER - 2 },
-        { ...stand(28, -8, 9, 2.5, 11, 1.5), cls: 'fl-ram is-face', depth: OVER - 1 },
+        // The body is a drum now - a contractile vacuole, the organelle that
+        // expels - with the rod and blade still frankly mechanical, because a
+        // person's decision drives them.
+        { ...drum(28, -34, 7, 7), cls: 'fl-ram is-body', depth: OVER - 3 },
+        { ...stand(28, -20, 3, 7, 4, 3, 3), cls: 'fl-ram is-neck', depth: OVER - 2 },
+        { ...stand(28, -8.5, 9, 2.5, 11, 2.5), cls: 'fl-ram is-face', depth: OVER - 1 },
         // The lever a person throws, and it is still the only hinge on this
         // plate. Nothing about a lever is ambient. It used to stand twenty-six
         // pixels tall in the station's own crimson, which made the one human
@@ -559,52 +702,53 @@ function mechanism(key, t) {
     // the reels unwind with it. A clock goes round; this goes back, and it is
     // the only thing in either figure that reverses.
     replay: () => {
-      const at = [-36, -24, -12, 0, 12, 24, 36]
+      const at = [-33, -22, -11, 0, 11, 22, 33]
       const mark = ['pass', 'hold', 'fail', 'pass', 'pass', 'fail', 'hold']
-      const spoke = (cx) =>
-        [0, 45, 90, 135].map((deg) => {
-          const a = (deg * Math.PI) / 180
-          return (
-            <line
-              key={deg}
-              x1={Math.round((cx + Math.cos(a) * 11) * 10) / 10}
-              y1={Math.round((2 + Math.sin(a) * 11) * 10) / 10}
-              x2={Math.round((cx - Math.cos(a) * 11) * 10) / 10}
-              y2={Math.round((2 - Math.sin(a) * 11) * 10) / 10}
-            />
-          )
-        })
+      // A COIL, NOT SPOKES. Four crossed spokes are a wheel; what winds onto
+      // a reel of biology is a strand, so each reel prints its own spiral -
+      // two and a half turns, drawn as a polyline in the reel's own plan -
+      // and the same clock that turned the spokes turns the coil.
+      const coil = (cx) => {
+        const pts = []
+        for (let i = 0; i <= 40; i += 1) {
+          const t = i / 40
+          const a = t * 2.5 * Math.PI * 2 + 0.6
+          const r = 2.4 + t * 8.4
+          pts.push(`${Math.round((cx + Math.cos(a) * r) * 10) / 10} ${Math.round((2 + Math.sin(a) * r) * 10) / 10}`)
+        }
+        return <path className="fl-coil" d={`M ${pts.join(' L ')}`} />
+      }
       return [
         printed(-800, 'fl-print', [
-          ...at.map((px) => <line className="fl-ruled" key={px} x1={px - 6} y1="-12" x2={px - 6} y2="16" />),
+          ...at.map((px) => <line className="fl-ruled" key={px} x1={px - 5.5} y1="-12" x2={px - 5.5} y2="16" />),
         ]),
         // THE TAPE IS A SOLID, NOT TWO PRINTED LINES. Frames standing on a pair
         // of hairlines are seven coloured cubes in a row; frames standing on a
         // strip that runs onto both reels are a record on a tape.
-        { ...stand(0, 2, 58, 8, 2, 2), cls: 'fl-tape', depth: -600 },
-        { ...drum(-58, 2, 13, 7), cls: 'fl-reel' },
-        { ...drum(58, 2, 13, 7), cls: 'fl-reel' },
-        { ...drum(-58, 2, 8, 3, 7), cls: 'fl-reel is-hub' },
-        { ...drum(58, 2, 8, 3, 7), cls: 'fl-reel is-hub' },
+        { ...stand(0, 2, 54, 8, 2, 4), cls: 'fl-tape', depth: -600 },
+        { ...drum(-52, 2, 13, 7), cls: 'fl-reel' },
+        { ...drum(52, 2, 13, 7), cls: 'fl-reel' },
+        { ...drum(-52, 2, 8, 3, 7), cls: 'fl-reel is-hub' },
+        { ...drum(52, 2, 8, 3, 7), cls: 'fl-reel is-hub' },
         // The reels wind as the head runs and unwind as it goes back, which is
         // what makes two cylinders a transport rather than two cylinders.
         printed(760, 'fl-print', [
-          <g className="fl-spin" key="l">{spoke(-58)}</g>,
-          <g className="fl-spin" key="r">{spoke(58)}</g>,
+          <g className="fl-spin" key="l">{coil(-52)}</g>,
+          <g className="fl-spin" key="r">{coil(52)}</g>,
         ], 7),
         // A frame is wider ACROSS the tape than along it, which is the whole
         // difference between a frame and a cube.
         ...at.map((px, i) => ({
-          ...stand(px, 2, 4, 7, 5, 1.5, 2),
+          ...stand(px, 2, 4, 7, 5, 3.5, 2),
           cls: `fl-blk is-${mark[i]} fl-frame`,
           turn: i,
         })),
         // THE HEAD. Two legs either side of the tape and a bar over the top, so
         // the tape passes UNDER it - which is the whole difference between a
         // head reading a tape and a solid sitting on one.
-        { ...stand(-38, -9, 5, 5, 17, 1.5), cls: 'fl-head is-leg', depth: OVER },
-        { ...stand(-38, 13, 5, 5, 17, 1.5), cls: 'fl-head is-leg', depth: OVER + 1 },
-        { ...stand(-38, 2, 4, 15, 6, 2, 17), cls: 'fl-head is-bar', depth: OVER + 2 },
+        { ...stand(-34, -9, 5, 5, 17, 4.5), cls: 'fl-head is-leg', depth: OVER },
+        { ...stand(-34, 13, 5, 5, 17, 4.5), cls: 'fl-head is-leg', depth: OVER + 1 },
+        { ...stand(-34, 2, 4, 15, 6, 4, 17), cls: 'fl-head is-bar', depth: OVER + 2 },
       ]
     },
   }
@@ -711,11 +855,17 @@ const STEPS = [
     index,
     tiles,
     seat,
+    // Where this station sits across the sheet, in the pointer field's own
+    // units, so the stylesheet can read nearness without measuring anything.
+    sx: Math.round(((seat[0] / W) - 0.5) * 2 * 1000) / 1000,
     emblem: mechanism(step.key, t),
     // The one surface the six tiles become, cut from the same geometry at the
     // same thickness. Its corner is the group's corner, so the handoff changes
     // what the object IS without changing where its edge falls.
     plate: roundedSlab(seat[0], seat[1], HALF_X, HALF_Y, SHEET, PLATE_R),
+    // The wall standing on it, split into the half that goes down before the
+    // machine and the half that goes down after it. Resolve's opens.
+    dish: vessel(seat, step.key === 'resolve' ? DISH_GAP : null),
   }
 })
 
@@ -801,6 +951,12 @@ export default function ChainSchematic({ animate = true }) {
             <pattern id="fl-grain" width="13" height="13" patternUnits="userSpaceOnUse">
               <circle className="dgm-grain" cx="1" cy="1" r="0.9" />
             </pattern>
+            {/* The cytoplasm's finer grain: a second dot scale, offset off the
+                first, so the floor of every vessel carries the ribosome
+                stipple a section drawing gives living ground. */}
+            <pattern id="fl-plasm" width="7" height="7" patternUnits="userSpaceOnUse">
+              <circle className="dgm-grain is-fine" cx="4.5" cy="3.5" r="0.55" />
+            </pattern>
           </defs>
 
           <line
@@ -817,6 +973,7 @@ export default function ChainSchematic({ animate = true }) {
             <g
               className={`fl-step is-${item.key}${hot === item.key ? ' is-hot' : ''}`}
               key={item.key}
+              style={{ '--sx': item.sx }}
               onMouseEnter={() => setHot(item.key)}
               onMouseLeave={() => setHot((current) => (current === item.key ? null : current))}
               onFocus={() => setHot(item.key)}
@@ -879,6 +1036,15 @@ export default function ChainSchematic({ animate = true }) {
                 <g className="fl-plate">
                   <Faces shape={item.plate} className="dgm-solid" />
                   <polygon className="fl-grain" points={item.plate.top} fill="url(#fl-grain)" />
+                  <polygon className="fl-plasm" points={item.plate.top} fill="url(#fl-plasm)" />
+                  {/* The far half of the wall: the inside surface a reader
+                      sees down onto, and the far rim band. Everything on the
+                      plate is nearer, so these go down first. */}
+                  <g className="fl-vessel is-back">
+                    {item.dish.back.map((piece, n) => (
+                      <path key={n} className={piece.cls} d={piece.d} />
+                    ))}
+                  </g>
                   {/* THE MEMBRANE. The plate's own boundary, printed as the
                       double wall a section drawing gives one, in the same plan
                       space as everything standing on the surface - so the wall
@@ -991,6 +1157,20 @@ export default function ChainSchematic({ animate = true }) {
                       </g>
                     )
                   })}
+                </g>
+
+                {/* The near half of the wall - outer skirt and near rim band -
+                    nearer than anything on the plate, so it goes down after
+                    the machine. On Resolve it stops either side of the exit,
+                    each cut end capped and wearing its pylon. */}
+                <g className="fl-vessel is-front">
+                  {item.dish.front.map((piece, n) =>
+                    piece.ellipse ? (
+                      <ellipse key={n} className={piece.cls} cx={piece.ellipse.cx} cy={piece.ellipse.cy} rx={piece.ellipse.rx} ry={piece.ellipse.ry} />
+                    ) : (
+                      <path key={n} className={piece.cls} d={piece.d} />
+                    ),
+                  )}
                 </g>
               </g>
 
