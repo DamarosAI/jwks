@@ -12982,367 +12982,186 @@ html.is-hidden .clinic-node i,
   to { transform: translateY(-0.7px); }
 }
 
-/* ── The state a part is in ──────────────────────────────────────────────
+/* ── The material, and the verdict it carries ────────────────────────────
 
-   IT IS A LAMP, NOT A HOLE. State used to be the solid's own opacity, and in an
-   axonometric a half-opaque solid is not a dim solid - it is a hole, and you
-   saw the plate's own plan straight through a record that had simply not been
-   reached yet. Now that this figure draws REAL holes that would be worse than
-   it ever was. So every population stays solid and what moves is the light.
+   A BLOCK IS THE THING THE WHOLE ROW IS MADE OF.
 
-   AND ITS RESTING VALUE IS THE FINISHED ONE. At zero the lamps are invisible
-   whenever no clock is running - a phone, a reader who has asked for less
-   motion, every screenshot - so the figure came to rest with five populations
-   and no state on any of them: a protocol that had never compiled, a chain that
-   had never been verified. The still frame has to state the claim. */
+   Every pass before this built five machines and gave them nothing to work on,
+   so the figure was five instruments demonstrating themselves. What ties a run
+   together is not the machines, it is the thing PASSING THROUGH them: a block
+   arrives in a heap, is ordered into rows, falls down one of three holes, and
+   ends up shelved where it can be pulled back out.
 
-.fl-lamp { opacity: calc(1 - var(--idle, 0)); }
+   And it carries its verdict the whole way. Green for eligible, red for not,
+   amber for the ones a machine cannot settle - which is the only reason Resolve
+   exists and the reason a person is standing at it. Two layers, and they do not
+   fight: the STATION'S ink dresses the plate and the instrument, and the
+   BLOCK'S colour is the state of one subject. The same green on Screening is
+   the same green on Replay because it is the same block.
 
-/* Except the reading that is not governing. Both readings lit is not a still
-   frame of a disagreement, it is a drawing of two answers being true at once. */
-.fl-lamp.is-read { opacity: calc(1 - var(--turn, 0)); }
+   The lamp idiom goes with this. State used to be a lit cap on top of a solid,
+   because a half-opaque solid in an axonometric reads as a hole and something
+   had to carry the state. That was the right answer to the wrong question: the
+   thing whose state matters is not a fixture on a plate, it is the subject
+   moving through, and a subject can simply be the colour it is. */
 
-/* A LIT CAP HAS TO BEAT ITS OWN BODY. At full tone against a body drawn at
-   fifty-eight per cent of the same tone the two sat a step apart, which is
-   enough for a cool hue and not for a warm one - Screening's amber caps
-   disappeared into their amber stacks. Carried most of the way into the page's
-   text colour instead, every lamp is the most saturated and the darkest mark on
-   its own plate whatever hue the station works in. */
-.fl-lamp .dgm-face-top { fill: var(--lamp); stroke: none; transition: fill 300ms ease; }
-.fl-lamp .dgm-face-left,
-.fl-lamp .dgm-face-right { fill: var(--deep); }
-
-/* ── PROTOCOL CUTS ───────────────────────────────────────────────────────
-
-   A sheet of prose lies on the plate, ruled. A die comes down on it and it
-   comes up with four bites punched clean through - and the four things that
-   came out of those bites are standing beside it as separate solids at four
-   heights. Continuous on one side of the press, discrete on the other. */
-
-/* The document is paper, so it is drawn as paper: the only thing on any plate
-   lighter than the surface it lies on. */
-.fl-sheet .dgm-face-top { fill: color-mix(in srgb, var(--tone) 12%, var(--surface-solid)); }
-.fl-sheet .dgm-face-left { fill: color-mix(in srgb, var(--tone) 24%, var(--surface-solid)); }
-.fl-sheet .dgm-face-right { fill: color-mix(in srgb, var(--tone) 32%, var(--surface-solid)); }
-
-/* A bite goes through the sheet and stops on the plate, so what shows at the
-   bottom of one is the plate's own paper. That is what makes it read as
-   material removed rather than as a dark spot printed on. */
-.fl-bite .fl-floor { fill: color-mix(in srgb, var(--tone) 9%, var(--surface-solid)); }
-.fl-bite .fl-wall { fill: color-mix(in srgb, var(--tone) 26%, var(--surface-solid)); }
-
-/* The die is a tool, and a tool is the heaviest thing on the plate it works. */
-.fl-die .dgm-face-top { fill: color-mix(in srgb, var(--deep) 60%, var(--surface-solid)); }
-.fl-die .dgm-face-left,
-.fl-die .dgm-face-right { fill: var(--deep); }
-
-/* NO SEAM ANYWHERE. A cycle whose last frame is not its first frame does not
-   loop, it RESTARTS: the lever snapped back across its whole arc between two
-   frames, the die teleported up, the mark and the bites jumped a value. Every
-   one of those is a moment where a reader is told the drawing is a recording.
-   So each cycle now RETURNS through the same motion it went out on, and the
-   return is part of the work rather than the price of it - a lever swings over
-   and swings back, a die presses and lifts. The endpoints match on all of them
-   and the spec walks every keyframe in the sheet to be sure. */
-
-/* FIVE PLATES, FIVE KINDS OF MOTION - AND THIS IS WHERE THAT WENT WRONG.
-
-   Banning sideways travel left exactly one axis, and I put everything on it:
-   Protocol pressed a die down and up, Screening dropped a subject down, Resolve
-   pressed a die down and up, and the other two barely moved at all. Three
-   plates doing the same thing is the redundancy this whole redesign existed to
-   remove, arrived at from the other direction.
-
-   Vertical translation is not the only motion an axonometric can take honestly.
-   It is the only one I reached for. So each plate takes a different KIND now:
-   Protocol CUTS in sequence, Evidence FLOWS along a line, Screening FALLS,
-   Resolve TURNS and drives a press, Replay FANS APART. Scale, flow, fall,
-   rotation, expansion - and the press that made two of the duplicates is gone
-   from this plate, because the sheet's four bites are the thing worth watching
-   on it anyway.
-
-   A wave of division travelling the document, left to right, one bite at a
-   time. Nothing else in the figure scales, and nothing else runs a sequence
-   along a row of objects. */
-
-.fl-bite {
-  transform-box: fill-box;
-  transform-origin: center;
+.fl-step {
+  --pass: color-mix(in srgb, var(--success) 84%, var(--accent-strong));
+  --hold: color-mix(in srgb, var(--warning) 86%, var(--accent-strong));
+  --fail: color-mix(in srgb, var(--danger) 74%, var(--accent-strong));
 }
 
-.dgm-svg.is-live.is-fused .fl-bite {
-  animation: fl-cut 6.2s ease-in-out infinite;
-  animation-delay: calc(var(--turn, 0) * 0.3s);
+/* Undecided: the station's own ink, because a block nobody has ruled on is not
+   a state, it is just material. */
+.fl-blk .dgm-face-top { fill: color-mix(in srgb, var(--tone) 40%, var(--surface-solid)); }
+.fl-blk .dgm-face-left { fill: color-mix(in srgb, var(--tone) 66%, var(--surface-solid)); }
+.fl-blk .dgm-face-right { fill: color-mix(in srgb, var(--tone) 84%, var(--surface-solid)); }
+
+.fl-blk.is-pass .dgm-face-top { fill: color-mix(in srgb, var(--pass) 46%, var(--surface-solid)); }
+.fl-blk.is-pass .dgm-face-left { fill: color-mix(in srgb, var(--pass) 74%, var(--surface-solid)); }
+.fl-blk.is-pass .dgm-face-right { fill: var(--pass); }
+
+.fl-blk.is-hold .dgm-face-top { fill: color-mix(in srgb, var(--hold) 44%, var(--surface-solid)); }
+.fl-blk.is-hold .dgm-face-left { fill: color-mix(in srgb, var(--hold) 72%, var(--surface-solid)); }
+.fl-blk.is-hold .dgm-face-right { fill: var(--hold); }
+
+.fl-blk.is-fail .dgm-face-top { fill: color-mix(in srgb, var(--fail) 44%, var(--surface-solid)); }
+.fl-blk.is-fail .dgm-face-left { fill: color-mix(in srgb, var(--fail) 72%, var(--surface-solid)); }
+.fl-blk.is-fail .dgm-face-right { fill: var(--fail); }
+
+/* ── PROTOCOL IS A BREAKER BOARD ─────────────────────────────────────────
+
+   Five criteria, five switches, thrown one at a time, and each settles green or
+   red. That is what a protocol IS once it stops being prose: a bank of
+   conditions that are either met or not. Nothing here is a metaphor for the
+   step - it is the step. */
+
+.fl-board .dgm-face-top { fill: color-mix(in srgb, var(--tone) 10%, var(--surface-solid)); }
+.fl-seat .dgm-face-top { fill: color-mix(in srgb, var(--deep) 44%, var(--surface-solid)); }
+.fl-seat .dgm-face-left,
+.fl-seat .dgm-face-right { fill: var(--deep); }
+
+.fl-toggle { transform-box: view-box; transform: rotate(-118deg); }
+.fl-toggle.is-pass { transform: rotate(-62deg); }
+.fl-toggle .fl-limb { fill: var(--deep); }
+.fl-toggle.is-pass .fl-grip { fill: var(--pass); }
+.fl-toggle.is-fail .fl-grip { fill: var(--fail); }
+
+/* Thrown one at a time down the row, and each STAYS where it was thrown for
+   most of the cycle - a criterion that keeps flipping is a protocol nobody has
+   settled. */
+.dgm-svg.is-live.is-fused .fl-toggle {
+  animation: fl-flip 6.2s cubic-bezier(0.6, 0, 0.3, 1.5) infinite;
+  animation-delay: calc(var(--turn, 0) * 0.44s);
 }
 
-/* Open at rest, because the resting frame of this figure is the finished one:
-   a protocol that has been compiled. The cycle takes one bite back to nothing
-   and reopens it, and the stagger is what makes four of those read as a cut
-   travelling rather than as four things blinking. */
-@keyframes fl-cut {
-  0%, 30% { transform: scale(1); }
-  44% { transform: scale(0.15); }
-  62%, 100% { transform: scale(1); }
+@keyframes fl-flip {
+  0%, 8% { transform: rotate(-118deg); }
+  18%, 84% { transform: rotate(-62deg); }
+  96%, 100% { transform: rotate(-118deg); }
 }
 
-.dgm-svg.is-live.is-fused .fl-lamp.is-crit .dgm-face-top {
-  animation: fl-compile 6.2s ease-in-out infinite;
-  animation-delay: calc(var(--turn, 0) * 0.24s + 3.4s);
+.dgm-svg.is-live.is-fused .fl-toggle.is-fail { animation-name: fl-flipoff; }
+
+@keyframes fl-flipoff {
+  0%, 8% { transform: rotate(-62deg); }
+  18%, 84% { transform: rotate(-118deg); }
+  96%, 100% { transform: rotate(-62deg); }
 }
 
-/* IT NEVER GOES OUT. Every lamp used to fade to nothing and come back, and
-   fading out at the end of a cycle only to fade up at the start of the next one
-   is a BLINK - a reader sees the loop turn over even when the two frames match.
-   The population stays lit, which is also the honest resting state of a step
-   that has happened, and what travels through it is a deepening. */
-@keyframes fl-compile {
-  0%, 10% { fill: var(--lamp); }
-  22%, 38% { fill: var(--deep); }
-  58%, 100% { fill: var(--lamp); }
+/* ── EVIDENCE IS A SHAPER ────────────────────────────────────────────────
+
+   A heap on one side, ordered rows on the other, and something overhead working
+   its way across turning one into the other. Nothing is created and nothing is
+   taken away: it is the same blocks in a different order, which is the entire
+   claim of the step. */
+
+.fl-shaper .dgm-face-top { fill: color-mix(in srgb, var(--tone) 34%, var(--surface-solid)); }
+.fl-shaper .dgm-face-right { fill: var(--deep); }
+.fl-shaper.is-dome .dgm-face-top { fill: var(--tone); }
+
+.dgm-svg.is-live.is-fused .fl-shaper { animation: fl-sweep 7.4s ease-in-out infinite; }
+
+/* Along a plan axis, at the ratio of ISO_Y over ISO_X, so it travels INSIDE the
+   drawing rather than across it. */
+@keyframes fl-sweep {
+  0%, 10% { transform: translate(0, 0); }
+  46%, 60% { transform: translate(52px, 20.4px); }
+  92%, 100% { transform: translate(0, 0); }
 }
 
-/* ── EVIDENCE SINKS ──────────────────────────────────────────────────────
-
-   The records are below the floor, at the bottom of sockets drilled through the
-   plate, and they never come up - because the claim of the step is that nothing
-   is moved and nothing is copied. What is above the surface is the plug: a
-   reference, not a record. */
-
-.fl-socket .fl-floor { fill: color-mix(in srgb, var(--tone) 16%, var(--surface-solid)); }
-
-/* A record, seen down a socket. It is drawn INSIDE the bore and nowhere else,
-   which is this step's claim made as geometry rather than as a caption. */
-.fl-record .dgm-face-top { fill: color-mix(in srgb, var(--deep) 54%, var(--surface-solid)); stroke: none; }
-.fl-record .dgm-face-right { fill: var(--deep); }
-
-/* Except the one nothing has reached. It is still down there and still a
-   record; what it has not got is a plug in the socket above it. */
-.fl-record.is-cold .dgm-face-top { fill: color-mix(in srgb, var(--tone) 30%, var(--surface-solid)); }
-.fl-record.is-cold .dgm-face-right { fill: color-mix(in srgb, var(--tone) 52%, var(--surface-solid)); }
-
-/* A BINDING IS DRAWN, NOT BUILT - and once made it STAYS made, which is what
-   this step claims and what the drawing spent three passes contradicting: the
-   route drew itself, held, and vanished, so the resting frame of the plate was
-   a snapshot with nothing bound in it. It is drawn permanently now and the pass
-   through it is a weight rather than an existence. */
-.fl-route {
-  stroke: var(--deep);
-  stroke-width: 1.3;
-  opacity: 1;
+/* A block that has been put in its row settles into it, one after another,
+   behind the shaper as it passes. */
+.dgm-svg.is-live.is-fused .fl-blk.is-set {
+  animation: fl-order 7.4s cubic-bezier(0.3, 0, 0.2, 1) infinite;
+  animation-delay: calc(var(--turn, 0) * 0.5s);
 }
 
-/* Except the one that is never made. It stays open on the bed: the bay is wired
-   for thirty-six criteria and twenty-five of them have evidence. */
-.fl-route.is-open {
-  stroke: color-mix(in srgb, var(--line) 38%, transparent);
-  stroke-width: 1;
-  stroke-dasharray: 3 4;
-  opacity: 1;
+@keyframes fl-order {
+  0%, 22% { transform: translateY(-9px); }
+  40%, 90% { transform: translateY(0); }
+  100% { transform: translateY(-9px); }
 }
 
-/* A REFERENCE BEING FOLLOWED. The binding is permanent - it has been made and
-   it stays made - so the thing that moves cannot be the route itself. It is a
-   short bright segment running the route from the spine down to the socket,
-   and it is the only motion in the figure that travels along a drawn line.
+/* ── SCREENING IS THREE HOLES ────────────────────────────────────────────
 
-   The dash pattern is exactly one period long, so an offset of a hundred and an
-   offset of nought are the same picture: this cycle is seamless by construction
-   rather than by matching two frames, which is why it is the one clock exempt
-   from the endpoint rule the others are held to. */
-.fl-flow {
-  fill: none;
-  stroke: var(--tone);
-  stroke-width: 2.6;
-  stroke-linecap: round;
-  stroke-dasharray: 13 87;
-  vector-effect: non-scaling-stroke;
-}
+   The ordered rows arrive and each block goes down the one its verdict sends it
+   to: green through, red out, and amber for the ones the machine cannot settle.
+   Those do not stop here. */
 
-.dgm-svg.is-live.is-fused .fl-flow {
-  animation: fl-flow 7.4s linear infinite;
-  animation-delay: calc(var(--turn, 0) * -1.85s);
-}
-
-@keyframes fl-flow {
-  0% { stroke-dashoffset: 100; }
-  100% { stroke-dashoffset: 0; }
-}
-
-.dgm-svg.is-live.is-fused .fl-lamp.is-res .dgm-face-top {
-  animation: fl-bind 7.4s ease-in-out infinite;
-  animation-delay: calc(var(--turn, 0) * 0.5s + 0.2s);
-}
-
-@keyframes fl-bind {
-  0%, 16% { fill: var(--lamp); }
-  30%, 46% { fill: var(--deep); }
-  66%, 100% { fill: var(--lamp); }
-}
-
-/* ── SCREENING DROPS ─────────────────────────────────────────────────────
-
-   Three throats are cut through the plate and each subject goes down whichever
-   one the protocol sends it. What is left standing behind each throat is the
-   count that went through it. */
-
-.fl-mouth { opacity: 0.72; }
-.fl-mouth .dgm-face-top { fill: color-mix(in srgb, var(--tone) 15%, var(--surface-solid)); }
-
-/* NO BOTTOM YOU CAN SEE. What goes down a throat does not stop inside the
-   plate, and the difference between a throat and a bin is whether a reader can
-   find a floor in it - so this one is drawn almost flush with its own rim in
-   the darkest ink in the figure, which is what a hole with nothing at the
-   bottom of it looks like from above. */
-.fl-throat .fl-floor { fill: var(--deep); }
-.fl-throat .fl-wall { fill: color-mix(in srgb, var(--deep) 66%, var(--tone)); }
-
-/* THE COUNT IS THE DRAWING. The value line under this plate reads 1 PASS -
-   4 REVIEW - 3 FAIL, and the drawing above it used to say nothing of the kind:
-   three blocks at three arbitrary heights is a bar chart of numbers nobody can
-   read off it. Each unit steps in half a plan unit as it goes up, which leaves
-   every one a visible rim, so the pile can be counted rather than estimated.
-   Nothing else in the figure is built out of repeated parts. */
-.fl-unit.is-alt .dgm-face-top { fill: color-mix(in srgb, var(--tone) 30%, var(--surface-solid)); }
-.fl-unit.is-alt .dgm-face-left { fill: color-mix(in srgb, var(--tone) 62%, var(--surface-solid)); }
-
-.dgm-svg.is-live.is-fused .fl-lamp.is-bin .dgm-face-top {
-  animation: fl-sort 5.6s ease-in-out infinite;
-  animation-delay: calc(var(--turn, 0) * 0.3s + 2.9s);
-}
-
-@keyframes fl-sort {
-  0%, 8% { fill: var(--lamp); }
-  20%, 36% { fill: var(--deep); }
-  56%, 100% { fill: var(--lamp); }
-}
-
-.fl-faller .dgm-face-top { fill: color-mix(in srgb, var(--deep) 76%, var(--surface-solid)); stroke: var(--line); }
-.fl-faller .dgm-face-left,
-.fl-faller .dgm-face-right { fill: var(--deep); }
+.fl-hole .fl-floor { fill: color-mix(in srgb, var(--deep) 80%, var(--accent-strong)); }
+.fl-hole.is-pass .fl-floor { fill: var(--pass); }
+.fl-hole.is-hold .fl-floor { fill: var(--hold); }
+.fl-hole.is-fail .fl-floor { fill: var(--fail); }
+.fl-hole .fl-wall { fill: color-mix(in srgb, var(--tone) 40%, var(--surface-solid)); }
 
 .dgm-svg.is-live.is-fused .fl-faller {
   animation: fl-drop 5.6s cubic-bezier(0.4, 0, 0.85, 1) infinite;
   animation-delay: calc(var(--turn, 0) * -1.87s);
 }
 
-/* STRAIGHT DOWN, AND GONE. It used to slide from the mouth across to the throat
-   and then descend, and a solid translating through a depth-sorted scene keeps
-   the draw order it was sorted into - so it passed in front of things it was
-   behind and behind things it was in front of, and the projection came apart
-   for as long as it moved. Height is the one axis here that cannot lie. */
 @keyframes fl-drop {
   0%, 6% { transform: translateY(-30px); opacity: 0; }
-  /* The last frame is the first frame: at zero opacity the return costs
-     nothing to look at, but a loop whose endpoints differ is a loop a browser
-     has to jump, and a jump is what a restart looks like. */
-  /* Solid the whole way down. It used to fade as it descended, and a
-     half-opaque solid in an axonometric is not a fading solid - it is a hole,
-     which on a plate that draws real holes is the worst thing it could be
-     mistaken for. It goes out only once it is inside the throat, where being
-     hard to see is what is actually happening to it. */
   14%, 68% { transform: translateY(-16px); opacity: 1; }
   84%, 96% { transform: translateY(11px); opacity: 0; }
   100% { transform: translateY(-30px); opacity: 0; }
 }
 
-/* ── RESOLVE IS PULLED ───────────────────────────────────────────────────
+/* THE CATAPULT. The amber block is the only one that leaves this plate, and it
+   leaves thrown - the one moment in the figure where a machine hands a decision
+   to a person because it has run out of rules. */
+.fl-catapult { transform-box: view-box; transform: rotate(-8deg); }
+.fl-catapult .fl-limb { fill: var(--deep); }
+.fl-catapult .fl-grip { fill: var(--hold); }
 
-   Every other plate here runs unattended. This one is worked by hand, because
-   this is the only step whose actor is a person: two readings stand at two
-   heights and disagree, a thumb comes down on the stamp, and the plate is
-   signed. Nothing about that is ambient. */
+.dgm-svg.is-live.is-fused .fl-catapult { animation: fl-fling 5.6s cubic-bezier(0.7, 0, 0.4, 1.6) infinite; }
 
-/* ── The instruments ─────────────────────────────────────────────────────
+@keyframes fl-fling {
+  0%, 52% { transform: rotate(-8deg); }
+  62%, 74% { transform: rotate(-64deg); }
+  90%, 100% { transform: rotate(-8deg); }
+}
 
-   FIVE LEVERS IS THE SAME MISTAKE AS FIVE CUBES.
+/* The shot: travel along a plan axis, thrown clear of the plate and gone. */
+.dgm-svg.is-live.is-fused .fl-shot { animation: fl-throwline 5.6s cubic-bezier(0.3, 0, 0.7, 1) infinite; }
 
-   Resolve was the one station that worked and the lesson I took from it was
-   "hinged bars are good", so I wrote a shared helper that placed one on every
-   plate and guaranteed all five would be the same object: a guillotine, a
-   cover, a chute, a lever and a crank, every one of them a bar rotating about
-   a pivot in the vertical plane. That is the third time this figure has been
-   five arrangements of one idea, and the helper is what made it inevitable.
+@keyframes fl-throwline {
+  0%, 58% { transform: translate(0, 0); opacity: 0; }
+  64% { transform: translate(0, 0); opacity: 1; }
+  86% { transform: translate(78px, 30.6px); opacity: 1; }
+  94% { transform: translate(78px, 30.6px); opacity: 0; }
+  100% { transform: translate(0, 0); opacity: 0; }
+}
 
-   The lesson was never the hinge. It was that a LEVER IS A THING A PERSON CAN
-   PICTURE THEIR HAND ON - and a hand knows more than one gesture. So each plate
-   keeps an agent and they now differ in KINEMATICS, which is the thing a shape
-   cannot disguise:
+/* ── RESOLVE IS A PRESS ON A LINE ────────────────────────────────────────
 
-     PROTOCOL  a punch that PLUNGES             straight down, by its knob
-     EVIDENCE  a card that SLIDES               travel along a plan axis
-     SCREENING an aperture that DILATES         change of size, no travel at all
-     RESOLVE   a lever that HINGES              rotation about a fixed pivot
-     REPLAY    a section that EXTENDS           differential, opening on a pull
+   The amber blocks land here and run down a line, a hand throws the lever, and
+   the press drops and pushes one of them off it. That is the honest picture of
+   a judgement call: the machine has run out of rules and somebody decides. */
 
-   One hinge left in the figure, and it is on the plate that earned it. */
-
+.fl-post { opacity: 0.8; }
 .fl-limb { fill: var(--deep); stroke: none; }
 .fl-grip { fill: var(--tone); stroke: none; }
-
-/* PROTOCOL PLUNGES. A press with a knob on it, straight down onto the document
-   - which is what actually makes a hole in a sheet of paper. It rests raised,
-   because a head sitting on the paper is a document nobody can read. */
-.fl-plunge .dgm-face-top { fill: color-mix(in srgb, var(--deep) 58%, var(--surface-solid)); }
-.fl-plunge .dgm-face-left,
-.fl-plunge .dgm-face-right { fill: var(--deep); }
-.fl-plunge.is-knob .dgm-face-top { fill: var(--tone); }
-
-.dgm-svg.is-live.is-fused .fl-plunge { animation: fl-punch 6.2s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
-
-@keyframes fl-punch {
-  0%, 26% { transform: translateY(0); }
-  44%, 54% { transform: translateY(26px); }
-  76%, 100% { transform: translateY(0); }
-}
-
-/* EVIDENCE SLIDES. The card is the reference and the records stay in their
-   sockets while it travels, which is the step's whole claim carried by the one
-   part that moves. It runs along the bank's own plan axis - a solid travelling
-   here has to move along an axis of the projection or it is sliding over the
-   top of it - and it is drawn above everything, so what it occludes on the way
-   out is never in doubt. */
-.fl-card .dgm-face-top { fill: color-mix(in srgb, var(--tone) 18%, var(--surface-solid)); }
-.fl-cardtab .dgm-face-top { fill: color-mix(in srgb, var(--deep) 64%, var(--surface-solid)); }
-.fl-cardtab .dgm-face-left,
-.fl-cardtab .dgm-face-right { fill: var(--deep); }
-
-.dgm-svg.is-live.is-fused .fl-card,
-.dgm-svg.is-live.is-fused .fl-cardtab { animation: fl-draw 7.4s cubic-bezier(0.4, 0, 0.3, 1) infinite; }
-
-/* Thirty plan units out along +x, which the projection puts at 26 across and
-   10.2 down: the ratio is ISO_Y over ISO_X, so this is travel INSIDE the
-   drawing rather than across it. */
-@keyframes fl-draw {
-  0%, 20% { transform: translate(0, 0); }
-  42%, 62% { transform: translate(26px, 10.2px); }
-  86%, 100% { transform: translate(0, 0); }
-}
-
-/* SCREENING DILATES. A sort begins by letting exactly one thing through at a
-   time, and an iris is the mechanism that does it: the only part of this figure
-   that opens by changing SIZE rather than by moving anywhere. */
-.fl-iris {
-  fill: color-mix(in srgb, var(--tone) 34%, var(--surface-solid));
-  stroke: var(--line);
-  stroke-width: 1;
-  transform-origin: -46px -24px;
-  vector-effect: non-scaling-stroke;
-}
-
-.dgm-svg.is-live.is-fused .fl-iris { animation: fl-dilate 5.6s cubic-bezier(0.5, 0, 0.4, 1) infinite; }
-
-@keyframes fl-dilate {
-  0%, 16% { transform: scale(1); }
-  34%, 50% { transform: scale(0.12); }
-  72%, 100% { transform: scale(1); }
-}
-
-/* RESOLVE HINGES, AND IT IS THE ONLY THING HERE THAT DOES. This is the station
-   that works, and it works because a lever is a thing a person can picture
-   their hand on. What went wrong was copying it onto the other four, not having
-   it here. Thrown at rest: the still frame of this figure is a run that has
-   been decided. */
-.fl-post { opacity: 0.8; }
 .fl-lever { transform-box: view-box; transform: rotate(-64deg); }
 
 .dgm-svg.is-live.is-fused .fl-lever { animation: fl-claim 4.8s cubic-bezier(0.6, 0, 0.3, 1.4) infinite; }
@@ -13353,19 +13172,30 @@ html.is-hidden .clinic-node i,
   92%, 100% { transform: rotate(-116deg); }
 }
 
-/* AND POINTING AT ONE PUTS A HAND ON IT. The instrument works faster under the
-   pointer - a station being OPERATED rather than highlighted, which is the
-   change a hover was missing. The duration changes rather than the animation,
-   so leaning in never makes the drawing jump. */
-.is-fused .fl-step.is-hot .fl-lever,
-.is-fused .fl-step.is-hot .fl-card,
-.is-fused .fl-step.is-hot .fl-cardtab,
-.is-fused .fl-step.is-hot .fl-iris,
-.is-fused .fl-step.is-hot .fl-plunge,
-.is-fused .fl-step.is-hot .fl-die.is-seal { animation-duration: 2.4s; }
+.fl-plunge .dgm-face-top { fill: color-mix(in srgb, var(--deep) 58%, var(--surface-solid)); }
+.fl-plunge .dgm-face-left,
+.fl-plunge .dgm-face-right { fill: var(--deep); }
+.fl-plunge.is-knob .dgm-face-top { fill: var(--tone); }
+.fl-anvil { opacity: 0.8; }
 
-.is-fused .fl-step.is-hot .fl-grip { fill: var(--deep); }
+.dgm-svg.is-live.is-fused .fl-plunge { animation: fl-press 4.8s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
 
+@keyframes fl-press {
+  0%, 34% { transform: translateY(-30px); }
+  52%, 80% { transform: translateY(0); }
+  96%, 100% { transform: translateY(-30px); }
+}
+
+/* And the block pushed off the line, which IS the decision: it arrives amber
+   and it leaves ruled. */
+.dgm-svg.is-live.is-fused .fl-pushed { animation: fl-shove 4.8s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+
+@keyframes fl-shove {
+  0%, 50% { transform: translate(0, 0); opacity: 0; }
+  60% { transform: translate(0, 0); opacity: 1; }
+  78%, 92% { transform: translate(30px, 11.8px); opacity: 1; }
+  100% { transform: translate(0, 0); opacity: 0; }
+}
 /* THE IMPRESSION, AND IT DOES NOT LIFT WITH THE PRESS. A signature that
    vanishes when the die goes back up is not a signature, it is an animation of
    one - so the mark is printed into the plate, its resting value is present,
@@ -13383,60 +13213,42 @@ html.is-hidden .clinic-node i,
   100% { opacity: 0.34; }
 }
 
-/* ── REPLAY LIFTS ────────────────────────────────────────────────────────
+/* ── REPLAY IS A SHELF ───────────────────────────────────────────────────
 
-   A core comes up out of a borehole - nine bands, the whole run read as a
-   section, against a depth scale printed down the plate beside it. A core is
-   the one drawing that says a past state was recovered INTACT and can be
-   counted band by band, and there is nothing rotating anywhere in it. */
+   Everything the row decided is shelved here in the order it happened, and any
+   one of it can be taken down and read. That is the only claim this step makes
+   and the only thing a shelf is for. Not the other noun for it: that word was
+   retired from this codebase on purpose, and the spec that keeps it out caught
+   this comment the first time it was written.
 
-.fl-bore .fl-floor { fill: color-mix(in srgb, var(--tone) 40%, var(--surface-solid)); }
+   The blocks keep the verdicts they were given four plates ago - the same green
+   is the same green, because it is the same block - so the shelf is also the
+   figure's own record of what the run did. Twelve of them, ruled, in rows. */
 
-/* The log the core is read against. Hairline, in the page's ink, and stepped
-   long-short so nine bands can be counted off it without counting the ticks. */
-.fl-scale {
-  fill: none;
-  stroke: color-mix(in srgb, var(--text) 30%, transparent);
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
-  opacity: var(--in);
+.dgm-svg.is-live.is-fused .fl-blk.is-shelved {
+  animation: fl-file 8.2s ease-in-out infinite;
+  animation-delay: calc(var(--turn, 0) * 0.24s);
 }
 
-.fl-band.is-alt .dgm-face-top { fill: color-mix(in srgb, var(--tone) 28%, var(--surface-solid)); }
-.fl-band.is-alt .dgm-face-left { fill: color-mix(in srgb, var(--tone) 60%, var(--surface-solid)); }
-
-/* The band the chain closes on. One dark solid per plate is what stops five
-   drawings in one colour from averaging into a single grey. */
-.fl-band.is-latest .dgm-face-top { fill: color-mix(in srgb, var(--deep) 62%, var(--surface-solid)); }
-.fl-band.is-latest .dgm-face-left,
-.fl-band.is-latest .dgm-face-right { fill: var(--deep); }
-
-.fl-core {
-  transform-box: fill-box;
-  transform-origin: center;
+/* A shelf breathes rather than moves: an archive that reshuffled itself every
+   eight seconds is an archive nothing can be found in. */
+@keyframes fl-file {
+  0%, 30% { transform: translateY(0); }
+  46%, 58% { transform: translateY(-2px); }
+  76%, 100% { transform: translateY(0); }
 }
 
-.dgm-svg.is-live.is-fused .fl-band {
-  animation: fl-lift 8.2s ease-in-out infinite;
-  animation-delay: calc(var(--turn, 0) * 0.3s);
-}
+/* THE ONE TAKEN DOWN. It rises clear of the shelf, holds where a reader can see
+   which of the three it is, and goes back - which is a replay: nothing is
+   changed by being read, and the block returns to the row it came from. */
+.dgm-svg.is-live.is-fused .fl-pull { animation: fl-recall 8.2s cubic-bezier(0.32, 0.72, 0, 1) infinite; }
 
-/* NINE OF NINE, ALWAYS. The bands used to fade in bottom-first and fade out
-   again, so the resting frame of the plate whose value line reads CHAIN INTACT
-   9 / 9 was a core with nothing in it. They stand permanently and the recovery
-   is a RIPPLE running up them - staggered per band, which is a chain checked
-   link by link rather than a stack rebuilt every eight seconds. */
-/* AND THE RECOVERY IS THE CORE COMING APART. A three-pixel ripple was not
-   motion, it was a rounding error. What a reconstruction looks like is a
-   section taken apart to be read and put back: each band lifts clear of the one
-   below it BY ITS OWN DEPTH in the stack, so the core fans open like a drawn
-   exploded view and closes again. The ninth band travels twenty-four pixels and
-   the first travels none, which is why this reads as a stack expanding rather
-   than as an object moving - the one motion here that is differential. */
-@keyframes fl-lift {
-  0%, 12% { transform: translateY(0); }
-  38%, 56% { transform: translateY(calc(var(--turn, 0) * -3px)); }
-  84%, 100% { transform: translateY(0); }
+@keyframes fl-recall {
+  0%, 10% { transform: translateY(0); opacity: 0; }
+  18% { transform: translateY(0); opacity: 1; }
+  38%, 62% { transform: translateY(-26px); opacity: 1; }
+  84% { transform: translateY(0); opacity: 1; }
+  92%, 100% { transform: translateY(0); opacity: 0; }
 }
 
 /* POINTING AT A STATION FINISHES IT.
@@ -13447,17 +13259,18 @@ html.is-hidden .clinic-node i,
    leans on Screening learns that Screening is the one they are leaning on.
 
    So the pointer now COMPLETES the station. Every lamp on the held plate comes
-   up and STAYS up, out of the cycle it was taking its turn in, which is the
-   finished state of that step: four criteria compiled, every record bound,
-   every bin counted, the call made, nine bands of nine recovered. The ambient
-   machine keeps running underneath - a machine that stops when somebody leans
-   in is not a machine - but what a reader is shown is the step having got
-   there rather than the step going round. */
+   up and STAYS up. What the pointer does now is bring the VERDICTS forward:
+   every block on the held plate goes to full strength, so the green, amber and
+   red that the row is sorting by are the loudest thing on the sheet for as long
+   as a reader is on that station. The ambient machine keeps running underneath
+   - one that stops when somebody leans in is not a machine - and the
+   instrument works faster, which is the station being operated rather than
+   highlighted. */
 
-.dgm-svg.is-floor.is-fused .fl-step.is-hot .fl-lamp .dgm-face-top {
-  animation: none;
-  fill: var(--deep);
-}
+.is-fused .fl-step.is-hot .fl-blk.is-pass .dgm-face-top { fill: color-mix(in srgb, var(--pass) 72%, var(--surface-solid)); }
+.is-fused .fl-step.is-hot .fl-blk.is-hold .dgm-face-top { fill: color-mix(in srgb, var(--hold) 70%, var(--surface-solid)); }
+.is-fused .fl-step.is-hot .fl-blk.is-fail .dgm-face-top { fill: color-mix(in srgb, var(--fail) 70%, var(--surface-solid)); }
+.fl-blk .dgm-face-top { transition: fill 300ms ease; }
 
 /* The machine gains a step of ink as it rises, so the plate a reader is on is
    the darkest thing on the sheet as well as the highest. */
@@ -13466,7 +13279,6 @@ html.is-hidden .clinic-node i,
   stroke: var(--line);
 }
 
-.is-fused .fl-step.is-hot .fl-lamp .dgm-face-top { fill: var(--deep); }
 
 .is-fused .fl-step.is-hot .fl-plate .dgm-face-top { stroke-width: 1.4; }
 
@@ -13542,16 +13354,13 @@ html.is-hidden .clinic-node i,
   /* The lamp pulse moved onto the face when it stopped being an opacity blink,
      so the reset has to follow it there or it keeps running for a reader who
      asked for less motion. */
-  .fl-lamp .dgm-face-top,
   .fl-stamp,
-  .fl-bite,
-  .fl-band,
+  .fl-blk,
+  .fl-toggle,
+  .fl-shaper,
+  .fl-catapult,
   .fl-lever,
-  .fl-card,
-  .fl-cardtab,
-  .fl-iris,
   .fl-plunge,
-  .fl-flow,
   .fl-settle,
   .fl-step,
   .fl-name,
@@ -13560,8 +13369,10 @@ html.is-hidden .clinic-node i,
   .fl-station,
   .fl-readpill { animation: none; transition: none; }
 
-  /* The routes and the sky are the two things whose resting value is nothing,
-     so they have to be given the finished one by hand: the bindings are made,
-     and the carriers are in the air. */
-  .fl-route { opacity: 1; }
+  /* The blocks that only exist mid-throw are the ones whose resting value is
+     nothing, so a still frame has to be given the finished one by hand: the
+     shot has been thrown and the decision has been made. */
+  .fl-shot,
+  .fl-pushed,
+  .fl-pull { opacity: 1; }
 }

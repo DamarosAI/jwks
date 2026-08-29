@@ -233,273 +233,157 @@ function mechanism(key, t) {
     ...extra,
   })
 
-  /* A SOLID AND THE LAMP THAT REPORTS ITS STATE. State used to be the solid's
-     own opacity, and in an axonometric a half-opaque solid is not a dim solid -
-     it is a hole. Now that this figure draws real holes that would be worse
-     than it was. So the population is always solid and the light moves. */
-  const lit = (kind, px, py, hx, hy, high, radius, turn, base = 0, extra = {}) => [
-    { ...stand(px, py, hx, hy, high, radius, base), cls: `fl-${kind}`, turn, ...extra },
-    {
-      ...stand(px, py, Math.max(1.4, hx - 1.7), Math.max(1.4, hy - 1.7), 2.3, Math.max(0.7, radius - 0.7), base + high),
-      cls: `fl-lamp is-${kind}`,
-      turn,
-      ...extra,
-    },
-  ]
+  /* THE LAMP IDIOM IS GONE, AND THE BLOCK IS WHY.
+
+     State used to be a small lit cap sitting on top of a solid, because a
+     half-opaque solid in an axonometric reads as a hole and something had to
+     carry it. That was the right answer to the wrong question. The thing whose
+     state matters here is not a fixture on a plate - it is the SUBJECT moving
+     through the row, and a subject can simply be the colour it is. Green,
+     amber, red, on the block itself, all the way from the heap to the shelf.
+
+     One fewer object per state, and the state is now attached to the thing it
+     is actually about. */
+
+  /* A BLOCK. THE MATERIAL THE WHOLE ROW IS MADE OF.
+
+     Every pass before this built five machines and gave them nothing to work
+     on, so the figure was five instruments demonstrating themselves. What ties
+     a run together is not the machines, it is the THING PASSING THROUGH THEM -
+     and here that is a block: it arrives in a heap, gets ordered into rows,
+     falls into one of three holes, and ends up shelved where it can be pulled
+     back out.
+
+     It carries its verdict as it goes. Green for eligible, red for not, and
+     amber for the ones a machine cannot settle - which is the only reason
+     Resolve exists, and the reason a person is standing at it. The station's
+     own ink still dresses the plate and the instrument; the block's colour is
+     the state of one subject, and it is the same green on Screening as it is on
+     Replay because it is the same block. */
+  const block = (px, py, verdict, high = 6, extra = {}) => ({
+    ...stand(px, py, 5, 5, high, 1.5),
+    cls: `fl-blk${verdict ? ` is-${verdict}` : ''}`,
+    ...extra,
+  })
 
   const build = {
-    // PROTOCOL CUTS. Prose in, four rules out, and the sheet keeps the holes.
+    // PROTOCOL IS A BREAKER BOARD. Five criteria, five switches, thrown one at
+    // a time, and each one settles green or red - which is what a protocol IS
+    // once it stops being prose: a bank of conditions that are either met or
+    // not. Nothing here is a metaphor for the step; it is the step.
     protocol: () => {
-      // The punches run along the plan ANTI-DIAGONAL, which is the only
-      // direction in this projection that separates on screen: a step of one
-      // plan unit there is 1.73 pixels of screen x and none of screen y, so
-      // four bites land in a flat row across the sheet instead of on top of
-      // each other. Along either plan axis alone they would be ten pixels apart
-      // carrying seventeen pixels of width.
-      const bite = [[-61, 25], [-51, 15], [-41, 5], [-31, -5]]
-      const at = [-6, 16, 38, 60]
-      const rise = [12, 18, 9, 15]
+      const at = [-22, -11, 0, 11, 22]
+      const verdict = ['pass', 'pass', 'fail', 'pass', 'fail']
       return [
         printed(-800, 'fl-print', [
-          // Where the sheet is registered, and where its output stands.
-          <line key="edge" x1="-20" y1="-16" x2="-20" y2="36" />,
-          ...at.map((px) => <line key={px} x1={px} y1="-14" x2={px} y2="-6" />),
-        ]),
-        // The prose: one sheet, ruled, continuous, and the only thing on any
-        // plate that is bigger than the machine working it.
-        { ...stand(-46, 10, 22, 22, 4, 3), cls: 'fl-sheet' },
-        printed(-35, 'fl-print fl-ruled', [
-          ...[-11, -6.6, -2.2, 2.2, 6.6, 11].map((u) => (
-            <line key={u} x1={-46 + u - 8} y1={10 + u + 8} x2={-46 + u + 8} y2={10 + u - 8} />
+          <rect key="board" x="-26" y="-22" width="64" height="56" rx="4" />,
+          ...at.map((s) => (
+            <line key={s} x1={s + 6 - 7} y1={-s + 6 + 7} x2={s + 6 + 7} y2={-s + 6 - 7} />
           )),
         ]),
-        // Four bites punched clean through it. This is the step, drawn once.
-        ...bite.map(([px, py], i) => ({ ...well(px, py, 7, 4, 4), cls: 'fl-bite', turn: i })),
-        // The die. One decisive stroke rather than a head strolling along a
-        // rail: a press is a thing that happens at a moment.
-        // And what came out of the bites, standing separately.
-        ...at.flatMap((px, i) => lit('crit', px, 10, 5, 5, rise[i], 1.5, i)),
-        // THE BLADE. A guillotine is the instrument this step actually is - a
-        // document goes under it and comes out in pieces - and it is a thing a
-        // reader has stood in front of. Hinged at the sheet's far corner, it
-        // comes down across the paper and lifts, and a criterion is standing
-        // beside the sheet that was not there before.
-        // THE PUNCH. A press with a knob on it, straight down onto the document
-        // - which is what actually makes a hole in a sheet of paper, and it
-        // leaves the one hinge in this figure to the plate a hand really does
-        // throw a lever on.
-        { ...stand(-46, 10, 14, 14, 5, 3, 34), cls: 'fl-plunge is-head', depth: OVER },
-        { ...stand(-46, 10, 5, 5, 16, 2, 39), cls: 'fl-plunge is-shaft', depth: OVER + 1 },
-        { ...drum(-46, 10, 9, 4.5, 55), cls: 'fl-plunge is-knob', depth: OVER + 2 },
+        { ...stand(6, 6, 30, 26, 3, 3), cls: 'fl-board' },
+        ...at.flatMap((s, i) => [
+          { ...stand(s + 6, -s + 6, 5, 5, 5, 1.5, 3), cls: 'fl-seat' },
+          arm(`fl-toggle is-${verdict[i]}`, s + 6, -s + 6, 11, 13, 4.6, { knob: 3.8, turn: i }),
+        ]),
       ]
     },
-    // EVIDENCE SINKS. The records are under the floor and stay there.
+    // EVIDENCE IS A SHAPER. A heap of records on one side, ordered rows on the
+    // other, and something overhead working its way across turning one into the
+    // other. That is the whole step: nothing is created and nothing is taken
+    // away, it is the same blocks in a different order.
     evidence: () => {
-      // Four sockets walked along the plan anti-diagonal, which is the only
-      // direction in this projection that separates on screen without also
-      // stepping down it - so they land as one flat rank across the plate.
-      const socket = [-27, -9, 9, 27].map((s) => [s - 8, -s - 8])
-      // Which criterion needs which record is not the order either of them
-      // happens to be in, so the routes cross. Routes that never cross are a
-      // rake, and a rake is not a bay.
-      const wire = [1, 3, 0, 2]
-      const from = [-42, -14, 14, 42]
-      const bend = [-30, -24, -18, -12]
+      const heap = [[-63, -11, 13], [-49, 8, 5], [-66, 26, 8], [-44, -25, 17], [-57, -34, 6], [-41, 6, 11], [-54, -4, 21]]
+      const rows = [0, 1].flatMap((r) => [0, 1, 2].map((c) => [12 + c * 24, -18 + r * 24]))
       return [
         printed(-800, 'fl-print', [
-          <line key="spine" x1="-52" y1="-40" x2="52" y2="-40" />,
-          ...from.map((x, i) => {
-            const [px, py] = socket[wire[i]]
-            const path = `${x},-40 ${x},${bend[i]} ${px - 16},${bend[i]} ${px - 16},${py - 16}`
-            // TWO PASSES OVER ONE ROUTE. The binding itself is permanent - it
-            // has been made and it stays made - so the thing that moves cannot
-            // be the route. It is a short bright segment running the route from
-            // the spine to the socket, which is a reference being FOLLOWED
-            // rather than a reference being created, and it is the only motion
-            // in the figure that travels along a drawn line.
+          <rect key="bed" x="-70" y="-40" width="42" height="76" rx="4" />,
+          ...rows.map(([px, py]) => (
+            <rect key={`${px}:${py}`} x={px - 8} y={py - 8} width="16" height="16" rx="2" />
+          )),
+        ]),
+        ...heap.map(([px, py, high], i) => block(px, py, null, high, { turn: i })),
+        ...rows.map(([px, py], i) => block(px, py, null, 6, { cls: 'fl-blk is-set', turn: i % 3 })),
+        // THE SHAPER. It hovers, and it works its way along the rows rather
+        // than sitting over the middle of them looking decorative.
+        { ...drum(-6, -6, 15, 4, 34), cls: 'fl-shaper', sweep: true },
+        { ...drum(-6, -6, 7, 5, 38), cls: 'fl-shaper is-dome', sweep: true },
+      ]
+    },
+    // SCREENING IS THREE HOLES. The ordered rows arrive, and each block goes
+    // down the one its verdict sends it to - green through, red out, and amber
+    // for the ones the machine cannot settle. Those do not stop here: they are
+    // thrown to the next plate, which is where a person is standing.
+    screening: () => {
+      const hole = [[-30, 22, 'pass'], [12, 14, 'hold'], [54, 6, 'fail']]
+      const feed = [0, 1].flatMap((r) => [0, 1].map((c) => [-58 + c * 22, -34 + r * 20]))
+      return [
+        printed(-800, 'fl-print', [
+          ...hole.map(([px, py]) => <line key={px} x1="-48" y1="-24" x2={px} y2={py} />),
+          ...hole.map(([px, py]) => <circle key={`r${px}`} cx={px} cy={py} r="19" />),
+        ]),
+        ...feed.map(([px, py], i) => block(px, py, null, 6, { turn: i })),
+        ...hole.map(([px, py, v]) => ({ ...well(px, py, 13, 4), cls: `fl-hole is-${v}` })),
+        ...hole.map(([px, py, v], i) => block(px, py, v, 6, { cls: `fl-blk is-${v} fl-faller`, turn: i })),
+        // THE CATAPULT. The amber block is the only one that leaves this plate,
+        // and it leaves it thrown - which is the one moment in the figure where
+        // a machine hands a decision to a person because it cannot make it.
+        arm('fl-catapult', 12, 14, 10, 26, 5, { knob: 4.4 }),
+        { ...block(12, 14, 'hold', 6), cls: 'fl-blk is-hold fl-shot', depth: OVER + 4 },
+      ]
+    },
+    // RESOLVE IS A PRESS ON A LINE. The amber blocks land here and run down a
+    // line, and a hand throws the lever that drops the press - which pushes one
+    // of them off. That is the honest picture of a judgement call: the machine
+    // has run out of rules and somebody decides.
+    resolve: () => {
+      const line = [-40, -18, 4, 26].map((px) => [px, px * 0.2 - 4])
+      return [
+        printed(-800, 'fl-print', [
+          <line key="rail" x1="-52" y1="-14" x2="38" y2="4" />,
+          <rect key="bed" x="4" y="6" width="44" height="44" rx="4" />,
+          ...Array.from({ length: 8 }, (_, k) => {
+            const a = (k * 45 * Math.PI) / 180
             return (
-              <g key={x}>
-                <polyline
-                  className={`fl-route${wire[i] === 3 ? ' is-open' : ''}`}
-                  points={path}
-                />
-                {wire[i] !== 3 && (
-                  <polyline className="fl-flow" points={path} pathLength="100" style={{ '--turn': i }} />
-                )}
-              </g>
+              <line
+                className="fl-stamp"
+                key={k}
+                x1={Math.round((26 + Math.cos(a) * 10) * 10) / 10}
+                y1={Math.round((28 + Math.sin(a) * 10) * 10) / 10}
+                x2={Math.round((26 + Math.cos(a) * 17) * 10) / 10}
+                y2={Math.round((28 + Math.sin(a) * 17) * 10) / 10}
+              />
             )
           }),
         ]),
-        // Four sockets drilled through the plate.
-        ...socket.map(([px, py]) => ({ ...well(px, py, 12, 7), cls: 'fl-socket' })),
-        // THE RECORD, AT THE BOTTOM OF THE SOCKET, AND NOWHERE ELSE.
-        //
-        // This is the step's whole claim made as geometry rather than as a
-        // caption: the record is at the site, below the floor, and nothing on
-        // this plate ever picks one up. The pass before this stood a plug on top
-        // of every socket and the plugs were taller than the holes were wide, so
-        // six records were drawn and not one of them could be seen - which
-        // argued the exact opposite of the step.
-        ...socket.map(([px, py], i) => ({
-          ...drum(px, py, 8, 2, -5),
-          cls: `fl-record${i === 3 ? ' is-cold' : ''}`,
-          depth: px + py + 0.1,
-        })),
-        // And the reference: a patch node standing on the plate BEHIND the
-        // socket, where the route lands. What Damaros holds is this, not what is
-        // down the hole - so it is small, it is on the surface, and it never
-        // covers the thing it points at.
-        ...socket.flatMap(([px, py], i) => (i === 3 ? [] : lit('res', px - 16, py - 16, 5, 5, 4, 1.5, i))),
-        // THE COVER. One hinged lid over the whole socket bank, and it is the
-        // most literal statement this figure makes: the records are UNDER it,
-        // you open it to look at them, and you put it back. Nothing is taken
-        // out. It rests open, because the resting frame of this figure is the
-        // finished one and a closed bank is a snapshot nobody has read.
-        // THE CARD. What Damaros holds is the reference, not the record - so
-        // the thing a hand pulls out of this bank is a CARD, and the records
-        // stay in their sockets while it travels. It slides along the bank's
-        // own plan axis, which is the one direction a solid can travel here
-        // without leaving the projection, and it is drawn above everything so
-        // what it occludes is never in doubt.
-        { ...stand(-52, -20, 20, 6, 3.5, 2, 2), cls: 'fl-card', depth: OVER },
-        { ...stand(-32, -20, 3, 7, 6, 2, 2), cls: 'fl-cardtab', depth: OVER + 1 },
+        ...line.map(([px, py], i) => block(px, py, 'hold', 6, { turn: i })),
+        // The one that gets pushed off the line, which is the decision.
+        { ...block(26, 1.2, 'pass', 6), cls: 'fl-blk is-pass fl-pushed', depth: OVER + 3 },
+        { ...drum(26, 28, 15, 3), cls: 'fl-anvil' },
+        { ...stand(26, 28, 9, 9, 13, 2.5, 24), cls: 'fl-plunge is-head', depth: OVER },
+        { ...stand(26, 28, 5, 5, 12, 2, 37), cls: 'fl-plunge is-shaft', depth: OVER + 1 },
+        { ...drum(26, 28, 7.5, 4, 49), cls: 'fl-plunge is-knob', depth: OVER + 2 },
+        { ...stand(-40, 26, 5, 5, 28, 1.5), cls: 'fl-post' },
+        arm('fl-lever', -40, 26, 28, 28, 5.4, { knob: 5.4 }),
       ]
     },
-    // SCREENING DROPS. Three throats, and what is left standing is the count.
-    screening: () => {
-      const throat = [[-16, 26, 1], [20, 18, 4], [56, 10, 3]]
-      return [
-        printed(-800, 'fl-print', [
-          ...throat.map(([px, py]) => <line key={px} x1="-46" y1="-24" x2={px} y2={py} />),
-          ...throat.map(([px, py]) => <circle key={`r${px}`} cx={px - 14} cy={py - 14} r="13" />),
-          <circle className="fl-iris" key="iris" cx="-46" cy="-24" r="15" />,
-        ]),
-        // Where the cohort comes in. One mouth, and everything goes through it.
-        // THE APERTURE. A sort begins by letting exactly one thing through at
-        // a time, and an iris is the mechanism that does it - the only part of
-        // this figure that opens by CHANGING SIZE rather than by moving.
-        { ...well(-46, -24, 15, 6), cls: 'fl-gate' },
-        // THE TALLY, STANDING BEHIND ITS OWN THROAT. The value line under this
-        // plate reads 1 PASS - 4 REVIEW - 3 FAIL and these are those three
-        // numbers: each unit steps in half a plan unit as it goes up so every
-        // one of them keeps a visible rim, and the pile can be counted rather
-        // than estimated off a height.
-        ...throat.flatMap(([px, py, count], i) => {
-          const half = (j) => 7 - j * 0.5
-          const cap = half(count - 1) - 1.6
-          return [
-            ...Array.from({ length: count }, (_, j) => ({
-              ...stand(px - 14, py - 14, half(j), half(j), 6, 1.5, j * 6),
-              cls: `fl-unit${j % 2 ? ' is-alt' : ''}`,
-              turn: i,
-            })),
-            { ...stand(px - 14, py - 14, cap, cap, 2.3, 1, count * 6), cls: 'fl-lamp is-bin', turn: i },
-          ]
-        }),
-        // Three throats cut clean through the plate. NO FLOOR is drawn in them,
-        // because what goes down one does not stop inside the plate - which is
-        // the difference between a bin and a throat, and the reason this plate
-        // can say many arrive and few come out anywhere.
-        ...throat.map(([px, py]) => ({ ...well(px, py, 13, 4), cls: 'fl-throat' })),
-        // One subject down each throat, forever, and always the same one down
-        // the same throat: the same protocol against the same evidence reaches
-        // the same result, which is the only way a drawing can say
-        // deterministic.
-        //
-        // IT DROPS. It used to slide from the mouth to the throat and then go
-        // down, and a solid translating ACROSS a depth-sorted scene keeps the
-        // draw order it was sorted into - so a subject crossing the plate
-        // passed in front of things it was behind and behind things it was in
-        // front of, and the projection came apart for as long as it moved.
-        // Straight down is the one direction in an axonometric that cannot lie:
-        // height is screen y and nothing else is, so a falling thing needs no
-        // resort and occludes exactly what it should.
-        ...throat.map(([px, py], i) => ({
-          ...stand(px, py, 5, 5, 7, 1.5, 0),
-          cls: 'fl-faller',
-          turn: i,
-          depth: px + py + 0.2,
-        })),
-        // THE CHUTE, AND IT TIPS. A sort is a thing somebody does by tipping a
-        // tray one way or the other, which is why every coin sorter and every
-        // set of railway points looks like this. It rocks between the throats
-        // and a subject goes down whichever one it is pointing at.
-
-      ]
-    },
-    // RESOLVE IS PULLED. The only plate here with a hand on it.
-    resolve: () => [
-      printed(-800, 'fl-print', [
-        <line key="beam" x1="-46" y1="10" x2="-10" y2="-26" />,
-        <rect key="bed" x="10" y="6" width="44" height="44" rx="4" />,
-        ...Array.from({ length: 8 }, (_, k) => {
-          const a = (k * 45 * Math.PI) / 180
-          return (
-            <line
-              className="fl-stamp"
-              key={k}
-              x1={Math.round((32 + Math.cos(a) * 10) * 10) / 10}
-              y1={Math.round((28 + Math.sin(a) * 10) * 10) / 10}
-              x2={Math.round((32 + Math.cos(a) * 17) * 10) / 10}
-              y2={Math.round((28 + Math.sin(a) * 17) * 10) / 10}
-            />
-          )
-        }),
-      ]),
-      // Two readings, at two heights, disagreeing.
-      ...lit('read', -46, 10, 8, 8, 26, 2, 0),
-      ...lit('read', -10, -26, 8, 8, 15, 2, 1),
-      // THE LEVER. Everything else in this figure runs unattended; this is the
-      // step where a named person decides, so this is the one plate with a
-      // control on it that only a hand can work. It is also the only part in
-      // the drawing that turns, now that Replay has stopped being a clock.
-
-      // The lever, in the same vocabulary as the other four now. It was the
-      // one instrument in the figure and it had its own bespoke branch; four
-      // more agents is four more reasons for them all to be one kind of thing.
-      // THE LEVER, AND IT STAYS. This is the one station that works, and it
-      // works because a lever is a thing a person can picture their hand on.
-      // What went wrong was copying it onto the other four, not having it here.
-      { ...stand(-4, 4, 5, 5, 30, 1.5), cls: 'fl-post' },
-      arm('fl-lever', -4, 4, 30, 30, 5.4, { knob: 5.4 }),
-      // And the die it drops.
-      { ...stand(32, 28, 11, 11, 22, 2, 4), cls: 'fl-die is-seal', depth: OVER + 1 },
-    ],
-    // REPLAY LIFTS. A core out of a borehole, nine bands, counted.
+    // REPLAY IS A SHELF. Everything the row decided is shelved here in the
+    // order it happened, and any one of it can be taken down and read - which
+    // is the only claim this step makes and the only thing a shelf is for. The
+    // block that comes out is the same block, with the same verdict on it.
     replay: () => {
-      const bands = 9
+      const shelf = [0, 1, 2].flatMap((r) => [0, 1, 2, 3].map((c) => [-42 + c * 24, -30 + r * 22 + c * 2]))
+      const mark = ['pass', 'hold', 'fail', 'pass', 'pass', 'fail', 'hold', 'pass', 'fail', 'pass', 'pass', 'hold']
       return [
         printed(-800, 'fl-print', [
-          <circle key="rim" cx="-14" cy="14" r="26" />,
-          <line key="run" x1="-40" y1="40" x2="12" y2="-12" />,
+          ...[0, 1, 2].map((r) => (
+            <line key={r} x1="-54" y1={-30 + r * 22} x2="42" y2={-30 + r * 22 + 8} />
+          )),
         ]),
-        // The depth scale, up the screen beside the core. Depth is the one
-        // quantity in this projection that runs straight up the page, so a log
-        // measured on a plan axis would be measured on a diagonal - which is
-        // not a log, it is a decoration lying next to a stack.
-        { scale: PLAN(t - 14, -t + 14), bands, depth: OVER - 1 },
-        // The borehole. Deep, because the thing coming out of it is long.
-        { ...well(-14, 14, 19, 7), cls: 'fl-bore' },
-        // THE CORE. Nine bands, alternating, and it comes UP - which is the one
-        // motion a record being reconstructed can honestly be given. There is
-        // nothing rotating on this plate.
-        ...Array.from({ length: bands }, (_, k) => ({
-          ...stand(-14, 14, 10, 10, 4.4, 1.5, k * 4.4),
-          cls: `fl-band${k % 2 ? ' is-alt' : ''}${k === bands - 1 ? ' is-latest' : ''}`,
-          turn: k,
-          core: true,
-          depth: OVER,
-        })),
-        // THE CRANK. A replay is a thing you WIND BACK, and a handle beside a
-        // borehole with a section coming up out of it is the picture of that.
-        // It is the only agent in the figure that goes all the way round, and
-        // the only one whose motion is continuous rather than a stroke - a
-        // reader can see it driving the core open.
-        // THE HANDLE. The core opens by being PULLED, and the handle travels
-        // furthest of anything on the plate because it is what the top band
-        // hangs from - an extension, which is the one kinematic left and the
-        // only honest picture of a section being taken apart to be read.
-        { ...drum(-14, 14, 11, 4, bands * 4.4 + 3), cls: 'fl-band is-handle', turn: bands, core: true, depth: OVER + 1 },
+        ...shelf.map(([px, py], i) => block(px, py, mark[i], 7, { cls: `fl-blk is-${mark[i]} is-shelved`, turn: i })),
+        // The one taken down. It rises clear of the shelf, holds where a reader
+        // can see which of the three it is, and goes back.
+        { ...block(-18, -8, 'hold', 7), cls: 'fl-blk is-hold fl-pull', depth: OVER },
       ]
     },
   }
@@ -800,23 +684,6 @@ export default function ChainSchematic({ animate = true }) {
                         </g>
                       )
                     }
-                    {/* THE DEPTH SCALE, in screen space because depth is the
-                        one quantity here that runs straight up the page. */}
-                    if (part.scale) {
-                      const [x, y] = part.scale
-                      return (
-                        <g className="fl-scale" key={`${item.key}-e${n}`}>
-                          <line x1={x + 34} y1={y + 4} x2={x + 34} y2={y - 42} />
-                          {Array.from({ length: part.bands }, (_, k) => (
-                            <line key={k} x1={x + 34} y1={y - 1 - k * 4.6} x2={x + (k % 2 ? 39 : 43)} y2={y - 1 - k * 4.6} />
-                          ))}
-                        </g>
-                      )
-                    }
-                    {/* THE LEVER, and it is the only thing in the figure that
-                        turns. It swings in the vertical plane about the top of
-                        its own post, which is a screen rotation because that is
-                        what a lever's plane is here. */}
                     {/* A HINGED AGENT, AND EVERY PLATE NOW HAS ONE.
                         Resolve was the only station a reader liked and the
                         reason was not its geometry - it was that a LEVER is a
@@ -868,19 +735,13 @@ export default function ChainSchematic({ animate = true }) {
                             whole column comes up as one thing - and the settle
                             sits inside THAT, so a band can be rising out of a
                             borehole and breathing at the same time. */}
-                        {part.core ? (
-                          <g className="fl-core">
-                            <g className="fl-settle"><Faces shape={part.shape} className="dgm-solid" /></g>
-                          </g>
-                        ) : (
-                          <g className="fl-settle">
-                            {part.round ? (
-                              <Drum shape={part.shape} className="dgm-solid" />
-                            ) : (
-                              <Faces shape={part.shape} className="dgm-solid" />
-                            )}
-                          </g>
-                        )}
+                        <g className="fl-settle">
+                          {part.round ? (
+                            <Drum shape={part.shape} className="dgm-solid" />
+                          ) : (
+                            <Faces shape={part.shape} className="dgm-solid" />
+                          )}
+                        </g>
                       </g>
                     )
                   })}
