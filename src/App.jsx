@@ -611,11 +611,11 @@ function LandingHero() {
       <BiomarkerRain />
       <img className="hero-drum-motif" src="/assets/damaros-monogram-blue.svg" alt="" aria-hidden="true" decoding="async" />
       <div className="hero-copy">
-        <h1 className="hero-heading" aria-label="Clinical research, built to execute anywhere.">
-          <span className="hero-line">Clinical research,</span>
-          <span className="hero-line accent-text">built to execute anywhere.</span>
+        <h1 className="hero-heading" aria-label="Agentic infrastructure for clinical research.">
+          <span className="hero-line">Agentic infrastructure</span>
+          <span className="hero-line accent-text">for clinical research.</span>
         </h1>
-        <p><BrandName /> turns protocols into evidence-bound decisions, signed locally and replayable on demand.</p>
+        <p>Built to execute anywhere: <BrandName /> turns protocols into evidence-bound decisions, signed locally and replayable on demand.</p>
         <div className="hero-actions">
           <PilotButton className="button button-primary">Start a pilot <ArrowUpRight size={17} weight="bold" /></PilotButton>
           <a className="button button-secondary" href="#trident" onClick={(event) => smoothSection(event, '#trident')}>How it works <ArrowRight size={17} weight="bold" /></a>
