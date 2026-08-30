@@ -2511,8 +2511,11 @@ describe('The floor schematic', () => {
     // the reader looks: each tower's screen-x interval must clear the
     // whole span of the far gate's traffic - from the low pylon's outer
     // edge to the greater of the high pylon's outer edge and the farthest
-    // silhouette edge the shipment reaches before it is gone - by a pixel
-    // of daylight.
+    // silhouette edge the shipment reaches before it is gone. AND THE
+    // DAYLIGHT IS A WIDTH, NOT A LINE: at four units of gap the mouth
+    // still read walled off beside a twenty-six-unit pillar, so the
+    // clearance is a full cell silhouette radius - a puck of open wall
+    // between the pillar and anything that crosses.
     const IXg = 0.866
     const towers = [...floor.matchAll(/stand\((-?[\d.]+), (-?[\d.]+), ([\d.]+), ([\d.]+), [\d.]+, [\d.]+\), cls: 'fl-rig is-tower'/g)]
       .map((m) => m.slice(1).map(Number))
@@ -2526,10 +2529,11 @@ describe('The floor schematic', () => {
       .matchAll(/translate\((-?[\d.]+)px/g)].map((m) => Number(m[1])))
     const shipEdge = (shipHome[1] - shipHome[0]) * IXg + shipSlide + 7 * Math.SQRT2 * IXg
     const traffic = [gateLo, Math.max(gateHi, shipEdge)]
+    const daylight = 7 * Math.SQRT2 * IXg
     for (const [tcx, tcy, thx, thy] of towers) {
       const span = [(tcx - thx - (tcy + thy)) * IXg, (tcx + thx - (tcy - thy)) * IXg]
-      assert.ok(span[1] < traffic[0] - 1 || span[0] > traffic[1] + 1,
-        `a tower over [${span.map((v) => v.toFixed(2))}] stands in the gate's traffic [${traffic.map((v) => v.toFixed(2))}]`)
+      assert.ok(span[1] < traffic[0] - daylight || span[0] > traffic[1] + daylight,
+        `a tower over [${span.map((v) => v.toFixed(2))}] crowds the gate's traffic [${traffic.map((v) => v.toFixed(2))}]`)
     }
     // And the runway spans tower to tower - lengthening the reach moves
     // the rail with it, so the towers cannot outrun their own span.

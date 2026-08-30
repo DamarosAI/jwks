@@ -678,15 +678,19 @@ function mechanism(key, t) {
         // twenty-six-unit box still rose across the gate mouth on screen -
         // and the outbound shipment, sliding through ground BEHIND it,
         // painted in front of it, because a mover's honest seat depth
-        // cannot follow it behind a post's early paint slot. So the tower
-        // answers where the reader looks: at 44 its screen interval begins
-        // right of everything that crosses the gate - the cut, both
-        // pylons, and the shipment's whole swept silhouette - and the spec
-        // holds that daylight in numbers. Towers first, runway over their
-        // caps, sliders in the OVER band.
+        // cannot follow it behind a post's early paint slot. AND A SLIVER
+        // OF DAYLIGHT STILL READS AS BLOCKED: at 44 the tower cleared the
+        // gate's traffic by four units, and next to a tall dark pillar
+        // four units is nothing - the mouth still read walled off. So the
+        // tower plants at 54, the deck's own right corner, with a full
+        // cell silhouette of open wall between the pillar and everything
+        // that crosses the gate - the cut, both pylons, and the shipment's
+        // whole swept silhouette - and the spec holds that daylight, at
+        // that width, in numbers. Towers first, runway over their caps,
+        // sliders in the OVER band.
         { ...stand(-58, -38, 5.5, 4.5, 26, 2.5), cls: 'fl-rig is-tower', depth: -102 },
-        { ...stand(44, -38, 5.5, 4.5, 26, 2.5), cls: 'fl-rig is-tower', depth: -101 },
-        { ...stand(-7, -38, 51, 3, 4, 2, 26), cls: 'fl-rig is-rail', depth: -100 },
+        { ...stand(54, -38, 5.5, 4.5, 26, 2.5), cls: 'fl-rig is-tower', depth: -101 },
+        { ...stand(-2, -38, 56, 3, 4, 2, 26), cls: 'fl-rig is-rail', depth: -100 },
         { ...stand(-52, -38, 6, 4, 8, 2.5, 24), cls: 'fl-gant', depth: OVER - 6 },
         { ...stand(-52, -27, 2.5, 11, 3, 1.5, 27), cls: 'fl-gant is-beam', depth: OVER - 5 },
         ...pile.map(([px, py, high, base], i) => cell(px, py, null, high, base, { turn: i })),
