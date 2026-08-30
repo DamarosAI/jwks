@@ -3264,6 +3264,21 @@ describe('The floor schematic', () => {
     // seam closes: it ends exactly where it began.
     const flee = css.match(/@keyframes fl-flee \{([\s\S]*?)\n\}/)[1]
     assert.doesNotMatch(flee, /translate\(/, 'the flee rides the height axis alone')
+    // AND THE STARTLE COMES BEFORE THE BOLT. A click scares a small
+    // cartoon character, and a scared character SHAKES first: a
+    // half-second tremble on the body's own group - horizontal only, the
+    // row's flat bearing, because that wrapper's transform origin is the
+    // sheet's corner and a rotate would swing the body around the viewBox
+    // instead of shivering it - while the parcel pops loose and the
+    // shadow fades. The flee waits out exactly the tremble, so liftoff
+    // lands the instant the shaking stops.
+    assert.match(css, /\.dgm-svg\.is-live \.fl-watch\.is-shy \.fl-monitor \{ animation: fl-scare/)
+    const scareSpan = css.match(/\.fl-monitor \{ animation: fl-scare ([\d.]+)s/)[1]
+    const fleeDelay = css.match(/animation: fl-flee 3\.2s cubic-bezier\([^)]*\) ([\d.]+)s 1/)[1]
+    assert.equal(fleeDelay, scareSpan, 'the bolt must wait out exactly the tremble')
+    const scare = css.match(/@keyframes fl-scare \{([\s\S]*?)\n\}/)[1]
+    assert.doesNotMatch(scare, /rotate\(/, 'a rotate on this wrapper swings the body around the viewBox origin')
+    assert.ok((scare.match(/translate\(-?[1-9]/g) || []).length >= 5, 'a tremble is several shakes, not one nudge')
     // THE CAMEOS ARE GONE, AND THE POKE AND THE COLLECTION WITH THEM. The
     // character works one sheet. Trident and Nectar keep their corner
     // mark and nothing else of it - no watch, no rounds, no pressed tile,

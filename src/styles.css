@@ -14145,12 +14145,33 @@ html.is-hidden .clinic-node i,
   51.4%, 100% { opacity: 0; }
 }
 
+/* THE STARTLE COMES BEFORE THE BOLT. A click does not launch the courier
+   like a rocket - it scares a small cartoon character, and a scared
+   character SHAKES first: a half-second tremble on the body's own group,
+   hard enough that the parcel pops loose and the shadow fades under it
+   (both already answer the click), and only then the bolt. Horizontal
+   only - the row's own flat bearing - because this wrapper's transform
+   origin is the sheet's corner, so a rotate here would swing the body
+   around the viewBox instead of shivering it. */
+.dgm-svg.is-live .fl-watch.is-shy .fl-monitor { animation: fl-scare 0.45s linear 1; }
+
+@keyframes fl-scare {
+  0%, 100% { transform: translate(0px, 0px); }
+  14% { transform: translate(-1.7px, 0px); }
+  28% { transform: translate(1.7px, 0px); }
+  42% { transform: translate(-1.9px, 0px); }
+  56% { transform: translate(1.9px, 0px); }
+  70% { transform: translate(-1.4px, 0px); }
+  84% { transform: translate(1px, 0px); }
+}
+
 /* The flee: straight up, off the sheet, a beat of nerve, and back down
    with one small bounce. Height axis only - the one axis that cannot lie -
    and on its own wrapper so the round underneath never stutters. A haul
    mid-flight goes with the body, which is honest: startle a courier and
-   the parcel comes along. */
-.dgm-svg.is-live .fl-watch.is-shy .fl-dart { animation: fl-flee 3.2s cubic-bezier(0.5, 0, 0.25, 1) 1; }
+   the parcel comes along. The delay is the tremble's own span, so
+   liftoff lands the instant the shaking stops. */
+.dgm-svg.is-live .fl-watch.is-shy .fl-dart { animation: fl-flee 3.2s cubic-bezier(0.5, 0, 0.25, 1) 0.45s 1; }
 
 .fl-watch.is-shy .fl-groundwrap { opacity: 0; }
 
@@ -14214,6 +14235,7 @@ html.is-hidden .clinic-node i,
   .fl-hover,
   .fl-dart,
   .fl-beam,
+  .fl-monitor,
   .fl-monitorshade,
   .fl-readpill { animation: none; transition: none; }
 
