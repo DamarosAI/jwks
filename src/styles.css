@@ -13643,16 +13643,19 @@ html.is-hidden .clinic-node i,
 .fl-head.is-bar .dgm-face-top { fill: var(--tone); }
 
 /* Forward at a constant rate, because a transport does not accelerate
-   through a record, and back on a curve, because a rewind does. ONE scan
-   per round now, on the courier's own 16.8s clock: the head reads its way
-   out while the courier finishes at Resolve, dwells at the far end - and
-   turns for home at 68.4, two tenths of a second after the courier's body
-   lands on the take-up reel at 68. The reversal is the press. When the
-   visitor is not on the sheet, the tape never runs back. */
+   through a record - and READING FROM THE ROUND'S FIRST FRAME: the head
+   used to park until 45%, which left the plate dead for the first seven
+   seconds a reader saw, and a transport with a dead stretch is a shelf.
+   Now the whole first two thirds of the round is one slow crawl out, the
+   dwell at the far end waits for the courier to land on the take-up
+   reel, and the head turns for home at 68.8, a tenth after the hub gives
+   at 68.7. The forward read is the housework; only the press makes the
+   tape run BACK, and when the visitor is not on the sheet, it never
+   does. */
 .dgm-svg.is-live .fl-head { animation: fl-run 16.8s linear infinite; }
 
 @keyframes fl-run {
-  0%, 45% { transform: translate(0px, 0px); }
+  0% { transform: translate(0px, 0px); }
   66.5%, 68.8% { transform: translate(58.89px, 23.12px); animation-timing-function: cubic-bezier(0.5, 0, 0.2, 1); }
   82%, 100% { transform: translate(0px, 0px); }
 }
@@ -13681,23 +13684,24 @@ html.is-hidden .clinic-node i,
 .dgm-svg.is-live .fl-spin { animation: fl-wind 16.8s linear infinite; }
 
 @keyframes fl-wind {
-  0%, 45% { transform: rotate(0deg); }
+  0% { transform: rotate(0deg); }
   66.5%, 68.8% { transform: rotate(208deg); animation-timing-function: cubic-bezier(0.5, 0, 0.2, 1); }
   82%, 100% { transform: rotate(0deg); }
 }
 
 /* A frame lifts a hair as the head crosses it and settles behind it. That is a
    record being read rather than seven blocks blinking: the delay walks the tape
-   at exactly the rate the head walks it. */
+   at the rate the head walks it - 1.8s a frame, the slow read's own pace, so
+   the last frame lifts just as the head reaches the far end. */
 .dgm-svg.is-live .fl-frame {
   animation: fl-read 16.8s ease-in-out infinite;
-  animation-delay: calc(var(--turn, 0) * 0.5s);
+  animation-delay: calc(var(--turn, 0) * 1.8s);
 }
 
 @keyframes fl-read {
-  0%, 45.2% { transform: translateY(0px); }
-  46.2%, 47.2% { transform: translateY(-3px); }
-  49%, 100% { transform: translateY(0px); }
+  0%, 0.8% { transform: translateY(0px); }
+  1.8%, 2.8% { transform: translateY(-3px); }
+  4.6%, 100% { transform: translateY(0px); }
 }
 
 /* THE BUTTON IS REAL, AND IT IS ONLY THE TOP CIRCLE. The take-up reel's

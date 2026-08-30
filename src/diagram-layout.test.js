@@ -3012,6 +3012,14 @@ describe('The floor schematic', () => {
       const away = [...body.matchAll(/([\d.]+)% \{ transform: (?:translate\([\d.]+px, [\d.]+px\)|rotate\([1-9][\d.]*deg\))/g)]
         .map((m) => Number(m[1]))
       assert.ok(Math.max(...away) >= 60, `${clock} turns for home at ${Math.max(...away)}%, which is a shuttle`)
+      // AND IT READS FROM THE ROUND'S FIRST FRAME. The head used to park
+      // until 45%, which left the plate dead for the first seven seconds
+      // a reader saw - a transport with a dead stretch is a shelf. The
+      // scan is one slow constant crawl from 0% now: a rest pair at the
+      // start of the round is banned; only the far-end dwell (waiting for
+      // the press) and the rewound tail may hold still.
+      assert.doesNotMatch(body, /0%, [\d.]+% \{ transform: (?:translate\(0px, 0px\)|rotate\(0deg\))/,
+        `${clock} parks at the start of the round - the transport reads from the first frame`)
     }
 
     // FIVE STATIONS, FIVE KINEMATICS - and each one is the tool the step
