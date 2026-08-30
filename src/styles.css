@@ -13218,9 +13218,11 @@ html.is-hidden .clinic-node i,
    axis moves a solid INSIDE the drawing; a translate down the screen is height,
    which is the one axis in an axonometric that cannot lie. Composing them as
    one vector would be neither, so the claw states them as two: go across, then
-   go down. */
+   go down. And the jaws start sinking at 0% - like the replay head, the claw
+   works from its cycle's first frame; the only stillness left is the breath
+   at 94 after the ride home. */
 @keyframes fl-fetch {
-  0%, 6% { transform: translate(0px, 0px) translateY(0px); }
+  0% { transform: translate(0px, 0px) translateY(0px); }
   14%, 22% { transform: translate(0px, 0px) translateY(8px); }
   30% { transform: translate(0px, 0px) translateY(0px); }
   44%, 52% { transform: translate(48.5px, 19.04px) translateY(0px); }

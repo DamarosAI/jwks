@@ -3021,6 +3021,13 @@ describe('The floor schematic', () => {
       assert.doesNotMatch(body, /0%, [\d.]+% \{ transform: (?:translate\(0px, 0px\)|rotate\(0deg\))/,
         `${clock} parks at the start of the round - the transport reads from the first frame`)
     }
+    // The claw obeys the same law on its own beat: the jaws begin their
+    // descent into the pile at 0%, so the machine a reader lands on is
+    // already working - the one stillness left is the breath after the
+    // ride home.
+    const fetchBody = css.match(/@keyframes fl-fetch \{([\s\S]*?)\n\}/)[1]
+    assert.doesNotMatch(fetchBody, /^\s*0%, [\d.]+% \{/m,
+      'fl-fetch parks at the start of its cycle - the claw works from the first frame')
 
     // FIVE STATIONS, FIVE KINEMATICS - and each one is the tool the step
     // actually is rather than a shape chosen to be different. Chasing five
