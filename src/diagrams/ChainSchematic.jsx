@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { memo, useState } from 'react'
 
 import { ISO_X, ISO_Y, jitter, planCircle, planSpace, project, roundedBox, roundedCylinder, roundedSlab } from './iso'
 import { Faces } from './Solid'
@@ -1125,47 +1125,17 @@ function Drum({ shape, core, className }) {
   )
 }
 
-export default function ChainSchematic({ animate = true }) {
-  const frame = useCenterOnOverflow()
-  const [hot, setHot] = useState(null)
-  // The monitor's one nerve: clicked, it bolts; the flee animation ending
-  // brings it back on its own, so there is no timer to leak.
-  const [shy, setShy] = useState(false)
-  const step = STEPS.find((item) => item.key === hot) ?? null
-
+/* ONE STATION'S ENTIRE DRAWING, MEMOISED ON ITS OWN GEOMETRY. Every part
+   below depends only on the module-level station record, but the figure's
+   hover state lives on the common ancestor - so before this memo, leaning
+   on any plate made React reconcile all five stations' full trees: a
+   couple of thousand nodes of pure churn at the exact moment a reader
+   interacts, which is a visible hitch on a weak device. The memo pins each
+   station's subtree to its `item`, whose identity never changes, so a
+   hover now touches five wrapper groups and the caption and nothing else. */
+const StationBody = memo(function StationBody({ item }) {
   return (
-    <figure className="dgm">
-      <div className="dgm-frame" ref={frame}>
-        <svg
-          className={`dgm-svg is-floor${animate ? ' is-live' : ''}`}
-          viewBox={`0 0 ${W} ${H}`}
-          role="img"
-          aria-label="Five plates in a row, seen in axonometric projection, their machines already running - each plate bounded by its own printed double-walled membrane, the way a section drawing bounds a cell. The five stations are lettered in ink beneath their plates: Protocol, Evidence, Screening, Resolve, Replay. A small hovering courier shaped as the flat blue Damaros mark - a plump two-part silhouette that bobs with a soft jelly squash, its floor shadow beneath it - works the air above the row on one slow round, and the seams of the run move only under it. One cell - a round body with its nucleus drawn on top - runs the whole row. A grid of twelve switches on a breaker board is thrown one at a time, each settling green or red, and once per round the courier drops to the export gate: the compiled violet transcript slides to the mouth under its beam and crosses the seam riding just below the courier's body, led to the next plate and set in through the entry gate, where it docks beside the gantry. There a claw closes on one cell in a heap, lifts it, carries it across, and sets it down into an ordered bed of round sockets; the placed cell then slides up a printed lane to a staging seat, waits its beat, and continues straight out through that plate's far gate - one cell, one line, socket to seat to gate. Along the far long edge of the next plate, three verdict seats wait in a line - green, red, amber. The bed feeds the green pore as a moving line: one cell slides onto the mouth and is visibly swallowed down the bore while the seat behind it shuffles forward and the newly arrived cell takes the empty place; the red pore stands open and ringed; the amber seat is a gate cut through the plate's wall, its pylons stained amber. The unsettled amber cell forms inside the plate's reticulum - nested curved sacs opening toward the gate - slides down the lane to the bay while the courier waits overhead, and leaves only in the courier's hold: carried through the air and set down at the resolve lane's entry gate, one seat behind the line, so it never lands where a cell already stands. The courier then steps sideways onto the lever and throws it - nothing else ever moves that lever - so the horizontal ram crosses the lane, pushes one cell clean off the edge through the one gap in the membrane, and the line indexes forward. On the last plate the run lies as frames on a tape between two reels, and a head reads its way out along the tape; the courier lands on the take-up reel's raised hub - the transport's one button - the hub gives under the press, and only then does the head turn and rewind, the courier stepping backwards alongside it before allowing itself one full spin on the climb home. Clicked anywhere on its round, the courier drops whatever it is carrying and darts off the sheet, drifting back on its own. Pointing at a plate darkens the ground beneath it and brings its verdicts forward."
-        >
-          <defs>
-            {/* One stipple only. The plate used to carry a second, coarser
-                dot grid as well, and at 13px pitch it read as the page's own
-                matrix showing THROUGH the plate - a solid surface looking
-                see-through. The fine ribosome stipple below is clearly
-                texture; the lookalike grid is gone. */}
-            <pattern id="fl-plasm" width="7" height="7" patternUnits="userSpaceOnUse">
-              <circle className="dgm-grain is-fine" cx="4.5" cy="3.5" r="0.55" />
-            </pattern>
-          </defs>
-
-          {STEPS.map((item) => (
-            <g
-              className={`fl-step is-${item.key}${hot === item.key ? ' is-hot' : ''}`}
-              key={item.key}
-              style={{ '--sx': item.sx }}
-              onMouseEnter={() => setHot(item.key)}
-              onMouseLeave={() => setHot((current) => (current === item.key ? null : current))}
-              onFocus={() => setHot(item.key)}
-              onBlur={() => setHot(null)}
-              tabIndex={0}
-              role="button"
-              aria-label={`${item.label}, ${item.fact} - ${item.read}`}
-            >
+    <>
               {/* IT WAS READING AS RECESSED, AND THE HALO WAS WHY.
                   A held plate used to grow a ring of pale blue all the way
                   round it, which is an INSET cue - the same thing every sunken
@@ -1387,6 +1357,52 @@ export default function ChainSchematic({ animate = true }) {
                 width="232"
                 height={FACT_Y + 8 - (item.plate.back[1] - 26)}
               />
+    </>
+  )
+})
+
+export default function ChainSchematic({ animate = true }) {
+  const frame = useCenterOnOverflow()
+  const [hot, setHot] = useState(null)
+  // The monitor's one nerve: clicked, it bolts; the flee animation ending
+  // brings it back on its own, so there is no timer to leak.
+  const [shy, setShy] = useState(false)
+  const step = STEPS.find((item) => item.key === hot) ?? null
+
+  return (
+    <figure className="dgm">
+      <div className="dgm-frame" ref={frame}>
+        <svg
+          className={`dgm-svg is-floor${animate ? ' is-live' : ''}`}
+          viewBox={`0 0 ${W} ${H}`}
+          role="img"
+          aria-label="Five plates in a row, seen in axonometric projection, their machines already running - each plate bounded by its own printed double-walled membrane, the way a section drawing bounds a cell. The five stations are lettered in ink beneath their plates: Protocol, Evidence, Screening, Resolve, Replay. A small hovering courier shaped as the flat blue Damaros mark - a plump two-part silhouette that bobs with a soft jelly squash, its floor shadow beneath it - works the air above the row on one slow round, and the seams of the run move only under it. One cell - a round body with its nucleus drawn on top - runs the whole row. A grid of twelve switches on a breaker board is thrown one at a time, each settling green or red, and once per round the courier drops to the export gate: the compiled violet transcript slides to the mouth under its beam and crosses the seam riding just below the courier's body, led to the next plate and set in through the entry gate, where it docks beside the gantry. There a claw closes on one cell in a heap, lifts it, carries it across, and sets it down into an ordered bed of round sockets; the placed cell then slides up a printed lane to a staging seat, waits its beat, and continues straight out through that plate's far gate - one cell, one line, socket to seat to gate. Along the far long edge of the next plate, three verdict seats wait in a line - green, red, amber. The bed feeds the green pore as a moving line: one cell slides onto the mouth and is visibly swallowed down the bore while the seat behind it shuffles forward and the newly arrived cell takes the empty place; the red pore stands open and ringed; the amber seat is a gate cut through the plate's wall, its pylons stained amber. The unsettled amber cell forms inside the plate's reticulum - nested curved sacs opening toward the gate - slides down the lane to the bay while the courier waits overhead, and leaves only in the courier's hold: carried through the air and set down at the resolve lane's entry gate, one seat behind the line, so it never lands where a cell already stands. The courier then steps sideways onto the lever and throws it - nothing else ever moves that lever - so the horizontal ram crosses the lane, pushes one cell clean off the edge through the one gap in the membrane, and the line indexes forward. On the last plate the run lies as frames on a tape between two reels, and a head reads its way out along the tape; the courier lands on the take-up reel's raised hub - the transport's one button - the hub gives under the press, and only then does the head turn and rewind, the courier stepping backwards alongside it before allowing itself one full spin on the climb home. Clicked anywhere on its round, the courier drops whatever it is carrying and darts off the sheet, drifting back on its own. Pointing at a plate darkens the ground beneath it and brings its verdicts forward."
+        >
+          <defs>
+            {/* One stipple only. The plate used to carry a second, coarser
+                dot grid as well, and at 13px pitch it read as the page's own
+                matrix showing THROUGH the plate - a solid surface looking
+                see-through. The fine ribosome stipple below is clearly
+                texture; the lookalike grid is gone. */}
+            <pattern id="fl-plasm" width="7" height="7" patternUnits="userSpaceOnUse">
+              <circle className="dgm-grain is-fine" cx="4.5" cy="3.5" r="0.55" />
+            </pattern>
+          </defs>
+
+          {STEPS.map((item) => (
+            <g
+              className={`fl-step is-${item.key}${hot === item.key ? ' is-hot' : ''}`}
+              key={item.key}
+              style={{ '--sx': item.sx }}
+              onMouseEnter={() => setHot(item.key)}
+              onMouseLeave={() => setHot((current) => (current === item.key ? null : current))}
+              onFocus={() => setHot(item.key)}
+              onBlur={() => setHot(null)}
+              tabIndex={0}
+              role="button"
+              aria-label={`${item.label}, ${item.fact} - ${item.read}`}
+            >
+              <StationBody item={item} />
             </g>
           ))}
 
