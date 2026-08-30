@@ -9,7 +9,9 @@
    Nothing here is invented: the ground is the section lattice at its own
    26px pitch, the ink and the accent are the site tokens, the mark is set in
    Endless and the sentence in Switzer - the same division of labour the page
-   makes between the display face and the UI face. The drum is the hero's own
+   makes between the display face and the UI face. The lattice runs unbroken
+   under both lines: nothing is knocked out behind the type, the way the
+   page sets its own copy straight onto the field. The drum is the hero's own
    motif, treated the way the hero and the closing CTA treat it - oversized
    past the frame it is in, bled off three edges, tipped -11deg and dropped
    to a wash the copy can sit straight on top of. It is bigger than the
@@ -70,17 +72,18 @@ const html = `<!doctype html>
     background-position: center, 13px 13px;
   }
 
-  /* Each text block stands on the lattice rather than on top of it: a soft
-     white bloom knocks the dots out under the glyphs, the way the page opens
-     its own ground under a label. */
-  .knock {
+  /* One centred lockup: the name, and the line it is making. Centred on the
+     banner's own middle - 104 of Endless over 27 of Switzer with the gap
+     between them read as one block - so the pair sits on the horizon of the
+     frame rather than in a corner of it. */
+  .lockup {
     position: absolute;
-    background: radial-gradient(ellipse at center, #ffffff 34%, rgba(255,255,255,0.82) 58%, rgba(255,255,255,0) 100%);
+    left: 0; right: 0; top: 50%;
+    transform: translateY(-50%);
+    text-align: center;
   }
 
   .mark {
-    position: absolute;
-    left: 92px; top: 96px;
     color: var(--ink);
     font-family: 'Endless', sans-serif;
     font-weight: 400;
@@ -93,15 +96,13 @@ const html = `<!doctype html>
   }
 
   .claim {
-    position: absolute;
-    right: 92px; bottom: 82px;
+    margin-top: 22px;
     color: var(--ink);
     font-family: 'Switzer', sans-serif;
     font-weight: 500;
-    font-size: 36px;
-    letter-spacing: -0.008em;
+    font-size: 27px;
+    letter-spacing: -0.004em;
     line-height: 1.2;
-    text-align: right;
     white-space: nowrap;
   }
   .claim em { font-style: normal; color: var(--accent); }
@@ -121,13 +122,14 @@ const html = `<!doctype html>
 </style></head>
 <body>
   <div class="field"></div>
-  <div class="knock" style="left: 0px; top: 44px; width: 614px; height: 216px;"></div>
   <svg class="drum" viewBox="0 0 476 520" fill="none" stroke="var(--accent)" stroke-width="33" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
     <path d="M 104.82 74.50 L 366.46 74.50 A 40.50 40.50 0 0 1 402.59 133.29 L 368.99 199.68 A 63.50 63.50 0 0 1 312.33 234.50 L 158.12 234.50 A 63.50 63.50 0 0 1 101.18 199.11 L 68.50 132.93 A 40.50 40.50 0 0 1 104.82 74.50 Z"/>
     <path d="M 158.62 284.50 L 312.06 284.50 A 63.50 63.50 0 0 1 368.75 319.39 L 403.25 387.75 A 40.50 40.50 0 0 1 367.09 446.50 L 104.32 446.50 A 40.50 40.50 0 0 1 68.01 388.07 L 101.68 319.88 A 63.50 63.50 0 0 1 158.62 284.50 Z"/>
   </svg>
-  <div class="mark">Damaros</div>
-  <p class="claim">Agentic infrastructure <em>for clinical trials.</em></p>
+  <div class="lockup">
+    <div class="mark">Damaros</div>
+    <p class="claim">Agentic infrastructure <em>for clinical trials.</em></p>
+  </div>
 </body></html>`
 
 const dir = mkdtempSync(join(tmpdir(), 'damaros-banner-'))
