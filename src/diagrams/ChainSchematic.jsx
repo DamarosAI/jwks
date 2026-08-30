@@ -673,12 +673,20 @@ function mechanism(key, t) {
         // bridge projected end-on into a clump that sat over the entry
         // gate, and its towers crowded the shipping lane. A runway along x
         // projects LONG AND FLAT - the one clean reading this projection
-        // gives a rail - and at plan y -38 with its right tower at 24, past
-        // the far gate's lane, every foot of it stays clear of the gate,
-        // the seat, the apron and the pile; the elevated span crosses the lane twenty-six units up, where the screen never even overlaps. Towers first, runway over their caps, sliders in the OVER band.
+        // gives a rail. PLAN CLEARANCE IS NOT SCREEN CLEARANCE: the right
+        // tower once stood at 24, past the gate's lane in plan, and its
+        // twenty-six-unit box still rose across the gate mouth on screen -
+        // and the outbound shipment, sliding through ground BEHIND it,
+        // painted in front of it, because a mover's honest seat depth
+        // cannot follow it behind a post's early paint slot. So the tower
+        // answers where the reader looks: at 44 its screen interval begins
+        // right of everything that crosses the gate - the cut, both
+        // pylons, and the shipment's whole swept silhouette - and the spec
+        // holds that daylight in numbers. Towers first, runway over their
+        // caps, sliders in the OVER band.
         { ...stand(-58, -38, 5.5, 4.5, 26, 2.5), cls: 'fl-rig is-tower', depth: -102 },
-        { ...stand(24, -38, 5.5, 4.5, 26, 2.5), cls: 'fl-rig is-tower', depth: -101 },
-        { ...stand(-17, -38, 41, 3, 4, 2, 26), cls: 'fl-rig is-rail', depth: -100 },
+        { ...stand(44, -38, 5.5, 4.5, 26, 2.5), cls: 'fl-rig is-tower', depth: -101 },
+        { ...stand(-7, -38, 51, 3, 4, 2, 26), cls: 'fl-rig is-rail', depth: -100 },
         { ...stand(-52, -38, 6, 4, 8, 2.5, 24), cls: 'fl-gant', depth: OVER - 6 },
         { ...stand(-52, -27, 2.5, 11, 3, 1.5, 27), cls: 'fl-gant is-beam', depth: OVER - 5 },
         ...pile.map(([px, py, high, base], i) => cell(px, py, null, high, base, { turn: i })),

@@ -2490,7 +2490,7 @@ describe('The floor schematic', () => {
     // And every gap sits on the straight run of its own edge, where the
     // construction can cap it: |x| within hx - r on the long edges, |y|
     // within hy - r on the short ones.
-    const dish = floor.match(/const DISH = \{ hx: ([\d.]+), hy: ([\d.]+), r: (\d+)/).slice(1).map(Number)
+    const dish = floor.match(/const DISH = \{ hx: ([\d.]+), hy: ([\d.]+), r: (\d+), t: (\d+)/).slice(1).map(Number)
     const runX = dish[0] - dish[2]
     const runY = dish[1] - dish[2]
     for (const [lo, hi] of [[gates[0], gates[1]], [gates[4], gates[5]], [gates[8], gates[9]], [gates[12], gates[13]]]) {
@@ -2499,6 +2499,43 @@ describe('The floor schematic', () => {
     for (const [lo, hi] of [[gates[2], gates[3]], [gates[6], gates[7]], [gates[10], gates[11]]]) {
       assert.ok(lo >= -runY && hi <= runY, 'a short-edge gate must sit on the straight run')
     }
+
+    // AND THE GATE'S TRAFFIC CLEARS THE MACHINE'S FEET ON SCREEN, IN
+    // NUMBERS. The right gantry tower has stood in front of this gate
+    // twice: once on the shipping lane itself, and once just past it in
+    // plan - where its twenty-six-unit box still rose across the gate
+    // mouth on screen, and the outbound shipment, sliding through plan
+    // ground BEHIND the tower, painted in front of it, because a mover's
+    // honest seat depth cannot follow it behind a post's early paint slot.
+    // Plan clearance is not screen clearance. So the towers answer where
+    // the reader looks: each tower's screen-x interval must clear the
+    // whole span of the far gate's traffic - from the low pylon's outer
+    // edge to the greater of the high pylon's outer edge and the farthest
+    // silhouette edge the shipment reaches before it is gone - by a pixel
+    // of daylight.
+    const IXg = 0.866
+    const towers = [...floor.matchAll(/stand\((-?[\d.]+), (-?[\d.]+), ([\d.]+), ([\d.]+), [\d.]+, [\d.]+\), cls: 'fl-rig is-tower'/g)]
+      .map((m) => m.slice(1).map(Number))
+    assert.equal(towers.length, 2, 'the runway stands on two towers')
+    const pylonY = dish[1] - dish[3] / 2
+    const pylonRx = 3.4 * Math.SQRT2 * IXg
+    const gateLo = (gates[4] + pylonY) * IXg - pylonRx
+    const gateHi = (gates[5] + pylonY) * IXg + pylonRx
+    const shipHome = floor.match(/const slot = \[(-?\d+), -?\d+\]\.flatMap\(\(py\) => \[(-?\d+), /).slice(1).map(Number)
+    const shipSlide = Math.max(...[...css.match(/@keyframes fl-ship \{([\s\S]*?)\n\}/)[1]
+      .matchAll(/translate\((-?[\d.]+)px/g)].map((m) => Number(m[1])))
+    const shipEdge = (shipHome[1] - shipHome[0]) * IXg + shipSlide + 7 * Math.SQRT2 * IXg
+    const traffic = [gateLo, Math.max(gateHi, shipEdge)]
+    for (const [tcx, tcy, thx, thy] of towers) {
+      const span = [(tcx - thx - (tcy + thy)) * IXg, (tcx + thx - (tcy - thy)) * IXg]
+      assert.ok(span[1] < traffic[0] - 1 || span[0] > traffic[1] + 1,
+        `a tower over [${span.map((v) => v.toFixed(2))}] stands in the gate's traffic [${traffic.map((v) => v.toFixed(2))}]`)
+    }
+    // And the runway spans tower to tower - lengthening the reach moves
+    // the rail with it, so the towers cannot outrun their own span.
+    const rail = floor.match(/stand\((-?[\d.]+), -38, ([\d.]+), [\d.]+, [\d.]+, [\d.]+, [\d.]+\), cls: 'fl-rig is-rail'/).slice(1).map(Number)
+    assert.equal(rail[0] - rail[1], Math.min(towers[0][0], towers[1][0]), 'the runway starts on the left tower')
+    assert.equal(rail[0] + rail[1], Math.max(towers[0][0], towers[1][0]), 'the runway ends on the right tower')
 
     // The membrane is context, not content: fainter than the plan the machine
     // stands in, and never animated - a wall does not run.
