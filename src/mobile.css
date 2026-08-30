@@ -69,6 +69,7 @@ body,
     right: 12px;
     bottom: auto;
     left: 12px;
+    translate: none;
     display: grid;
     width: auto;
     min-height: 39px;

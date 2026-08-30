@@ -394,17 +394,25 @@ h2 {
 .page-spine {
   position: fixed;
   z-index: 20;
-  top: 96px;
-  bottom: 0;
+  top: 50%;
   left: clamp(18px, 2vw, 32px);
   display: grid;
   width: 34px;
-  align-content: center;
   gap: 5px;
+  padding: 11px 0;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface-solid) 92%, transparent);
+  box-shadow: 0 10px 30px rgba(33, 77, 121, 0.08);
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
   transform: none;
+  /* Centered by `translate` rather than transform: the type law pins
+     transform: none here (travel shears Endless), and the panel still
+     needs to hang from the viewport's middle the way the content used
+     to sit in the old top-to-bottom band. */
+  translate: 0 -50%;
   transition: opacity 360ms ease, visibility 0s linear 360ms;
 }
 
@@ -422,7 +430,7 @@ h2 {
   min-height: 34px;
   width: 100%;
   align-items: center;
-  justify-items: start;
+  justify-items: center;
   padding: 0;
   border: 0;
   background: transparent;
@@ -447,6 +455,7 @@ h2 {
     right: 14px;
     bottom: 14px;
     left: 14px;
+    translate: none;
     display: grid;
     width: auto;
     min-height: 46px;
