@@ -3028,6 +3028,32 @@ describe('The floor schematic', () => {
     const fetchBody = css.match(/@keyframes fl-fetch \{([\s\S]*?)\n\}/)[1]
     assert.doesNotMatch(fetchBody, /^\s*0%, [\d.]+% \{/m,
       'fl-fetch parks at the start of its cycle - the claw works from the first frame')
+    // AND THE RESET IS A TURNING POINT, NOT A PARKING SPOT. The head lands
+    // from the rewind and sets off again on the same frame - the slow
+    // crawl wraps the round's seam, so home is only ever an instant: a
+    // held pair at the home value in either transport clock is the
+    // machine stopping to rest, and it is banned.
+    for (const clock of ['fl-run', 'fl-wind']) {
+      const body = css.match(new RegExp(`@keyframes ${clock} \\{([\\s\\S]*?)\\n\\}`))[1]
+      assert.doesNotMatch(body, /[\d.]+%, [\d.]+% \{ transform: (?:translate\(0px, 0px\)|rotate\(0deg\))/,
+        `${clock} holds still at home - the transport sets off the frame it lands`)
+    }
+    // AND THE SCAN NEVER TOUCHES THE TAKE-UP END. The bar used to halt
+    // one plan unit off the reel's flange - the reel the courier is
+    // about to press - which read as the head ramming the machine's own
+    // end stop. The bar's leading edge must still cross the last frame
+    // (or the read is a lie), and must stop at least four plan units
+    // short of the take-up reel's edge. All three numbers come from the
+    // source and the keyframes, so any retiming re-answers to this.
+    const barHead = floor.match(/stand\((-?[\d.]+), -?[\d.]+, ([\d.]+), [\d.]+, [\d.]+, [\d.]+, [\d.]+\), cls: 'fl-head is-bar'/).slice(1).map(Number)
+    const takeUp = floor.match(/drum\((\d+), 2, (\d+), 7\), cls: 'fl-reel' \}/).slice(1).map(Number)
+    const lastFrame = Math.max(...floor.match(/const at = \[([-\d, ]+)\]/)[1].split(',').map(Number))
+    const runMax = Math.max(...[...css.match(/@keyframes fl-run \{([\s\S]*?)\n\}/)[1]
+      .matchAll(/translate\((-?[\d.]+)px/g)].map((m) => Number(m[1])))
+    const barReach = barHead[0] + runMax / 0.866 + barHead[1]
+    assert.ok(barReach >= lastFrame, `the head's leading edge stops at ${barReach.toFixed(1)}, short of the last frame at ${lastFrame}`)
+    assert.ok(barReach <= takeUp[0] - takeUp[1] - 4,
+      `the head's leading edge reaches ${barReach.toFixed(1)}, crowding the take-up reel's edge at ${takeUp[0] - takeUp[1]}`)
 
     // FIVE STATIONS, FIVE KINEMATICS - and each one is the tool the step
     // actually is rather than a shape chosen to be different. Chasing five
@@ -3162,7 +3188,7 @@ describe('The floor schematic', () => {
       `the lever rests until ${throwAt}%, which must sit inside the courier's Resolve stop (${leverFrom}-${leverTo})`)
     const [reelFrom, reelTo] = stopWindow(stops[4])
     const pressAt = Number(css.match(/@keyframes fl-press \{\s*\n\s*0%, ([\d.]+)% \{ transform: translateY\(0px\); \}/)[1])
-    const turnAt = Number(css.match(/@keyframes fl-run \{[\s\S]*?[\d.]+%, ([\d.]+)% \{ transform: translate\(58\.89px, 23\.12px\)/)[1])
+    const turnAt = Number(css.match(/@keyframes fl-run \{[\s\S]*?[\d.]+%, ([\d.]+)% \{ transform: translate\(55\.42px, 21\.76px\)/)[1])
     assert.ok(pressAt >= reelFrom && turnAt <= reelTo,
       'the reel gives and the head turns inside the courier\'s Replay stop')
     assert.ok(pressAt < turnAt, 'the reel must give BEFORE the head turns for home - the reversal answers the press')

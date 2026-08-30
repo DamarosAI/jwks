@@ -13645,21 +13645,26 @@ html.is-hidden .clinic-node i,
 .fl-head.is-bar .dgm-face-top { fill: var(--tone); }
 
 /* Forward at a constant rate, because a transport does not accelerate
-   through a record - and READING FROM THE ROUND'S FIRST FRAME: the head
-   used to park until 45%, which left the plate dead for the first seven
-   seconds a reader saw, and a transport with a dead stretch is a shelf.
-   Now the whole first two thirds of the round is one slow crawl out, the
-   dwell at the far end waits for the courier to land on the take-up
-   reel, and the head turns for home at 68.8, a tenth after the hub gives
-   at 68.7. The forward read is the housework; only the press makes the
-   tape run BACK, and when the visitor is not on the sheet, it never
-   does. */
+   through a record - and NEVER AT REST GOING FORWARD: the head used to
+   park until 45%, then to rest again after the rewind, and a transport
+   with a dead stretch is a shelf. The reset is a turning point now, not
+   a parking spot - the head lands from the rewind at 82 and sets off
+   again on the same frame, so the slow crawl out wraps the round's seam
+   and 0% finds the head already thirteen units into its read. The dwell
+   at the far end waits for the courier, the hub gives at 68.7, the head
+   turns at 68.8. AND THE SCAN STOPS SHORT OF THE TAKE-UP END: the
+   travel is sixty-four plan units now, not sixty-eight - the bar's
+   leading edge still crosses the last frame, but halts five clear units
+   before the reel the courier is about to press, instead of parking one
+   unit off its flange. Only the press makes the tape run BACK, and when
+   the visitor is not on the sheet, it never does. */
 .dgm-svg.is-live .fl-head { animation: fl-run 16.8s linear infinite; }
 
 @keyframes fl-run {
-  0% { transform: translate(0px, 0px); }
-  66.5%, 68.8% { transform: translate(58.89px, 23.12px); animation-timing-function: cubic-bezier(0.5, 0, 0.2, 1); }
-  82%, 100% { transform: translate(0px, 0px); }
+  0% { transform: translate(11.81px, 4.64px); }
+  66.5%, 68.8% { transform: translate(55.42px, 21.76px); animation-timing-function: cubic-bezier(0.5, 0, 0.2, 1); }
+  82% { transform: translate(0px, 0px); }
+  100% { transform: translate(11.81px, 4.64px); }
 }
 
 /* The tape, which is a solid and not two printed lines. Seven blocks standing
@@ -13686,24 +13691,27 @@ html.is-hidden .clinic-node i,
 .dgm-svg.is-live .fl-spin { animation: fl-wind 16.8s linear infinite; }
 
 @keyframes fl-wind {
-  0% { transform: rotate(0deg); }
-  66.5%, 68.8% { transform: rotate(208deg); animation-timing-function: cubic-bezier(0.5, 0, 0.2, 1); }
-  82%, 100% { transform: rotate(0deg); }
+  0% { transform: rotate(41.71deg); }
+  66.5%, 68.8% { transform: rotate(195.8deg); animation-timing-function: cubic-bezier(0.5, 0, 0.2, 1); }
+  82% { transform: rotate(0deg); }
+  100% { transform: rotate(41.71deg); }
 }
 
 /* A frame lifts a hair as the head crosses it and settles behind it. That is a
    record being read rather than seven blocks blinking: the delay walks the tape
-   at the rate the head walks it - 1.8s a frame, the slow read's own pace, so
-   the last frame lifts just as the head reaches the far end. */
+   at the rate the head walks it - 2.28s a frame, the wrapped crawl's own pace.
+   The walk starts at 84.4, just after the reset, so frame zero lifts as the
+   head sets off from it and the last frame lifts exactly as the head arrives
+   at the far end. */
 .dgm-svg.is-live .fl-frame {
   animation: fl-read 16.8s ease-in-out infinite;
-  animation-delay: calc(var(--turn, 0) * 1.8s);
+  animation-delay: calc(var(--turn, 0) * 2.28s);
 }
 
 @keyframes fl-read {
-  0%, 0.8% { transform: translateY(0px); }
-  1.8%, 2.8% { transform: translateY(-3px); }
-  4.6%, 100% { transform: translateY(0px); }
+  0%, 83.4% { transform: translateY(0px); }
+  84.4%, 85.4% { transform: translateY(-3px); }
+  87.2%, 100% { transform: translateY(0px); }
 }
 
 /* THE BUTTON IS REAL, AND IT IS ONLY THE TOP CIRCLE. The take-up reel's
