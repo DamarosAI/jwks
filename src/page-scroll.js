@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-/** Live product chrome. Clip-only — never a page-scroll trap. */
+/** Live product chrome. Clip-only - never a page-scroll trap. */
 export const DEMO_PAGE_WHEEL_SURFACES = [
   '.hero-workspace',
   '.control-system',

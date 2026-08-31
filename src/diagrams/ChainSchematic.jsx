@@ -1044,40 +1044,61 @@ function mechanism(key, t) {
    the row already says these five are one run, and it says it with one line
    instead of fourteen marks. */
 
-/* What the caption says when no station is hot - and one of the lines the
-   readout reserves room for, so it is a name, not an inline string. */
-const READ_REST = 'One protocol, executed the same way at every site, and reconstructable end to end.'
+/* WHAT THE CAPTION SAYS WHEN NO STATION IS HOT - and one of the lines the
+   readout reserves room for, so it is a name, not an inline string.
+
+   The section used to close with a slogan under the drawing. The slogan was
+   answering a claim the page had already made twice, and it sat where the one
+   piece of writing this figure actually needs belongs: the reads. So the
+   slogan went, the reads grew, and this line carries the run at rest.
+
+   THE READS SAY WHAT CHANGES, NOT WHAT IS THERE. A reader who has never run a
+   trial needs to know what each station replaces - the binder, the hand-check,
+   the judgement call that lands differently twice, the day spent chasing, the
+   audit nobody can answer - and who does that work now.
+
+   AND THEY SAY IT IN THE PRODUCT'S OWN LAW, which is one sentence long: agents
+   prepare the work at every step; deterministic code and a named person
+   decide. So the reads name what an agent does at each station - drafts the
+   cited criterion, maps the record, stages the REVIEW - and where the same
+   read has to, they name what an agent never does: it does not cast the
+   verdict, it does not pick the action, it does not hold the pen. Every claim
+   here is one the kernel makes: citation back to the source text, facts bound
+   to their record and sealed as of the day, one deterministic verdict per
+   protocol-and-evidence pair, a signature on every decision, and a run that
+   reproduces rather than gets rebuilt. */
+const READ_REST = 'One protocol, executed the same way at every site. Agents prepare the work at every step - reading, mapping, drafting - and deterministic code and a named person make every decision that counts.'
 
 const STEPS = [
   {
     key: 'protocol',
     label: 'PROTOCOL',
     fact: 'V2.1 - 36 CRITERIA',
-    read: 'The study arrives as something that executes, with its criteria as logic rather than prose.',
+    read: 'The trial arrives as a document and leaves as logic that runs. Agents draft every criterion with its citation back into the source text, and a person signs the version - so nobody screens a patient by rereading a binder.',
   },
   {
     key: 'evidence',
     label: 'EVIDENCE',
     fact: '25 / 36 MAPPED',
-    read: 'Site records bind to the criteria that need them, and stay where they already are.',
+    read: 'Nothing here is hand-checked. Agents map the site\'s own records onto the criteria that need them, and each fact is bound to the record it came from and sealed as of that day - and none of it leaves the site.',
   },
   {
     key: 'screening',
     label: 'SCREENING',
     fact: '1 PASS - 4 REVIEW - 3 FAIL',
-    read: 'Deterministic. The same protocol against the same evidence reaches the same result.',
+    read: 'Deterministic, and no model touches the verdict. The same protocol against the same evidence returns the same PASS, REVIEW or FAIL every time, and the trace shows which facts, which sources, and what went stale.',
   },
   {
     key: 'resolve',
     label: 'RESOLVE',
     fact: 'PI SIGNED - ED25519',
-    read: 'Where the answer needs judgement, a named person makes the call and signs it.',
+    read: 'Ambiguity becomes a worklist instead of a fire. Agents stage each REVIEW with its citations already attached; a named person picks the action and signs it. One surface, and no day spent chasing twenty systems.',
   },
   {
     key: 'replay',
     label: 'REPLAY',
     fact: 'CHAIN INTACT 9 / 9',
-    read: 'Any decision reconstructs cold: protocol version, evidence as of then, and who decided.',
+    read: 'Years later, the run reproduces itself. The record holds the protocol version, the evidence as of that day and every signature - so an audit reaches the same result rather than a reconstruction of it.',
   },
 ].map((step, index) => {
   const t = (index - 2) * STEP

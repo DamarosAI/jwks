@@ -152,11 +152,15 @@ if (!app.includes('about-scroll-cue') || !app.includes('hero-scroll-cue') || !ap
 if (!css.includes('.thesis-section.section-space') || !css.includes('22vh')) {
   throw new Error('Home hero and thesis must share a scroll stop')
 }
-if (!app.includes('The next generation of medicine') || !app.includes("tomorrow's research infrastructure") || app.includes('Most clinics cannot budget') || app.includes('whether a site runs one trial or a hundred') || app.includes('is building what comes next') || !app.includes('<h2 className="thesis-closer">')) {
-  throw new Error('Thesis must close with its one sentence under the figure, and nothing else')
+if (app.includes('The next generation of medicine') || app.includes("tomorrow's research infrastructure") || app.includes('Most clinics cannot budget') || app.includes('whether a site runs one trial or a hundred') || app.includes('is building what comes next') || app.includes('thesis-closer')) {
+  throw new Error('Thesis must close on the figure, whose caption is the section\'s only prose')
 }
-if (app.includes('—') || css.includes('—')) {
-  throw new Error('Public copy and styles must not use em dashes')
+// NO EM DASH ANYWHERE. Not in copy, not in a stylesheet, not in a comment on a
+// diagram sheet. The hyphen with spaces around it is the only dash this site
+// sets, and a rule with an exception is a rule that leaks back in.
+const dashSources = await Promise.all(['src/App.jsx', 'src/PrivacyPage.jsx', 'src/styles.css', 'src/mobile.css', 'src/app.css', 'src/page-scroll.js', 'src/diagrams/ChainSchematic.jsx', 'src/diagrams/TridentSchematic.jsx', 'src/diagrams/NectarSchematic.jsx', 'src/diagrams/Courier.jsx', 'index.html', 'llms.txt', 'public/llms.txt'].map(async (file) => [file, await readSource(`${root}${file}`)]))
+for (const [file, text] of dashSources) {
+  if (text.includes('—') || text.includes('–')) throw new Error(`${file} must not use em or en dashes`)
 }
 if (!app.includes('<span>Evidence stays</span>') || !app.includes('<span>with the site.</span>')) {
   throw new Error('Site control heading must break onto two lines')

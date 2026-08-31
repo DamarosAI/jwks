@@ -98,10 +98,10 @@ describe('Damaros brand mark', () => {
     assert.match(css, /\.page-spine \{[\s\S]*?width:\s*34px;/)
     assert.match(css, /\.site-nav-wrap \{[\s\S]*?z-index:\s*50;[\s\S]*?isolation:\s*isolate;/)
     // The thesis section is a left-set column now rather than a centred slab -
-    // the eyebrow, the figure and the closer all start on one pixel - so both
-    // of these pin the LEFT setting and the alignment they replaced.
+    // the eyebrow, the figure and the figure's caption all start on one pixel
+    // - so both of these pin the LEFT setting and the alignment they replaced.
     assert.match(css, /\.thesis-section \{[\s\S]*?align-items:\s*stretch;[\s\S]*?text-align:\s*left;/)
-    assert.match(css, /\.thesis-closer \{[\s\S]*?text-align:\s*left;/)
+    assert.match(css, /\.thesis-column \{[\s\S]*?text-align:\s*left;/)
     // And the column width is SOLVED against the eyebrow's own offset rather
     // than eyeballed: the eyebrow sits at `(W - min(W, 1480)) / 2 + gutter`
     // from the section edge, and a column centred in a content box already
@@ -145,27 +145,23 @@ describe('Damaros brand mark', () => {
     assert.doesNotMatch(css, /\.landing-source-view \.workspace-view \{[\s\S]*?min-height:\s*789px/)
   })
 
-  it('closes the thesis with its own sentence and even section padding', () => {
-    // THE HEADLINE IS THE CLOSER NOW. The slogan that sat under the figure
-    // answered a claim the reader had already met twice; the claim itself
-    // moved down instead - the section's one sentence, under the drawing
-    // that earns it, still breaking where the statement turns and keeping
-    // the accent on the first statement. It is the section's one heading,
-    // so it is an h2.
-    assert.match(app, /<h2 className="thesis-closer"><span className="thesis-line accent-text">The next generation of medicine<\/span><span className="thesis-line">deserves tomorrow's research infrastructure\.<\/span><\/h2>/)
+  it('closes the thesis with the figure alone and even section padding', () => {
+    // NOTHING SITS UNDER THE DRAWING BUT ITS OWN CAPTION. A headline stood
+    // here, then a dek, then a slogan in the closer's seat - three attempts
+    // at a sentence that could stand against five running plates, each one
+    // the section answering a claim the page had already made twice. The
+    // writing this section needed was the figure's caption, so the slogan
+    // went and the reads grew. Every trace of the closer goes with it: the
+    // element, its class, its own ramp, and its seat in the four grouped
+    // rules that used to size it as a page heading.
+    assert.doesNotMatch(app, /thesis-closer|thesis-line/)
+    assert.doesNotMatch(app, /The next generation of medicine|tomorrow's research infrastructure/)
     assert.doesNotMatch(app, /is building what comes next/)
-    assert.match(css, /#root \.thesis-closer \.thesis-line \{[^}]*display:\s*block;/)
-    // The sentence runs on the same body-anchored ramp the two product deks
-    // run on, pinned at `#root` because four grouped rules in the sheet used
-    // to size this element as a page heading. If any of them is ever
-    // re-added, the thesis line silently goes back to four inches and this
-    // is the thing that notices.
-    assert.match(css, /#root \.thesis-closer \{\s*\n\s*font-size:\s*clamp\(1\.34rem, 1\.1rem \+ 1\.02vw, 2\.05rem\);/)
-    assert.doesNotMatch(css, /\.thesis-closer,\n\.capacity-section \.section-heading h2/)
-    assert.doesNotMatch(css, /#root \.section-heading h2,\n#root \.thesis-closer/)
-    // And it sits UNDER the drawing. Order in the source is the order on the
-    // page.
-    assert.match(app, /className="thesis-chain">[\s\S]*?<\/div>\s*\n\s*<h2 className="thesis-closer">/)
+    assert.doesNotMatch(css, /thesis-closer|thesis-line/)
+    assert.doesNotMatch(mobile, /thesis-closer|thesis-line/)
+    // The figure is the last thing in the column, and order in the source is
+    // the order on the page.
+    assert.match(app, /className="thesis-chain">\s*\n\s*<ChainSchematic animate=\{animate\} \/>\s*\n\s*<\/div>\s*\n\s*<\/div>/)
     assert.match(css, /\.thesis-section\.section-space \{[\s\S]*?padding-block:\s*112px;/)
     assert.match(css, /\.landing-hero \{[\s\S]*?padding:\s*clamp\(196px, 22vh, 248px\) var\(--gutter\) 112px;/)
     assert.match(app, /className="hero-scroll-cue"/)

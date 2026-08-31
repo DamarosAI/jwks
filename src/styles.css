@@ -1130,33 +1130,16 @@ h2 {
   margin-inline: clamp(-136px, calc((1480px - 100vw) / 2), 0px);
 }
 
-/* THE CLOSER IS THE HEADLINE NOW, under the drawing that earns it. The slogan
-   that sat here answered a claim the reader had already been given twice; the
-   claim itself moved down instead, set in the display face on the deks' own
-   ramp, two statements breaking where the statement turns - the last line of
-   an argument rather than a caption for one. It is the section's one heading,
-   so it is an h2, and the accent stays on the first statement. */
+/* AND NOTHING SITS UNDER THE DRAWING BUT ITS OWN CAPTION.
 
-.thesis-closer {
-  width: 100%;
-  max-width: 40ch;
-  margin: clamp(18px, 2.2vw, 32px) 0 0;
-  color: var(--text);
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-synthesis: none;
-  letter-spacing: -0.014em;
-  line-height: 1.1;
-  text-align: left;
-  text-wrap: balance;
-}
-
-.thesis-closer .accent-text {
-  color: var(--accent);
-  font-family: inherit;
-  font-weight: inherit;
-  text-align: inherit;
-}
+   A headline stood here, then a dek, then a slogan in the closer's seat -
+   three attempts at a sentence that could stand against five running plates,
+   and each one was the section answering a claim the page had already made
+   twice. The figure's caption is the writing this section needed: one line at
+   rest and five reads that say what each station replaces and who does the
+   work now. It is prose in the document rather than type in the drawing, it
+   holds its size while the figure scales, and it is styled with the readout,
+   down in the floor sheet's own block. */
 
 
 /* Bays, not tiles. The list is five and it is not growing, so it sits still and
@@ -8953,13 +8936,13 @@ html.is-hidden .clinic-node i,
   font-family: var(--font-ui);
 }
 
-#root :is(.wordmark, .hero-heading, .hero-line, .about-hero-copy h1, .about-hero-copy h1 span, .founder-section blockquote, .founder-section blockquote span, .footer-mark > span, .final-cta h2, .thesis-closer, .thesis-closer *, .section-heading h2, .section-heading h2 *, .control-copy h2, .control-copy h2 *, .why-now-title h2, .bento-copy h3, .bento-copy h3 *, .record-copy h3, .record-copy h3 *, .page-spine button > span, .why-now-lines .why-now-line > span, .outcome-panel > span, h1, h2) {
+#root :is(.wordmark, .hero-heading, .hero-line, .about-hero-copy h1, .about-hero-copy h1 span, .founder-section blockquote, .founder-section blockquote span, .footer-mark > span, .final-cta h2, .section-heading h2, .section-heading h2 *, .control-copy h2, .control-copy h2 *, .why-now-title h2, .bento-copy h3, .bento-copy h3 *, .record-copy h3, .record-copy h3 *, .page-spine button > span, .why-now-lines .why-now-line > span, .outcome-panel > span, h1, h2) {
   font-family: 'Endless', sans-serif;
   font-weight: 400;
   font-synthesis: none;
 }
 
-#root :is(h1, h2, .hero-heading, .hero-line, .thesis-closer, .section-heading h2) :is(*) {
+#root :is(h1, h2, .hero-heading, .hero-line, .section-heading h2) :is(*) {
   font-family: inherit;
   font-weight: inherit;
   font-synthesis: none;
@@ -12402,28 +12385,6 @@ html.is-hidden .clinic-node i,
   }
 }
 
-/* ONE SIZE FOR THE CLOSER, and it is the deks' own ramp.
-
-   `.trident-copy .section-dek` and `.nectar-copy .section-dek` are the two
-   lines on this site that sit against a figure and say what it will not say
-   itself. The workflow sentence does that job from below the drawing now, so
-   it runs on exactly that ramp - anchored to the body size rather than to
-   `--fluid-lead`, which bottoms out under it on a phone and would invert the
-   two. Set at `#root` because four grouped rules in this sheet used to size
-   the thesis sentence as a page heading and one of them will try again. */
-
-#root .thesis-closer {
-  font-size: clamp(1.34rem, 1.1rem + 1.02vw, 2.05rem);
-}
-
-/* The sentence is two statements, so it breaks where it turns rather than
-   wherever the column happens to run out. */
-
-#root .thesis-closer .thesis-line {
-  display: block;
-  text-wrap: balance;
-}
-
 /* Capacity: three figures, and the systems they have to reach.
 
    The section also carried a compiled-protocol panel and an execution-record
@@ -13801,7 +13762,13 @@ html.is-hidden .clinic-node i,
 /* ── The readout ─────────────────────────────────────────────────────────
 
    Prose in the document, so it holds its size while the figure scales and a
-   screen reader gets it as text rather than as a label inside an image. */
+   screen reader gets it as text rather than as a label inside an image.
+
+   IT IS ALSO THE SECTION'S ONLY WRITING NOW. The slogan that used to close
+   the workflow section is gone, and the reads that replaced it are long
+   enough to tell a reader who has never run a trial what each station
+   replaces - so this is set as prose, on a reading measure, rather than as a
+   caption stretched to the width of a drawing that wants the screen. */
 
 .fl-readout {
   display: flex;
@@ -13809,9 +13776,9 @@ html.is-hidden .clinic-node i,
   gap: clamp(12px, 1.6vw, 22px);
   /* The caption stands back in the COLUMN. The figure breaks out of the
      reading measure because a run wants the width of the screen; its caption
-     is prose, and prose lines up with the closer under it - so the readout
-     cancels the chain's own bleed, margin for margin, and the pill starts
-     exactly where "Damaros is building what comes next" starts. */
+     is prose, and prose lines up with the column - so the readout cancels the
+     chain's own bleed, margin for margin, and the pill starts exactly where
+     the word WORKFLOW starts. */
   margin-inline: clamp(0px, calc((100vw - 1480px) / 2), 136px);
   margin-top: clamp(10px, 1.6vh, 20px);
   padding-top: clamp(10px, 1.4vh, 16px);
@@ -13844,10 +13811,15 @@ html.is-hidden .clinic-node i,
 .fl-readline {
   /* THE CAPTION HOLDS ITS GROUND. Every read the pill can show is stacked
      hidden in this one grid cell, so the line box is as tall as the
-     tallest caption at whatever width the reader holds - and the closer
-     under the figure never shifts when the narration changes. */
+     tallest caption at whatever width the reader holds - and nothing under
+     the figure shifts when the narration changes. Which is what let the
+     reads grow: the reserve is measured, not guessed, so a two-sentence
+     read costs the same still page as a half-line one did. */
   display: grid;
   width: 100%;
+  /* A reading measure, not the drawing's. The figure breaks the column
+     because a run wants the screen; a sentence read at 1480 does not. */
+  max-width: 80ch;
   min-width: 0;
   color: var(--text);
   font-size: clamp(0.95rem, 0.87rem + 0.36vw, 1.16rem);

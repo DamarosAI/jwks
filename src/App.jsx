@@ -629,23 +629,28 @@ function LandingHero() {
   )
 }
 
-/* THE WORKFLOW SECTION IS THE FIGURE, AND THE SENTENCE IS ITS LAST LINE.
+/* THE WORKFLOW SECTION IS THE FIGURE, AND ITS CAPTION IS THE WRITING.
 
    This carried a headline once - one line of six-inch type, then a dek set
-   over the drawing - and both were the section explaining itself before it
-   had shown anything. The figure is the argument: five stations, one run,
-   every seam plumbed. So the section opens the way the two product sections
-   open, with a NAME - WORKFLOW, set at the brand eyebrows' own volume,
-   because what the five plates draw is the product's shape - and the one
-   sentence the section keeps has moved to where a conclusion belongs: under
-   the drawing that earns it, in the closer's seat, replacing the slogan that
-   used to sit there.
+   over the drawing, then a slogan in the closer's seat under it - and all
+   three were the section explaining itself instead of explaining the run.
+   The figure is the argument: five stations, one run, every seam plumbed. So
+   the section opens the way the two product sections open, with a NAME -
+   WORKFLOW, set at the brand eyebrows' own volume, because what the five
+   plates draw is the product's shape.
+
+   And the prose it kept is the figure's own caption, which is the only
+   writing here a reader actually needs: one line at rest, and five reads
+   that say what each station replaces and who does that work now. The
+   slogan under the drawing was answering a claim the page had already made
+   twice; the caption answers the drawing. Nothing sits below the figure but
+   its own read.
 
    Everything in it lines up on the eyebrow's own left edge - the wrapper is
-   the same 1480 the eyebrow's offset is solved against - so the figure and
-   the closer start where the word WORKFLOW starts and the section reads as
-   one column rather than as a centred slab with a label stuck to its
-   corner. */
+   the same 1480 the eyebrow's offset is solved against, and the readout
+   cancels the drawing's bleed - so the figure and its caption start where
+   the word WORKFLOW starts and the section reads as one column rather than
+   as a centred slab with a label stuck to its corner. */
 
 /* THE FIGURE RUNS ITSELF, SO THE SECTION IS AN ORDINARY SECTION AGAIN.
 
@@ -682,7 +687,7 @@ function ThesisSection() {
       clearProps: 'transform',
       scrollTrigger: { trigger: root.current, start: 'top 68%', once: true },
     }),
-    gsap.from('.thesis-closer', {
+    gsap.from('.fl-readout', {
       opacity: 0,
       duration: 0.8,
       ease: 'power2.out',
@@ -699,7 +704,6 @@ function ThesisSection() {
         <div className="thesis-chain">
           <ChainSchematic animate={animate} />
         </div>
-        <h2 className="thesis-closer"><span className="thesis-line accent-text">The next generation of medicine</span><span className="thesis-line">deserves tomorrow's research infrastructure.</span></h2>
       </div>
     </section>
   )

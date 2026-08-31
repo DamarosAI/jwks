@@ -202,11 +202,11 @@ body,
     min-height: 0;
   }
 
-  #root :is(.thesis-closer, .capacity-section .section-heading, .control-copy) {
+  #root :is(.capacity-section .section-heading, .control-copy) {
     text-align: left;
   }
 
-  #root :is(.thesis-closer, .capacity-section .section-heading h2, .control-copy h2) {
+  #root :is(.capacity-section .section-heading h2, .control-copy h2) {
     letter-spacing: -0.018em;
     line-height: 1.04;
   }
@@ -334,8 +334,9 @@ body,
      gets the full measure instead of the sliver beside the pill. (This rule
      spent a while addressed to a readout class nothing renders, so phones
      kept the desktop row and every caption wrapped differently beside the
-     pill.) The reserve that keeps the closer from shifting is structural -
-     the readline's hidden ghost stack - not a guessed min-height here. */
+     pill.) The reserve that keeps the page still under a changing read is
+     structural - the readline's hidden ghost stack - not a guessed
+     min-height here, which matters more now the reads are two sentences. */
   #root .fl-readout {
     flex-direction: column;
     align-items: flex-start;
@@ -344,10 +345,6 @@ body,
 
   #root .thesis-column {
     width: 100%;
-  }
-
-  #root .thesis-closer {
-    max-width: none;
   }
 
   #root .final-cta {
