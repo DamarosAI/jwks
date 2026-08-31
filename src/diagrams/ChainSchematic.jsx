@@ -1,4 +1,4 @@
-import { memo, useState } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 
 import { ISO_X, ISO_Y, jitter, planCircle, planSpace, project, roundedBox, roundedCylinder, roundedSlab } from './iso'
 import { Faces } from './Solid'
@@ -406,6 +406,19 @@ const FACT_Y = 273
  * description says what is DRAWN, and a screen reader has the reads already,
  * on five focusable stations, without being told to point at anything. */
 const INVITE_Y = 34
+
+/* HOW LONG A POINTER HAS TO MEAN IT. The invitation used to go on the first
+ * mouseenter, and a mouseenter is not an intention - a reader scrolling the
+ * page drags the cursor straight across all five plates on the way past, and
+ * the line they had not read yet was gone before they arrived. So the sheet
+ * waits for a pointer to SETTLE on one station. A sweep touches a plate for a
+ * few dozen milliseconds; a look rests. Set to the sheet's own 260, the same
+ * beat every hover response here already transitions on.
+ *
+ * Only the POINTER serves this sentence. Focus does not: arriving by tab or by
+ * tap is deliberate by construction, and there is no such thing as scrolling
+ * past something with the keyboard. */
+const READ_DWELL_MS = 260
 
 /* -- WHAT RUNS ON EACH PLATE --------------------------------------------
 
@@ -1433,8 +1446,22 @@ const StationBody = memo(function StationBody({ item }) {
 export default function ChainSchematic({ animate = true }) {
   const frame = useCenterOnOverflow()
   const [hot, setHot] = useState(null)
-  // Once a station has been read the invitation has done its job and goes.
+  // Once a station has been READ - not merely crossed - the invitation has done
+  // its job and goes. The dwell timer is what tells those two apart.
   const [read, setRead] = useState(false)
+  const dwell = useRef(0)
+  useEffect(() => () => window.clearTimeout(dwell.current), [])
+
+  // The caption answers the pointer at once; only the invitation waits.
+  const enter = (key) => {
+    setHot(key)
+    window.clearTimeout(dwell.current)
+    dwell.current = window.setTimeout(() => setRead(true), READ_DWELL_MS)
+  }
+  const leave = (key) => {
+    window.clearTimeout(dwell.current)
+    setHot((current) => (current === key ? null : current))
+  }
   // The monitor's one nerve: clicked, it bolts; the flee animation ending
   // brings it back on its own, so there is no timer to leak.
   const [shy, setShy] = useState(false)
@@ -1473,8 +1500,8 @@ export default function ChainSchematic({ animate = true }) {
               className={`fl-step is-${item.key}${hot === item.key ? ' is-hot' : ''}`}
               key={item.key}
               style={{ '--sx': item.sx }}
-              onMouseEnter={() => { setHot(item.key); setRead(true) }}
-              onMouseLeave={() => setHot((current) => (current === item.key ? null : current))}
+              onMouseEnter={() => enter(item.key)}
+              onMouseLeave={() => leave(item.key)}
               onFocus={() => { setHot(item.key); setRead(true) }}
               onBlur={() => setHot(null)}
               tabIndex={0}

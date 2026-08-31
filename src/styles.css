@@ -12798,45 +12798,6 @@ html.is-hidden .clinic-node i,
   transition: fill 260ms ease;
 }
 
-/* THE INVITATION, in the air band over the run.
-
-   The five reads are the best writing in this section and a visitor can leave
-   without learning they exist, because the only thing announcing them is a
-   cursor over a plate. So the sheet says it, once, centred over the row and
-   set QUIETER than the station names - it is an instruction about the drawing,
-   not a part of it, so it takes the faint ink and the tracked small caps the
-   chrome uses everywhere else rather than the names' full body.
-
-   It retires when it is obeyed. The first station to go hot puts `is-read` on
-   the sheet and the line fades out for good, on the same 260ms every other
-   hover response here runs on, because an instruction still standing after it
-   has been followed is furniture. And it never eats a pointer: the plates
-   underneath keep every event. */
-
-.fl-invite {
-  fill: var(--faint);
-  font-family: var(--font-ui);
-  font-size: 9.5px;
-  font-weight: 600;
-  font-synthesis: none;
-  letter-spacing: 0.16em;
-  pointer-events: none;
-  text-transform: uppercase;
-  transition: opacity 260ms ease;
-}
-
-.dgm-svg.is-read .fl-invite { opacity: 0; }
-
-/* A phone has no hover to offer, and the stations answer a tap through their
-   own focus. The query is the thing that knows which gesture the reader has,
-   so the swap happens here rather than in the component. */
-.fl-invite.is-touch { display: none; }
-
-@media (hover: none) {
-  .fl-invite.is-pointer { display: none; }
-  .fl-invite.is-touch { display: revert; }
-}
-
 .fl-step.is-hot .fl-fact { fill: var(--ink-deep); }
 
 /* -- THE FIVE MECHANISMS ------------------------------------------------
@@ -13797,6 +13758,55 @@ html.is-hidden .clinic-node i,
 .fl-step.is-hot .fl-plate .dgm-face-top { stroke-width: 1.4; }
 
 .fl-emblem .dgm-face-top { transition: fill 300ms ease, stroke 300ms ease; }
+
+/* THE INVITATION, in the air band over the run.
+
+   The five reads are the best writing in this section and a visitor can leave
+   without learning they exist, because the only thing announcing them is a
+   cursor over a plate. So the sheet says it, once, centred over the row and
+   set QUIETER than the station names - it is an instruction about the drawing,
+   not a part of it, so it takes the tracked small caps the chrome uses
+   everywhere else rather than the names' full body.
+
+   IN THE HOUSE BLUE, AND HELD BACK. Grey read as a fifth piece of machine
+   lettering that had lost its plate. The accent is the ink this site uses for
+   the one line in a block that is talking TO the reader rather than labelling
+   something - the deks under the two product headings do exactly this - and
+   the drawing's blue is already the courier's own. Carried at 0.62 so it sits
+   under the station names in the reading order the row wants: plates, names,
+   then the aside above them.
+
+   It retires when it is OBEYED, not when it is crossed. The dwell timer in the
+   component is what separates a reader settling on a station from a cursor
+   dragged over five of them on the way down the page; once that lands,
+   `is-read` goes on the sheet and the line fades for good, on the same 260ms
+   every other hover response here runs on. And it never eats a pointer: the
+   plates underneath keep every event. */
+
+.fl-invite {
+  fill: var(--accent);
+  font-family: var(--font-ui);
+  font-size: 9.5px;
+  font-weight: 600;
+  font-synthesis: none;
+  letter-spacing: 0.16em;
+  opacity: 0.62;
+  pointer-events: none;
+  text-transform: uppercase;
+  transition: opacity 260ms ease;
+}
+
+.dgm-svg.is-read .fl-invite { opacity: 0; }
+
+/* A phone has no hover to offer, and the stations answer a tap through their
+   own focus. The query is the thing that knows which gesture the reader has,
+   so the swap happens here rather than in the component. */
+.fl-invite.is-touch { display: none; }
+
+@media (hover: none) {
+  .fl-invite.is-pointer { display: none; }
+  .fl-invite.is-touch { display: revert; }
+}
 
 /* ── The readout ─────────────────────────────────────────────────────────
 

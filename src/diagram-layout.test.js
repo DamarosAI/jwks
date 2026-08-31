@@ -1756,7 +1756,16 @@ describe('Trident and Nectar schematics', () => {
     assert.match(driver, /return \[figure, reduced \? rest : phase, reduced \|\| booted\]/)
     assert.doesNotMatch(driver, /export function useScrollPhase/)
     for (const source of sources) {
-      assert.doesNotMatch(source, /setTimeout|setInterval/)
+      // A REPEATING CLOCK IN JS IS ALWAYS THE SIN. Motion on these sheets runs
+      // on CSS clocks and on scroll, so nothing here may set one going.
+      assert.doesNotMatch(source, /setInterval/)
+      // One timeout is allowed on the floor sheet, and it is not motion: the
+      // pointer dwell that separates a reader settling on a station from a
+      // cursor dragged across five of them on the way down the page. Input
+      // intent, not animation - and it is named, so a second one cannot slip
+      // in behind it and start driving something.
+      const timers = [...source.matchAll(/setTimeout\(([^,]*),/g)].map((m) => m[1].trim())
+      assert.deepEqual(timers.filter((fn) => fn !== '() => setRead(true)'), [], 'no timer may drive a drawing')
     }
     for (const source of figures) {
       assert.match(source, /const \[figure, phase, booted\] = useScrollRun\(PHASES, \{ reduced \}\)/)
@@ -3339,6 +3348,12 @@ describe('The floor schematic', () => {
       .replace(/^[\s\S]*?\*\//, '')
       .replace(/\/\*[\s\S]*?\*\//g, '')
     assert.doesNotMatch(letters, /accent/, 'the lettering does not spend the sheet\'s one colour')
+    // AND THE INVITATION IS NOT LETTERING. It is an aside about the drawing
+    // rather than a label on it, so it is styled outside this block, in the
+    // chrome above the readout, and it is the one text on the sheet allowed
+    // the accent - which is precisely how a reader tells it apart from the
+    // five names that ARE part of the figure.
+    assert.doesNotMatch(letters, /fl-invite/, 'the invitation is chrome, and is styled with the chrome')
     assert.doesNotMatch(css, /@keyframes fl-label/)
 
     // THE CAPTION HOLDS ITS GROUND. Every read the pill can show is drawn
@@ -3502,7 +3517,7 @@ describe('The floor schematic', () => {
     // and on a touch screen `:hover` sticks after the finger has gone, so the
     // plate stayed lifted under a caption that had moved on.
     assert.doesNotMatch(css.slice(css.indexOf('FIVE SURFACES, ALREADY DOWN')), /\.fl-step:hover/)
-    assert.match(floor, /onMouseEnter=\{\(\) => \{ setHot\(item\.key\); setRead\(true\) \}\}/)
+    assert.match(floor, /onMouseEnter=\{\(\) => enter\(item\.key\)\}/)
   })
 
   it('invites the reader into the reads, and stops once they are in', () => {
@@ -3520,14 +3535,35 @@ describe('The floor schematic', () => {
     const climb = Math.max(0, ...[...duck.matchAll(/translateY\((-[\d.]+)px\)/g)].map((m) => -Number(m[1])))
     assert.ok(inviteY + 16 < 72 - climb, `the invitation crowds the courier: ${inviteY} against ${72 - climb}`)
     // It is quieter than the station names, because it is an instruction about
-    // the drawing rather than a part of it, and it never eats a pointer.
-    assert.match(css, /\.fl-invite \{[\s\S]*?fill: var\(--faint\);/)
+    // the drawing rather than a part of it, and it never eats a pointer. The
+    // house blue is the ink this site gives the one line in a block that talks
+    // TO the reader instead of labelling something, and it is carried back so
+    // the aside sits under the names in the row's reading order.
+    assert.match(css, /\.fl-invite \{[\s\S]*?fill: var\(--accent\);/)
     assert.match(css, /\.fl-invite \{[\s\S]*?pointer-events: none;/)
+    const inviteFade = Number(css.match(/\.fl-invite \{[\s\S]*?\n {2}opacity: ([\d.]+);/)[1])
+    assert.ok(inviteFade > 0.4 && inviteFade < 0.8, `an aside is neither shouting nor invisible: ${inviteFade}`)
     const inviteSize = Number(css.match(/\.fl-invite \{[\s\S]*?font-size: ([\d.]+)px;/)[1])
     const nameSize = Number(css.match(/\.fl-name \{[\s\S]*?font-size: (\d+)px;/)[1])
     assert.ok(inviteSize < nameSize, 'the instruction must not out-shout the stations it points at')
-    // AND IT RETIRES WHEN IT IS OBEYED.
+    // AND IT RETIRES WHEN IT IS OBEYED, NOT WHEN IT IS CROSSED. A reader on
+    // their way down the page drags the cursor across all five plates, and the
+    // line they had not read yet used to be gone before they arrived. So the
+    // pointer has to SETTLE: a sweep touches a plate for a few dozen
+    // milliseconds, a look rests. The caption still answers instantly - only
+    // the invitation waits - and the timer is cleared on the way out and on
+    // unmount, so a sweep leaves nothing running.
     assert.match(css, /\.dgm-svg\.is-read \.fl-invite \{ opacity: 0; \}/)
+    const dwellMs = Number(floor.match(/const READ_DWELL_MS = (\d+)/)[1])
+    assert.ok(dwellMs >= 200 && dwellMs <= 500, `a dwell is tenths of a second, not ${dwellMs}ms`)
+    assert.match(floor, /dwell\.current = window\.setTimeout\(\(\) => setRead\(true\), READ_DWELL_MS\)/)
+    assert.match(floor, /const leave = \(key\) => \{\s*\n\s*window\.clearTimeout\(dwell\.current\)/)
+    assert.match(floor, /useEffect\(\(\) => \(\) => window\.clearTimeout\(dwell\.current\), \[\]\)/)
+    // The caption is not gated on the dwell: hot lands on the first frame.
+    assert.match(floor, /const enter = \(key\) => \{\s*\n\s*setHot\(key\)/)
+    // Focus never waits. Arriving by tab or by tap is deliberate by
+    // construction, and nobody scrolls past something with a keyboard.
+    assert.match(floor, /onFocus=\{\(\) => \{ setHot\(item\.key\); setRead\(true\) \}\}/)
     // A phone has no hover to offer, and the query is the thing that knows.
     assert.match(css, /\.fl-invite\.is-touch \{ display: none; \}/)
     assert.match(css, /@media \(hover: none\) \{\s*\n\s*\.fl-invite\.is-pointer \{ display: none; \}\s*\n\s*\.fl-invite\.is-touch \{ display: revert; \}/)
