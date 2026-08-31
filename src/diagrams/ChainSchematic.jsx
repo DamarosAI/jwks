@@ -1067,6 +1067,25 @@ function mechanism(key, t) {
    signs. Written as a negative it read as a denial of something the reader had
    not suspected, which is a strange thing to put in a caption.
 
+   FIVE READS, FIVE SHAPES. Written to one template they came out as five
+   verses of the same hymn - agent verb, object, consequence - and a reader
+   skims the second one and stops. Each station is a different problem, so
+   each read is a different sentence. Protocol states a transformation.
+   Evidence opens on the day the coordinator actually has and answers it.
+   Screening opens on a principle nobody argues with, then earns it. Resolve
+   opens on the work itself. Replay opens on the bill. Five different first
+   words, and only one read that begins by naming the agent.
+
+   AND EACH ONE IS AIMED AT SOMETHING THAT ACTUALLY HURTS - the amendment that
+   silently invalidates what the coordinator knows, the value that takes four
+   systems and a phone call to confirm, the eligibility call that lands
+   differently depending on who read the chart, the inbox that is really a
+   worklist wearing the wrong clothes, and the audit that pays a person to
+   rebuild by hand what a machine already decided. In PROSE, not in figures:
+   the market brief carries numbers this site has no verified source for, and
+   a caption that quotes one is a claim the company then has to defend. Name
+   the pain; leave the arithmetic to the cited panels downpage.
+
    NO DASHES, AND NO SHOUTING. The reads are sentences, so they break on full
    stops rather than on a punctuation mark holding two clauses apart, and a
    verdict named in prose is set in prose: pass, review, fail. The demo chrome
@@ -1084,31 +1103,31 @@ const STEPS = [
     key: 'protocol',
     label: 'PROTOCOL',
     fact: 'V2.1 - 36 CRITERIA',
-    read: 'The trial arrives as a document and transforms into an object that runs. Agents draft each criterion as executable logic, cited back to the source text, and a person signs the version. Nobody screens a patient by rereading a binder.',
+    read: 'The trial arrives as a document and transforms into an object that runs. Agents draft each criterion as executable logic, cited back to the sentence it came from. A person signs the version, and when an amendment lands the logic moves with it.',
   },
   {
     key: 'evidence',
     label: 'EVIDENCE',
     fact: '25 / 36 MAPPED',
-    read: 'Nothing here is checked by hand. Agents map the site\'s own records onto the criteria that need them, and every fact stays bound to the record it came from, sealed as of that day. None of it leaves the site.',
+    read: 'A single lab value used to mean opening system after system, then a phone call. Agents now bring the record to the criterion that needs it, each fact tied to the document it came from and sealed on the day it was read. Nothing about the patient leaves the site.',
   },
   {
     key: 'screening',
     label: 'SCREENING',
     fact: '1 PASS - 4 REVIEW - 3 FAIL',
-    read: 'Agents map each fact onto what a criterion actually requires. The engine decides, and it decides deterministically: the same protocol against the same evidence reaches the same pass, review or fail, every time, with the facts and sources it used.',
+    read: 'Two people reading the same chart should not reach two answers. Agents line each fact up against what a criterion actually requires; the engine returns pass, review or fail, and the same evidence returns the same verdict tomorrow, with its reasons attached.',
   },
   {
     key: 'resolve',
     label: 'RESOLVE',
     fact: 'PI SIGNED - ED25519',
-    read: 'Ambiguity becomes a worklist instead of a fire. Agents stage each review with its citations already attached. A named person picks the action and signs it. One surface, instead of a day spent chasing twenty systems.',
+    read: 'Hard cases are the job, and they usually arrive as a full inbox. Here they arrive as a worklist: agents stage each review with its citations already attached, and a named person picks the action and signs it. One surface, and the day stops being a search.',
   },
   {
     key: 'replay',
     label: 'REPLAY',
     fact: 'CHAIN INTACT 9 / 9',
-    read: 'Years later, the run reproduces itself. The record holds the protocol version, the evidence as of that day and every signature, so an audit reaches the same result instead of a reconstruction of it.',
+    read: 'An audit is where a trial gets expensive, because someone has to rebuild every decision by hand, record by record. A run here does not get rebuilt. It reproduces, holding the protocol version, the evidence as of that day and every signature.',
   },
 ].map((step, index) => {
   const t = (index - 2) * STEP

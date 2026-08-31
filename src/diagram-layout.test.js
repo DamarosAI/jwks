@@ -3376,28 +3376,45 @@ describe('The floor schematic', () => {
       // full stop, not on a mark propping two halves apart.
       assert.doesNotMatch(read, / [-\u2013\u2014] /, `a read breaks on a full stop, not a dash: ${read}`)
     }
-    // Agents do the preparing, at every station that has preparation to do -
+    // FIVE READS, FIVE SHAPES. Written to one template they read as five
+    // verses of the same hymn, and a visitor skims the second one and stops.
+    // Each station is a different problem, so each read opens on a different
+    // word and only one of them opens by naming the agent.
+    assert.equal(new Set(reads.map((read) => read.split(' ')[0])).size, 5)
+    assert.equal(reads.filter((read) => /^Agents /.test(read)).length, 0)
+    // Agents do the preparing, at every station that has preparation to do,
     // screening included, because a fact does not map itself onto a criterion.
-    assert.equal(reads.filter((read) => /Agents /.test(read)).length, 4)
-    assert.match(reads[2], /Agents map each fact onto what a criterion actually requires/)
+    assert.equal(reads.filter((read) => /\bagents /i.test(read)).length, 4)
+    assert.match(reads[2], /Agents line each fact up against what a criterion actually requires/)
     assert.match(rest, /Agents prepare the work at every step/)
-    // The boundary is carried in the POSITIVE - who decides, not who does not.
+    // The boundary is carried in the POSITIVE: who decides, not who does not.
     // "No model casts the verdict" denied something the reader had not
-    // suspected; the engine deciding says the same thing and reads as a fact.
+    // suspected; the engine returning it says the same thing as a fact.
     assert.match(rest, /Deterministic code and a named person make every decision/)
-    assert.match(reads[2], /The engine decides, and it decides deterministically/)
-    assert.match(reads[3], /A named person picks the action and signs it/)
+    assert.match(reads[2], /the engine returns pass, review or fail/)
+    assert.match(reads[3], /a named person picks the action and signs it/)
     for (const read of reads) assert.doesNotMatch(read, /no model|never decides|does not decide/i)
     // A verdict named in prose is set in prose. The capitals belong to the
     // demo chrome, where those words are states of a record.
-    assert.match(reads[2], /the same pass, review or fail/)
     for (const read of reads) assert.doesNotMatch(read, /PASS|REVIEW|FAIL/)
+    // Each read is aimed at something that actually hurts, and it names the
+    // pain in PROSE. The market brief carries figures this site has no
+    // verified source for, and a caption that quotes one is a claim the
+    // company then has to defend. The cited panels downpage carry numbers.
+    for (const read of [...reads, rest]) {
+      assert.doesNotMatch(read, /\d/, `a read names the pain in prose, not in figures: ${read}`)
+    }
+    assert.match(reads[0], /when an amendment lands the logic moves with it/)
+    assert.match(reads[1], /opening system after system/)
+    assert.match(reads[2], /should not reach two answers/)
+    assert.match(reads[3], /arrive as a full inbox/)
+    assert.match(reads[4], /rebuild every decision by hand/)
     // And every value is traceable to what produced it, at the station that
     // produced it: a criterion to its source text, a fact to its record, a
     // signed run to the version and evidence it was decided on.
-    assert.match(reads[0], /cited back to the source text/)
-    assert.match(reads[1], /bound to the record it came from/)
-    assert.match(reads[1], /None of it leaves the site/)
+    assert.match(reads[0], /cited back to the sentence it came from/)
+    assert.match(reads[1], /tied to the document it came from/)
+    assert.match(reads[1], /Nothing about the patient leaves the site/)
     assert.match(reads[4], /protocol version, the evidence as of that day and every signature/)
   })
 
