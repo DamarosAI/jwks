@@ -1492,8 +1492,8 @@ export default function ChainSchematic({ animate = true }) {
               for the gesture the reader actually has. Swapped in CSS off
               `(hover: none)` rather than in JS, because a media query is the
               thing that knows. */}
-          <text className="fl-invite is-pointer" x={CX} y={INVITE_Y} textAnchor="middle">Hover a station to read the step</text>
-          <text className="fl-invite is-touch" x={CX} y={INVITE_Y} textAnchor="middle">Tap a station to read the step</text>
+          <text className="fl-invite is-pointer" x={CX} y={INVITE_Y} textAnchor="middle">Hover over a station to learn more</text>
+          <text className="fl-invite is-touch" x={CX} y={INVITE_Y} textAnchor="middle">Tap a station to learn more</text>
 
           {STEPS.map((item) => (
             <g

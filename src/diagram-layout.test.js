@@ -3524,8 +3524,8 @@ describe('The floor schematic', () => {
     // THE FIVE READS ARE FINDABLE. They are the best writing in the section
     // and the only thing announcing them was a cursor over a plate, so the
     // sheet says it in its own lettering, centred over the run.
-    assert.match(floor, /<text className="fl-invite is-pointer" x=\{CX\} y=\{INVITE_Y\} textAnchor="middle">Hover a station to read the step<\/text>/)
-    assert.match(floor, /<text className="fl-invite is-touch" x=\{CX\} y=\{INVITE_Y\} textAnchor="middle">Tap a station to read the step<\/text>/)
+    assert.match(floor, /<text className="fl-invite is-pointer" x=\{CX\} y=\{INVITE_Y\} textAnchor="middle">Hover over a station to learn more<\/text>/)
+    assert.match(floor, /<text className="fl-invite is-touch" x=\{CX\} y=\{INVITE_Y\} textAnchor="middle">Tap a station to learn more<\/text>/)
     // IT SITS IN THE COURIER'S AIR BAND, ABOVE THE ROUND. The body rests at 72
     // and the climb home is the one leg that lifts it, by fourteen, so nothing
     // on the sheet reaches 56. If that climb ever deepens past this clearance
@@ -3569,7 +3569,7 @@ describe('The floor schematic', () => {
     assert.match(css, /@media \(hover: none\) \{\s*\n\s*\.fl-invite\.is-pointer \{ display: none; \}\s*\n\s*\.fl-invite\.is-touch \{ display: revert; \}/)
     // It is not in the aria-label: a screen reader already has the reads on
     // five focusable stations and does not need to be told to point.
-    assert.doesNotMatch(floor, /aria-label="[^"]*[Hh]over a station/)
+    assert.doesNotMatch(floor, /aria-label="[^"]*[Hh]over over a station/)
   })
 
   it('holds a legible scale on a phone', () => {
