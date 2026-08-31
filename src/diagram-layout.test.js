@@ -1951,7 +1951,7 @@ describe('The floor schematic', () => {
     // The machines still gate on the section's power: clocks run while the
     // figure is on screen, and every seam handoff starts from that one class
     // flip - which is what keeps the five plates phase-locked.
-    assert.match(floor, /className=\{`dgm-svg is-floor\$\{animate \? ' is-live' : ''\}`\}/)
+    assert.match(floor, /className=\{`dgm-svg is-floor\$\{animate \? ' is-live' : ''\}\$\{read \? ' is-read' : ''\}`\}/)
     // And with no scatter to wait out, every station is a target from the
     // first frame.
     assert.match(floor, /tabIndex=\{0\}/)
@@ -3502,7 +3502,38 @@ describe('The floor schematic', () => {
     // and on a touch screen `:hover` sticks after the finger has gone, so the
     // plate stayed lifted under a caption that had moved on.
     assert.doesNotMatch(css.slice(css.indexOf('FIVE SURFACES, ALREADY DOWN')), /\.fl-step:hover/)
-    assert.match(floor, /onMouseEnter=\{\(\) => setHot\(item\.key\)\}/)
+    assert.match(floor, /onMouseEnter=\{\(\) => \{ setHot\(item\.key\); setRead\(true\) \}\}/)
+  })
+
+  it('invites the reader into the reads, and stops once they are in', () => {
+    // THE FIVE READS ARE FINDABLE. They are the best writing in the section
+    // and the only thing announcing them was a cursor over a plate, so the
+    // sheet says it in its own lettering, centred over the run.
+    assert.match(floor, /<text className="fl-invite is-pointer" x=\{CX\} y=\{INVITE_Y\} textAnchor="middle">Hover a station to read the step<\/text>/)
+    assert.match(floor, /<text className="fl-invite is-touch" x=\{CX\} y=\{INVITE_Y\} textAnchor="middle">Tap a station to read the step<\/text>/)
+    // IT SITS IN THE COURIER'S AIR BAND, ABOVE THE ROUND. The body rests at 72
+    // and the climb home is the one leg that lifts it, by fourteen, so nothing
+    // on the sheet reaches 56. If that climb ever deepens past this clearance
+    // the line and the courier start sharing a pixel, and this notices.
+    const inviteY = Number(floor.match(/const INVITE_Y = (\d+)/)[1])
+    const duck = css.match(/@keyframes fl-duck \{[\s\S]*?\n\}/)[0]
+    const climb = Math.max(0, ...[...duck.matchAll(/translateY\((-[\d.]+)px\)/g)].map((m) => -Number(m[1])))
+    assert.ok(inviteY + 16 < 72 - climb, `the invitation crowds the courier: ${inviteY} against ${72 - climb}`)
+    // It is quieter than the station names, because it is an instruction about
+    // the drawing rather than a part of it, and it never eats a pointer.
+    assert.match(css, /\.fl-invite \{[\s\S]*?fill: var\(--faint\);/)
+    assert.match(css, /\.fl-invite \{[\s\S]*?pointer-events: none;/)
+    const inviteSize = Number(css.match(/\.fl-invite \{[\s\S]*?font-size: ([\d.]+)px;/)[1])
+    const nameSize = Number(css.match(/\.fl-name \{[\s\S]*?font-size: (\d+)px;/)[1])
+    assert.ok(inviteSize < nameSize, 'the instruction must not out-shout the stations it points at')
+    // AND IT RETIRES WHEN IT IS OBEYED.
+    assert.match(css, /\.dgm-svg\.is-read \.fl-invite \{ opacity: 0; \}/)
+    // A phone has no hover to offer, and the query is the thing that knows.
+    assert.match(css, /\.fl-invite\.is-touch \{ display: none; \}/)
+    assert.match(css, /@media \(hover: none\) \{\s*\n\s*\.fl-invite\.is-pointer \{ display: none; \}\s*\n\s*\.fl-invite\.is-touch \{ display: revert; \}/)
+    // It is not in the aria-label: a screen reader already has the reads on
+    // five focusable stations and does not need to be told to point.
+    assert.doesNotMatch(floor, /aria-label="[^"]*[Hh]over a station/)
   })
 
   it('holds a legible scale on a phone', () => {

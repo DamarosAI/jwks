@@ -109,8 +109,32 @@ describe('demo controls', () => {
     assert.match(app, /role="group" aria-label="Scope the queue by deterministic result"/)
     assert.match(app, /aria-pressed=\{scope === 'review'\}/)
     assert.match(app, /inScope\(patient\)/)
-    // The guided tour only walks the queue while the scope is open.
-    assert.match(app, /if \(scope !== 'all'\) return/)
+  })
+
+  it('remembers what the visitor last opened in Screening and Resolve', () => {
+    // THE DEMO USED TO OVERWRITE ITS OWN READER. Both panes ran their
+    // selection off the hero's tick, so a subject the visitor had chosen was
+    // replaced three and a half seconds later, and both held that selection
+    // locally, so walking to another step and back reset it to something they
+    // had not picked. A signed decision did not survive the walk either.
+    const screening = app.slice(app.indexOf('function ScreeningView'), app.indexOf('function ResolveView'))
+    const resolve = app.slice(app.indexOf('function ResolveView'), app.indexOf('function ReplayView'))
+    for (const [name, view] of [['Screening', screening], ['Resolve', resolve]]) {
+      assert.doesNotMatch(view, /autoplayIndex/, `${name} must not move the selection on a clock`)
+      assert.doesNotMatch(view, /useState/, `${name} must not hold selection that dies with the pane`)
+      assert.doesNotMatch(view, /\btick\b/, `${name} has no business knowing the time`)
+    }
+    // The state lives one level up, with the stage that outlives the unmount.
+    assert.match(app, /const \[screeningSubject, setScreeningSubject\] = useState\(2\)/)
+    assert.match(app, /const \[screeningScope, setScreeningScope\] = useState\('all'\)/)
+    assert.match(app, /const \[resolveWork, setResolveWork\] = useState\(0\)/)
+    assert.match(app, /const \[resolveDecision, setResolveDecision\] = useState\(null\)/)
+    assert.match(app, /const \[resolveSigned, setResolveSigned\] = useState\(\{\}\)/)
+    assert.match(app, /<ScreeningView selectedSubject=\{screeningSubject\} setSelectedSubject=\{setScreeningSubject\} scope=\{screeningScope\} setScope=\{setScreeningScope\}/)
+    assert.match(app, /<ResolveView work=\{resolveWork\} setWork=\{setResolveWork\} decision=\{resolveDecision\} setDecision=\{setResolveDecision\} signedDecisions=\{resolveSigned\} setSignedDecisions=\{setResolveSigned\} \/>/)
+    // And the click still lands where it always did.
+    assert.match(screening, /onClick=\{\(\) => setSelectedSubject\(index\)\}/)
+    assert.match(resolve, /onClick=\{\(\) => selectWork\(index\)\}/)
   })
 
   it('prices every resolve option and names the signer before the pen moves', () => {

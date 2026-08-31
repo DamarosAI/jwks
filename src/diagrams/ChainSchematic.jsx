@@ -388,6 +388,25 @@ const CARGO_CORE = { dx: 1.99, dy: 0.78, ...planCircle(2.4) }
 const NAME_Y = 260
 const FACT_Y = 273
 
+/* THE ONE INSTRUCTION ON THE SHEET, and it is set where the sheet has room
+ * for it. The five reads are the best writing in this section and a visitor
+ * can leave without ever finding out they exist, because the only thing that
+ * says so is a cursor change over a plate. So the figure says it itself, in
+ * its own lettering, centred over the run.
+ *
+ * It sits in the AIR BAND the courier works, above the highest point of the
+ * round: the body rests at 72 and the climb home is the one leg that lifts it
+ * (fl-duck, minus fourteen), so nothing on the sheet reaches 56, and a
+ * baseline at 34 clears the courier by a full body without crowding the top
+ * edge. The line and the courier share that band and never share a pixel.
+ *
+ * And it retires the moment it is obeyed - `is-read` on the sheet the first
+ * time a station goes hot - because an instruction still standing after it has
+ * been followed is just furniture. It is not in the aria-label: the figure's
+ * description says what is DRAWN, and a screen reader has the reads already,
+ * on five focusable stations, without being told to point at anything. */
+const INVITE_Y = 34
+
 /* -- WHAT RUNS ON EACH PLATE --------------------------------------------
 
    FIVE MACHINES, AND EACH ONE HANDLES THE MATERIAL DIFFERENTLY.
@@ -1414,6 +1433,8 @@ const StationBody = memo(function StationBody({ item }) {
 export default function ChainSchematic({ animate = true }) {
   const frame = useCenterOnOverflow()
   const [hot, setHot] = useState(null)
+  // Once a station has been read the invitation has done its job and goes.
+  const [read, setRead] = useState(false)
   // The monitor's one nerve: clicked, it bolts; the flee animation ending
   // brings it back on its own, so there is no timer to leak.
   const [shy, setShy] = useState(false)
@@ -1423,7 +1444,7 @@ export default function ChainSchematic({ animate = true }) {
     <figure className="dgm">
       <div className="dgm-frame" ref={frame}>
         <svg
-          className={`dgm-svg is-floor${animate ? ' is-live' : ''}`}
+          className={`dgm-svg is-floor${animate ? ' is-live' : ''}${read ? ' is-read' : ''}`}
           viewBox={`0 0 ${W} ${H}`}
           role="img"
           aria-label="Five plates in a row, seen in axonometric projection, their machines already running - each plate bounded by its own printed double-walled membrane, the way a section drawing bounds a cell. The five stations are lettered in ink beneath their plates: Protocol, Evidence, Screening, Resolve, Replay. A small hovering courier shaped as the flat blue Damaros mark - a plump two-part silhouette that bobs with a soft jelly squash, its floor shadow beneath it - works the air above the row on one slow round, and the seams of the run move only under it. One cell - a round body with its nucleus drawn on top - runs the whole row. A grid of twelve switches on a breaker board is thrown one at a time, each settling green or red, and once per round the courier drops to the export gate: the compiled violet transcript slides to the mouth under its beam and crosses the seam riding just below the courier's body, led to the next plate and set in through the entry gate, where it docks beside the gantry. There a claw closes on one cell in a heap, lifts it, carries it across, and sets it down into an ordered bed of round sockets; the placed cell then slides up a printed lane to a staging seat, waits its beat, and continues straight out through that plate's far gate - one cell, one line, socket to seat to gate. Along the far long edge of the next plate, three verdict seats wait in a line - green, red, amber. The bed feeds the green pore as a moving line: one cell slides onto the mouth and is visibly swallowed down the bore while the seat behind it shuffles forward and the newly arrived cell takes the empty place; the red pore stands open and ringed; the amber seat is a gate cut through the plate's wall, its pylons stained amber. The unsettled amber cell forms inside the plate's reticulum - nested curved sacs opening toward the gate - slides down the lane to the bay while the courier waits overhead, and leaves only in the courier's hold: carried through the air and set down at the resolve lane's entry gate, one seat behind the line, so it never lands where a cell already stands. The courier then steps sideways onto the lever and throws it - nothing else ever moves that lever - so the horizontal ram crosses the lane, pushes one cell clean off the edge through the one gap in the membrane, and the line indexes forward. On the last plate the run lies as frames on a tape between two reels, and a head reads its way out along the tape; the courier lands on the take-up reel's raised hub - the transport's one button - the hub gives under the press, and only then does the head turn and rewind, the courier stepping backwards alongside it before allowing itself one full spin on the climb home. Clicked anywhere on its round, the courier drops whatever it is carrying and darts off the sheet, drifting back on its own. Pointing at a plate darkens the ground beneath it and brings its verdicts forward."
@@ -1439,14 +1460,22 @@ export default function ChainSchematic({ animate = true }) {
             </pattern>
           </defs>
 
+          {/* Two lines, one shown. A phone has no hover to offer and the
+              stations answer a tap through their own focus, so the sheet asks
+              for the gesture the reader actually has. Swapped in CSS off
+              `(hover: none)` rather than in JS, because a media query is the
+              thing that knows. */}
+          <text className="fl-invite is-pointer" x={CX} y={INVITE_Y} textAnchor="middle">Hover a station to read the step</text>
+          <text className="fl-invite is-touch" x={CX} y={INVITE_Y} textAnchor="middle">Tap a station to read the step</text>
+
           {STEPS.map((item) => (
             <g
               className={`fl-step is-${item.key}${hot === item.key ? ' is-hot' : ''}`}
               key={item.key}
               style={{ '--sx': item.sx }}
-              onMouseEnter={() => setHot(item.key)}
+              onMouseEnter={() => { setHot(item.key); setRead(true) }}
               onMouseLeave={() => setHot((current) => (current === item.key ? null : current))}
-              onFocus={() => setHot(item.key)}
+              onFocus={() => { setHot(item.key); setRead(true) }}
               onBlur={() => setHot(null)}
               tabIndex={0}
               role="button"

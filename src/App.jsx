@@ -491,6 +491,21 @@ function MiniRun() {
   const [evidenceSelected, setEvidenceSelected] = useState(0)
   const [evidenceLocked, setEvidenceLocked] = useState(false)
   const [evidenceActed, setEvidenceActed] = useState({})
+  /* THE WORKSPACE REMEMBERS WHAT THE VISITOR DID IN IT.
+     Screening and Resolve each held their own selection, so the demo did two
+     things a real application never does. It moved the selection under the
+     reader on a timer, three and a half seconds after they had chosen a
+     patient - and then, if they walked to another step and came back, it threw
+     the choice away and reset to a subject they had not picked. A signed
+     decision in Resolve did not survive the walk either.
+     So the state lives here, one level up, with the stage that owns it. It
+     outlives the unmount, and nothing on a clock writes to it. Evidence
+     already worked this way; these two now match it. */
+  const [screeningSubject, setScreeningSubject] = useState(2)
+  const [screeningScope, setScreeningScope] = useState('all')
+  const [resolveWork, setResolveWork] = useState(0)
+  const [resolveDecision, setResolveDecision] = useState(null)
+  const [resolveSigned, setResolveSigned] = useState({})
   const { held: pointerHeld, hold, clearHold } = useAutoplayHold(reduced)
   // Guided is the resting state. The first click anywhere in the demo hands
   // the visitor the controls for good - manual mode, said plainly by the pill
@@ -550,8 +565,8 @@ function MiniRun() {
               <div className="landing-source-view">
                 {active === 0 && <ProtocolView tick={tick} onAdvance={() => selectStage(1)} />}
                 {active === 1 && <EvidenceView refreshing={false} tick={tick} playing={playing} selected={evidenceSelected} setSelected={setEvidenceSelected} locked={evidenceLocked} setLocked={setEvidenceLocked} acted={evidenceActed} setActed={setEvidenceActed} onAdvance={() => selectStage(2)} />}
-                {active === 2 && <ScreeningView tick={tick} onAdvance={() => selectStage(3)} />}
-                {active === 3 && <ResolveView tick={tick} />}
+                {active === 2 && <ScreeningView selectedSubject={screeningSubject} setSelectedSubject={setScreeningSubject} scope={screeningScope} setScope={setScreeningScope} onAdvance={() => selectStage(3)} />}
+                {active === 3 && <ResolveView work={resolveWork} setWork={setResolveWork} decision={resolveDecision} setDecision={setResolveDecision} signedDecisions={resolveSigned} setSignedDecisions={setResolveSigned} />}
                 {active === 4 && <ReplayView tick={tick} />}
               </div>
             </div>
@@ -1006,17 +1021,12 @@ function EvidenceView({ refreshing, onAdvance, tick = 0, playing = false, select
   )
 }
 
-function ScreeningView({ onAdvance, tick = 0 }) {
+// The queue holds still. Nothing here runs on the demo's clock: a coordinator
+// reading a patient's blockers does not want the pane to move to the next
+// subject under them, and the selection and the scope both live in the stage
+// above, so walking to Resolve and back returns to the patient they left open.
+function ScreeningView({ onAdvance, selectedSubject, setSelectedSubject, scope, setScope }) {
   const settle = usePaneSettle()
-  const [selectedSubject, setSelectedSubject] = useState(2)
-  // The result tiles are a scope bar, not a caption: pressing one narrows the
-  // queue to that deterministic result. The guided tour only walks the queue
-  // while the scope is open, so a narrowed view stays where the user put it.
-  const [scope, setScope] = useState('all')
-  useEffect(() => {
-    if (scope !== 'all') return
-    setSelectedSubject(autoplayIndex(tick, PLATFORM_SCREENING_QUEUE.length))
-  }, [tick, scope])
   const subject = PLATFORM_SCREENING_QUEUE[selectedSubject]
   const tally = PLATFORM_SCREENING_QUEUE.reduce((counts, patient) => {
     counts[patient.status.toLowerCase()] += 1
@@ -1056,11 +1066,12 @@ function ScreeningView({ onAdvance, tick = 0 }) {
   )
 }
 
-function ResolveView({ tick = 0 }) {
+// Judgment does not run on a timer either. The work item, the decision in
+// progress and every signature live in the stage above, so a decision signed
+// here is still signed after a walk through Replay, and the item the reader
+// opened is the item they come back to.
+function ResolveView({ work, setWork, decision, setDecision, signedDecisions, setSignedDecisions }) {
   const settle = usePaneSettle()
-  const [decision, setDecision] = useState(null)
-  const [work, setWork] = useState(0)
-  const [signedDecisions, setSignedDecisions] = useState({})
   const selectedWork = RESOLVE_WORK_ITEMS[work]
   const signed = signedDecisions[selectedWork.key]
   const remaining = RESOLVE_WORK_ITEMS.length - Object.keys(signedDecisions).length
@@ -1074,11 +1085,6 @@ function ResolveView({ tick = 0 }) {
   const signDecision = () => {
     if (decision) setSignedDecisions((current) => ({ ...current, [selectedWork.key]: decision }))
   }
-
-  useEffect(() => {
-    if (decision) return
-    selectWork(autoplayIndex(tick, RESOLVE_WORK_ITEMS.length))
-  }, [tick, decision])
 
   return (
     <div className="workspace-view source-resolve-view" key="resolve">
