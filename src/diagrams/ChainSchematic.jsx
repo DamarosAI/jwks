@@ -1053,52 +1053,62 @@ function mechanism(key, t) {
    slogan went, the reads grew, and this line carries the run at rest.
 
    THE READS SAY WHAT CHANGES, NOT WHAT IS THERE. A reader who has never run a
-   trial needs to know what each station replaces - the binder, the hand-check,
-   the judgement call that lands differently twice, the day spent chasing, the
-   audit nobody can answer - and who does that work now.
+   trial needs to know what each station replaces: the binder, the checklist
+   worked by hand, the judgement call that lands differently twice, the day
+   spent chasing twenty systems, the audit nobody can answer. And they need to
+   know who does that work now.
 
    AND THEY SAY IT IN THE PRODUCT'S OWN LAW, which is one sentence long: agents
-   prepare the work at every step; deterministic code and a named person
-   decide. So the reads name what an agent does at each station - drafts the
-   cited criterion, maps the record, stages the REVIEW - and where the same
-   read has to, they name what an agent never does: it does not cast the
-   verdict, it does not pick the action, it does not hold the pen. Every claim
-   here is one the kernel makes: citation back to the source text, facts bound
-   to their record and sealed as of the day, one deterministic verdict per
-   protocol-and-evidence pair, a signature on every decision, and a run that
-   reproduces rather than gets rebuilt. */
-const READ_REST = 'One protocol, executed the same way at every site. Agents prepare the work at every step - reading, mapping, drafting - and deterministic code and a named person make every decision that counts.'
+   prepare the work at every step, and deterministic code and a named person
+   decide. So every station shows an agent doing the preparation, screening
+   included, because a fact does not map itself onto a criterion. The boundary
+   is then carried by what the sentence says NEXT, in the positive: at
+   Screening the ENGINE decides, at Resolve a NAMED PERSON picks the action and
+   signs. Written as a negative it read as a denial of something the reader had
+   not suspected, which is a strange thing to put in a caption.
+
+   NO DASHES, AND NO SHOUTING. The reads are sentences, so they break on full
+   stops rather than on a punctuation mark holding two clauses apart, and a
+   verdict named in prose is set in prose: pass, review, fail. The demo chrome
+   is where those words are stamped in capitals, because there they are states
+   of a record rather than words in a sentence.
+
+   Every claim here is one the kernel makes: a criterion cited back to the
+   source text, facts bound to their record and sealed as of the day, one
+   deterministic verdict for a given protocol and evidence, a signature on
+   every decision, and a run that reproduces rather than gets rebuilt. */
+const READ_REST = 'One protocol, executed the same way at every site. Agents prepare the work at every step. Deterministic code and a named person make every decision that counts.'
 
 const STEPS = [
   {
     key: 'protocol',
     label: 'PROTOCOL',
     fact: 'V2.1 - 36 CRITERIA',
-    read: 'The trial arrives as a document and leaves as logic that runs. Agents draft every criterion with its citation back into the source text, and a person signs the version - so nobody screens a patient by rereading a binder.',
+    read: 'The trial arrives as a document and transforms into an object that runs. Agents draft each criterion as executable logic, cited back to the source text, and a person signs the version. Nobody screens a patient by rereading a binder.',
   },
   {
     key: 'evidence',
     label: 'EVIDENCE',
     fact: '25 / 36 MAPPED',
-    read: 'Nothing here is hand-checked. Agents map the site\'s own records onto the criteria that need them, and each fact is bound to the record it came from and sealed as of that day - and none of it leaves the site.',
+    read: 'Nothing here is checked by hand. Agents map the site\'s own records onto the criteria that need them, and every fact stays bound to the record it came from, sealed as of that day. None of it leaves the site.',
   },
   {
     key: 'screening',
     label: 'SCREENING',
     fact: '1 PASS - 4 REVIEW - 3 FAIL',
-    read: 'Deterministic, and no model touches the verdict. The same protocol against the same evidence returns the same PASS, REVIEW or FAIL every time, and the trace shows which facts, which sources, and what went stale.',
+    read: 'Agents map each fact onto what a criterion actually requires. The engine decides, and it decides deterministically: the same protocol against the same evidence reaches the same pass, review or fail, every time, with the facts and sources it used.',
   },
   {
     key: 'resolve',
     label: 'RESOLVE',
     fact: 'PI SIGNED - ED25519',
-    read: 'Ambiguity becomes a worklist instead of a fire. Agents stage each REVIEW with its citations already attached; a named person picks the action and signs it. One surface, and no day spent chasing twenty systems.',
+    read: 'Ambiguity becomes a worklist instead of a fire. Agents stage each review with its citations already attached. A named person picks the action and signs it. One surface, instead of a day spent chasing twenty systems.',
   },
   {
     key: 'replay',
     label: 'REPLAY',
     fact: 'CHAIN INTACT 9 / 9',
-    read: 'Years later, the run reproduces itself. The record holds the protocol version, the evidence as of that day and every signature - so an audit reaches the same result rather than a reconstruction of it.',
+    read: 'Years later, the run reproduces itself. The record holds the protocol version, the evidence as of that day and every signature, so an audit reaches the same result instead of a reconstruction of it.',
   },
 ].map((step, index) => {
   const t = (index - 2) * STEP
@@ -1421,7 +1431,7 @@ export default function ChainSchematic({ animate = true }) {
               onBlur={() => setHot(null)}
               tabIndex={0}
               role="button"
-              aria-label={`${item.label}, ${item.fact} - ${item.read}`}
+              aria-label={`${item.label}, ${item.fact}. ${item.read}`}
             >
               <StationBody item={item} />
             </g>

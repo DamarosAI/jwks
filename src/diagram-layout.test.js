@@ -3361,32 +3361,43 @@ describe('The floor schematic', () => {
 
   it('says what each station replaces, and who does that work now', () => {
     // THE SECTION'S ONE PIECE OF WRITING. The slogan that used to close this
-    // section is gone, so the reads carry it - and a reader who has never
-    // run a trial has to learn from them what the station replaces and who
-    // does the work. Every read names the change, and the division of labour
-    // the ADRs pin - agents PREPARE at every station, the verdict is
-    // arithmetic, the signature is a person's - holds across all five.
+    // section is gone, so the reads carry it, and a reader who has never run
+    // a trial has to learn from them what the station replaces and who does
+    // the work. Every read names the change, and the division of labour the
+    // ADRs pin holds across all five: agents PREPARE at every station, the
+    // verdict is the engine's, the signature is a person's.
     const reads = [...floor.matchAll(/\n {4}read: '((?:[^'\\]|\\')*)'/g)].map((m) => m[1].replace(/\\'/g, "'"))
     assert.equal(reads.length, 5)
     const rest = floor.match(/const READ_REST = '([^']*)'/)[1]
     for (const read of [...reads, rest]) {
       assert.ok(read.length > 150, `a one-liner is what this pass replaced: ${read}`)
       assert.ok(/[.] /.test(read), `a read is two sentences, not one clause: ${read}`)
+      // NO DASH HOLDS A CLAUSE OPEN. These are sentences: they break on a
+      // full stop, not on a mark propping two halves apart.
+      assert.doesNotMatch(read, / [-\u2013\u2014] /, `a read breaks on a full stop, not a dash: ${read}`)
     }
-    // Agents do the preparing, and they are visible doing it.
-    assert.equal(reads.filter((read) => /Agents /.test(read)).length, 3)
+    // Agents do the preparing, at every station that has preparation to do -
+    // screening included, because a fact does not map itself onto a criterion.
+    assert.equal(reads.filter((read) => /Agents /.test(read)).length, 4)
+    assert.match(reads[2], /Agents map each fact onto what a criterion actually requires/)
     assert.match(rest, /Agents prepare the work at every step/)
-    // But they never cast the verdict or hold the pen, and the rest line says
-    // the whole law in the kernel's own terms.
-    assert.match(rest, /deterministic code and a named person make every decision/)
-    assert.match(reads[2], /no model touches the verdict/)
-    assert.match(reads[3], /a named person picks the action and signs it/)
+    // The boundary is carried in the POSITIVE - who decides, not who does not.
+    // "No model casts the verdict" denied something the reader had not
+    // suspected; the engine deciding says the same thing and reads as a fact.
+    assert.match(rest, /Deterministic code and a named person make every decision/)
+    assert.match(reads[2], /The engine decides, and it decides deterministically/)
+    assert.match(reads[3], /A named person picks the action and signs it/)
+    for (const read of reads) assert.doesNotMatch(read, /no model|never decides|does not decide/i)
+    // A verdict named in prose is set in prose. The capitals belong to the
+    // demo chrome, where those words are states of a record.
+    assert.match(reads[2], /the same pass, review or fail/)
+    for (const read of reads) assert.doesNotMatch(read, /PASS|REVIEW|FAIL/)
     // And every value is traceable to what produced it, at the station that
     // produced it: a criterion to its source text, a fact to its record, a
     // signed run to the version and evidence it was decided on.
-    assert.match(reads[0], /citation back into the source text/)
+    assert.match(reads[0], /cited back to the source text/)
     assert.match(reads[1], /bound to the record it came from/)
-    assert.match(reads[1], /none of it leaves the site/)
+    assert.match(reads[1], /None of it leaves the site/)
     assert.match(reads[4], /protocol version, the evidence as of that day and every signature/)
   })
 
