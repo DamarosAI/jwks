@@ -1171,7 +1171,7 @@ function TridentSection() {
       <SectionEyebrow brand>Trident</SectionEyebrow>
       <div className="trident-copy">
         <h2><span>Any model can propose at the point of care.</span></h2>
-        <p className="section-dek">None can decide.</p>
+        <p className="section-dek">Help make decisions, don't take them.</p>
         <p>Trident is a governed AI harness. Operators choose the provider. Every task is versioned, schema-validated, and receipted. Checkpoints keep authority with the site.</p>
         <div className="control-facts">
           <span><CheckCircle size={18} /> Schema-validated</span>

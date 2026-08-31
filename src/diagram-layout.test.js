@@ -391,11 +391,14 @@ describe('Trident and Nectar schematics', () => {
     for (const source of figures) {
       assert.match(source, /role="img"[\s\S]{0,12}aria-label="[A-Z][^"]{160,}"/)
     }
-    // Both sections open the same way: the heading says what the system does and
-    // one dek, in the blue every other dek on the site uses, says what it will
-    // not do. One class, so the pair cannot drift into two treatments.
+    // Both sections open the same way: the heading says what the system does
+    // and one dek, in the blue every other dek on the site uses, draws the
+    // line. Trident's dek says it to the models directly, in the imperative,
+    // which is the one place on the site the boundary is given as an order
+    // rather than as a fact about the architecture. One class, so the pair
+    // cannot drift into two treatments.
     assert.match(app, /<h2><span>Any model can propose at the point of care\.<\/span><\/h2>/)
-    assert.match(app, /<p className="section-dek">None can decide\.<\/p>/)
+    assert.match(app, /<p className="section-dek">Help make decisions, don't take them\.<\/p>/)
     assert.match(app, /<h2><span>Execution intelligence that crosses site boundaries\.<\/span><\/h2>/)
     assert.match(app, /<p className="section-dek">Patient data that never does\.<\/p>/)
     assert.doesNotMatch(css, /\.nectar-dek/)

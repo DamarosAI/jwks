@@ -30,7 +30,7 @@ describe('theme and product language', () => {
     assert.match(app, /<TridentSection \/>/)
     assert.match(app, /<NectarSection \/>/)
     assert.match(app, /Any model can propose\./)
-    assert.match(app, /None can decide\./)
+    assert.match(app, /Help make decisions, don't take them\./)
     assert.match(app, /Execution intelligence that crosses site boundaries\./)
     assert.match(app, /Patient data that never does\./)
     assert.match(app, /Any model can propose\. Your site decides\./)
