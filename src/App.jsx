@@ -758,6 +758,12 @@ function CapacityBento() {
           <cite>Kirkwood et al., JCO Oncology Practice 2025</cite>
         </article>
         <article className="bento-card metric-card metric-wide">
+          <MetricDots active={7} total={20} />
+          <strong>34%</strong>
+          <p>of FDA investigator inspections cite failure to follow the protocol.</p>
+          <cite>FDA Bioresearch Monitoring (BIMO) inspection metrics</cite>
+        </article>
+        <article className="bento-card metric-card metric-wide">
           <MetricDots active={1} total={20} />
           <strong>4.1%</strong>
           <p>Community-program treatment-trial enrollment, versus 21.6% at NCI-designated comprehensive cancer centers.</p>

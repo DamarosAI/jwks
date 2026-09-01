@@ -12403,9 +12403,9 @@ html.is-hidden .clinic-node i,
   background: var(--accent-strong);
 }
 
-/* Two figures over a figure and the systems it counts. */
+/* Three figures over a figure and the systems it counts. */
 
-#root .capacity-bento > .metric-wide { grid-column: span 3; grid-row: 1; }
+#root .capacity-bento > .metric-wide { grid-column: span 2; grid-row: 1; }
 #root .capacity-bento > .metric-systems { grid-column: span 2; grid-row: 2; }
 #root .capacity-bento > .connector-closeup { grid-column: span 4; grid-row: 2; }
 
