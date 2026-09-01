@@ -3422,7 +3422,7 @@ describe('The floor schematic', () => {
     for (const read of [...reads, rest]) {
       assert.doesNotMatch(read, /\d/, `a read names the pain in prose, not in figures: ${read}`)
     }
-    assert.match(reads[0], /when an amendment lands the logic moves with it/)
+    assert.match(reads[0], /^Amendments used to mean rereading the binder/)
     assert.match(reads[1], /opening system after system/)
     assert.match(reads[2], /should not reach two answers/)
     assert.match(reads[3], /arrive as a full inbox/)
@@ -3430,7 +3430,10 @@ describe('The floor schematic', () => {
     // And every value is traceable to what produced it, at the station that
     // produced it: a criterion to its source text, a fact to its record, a
     // signed run to the version and evidence it was decided on.
-    assert.match(reads[0], /cited back to the sentence it came from/)
+    assert.match(reads[0], /each cited to its page/)
+    // A protocol is not only its eligibility, and the kernel proposes the
+    // schedule of activities as its own cited artifact, so the read names it.
+    assert.match(reads[0], /the criteria and the schedule of activities/)
     assert.match(reads[1], /tied to the document it came from/)
     assert.match(reads[1], /Nothing about the patient leaves the site/)
     assert.match(reads[4], /protocol version, the evidence as of that day and every signature/)

@@ -1102,7 +1102,7 @@ function mechanism(key, t) {
    FIVE READS, FIVE SHAPES. Written to one template they came out as five
    verses of the same hymn - agent verb, object, consequence - and a reader
    skims the second one and stops. Each station is a different problem, so
-   each read is a different sentence. Protocol states a transformation.
+   each read is a different sentence. Protocol opens on the amendment.
    Evidence opens on the day the coordinator actually has and answers it.
    Screening opens on a principle nobody argues with, then earns it. Resolve
    opens on the work itself. Replay opens on the bill. Five different first
@@ -1113,7 +1113,19 @@ function mechanism(key, t) {
    systems and a phone call to confirm, the eligibility call that lands
    differently depending on who read the chart, the inbox that is really a
    worklist wearing the wrong clothes, and the audit that pays a person to
-   rebuild by hand what a machine already decided. In PROSE, not in figures:
+   rebuild by hand what a machine already decided. Protocol leads with the
+   amendment because it is the sharpest of those: a version lands, and every
+   piece of what a site knows quietly stops being true at once.
+
+   THE SCHEDULE OF ACTIVITIES IS NAMED, because a protocol is not only its
+   eligibility. The kernel proposes it as its own cited artifact
+   (`protocol.schedule.v1`, one of the nineteen), and keeps it deliberately
+   OUT of the logic hash - a visit schedule is not executable eligibility, and
+   the products that conflate the two are why that separation is worth
+   building. The read names both and claims one origin for them, which is the
+   part a coordinator cares about: it came from the page, not from a model's
+   memory. The separation itself stays down here; a hover caption is not where
+   a hash boundary gets explained. In PROSE, not in figures:
    the market brief carries numbers this site has no verified source for, and
    a caption that quotes one is a claim the company then has to defend. Name
    the pain; leave the arithmetic to the cited panels downpage.
@@ -1135,7 +1147,7 @@ const STEPS = [
     key: 'protocol',
     label: 'PROTOCOL',
     fact: 'V2.1 - 36 CRITERIA',
-    read: 'The trial arrives as a document and transforms into an object that runs. Agents draft each criterion as executable logic, cited back to the sentence it came from. A person signs the version, and when an amendment lands the logic moves with it.',
+    read: 'Amendments used to mean rereading the binder and hoping the site caught it. The protocol is an object that runs now: agents draft the criteria and the schedule of activities, each cited to its page, and the day a version is signed is the day the site works from it.',
   },
   {
     key: 'evidence',
