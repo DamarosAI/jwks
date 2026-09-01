@@ -626,9 +626,9 @@ function LandingHero() {
       <BiomarkerRain />
       <img className="hero-drum-motif" src="/assets/damaros-monogram-blue.svg" alt="" aria-hidden="true" decoding="async" />
       <div className="hero-copy">
-        <h1 className="hero-heading" aria-label="Agentic infrastructure for clinical trials.">
+        <h1 className="hero-heading" aria-label="Agentic infrastructure for clinical research.">
           <span className="hero-line">Agentic infrastructure</span>
-          <span className="hero-line accent-text">for clinical trials.</span>
+          <span className="hero-line accent-text">for clinical research.</span>
         </h1>
         <p>Built to execute anywhere: <BrandName /> turns protocols into evidence-bound decisions, signed locally and replayable on demand.</p>
         <div className="hero-actions">
