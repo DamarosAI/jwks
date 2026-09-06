@@ -1057,7 +1057,7 @@ function ScreeningView({ onAdvance, selectedSubject, setSelectedSubject, scope, 
   }[subject.id]
   return (
     <div className="workspace-view source-screening-view">
-      <div className="source-view-intro"><span>SCREENING</span><small>Protocol v2.1 - deterministic evaluator - no model in the loop</small></div>
+      <div className="source-view-intro"><span>SCREENING</span><small>Protocol v2.1 - deterministic evaluator</small></div>
       <div className="screen-summary-strip" role="group" aria-label="Scope the queue by deterministic result">
         <button type="button" className={`all${scope === 'all' ? ' is-on' : ''}`} aria-pressed={scope === 'all'} onClick={() => pickScope('all')}><strong>{PLATFORM_SCREENING_QUEUE.length}</strong><span>All subjects</span></button>
         <button type="button" className={`pass${scope === 'pass' ? ' is-on' : ''}`} aria-pressed={scope === 'pass'} onClick={() => pickScope('pass')}><strong>{tally.pass}</strong><span>Pass</span></button>
@@ -1138,7 +1138,7 @@ function ReplayView({ tick = 0 }) {
     { event: 'Evidence ingested', detail: 'Observation/ECOG-8841', time: '09:42', actor: 'system', id: 'EVT-1041', rows: [['Source', 'Epic FHIR R4'], ['Object', 'Observation/ECOG-8841'], ['Integrity', 'Verified - record intact']] },
     { event: 'Document indexed', detail: 'Oncology note - DocumentReference', time: '09:43', actor: 'system', id: 'EVT-1042', rows: [['Source', 'Oncology note'], ['Object', 'DocumentReference/note-2207'], ['Integrity', 'Verified - record intact']] },
     { event: 'Evidence snapshot frozen', detail: 'pop-2026-06-22 - 1,284 resources', time: '09:55', actor: 'system', id: 'EVT-1088', rows: [['Snapshot', 'pop-2026-06-22'], ['Resources', '1,284 - 25/36 mapped'], ['Cutoff', '06-22 09:54']] },
-    { event: 'Criterion evaluated', detail: 'I-4.2 ECOG - Protocol v2.1', time: '10:02', actor: 'evaluator', id: 'EVT-1108', flag: 'CONFLICT', rows: [['Screening', 'deterministic - no model'], ['Criterion', 'I-4.2 ECOG 0-1'], ['Facts used', 'structured ECOG 1 (06-18); note ECOG 2 (06-20)'], ['Result', 'REVIEW'], ['Exception', 'CONFLICTING_SOURCE'], ['Integrity', 'Verified - record intact']] },
+    { event: 'Criterion evaluated', detail: 'I-4.2 ECOG - Protocol v2.1', time: '10:02', actor: 'evaluator', id: 'EVT-1108', flag: 'CONFLICT', rows: [['Screening', 'deterministic'], ['Criterion', 'I-4.2 ECOG 0-1'], ['Facts used', 'structured ECOG 1 (06-18); note ECOG 2 (06-20)'], ['Result', 'REVIEW'], ['Exception', 'CONFLICTING_SOURCE'], ['Integrity', 'Verified - record intact']] },
     { event: 'Screening evaluated', detail: '1 eligible - 4 review - 3 fail', time: '10:03', actor: 'evaluator', id: 'EVT-1110', rows: [['Protocol', 'v2.1'], ['Cohort', '8 subjects'], ['Result', '1 pass - 4 review - 3 fail']] },
     { event: 'Review opened', detail: 'Review R-884 - Screening', time: '10:04', actor: 'system', id: 'EVT-1111', rows: [['Work item', 'Review R-884'], ['Owner', 'PI / Sub-I'], ['State', 'Awaiting site judgment']] },
     { event: 'Resolve committed', detail: 'Review R-884 - PI signature', time: '14:07', actor: 'You', id: 'EVT-1207', rows: [['Decision', 'Accept note - ECOG 2'], ['Signer', 'Dr. A. Voss - PI / Sub-I'], ['Signature', 'Ed25519 verified']] },
