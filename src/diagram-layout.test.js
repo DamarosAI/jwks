@@ -511,9 +511,14 @@ describe('Trident and Nectar schematics', () => {
     assert.match(nectar, /intel: \{ tone: '\w+', pill: '[A-Z ]+', read: '/)
     assert.match(nectar, /<text className="dgm-read" x="164" y="677">\{read\}<\/text>/)
     assert.doesNotMatch(nectar, /Site \d+ holds [\d,]+ records/)
+    // Hover no longer rewrites the svg's own tone class - that restyled the
+    // whole figure on every enter. The pill's tone lives on the readout group.
+    assert.match(nectar, /className=\{`dgm-readout is-\$\{tone\}`\}/)
+    assert.match(nectar, /className=\{`dgm-svg is-\$\{state\.tone\}/)
     // Every tone the readout can take has a rule that colours the pill.
     for (const tone of ['valid', 'signed', 'hold', 'pass']) {
       assert.match(DGM_BLOCK, new RegExp(`\\.dgm-svg\\.is-${tone} \\.dgm-status`))
+      assert.match(DGM_BLOCK, new RegExp(`\\.dgm-readout\\.is-${tone} \\.dgm-status`))
     }
   })
 
@@ -649,7 +654,7 @@ describe('Trident and Nectar schematics', () => {
     // A Nectar site shows the local run crossing its own records, and the
     // intelligence takes a pointer as one panel over a target the size of the plane.
     assert.match(DGM_BLOCK, /\.dgm-svg\.is-live \.dgm-site\.is-hot \.dgm-sweep/)
-    assert.match(nectar, /className=\{`dgm-intel\$\{lit\('intel'\)\}`\} \{\.\.\.probe\('intel'\)\}/)
+    assert.match(nectar, /className="dgm-intel" data-lit="intel" \{\.\.\.probe\('intel'\)\}/)
     assert.match(nectar, /<rect className="dgm-hit" x="-160" y="-160" width="320" height="320" rx="28" \/>/)
     // What leaning on the panel does is make the index it holds easier to read -
     // the bound links strengthen and every bound criterion deepens into its own
@@ -1183,12 +1188,12 @@ describe('Trident and Nectar schematics', () => {
     // skirt is stroke order. Put the intelligence back above them and every route in
     // this figure turns into a wire laid over a photograph.
     assert.ok(
-      nectar.indexOf('{CHANNELS.map((item) => {') < nectar.indexOf('<g className={`dgm-intel'),
+      nectar.indexOf('{CHANNELS.map((item) => {') < nectar.indexOf('<g className="dgm-intel" data-lit="intel"'),
       'the intelligence is drawn before the channels, so every route crosses the slab it goes into',
     )
     // The sites still come after it, so a site is never drawn under the slab it
     // publishes into.
-    assert.ok(nectar.indexOf('<g className={`dgm-intel') < nectar.indexOf('const chan = BY_SITE[site.id]'))
+    assert.ok(nectar.indexOf('<g className="dgm-intel" data-lit="intel"') < nectar.indexOf('const chan = BY_SITE[site.id]'))
 
     // A PORT IS DRAWN AS A HOLE, and as the same hole the other figure's intake
     // throat is: a plan circle for the wall, the same circle a few units further
@@ -1223,7 +1228,8 @@ describe('Trident and Nectar schematics', () => {
     assert.doesNotMatch(nectar, /^[^/\n]*INTEL\.front/m)
 
     // What the port feeds, on the sheet.
-    assert.match(nectar, /className=\{`dgm-trace is-feed\$\{state\.up\.includes\(item\.key\) \? ' is-up' : ''\}\$\{lit\(item\.key\)\}`\}/)
+    assert.match(nectar, /className=\{`dgm-trace is-feed\$\{state\.up\.includes\(item\.key\) \? ' is-up' : ''\}`\}/)
+    assert.match(nectar, /data-lit=\{item\.key\}/)
     assert.match(nectar, /<path className="dgm-tracepath" d=\{item\.feed\} \/>/)
     assert.match(nectar, /const dock = dockOn\(item\.into, port\.at\)/)
     assert.match(nectar, /const feed = run\(port\.at, dock, 'x'\)/)
@@ -1439,9 +1445,12 @@ describe('Trident and Nectar schematics', () => {
     // to sit under dark type is more than a few levels off any other. The
     // difference moves onto weight instead: passing is a tint with the deep blue
     // written on it, settled is the deep blue with the paper written on it.
-    assert.match(DGM_BLOCK, /\.dgm-svg\.is-valid \.dgm-status,\s*\n\.dgm-svg\.is-signed \.dgm-status \{ fill: var\(--settled\); \}/)
-    assert.match(DGM_BLOCK, /\.dgm-svg\.is-valid \.dgm-statustext,\s*\n\.dgm-svg\.is-signed \.dgm-statustext \{ fill: var\(--surface-solid\); \}/)
-    assert.match(DGM_BLOCK, /\.dgm-svg\.is-pass \.dgm-status \{ fill: var\(--accent-soft\); \}/)
+    // Nectar keeps the same fills on `.dgm-readout` so a hover can recolour the
+    // pill without rewriting the svg's own tone class (which restyled the whole
+    // figure and hitching every ambient clock).
+    assert.match(DGM_BLOCK, /\.dgm-svg\.is-valid \.dgm-status,\s*\n\.dgm-svg\.is-signed \.dgm-status,\s*\n\.dgm-readout\.is-valid \.dgm-status,\s*\n\.dgm-readout\.is-signed \.dgm-status \{ fill: var\(--settled\); \}/)
+    assert.match(DGM_BLOCK, /\.dgm-svg\.is-valid \.dgm-statustext,\s*\n\.dgm-svg\.is-signed \.dgm-statustext,\s*\n\.dgm-readout\.is-valid \.dgm-statustext,\s*\n\.dgm-readout\.is-signed \.dgm-statustext \{ fill: var\(--surface-solid\); \}/)
+    assert.match(DGM_BLOCK, /\.dgm-svg\.is-pass \.dgm-status,\s*\n\.dgm-readout\.is-pass \.dgm-status \{ fill: var\(--accent-soft\); \}/)
   })
 
   it('keeps the whole Trident stack in one ink and deepens it as the run descends', () => {
@@ -1688,7 +1697,11 @@ describe('Trident and Nectar schematics', () => {
     // through the projection, so the three move in the ground rather than
     // hovering over it, with the reach each one carries running the same circle
     // in plan units so a site never drifts outside its own coverage.
+    // Sixteen stops rather than eight: eight chords kinked visibly at every
+    // corner, which three sites doing together read as the drawing jittering.
+    assert.match(DGM_BLOCK, /@keyframes dgm-orbit \{[\s\S]*?6\.25% \{ transform: translate\(0\.94px, 0\.9px\); \}/)
     assert.match(DGM_BLOCK, /@keyframes dgm-orbit \{[\s\S]*?12\.5% \{ transform: translate\(0, 0\.96px\); \}/)
+    assert.match(DGM_BLOCK, /@keyframes dgm-orbitplan \{[\s\S]*?6\.25% \{ transform: translate\(1\.85px, 0\.77px\); \}/)
     assert.match(DGM_BLOCK, /@keyframes dgm-orbitplan \{[\s\S]*?25% \{ transform: translate\(0, 2px\); \}/)
     for (const rule of ['.dgm-svg.is-live .dgm-orbit', '.dgm-svg.is-live .dgm-reach']) {
       const escaped = rule.replace(/[.()*:]/g, (c) => `\\${c}`)
@@ -1859,7 +1872,12 @@ describe('Trident and Nectar schematics', () => {
     assert.match(nectar, /pill: 'INTELLIGENCE'/)
     assert.match(nectar, /const INTEL_HALF = 160/)
     assert.match(nectar, /const INTEL = roundedDeck\(310, MESH_Y, INTEL_HALF, INTEL_WALL, 28\)/)
-    assert.match(nectar, /className=\{`dgm-intel\$\{lit\('intel'\)\}`\}/)
+    // Hover lights the panel through `data-lit`, not through a React class
+    // rewrite - putting `is-hot` in state re-rendered the whole board and
+    // hitching every ambient clock the instant the cursor arrived.
+    assert.match(nectar, /className="dgm-intel" data-lit="intel"/)
+    assert.match(nectar, /useDiagramHot/)
+    assert.match(nectar, /function NectarReadout/)
     // The three facts under it are unchanged, so nothing concrete moved up into
     // the paragraph when the paragraph moved up.
     assert.doesNotMatch(para, /PHI|Coverage compounds|stays at the site/)
@@ -1881,6 +1899,9 @@ describe('Trident and Nectar schematics', () => {
     assert.match(mobile, /#root \.dgm-frame \{[\s\S]*?overflow-x:\s*auto;/)
     assert.match(mobile, /#root \.dgm-svg \{ min-width: 500px; \}/)
     assert.match(pan, /frame\.scrollTo\(\{ left: slack \/ 2 \}\)/)
+    // Coalesced onto one animation frame so a burst of ResizeObserver
+    // callbacks cannot fight the scroll position and jitter the sheet.
+    assert.match(pan, /requestAnimationFrame/)
     for (const source of figures) {
       assert.match(source, /const frame = useCenterOnOverflow\(\)/)
       assert.match(source, /className="dgm-frame" ref=\{frame\}/)

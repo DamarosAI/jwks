@@ -11131,26 +11131,47 @@ html.is-hidden .clinic-node i,
    lets a reader pick up a site that is already moving without the drift being
    replaced by the lift for as long as the cursor is there. */
 
+/* Sixteen stops rather than eight. Eight chords of a two-pixel circle are
+   still visibly polygonal at the corners - each linear segment arrives with a
+   kink, and three sites kinking together every couple of seconds is the
+   jitter a reader clocks as the drawing fighting itself. Sixteen is below the
+   threshold; the asserted 12.5% and 25% marks stay where they were. */
 @keyframes dgm-orbit {
   0%, 100% { transform: translate(1.73px, 0.68px); }
+  6.25% { transform: translate(0.94px, 0.9px); }
   12.5% { transform: translate(0, 0.96px); }
+  18.75% { transform: translate(-0.94px, 0.9px); }
   25% { transform: translate(-1.73px, 0.68px); }
+  31.25% { transform: translate(-2.26px, 0.37px); }
   37.5% { transform: translate(-2.45px, 0); }
+  43.75% { transform: translate(-2.26px, -0.37px); }
   50% { transform: translate(-1.73px, -0.68px); }
+  56.25% { transform: translate(-0.94px, -0.9px); }
   62.5% { transform: translate(0, -0.96px); }
+  68.75% { transform: translate(0.94px, -0.9px); }
   75% { transform: translate(1.73px, -0.68px); }
+  81.25% { transform: translate(2.26px, -0.37px); }
   87.5% { transform: translate(2.45px, 0); }
+  93.75% { transform: translate(2.26px, 0.37px); }
 }
 
 @keyframes dgm-orbitplan {
   0%, 100% { transform: translate(2px, 0); }
+  6.25% { transform: translate(1.85px, 0.77px); }
   12.5% { transform: translate(1.41px, 1.41px); }
+  18.75% { transform: translate(0.77px, 1.85px); }
   25% { transform: translate(0, 2px); }
+  31.25% { transform: translate(-0.77px, 1.85px); }
   37.5% { transform: translate(-1.41px, 1.41px); }
+  43.75% { transform: translate(-1.85px, 0.77px); }
   50% { transform: translate(-2px, 0); }
+  56.25% { transform: translate(-1.85px, -0.77px); }
   62.5% { transform: translate(-1.41px, -1.41px); }
+  68.75% { transform: translate(-0.77px, -1.85px); }
   75% { transform: translate(0, -2px); }
+  81.25% { transform: translate(0.77px, -1.85px); }
   87.5% { transform: translate(1.41px, -1.41px); }
+  93.75% { transform: translate(1.85px, -0.77px); }
 }
 
 .dgm-svg.is-live .dgm-orbit {
@@ -11686,6 +11707,7 @@ html.is-hidden .clinic-node i,
 }
 
 .dgm-reachfill {
+  fill: color-mix(in srgb, var(--accent) 14%, transparent);
   stroke: none;
   opacity: 0.62;
   transition: r var(--grow);
@@ -11930,13 +11952,21 @@ html.is-hidden .clinic-node i,
    chip is a stamp - and it is the only inversion anywhere on either sheet, which
    is what makes it mean something. */
 .dgm-svg.is-valid .dgm-status,
-.dgm-svg.is-signed .dgm-status { fill: var(--settled); }
+.dgm-svg.is-signed .dgm-status,
+.dgm-readout.is-valid .dgm-status,
+.dgm-readout.is-signed .dgm-status { fill: var(--settled); }
 .dgm-svg.is-valid .dgm-statustext,
-.dgm-svg.is-signed .dgm-statustext { fill: var(--surface-solid); }
-.dgm-svg.is-hold .dgm-status { fill: var(--warning-soft); }
-.dgm-svg.is-hold .dgm-statustext { fill: var(--warning); }
-.dgm-svg.is-pass .dgm-status { fill: var(--accent-soft); }
-.dgm-svg.is-pass .dgm-statustext { fill: var(--accent-strong); }
+.dgm-svg.is-signed .dgm-statustext,
+.dgm-readout.is-valid .dgm-statustext,
+.dgm-readout.is-signed .dgm-statustext { fill: var(--surface-solid); }
+.dgm-svg.is-hold .dgm-status,
+.dgm-readout.is-hold .dgm-status { fill: var(--warning-soft); }
+.dgm-svg.is-hold .dgm-statustext,
+.dgm-readout.is-hold .dgm-statustext { fill: var(--warning); }
+.dgm-svg.is-pass .dgm-status,
+.dgm-readout.is-pass .dgm-status { fill: var(--accent-soft); }
+.dgm-svg.is-pass .dgm-statustext,
+.dgm-readout.is-pass .dgm-statustext { fill: var(--accent-strong); }
 
 @media (prefers-reduced-motion: reduce) {
   .dgm-svg { transition: none; }

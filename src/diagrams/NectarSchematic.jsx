@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 
 import { EDGE_ANGLE, ISO_X, ISO_Y, jitter, planCyl, planPrism, planSpace, project, roundedDeck } from './iso'
 import { Faces } from './Solid'
 import { useCenterOnOverflow } from './useCenterOnOverflow'
+import { useDiagramHot } from './useDiagramHot'
 import { useScrollRun } from './useScrollPhase'
 
 /**
@@ -796,19 +797,22 @@ function Seat({ half, radius, cy, kind }) {
   )
 }
 
-export default function NectarSchematic({ animate = true, reduced = false }) {
-  const frame = useCenterOnOverflow()
-  const [figure, phase, booted] = useScrollRun(PHASES, { reduced })
+/**
+ * The pill and the sentence. They are the only thing on this sheet that has to
+ * answer a pointer through React: everything else lights by an imperative class
+ * so the mesh never re-renders mid-orbit. Kept in its own component for that
+ * reason - a hover that set state in the board itself would re-commit every
+ * criterion, every trace and every site, which is exactly the hitch the
+ * ambient clocks were hitching on.
+ */
+function NectarReadout({ state, notify }) {
   const [hot, setHot] = useState(null)
-  const state = PHASES[phase] ?? PHASES[PHASES.length - 1]
-
-  // Pointing at a site lifts it and lights the structure it has published.
-  // Hover only re-weights what is already drawn.
-  const probe = (key) => ({
-    onMouseEnter: () => setHot(key),
-    onMouseLeave: () => setHot((current) => (current === key ? null : current)),
-  })
-  const lit = (key) => (hot === key ? ' is-hot' : '')
+  useEffect(() => {
+    notify.current = setHot
+    return () => {
+      notify.current = null
+    }
+  }, [notify])
 
   const cue = READS[hot]
   const tone = cue?.tone ?? state.tone
@@ -816,10 +820,26 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
   const read = cue?.read ?? state.read
 
   return (
-    <figure className="dgm">
-      <div className="dgm-frame" ref={frame}>
+    <g className={`dgm-readout is-${tone}`}>
+      <line className="dgm-rule" x1="20" y1="648" x2="600" y2="648" />
+      <rect className="dgm-status" x="20" y="660" width="130" height="26" rx="13" />
+      <text className="dgm-statustext" x="85" y="677" textAnchor="middle">{pill}</text>
+      <text className="dgm-read" x="164" y="677">{read}</text>
+    </g>
+  )
+}
+
+const NectarBoard = memo(function NectarBoard({ figure, state, animate, booted }) {
+  // Pointing at a site lifts it and lights the structure it has published.
+  // Hover only re-weights what is already drawn - and it does it without
+  // putting the pointer into this component's state, so the board never
+  // re-renders for a hover.
+  const notify = useRef(null)
+  const probe = useDiagramHot(figure, (key) => notify.current?.(key))
+
+  return (
         <svg
-          className={`dgm-svg is-${tone}${animate ? ' is-live' : ''}${booted ? ' is-booted' : ''}`}
+          className={`dgm-svg is-${state.tone}${animate ? ' is-live' : ''}${booted ? ' is-booted' : ''}`}
           ref={figure}
           viewBox="0 0 620 700"
           role="img"
@@ -889,8 +909,11 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
               {SITES.map((site) => {
                 const span = Math.round(state.reach * site.grew)
                 return (
-                  <g className={`dgm-reach${lit(site.id)}`} key={site.id} style={{ '--stagger': site.stagger, '--life': site.life }}>
-                    <circle className="dgm-reachfill" cx={site.plan[0]} cy={site.plan[1]} r={span} fill="url(#nc-reach)" />
+                  <g className="dgm-reach" data-lit={site.id} key={site.id} style={{ '--stagger': site.stagger, '--life': site.life }}>
+                    {/* Solid fill, not a pattern. A patterned circle re-rasterises
+                        on every orbit frame; three of them under a live transform
+                        was the paint cost behind the sheet's own jitter. */}
+                    <circle className="dgm-reachfill" cx={site.plan[0]} cy={site.plan[1]} r={span} />
                     <circle className="dgm-reachrim" cx={site.plan[0]} cy={site.plan[1]} r={span} vectorEffect="non-scaling-stroke" />
                     {/* The growth ring: the reach a phase ago, still visible
                         inside the rim, so coverage reads as grown rather than
@@ -936,7 +959,8 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
             const down = state.down.includes(item.key)
             return (
               <g
-                className={`dgm-lift${up ? ' is-up' : ''}${down ? ' is-down' : ''}${lit(item.key)}`}
+                className={`dgm-lift${up ? ' is-up' : ''}${down ? ' is-down' : ''}`}
+                data-lit={item.key}
                 key={item.key}
                 style={{ '--life': item.site.life }}
               >
@@ -966,7 +990,7 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
               is a slab rather than a sheet, it drifts as one, and it answers a
               pointer as one - over a target the size of the whole plane, because
               a two-pixel node is not something a reader can aim at. */}
-          <g className={`dgm-intel${lit('intel')}`} {...probe('intel')}>
+          <g className="dgm-intel" data-lit="intel" {...probe('intel')}>
             <Faces shape={INTEL} className="dgm-solid" />
             <g transform={planSpace(310, MESH_Y)}>
               <rect className="dgm-planefill" x="-160" y="-160" width="320" height="320" rx="28" fill="url(#nc-grain)" />
@@ -1087,7 +1111,7 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
                     rather than over it and any solid taller than it passes in
                     front. */}
                 {CHANNELS.map((item) => (
-                  <g className={`dgm-portal${lit(item.key)}`} key={`p-${item.key}`}>
+                  <g className="dgm-portal" data-lit={item.key} key={`p-${item.key}`}>
                     <g clipPath={`url(#nc-port-${item.key.replace(' ', '-')})`}>
                       <circle className="dgm-shaft" cx={item.port.at[0]} cy={item.port.at[1]} r={PORT_R} />
                       <circle
@@ -1118,7 +1142,8 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
                 ))}
                 {CHANNELS.map((item) => (
                   <g
-                    className={`dgm-trace is-feed${state.up.includes(item.key) ? ' is-up' : ''}${lit(item.key)}`}
+                    className={`dgm-trace is-feed${state.up.includes(item.key) ? ' is-up' : ''}`}
+                    data-lit={item.key}
                     key={`f-${item.key}`}
                     style={{ '--life': item.site.life }}
                   >
@@ -1210,7 +1235,8 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
             const chan = BY_SITE[site.id]
             return (
               <g
-                className={`dgm-site${state.down.includes(site.id) ? ' is-running' : ''}${lit(site.id)}`}
+                className={`dgm-site${state.down.includes(site.id) ? ' is-running' : ''}`}
+                data-lit={site.id}
                 key={site.id}
                 style={{ '--stagger': site.stagger, '--life': site.life, '--run': `${site.run}px` }}
                 {...probe(site.id)}
@@ -1279,11 +1305,20 @@ export default function NectarSchematic({ animate = true, reduced = false }) {
               pointer - the probe is on the solid, where it always was, so the
               strip took nothing with it when it went. */}
 
-          <line className="dgm-rule" x1="20" y1="648" x2="600" y2="648" />
-          <rect className="dgm-status" x="20" y="660" width="130" height="26" rx="13" />
-          <text className="dgm-statustext" x="85" y="677" textAnchor="middle">{pill}</text>
-          <text className="dgm-read" x="164" y="677">{read}</text>
+          <NectarReadout state={state} notify={notify} />
         </svg>
+  )
+})
+
+export default function NectarSchematic({ animate = true, reduced = false }) {
+  const frame = useCenterOnOverflow()
+  const [figure, phase, booted] = useScrollRun(PHASES, { reduced })
+  const state = PHASES[phase] ?? PHASES[PHASES.length - 1]
+
+  return (
+    <figure className="dgm">
+      <div className="dgm-frame" ref={frame}>
+        <NectarBoard figure={figure} state={state} animate={animate} booted={booted} />
       </div>
     </figure>
   )

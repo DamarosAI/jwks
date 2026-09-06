@@ -7,19 +7,36 @@ import { useCallback } from 'react'
  * a reader sees first.
  *
  * Returns a callback ref: the frame centres itself the moment it attaches, and
- * again whenever it is resized.
+ * again whenever it is resized. Centring is coalesced onto one animation frame
+ * so a burst of ResizeObserver callbacks - font load, container query, the
+ * figure booting its own width - cannot fight the scroll position and jitter
+ * the sheet under the reader's eye.
  */
 export function useCenterOnOverflow() {
   return useCallback((frame) => {
     if (!frame) return undefined
+    let pending = 0
     const centre = () => {
-      const slack = frame.scrollWidth - frame.clientWidth
-      if (slack > 0) frame.scrollTo({ left: slack / 2 })
+      if (pending) return
+      pending = window.requestAnimationFrame(() => {
+        pending = 0
+        const slack = frame.scrollWidth - frame.clientWidth
+        if (slack > 0) frame.scrollTo({ left: slack / 2 })
+      })
     }
     centre()
-    if (typeof ResizeObserver === 'undefined') return undefined
+    if (typeof ResizeObserver === 'undefined') {
+      return () => {
+        window.cancelAnimationFrame(pending)
+        pending = 0
+      }
+    }
     const observer = new ResizeObserver(centre)
     observer.observe(frame)
-    return () => observer.disconnect()
+    return () => {
+      window.cancelAnimationFrame(pending)
+      pending = 0
+      observer.disconnect()
+    }
   }, [])
 }
