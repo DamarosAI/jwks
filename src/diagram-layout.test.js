@@ -3637,7 +3637,7 @@ describe('The floor schematic', () => {
     // went with the pass that grew the reads, so nothing shares the drawing's
     // cell and nothing needs to refuse pointer events over it.
     assert.match(app, /<SectionEyebrow brand>Workflow<\/SectionEyebrow>/)
-    assert.match(app, /className="thesis-chain">\s*\n\s*<ChainSchematic animate=\{animate\} \/>\s*\n\s*<\/div>\s*\n\s*<\/div>/)
+    assert.match(app, /className="thesis-chain">\s*\n\s*<Suspense fallback=\{<div className="dgm-frame" aria-hidden="true" \/>\}>\s*\n\s*<ChainSchematic animate=\{animate\} \/>\s*\n\s*<\/Suspense>\s*\n\s*<\/div>\s*\n\s*<\/div>/)
     assert.doesNotMatch(app, /thesis-stage|thesis-head/)
     assert.doesNotMatch(css, /thesis-stage|thesis-head/)
     assert.doesNotMatch(mobile, /thesis-stage|thesis-head/)

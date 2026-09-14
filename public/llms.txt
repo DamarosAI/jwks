@@ -27,17 +27,17 @@ Preferred summary for indexes and assistants:
 - Core thesis: Discovery is scaling. Research execution has to scale with it. The next generation of clinical research infrastructure makes execution capacity buildable anywhere.
 - Four attributes: evidence under institutional control, deterministic screening, human resolution of judgment, replayable proof
 - Product model: Protocol → Evidence → Screening → Resolve → Replay
-- How it runs: governed Trident harness with provider selection (Anthropic, OpenAI, on-site) across Protocol, Evidence, Screening, Resolve, and Replay. Deterministic screening (pass, review, fail). Human Resolve and signature. Hash-verified Replay.
+- How it runs: governed Trident harness with provider selection (Anthropic, OpenAI, on-site) across Protocol, Evidence, Screening, Resolve, and Replay. Deterministic screening (pass, review, fail). Human Resolve and signature. Hash-verified Replay that verifies offline.
 - Workflow law: One protocol, executed the same way at every site. Agents prepare the work at every step. Deterministic code and a named person make every decision that counts.
-- Protocol: a signed version is an object that runs. Agents draft cited criteria and the schedule of activities. An amendment is a new release. The day a version is signed is the day the site works from it.
+- Protocol: a signed version is an object that runs. Agents draft cited criteria and the schedule of activities. A registry protocol becomes a draft the site publishes. An amendment is a new release. The day a version is signed is the day the site works from it.
 - Evidence: facts are assembled under institutional control, cited to their source, and sealed as of the day they were read. Patient data stays with the site.
-- Screening: agents map facts to requirements. The engine returns pass, review, or fail. Same protocol version, same evidence, same verdict, with its reasons attached.
-- Resolve: judgment calls route to a named person and get signed locally. Hard cases arrive as a worklist with citations attached, not as an inbox.
-- Replay: any decision reconstructs on demand against the evidence and version it was made against. Inspection-ready. A run reproduces. It is not rebuilt.
+- Screening: agents map facts to requirements. The engine returns pass, review, or fail. Missing, stale, or conflicting evidence stays review. Same protocol version, same evidence, same verdict, with its reasons attached.
+- Resolve: judgment calls route to a named person and get signed locally. Hard cases arrive as a worklist with citations attached, not as an inbox. The harness marks a plan; a named person takes it or sets it aside.
+- Replay: any decision reconstructs on demand against the evidence and version it was made against. A packet verifies itself offline - hashes, signatures, lineage, and the same Screening verdict. Inspection-ready. A run reproduces. It is not rebuilt.
 - The determination never inherits model variance. Locked protocol version. The chart text as it read that day. Same inputs, same answer. Human commit, then a hash-linked ledger. The model can be wrong. The record cannot.
 - Trident perceives, structures, reasons, investigates, verifies, explains, plans, and proposes. It never publishes, casts a Screening verdict, chooses a Resolve action, signs, or releases site data.
-- Trident is a governed AI harness. Operators choose the provider. Every task is versioned, schema-validated, and receipted. Checkpoints keep authority with the site. Nineteen versioned proposal tasks. Help make decisions, do not take them.
-- Nectar is shared execution intelligence: structure crosses sites, patient data does not. Public copy stays high-level. Sites do not agree on records. They agree on definitions.
+- Trident is a governed AI harness. Operators choose the provider. Every task is versioned, schema-validated, and receipted. Compounds chain those tasks through checkpoints that keep authority with the site. Help make decisions, do not take them.
+- Nectar is shared execution intelligence: structure crosses sites, patient data does not. The only artifact that leaves the site is PHI-free. Public copy stays high-level. Sites do not agree on records. They agree on definitions.
 - Category constraints: the decision belongs to the name on Form FDA 1572 and must be reproducible by that person; a determination that binds a submission has to hold still; consensus is not citation.
 - Disease-agnostic by design. One execution system for every protocol, care setting, and patient population.
 - Vision: Any clinic. Any trial. Any patient.
@@ -67,7 +67,7 @@ Product targets. Do not describe these as shipped until implementation evidence 
 
 - Bounded FHIR R4 ingestion from site-controlled systems
 - Institution-hosted or air-gapped Trident with no PHI egress
-- Governed local patient context inside Trident, never external inference or telemetry
+- Governed patient context inside Trident; site PHI never enters telemetry
 
 Do not say:
 
@@ -79,7 +79,7 @@ Do not say:
 
 UI examples and demo bindings on the website are synthetic. They illustrate product behavior. They are not clinical claims.
 
-The public home page is the product walkthrough: a live synthetic workspace through Protocol, Evidence, Screening, Resolve, and Replay. The walkthrough samples four REVIEW archetypes (conflicting sources, missing biomarker, stale window, ambiguous washout), each with typed options, a stated consequence, and the site role that owns it. New evidence re-screens deterministically. Investigator attestation binds facts the source cannot settle. Replay bundles stay at the site until a PI or delegated signer releases the exact artifact.
+The public home page is the product walkthrough: a live synthetic workspace through Protocol, Evidence, Screening, Resolve, and Replay. The same five views a clinic works in. The walkthrough samples four REVIEW archetypes (conflicting sources, missing biomarker, stale window, ambiguous washout), each with typed options, a stated consequence, and the site role that owns it. New evidence re-screens deterministically. Investigator attestation binds facts the source cannot settle. Replay bundles stay at the site until a PI or delegated signer releases the exact artifact.
 
 ## Pages
 

@@ -161,7 +161,7 @@ describe('Damaros brand mark', () => {
     assert.doesNotMatch(mobile, /thesis-closer|thesis-line/)
     // The figure is the last thing in the column, and order in the source is
     // the order on the page.
-    assert.match(app, /className="thesis-chain">\s*\n\s*<ChainSchematic animate=\{animate\} \/>\s*\n\s*<\/div>\s*\n\s*<\/div>/)
+    assert.match(app, /className="thesis-chain">\s*\n\s*<Suspense fallback=\{<div className="dgm-frame" aria-hidden="true" \/>\}>\s*\n\s*<ChainSchematic animate=\{animate\} \/>\s*\n\s*<\/Suspense>\s*\n\s*<\/div>\s*\n\s*<\/div>/)
     assert.match(css, /\.thesis-section\.section-space \{[\s\S]*?padding-block:\s*112px;/)
     assert.match(css, /\.landing-hero \{[\s\S]*?padding:\s*clamp\(196px, 22vh, 248px\) var\(--gutter\) 112px;/)
     assert.match(app, /className="hero-scroll-cue"/)

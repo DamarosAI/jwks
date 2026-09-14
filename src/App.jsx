@@ -5,9 +5,9 @@ import { easeSectionScroll, sectionScrollDuration, sectionScrollTarget, usePaneS
 import { useDemoPageWheel } from './page-scroll'
 import { PilotButton, PilotProvider } from './PilotInquiry'
 const PrivacyPage = lazy(() => import('./PrivacyPage'))
-import ChainSchematic from './diagrams/ChainSchematic'
-import TridentSchematic from './diagrams/TridentSchematic'
-import NectarSchematic from './diagrams/NectarSchematic'
+const ChainSchematic = lazy(() => import('./diagrams/ChainSchematic'))
+const TridentSchematic = lazy(() => import('./diagrams/TridentSchematic'))
+const NectarSchematic = lazy(() => import('./diagrams/NectarSchematic'))
 import { usePointerField } from './diagrams/usePointerField'
 import { useScrollSpread } from './diagrams/useScrollPhase'
 import { useGSAP } from '@gsap/react'
@@ -32,6 +32,12 @@ import {
 
 gsap.registerPlugin(ScrollTrigger, useGSAP)
 ScrollTrigger.config({ ignoreMobileResize: true })
+
+function prefetchHomeFigures() {
+  void import('./diagrams/ChainSchematic')
+  void import('./diagrams/TridentSchematic')
+  void import('./diagrams/NectarSchematic')
+}
 
 
 /* THE POINTER AS A POINT OF VIEW.
@@ -717,7 +723,9 @@ function ThesisSection() {
       <div className="section-field" ref={field} aria-hidden="true" />
       <div className="thesis-column">
         <div className="thesis-chain">
-          <ChainSchematic animate={animate} />
+          <Suspense fallback={<div className="dgm-frame" aria-hidden="true" />}>
+            <ChainSchematic animate={animate} />
+          </Suspense>
         </div>
       </div>
     </section>
@@ -1184,15 +1192,17 @@ function TridentSection() {
       <div className="trident-copy">
         <h2><span>Any model can propose at the point of care.</span></h2>
         <p className="section-dek">Help make decisions, don't take them.</p>
-        <p>Trident is a governed AI harness. Operators choose the provider. Every task is versioned, schema-validated, and receipted. Checkpoints keep authority with the site.</p>
+        <p>Trident is a governed AI harness. Operators choose the provider. Every task is versioned, schema-validated, and receipted. Compounds chain those tasks through checkpoints that keep authority with the site.</p>
         <div className="control-facts">
           <span><CheckCircle size={18} /> Schema-validated</span>
           <span><Fingerprint size={18} /> Provider identity</span>
-          <span><FileText size={18} /> 19 versioned tasks</span>
+          <span><FileText size={18} /> Versioned catalog</span>
         </div>
       </div>
       <div className="trident-diagram">
-        <TridentSchematic animate={animate} reduced={reduced} />
+        <Suspense fallback={<div className="dgm-frame" aria-hidden="true" />}>
+          <TridentSchematic animate={animate} reduced={reduced} />
+        </Suspense>
       </div>
     </section>
   )
@@ -1222,7 +1232,9 @@ function NectarSection() {
       <div className="section-field" ref={field} aria-hidden="true" />
       <SectionEyebrow brand>Nectar</SectionEyebrow>
       <div className="nectar-network">
-        <NectarSchematic animate={animate} reduced={reduced} />
+        <Suspense fallback={<div className="dgm-frame" aria-hidden="true" />}>
+          <NectarSchematic animate={animate} reduced={reduced} />
+        </Suspense>
       </div>
       <div className="nectar-copy">
         <h2><span>Execution intelligence that crosses site boundaries.</span></h2>
@@ -1400,6 +1412,9 @@ function HomePage() {
   const root = useRef(null)
   const reduced = useReducedMotion()
   usePageScrollFlow(root, reduced)
+  useEffect(() => {
+    prefetchHomeFigures()
+  }, [])
   return (
     <main className="page-shell" ref={root}>
       <PageMeta

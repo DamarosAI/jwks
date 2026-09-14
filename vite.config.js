@@ -16,6 +16,7 @@ export default defineConfig({
         manualChunks(id) {
           if (id.includes('node_modules/react-dom') || id.includes('node_modules/react/') || id.includes('node_modules/react-router')) return 'vendor'
           if (id.includes('node_modules/gsap') || id.includes('node_modules/@gsap')) return 'gsap'
+          if (id.includes('/src/diagrams/')) return 'figures'
         },
       },
     },

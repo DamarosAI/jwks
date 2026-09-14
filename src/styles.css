@@ -9517,6 +9517,17 @@ html.is-hidden .clinic-node i,
 
 .dgm-frame { min-width: 0; }
 
+.thesis-chain > .dgm-frame {
+  aspect-ratio: 1200 / 286;
+  width: 100%;
+}
+
+.trident-diagram > .dgm-frame,
+.nectar-network > .dgm-frame {
+  aspect-ratio: 620 / 700;
+  width: 100%;
+}
+
 .dgm-svg {
   display: block;
   width: 100%;
