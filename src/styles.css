@@ -394,10 +394,13 @@ h2 {
 .page-spine {
   position: fixed;
   z-index: 20;
-  top: 50%;
+  top: 0;
+  bottom: 0;
   left: clamp(18px, 2vw, 32px);
   display: grid;
   width: 34px;
+  height: fit-content;
+  margin-block: auto;
   gap: 5px;
   padding: 11px 0;
   border: 1px solid var(--border);
@@ -408,11 +411,10 @@ h2 {
   visibility: hidden;
   pointer-events: none;
   transform: none;
-  /* Centered by `translate` rather than transform: the type law pins
-     transform: none here (travel shears Endless), and the panel still
-     needs to hang from the viewport's middle the way the content used
-     to sit in the old top-to-bottom band. */
-  translate: 0 -50%;
+  /* A stretched column, a fit-content pill, auto block margins. That is
+     the viewport's middle without a transform (travel shears Endless)
+     and without a `top: 50%` plus translate that later layers can reset. */
+  translate: none;
   transition: opacity 360ms ease, visibility 0s linear 360ms;
 }
 
@@ -443,7 +445,7 @@ h2 {
   transition: color 180ms ease;
 }
 
-.page-spine button > span { color: inherit; font-family: inherit; font-size: 0.8rem; font-variant-numeric: tabular-nums; font-weight: 400; letter-spacing: 0.01em; }
+.page-spine button > span { color: inherit; font-family: inherit; font-size: 0.8rem; font-variant-numeric: tabular-nums; font-weight: 400; letter-spacing: 0.01em; line-height: 1; }
 .page-spine button:hover,
 .page-spine button:focus-visible,
 .page-spine button.active { color: var(--accent); }
@@ -1128,6 +1130,12 @@ h2 {
   width: auto;
   min-width: 0;
   margin-inline: clamp(-136px, calc((1480px - 100vw) / 2), 0px);
+  /* The pointer field writes `--px` / `--py` on the section. Inherited into
+     this svg they restyle every vessel every frame (color-mix stroke plus
+     a transform on five running clocks). The lattice still follows the
+     pointer; the drawing does not. */
+  --px: 0;
+  --py: 0;
 }
 
 /* AND NOTHING SITS UNDER THE DRAWING BUT ITS OWN CAPTION.
@@ -9349,6 +9357,7 @@ html.is-hidden .clinic-node i,
   left: 50%;
   width: 100vw;
   margin-left: -50vw;
+  overflow: hidden;
   /* TWO LAYERS: THE LATTICE, AND WHERE THE READER IS STANDING ON IT.
 
      The dots are the ground and they have not changed. Over them is one soft
@@ -9366,7 +9375,6 @@ html.is-hidden .clinic-node i,
      layer is a tint of the one accent: the field is somewhere the figures are
      suspended, not a texture behind them. */
   background-image:
-    radial-gradient(circle 26vmax at calc(50% + var(--px, 0) * 40%) calc(50% + var(--py, 0) * 44%), color-mix(in srgb, var(--accent) 10%, transparent), transparent 64%),
     radial-gradient(ellipse 58vmax 42vmax at 16% 22%, color-mix(in srgb, var(--accent) 6%, transparent), transparent 70%),
     radial-gradient(ellipse 52vmax 44vmax at 86% 74%, color-mix(in srgb, var(--accent) 5%, transparent), transparent 72%),
     radial-gradient(circle at center, transparent 5.2px, color-mix(in srgb, var(--accent) 15%, transparent) 5.9px, transparent 7px),
@@ -9375,18 +9383,25 @@ html.is-hidden .clinic-node i,
   background-position:
     center,
     center,
-    center,
     calc(50% + 47px) calc(var(--spread, 1) * -34px + 31px),
     calc(50% - 60px) calc(var(--spread, 1) * -34px - 22px),
     center calc(var(--spread, 1) * -34px);
   background-size:
     100% 100%,
     100% 100%,
-    100% 100%,
     233px 209px,
     181px 163px,
     26px 26px;
   opacity: calc(0.34 + 0.66 * var(--spread, 1));
+  pointer-events: none;
+}
+
+.section-field::before {
+  content: '';
+  position: absolute;
+  inset: -18%;
+  background: radial-gradient(circle 26vmax at 50% 50%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 64%);
+  transform: translate3d(calc(var(--px, 0) * 16%), calc(var(--py, 0) * 18%), 0);
   pointer-events: none;
 }
 

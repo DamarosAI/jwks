@@ -19,6 +19,7 @@ const nectar = await readSource(new URL('./diagrams/NectarSchematic.jsx', import
 const courier = await readSource(new URL('./diagrams/Courier.jsx', import.meta.url))
 const floor = await readSource(new URL('./diagrams/ChainSchematic.jsx', import.meta.url))
 const field = await readSource(new URL('./diagrams/usePointerField.js', import.meta.url))
+const hot = await readSource(new URL('./diagrams/useDiagramHot.js', import.meta.url))
 
 const sources = [driver, pan, iso, solid, trident, nectar, floor, field]
 // The two figures built over one square plan and one 620x700 sheet. The floor
@@ -1778,7 +1779,11 @@ describe('Trident and Nectar schematics', () => {
       // intent, not animation - and it is named, so a second one cannot slip
       // in behind it and start driving something.
       const timers = [...source.matchAll(/setTimeout\(([^,]*),/g)].map((m) => m[1].trim())
-      assert.deepEqual(timers.filter((fn) => fn !== '() => setRead(true)'), [], 'no timer may drive a drawing')
+      assert.deepEqual(
+        timers.filter((fn) => !fn.includes("classList.add('is-read')")),
+        [],
+        'no timer may drive a drawing',
+      )
     }
     for (const source of figures) {
       assert.match(source, /const \[figure, phase, booted\] = useScrollRun\(PHASES, \{ reduced \}\)/)
@@ -1981,7 +1986,7 @@ describe('The floor schematic', () => {
     // The machines still gate on the section's power: clocks run while the
     // figure is on screen, and every seam handoff starts from that one class
     // flip - which is what keeps the five plates phase-locked.
-    assert.match(floor, /className=\{`dgm-svg is-floor\$\{animate \? ' is-live' : ''\}\$\{read \? ' is-read' : ''\}`\}/)
+    assert.match(floor, /className=\{`dgm-svg is-floor\$\{animate \? ' is-live' : ''\}`\}/)
     // And with no scatter to wait out, every station is a target from the
     // first frame.
     assert.match(floor, /tabIndex=\{0\}/)
@@ -3541,7 +3546,15 @@ describe('The floor schematic', () => {
     // and on a touch screen `:hover` sticks after the finger has gone, so the
     // plate stayed lifted under a caption that had moved on.
     assert.doesNotMatch(css.slice(css.indexOf('FIVE SURFACES, ALREADY DOWN')), /\.fl-step:hover/)
-    assert.match(floor, /onMouseEnter=\{\(\) => enter\(item\.key\)\}/)
+    // Lighting is a class written onto `[data-lit]`, not a React rewrite of
+    // the board - the same hitch Nectar already refused. `setHot` in the
+    // component that owns the courier and five stations restyles the whole
+    // svg mid-clock the instant the cursor arrives.
+    assert.match(floor, /useDiagramHot/)
+    assert.match(floor, /data-lit=\{item\.key\}/)
+    assert.match(floor, /\{\.\.\.probe\(item\.key\)\}/)
+    assert.doesNotMatch(floor, /onMouseEnter=\{\(\) => enter\(item\.key\)\}/)
+    assert.doesNotMatch(floor, /const enter = \(key\) => \{\s*\n\s*setHot\(key\)/)
   })
 
   it('invites the reader into the reads, and stops once they are in', () => {
@@ -3580,14 +3593,15 @@ describe('The floor schematic', () => {
     assert.match(css, /\.dgm-svg\.is-read \.fl-invite \{ opacity: 0; \}/)
     const dwellMs = Number(floor.match(/const READ_DWELL_MS = (\d+)/)[1])
     assert.ok(dwellMs >= 200 && dwellMs <= 500, `a dwell is tenths of a second, not ${dwellMs}ms`)
-    assert.match(floor, /dwell\.current = window\.setTimeout\(\(\) => setRead\(true\), READ_DWELL_MS\)/)
-    assert.match(floor, /const leave = \(key\) => \{\s*\n\s*window\.clearTimeout\(dwell\.current\)/)
+    assert.match(floor, /dwell\.current = window\.setTimeout\(\(\) => \{\s*\n\s*svg\.current\?\.classList\.add\('is-read'\)/)
+    assert.match(floor, /window\.clearTimeout\(dwell\.current\)/)
     assert.match(floor, /useEffect\(\(\) => \(\) => window\.clearTimeout\(dwell\.current\), \[\]\)/)
-    // The caption is not gated on the dwell: hot lands on the first frame.
-    assert.match(floor, /const enter = \(key\) => \{\s*\n\s*setHot\(key\)/)
+    // The caption is not gated on the dwell: hot lands on the first frame
+    // through the readout, not through a rewrite of the board.
+    assert.match(floor, /notify\.current\?\.\(key\)/)
     // Focus never waits. Arriving by tab or by tap is deliberate by
     // construction, and nobody scrolls past something with a keyboard.
-    assert.match(floor, /onFocus=\{\(\) => \{ setHot\(item\.key\); setRead\(true\) \}\}/)
+    assert.match(hot, /onFocus: \(\) => \{\s*\n\s*paint\(key\)\s*\n\s*svgRef\.current\?\.classList\.add\('is-read'\)/)
     // A phone has no hover to offer, and the query is the thing that knows.
     assert.match(css, /\.fl-invite\.is-touch \{ display: none; \}/)
     assert.match(css, /@media \(hover: none\) \{\s*\n\s*\.fl-invite\.is-pointer \{ display: none; \}\s*\n\s*\.fl-invite\.is-touch \{ display: revert; \}/)
@@ -3689,6 +3703,12 @@ describe('The pointer field', () => {
     // pointer-field variables themselves rather than a name that got reused.
     assert.doesNotMatch(floor, /usePointerField|--px\b|--py\b/)
     assert.match(field, /export function usePointerField\(target, \{ reduced = false \} = \{\}\)/)
+    // The wash follows the pointer as a transformed layer, not as a
+    // background-image rewrite of the whole viewport lattice every frame.
+    // The drawing itself inherits zeroes, so five running clocks are not
+    // restyled on every pointer move.
+    assert.match(css, /\.section-field::before \{[\s\S]*?translate3d\(calc\(var\(--px, 0\)/)
+    assert.match(css, /\.thesis-chain \{[\s\S]*?--px: 0;[\s\S]*?--py: 0;/)
   })
 
   it('is off wherever following a pointer would be a lie', () => {

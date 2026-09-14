@@ -4,6 +4,7 @@ import { ISO_X, ISO_Y, jitter, planCircle, planSpace, project, roundedBox, round
 import { Faces } from './Solid'
 import { Courier } from './Courier'
 import { useCenterOnOverflow } from './useCenterOnOverflow'
+import { useDiagramHot } from './useDiagramHot'
 
 /**
  * FIVE SURFACES, ALREADY DOWN, ALREADY WORKING.
@@ -1455,35 +1456,61 @@ const StationBody = memo(function StationBody({ item }) {
   )
 })
 
+function FloorReadout({ notify }) {
+  const [hot, setHot] = useState(null)
+  useEffect(() => {
+    notify.current = setHot
+    return () => { notify.current = null }
+  }, [notify])
+  const step = STEPS.find((item) => item.key === hot) ?? null
+
+  return (
+      <figcaption className={`fl-readout${step ? ' is-hot' : ''}`} aria-live="polite">
+        <span className="fl-readpill">{step ? step.label : 'FIVE STEPS'}</span>
+        {/* THE CAPTION HOLDS ITS GROUND. Every read the pill can show is
+            drawn in the same grid cell, hidden - so the line box stands as
+            tall as the tallest caption at ANY width, and the closer under
+            the figure never moves when the narration changes. Reserving a
+            guessed number of lines broke at exactly the widths a guess
+            breaks at. */}
+        <span className="fl-readline">
+          {[...STEPS.map((s) => s.read), READ_REST].map((text) => (
+            <span className="fl-readghost" aria-hidden="true" key={text}>{text}</span>
+          ))}
+          <span className="fl-readtext">{step ? step.read : READ_REST}</span>
+        </span>
+      </figcaption>
+  )
+}
+
 export default function ChainSchematic({ animate = true }) {
   const frame = useCenterOnOverflow()
-  const [hot, setHot] = useState(null)
+  const svg = useRef(null)
+  const notify = useRef(null)
   // Once a station has been READ - not merely crossed - the invitation has done
-  // its job and goes. The dwell timer is what tells those two apart.
-  const [read, setRead] = useState(false)
+  // its job and goes. The dwell timer is what tells those two apart. Lighting
+  // the plate is a class on `[data-lit]`, not state in this tree: rewriting
+  // the board on every enter hitching every ambient clock.
   const dwell = useRef(0)
+  const probe = useDiagramHot(svg, (key) => {
+    notify.current?.(key)
+    window.clearTimeout(dwell.current)
+    if (key == null) return
+    dwell.current = window.setTimeout(() => {
+      svg.current?.classList.add('is-read')
+    }, READ_DWELL_MS)
+  })
   useEffect(() => () => window.clearTimeout(dwell.current), [])
-
-  // The caption answers the pointer at once; only the invitation waits.
-  const enter = (key) => {
-    setHot(key)
-    window.clearTimeout(dwell.current)
-    dwell.current = window.setTimeout(() => setRead(true), READ_DWELL_MS)
-  }
-  const leave = (key) => {
-    window.clearTimeout(dwell.current)
-    setHot((current) => (current === key ? null : current))
-  }
   // The monitor's one nerve: clicked, it bolts; the flee animation ending
   // brings it back on its own, so there is no timer to leak.
   const [shy, setShy] = useState(false)
-  const step = STEPS.find((item) => item.key === hot) ?? null
 
   return (
     <figure className="dgm">
       <div className="dgm-frame" ref={frame}>
         <svg
-          className={`dgm-svg is-floor${animate ? ' is-live' : ''}${read ? ' is-read' : ''}`}
+          ref={svg}
+          className={`dgm-svg is-floor${animate ? ' is-live' : ''}`}
           viewBox={`0 0 ${W} ${H}`}
           role="img"
           aria-label="Five plates in a row, seen in axonometric projection, their machines already running - each plate bounded by its own printed double-walled membrane, the way a section drawing bounds a cell. The five stations are lettered in ink beneath their plates: Protocol, Evidence, Screening, Resolve, Replay. A small hovering courier shaped as the flat blue Damaros mark - a plump two-part silhouette that bobs with a soft jelly squash, its floor shadow beneath it - works the air above the row on one slow round, and the seams of the run move only under it. One cell - a round body with its nucleus drawn on top - runs the whole row. A grid of twelve switches on a breaker board is thrown one at a time, each settling green or red, and once per round the courier drops to the export gate: the compiled violet transcript slides to the mouth under its beam and crosses the seam riding just below the courier's body, led to the next plate and set in through the entry gate, where it docks beside the gantry. There a claw closes on one cell in a heap, lifts it, carries it across, and sets it down into an ordered bed of round sockets; the placed cell then slides up a printed lane to a staging seat, waits its beat, and continues straight out through that plate's far gate - one cell, one line, socket to seat to gate. Along the far long edge of the next plate, three verdict seats wait in a line - green, red, amber. The bed feeds the green pore as a moving line: one cell slides onto the mouth and is visibly swallowed down the bore while the seat behind it shuffles forward and the newly arrived cell takes the empty place; the red pore stands open and ringed; the amber seat is a gate cut through the plate's wall, its pylons stained amber. The unsettled amber cell forms inside the plate's reticulum - nested curved sacs opening toward the gate - slides down the lane to the bay while the courier waits overhead, and leaves only in the courier's hold: carried through the air and set down at the resolve lane's entry gate, one seat behind the line, so it never lands where a cell already stands. The courier then steps sideways onto the lever and throws it - nothing else ever moves that lever - so the horizontal ram crosses the lane, pushes one cell clean off the edge through the one gap in the membrane, and the line indexes forward. On the last plate the run lies as frames on a tape between two reels, and a head reads its way out along the tape; the courier lands on the take-up reel's raised hub - the transport's one button - the hub gives under the press, and only then does the head turn and rewind, the courier stepping backwards alongside it before allowing itself one full spin on the climb home. Clicked anywhere on its round, the courier drops whatever it is carrying and darts off the sheet, drifting back on its own. Pointing at a plate darkens the ground beneath it and brings its verdicts forward."
@@ -1509,13 +1536,11 @@ export default function ChainSchematic({ animate = true }) {
 
           {STEPS.map((item) => (
             <g
-              className={`fl-step is-${item.key}${hot === item.key ? ' is-hot' : ''}`}
+              className={`fl-step is-${item.key}`}
+              data-lit={item.key}
               key={item.key}
               style={{ '--sx': item.sx }}
-              onMouseEnter={() => enter(item.key)}
-              onMouseLeave={() => leave(item.key)}
-              onFocus={() => { setHot(item.key); setRead(true) }}
-              onBlur={() => setHot(null)}
+              {...probe(item.key)}
               tabIndex={0}
               role="button"
               aria-label={`${item.label}, ${item.fact}. ${item.read}`}
@@ -1603,24 +1628,7 @@ export default function ChainSchematic({ animate = true }) {
         <div className="fl-warplens" aria-hidden="true" />
       </div>
 
-      {/* Prose in the document rather than type inside the drawing: it holds
-          its size while the figure scales, a screen reader gets it as text, and
-          it is where the curiosity a hover creates has somewhere to go. */}
-      <figcaption className={`fl-readout${step ? ' is-hot' : ''}`} aria-live="polite">
-        <span className="fl-readpill">{step ? step.label : 'FIVE STEPS'}</span>
-        {/* THE CAPTION HOLDS ITS GROUND. Every read the pill can show is
-            drawn in the same grid cell, hidden - so the line box stands as
-            tall as the tallest caption at ANY width, and the closer under
-            the figure never moves when the narration changes. Reserving a
-            guessed number of lines broke at exactly the widths a guess
-            breaks at. */}
-        <span className="fl-readline">
-          {[...STEPS.map((s) => s.read), READ_REST].map((text) => (
-            <span className="fl-readghost" aria-hidden="true" key={text}>{text}</span>
-          ))}
-          <span className="fl-readtext">{step ? step.read : READ_REST}</span>
-        </span>
-      </figcaption>
+      <FloorReadout notify={notify} />
     </figure>
   )
 }

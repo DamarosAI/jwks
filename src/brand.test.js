@@ -96,6 +96,11 @@ describe('Damaros brand mark', () => {
     // the one brand eyebrow living in a section the phone sheet names.
     assert.match(css, /#root \.section-eyebrow\.is-brand,\s*\n#root \.thesis-section \.section-eyebrow\.is-brand \{/)
     assert.match(css, /\.page-spine \{[\s\S]*?width:\s*34px;/)
+    // Hung from the viewport's own middle without a transform (travel shears
+    // Endless) and without `top: 50%` plus a translate that some layers reset.
+    // A stretched column with a fit-content pill and auto block margins is
+    // the center that survives the type law.
+    assert.match(css, /\.page-spine \{[\s\S]*?top:\s*0;[\s\S]*?bottom:\s*0;[\s\S]*?height:\s*fit-content;[\s\S]*?margin-block:\s*auto;/)
     assert.match(css, /\.site-nav-wrap \{[\s\S]*?z-index:\s*50;[\s\S]*?isolation:\s*isolate;/)
     // The thesis section is a left-set column now rather than a centred slab -
     // the eyebrow, the figure and the figure's caption all start on one pixel

@@ -54,5 +54,10 @@ export function useDiagramHot(svgRef, onHot) {
   return useCallback((key) => ({
     onMouseEnter: () => paint(key),
     onMouseLeave: () => paint(null),
-  }), [paint])
+    onFocus: () => {
+      paint(key)
+      svgRef.current?.classList.add('is-read')
+    },
+    onBlur: () => paint(null),
+  }), [paint, svgRef])
 }
