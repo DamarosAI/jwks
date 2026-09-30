@@ -398,10 +398,10 @@ describe('Trident and Nectar schematics', () => {
     // which is the one place on the site the boundary is given as an order
     // rather than as a fact about the architecture. One class, so the pair
     // cannot drift into two treatments.
-    assert.match(app, /<h2><span>Any model can propose at the point of care\.<\/span><\/h2>/)
+    assert.match(app, /<h2><span>The site names the model\.<\/span><\/h2>/)
     assert.match(app, /<p className="section-dek">Help make decisions, don't take them\.<\/p>/)
-    assert.match(app, /<h2><span>Execution intelligence that crosses site boundaries\.<\/span><\/h2>/)
-    assert.match(app, /<p className="section-dek">Patient data that never does\.<\/p>/)
+    assert.match(app, /<h2><span>Signed execution crosses\.<\/span><\/h2>/)
+    assert.match(app, /<p className="section-dek">Patient data never does\.<\/p>/)
     assert.doesNotMatch(css, /\.nectar-dek/)
   })
 
@@ -1827,7 +1827,7 @@ describe('Trident and Nectar schematics', () => {
 
   it('carries the Nectar claims as facts beside the copy, the way Trident does', () => {
     assert.match(app, /<div className="control-facts">\s*\n\s*<span><ShieldCheck size=\{18\} \/> PHI-free by construction<\/span>/)
-    assert.match(app, /<span><Graph size=\{18\} \/> Coverage compounds<\/span>/)
+    assert.match(app, /<span><Graph size=\{18\} \/> Compiled from signed runs<\/span>/)
     assert.match(app, /<span><Database size=\{18\} \/> Records stay at the site<\/span>/)
     assert.match(css, /\.nectar-copy \.control-facts \{/)
     // The old three-column band is gone from every stylesheet.
@@ -1885,7 +1885,7 @@ describe('Trident and Nectar schematics', () => {
     assert.match(nectar, /function NectarReadout/)
     // The three facts under it are unchanged, so nothing concrete moved up into
     // the paragraph when the paragraph moved up.
-    assert.doesNotMatch(para, /PHI|Coverage compounds|stays at the site/)
+    assert.doesNotMatch(para, /PHI|Compiled from signed runs|stays at the site/)
   })
 
   it('keeps the panels on the light field and lets the headlines wrap', () => {

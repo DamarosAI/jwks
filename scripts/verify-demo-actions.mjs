@@ -73,7 +73,7 @@ if (!/#root \.capacity-bento > \.metric-blue \{[^}]*background: var\(--accent-st
 // A ground for the page, so a white card is an object and not the page itself.
 if (!css.includes('--page-ground:') || !/body \{[\s\S]*?var\(--page-ground\)/.test(css)) throw new Error('The page needs a ground for its surfaces to sit on')
 if (!/#root \.final-cta h2 \{[^}]*font-size: var\(--fluid-cta\);/.test(css) || !css.includes('--fluid-cta:')) throw new Error('The final call to action needs its own scale, not the section one')
-if (!app.includes('control-security-workspace') || !app.includes('Trident execution') || !app.includes('No PHI egress') || !css.includes('.control-control-detail')) {
+if (!app.includes('control-security-workspace') || !app.includes('Trident execution') || !app.includes('Attested endpoints only') || !css.includes('.control-control-detail')) {
   throw new Error('Site control must show local Trident custody and fail-closed execution')
 }
 if (!app.includes('<PageSpine />') || !app.includes('<PageSpine about />')) throw new Error('Page spine missing')

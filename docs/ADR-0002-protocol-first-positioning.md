@@ -15,9 +15,9 @@ Damaros sells clinical research execution infrastructure. Unit is trial-capable 
 starts from Protocol, binds site Evidence, evaluates Screening deterministically, routes judgment to
 human Resolve, and produces Replay proof.
 
-Target product makes Trident prepare source-grounded work across five steps inside site boundary. Authorized local
-patient context may enter Trident. PHI never leaves site or enters external inference or telemetry.
-Trident never casts Screening verdict or takes human authority.
+Trident prepares source-grounded work across five steps. The site names the provider: Anthropic, OpenAI, or a model it runs itself, with no silent fallback. Authorized patient context may enter Trident only on this machine, or at an endpoint the site attested: a vendor under a business associate agreement the site or Damaros holds, or a model the site operates, with no training, no human review, and retention inside the site's limit. PHI never enters telemetry. Trident never casts a Screening verdict or takes human authority. Publish, screen, sign, export, and verify finish when no model is set.
+
+Nectar compiles a PHI-free profile from signed runs. That profile is the only artifact that may leave the site. The merge can inform the next protocol. Nectar never screens, resolves, signs, or releases.
 
 ## Claims boundary
 

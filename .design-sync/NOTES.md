@@ -9,6 +9,6 @@ Never push these compiled artifacts:
 
     _ds_bundle.js  _ds_manifest.json  _adherence.oxlintrc.json
 
-Public product language: five workflow steps, Trident as the governed harness,
-Nectar as high-level execution intelligence. Remote snapshots must not override
-repository copy.
+Public product language: five workflow steps, Trident as the site-named harness,
+Nectar as high-level execution intelligence compiled from signed runs. Remote
+snapshots must not override repository copy.

@@ -65,7 +65,7 @@ describe('site-control workspace geometry', () => {
 
   it('keeps the control boundary in the protocol amendment band', () => {
     assert.match(app, /const \[selectedControl, setSelectedControl\] = useState\(0\)/)
-    assert.match(app, /Trident runs inside site boundary/)
+    assert.match(app, /Authority stays at the site/)
     assert.match(app, /CONTROL BOUNDARY/)
     assert.doesNotMatch(app, /className="control-control-footer"/)
     assert.doesNotMatch(app, /control-release-card/)
@@ -87,7 +87,7 @@ describe('site-control workspace geometry', () => {
     assert.doesNotMatch(app, /className="control-control-fill"/)
     assert.match(app, /SHA-256/)
     assert.match(app, /Ed25519/)
-    assert.match(app, /Governed Trident harness\. No PHI egress\./)
+    assert.match(app, /Governed Trident harness\. Attested endpoints only\./)
     assert.doesNotMatch(app, /boundaryNote/)
     assert.match(app, /className="source-arm"/)
     assert.match(app, /LEDGER - 3 EVENTS - SITE 018/)

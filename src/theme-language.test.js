@@ -29,10 +29,10 @@ describe('theme and product language', () => {
     assert.match(app, /\['nectar', 'Nectar', 'Intelligence'\]/)
     assert.match(app, /<TridentSection \/>/)
     assert.match(app, /<NectarSection \/>/)
-    assert.match(app, /Any model can propose at the point of care\./)
+    assert.match(app, /The site names the model\./)
     assert.match(app, /Help make decisions, don't take them\./)
-    assert.match(app, /Execution intelligence that crosses site boundaries\./)
-    assert.match(app, /Patient data that never does\./)
+    assert.match(app, /Signed execution crosses\./)
+    assert.match(app, /Patient data never does\./)
     assert.match(app, /Protocol to proof, owned by the site\./)
   })
 
