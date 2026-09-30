@@ -51,7 +51,7 @@ if (!app.includes('hero-drum-motif')) throw new Error('Landing drum motif missin
 if (css.includes('.biomarker-rain span::before')) throw new Error('Biomarker line trails must stay removed')
 
 if (!app.includes("aria-live=\"polite\"")) throw new Error('Demo actions need an announced confirmation region')
-if (!app.includes('A research department,</span>') || !app.includes('deployed like software.')) throw new Error('Capacity thesis drifted')
+if (!app.includes('A protocol a clinic</span>') || !app.includes('can actually run.')) throw new Error('Capacity thesis drifted')
 // Capacity is three figures and the systems they reach. The compiled-protocol
 // panel and the execution-record card moved out - Trident and Nectar carry
 // that story on their own sheets now.

@@ -128,7 +128,7 @@ const html = `<!doctype html>
   </svg>
   <div class="lockup">
     <div class="mark">Damaros</div>
-    <p class="claim">Agentic infrastructure <em>for clinical research.</em></p>
+    <p class="claim">Protocol to proof. <em>Owned by the site.</em></p>
   </div>
 </body></html>`
 

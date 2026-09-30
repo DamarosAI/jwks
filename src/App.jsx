@@ -466,7 +466,7 @@ function Footer() {
     <footer className="site-footer">
       <div className="footer-mark">
         <span><BrandName /></span>
-        <p>Clinical research execution infrastructure. Any model can propose. Your site decides.</p>
+        <p>Clinical research execution infrastructure. Protocol to proof, owned by the site.</p>
       </div>
       <div className="footer-links">
         <NavLink to="/">Home</NavLink>
@@ -632,11 +632,11 @@ function LandingHero() {
       <BiomarkerRain />
       <img className="hero-drum-motif" src="/assets/damaros-monogram-blue.svg" alt="" aria-hidden="true" decoding="async" />
       <div className="hero-copy">
-        <h1 className="hero-heading" aria-label="Agentic infrastructure for clinical research.">
-          <span className="hero-line">Agentic infrastructure</span>
-          <span className="hero-line accent-text">for clinical research.</span>
+        <h1 className="hero-heading" aria-label="Protocol to proof. Owned by the site.">
+          <span className="hero-line">Protocol to proof.</span>
+          <span className="hero-line accent-text">Owned by the site.</span>
         </h1>
-        <p>Built to execute anywhere: <BrandName /> turns protocols into evidence-bound decisions, signed locally and replayable on demand.</p>
+        <p>A protocol becomes a sealed run: evidence as read that day, a screen the model cannot move, and a signature the site can reopen.</p>
         <div className="hero-actions">
           <PilotButton className="button button-primary">Start a pilot <ArrowUpRight size={17} weight="bold" /></PilotButton>
           <a className="button button-secondary" href="#trident" onClick={(event) => smoothSection(event, '#trident')}>How it works <ArrowRight size={17} weight="bold" /></a>
@@ -752,8 +752,8 @@ function CapacityBento() {
   return (
     <section className="capacity-section section-space" id="capacity" ref={root}>
       <div className="section-heading centered-heading">
-        <h2><span className="capacity-title-line">A research department,</span><span className="capacity-title-line">deployed like software.</span></h2>
-        <p>Disease-agnostic by design. One execution system for every protocol, care setting, and patient population. Each protocol adds reusable coverage. Every decision keeps human accountability and local control.</p>
+        <h2><span className="capacity-title-line">A protocol a clinic</span><span className="capacity-title-line">can actually run.</span></h2>
+        <p>Study startup, visit calendars, budgets, and recruitment stay in the systems a site already keeps. Damaros publishes the protocol, seals the evidence to the day it was read, screens it the same way twice, and keeps the signature reconstructable.</p>
       </div>
       {/* Two figures over the row that pairs the third with what it counts: the
           panel is the systems, so the number beside it is its own caption and
@@ -1402,7 +1402,7 @@ function FinalCta({ about = false }) {
       {!about && <SectionEyebrow>Pilot</SectionEyebrow>}
       <img className="final-cta-mark" src="/assets/damaros-monogram.svg" alt="" aria-hidden="true" loading="lazy" decoding="async" />
       <p>{about ? 'Build capacity where care already happens.' : 'Bring one protocol. Leave with a replayable run.'}</p>
-      <h2>{about ? 'Make research capacity buildable.' : 'Start with a real site workflow.'}</h2>
+      <h2>{about ? 'Make research capacity buildable.' : 'Start with one protocol at one clinic.'}</h2>
       <PilotButton className="button button-primary button-large">Start a pilot <ArrowUpRight size={20} weight="bold" /></PilotButton>
     </section>
   )
@@ -1419,7 +1419,7 @@ function HomePage() {
     <main className="page-shell" ref={root}>
       <PageMeta
         title="Damaros | Clinical research execution infrastructure"
-        description="Damaros turns protocols into evidence-bound, locally signed, replayable clinical research execution."
+        description="A protocol becomes a sealed run: evidence as read that day, a screen the model cannot move, and a signature the site can reopen."
         path="/"
       />
       <LandingHero />
@@ -1497,7 +1497,7 @@ function WhyNow() {
         <div className="why-now-title why-now-line">
           <div>
             <h2>Tools scale. Capacity doesn't.</h2>
-            <p>Research execution remains limited by local infrastructure, not scientific ambition.</p>
+            <p>A study calendar in the chart does not execute the protocol.</p>
           </div>
           <CaretDown className="why-now-chevron" size={22} weight="bold" aria-hidden="true" />
         </div>
