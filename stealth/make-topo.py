@@ -35,7 +35,7 @@ def terrain(W, H, summit, hills, seed, S=8, calm=420, wobble=1.0):
 
     noise = vnoise(380, .10, seed) + vnoise(170, .045, seed + 2) + vnoise(80, .012, seed + 6)
     damp = 1 - np.exp(-(((X - sx) ** 2 + (Y - sy) ** 2) / calm ** 2))
-    return f + wobble * noise * (0.15 + 0.85 * damp), S
+    return blur(f + wobble * noise * (0.15 + 0.85 * damp)), S
 
 
 TABLE = {1: [('l', 'b')], 2: [('b', 'r')], 3: [('l', 'r')], 4: [('t', 'r')], 5: [('l', 't'), ('b', 'r')],
@@ -82,6 +82,47 @@ def join(segs):
     return lines
 
 
+def blur(f, sigma=1.3):
+    """A light Gaussian blur of the field, so the traced lines carry no grid-scale wiggle."""
+    r = int(3 * sigma)
+    x = np.arange(-r, r + 1)
+    k = np.exp(-x ** 2 / (2 * sigma ** 2))
+    k /= k.sum()
+    run = lambda m: np.convolve(np.pad(m, r, mode='edge'), k, mode='valid')
+    return np.apply_along_axis(run, 0, np.apply_along_axis(run, 1, f))
+
+
+def chaikin(pts, closed, rounds=2):
+    """Corner cutting: each pass replaces every corner with two points a quarter in from it."""
+    for _ in range(rounds):
+        m, out = len(pts), []
+        if not closed:
+            out.append(pts[0])
+        for i in (range(m) if closed else range(m - 1)):
+            p, q = pts[i], pts[(i + 1) % m]
+            out.append((0.75 * p[0] + 0.25 * q[0], 0.75 * p[1] + 0.25 * q[1]))
+            out.append((0.25 * p[0] + 0.75 * q[0], 0.25 * p[1] + 0.75 * q[1]))
+        if not closed:
+            out.append(pts[-1])
+        pts = out
+    return pts
+
+
+def resample(pts, closed, step=34):
+    """Even spacing along the line. Uneven spacing is what makes a Catmull-Rom fit overshoot into kinks.
+    A small closed ring always keeps at least sixteen points. The field is blurred, so 34px spacing
+    still follows every bend."""
+    a = np.array(pts + ([pts[0]] if closed else []))
+    seg = np.hypot(*np.diff(a, axis=0).T)
+    length = seg.sum()
+    if closed:
+        step = min(step, length / 16)
+    n = max(16 if closed else 2, int(round(length / step)) + (0 if closed else 1))
+    cum = np.concatenate([[0], np.cumsum(seg)])
+    ts = np.linspace(0, length, n, endpoint=not closed)
+    return list(zip(np.interp(ts, cum, a[:, 0]), np.interp(ts, cum, a[:, 1])))
+
+
 def simplify(pts, eps=1.6):
     if len(pts) < 3:
         return pts
@@ -99,12 +140,12 @@ def simplify(pts, eps=1.6):
 def bezier(pts, closed):
     n = len(pts)
     if n < 3:
-        return 'M%.0f %.0f' % pts[0] + ''.join(' L%.0f %.0f' % p for p in pts[1:])
+        return 'M%.1f %.1f' % pts[0] + ''.join(' L%.1f %.1f' % p for p in pts[1:])
     P = (lambda i: pts[i % n]) if closed else (lambda i: pts[max(0, min(n - 1, i))])
-    d = 'M%.0f %.0f' % pts[0]
+    d = 'M%.1f %.1f' % pts[0]
     for i in (range(n) if closed else range(n - 1)):
         p0, p1, p2, p3 = P(i - 1), P(i), P(i + 1), P(i + 2)
-        d += ' C%.0f %.0f %.0f %.0f %.0f %.0f' % (p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6,
+        d += (' C' if i == 0 else ' ') + '%.1f %.1f %.1f %.1f %.1f %.1f' % (p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6,
                                                   p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6, *p2)
     return d + (' Z' if closed else '')
 
@@ -132,9 +173,9 @@ def contours(f, S, count, clear=None):
             if len(line) < 6:
                 continue
             closed = abs(line[0][0] - line[-1][0]) < .5 and abs(line[0][1] - line[-1][1]) < .5
-            s = simplify(line)
-            if closed and len(s) > 3:
-                s = s[:-1]
+            if closed:
+                line = line[:-1]
+            s = resample(chaikin(line, closed), closed)
             if len(s) >= 2:
                 found.append((kind, s, closed))
     if clear:

@@ -28,7 +28,7 @@ const html = `<!doctype html>
       radial-gradient(ellipse 640px 300px at 1080px 214px, #fbfcfe 0%, rgba(248, 250, 252, 0) 70%),
       linear-gradient(180deg, #f8fafc 0%, #e9eff5 100%);
   }
-  .topo { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; }
+  .topo { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke-linecap: round; stroke-linejoin: round; }
   .topo-ink { stroke: #10161d; stroke-opacity: 0.12; stroke-width: 1; }
   .topo-blue { stroke: #2f6193; stroke-opacity: 0.3; stroke-width: 1; }
   .topo-index { stroke: #214d79; stroke-opacity: 0.55; stroke-width: 1.4; }
