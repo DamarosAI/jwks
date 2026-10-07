@@ -2,8 +2,8 @@
 
 A summit, a few hills and a saddle, low-frequency value noise for the wobble - damped near the summit so
 the rings around it stay clean - traced with marching squares, simplified, and smoothed into cubic
-Beziers. Lines are sorted into three inks the way a survey sheet sorts them: every fifth level is an
-index contour, and the rest alternate slate and blue.
+Beziers. Lines are sorted into three inks in a steady rhythm of four: blue, slate, blue, then an accent - a
+blue index contour at twice the weight. Three lines in four are blue, and no two slate lines touch.
 
     python3 stealth/make-topo.py
 
@@ -168,7 +168,7 @@ def contours(f, S, count, clear=None):
     levels = np.linspace(f.min() + 0.04, f.max() - 0.02, count)
     found = []
     for li, lv in enumerate(levels):
-        kind = 'index' if li % 5 == 4 else ('blue' if li % 2 else 'ink')
+        kind = ('blue', 'ink', 'blue', 'index')[li % 4]
         for line in join(march(f, S, lv)):
             if len(line) < 6:
                 continue

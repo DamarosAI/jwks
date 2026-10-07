@@ -1,6 +1,6 @@
 /* THE STEALTH BANNER. Just the survey, cut to LinkedIn's 1584x396 frame: the contours from
-   stealth/topo-banner.svg on the page's own ground, slate and blue alternating, index lines in the
-   house blue. No mark, no words. The summit sits right of centre because the avatar punches through
+   stealth/topo-banner.svg on the page's own ground, blue, slate, blue, then an accent line in the
+   house blue at twice the weight. No mark, no words. The summit sits right of centre because the avatar punches through
    the bottom-left corner.
 
      python3 stealth/make-topo.py && node scripts/make-stealth-banner.mjs
@@ -31,7 +31,7 @@ const html = `<!doctype html>
   .topo { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke-linecap: round; stroke-linejoin: round; }
   .topo-ink { stroke: #10161d; stroke-opacity: 0.12; stroke-width: 1; }
   .topo-blue { stroke: #2f6193; stroke-opacity: 0.3; stroke-width: 1; }
-  .topo-index { stroke: #214d79; stroke-opacity: 0.55; stroke-width: 1.4; }
+  .topo-index { stroke: #214d79; stroke-opacity: 0.5; stroke-width: 2; }
 </style></head><body>${topo}</body></html>`
 
 const dir = mkdtempSync(join(tmpdir(), 'damaros-stealth-banner-'))
