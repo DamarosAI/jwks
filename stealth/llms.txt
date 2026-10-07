@@ -1,6 +1,6 @@
 # Damaros
 
-> Damaros.
+> Applied AI for the highest-stakes decisions in health.
 
 - Contact: team@damaros.ai
 - Site: https://www.damaros.ai/
