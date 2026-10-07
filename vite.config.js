@@ -7,7 +7,8 @@ import react from '@vitejs/plugin-react'
 
 /* STEALTH. `VITE_STEALTH=1` swaps the built index.html for `stealth/index.html`
    and overwrites the crawler files with the copies beside it. It also writes the page as about.html,
-   privacy.html and 404.html so deep links and unknown paths show it without the SPA rewrite. The site's own
+   404.html so deep links and unknown paths show it without the SPA rewrite, and serves the policy
+   from stealth/privacy.html at /privacy. The site's own
    sources are untouched; the flag is the only thing that changes. See
    stealth/README.md. */
 const STEALTH_DIR = fileURLToPath(new URL('./stealth/', import.meta.url))
@@ -27,6 +28,11 @@ function stealth() {
     },
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
+        if (req.url === '/privacy' || req.url === '/privacy.html') {
+          res.setHeader('Content-Type', 'text/html; charset=utf-8')
+          res.end(readFileSync(`${STEALTH_DIR}privacy.html`))
+          return
+        }
         const name = STEALTH_FILES.find((file) => req.url === `/${file}`)
         if (!name) return next()
         res.setHeader('Content-Type', name.endsWith('.xml') ? 'application/xml; charset=utf-8' : name.endsWith('.webmanifest') ? 'application/manifest+json' : 'text/plain; charset=utf-8')
@@ -39,7 +45,9 @@ function stealth() {
       }
       // Deep links must not depend on the SPA rewrite: the old routes and any unknown path show the same page.
       const page = readFileSync(`${outDir}/index.html`)
-      for (const name of ['about.html', 'privacy.html', '404.html']) writeFileSync(`${outDir}/${name}`, page)
+      for (const name of ['about.html', '404.html']) writeFileSync(`${outDir}/${name}`, page)
+      // The privacy policy stays a real page: the policy itself, verbatim, on the stealth ground.
+      writeFileSync(`${outDir}/privacy.html`, readFileSync(`${STEALTH_DIR}privacy.html`))
     },
   }
 }

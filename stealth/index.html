@@ -53,6 +53,7 @@
         --muted: #657482;
         --accent: #2f6193;
         --accent-strong: #214d79;
+        --border: rgba(31, 45, 61, 0.13);
         --font-display: 'Endless', 'Switzer', sans-serif;
         --font-ui: 'Switzer', sans-serif;
         --font-mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
@@ -97,7 +98,20 @@
       .contact a { display: inline-block; padding: 6px 4px; }
 
       @media (prefers-reduced-motion: reduce) { .float, .drum { animation: none; } }
-      @media (max-width: 640px) { .contact { bottom: calc(env(safe-area-inset-bottom, 0px) + 20px); } }
+      /* THE CORNERS. Bottom left, a geocache: the visitor's own approximate coordinates, decoded into place in
+         the trails' mono face. Bottom right, a quiet tab to the privacy policy. Both sit on the email's line. */
+      .geo, .privacy-tab { position: absolute; z-index: 2; bottom: 30px; }
+      .geo { left: 28px; margin: 0; padding: 6px 0; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; opacity: 0; transition: opacity 600ms ease; }
+      .geo.is-on { opacity: 1; }
+      .privacy-tab { right: 28px; display: inline-flex; align-items: center; min-height: 30px; padding: 0 12px; border: 1px solid var(--border); border-radius: 999px; background: color-mix(in srgb, #ffffff 55%, transparent); font-size: 0.78rem; color: var(--muted); transition: color 180ms ease, border-color 180ms ease, background 180ms ease; }
+      .privacy-tab::after { content: ''; position: absolute; inset: -8px; }
+      .privacy-tab:hover { color: var(--accent-strong); border-color: color-mix(in srgb, var(--accent) 40%, transparent); background: #ffffff; }
+      @media (max-width: 640px) {
+        .contact { bottom: calc(env(safe-area-inset-bottom, 0px) + 58px); }
+        .geo, .privacy-tab { bottom: calc(env(safe-area-inset-bottom, 0px) + 18px); }
+        .geo { left: 20px; }
+        .privacy-tab { right: 20px; }
+      }
     </style>
   </head>
   <body>
@@ -116,6 +130,8 @@
         <h1 class="name">Damaros</h1>
       </div>
       <p class="contact" id="contact"><a href="mailto:team@damaros.ai">team@damaros.ai</a></p>
+      <p class="geo" id="geo" aria-label="Your approximate location"></p>
+      <a class="privacy-tab" id="privacy" href="/privacy">Privacy</a>
     </main>
     <script>
 /* THE TRAILS. Each trail is three or four markers from cancer care falling in one column, head first,
@@ -460,9 +476,30 @@ function damarosTrails(canvas, host, opts) {
   };
 }
 
+      (function geocache() {
+        var el = document.getElementById('geo');
+        if (!el || !window.fetch) return;
+        function fmt(v, pos, neg) { return Math.abs(v).toFixed(4) + '\u00B0 ' + (v >= 0 ? pos : neg); }
+        fetch('/api/geo', { cache: 'no-store' }).then(function (r) { return r.status === 200 ? r.json() : null; }).then(function (g) {
+          if (!g || typeof g.lat !== 'number' || typeof g.lon !== 'number') return;
+          var text = fmt(g.lat, 'N', 'S') + '  ' + fmt(g.lon, 'E', 'W');
+          el.classList.add('is-on');
+          if (matchMedia('(prefers-reduced-motion: reduce)').matches) { el.textContent = text; return; }
+          var t0 = performance.now(), dur = 1100;
+          (function tick(now) {
+            var k = Math.min(1, (now - t0) / dur), out = '';
+            for (var i = 0; i < text.length; i++) {
+              var c = text[i];
+              out += /[0-9]/.test(c) && i / text.length > k ? String((Math.random() * 10) | 0) : c;
+            }
+            el.textContent = out;
+            if (k < 1) requestAnimationFrame(tick);
+          })(t0);
+        }).catch(function () {});
+      })();
       damarosTrails(document.getElementById('trails'), document.getElementById('scene'), {
         reduce: matchMedia('(prefers-reduced-motion: reduce)').matches,
-        keep: function () { return [document.getElementById('center'), document.getElementById('contact')]; }
+        keep: function () { return [document.getElementById('center'), document.getElementById('contact'), document.getElementById('geo'), document.getElementById('privacy')]; }
       });
     </script>
   </body>

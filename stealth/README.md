@@ -8,8 +8,8 @@ language anywhere a person, a crawler or a model can read it.
 
 With the flag set, the build:
 
-- serves `stealth/index.html` as `index.html`. Every route already rewrites to it, so `/about` and
-  `/privacy` show the same page;
+- serves `stealth/index.html` as `index.html`, and as `about.html` and `404.html`, so every route but
+  `/privacy` shows the same page. `/privacy` serves `stealth/privacy.html`;
 - overwrites `llms.txt`, `sitemap.xml` and `site.webmanifest` in `dist/` with the copies in this folder.
 
 Without the flag nothing changes: `src/`, `public/` and the root `index.html` are untouched, and the
@@ -31,6 +31,12 @@ environment variables and redeploy. To come back, remove it and redeploy.
 - **The probe.** In range, a marker locks: it deepens and trembles. Touched, it is ablated. Kills
   inside 0.7s chain, and a tally appears top-right from the first kill. Idle blips invite the first
   move and retire after three kills. Reduced motion freezes the trails and the mark.
+- **The corners.** Bottom left, a geocache: the visitor's approximate city-level coordinates from
+  `api/geo.js`, which reads the location headers Vercel's edge already attaches. No browser permission,
+  no third party, nothing stored; the privacy policy's "approximate city-level location" covers it.
+  Locally there is no edge, so it stays hidden. Bottom right, a tab to `/privacy`.
+- **The privacy policy.** `privacy.html` is the full site's policy, verbatim from `src/PrivacyPage.jsx`,
+  served at `/privacy` in the stealth build. Keep the two in step.
 - **The mark.** The outline drum, moving only in the plane of the screen: a slow float and the site's
   axis shimmy.
 
