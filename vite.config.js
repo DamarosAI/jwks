@@ -6,7 +6,8 @@ import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 
 /* STEALTH. `VITE_STEALTH=1` swaps the built index.html for `stealth/index.html`
-   and overwrites the crawler files with the copies beside it. The site's own
+   and overwrites the crawler files with the copies beside it. It also writes the page as about.html,
+   privacy.html and 404.html so deep links and unknown paths show it without the SPA rewrite. The site's own
    sources are untouched; the flag is the only thing that changes. See
    stealth/README.md. */
 const STEALTH_DIR = fileURLToPath(new URL('./stealth/', import.meta.url))
@@ -36,6 +37,9 @@ function stealth() {
       for (const name of STEALTH_FILES) {
         writeFileSync(`${outDir}/${name}`, readFileSync(`${STEALTH_DIR}${name}`))
       }
+      // Deep links must not depend on the SPA rewrite: the old routes and any unknown path show the same page.
+      const page = readFileSync(`${outDir}/index.html`)
+      for (const name of ['about.html', 'privacy.html', '404.html']) writeFileSync(`${outDir}/${name}`, page)
     },
   }
 }
