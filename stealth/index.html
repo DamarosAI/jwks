@@ -97,11 +97,14 @@
       .contact { position: absolute; z-index: 2; left: 0; right: 0; bottom: 30px; text-align: center; font-size: 0.82rem; color: var(--text-soft); }
       .contact a { display: inline-block; padding: 6px 4px; }
 
-      @media (prefers-reduced-motion: reduce) { .float, .drum { animation: none; } }
+      @media (prefers-reduced-motion: reduce) { .float, .drum, .geo::before { animation: none; } }
       /* THE CORNERS. Bottom left, a geocache: the visitor's own approximate coordinates, decoded into place in
          the trails' mono face. Bottom right, a quiet tab to the privacy policy. Both sit on the email's line. */
       .geo, .privacy-tab { position: absolute; z-index: 2; bottom: 30px; }
-      .geo { left: 28px; margin: 0; padding: 6px 0; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; opacity: 0; transition: opacity 600ms ease; }
+      .geo { left: 28px; display: flex; align-items: center; gap: 9px; margin: 0; padding: 6px 0; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.04em; color: var(--text-soft); white-space: nowrap; font-variant-numeric: tabular-nums; opacity: 0; transition: opacity 600ms ease; }
+      /* The pin: a small blue dot with a slow ping, so the coordinates read as a live fix, not a caption. */
+      .geo::before { content: ''; flex: 0 0 auto; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent); animation: geo-ping 2.8s ease-out infinite; }
+      @keyframes geo-ping { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent); } 70%, 100% { box-shadow: 0 0 0 7px color-mix(in srgb, var(--accent) 0%, transparent); } }
       .geo.is-on { opacity: 1; }
       .privacy-tab { right: 28px; display: inline-flex; align-items: center; min-height: 30px; padding: 0 12px; border: 1px solid var(--border); border-radius: 999px; background: color-mix(in srgb, #ffffff 55%, transparent); font-size: 0.78rem; color: var(--muted); transition: color 180ms ease, border-color 180ms ease, background 180ms ease; }
       .privacy-tab::after { content: ''; position: absolute; inset: -8px; }

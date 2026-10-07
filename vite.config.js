@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from 'node:fs'
+import { readFileSync, rmSync, writeFileSync } from 'node:fs'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import { defineConfig, loadEnv } from 'vite'
@@ -46,6 +46,8 @@ function stealth() {
       // Deep links must not depend on the SPA rewrite: the old routes and any unknown path show the same page.
       const page = readFileSync(`${outDir}/index.html`)
       for (const name of ['about.html', '404.html']) writeFileSync(`${outDir}/${name}`, page)
+      // Nothing from the full site that names its world: the integration logos are not shipped.
+      rmSync(`${outDir}/assets/vendor`, { recursive: true, force: true })
       // The privacy policy stays a real page: the policy itself, verbatim, on the stealth ground.
       writeFileSync(`${outDir}/privacy.html`, readFileSync(`${STEALTH_DIR}privacy.html`))
     },
