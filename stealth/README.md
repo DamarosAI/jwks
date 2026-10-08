@@ -37,6 +37,9 @@ environment variables and redeploy. To come back, remove it and redeploy.
   Locally there is no edge, so it stays hidden. Bottom right, a tab to `/privacy`.
 - **The privacy policy.** `privacy.html` is the full site's policy, verbatim from `src/PrivacyPage.jsx`,
   served at `/privacy` in the stealth build. Keep the two in step.
+- **The line.** "Applied AI for the highest-stakes decisions in health." sits under the name (one line on
+  a wide screen, balanced over two on a phone) and is the title, description, link-preview text, structured
+  data slogan, manifest and llms.txt line. Change it in all of those together.
 - **The mark.** The outline drum, moving only in the plane of the screen: a slow float and the site's
   axis shimmy.
 

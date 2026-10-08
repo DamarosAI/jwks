@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="color-scheme" content="light" />
     <meta name="theme-color" content="#f8fafc" />
-    <title>Damaros</title>
+    <title>Damaros | Applied AI for the highest-stakes decisions in health</title>
     <link rel="canonical" href="https://www.damaros.ai/" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon-48x48.png" type="image/png" sizes="48x48" />
@@ -36,7 +36,7 @@
     <meta name="twitter:description" content="Applied AI for the highest-stakes decisions in health." />
     <meta name="twitter:image" content="https://www.damaros.ai/assets/og-card.png" />
     <script type="application/ld+json">
-    {"@context":"https://schema.org","@type":"Organization","@id":"https://www.damaros.ai/#organization","name":"Damaros","legalName":"Damaros Inc","description":"Applied AI for the highest-stakes decisions in health.","url":"https://www.damaros.ai/","logo":"https://www.damaros.ai/favicon-192x192.png","email":"team@damaros.ai"}
+    {"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://www.damaros.ai/#organization","name":"Damaros","legalName":"Damaros Inc","description":"Applied AI for the highest-stakes decisions in health.","slogan":"Applied AI for the highest-stakes decisions in health.","url":"https://www.damaros.ai/","logo":"https://www.damaros.ai/favicon-192x192.png","email":"team@damaros.ai"},{"@type":"WebSite","@id":"https://www.damaros.ai/#website","name":"Damaros","url":"https://www.damaros.ai/","description":"Applied AI for the highest-stakes decisions in health.","publisher":{"@id":"https://www.damaros.ai/#organization"}}]}
     </script>
     <style>
       /* STEALTH. One screen built from the site's parts: its ground and blue, its two faces, the drum. Under it
@@ -94,26 +94,33 @@
       @keyframes drum-float { from { transform: translateY(7px); } to { transform: translateY(-7px); } }
       @keyframes drum-axis-shimmy { 0%, 100% { transform: rotate(calc(var(--drum-base) - 2.2deg)); } 50% { transform: rotate(calc(var(--drum-base) + 2.2deg)); } }
       .name { margin: 32px 0 0; font-family: var(--font-display); font-size: clamp(2rem, 3.4vw, 3rem); font-weight: 400; letter-spacing: -0.008em; line-height: 1; color: var(--text); }
-      .contact { position: absolute; z-index: 2; left: 0; right: 0; bottom: 30px; text-align: center; font-size: 0.82rem; color: var(--text-soft); }
-      .contact a { display: inline-block; padding: 6px 4px; }
+      /* The line, under the name: what Damaros is for, in the body face, muted. One line on a wide screen. */
+      .tagline { margin: 16px 0 0; white-space: nowrap; text-align: center; font-size: clamp(0.98rem, 1.1vw, 1.08rem); line-height: 1.45; letter-spacing: 0.005em; color: var(--muted); }
+      @media (max-width: 640px) { .tagline { white-space: normal; max-width: calc(100vw - 48px); text-wrap: balance; } }
+      .nb { white-space: nowrap; }
+      .contact { position: absolute; z-index: 2; left: 0; right: 0; bottom: 30px; margin: 0; text-align: center; pointer-events: none; }
+      /* Plain underlined text, the email and Privacy alike. The email copies itself when clicked. */
+      .link { pointer-events: auto; appearance: none; -webkit-appearance: none; margin: 0; padding: 6px 2px; border: 0; background: none; font: inherit; font-size: 0.82rem; color: var(--text-soft); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: color-mix(in srgb, currentColor 35%, transparent); cursor: pointer; transition: color 160ms ease, text-decoration-color 160ms ease; }
+      .link:hover { color: var(--accent-strong); text-decoration-color: currentColor; }
+      .link:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+      .copy { display: inline-block; text-align: center; }
+      .sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
       @media (prefers-reduced-motion: reduce) { .float, .drum, .geo::before { animation: none; } }
       /* THE CORNERS. Bottom left, a geocache: the visitor's own approximate coordinates, decoded into place in
          the trails' mono face. Bottom right, a quiet tab to the privacy policy. Both sit on the email's line. */
-      .geo, .privacy-tab { position: absolute; z-index: 2; bottom: 30px; }
-      .geo { left: 28px; display: flex; align-items: center; gap: 9px; margin: 0; padding: 6px 0; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.04em; color: var(--text-soft); white-space: nowrap; font-variant-numeric: tabular-nums; opacity: 0; transition: opacity 600ms ease; }
+      .geo, .privacy { position: absolute; z-index: 2; bottom: 30px; }
+      .geo { left: 28px; display: flex; align-items: center; gap: 9px; margin: 0; padding: 6px 0; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.04em; color: var(--text-soft); white-space: nowrap; opacity: 0; transition: opacity 600ms ease; }
       /* The pin: a small blue dot with a slow ping, so the coordinates read as a live fix, not a caption. */
       .geo::before { content: ''; flex: 0 0 auto; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent); animation: geo-ping 2.8s ease-out infinite; }
       @keyframes geo-ping { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent); } 70%, 100% { box-shadow: 0 0 0 7px color-mix(in srgb, var(--accent) 0%, transparent); } }
       .geo.is-on { opacity: 1; }
-      .privacy-tab { right: 28px; display: inline-flex; align-items: center; min-height: 30px; padding: 0 12px; border: 1px solid var(--border); border-radius: 999px; background: color-mix(in srgb, #ffffff 55%, transparent); font-size: 0.78rem; color: var(--muted); transition: color 180ms ease, border-color 180ms ease, background 180ms ease; }
-      .privacy-tab::after { content: ''; position: absolute; inset: -8px; }
-      .privacy-tab:hover { color: var(--accent-strong); border-color: color-mix(in srgb, var(--accent) 40%, transparent); background: #ffffff; }
+      .privacy { right: 28px; }
       @media (max-width: 640px) {
         .contact { bottom: calc(env(safe-area-inset-bottom, 0px) + 58px); }
-        .geo, .privacy-tab { bottom: calc(env(safe-area-inset-bottom, 0px) + 18px); }
+        .geo, .privacy { bottom: calc(env(safe-area-inset-bottom, 0px) + 18px); }
         .geo { left: 20px; }
-        .privacy-tab { right: 20px; }
+        .privacy { right: 20px; }
       }
     </style>
   </head>
@@ -130,11 +137,13 @@
             </g>
           </svg>
         </div>
-        <h1 class="name">Damaros</h1>
+        <h1 class="name" id="name">Damaros</h1>
+        <p class="tagline">Applied AI for the <span class="nb">highest-stakes</span> decisions in health.</p>
       </div>
-      <p class="contact" id="contact"><a href="mailto:team@damaros.ai">team@damaros.ai</a></p>
-      <p class="geo" id="geo" aria-label="Your approximate location"></p>
-      <a class="privacy-tab" id="privacy" href="/privacy">Privacy</a>
+      <p class="contact" id="contact"><button class="link copy" id="copy" type="button" data-email="team@damaros.ai" title="Copy email address">team@damaros.ai</button></p>
+      <p class="geo" id="geo" aria-label="Nearest city to you"></p>
+      <a class="link privacy" id="privacy" href="/privacy">Privacy</a>
+      <span class="sr" id="copied" aria-live="polite"></span>
     </main>
     <script>
 /* THE TRAILS. Each trail is three or four markers from cancer care falling in one column, head first,
@@ -191,9 +200,10 @@ function damarosTrails(canvas, host, opts) {
      skipped and every trail on screen is one you can read. Measured against the block itself, not its
      padded clear zone, so a phone keeps both side columns. */
   function throughName(l) {
-    if (!keep || !keep[0]) return false;
+    var c = core || (keep && keep[0]);
+    if (!c) return false;
     var x0 = laneX(l), x1 = x0 + 100;
-    return x1 > keep[0].l + 28 && x0 < keep[0].r - 28;
+    return x1 > c.l + 28 && x0 < c.r - 28;
   }
   function placeLane(t, i) {
     var near = [trails[(i + trails.length - 1) % trails.length], trails[(i + 1) % trails.length]];
@@ -229,8 +239,14 @@ function damarosTrails(canvas, host, opts) {
     for (var k = 0; k < count; k++) { placeLane(trails[k], k); relabel(trails[k]); }
   }
   /* Clear zones: the trails fade out around the name and around the email, never crossing either. */
+  var core = null;
   function measureKeep() {
     var els = (opts.keep && opts.keep()) || [], b = host.getBoundingClientRect();
+    var ce = opts.core && opts.core();
+    if (ce) {
+      var cr = ce.getBoundingClientRect();
+      core = { l: cr.left - b.left - 28, r: cr.right - b.left + 28 };
+    } else core = null;
     keep = [].concat(els).filter(Boolean).map(function (el) {
       var a = el.getBoundingClientRect();
       return { l: a.left - b.left - 28, t: a.top - b.top - 22, r: a.right - b.left + 28, b: a.bottom - b.top + 22 };
@@ -479,29 +495,62 @@ function damarosTrails(canvas, host, opts) {
   };
 }
 
+      /* The geocache: the nearest city, from our own /api/geo (Vercel's edge headers), decoded into place. */
       (function geocache() {
         var el = document.getElementById('geo');
         if (!el || !window.fetch) return;
-        function fmt(v, pos, neg) { return Math.abs(v).toFixed(4) + '\u00B0 ' + (v >= 0 ? pos : neg); }
         fetch('/api/geo', { cache: 'no-store' }).then(function (r) { return r.status === 200 ? r.json() : null; }).then(function (g) {
-          if (!g || typeof g.lat !== 'number' || typeof g.lon !== 'number') return;
-          var text = fmt(g.lat, 'N', 'S') + '  ' + fmt(g.lon, 'E', 'W');
+          var text = g && typeof g.city === 'string' ? g.city.trim() : '';
+          if (!text) return;
           el.classList.add('is-on');
           if (matchMedia('(prefers-reduced-motion: reduce)').matches) { el.textContent = text; return; }
-          var t0 = performance.now(), dur = 1100;
+          var A = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', t0 = performance.now(), dur = 900;
           (function tick(now) {
             var k = Math.min(1, (now - t0) / dur), out = '';
             for (var i = 0; i < text.length; i++) {
-              var c = text[i];
-              out += /[0-9]/.test(c) && i / text.length > k ? String((Math.random() * 10) | 0) : c;
+              var c = text[i], letter = /[A-Za-z]/.test(c);
+              if (letter && i / text.length >= k) {
+                var r = A[(Math.random() * 26) | 0];
+                out += c === c.toLowerCase() ? r.toLowerCase() : r;
+              } else out += c;
             }
             el.textContent = out;
             if (k < 1) requestAnimationFrame(tick);
           })(t0);
         }).catch(function () {});
       })();
+      /* The email copies itself. The label reads "Copied" for a moment at the same width, and a polite live
+         region says so for screen readers. If the clipboard is unavailable, it falls back to a mail link. */
+      (function copyEmail() {
+        var btn = document.getElementById('copy'), live = document.getElementById('copied');
+        if (!btn) return;
+        var email = btn.getAttribute('data-email'), timer = 0;
+        function done() {
+          btn.style.minWidth = btn.offsetWidth + 'px';
+          btn.textContent = 'Copied';
+          if (live) live.textContent = 'Email address copied';
+          clearTimeout(timer);
+          timer = setTimeout(function () { btn.textContent = email; btn.style.minWidth = ''; if (live) live.textContent = ''; }, 1400);
+        }
+        function legacy() {
+          var ta = document.createElement('textarea');
+          ta.value = email; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+          document.body.appendChild(ta); ta.select();
+          var ok = false;
+          try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+          document.body.removeChild(ta);
+          return ok;
+        }
+        btn.addEventListener('click', function () {
+          if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(email).then(done, function () { legacy() ? done() : (location.href = 'mailto:' + email); });
+          } else if (legacy()) done();
+          else location.href = 'mailto:' + email;
+        });
+      })();
       damarosTrails(document.getElementById('trails'), document.getElementById('scene'), {
         reduce: matchMedia('(prefers-reduced-motion: reduce)').matches,
+        core: function () { return document.getElementById('name'); },
         keep: function () { return [document.getElementById('center'), document.getElementById('contact'), document.getElementById('geo'), document.getElementById('privacy')]; }
       });
     </script>

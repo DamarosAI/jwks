@@ -2,5 +2,7 @@
 
 > Applied AI for the highest-stakes decisions in health.
 
-- Contact: team@damaros.ai
+Damaros Inc. Contact: team@damaros.ai
+
 - Site: https://www.damaros.ai/
+- Privacy: https://www.damaros.ai/privacy
