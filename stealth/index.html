@@ -111,6 +111,7 @@
       .geo::before { content: ''; flex: 0 0 auto; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent); animation: geo-ping 2.8s ease-out infinite; }
       @keyframes geo-ping { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent); } 70%, 100% { box-shadow: 0 0 0 7px color-mix(in srgb, var(--accent) 0%, transparent); } }
       .geo.is-on { opacity: 1; }
+      .geo-text { overflow: hidden; text-overflow: ellipsis; max-width: calc(100vw - 150px); }
       .privacy { right: 28px; }
       @media (max-width: 640px) {
         .contact { bottom: calc(env(safe-area-inset-bottom, 0px) + 58px); }
@@ -136,7 +137,7 @@
         <h1 class="name" id="name">Damaros</h1>
       </div>
       <p class="contact" id="contact"><button class="link copy" id="copy" type="button" data-email="team@damaros.ai" title="Copy email address">team@damaros.ai</button></p>
-      <p class="geo" id="geo" aria-label="Nearest city to you"></p>
+      <p class="geo" id="geo" aria-label="Your approximate location"><span class="geo-text" id="geo-text"></span></p>
       <a class="link privacy" id="privacy" href="/privacy">Privacy</a>
       <span class="sr" id="copied" aria-live="polite"></span>
     </main>
@@ -490,27 +491,28 @@ function damarosTrails(canvas, host, opts) {
   };
 }
 
-      /* The geocache: the nearest city, from our own /api/geo (Vercel's edge headers), decoded into place. */
+      /* The geocache: "City, ST" in the US and "City, Country" elsewhere, from our own /api/geo (Vercel's edge
+         headers). Each character settles left to right out of a short scramble of its own case. */
       (function geocache() {
-        var el = document.getElementById('geo');
-        if (!el || !window.fetch) return;
+        var el = document.getElementById('geo'), out = document.getElementById('geo-text');
+        if (!el || !out || !window.fetch) return;
         fetch('/api/geo', { cache: 'no-store' }).then(function (r) { return r.status === 200 ? r.json() : null; }).then(function (g) {
-          var text = g && typeof g.city === 'string' ? g.city.trim() : '';
+          var text = g && typeof g.label === 'string' ? g.label.trim() : '';
           if (!text) return;
+          el.title = text + ' (approximate, from your network)';
           el.classList.add('is-on');
-          if (matchMedia('(prefers-reduced-motion: reduce)').matches) { el.textContent = text; return; }
-          var A = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', t0 = performance.now(), dur = 900;
+          if (matchMedia('(prefers-reduced-motion: reduce)').matches) { out.textContent = text; return; }
+          var A = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', t0 = performance.now(), step = 38, hold = 260;
           (function tick(now) {
-            var k = Math.min(1, (now - t0) / dur), out = '';
+            var t = now - t0, s = '', settled = 0;
             for (var i = 0; i < text.length; i++) {
-              var c = text[i], letter = /[A-Za-z]/.test(c);
-              if (letter && i / text.length >= k) {
-                var r = A[(Math.random() * 26) | 0];
-                out += c === c.toLowerCase() ? r.toLowerCase() : r;
-              } else out += c;
+              var c = text[i];
+              if (t >= hold + i * step || !/\p{L}/u.test(c)) { s += c; settled++; continue; }
+              var r = A[(Math.random() * 26) | 0];
+              s += c === c.toLowerCase() && c !== c.toUpperCase() ? r.toLowerCase() : r;
             }
-            el.textContent = out;
-            if (k < 1) requestAnimationFrame(tick);
+            out.textContent = s;
+            if (settled < text.length) requestAnimationFrame(tick);
           })(t0);
         }).catch(function () {});
       })();
