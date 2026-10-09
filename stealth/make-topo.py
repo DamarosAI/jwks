@@ -7,7 +7,7 @@ blue index contour at twice the weight. Three lines in four are blue, and no two
 
     python3 stealth/make-topo.py
 
-writes stealth/topo-page.svg (inlined into stealth/index.html) and stealth/topo-banner.svg (rendered
+writes stealth/topo/topo-0..7.svg (one is picked at random on each load) and stealth/topo-banner.svg (rendered
 to PNG by scripts/make-stealth-banner.mjs). Needs numpy.
 """
 import numpy as np
@@ -159,6 +159,15 @@ def inside(pt, poly):
     return hit
 
 
+def centroid(poly):
+    a = cx = cy = 0.0
+    for i in range(len(poly)):
+        (x0, y0), (x1, y1) = poly[i - 1], poly[i]
+        k = x0 * y1 - x1 * y0
+        a += k; cx += (x0 + x1) * k; cy += (y0 + y1) * k
+    return (cx / (3 * a), cy / (3 * a)) if a else poly[0]
+
+
 def area(poly):
     return abs(sum(poly[i - 1][0] * poly[i][1] - poly[i][0] * poly[i - 1][1] for i in range(len(poly)))) / 2
 
@@ -178,29 +187,56 @@ def contours(f, S, count, clear=None):
             s = resample(chaikin(line, closed), closed)
             if len(s) >= 2:
                 found.append((kind, s, closed))
+    summit = None
     if clear:
         rings = [i for i, (_, s, closed) in enumerate(found) if closed and len(s) > 3 and inside(clear, s)]
         if rings:
             found.pop(min(rings, key=lambda i: area(found[i][1])))
+        # The summit as the eye reads it: the mean centroid of the three innermost rings left, which is
+        # what the page centres under the mark and name.
+        rings = sorted((s for _, s, closed in found if closed and len(s) > 3 and inside(clear, s)), key=area)[:3]
+        if rings:
+            cs = [centroid(s) for s in rings]
+            summit = (sum(c[0] for c in cs) / len(cs), sum(c[1] for c in cs) / len(cs))
     out = {'ink': [], 'blue': [], 'index': []}
     for kind, s, closed in found:
         out[kind].append(bezier(s, closed))
-    return out
+    return out, summit
 
 
-def svg(W, H, lines, cls, extra=''):
+def svg(W, H, result, cls, extra=''):
+    lines, summit = result
+    if summit:
+        extra += ' data-summit="%.1f %.1f"' % summit
     paths = ''.join('<path class="%s-%s" d="%s"/>' % (cls, k, ' '.join(v)) for k, v in lines.items())
     return ('<svg class="%s" viewBox="0 0 %d %d" preserveAspectRatio="xMidYMid slice" aria-hidden="true"%s>%s</svg>'
             % (cls, W, H, extra, paths))
 
 
-# The page: 1600x1000, sliced to cover. The summit sits 44 units above centre - exactly under the mark,
-# which rides above the middle of the mark-and-name block - with clean rings around it. The innermost
-# ring is left out so the summit itself stays open under the mark.
-f, S = terrain(1600, 1000, (800, 456, 420, 360),
-               [(230, 180, 260, 200, .55), (1380, 820, 300, 230, .6), (1300, 150, 220, 180, .38),
-                (260, 860, 240, 190, .42), (560, 700, 170, 150, -.2), (1090, 330, 150, 140, -.16)], seed=3)
-(HERE / 'topo-page.svg').write_text(svg(1600, 1000, contours(f, S, 30, clear=(800, 456)), 'topo'))
+# The page: 1600x1000, sliced to cover; the page pins the summit under the mark and name. Eight variants
+# share the summit and the two hollows that shape its rings, so the centre reads the same on every load;
+# everything farther out - the outer hills and the noise - moves, so the ground is never quite the same
+# twice. Variant 0 is the original map. The innermost ring is left out so the summit itself stays open.
+PAGE_HILLS = [(230, 180, 260, 200, .55), (1380, 820, 300, 230, .6), (1300, 150, 220, 180, .38),
+              (260, 860, 240, 190, .42)]
+PAGE_HOLLOWS = [(560, 700, 170, 150, -.2), (1090, 330, 150, 140, -.16)]
+VARIANTS = 8
+(HERE / 'topo').mkdir(exist_ok=True)
+for v in range(VARIANTS):
+    r = np.random.default_rng(1000 + v)
+    hills = PAGE_HILLS if v == 0 else [
+        (cx + r.uniform(-160, 160), cy + r.uniform(-120, 120), rx * r.uniform(0.8, 1.25), ry * r.uniform(0.8, 1.25),
+         a * r.uniform(0.75, 1.3)) for cx, cy, rx, ry, a in PAGE_HILLS]
+    if v:
+        # One extra rise somewhere out at the edges, never near the summit.
+        while True:
+            ex, ey = r.uniform(80, 1520), r.uniform(60, 940)
+            if ((ex - 800) / 620) ** 2 + ((ey - 456) / 420) ** 2 > 1:
+                break
+        hills = hills + [(ex, ey, r.uniform(140, 240), r.uniform(120, 200), r.uniform(0.25, 0.5))]
+    f, S = terrain(1600, 1000, (800, 456, 420, 360), hills + PAGE_HOLLOWS, seed=3 if v == 0 else 3 + 7 * v)
+    (HERE / 'topo' / ('topo-%d.svg' % v)).write_text(
+        svg(1600, 1000, contours(f, S, 30, clear=(800, 456)), 'topo', ' xmlns="http://www.w3.org/2000/svg"'))
 
 # The banner: 1584x396. The avatar punches through the bottom-left, so the summit goes right of centre
 # and the ground falls away under the avatar into long, quiet lines.
@@ -209,4 +245,4 @@ f, S = terrain(1584, 396, (1080, 214, 360, 210),
                 (140, 380, 260, 140, .15)], seed=21, S=6, calm=300)
 (HERE / 'topo-banner.svg').write_text(svg(1584, 396, contours(f, S, 26), 'topo',
                                           ' xmlns="http://www.w3.org/2000/svg" width="1584" height="396"'))
-print('wrote', HERE / 'topo-page.svg', HERE / 'topo-banner.svg')
+print('wrote', VARIANTS, 'page variants in', HERE / 'topo', 'and', HERE / 'topo-banner.svg')
