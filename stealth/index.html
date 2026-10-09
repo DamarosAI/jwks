@@ -79,7 +79,7 @@
          slate, blue. Ink faint enough to read as the paper. */
       /* The ground moves in script: a continuous drift plus the pointer's lean, one transform on this layer,
          turning about the summit. Oversized by 48px so no edge ever shows. */
-      .topo-wrap { position: absolute; inset: -48px; pointer-events: none; will-change: transform; transform-origin: 50% 45.6%; }
+      .topo-wrap { position: absolute; inset: -48px; overflow: hidden; pointer-events: none; will-change: transform; transform-origin: 50% 45.6%; }
       .topo { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke-linecap: round; stroke-linejoin: round; shape-rendering: geometricPrecision; }
       .topo-ink { stroke: var(--text); stroke-opacity: 0.075; stroke-width: 0.8; }
       .topo-blue { stroke: var(--accent); stroke-opacity: 0.22; stroke-width: 0.8; }
@@ -235,8 +235,30 @@ function damarosTrails(canvas, host, opts) {
     for (var k = 0; k < count; k++) { placeLane(trails[k], k); relabel(trails[k]); }
   }
   /* Clear zones: the trails fade out around the name and around the email, never crossing either. */
+  /* THE SUMMIT UNDER THE NAME. The map is sized and placed so its summit (800, 456 of 1600 x 1000) lands on
+     the centre of the mark-and-name block, whatever the screen's shape: the smallest scale that still covers
+     the oversized layer from that anchor, then the drift turns about the same point. Layout boxes only, so
+     the float and the drift never feed back into the measurement. */
+  var topoSvg = topoEl && topoEl.querySelector('svg');
+  function placeTopo() {
+    var anchor = opts.anchor && opts.anchor();
+    if (!topoEl || !topoSvg || !anchor) return;
+    var hb = host.getBoundingClientRect(), ab = anchor.getBoundingClientRect();
+    var W = topoEl.offsetWidth, H = topoEl.offsetHeight;
+    if (!W || !H) return;
+    var ax = ab.left + ab.width / 2 - hb.left - topoEl.offsetLeft;
+    var ay = ab.top + ab.height / 2 - hb.top - topoEl.offsetTop;
+    var s = Math.max(ax / 800, (W - ax) / 800, ay / 456, (H - ay) / 544);
+    topoSvg.style.inset = 'auto';
+    topoSvg.style.left = (ax - 800 * s).toFixed(2) + 'px';
+    topoSvg.style.top = (ay - 456 * s).toFixed(2) + 'px';
+    topoSvg.style.width = (1600 * s).toFixed(2) + 'px';
+    topoSvg.style.height = (1000 * s).toFixed(2) + 'px';
+    topoEl.style.transformOrigin = ax.toFixed(1) + 'px ' + ay.toFixed(1) + 'px';
+  }
   var core = null;
   function measureKeep() {
+    placeTopo();
     var els = (opts.keep && opts.keep()) || [], b = host.getBoundingClientRect();
     var ce = opts.core && opts.core();
     if (ce) {
@@ -472,6 +494,9 @@ function damarosTrails(canvas, host, opts) {
     if (reduce) frame(performance.now());
   });
   ro.observe(host);
+  var anchorEl = opts.anchor && opts.anchor();
+  if (anchorEl) ro.observe(anchorEl);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { measureKeep(); });
   host.addEventListener('pointermove', onMove, { passive: true });
   host.addEventListener('pointerdown', onMove, { passive: true });
   host.addEventListener('pointerleave', onLeave);
@@ -548,6 +573,7 @@ function damarosTrails(canvas, host, opts) {
       damarosTrails(document.getElementById('trails'), document.getElementById('scene'), {
         reduce: matchMedia('(prefers-reduced-motion: reduce)').matches,
         core: function () { return document.getElementById('name'); },
+        anchor: function () { return document.getElementById('center'); },
         keep: function () { return [document.getElementById('center'), document.getElementById('contact'), document.getElementById('geo'), document.getElementById('privacy')]; }
       });
     </script>
